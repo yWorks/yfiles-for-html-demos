@@ -48,6 +48,10 @@ import {
 } from 'yfiles'
 
 import VoronoiDiagram from './VoronoiDiagram.js'
+import { colorSets } from '../../resources/basic-demo-styles.js'
+
+const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
+const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
 
 /**
  * Sets the value of the attribute with the given name for the given element.
@@ -83,8 +87,8 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     const colors = generateColors(
-      Color.ROYAL_BLUE,
-      Color.LIGHT_CYAN,
+      GRADIENT_START,
+      GRADIENT_END,
       this.voronoiDiagram.voronoiFaces.length + 1
     )
 
@@ -126,7 +130,7 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
       point.x + offset
     },${point.y - offset} L${point.x - offset},${point.y + offset}`
     setAttribute(path, 'd', d)
-    setAttribute(path, 'stroke', '#666666')
+    setAttribute(path, 'stroke', '#363020')
     setAttribute(path, 'stroke-width', '4')
     container.appendChild(path)
   }
@@ -146,8 +150,8 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
     super()
     this.clusters = clusters
     this.drawCenter = drawCenter
-    this.startColor = Color.ROYAL_BLUE
-    this.endColor = Color.LAVENDER
+    this.startColor = GRADIENT_START
+    this.endColor = GRADIENT_END
   }
 
   /**

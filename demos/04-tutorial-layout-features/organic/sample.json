@@ -1,0 +1,601 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "layout": {
+        "x": 502,
+        "y": 476,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 0,
+      "labels": [
+        {
+          "text": "This label has a very long text",
+          "anchorX": 437.5,
+          "anchorY": 498,
+          "upX": 0,
+          "upY": -1,
+          "width": 159,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "layout": {
+        "x": 692,
+        "y": 597,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 1,
+      "labels": [
+        {
+          "text": "1",
+          "anchorX": 703.5,
+          "anchorY": 619,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "layout": {
+        "x": 561,
+        "y": 558,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 2,
+      "labels": [
+        {
+          "text": "2",
+          "anchorX": 572.5,
+          "anchorY": 580,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "layout": {
+        "x": 1163,
+        "y": 332,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 3,
+      "labels": [
+        {
+          "text": "3",
+          "anchorX": 1174.5,
+          "anchorY": 354,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "layout": {
+        "x": 15,
+        "y": 386,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 4,
+      "labels": [
+        {
+          "text": "4",
+          "anchorX": 26.5,
+          "anchorY": 408,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "layout": {
+        "x": 1020,
+        "y": 312,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 5,
+      "labels": [
+        {
+          "text": "5",
+          "anchorX": 1031.5,
+          "anchorY": 334,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "layout": {
+        "x": 1120,
+        "y": 116,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 6,
+      "labels": [
+        {
+          "text": "6",
+          "anchorX": 1131.5,
+          "anchorY": 138,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "layout": {
+        "x": 500,
+        "y": 168,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 7,
+      "labels": [
+        {
+          "text": "7",
+          "anchorX": 511.5,
+          "anchorY": 190,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "layout": {
+        "x": 403,
+        "y": 202,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 8,
+      "labels": [
+        {
+          "text": "8",
+          "anchorX": 414.5,
+          "anchorY": 224,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "layout": {
+        "x": 1037,
+        "y": 215,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 9,
+      "labels": [
+        {
+          "text": "9",
+          "anchorX": 1048.5,
+          "anchorY": 237,
+          "upX": 0,
+          "upY": -1,
+          "width": 7,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "layout": {
+        "x": 773,
+        "y": 422,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 10,
+      "labels": [
+        {
+          "text": "10",
+          "anchorX": 781,
+          "anchorY": 444,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "layout": {
+        "x": 180,
+        "y": 413,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 11,
+      "labels": [
+        {
+          "text": "11",
+          "anchorX": 188.5,
+          "anchorY": 435,
+          "upX": 0,
+          "upY": -1,
+          "width": 13,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "layout": {
+        "x": 678,
+        "y": 709,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 12,
+      "labels": [
+        {
+          "text": "12",
+          "anchorX": 686,
+          "anchorY": 731,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "layout": {
+        "x": 547,
+        "y": 238,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 13,
+      "labels": [
+        {
+          "text": "13",
+          "anchorX": 555,
+          "anchorY": 260,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "layout": {
+        "x": 511,
+        "y": 15,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 14,
+      "labels": [
+        {
+          "text": "14",
+          "anchorX": 519,
+          "anchorY": 37,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "layout": {
+        "x": 721,
+        "y": 500,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 15,
+      "labels": [
+        {
+          "text": "15",
+          "anchorX": 729,
+          "anchorY": 522,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "layout": {
+        "x": 1219,
+        "y": 186,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 16,
+      "labels": [
+        {
+          "text": "16",
+          "anchorX": 1227,
+          "anchorY": 208,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "layout": {
+        "x": 672,
+        "y": 198,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 17,
+      "labels": [
+        {
+          "text": "17",
+          "anchorX": 680,
+          "anchorY": 220,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "layout": {
+        "x": 81,
+        "y": 502,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 18,
+      "labels": [
+        {
+          "text": "18",
+          "anchorX": 89,
+          "anchorY": 524,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "layout": {
+        "x": 645,
+        "y": 422,
+        "width": 30,
+        "height": 30
+      },
+      "tag": 19,
+      "labels": [
+        {
+          "text": "19",
+          "anchorX": 653,
+          "anchorY": 444,
+          "upX": 0,
+          "upY": -1,
+          "width": 14,
+          "height": 14
+        }
+      ]
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 11,
+      "labels": [],
+      "tag": 0
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 8,
+      "labels": [],
+      "tag": 1
+    },
+    {
+      "id": 2,
+      "source": 0,
+      "target": 19,
+      "labels": [],
+      "tag": 2
+    },
+    {
+      "id": 3,
+      "source": 0,
+      "target": 2,
+      "labels": [],
+      "tag": 3
+    },
+    {
+      "id": 4,
+      "source": 11,
+      "target": 4,
+      "labels": [],
+      "tag": 4
+    },
+    {
+      "id": 5,
+      "source": 11,
+      "target": 18,
+      "labels": [],
+      "tag": 5
+    },
+    {
+      "id": 6,
+      "source": 8,
+      "target": 7,
+      "labels": [],
+      "tag": 6
+    },
+    {
+      "id": 7,
+      "source": 19,
+      "target": 13,
+      "labels": [],
+      "tag": 7
+    },
+    {
+      "id": 8,
+      "source": 19,
+      "target": 2,
+      "labels": [],
+      "tag": 8
+    },
+    {
+      "id": 9,
+      "source": 19,
+      "target": 17,
+      "labels": [],
+      "tag": 9
+    },
+    {
+      "id": 10,
+      "source": 19,
+      "target": 15,
+      "labels": [],
+      "tag": 10
+    },
+    {
+      "id": 11,
+      "source": 19,
+      "target": 10,
+      "labels": [],
+      "tag": 11
+    },
+    {
+      "id": 12,
+      "source": 13,
+      "target": 7,
+      "labels": [],
+      "tag": 12
+    },
+    {
+      "id": 13,
+      "source": 13,
+      "target": 17,
+      "labels": [],
+      "tag": 13
+    },
+    {
+      "id": 14,
+      "source": 2,
+      "target": 15,
+      "labels": [],
+      "tag": 14
+    },
+    {
+      "id": 15,
+      "source": 2,
+      "target": 1,
+      "labels": [],
+      "tag": 15
+    },
+    {
+      "id": 16,
+      "source": 4,
+      "target": 18,
+      "labels": [],
+      "tag": 16
+    },
+    {
+      "id": 17,
+      "source": 16,
+      "target": 6,
+      "labels": [],
+      "tag": 17
+    },
+    {
+      "id": 18,
+      "source": 7,
+      "target": 14,
+      "labels": [],
+      "tag": 18
+    },
+    {
+      "id": 19,
+      "source": 17,
+      "target": 5,
+      "labels": [],
+      "tag": 19
+    },
+    {
+      "id": 20,
+      "source": 15,
+      "target": 10,
+      "labels": [],
+      "tag": 20
+    },
+    {
+      "id": 21,
+      "source": 15,
+      "target": 12,
+      "labels": [],
+      "tag": 21
+    },
+    {
+      "id": 22,
+      "source": 6,
+      "target": 9,
+      "labels": [],
+      "tag": 22
+    },
+    {
+      "id": 23,
+      "source": 5,
+      "target": 3,
+      "labels": [],
+      "tag": 23
+    },
+    {
+      "id": 24,
+      "source": 5,
+      "target": 9,
+      "labels": [],
+      "tag": 24
+    }
+  ]
+}

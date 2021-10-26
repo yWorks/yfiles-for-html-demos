@@ -51,15 +51,15 @@ import {
   OrganicLayout,
   OrthogonalLayout,
   Point,
-  TemplateNodeStyle,
   TreeLayout,
   TreeReductionStage,
-  VoidLabelStyle,
   YDimension
 } from 'yfiles'
 
 import DemoStyles, {
+  createDemoNodeLabelStyle,
   DemoEdgeStyle,
+  DemoNodeStyle,
   DemoSerializationListener
 } from '../../resources/demo-styles.js'
 import {
@@ -68,7 +68,8 @@ import {
   bindCommand,
   checkLicense,
   readGraph,
-  showApp
+  showApp,
+  showLoadingIndicator
 } from '../../resources/demo-app.js'
 import { passiveSupported } from '../../utils/Workarounds.js'
 import loadJson from '../../resources/load-json.js'
@@ -89,7 +90,6 @@ function run(licenseData) {
   modelGraphComponent = new GraphComponent('modelGraphComponent')
 
   registerCommands()
-  initConverters()
   initializeCoreLayouts()
   initializeInputModes()
   loadModelGraph('Pop Artists')
@@ -177,8 +177,8 @@ function runMultiPageLayout() {
     createProxyReferenceNodes: createProxyNodes,
     multipleComponentsOnSinglePage: placeComponentsOnSinglePage,
     additionalParentCount: Number.parseInt(document.getElementById('additionalParentCount').value),
-    layoutCallback: ILayoutCallback.create(result => {
-      applyLayoutResult(result, pageWidth, pageHeight)
+    layoutCallback: ILayoutCallback.create(async result => {
+      await applyLayoutResult(result, pageWidth, pageHeight)
     })
   })
 
@@ -203,28 +203,29 @@ function runMultiPageLayout() {
  * @param {!MultiPageLayoutResult} multiPageLayoutResult
  * @param {number} pageWidth
  * @param {number} pageHeight
+ * @returns {!Promise}
  */
-function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
+async function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
   // use the MultiPageGraphBuilder to create a list of IGraph instances that represent the single pages
   const builder = new MultiPageIGraphBuilder(multiPageLayoutResult)
-  builder.normalNodeDefaults.style = new TemplateNodeStyle('NormalNodeTemplate')
-  builder.normalNodeDefaults.labels.style = VoidLabelStyle.INSTANCE
-  builder.connectorNodeDefaults.style = new TemplateNodeStyle('ConnectorNodeTemplate')
-  builder.connectorNodeDefaults.labels.style = VoidLabelStyle.INSTANCE
-  builder.proxyNodeDefaults.style = new TemplateNodeStyle('ProxyNodeTemplate')
-  builder.proxyNodeDefaults.labels.style = VoidLabelStyle.INSTANCE
-  builder.proxyReferenceNodeDefaults.style = new TemplateNodeStyle('ProxyReferenceNodeTemplate')
-  builder.proxyReferenceNodeDefaults.labels.style = VoidLabelStyle.INSTANCE
-  const normalEdgeStyle = new DemoEdgeStyle()
+  builder.normalNodeDefaults.style = new DemoNodeStyle('demo-palette-21')
+  builder.normalNodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-21')
+  builder.connectorNodeDefaults.style = new DemoNodeStyle('demo-palette-23')
+  builder.connectorNodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-23')
+  builder.proxyNodeDefaults.style = new DemoNodeStyle('demo-palette-25')
+  builder.proxyNodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-25')
+  builder.proxyReferenceNodeDefaults.style = new DemoNodeStyle('demo-palette-14')
+  builder.proxyReferenceNodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-14')
+  const normalEdgeStyle = new DemoEdgeStyle('demo-palette-21')
   normalEdgeStyle.showTargetArrows = false
   builder.normalEdgeDefaults.style = normalEdgeStyle
-  const connectorEdgeStyle = new DemoEdgeStyle()
+  const connectorEdgeStyle = new DemoEdgeStyle('demo-palette-23')
   connectorEdgeStyle.showTargetArrows = false
   builder.connectorEdgeDefaults.style = connectorEdgeStyle
-  const proxyEdgeStyle = new DemoEdgeStyle()
+  const proxyEdgeStyle = new DemoEdgeStyle('demo-palette-25')
   proxyEdgeStyle.showTargetArrows = false
   builder.proxyEdgeDefaults.style = proxyEdgeStyle
-  builder.proxyReferenceEdgeDefaults.style = new DemoEdgeStyle()
+  builder.proxyReferenceEdgeDefaults.style = new DemoEdgeStyle('demo-palette-14')
 
   // create the graphs
   viewGraphs = builder.createViewGraphs()
@@ -238,7 +239,7 @@ function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
   document.getElementById('previousPage').disabled = true
   document.getElementById('nextPage').disabled = viewGraphs.length <= 1
 
-  showLoadingIndicator(false)
+  await showLoadingIndicator(false)
 }
 
 /**
@@ -328,15 +329,6 @@ function checkPageNumber(pageNo) {
 }
 
 /**
- * Displays or hides the loading indicator.
- * @param {boolean} visible
- */
-function showLoadingIndicator(visible) {
-  const loadingIndicator = document.getElementById('loadingIndicator')
-  loadingIndicator.style.setProperty('display', visible ? 'block' : 'none', undefined)
-}
-
-/**
  * Registers the JavaScript commands for the GUI elements, typically the
  * tool bar buttons, during the creation of this application.
  */
@@ -370,8 +362,8 @@ function registerCommands() {
     loadModelGraph(value)
   })
 
-  bindAction("button[data-command='DoLayout']", () => {
-    showLoadingIndicator(true)
+  bindAction("button[data-command='DoLayout']", async () => {
+    await showLoadingIndicator(true)
     runMultiPageLayout()
   })
 }
@@ -439,7 +431,7 @@ function initializeInputModes() {
   })
 
   // highlight nodes on hover
-  inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
+  inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.LABEL
   inputMode.itemHoverInputMode.addHoveredItemChangedListener(onHoveredItemChanged)
 
   // handle clicks on nodes
@@ -455,7 +447,7 @@ function initializeInputModes() {
     focusableItems: GraphItemTypes.NONE
   })
   // fit bounds on double-click
-  modelInputMode.clickInputMode.addDoubleClickedListener((sender, args) => {
+  modelInputMode.clickInputMode.addDoubleClickedListener(() => {
     modelGraphComponent.fitGraphBounds()
   })
   modelGraphComponent.inputMode = modelInputMode
@@ -469,36 +461,17 @@ function initializeInputModes() {
 function onHoveredItemChanged(sender, args) {
   // we use the highlight manager to highlight hovered items
   const manager = graphComponent.highlightIndicatorManager
-  if (args.oldItem) {
+  if (args.oldItem instanceof INode) {
     manager.removeHighlight(args.oldItem)
+  } else if (args.oldItem instanceof ILabel) {
+    manager.removeHighlight(args.oldItem.owner)
   }
-  if (args.item) {
+
+  if (args.item instanceof INode) {
     manager.addHighlight(args.item)
+  } else if (args.item instanceof ILabel) {
+    manager.addHighlight(args.item.owner)
   }
-}
-
-/**
- * Initializes the converters for the node style.
- */
-function initConverters() {
-  // create the converters needed for the node templates
-  const store = {}
-  TemplateNodeStyle.CONVERTERS.multipage = store
-
-  /**
-   * Converts a node into the text of the first node label.
-   */
-  store.labelConverter = (value, parameter) => {
-    const node = value instanceof INode ? value : null
-    return node && node.labels.size > 0 ? node.labels.first().text : ''
-  }
-
-  /**
-   * Converts a width value into a 'translate' transformation to the node center.
-   */
-  // eslint-disable-next-line no-confusing-arrow
-  store.transformConverter = (value, parameter) =>
-    !isNaN(value) ? `translate(${(value * 0.5) | 0} 15)` : ''
 }
 
 /**
@@ -507,7 +480,7 @@ function initConverters() {
  */
 async function loadModelGraph(graphId) {
   // show a notification because the multi-page layout takes some time
-  showLoadingIndicator(true)
+  await showLoadingIndicator(true)
 
   const filename =
     graphId === 'Pop Artists'
@@ -518,7 +491,7 @@ async function loadModelGraph(graphId) {
 
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)

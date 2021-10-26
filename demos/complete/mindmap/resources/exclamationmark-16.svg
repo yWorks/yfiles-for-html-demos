@@ -1,85 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   id="svg2"
-   viewBox="0 0 16 16"
-   height="16"
-   width="16"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="exclamationmark-16.svg">
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1147"
-     id="namedview8"
-     showgrid="false"
-     units="px"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:zoom="19.253529"
-     inkscape:cx="6.4431677"
-     inkscape:cy="6.1670285"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
-  <defs
-     id="defs4" />
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     transform="matrix(1.2262546,0,0,1.2972613,-50.227534,-606.34108)"
-     id="layer1">
-    <g
-       id="g5802"
-       transform="translate(0.08141415,-0.07730325)">
+  xmlns="http://www.w3.org/2000/svg"
+  version="1.1"
+  id="svg2"
+  viewBox="0 0 16 16"
+  height="16"
+  width="16">
+  <g transform="matrix(1.2262546,0,0,1.2972613,-50.227534,-606.34108)">
+    <g transform="translate(0.08141415,-0.07730325)">
       <ellipse
-         ry="5.6098533"
-         rx="5.9645357"
-         cy="473.64734"
-         cx="47.429546"
-         id="path5782"
-         style="fill:#ff7828;fill-opacity:1;stroke:#e72000;stroke-width:1.03071666;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098" />
+        ry="5.6098533"
+        rx="5.9645357"
+        cy="473.64734"
+        cx="47.429546"
+        style="fill:#ff6c00;fill-opacity:1;stroke:#db3a34;stroke-width:1.03071666;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098"/>
     </g>
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.79285896;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098"
-       id="rect5784"
-       width="1.6309826"
-       height="5.7814102"
-       x="46.632679"
-       y="469.27716" />
+      style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.79285896;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098"
+      width="1.6309826"
+      height="5.7814102"
+      x="46.632679"
+      y="469.27716"/>
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098"
-       id="rect5786"
-       width="1.6309826"
-       height="1.5417094"
-       x="46.632679"
-       y="476.29886" />
+      style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098"
+      width="1.6309826"
+      height="1.5417094"
+      x="46.632679"
+      y="476.29886"/>
   </g>
 </svg>

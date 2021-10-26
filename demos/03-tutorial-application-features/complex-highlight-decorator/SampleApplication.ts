@@ -27,7 +27,8 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -35,10 +36,9 @@ import {
   GraphItemTypes,
   ICommand,
   IGraph,
-  InteriorStretchLabelModel,
   License,
-  PanelNodeStyle,
   Point,
+  ShapeNodeShape,
   ShapeNodeStyle,
   Size
 } from 'yfiles'
@@ -46,6 +46,7 @@ import {
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { NodeHighlightManager } from './NodeHighlightManager'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
 
 /**
  * Bootstraps the demo.
@@ -59,7 +60,7 @@ function run(licenseData: object): void {
     allowGroupingOperations: true
   })
 
-  // configures default styles for newly created graph elements
+  // configure default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
 
   // enable mouse hover effects for nodes and edges
@@ -105,33 +106,23 @@ function configureHoverHighlight(graphComponent: GraphComponent): void {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
  *
  * @param graph The graph.
  */
 function initTutorialDefaults(graph: IGraph): void {
-  // configure defaults for normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
-  graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults for group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  // set sizes and locations specific for this tutorial
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
+    insets: 5
+  }).createParameter('south')
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**
@@ -140,19 +131,15 @@ function initTutorialDefaults(graph: IGraph): void {
  * @param graph The graph.
  */
 function createGraph(graph: IGraph): void {
-  const ellipseStyle = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white',
-    shape: 'ellipse'
-  })
+  const ellipseStyle = graph.nodeDefaults.style.clone() as ShapeNodeStyle
+  ellipseStyle.shape = ShapeNodeShape.ELLIPSE
+  const triangleStyle = graph.nodeDefaults.style.clone() as ShapeNodeStyle
+  triangleStyle.shape = ShapeNodeShape.TRIANGLE
+
   const node1 = graph.createNodeAt({ location: [110, 20], tag: 'rect' })
   const node2 = graph.createNodeAt({
     location: [145, 95],
-    style: new ShapeNodeStyle({
-      fill: 'darkorange',
-      stroke: 'white',
-      shape: 'triangle'
-    }),
+    style: triangleStyle,
     tag: 'triangle'
   })
   const node3 = graph.createNodeAt({ location: [75, 95], tag: 'rect' })

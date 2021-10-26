@@ -140,7 +140,7 @@ export function createChild(graph, parent, nodeStyle, edgeStyle, labelStyle) {
   const data = {
     depth: parentNodeData.depth + 1,
     isLeft: left,
-    color: '#4477FF',
+    color: '#4281a4',
     isCollapsed: false,
     stateIcon: 0
   }

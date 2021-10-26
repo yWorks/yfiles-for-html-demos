@@ -144,6 +144,10 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @returns {!Visual}
    */
   updateVisual(context, oldVisual, node) {
+    if (!(oldVisual instanceof SvgVisual) || !('wrappedStyle-visual' in oldVisual.svgElement)) {
+      return this.createVisual(context, node)
+    }
+
     const container = oldVisual.svgElement
     // retrieve the wrappedStyle visual from the container
     const wrappedStyleVisual = container['wrappedStyle-visual']

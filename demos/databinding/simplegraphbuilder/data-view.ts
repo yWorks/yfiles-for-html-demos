@@ -26,9 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { toggleClass } from '../../resources/demo-app'
+/* global CodeMirror */
 // import CodeMirror typings
 import CodeMirror, { EditorFromTextArea } from 'codemirror'
+import { toggleClass } from '../../resources/demo-app'
 
 let container: HTMLDivElement
 let sourceDataView: EditorFromTextArea

@@ -30,7 +30,7 @@
  * Non-UI model classes for the adjacency graph builder demo
  */
 
-import { StringTemplateNodeStyle, AdjacencyGraphBuilder, AdjacencyNodesSource } from 'yfiles'
+import { AdjacencyGraphBuilder, AdjacencyNodesSource, StringTemplateNodeStyle } from 'yfiles'
 
 /**
  * Defines an adjacency node source consisting of data and bindings

@@ -20,3 +20,8 @@ The bound values can be manipulated and processed using converters. This makes i
 
 The binding context gives you information about the current state, e.g. the zoom level, the item size, the item's selection state, etc. Template bindings are written like this:  
 `width="{TemplateBinding width}"`
+
+## Related Demos
+
+- [String Template Node Style Demo](../../style/string-template-node-style/index.html)
+- [Vue.js Template Node Style Demo](../../style/vuejstemplatenodestyle/index.html)

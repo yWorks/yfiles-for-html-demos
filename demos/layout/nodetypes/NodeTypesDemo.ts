@@ -54,6 +54,7 @@ import {
   TreeReductionStage
 } from 'yfiles'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -94,10 +95,6 @@ const samples: Sample[] = [
 ]
 
 const sampleComboBox = document.querySelector('#sample-combo-box') as HTMLSelectElement
-
-const previousButton = document.querySelector('#previous-sample-button') as HTMLButtonElement
-
-const nextButton = document.querySelector('#next-sample-button') as HTMLButtonElement
 
 /**
  * The graph component holding the graph and shown in this demo.
@@ -382,15 +379,7 @@ function registerCommands(): void {
   bindAction("button[data-command='Layout']", () => applyCurrentLayout(true))
   bindAction("button[data-command='Reset']", loadSample)
   bindChangeListener('#sample-combo-box', loadSample)
-  bindAction('#previous-sample-button', () => {
-    sampleComboBox.selectedIndex--
-    loadSample()
-  })
-  bindAction('#next-sample-button', () => {
-    sampleComboBox.selectedIndex++
-    loadSample()
-  })
-
+  addNavigationButtons(sampleComboBox)
   bindAction('#consider-types', () => applyCurrentLayout(true))
 }
 
@@ -403,8 +392,6 @@ function setUIDisabled(disabled: boolean): void {
   ;(document.querySelector("button[data-command='Layout']") as HTMLButtonElement).disabled =
     disabled
   sampleComboBox.disabled = disabled
-  previousButton.disabled = disabled || sampleComboBox.selectedIndex === 0
-  nextButton.disabled = disabled || sampleComboBox.selectedIndex === samples.length - 1
   ;(graphComponent.inputMode as GraphEditorInputMode).enabled = !disabled
 }
 

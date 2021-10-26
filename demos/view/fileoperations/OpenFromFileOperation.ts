@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global ActiveXObject */
+
 const ERROR_ON_LOCAL_ACCESS =
   'Unable to access local files due to Internet Explorer security settings.\n' +
   'Local file access for ActiveX controls can be configured in Tools->Internet Options->Security->Custom Level.\n' +

@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -40,12 +39,13 @@ import {
   Size
 } from 'yfiles'
 
-import { DemoNodeStyle } from '../../resources/demo-styles'
 import { checkLicense, showApp } from '../../resources/demo-app'
 import LimitedRectangleDescriptor from './LimitedRectangleDescriptor'
 import GreenSizeConstraintProvider from './GreenSizeConstraintProvider'
 import BlueSizeConstraintProvider from './BlueSizeConstraintProvider'
 import loadJson from '../../resources/load-json'
+import type { ColorSetName } from '../../resources/basic-demo-styles'
+import { createDemoNodeLabelStyle, DemoNodeStyle } from '../../resources/demo-styles'
 
 /**
  * Registers a callback function as decorator that provides a custom
@@ -67,7 +67,7 @@ function registerSizeConstraintProvider(graph: IGraph, boundaryRectangle: Mutabl
 
     // Check if it is a known tag and choose the respective implementation.
     // Fallback to the default behavior otherwise.
-    if (nodeTag === 'royalblue') {
+    if (nodeTag === 'blue') {
       return blueSizeConstraintProvider
     } else if (nodeTag === 'green') {
       return new GreenSizeConstraintProvider()
@@ -115,11 +115,20 @@ function run(licenseData: any): void {
  * @param graph The graph to populate
  */
 function createSampleGraph(graph: IGraph): void {
-  createNode(graph, 100, 100, 100, 60, 'royalblue', 'whitesmoke', 'Never Shrink\n(Max 3x)')
-  createNode(graph, 300, 100, 160, 30, 'royalblue', 'whitesmoke', 'Never Shrink (Max 3x)')
-  createNode(graph, 100, 215, 100, 30, 'green', 'whitesmoke', 'Enclose Label')
-  createNode(graph, 300, 200, 140, 80, 'green', 'whitesmoke', 'Enclose Label,\nEven Large Ones')
-  createNode(graph, 200, 340, 140, 140, 'orange', 'black', 'Encompass Rectangle,\nMin and Max Size')
+  createNode(graph, 100, 100, 100, 60, 'demo-lightblue', 'blue', 'Never Shrink\n(Max 3x)')
+  createNode(graph, 300, 100, 160, 30, 'demo-lightblue', 'blue', 'Never Shrink (Max 3x)')
+  createNode(graph, 100, 215, 100, 30, 'demo-green', 'green', 'Enclose Label')
+  createNode(graph, 300, 200, 140, 80, 'demo-green', 'green', 'Enclose Label,\nEven Large Ones')
+  createNode(
+    graph,
+    200,
+    340,
+    140,
+    140,
+    'demo-orange',
+    'orange',
+    'Encompass Rectangle,\nMin and Max Size'
+  )
 }
 
 /**
@@ -130,7 +139,7 @@ function createSampleGraph(graph: IGraph): void {
  * @param w The node's width
  * @param h The node's height
  * @param cssClass The given css class
- * @param textColor The color of the text
+ * @param tag The tag to identify the size constraint provider
  * @param labelText The nodes label's text
  */
 function createNode(
@@ -139,22 +148,20 @@ function createNode(
   y: number,
   w: number,
   h: number,
-  cssClass: string,
-  textColor: string,
+  cssClass: ColorSetName,
+  tag: string,
   labelText: string
 ): void {
-  const textLabelStyle = new DefaultLabelStyle({
-    textFill: textColor
+  const node = graph.createNode({
+    layout: new Rect(x, y, w, h),
+    style: new DemoNodeStyle(cssClass),
+    tag: tag
   })
 
-  const nodeStyle = new DemoNodeStyle()
-  nodeStyle.cssClass = cssClass
-
-  const node = graph.createNode(new Rect(x, y, w, h), nodeStyle, cssClass)
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: textLabelStyle
+    style: createDemoNodeLabelStyle(cssClass)
   })
 }
 

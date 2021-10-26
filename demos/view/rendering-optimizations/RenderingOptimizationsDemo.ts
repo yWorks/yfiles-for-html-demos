@@ -88,17 +88,19 @@ import SimpleSvgNodeStyle from './SimpleSvgNodeStyle'
 import { FastGraphModelManager, OptimizationMode } from './FastGraphModelManager'
 import {
   addClass,
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
   checkLicense,
   removeClass,
-  showApp
+  showApp,
+  showLoadingIndicator
 } from '../../resources/demo-app'
 import PreConfigurator from './resources/PreConfigurator'
 import samples from './resources/samples'
 import loadJson from '../../resources/load-json'
-import { webGl2Supported, webGlSupported } from '../../utils/Workarounds'
+import { isWebGl2Supported, isWebGlSupported } from '../../utils/Workarounds'
 import { createUrlIcon } from '../../utils/IconCreation'
 import { FPSMeter } from './FPSMeter'
 
@@ -145,25 +147,17 @@ let preConfigurator: PreConfigurator
 let tooltipTimer = 0
 
 const webGLImageData: ImageData[] = []
-/**
- * The default edge color
- */
-const edgeColor = new Color(100, 100, 100)
 
 /**
  * The default edge thickness
  */
 const edgeThickness = 5
 
-// the "graph loading" indicator element
-const loadingIndicator = querySelector<HTMLDivElement>('#loadingIndicator')
 const redrawGraphButton = querySelector<HTMLButtonElement>('#redrawGraphButton')
 // Control for the input mode.
 const modeChooserBox = querySelector<HTMLSelectElement>('#modeChooserBox')
 // Controls for the sample graphs.
 const graphChooserBox = querySelector<HTMLSelectElement>('#graphChooserBox')
-const nextButton = querySelector<HTMLButtonElement>('#nextButton')
-const previousButton = querySelector<HTMLButtonElement>('#previousButton')
 const nodeLabelsCheckbox = querySelector<HTMLInputElement>('#nodeLabelsCheckbox')
 const edgeLabelsCheckbox = querySelector<HTMLInputElement>('#edgeLabelsCheckbox')
 const detailLevelIndicator = querySelector<HTMLDivElement>('#detailLevelIndicator')
@@ -257,7 +251,7 @@ function initializeUI() {
  * Checks whether WebGl2 is supported and updates the corresponding UI buttons.
  */
 async function prepareWebGL2Rendering(): Promise<void> {
-  if (webGl2Supported) {
+  if (isWebGl2Supported()) {
     await createWebGLImageData(webGLImageData)
   } else {
     // if the browser does not support WebGL2, disable this option
@@ -357,9 +351,10 @@ function createFastGraphModelManager(graphComponent: GraphComponent): FastGraphM
     graphComponent,
     graphComponent.contentGroup
   )
-  fastGraphModelManager.intermediateNodeStyle = new SimpleSvgNodeStyle(Color.DARK_ORANGE)
+  fastGraphModelManager.intermediateNodeStyle = new SimpleSvgNodeStyle(Color.from('#FF6C00'))
+  const edgeColor = Color.from('#662b00')
   fastGraphModelManager.intermediateEdgeStyle = new SvgEdgeStyle(edgeColor, edgeThickness)
-  if (webGlSupported) {
+  if (isWebGlSupported()) {
     fastGraphModelManager.overviewEdgeStyle = new WebGLTaperedEdgeStyle({
       thickness: 30,
       color: edgeColor
@@ -416,11 +411,9 @@ function scheduleRedraw(): void {
  */
 async function loadGraph(fileName: string): Promise<void> {
   graphChooserBox.disabled = true
-  nextButton.disabled = true
-  previousButton.disabled = true
 
   // display the loading indicator
-  setLoadingIndicatorVisibility(true)
+  await showLoadingIndicator(true)
 
   const fm = new FoldingManager()
   const fv = fm.createFoldingView()
@@ -445,7 +438,6 @@ async function loadGraph(fileName: string): Promise<void> {
   setWebGLItemStyles()
 
   graphChooserBox.disabled = false
-  updateButtons()
 
   fastGraphModelManager.dirty = true
 
@@ -563,7 +555,7 @@ function createEditorInputMode(isMoveMode: boolean): IInputMode {
   }
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
-  if (webGlSupported) {
+  if (isWebGlSupported()) {
     graphEditorInputMode.handleInputMode.renderMode = RenderModes.WEB_GL
   }
 
@@ -835,22 +827,6 @@ function onAutoRedrawChanged(): void {
 }
 
 /**
- * Called when the 'previous graph' button was clicked.
- */
-function onPreviousButtonClicked(): void {
-  graphChooserBox.selectedIndex--
-  onGraphChooserSelectionChanged()
-}
-
-/**
- * Called when the 'next graph' button was clicked.
- */
-function onNextButtonClicked(): void {
-  graphChooserBox.selectedIndex++
-  onGraphChooserSelectionChanged()
-}
-
-/**
  * Called when the selected item in the graph chooser combo box has changed.
  */
 function onGraphChooserSelectionChanged(): void {
@@ -1016,15 +992,6 @@ function onSelectEverythingClicked(): void {
 }
 
 /**
- * Disables the 'Previous/Next graph' buttons in the UI according to whether there is a
- * previous/next graph to switch.
- */
-function updateButtons(): void {
-  nextButton.disabled = graphChooserBox.selectedIndex === graphChooserBox.options.length - 1
-  previousButton.disabled = graphChooserBox.selectedIndex === 0
-}
-
-/**
  * Disables/enables the redraw graph button.
  */
 function updateRedrawGraphButton(): void {
@@ -1053,11 +1020,11 @@ function updateRedrawGraphButton(): void {
  * Helper method to hide the loading indicator after the {@link graphComponent} has finished
  * the initial rendering.
  */
-function onGraphComponentRendered(): void {
+async function onGraphComponentRendered(): Promise<void> {
   // de-register the event handler after it has been executed
   graphComponent.removeUpdatedVisualListener(onGraphComponentRendered)
   // hide the loading indicator
-  setLoadingIndicatorVisibility(false)
+  await showLoadingIndicator(false)
 }
 
 /**
@@ -1088,13 +1055,6 @@ function updateButtonStateAtAnimation(disabled: boolean): void {
     button.disabled = disabled
     disabled ? addClass(button, 'disabled-button') : removeClass(button, 'disabled-button')
   })
-}
-
-/**
- * Displays or hides the loading indicator.
- */
-function setLoadingIndicatorVisibility(visible: boolean): void {
-  loadingIndicator.style.display = visible ? 'block' : 'none'
 }
 
 function setWebGLItemStyles(): void {
@@ -1199,24 +1159,29 @@ function updateDefaultStyles(graph: IGraph): {
   let labelStyle: ILabelStyle
   let webGL2NodeStyle: WebGL2NodeStyle
 
+  // level of detail colors
   let overviewColor: Color
   let intermediateColor: Color
+  let edgeColor: Color
 
   // handle the graph item style
   if (simpleSvgStyle.checked) {
-    overviewColor = new Color(250, 128, 114)
-    intermediateColor = new Color(246, 33, 8)
-    nodeStyle = new SimpleSvgNodeStyle(new Color(140, 18, 4))
+    const color = Color.from('#AB2346')
+    edgeColor = color
+    intermediateColor = generateColorShade(color, 1.2)
+    overviewColor = generateColorShade(intermediateColor, 1.2)
+    nodeStyle = new SimpleSvgNodeStyle(color)
     edgeStyle = new SvgEdgeStyle(edgeColor, edgeThickness)
     labelStyle = new SvgLabelStyle()
     webGL2NodeStyle = new WebGL2ShapeNodeStyle({
-      fill: new Color(140, 18, 4),
+      fill: color,
       stroke: WebGL2Stroke.NONE,
       shape: 'rectangle'
     })
   } else if (complexSvgStyle.checked) {
-    overviewColor = new Color(212, 184, 255)
-    intermediateColor = new Color(132, 52, 255)
+    intermediateColor = Color.from('#621B00')
+    edgeColor = intermediateColor
+    overviewColor = generateColorShade(intermediateColor, 1.2)
     nodeStyle = new ComplexSvgNodeStyle()
     edgeStyle = new SvgEdgeStyle(edgeColor, edgeThickness)
     labelStyle = new SvgLabelStyle()
@@ -1227,19 +1192,22 @@ function updateDefaultStyles(graph: IGraph): {
       shape: 'ellipse'
     })
   } else if (simpleCanvasStyle.checked) {
-    overviewColor = new Color(135, 206, 250)
-    intermediateColor = new Color(24, 160, 245)
-    nodeStyle = new SimpleCanvasNodeStyle(new Color(6, 93, 147))
+    const color = Color.from('#0B7189')
+    edgeColor = color
+    intermediateColor = generateColorShade(color, 1.2)
+    overviewColor = generateColorShade(intermediateColor, 1.2)
+    nodeStyle = new SimpleCanvasNodeStyle(color)
     edgeStyle = new CanvasEdgeStyle(edgeColor, edgeThickness)
     labelStyle = new CanvasLabelStyle()
     webGL2NodeStyle = new WebGL2ShapeNodeStyle({
-      fill: new Color(6, 93, 147),
+      fill: color,
       stroke: WebGL2Stroke.NONE,
       shape: 'rectangle'
     })
   } else if (complexCanvasStyle.checked) {
-    overviewColor = new Color(192, 242, 192)
-    intermediateColor = new Color(84, 219, 84)
+    intermediateColor = Color.from('#111D4A')
+    edgeColor = intermediateColor
+    overviewColor = generateColorShade(intermediateColor, 1.2)
     nodeStyle = new ComplexCanvasNodeStyle()
     edgeStyle = new CanvasEdgeStyle(edgeColor, edgeThickness)
     labelStyle = new CanvasLabelStyle()
@@ -1250,11 +1218,13 @@ function updateDefaultStyles(graph: IGraph): {
       shape: 'ellipse'
     })
   } else {
+    const color = Color.from('#FF6C00')
+    edgeColor = Color.from('#662b00')
     // simpleWebglStyle is checked
-    overviewColor = new Color(210, 190, 75)
-    intermediateColor = new Color(159, 141, 39)
+    intermediateColor = generateColorShade(color, 1.2)
+    overviewColor = generateColorShade(intermediateColor, 1.2)
     nodeStyle = new WebGLShapeNodeStyle({
-      color: 'rgb(91, 81, 22)'
+      color: color
     })
     edgeStyle = new WebGLPolylineEdgeStyle({
       thickness: edgeThickness,
@@ -1262,13 +1232,13 @@ function updateDefaultStyles(graph: IGraph): {
     })
     labelStyle = new CanvasLabelStyle()
     webGL2NodeStyle = new WebGL2ShapeNodeStyle({
-      fill: 'rgb(91, 81, 22)',
+      fill: color,
       stroke: WebGL2Stroke.NONE,
       shape: 'rectangle'
     })
   }
 
-  fastGraphModelManager.overviewNodeStyle = webGlSupported
+  fastGraphModelManager.overviewNodeStyle = isWebGlSupported()
     ? new WebGLShapeNodeStyle({ color: overviewColor })
     : new SimpleSvgNodeStyle(overviewColor)
   fastGraphModelManager.intermediateNodeStyle = new SimpleSvgNodeStyle(intermediateColor)
@@ -1374,7 +1344,31 @@ function shuffle(array: Array<IModelItem>): IModelItem[] {
   }
   return array
 }
-
+/**
+ * Generates a different color shade
+ * @param color The base color
+ * @param factor how much lighter or darker the color should be, i.e. 0.8 => 20% darker, 1.2 => 20% lighter
+ * @return a lighter color
+ */
+function generateColorShade(color: Color, factor: number): Color {
+  if (factor < 1) {
+    // darker shade
+    return new Color(
+      Math.max(Math.round(color.r * factor), 0),
+      Math.max(Math.round(color.g * factor), 0),
+      Math.max(Math.round(color.b * factor), 0)
+    )
+  } else if (factor > 1) {
+    // lighter shade
+    return new Color(
+      Math.min(Math.round(color.r * factor), 255),
+      Math.min(Math.round(color.g * factor), 255),
+      Math.min(Math.round(color.b * factor), 255)
+    )
+  } else {
+    return color
+  }
+}
 /**
  * Binds actions and commands to the demo's UI controls.
  */
@@ -1390,8 +1384,7 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, null)
 
   bindChangeListener('#graphChooserBox', onGraphChooserSelectionChanged)
-  bindAction("button[data-command='PreviousGraph']", onPreviousButtonClicked)
-  bindAction("button[data-command='NextGraph']", onNextButtonClicked)
+  addNavigationButtons(graphChooserBox, true, 'nav-buttons')
 
   bindAction("button[data-command='PanAnimation']", onPanAnimationClicked)
   bindAction("button[data-command='ZoomAnimation']", onZoomAnimationClicked)

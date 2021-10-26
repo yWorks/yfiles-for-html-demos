@@ -73,7 +73,7 @@ import DemoStyles, {
 } from '../../resources/demo-styles.js'
 import {
   addClass,
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
@@ -99,8 +99,6 @@ let graphSearch
 
 // get hold of some UI elements
 const graphChooserBox = document.getElementById('graphChooserBox')
-const nextButton = document.getElementById('nextFileButton')
-const previousButton = document.getElementById('previousFileButton')
 const graphDescription = document.getElementById('graphInfoContent')
 const nodeInfo = document.getElementById('nodeInfoLabel')
 const nodeInfoDescription = document.getElementById('nodeInfoDescription')
@@ -589,7 +587,7 @@ function createGraphMLIOHandler() {
   const ioHandler = new GraphMLIOHandler()
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   ioHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   ioHandler.addHandleSerializationListener(DemoSerializationListener)
@@ -638,9 +636,8 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent, null)
 
-  bindAction("button[data-command='PreviousFile']", onPreviousButtonClicked)
-  bindAction("button[data-command='NextFile']", onNextButtonClicked)
   bindChangeListener("select[data-command='SelectedFileChanged']", readSampleGraph)
+  addNavigationButtons(graphChooserBox)
 }
 
 /**
@@ -663,29 +660,7 @@ function enableGraphML() {
  */
 function setUIDisabled(disabled) {
   graphChooserBox.disabled = disabled
-  previousButton.disabled = disabled || graphChooserBox.selectedIndex === 0
-  nextButton.disabled =
-    disabled || graphChooserBox.selectedIndex === graphChooserBox.childElementCount - 1
   searchBox.disabled = disabled
-}
-
-/**
- * Switches to the previous graph.
- */
-function onPreviousButtonClicked() {
-  graphChooserBox.selectedIndex = Math.max(0, graphChooserBox.selectedIndex - 1)
-  readSampleGraph()
-}
-
-/**
- * Switches to the next graph.
- */
-function onNextButtonClicked() {
-  graphChooserBox.selectedIndex = Math.min(
-    graphChooserBox.selectedIndex + 1,
-    graphChooserBox.options.length - 1
-  )
-  readSampleGraph()
 }
 
 /**

@@ -84,20 +84,20 @@ const subcomponents: SubComponent[] = []
  * subcomponents.
  */
 const colors = [
-  'crimson',
-  'darkturquoise',
-  'cornflowerblue',
-  'darkslateblue',
-  'gold',
-  'mediumslateblue',
-  'forestgreen',
-  'mediumvioletred',
-  'darkcyan',
-  'chocolate',
-  'limegreen',
-  'mediumorchid',
-  'royalblue',
-  'orangered'
+  'demo-palette-11',
+  'demo-palette-12',
+  'demo-palette-13',
+  'demo-palette-14',
+  'demo-palette-15',
+  'demo-palette-21',
+  'demo-palette-22',
+  'demo-palette-24',
+  'demo-palette-25',
+  'demo-palette-31',
+  'demo-palette-31',
+  'demo-palette-33',
+  'demo-palette-34',
+  'demo-palette-35'
 ]
 
 function run(licenseData: object): void {

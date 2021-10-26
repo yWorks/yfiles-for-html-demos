@@ -26,36 +26,37 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
-import React, { Component } from 'react'
+import * as React from 'react'
+import type { ReactComponentNodeStyleProps } from '../ReactComponentNodeStyle'
+import SvgText from './SvgTextComponent'
 
-interface ItemElementProps {
-  width: number
-  height: number
-  tag: { name?: string }
-}
-
-export default class NodeTemplate extends Component<ItemElementProps> {
-  render(): JSX.Element {
-    return (
-      <g>
-        <rect
-          style={{ fill: '#00d7ff' }}
-          x={0}
-          y={0}
-          rx={10}
-          ry={10}
-          width={this.props.width}
-          height={this.props.height}
-        />
-        <text
-          x={this.props.width / 2}
-          y={this.props.height / 2}
-          style={{ fill: '#ffffff', textAnchor: 'middle', dominantBaseline: 'middle' }}
-        >
-          {this.props.tag!.name}
-        </text>
-      </g>
-    )
-  }
+export default function NodeTemplate({
+  width,
+  height,
+  selected,
+  tag
+}: ReactComponentNodeStyleProps<{ name: string }>) {
+  return (
+    <g>
+      <rect
+        style={{ fill: selected ? '#F26419' : '#AA4586', stroke: '#66485B', strokeWidth: 1.5 }}
+        x={0}
+        y={0}
+        rx={10}
+        ry={10}
+        width={width}
+        height={height}
+      />
+      <SvgText
+        text={tag.name}
+        font="bold 12px sans-serif"
+        maxWidth={width - 4}
+        maxHeight={height}
+        x={width / 2}
+        y={height / 2 - 9}
+        fill="#DCB4CE"
+        style={{ textAnchor: 'middle', dominantBaseline: 'middle' }}
+      />
+    </g>
+  )
 }

@@ -63,7 +63,7 @@ import {
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-import { webGl2Supported } from '../../utils/Workarounds.js'
+import { isWebGl2Supported } from '../../utils/Workarounds.js'
 import { createFontAwesomeIcon } from '../../utils/IconCreation.js'
 
 /** @type {Array.<ImageData>} */
@@ -76,7 +76,7 @@ let foldingManager = null
  * @param {!object} licenseData
  */
 function run(licenseData) {
-  if (!webGl2Supported) {
+  if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support').removeAttribute('style')
     showApp(null)

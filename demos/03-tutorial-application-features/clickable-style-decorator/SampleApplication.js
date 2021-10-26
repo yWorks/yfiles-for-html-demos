@@ -27,25 +27,25 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
+  IGraph,
   IModelItem,
   INode,
-  InteriorStretchLabelModel,
   ItemClickedEventArgs,
   License,
-  PanelNodeStyle,
   Point,
-  ShapeNodeStyle,
   Size
 } from 'yfiles'
 
 import NodeStyleDecorator from './NodeStyleDecorator.js'
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -70,7 +70,7 @@ function run(licenseData) {
   graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
-  initTutorialDefaults()
+  initTutorialDefaults(graphComponent.graph)
 
   // register a click listener that handles clicks on the decorator
   initializeDecorationClickListener()
@@ -119,36 +119,23 @@ function initializeDecorationClickListener() {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
+ *
+ * @param {!IGraph} graph The graph.
  */
-function initTutorialDefaults() {
-  const graph = graphComponent.graph
+function initTutorialDefaults(graph) {
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults normal nodes and their labels
-  graph.nodeDefaults.style = new NodeStyleDecorator(
-    new ShapeNodeStyle({
-      fill: 'darkorange',
-      stroke: 'white'
-    }),
-    'resources/workstation.svg'
-  )
+  // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
-
-  // configure defaults group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
+    insets: 5
+  }).createParameter('south')
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**
@@ -160,41 +147,20 @@ function createGraph() {
   const node1 = graph.createNodeAt([110, 20])
   const node2 = graph.createNodeAt({
     location: [145, 95],
-    style: new NodeStyleDecorator(
-      new ShapeNodeStyle({
-        fill: 'darkorange',
-        stroke: 'white'
-      }),
-      'resources/printer.svg'
-    )
+    style: new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), 'resources/printer.svg')
   })
   const node3 = graph.createNodeAt({
     location: [75, 95],
-    style: new NodeStyleDecorator(
-      new ShapeNodeStyle({
-        fill: 'darkorange',
-        stroke: 'white'
-      }),
-      'resources/switch.svg'
-    )
+    style: new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), 'resources/switch.svg')
   })
   const node4 = graph.createNodeAt({
     location: [30, 175],
-    style: new NodeStyleDecorator(
-      new ShapeNodeStyle({
-        fill: 'darkorange',
-        stroke: 'white'
-      }),
-      'resources/scanner.svg'
-    )
+    style: new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), 'resources/scanner.svg')
   })
   const node5 = graph.createNodeAt({
     location: [100, 175],
     style: new NodeStyleDecorator(
-      new ShapeNodeStyle({
-        fill: 'darkorange',
-        stroke: 'white'
-      }),
+      graph.nodeDefaults.getStyleInstance(),
       'resources/workstation.svg'
     )
   })

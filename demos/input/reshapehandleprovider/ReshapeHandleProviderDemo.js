@@ -117,7 +117,7 @@ async function run(licenseData) {
  */
 function initializeGraphDefaults(graph) {
   const adaptedStyle = new ShapeNodeStyle({
-    fill: 'green',
+    fill: '#61A044',
     stroke: 'transparent'
   })
   graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter({
@@ -130,7 +130,7 @@ function initializeGraphDefaults(graph) {
   graph.nodeDefaults.ports.autoCleanUp = false
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '3px solid black'
+    stroke: '3px solid #2E282A'
   })
 }
 

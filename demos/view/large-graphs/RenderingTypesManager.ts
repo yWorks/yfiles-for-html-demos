@@ -47,8 +47,8 @@ import {
   List,
   Point,
   RenderModes,
-  WebGL2IconNodeStyle,
   WebGL2GraphModelManager,
+  WebGL2IconNodeStyle,
   WebGL2SelectionIndicatorManager
 } from 'yfiles'
 

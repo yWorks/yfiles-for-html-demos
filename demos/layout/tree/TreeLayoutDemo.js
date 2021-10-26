@@ -51,14 +51,14 @@ import {
 import * as TreeData from './resources/TreeData.js'
 import CreateTreeEdgeInputMode from './CreateTreeEdgeInputMode.js'
 import {
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-import NodePlacerPanel, { LayerFills } from './NodePlacerPanel.js'
+import NodePlacerPanel, { LayerColors } from './NodePlacerPanel.js'
 
 /**
  * The graph component which contains the tree graph.
@@ -278,7 +278,8 @@ async function loadGraph() {
   graph.nodeDefaults.shareStyleInstance = false
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: 'triangle'
+    targetArrow: '#617984 medium triangle',
+    stroke: '1.5px solid #617984'
   })
 
   // select tree data
@@ -320,8 +321,10 @@ async function loadGraph() {
 
   // update the node fill colors according to their layers
   graph.nodes.forEach(node => {
+    const layerColor = LayerColors[node.tag.layer % LayerColors.length]
     const style = node.style
-    style.fill = LayerFills[node.tag.layer % LayerFills.length]
+    style.fill = layerColor.fill
+    style.stroke = layerColor.stroke
     if (node.tag.assistant) {
       style.stroke = Stroke.from('2px dashed black')
     }
@@ -352,20 +355,7 @@ function registerCommands() {
   bindChangeListener("select[data-command='SelectSample']", loadGraph)
 
   const samples = document.getElementById('select-sample')
-  const previousSample = document.getElementById('previous-sample')
-  const nextSample = document.getElementById('next-sample')
-  bindAction("button[data-command='PreviousSample']", () => {
-    samples.selectedIndex = Math.max(samples.selectedIndex - 1, 0)
-    loadGraph()
-    previousSample.disabled = samples.selectedIndex === 0
-    nextSample.disabled = samples.selectedIndex === samples.options.length - 1
-  })
-  bindAction("button[data-command='NextSample']", () => {
-    samples.selectedIndex = Math.min(samples.selectedIndex + 1, samples.options.length - 1)
-    loadGraph()
-    previousSample.disabled = samples.selectedIndex === 0
-    nextSample.disabled = samples.selectedIndex === samples.options.length - 1
-  })
+  addNavigationButtons(samples)
 }
 
 loadJson().then(checkLicense).then(run)

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="25px" height="30.2px" xml:space="preserve">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25px" height="30.2px" xml:space="preserve">
 <g>
   <path d="M0.5,4.8 L4.8,0.5 L19.2,0.5 L24.5,4.8 L24.5,24.5 L0.5,24.5 Z" fill="tan" stroke="#555"></path>
   <rect x="0.5" y ="5.2" width="24" height="24" fill="tan" stroke="#555"></rect>

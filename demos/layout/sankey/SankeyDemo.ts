@@ -70,20 +70,13 @@ import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 const colors = [
-  { dark: new Color(102, 153, 204), light: new Color(194, 221, 249, 200) },
-  { dark: new Color(55, 55, 55), light: new Color(161, 161, 161, 200) },
-  { dark: Color.FIREBRICK, light: new Color(254, 128, 128, 200) },
-  { dark: Color.GOLDENROD, light: new Color(254, 229, 128, 200) },
-  { dark: Color.FOREST_GREEN, light: new Color(203, 229, 128, 200) },
-  { dark: new Color(153, 51, 102), light: new Color(203, 153, 178, 200) },
-  { dark: new Color(51, 102, 255), light: new Color(101, 136, 252, 200) },
-  { dark: new Color(102, 102, 153), light: new Color(160, 160, 209, 200) },
-  { dark: new Color(255, 145, 255), light: new Color(249, 207, 249, 200) },
-  { dark: new Color(128, 255, 128), light: new Color(199, 250, 199, 200) },
-  { dark: new Color(255, 101, 2), light: new Color(246, 200, 169, 200) },
-  { dark: new Color(87, 173, 87), light: new Color(164, 240, 164, 200) },
-  { dark: new Color(44, 174, 212), light: new Color(163, 221, 239, 200) },
-  { dark: new Color(139, 69, 19), light: new Color(222, 178, 144, 200) }
+  { dark: Color.from('#000000'), light: Color.from('#80000000') },
+  { dark: Color.from('#db3a34'), light: Color.from('#80db3a34') },
+  { dark: Color.from('#f0c808'), light: Color.from('#80f0c808') },
+  { dark: Color.from('#56926e'), light: Color.from('#8056926e') },
+  { dark: Color.from('#6c4f77'), light: Color.from('#806c4f77') },
+  { dark: Color.from('#4281a4'), light: Color.from('#804281a4') },
+  { dark: Color.from('#4281a4'), light: Color.from('#804281a4') }
 ]
 
 const colorDirectionBox = document.getElementById('colorDirection') as HTMLSelectElement

@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global CodeMirror */
 import {
   GraphBuilder,
   GraphComponent,
@@ -103,6 +104,11 @@ function initializeTextAreas() {
     gutters: ['CodeMirror-lint-markers'],
     lint: true
   })
+
+  // disable standard selection and focus visualization
+  graphComponent.selectionIndicatorManager.enabled = false
+  graphComponent.focusIndicatorManager.enabled = false
+
   graphComponent.selection.addItemSelectionChangedListener(() => {
     const selectedNode = graphComponent.selection.selectedNodes.firstOrDefault()
     if (selectedNode) {
@@ -140,7 +146,7 @@ function initializeStyles() {
 <rect v-else-if="tag.status === 'busy'" :width="layout.width" height="2" fill="#E7527C"></rect>
 <rect v-else-if="tag.status === 'travel'" :width="layout.width" height="2" fill="#9945E9"></rect>
 <rect v-else-if="tag.status === 'unavailable'" :width="layout.width" height="2" fill="#8D8F91"></rect>
-<rect fill="transparent" :stroke="selected ? '#FFBB33' : 'transparent'" stroke-width="3" :width="layout.width-3" :height="layout.height-3" x="1.5" y="1.5"></rect>
+<rect fill="transparent" :stroke="selected ? '#FF6C00' : 'transparent'" stroke-width="3" :width="layout.width-3" :height="layout.height-3" x="1.5" y="1.5"></rect>
 <template v-if="zoom >= 0.7">
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="10" width="63.75" height="63.75"></image>
   <image :xlink:href="'./resources/' + tag.status + '_icon.svg'" x="25" y="80" height="15" width="60"></image>
@@ -161,10 +167,10 @@ function initializeStyles() {
 </template>
 <defs>
   <linearGradient :id="localId('bottomGradient')" x1="0%" y1="100%" x2="0%" y2="0%">
-    <stop offset="0%" v-if="tag.status === 'present'" style="stop-color:#55B757;stop-opacity:1"/>
-    <stop offset="0%" v-else-if="tag.status === 'busy'" style="stop-color:#E7527C;stop-opacity:1"/>
-    <stop offset="0%" v-else-if="tag.status === 'travel'" style="stop-color:#9945E9;stop-opacity:1"/>
-    <stop offset="0%" v-else-if="tag.status === 'unavailable'" style="stop-color:#8D8F91;stop-opacity:1"/>
+    <stop offset="0%" v-if="tag.status === 'present'" style="stop-color:#76b041;stop-opacity:1"/>
+    <stop offset="0%" v-else-if="tag.status === 'busy'" style="stop-color:#ab2346;stop-opacity:1"/>
+    <stop offset="0%" v-else-if="tag.status === 'travel'" style="stop-color:#a367dc;stop-opacity:1"/>
+    <stop offset="0%" v-else-if="tag.status === 'unavailable'" style="stop-color:#c1c1c1;stop-opacity:1"/>
     <stop offset="5%" style="stop-color:white;stop-opacity:1" />
   </linearGradient>
 </defs>

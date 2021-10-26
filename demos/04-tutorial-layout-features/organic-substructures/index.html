@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.4.
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Organic Layout with Substructures - Layout Features Tutorial [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
+</head>
+<body class="demo-has-left">
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <h2>Organic Layout with Substructures</h2>
+
+    <p>
+      This demo shows the ability of <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> to consider substructures in the graph.
+    </p>
+    <p>
+      The graph contains three substructures: a circle, a star and a chain. For each substructure type
+      a special layout configuration is used:
+    </p>
+    <ul>
+      <li>The circle is configured with the <a href="https://docs.yworks.com/yfileshtml/#/api/StarSubstructureStyle#RADIAL" target="_blank">RADIAL</a> style.</li>
+      <li>The star is configured with the <a href="https://docs.yworks.com/yfileshtml/#/api/CycleSubstructureStyle#CIRCULAR" target="_blank">CIRCULAR</a> style.</li>
+      <li>The chain is configured with <a href="https://docs.yworks.com/yfileshtml/#/api/ChainSubstructureStyle.RECTANGULAR" target="_blank">RECTANGULAR</a> style.</li>
+    </ul>
+
+    <h3>Code Snippet</h3>
+    <p>You can copy the code snippet to configure the layout from
+      <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/organic-substructures/OraganicSubstructures.ts"
+         target="_blank">GitHub</a>.</p>
+
+    <h3>Demos</h3>
+    <p>
+      See the <a href="../../layout/organicsubstructures/index.html">Organic Substructures Demo</a>
+      for an extensive presentation of the substructures functionality.
+    </p>
+
+    <h3>Documentation</h3>
+    <p>
+      See the <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures" target="_blank">Layout of Regular Substructures</a>
+      section in the Developer's Guide for an in-depth discussion of the relevant concepts.
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+  </div>
+  <div id="graphComponent"></div>
+</div>
+
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+</body>
+</html>

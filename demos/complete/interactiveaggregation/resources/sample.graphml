@@ -29,7 +29,7 @@
      ////////////////////////////////////////////////////////////////////////-->
 
 <!--Created by yFiles for HTML 2.3.0.1-->
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:compat="http://www.yworks.com/xml/yfiles-compat-arrows/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:compat="http://www.yworks.com/xml/yfiles-compat-arrows/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
 	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
@@ -63,9 +63,9 @@
 	<data key="d19">
 		<y:SharedData>
 			<yjs:ShapeNodeStyle x:Key="1" stroke="#FF0096FF" fill="#FF0096FF"/>
-			<yjs:PolylineEdgeStyle x:Key="2" stroke="DARK_CYAN"/>
-			<yjs:PolylineEdgeStyle x:Key="3" stroke="DARK_ORCHID"/>
-			<yjs:PolylineEdgeStyle x:Key="4" stroke="CORNFLOWER_BLUE"/>
+			<yjs:PolylineEdgeStyle x:Key="2" stroke="#177e89"/>
+			<yjs:PolylineEdgeStyle x:Key="3" stroke="#aa4586"/>
+			<yjs:PolylineEdgeStyle x:Key="4" stroke="#67b7dc"/>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">
@@ -78,7 +78,7 @@
 				<y:RectD X="0" Y="1201" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -88,7 +88,7 @@
 				<y:RectD X="273" Y="643" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -102,7 +102,7 @@
 				<y:RectD X="515" Y="582" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -118,7 +118,7 @@
 				<y:RectD X="963" Y="913" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -131,7 +131,7 @@
 				<y:RectD X="480" Y="709" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -143,7 +143,7 @@
 				<y:RectD X="1174" Y="0" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -153,7 +153,7 @@
 				<y:RectD X="1018" Y="1243" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -167,7 +167,7 @@
 				<y:RectD X="781" Y="689" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -182,7 +182,7 @@
 				<y:RectD X="167" Y="505" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -192,7 +192,7 @@
 				<y:RectD X="851" Y="463" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -203,7 +203,7 @@
 				<y:RectD X="892" Y="685" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -214,7 +214,7 @@
 				<y:RectD X="64" Y="1073" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -225,7 +225,7 @@
 				<y:RectD X="1012" Y="772" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -235,7 +235,7 @@
 				<y:RectD X="907" Y="1309" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -247,7 +247,7 @@
 				<y:RectD X="1089" Y="883" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -259,7 +259,7 @@
 				<y:RectD X="379" Y="434" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -271,7 +271,7 @@
 				<y:RectD X="1165" Y="304" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -282,7 +282,7 @@
 				<y:RectD X="962" Y="499" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -293,7 +293,7 @@
 				<y:RectD X="683" Y="1595" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -303,7 +303,7 @@
 				<y:RectD X="1315" Y="454" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -314,7 +314,7 @@
 				<y:RectD X="449" Y="1094" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -325,7 +325,7 @@
 				<y:RectD X="134" Y="731" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -335,7 +335,7 @@
 				<y:RectD X="660" Y="1397" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -348,7 +348,7 @@
 				<y:RectD X="560" Y="1033" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -362,7 +362,7 @@
 				<y:RectD X="907" Y="289" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -373,7 +373,7 @@
 				<y:RectD X="1321" Y="118" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -386,7 +386,7 @@
 				<y:RectD X="1346" Y="343" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -397,7 +397,7 @@
 				<y:RectD X="262" Y="999" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -410,7 +410,7 @@
 				<y:RectD X="886" Y="1449" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -421,7 +421,7 @@
 				<y:RectD X="796" Y="1217" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -432,7 +432,7 @@
 				<y:RectD X="404" Y="569" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -444,7 +444,7 @@
 				<y:RectD X="473" Y="820" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -461,7 +461,7 @@
 				<y:RectD X="439" Y="983" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -477,7 +477,7 @@
 				<y:RectD X="1063" Y="1402" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -488,7 +488,7 @@
 				<y:RectD X="167" Y="1262" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -500,7 +500,7 @@
 				<y:RectD X="281" Y="316" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -510,7 +510,7 @@
 				<y:RectD X="1475" Y="616" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -520,7 +520,7 @@
 				<y:RectD X="738" Y="281" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -530,7 +530,7 @@
 				<y:RectD X="362" Y="760" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -543,7 +543,7 @@
 				<y:RectD X="887" Y="127" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -553,7 +553,7 @@
 				<y:RectD X="258" Y="1394" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -563,7 +563,7 @@
 				<y:RectD X="1045" Y="661" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -579,7 +579,7 @@
 				<y:RectD X="1356" Y="929" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -589,7 +589,7 @@
 				<y:RectD X="175" Y="1114" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -602,7 +602,7 @@
 				<y:RectD X="99" Y="620" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -612,7 +612,7 @@
 				<y:RectD X="1437" Y="730" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -622,7 +622,7 @@
 				<y:RectD X="632" Y="1144" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -636,7 +636,7 @@
 				<y:RectD X="1196" Y="1289" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -646,7 +646,7 @@
 				<y:RectD X="1210" Y="164" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -657,7 +657,7 @@
 				<y:RectD X="397" Y="1208" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -670,7 +670,7 @@
 				<y:RectD X="998" Y="1088" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -681,7 +681,7 @@
 				<y:RectD X="591" Y="804" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -694,7 +694,7 @@
 				<y:RectD X="1244" Y="799" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -705,7 +705,7 @@
 				<y:RectD X="1434" Y="147" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -716,7 +716,7 @@
 				<y:RectD X="522" Y="210" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -726,7 +726,7 @@
 				<y:RectD X="184" Y="842" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -736,7 +736,7 @@
 				<y:RectD X="286" Y="1130" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -747,7 +747,7 @@
 				<y:RectD X="796" Y="574" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -759,7 +759,7 @@
 				<y:RectD X="1165" Y="1006" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -769,7 +769,7 @@
 				<y:RectD X="529" Y="1337" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -783,7 +783,7 @@
 				<y:RectD X="771" Y="1378" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -795,7 +795,7 @@
 				<y:RectD X="702" Y="838" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -810,7 +810,7 @@
 				<y:RectD X="901" Y="799" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -822,7 +822,7 @@
 				<y:RectD X="740" Y="455" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 		</node>
@@ -832,7 +832,7 @@
 				<y:RectD X="874" Y="1071" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -846,7 +846,7 @@
 				<y:RectD X="392" Y="1322" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE" shape="OCTAGON"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc" shape="OCTAGON"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -859,7 +859,7 @@
 				<y:RectD X="587" Y="915" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_CYAN" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#304F52" fill="#177E89" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -872,7 +872,7 @@
 				<y:RectD X="629" Y="490" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -883,7 +883,7 @@
 				<y:RectD X="307" Y="874" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -894,7 +894,7 @@
 				<y:RectD X="551" Y="365" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -905,7 +905,7 @@
 				<y:RectD X="763" Y="1060" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="DARK_ORCHID" shape="DIAMOND"/>
+				<yjs:ShapeNodeStyle stroke="#66485B" fill="#aa4586" shape="DIAMOND"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -916,7 +916,7 @@
 				<y:RectD X="711" Y="949" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -929,7 +929,7 @@
 				<y:RectD X="840" Y="913" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -941,7 +941,7 @@
 				<y:RectD X="652" Y="693" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -956,7 +956,7 @@
 				<y:RectD X="549" Y="1463" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -968,7 +968,7 @@
 				<y:RectD X="685" Y="1255" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -983,7 +983,7 @@
 				<y:RectD X="512" Y="1205" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -995,7 +995,7 @@
 				<y:RectD X="1300" Y="587" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -1009,7 +1009,7 @@
 				<y:RectD X="1196" Y="474" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -1022,7 +1022,7 @@
 				<y:RectD X="1073" Y="542" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>
@@ -1036,7 +1036,7 @@
 				<y:RectD X="1047" Y="342" Width="50" Height="50"/>
 			</data>
 			<data key="d7">
-				<yjs:ShapeNodeStyle stroke="#FF505050" fill="CORNFLOWER_BLUE"/>
+				<yjs:ShapeNodeStyle stroke="#617984" fill="#67b7dc"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1"/>

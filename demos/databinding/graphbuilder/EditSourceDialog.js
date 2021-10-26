@@ -26,11 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global CodeMirror */
 import {
   EdgesSourceDefinitionBuilderConnector,
   NodesSourceDefinitionBuilderConnector
 } from './ModelClasses.js'
-
 import { addClass } from '../../resources/demo-app.js'
 
 /**

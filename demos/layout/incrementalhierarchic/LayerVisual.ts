@@ -299,12 +299,12 @@ function getLayerIndex(location: Point, layerBounds: Rect, layerIndex: number): 
 /**
  * the dark fill used for drawing the layers
  */
-const DARK_FILL = 'rgb(150,200,255)'
+const DARK_FILL = '#FFC914'
 
 /**
  * the light fill used for drawing the layers
  */
-const LIGHT_FILL = 'rgb(220,240,240)'
+const LIGHT_FILL = '#FFE8A0'
 
 /**
  * the insets for each layer

@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global CodeMirror */
 import { toggleClass } from '../../resources/demo-app.js'
 
 /** @type {HTMLDivElement} */

@@ -185,15 +185,14 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
   static getStroke(data) {
     switch (data) {
       case 'TRAFFIC_VERY_HIGH':
-        return new Stroke(Fill.RED, 3.0)
+        return new Stroke('#db3a34', 3.5)
       case 'TRAFFIC_HIGH':
-        return new Stroke(Fill.ORANGE, 2.0)
-      case 'TRAFFIC_NORMAL':
-        return new Stroke(Fill.BLACK, 1.0)
+        return new Stroke('#ff6c00', 2.5)
       case 'TRAFFIC_LOW':
-        return new Stroke(Fill.LIGHT_GRAY, 1.0)
+        return new Stroke('#c1c1c1', 1.5)
+      case 'TRAFFIC_NORMAL':
       default:
-        return new Stroke(Fill.BLACK, 1.0)
+        return new Stroke(Fill.BLACK, 1.5)
     }
   }
 

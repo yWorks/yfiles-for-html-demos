@@ -31,3 +31,7 @@ A directive is used to abbreviate the employee names in the overview template.
 The layout is provided by a `Service`.
 
 The zoom buttons use a `Command` directive that binds the click events to yFiles commands.
+
+## App Generator
+
+Use the [App Generator](https://www.yworks.com/products/app-generator) to create visualization prototypes – quickly and easily.

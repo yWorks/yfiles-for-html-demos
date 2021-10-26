@@ -64,7 +64,7 @@ import {
   bindCommand,
   checkLicense,
   removeClass,
-  showApp
+  showApp, showLoadingIndicator
 } from '../../resources/demo-app'
 import BankFraudData from './resources/BankFraudData'
 import InsuranceFraudData from './resources/InsuranceFraudData'
@@ -667,13 +667,12 @@ function loadSampleGraph(fraudData: {
  * When busy, the mouse cursor is changed and the toolbar as well as the input modes are disabled.
  * @param value state
  */
-function setBusy(value: boolean): void {
-  const loadingIndicator = document.getElementById('loadingIndicator') as HTMLElement
+async function setBusy(value: boolean): Promise<void> {
   ;(graphComponent.inputMode as GraphEditorInputMode).waiting = value
   ;(document.getElementById('sampleSelect') as HTMLSelectElement).disabled = value
-  loadingIndicator.style.display = value ? 'block' : 'none'
   busy = value
   timelineComponent.busy = value
+  await showLoadingIndicator(value)
 }
 
 /**

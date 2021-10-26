@@ -47,6 +47,7 @@ import {
 import SampleData from './resources/SampleData'
 import { DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -346,6 +347,7 @@ function registerCommands(): void {
 
   const beforeBusLabel = document.getElementById('before-bus-label') as HTMLLabelElement
   const afterBusLabel = document.getElementById('after-bus-label') as HTMLLabelElement
+  addNavigationButtons(busPresetSelect)
   bindChangeListener("select[data-command='SelectBusPreset']", async preset => {
     busSliders.style.opacity = preset === 'custom' ? '1' : '0.5'
     if (preset === 'custom') {

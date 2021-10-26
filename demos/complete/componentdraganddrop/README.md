@@ -15,3 +15,10 @@ If a component is dragged from the palette onto the canvas, the _ClearAreaLayout
 - Press the ESC key while dragging to cancel the drag and drop operation.
 - Select the button _Keep Components_ to prevent the components from being changed during the drag and drop operation.
 - Select a component by clicking on a node, drag the component through the remaining graph, and watch how the graph changes to provide space for it.
+
+## Related Demos
+
+- [Drag and Drop](../../input/draganddrop)
+- [Graph Drag and Drop](../../input/graph-drag-and-drop)
+- [Custom Drag and Drop](../../input/custom-drag-and-drop)
+- [Tutorial: Drag and Drop](../../03-tutorial-application-features/drag-and-drop/index.html)

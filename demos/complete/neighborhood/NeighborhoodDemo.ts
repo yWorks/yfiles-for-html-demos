@@ -46,7 +46,7 @@ import {
 
 import NeighborhoodView from './NeighborhoodView'
 import {
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
@@ -59,18 +59,14 @@ import loadJson from '../../resources/load-json'
 /**
  * The GraphComponent
  */
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * The NeighborhoodView.
  */
-// @ts-ignore
-let neighborhoodView: NeighborhoodView = null
+let neighborhoodView: NeighborhoodView
 
 // get hold of some UI elements
-const nextButton = document.getElementById('nextButton') as HTMLButtonElement
-const previousButton = document.getElementById('previousButton') as HTMLButtonElement
 const graphChooserBox = document.getElementById('graphChooserBox') as HTMLSelectElement
 const neighborhoodModeChooserBox = document.getElementById(
   'neighborhoodModeChooserBox'
@@ -156,7 +152,7 @@ function enableGraphML(): void {
 
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
@@ -241,8 +237,9 @@ function initializeHighlighting(): void {
   // register it as the default implementation for all nodes
   decorator.nodeDecorator.highlightDecorator.setImplementation(nodeStyleHighlight)
 
-  // hide default selection implementation
+  // hide default selection and focus implementation
   decorator.nodeDecorator.selectionDecorator.hideImplementation()
+  decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
 }
 
 /**
@@ -277,20 +274,13 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindAction("button[data-command='PreviousFile']", () => {
-    graphChooserBox.selectedIndex--
-    readSampleGraph()
-  })
-  bindAction("button[data-command='NextFile']", () => {
-    graphChooserBox.selectedIndex++
-    readSampleGraph()
-  })
-
   bindChangeListener("select[data-command='SelectedFileChanged']", readSampleGraph)
+  addNavigationButtons(graphChooserBox)
 
   bindChangeListener("select[data-command='NeighborhoodModeChanged']", () => {
     onNeighborhoodModeChanged()
   })
+  addNavigationButtons(neighborhoodModeChooserBox)
 }
 
 /**
@@ -326,8 +316,7 @@ function onNeighborhoodModeChanged(): void {
  */
 async function readSampleGraph(): Promise<void> {
   // Disable navigation buttons while graph is loaded
-  nextButton.disabled = true
-  previousButton.disabled = true
+  graphChooserBox.disabled = true
 
   // first derive the file name
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
@@ -337,7 +326,7 @@ async function readSampleGraph(): Promise<void> {
 
   // enable deserialization of the demo styles - without a namespace mapping, deserialization will fail
   ioh.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   ioh.addHandleSerializationListener(DemoSerializationListener)
@@ -345,21 +334,13 @@ async function readSampleGraph(): Promise<void> {
   // when done - fit the bounds
   ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
   // re-enable navigation buttons
-  setTimeout(updateButtons, 10)
+  setTimeout(() => (graphChooserBox.disabled = false), 10)
   // update NeighborhoodView
   graphComponent.currentItem = graphComponent.graph.nodes.firstOrDefault()
   if (INode.isInstance(graphComponent.currentItem)) {
     const nodes = new List(graphComponent.selection.selectedNodes)
     highlightNodes(nodes)
   }
-}
-
-/**
- * Updates the previous/next buttons.
- */
-function updateButtons(): void {
-  nextButton.disabled = graphChooserBox.selectedIndex >= graphChooserBox.length - 1
-  previousButton.disabled = graphChooserBox.selectedIndex <= 0
 }
 
 /**

@@ -34,7 +34,7 @@
     xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0"
     xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml"
     xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0"
-    xmlns:x0="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0"
+    xmlns:x0="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
   <key id="d1" for="node" attr.name="NodeGeometry"
@@ -65,8 +65,8 @@
           <yjs:Font fontSize="12"/>
         </yjs:DefaultLabelStyle.font>
       </yjs:DefaultLabelStyle>
-      <x0:DemoNodeStyle x:Key="2"/>
-      <x0:DemoEdgeStyle x:Key="3"/>
+      <x0:DemoNodeStyle x:Key="2" cssClass="demo-palette-21"/>
+      <x0:DemoEdgeStyle x:Key="3" cssClass="demo-palette-21"/>
     </y:SharedData>
   </data>
   <graph id="G" edgedefault="directed">

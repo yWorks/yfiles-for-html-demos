@@ -32,19 +32,6 @@
   height: auto !important;
   min-width: 365px;
 }
-#loadingIndicator {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  height: 200px;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  margin-top: -100px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #ffffff;
-  padding-top: 80px;
-  text-align: center;
-}
 #detailLevelPopup {
   position: absolute;
   bottom: 10%;
@@ -291,19 +278,19 @@ legend {
   top: -4px;
 }
 .styleSample.simpleSvg::after {
-  background-color: rgb(140, 18, 4);
+  background-color: #ab2346;
 }
 .styleSample.complexSvg::after {
   background-image: url('complexSvg.svg');
 }
 .styleSample.simpleCanvas::after {
-  background-color: rgb(6, 93, 147);
+  background-color: #0b7189;
 }
 .styleSample.complexCanvas::after {
   background-image: url('complexCanvas.svg');
 }
 .styleSample.simpleWebgl::after {
-  background-color: rgb(91, 81, 22);
+  background-color: #ff6c00;
 }
 
 @-webkit-keyframes highlight {

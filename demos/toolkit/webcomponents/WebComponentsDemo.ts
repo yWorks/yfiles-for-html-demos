@@ -26,20 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphEditorInputMode,
-  IArrow,
-  IGraph,
-  IInputMode,
-  License,
-  PolylineEdgeStyle,
-  Rect,
-  ShapeNodeStyle
-} from 'yfiles'
+import { GraphEditorInputMode, IGraph, IInputMode, License, Rect } from 'yfiles'
 import { enableWorkarounds } from '../../utils/Workarounds'
 import loadJson from '../../resources/load-json'
 
 import './GraphComponentElement'
+import { createBasicEdgeStyle, createBasicNodeStyle } from '../../resources/basic-demo-styles'
 
 // wait for the custom graph-component element to be defined
 if (window.customElements) {
@@ -91,14 +83,8 @@ function run(licenseData: object): void {
 
 function initializeGraph(graph: IGraph): void {
   // initialize default styles
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'orange',
-    stroke: 'white',
-    shape: 'rectangle'
-  })
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: IArrow.DEFAULT
-  })
+  graph.nodeDefaults.style = createBasicNodeStyle()
+  graph.edgeDefaults.style = createBasicEdgeStyle()
 
   // create small sample graph
   const node1 = graph.createNode(new Rect(50, 50, 30, 30))

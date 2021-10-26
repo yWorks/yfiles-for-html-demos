@@ -87,7 +87,10 @@ import {
 } from 'yfiles'
 
 import { AxisVisual, CutoffVisual, generateColors } from './DemoVisuals'
+import { colorSets } from '../../resources/basic-demo-styles'
 
+const DENDROGRAM_GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
+const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
 /**
  * Responsible for building a dendrogram graph based on the result of the hierarchical clustering algorithm.
  * The dendrogram is rendered in its own {@link GraphComponent}, the {@link dendrogramComponent}.
@@ -158,7 +161,7 @@ export class DendrogramComponent {
   configureGraph(graph: IGraph): void {
     this.defaultNodeStyle = new ShapeNodeStyle({
       shape: 'ellipse',
-      fill: 'rgb(51, 102, 153)',
+      fill: 'gray',
       stroke: null
     })
     graph.nodeDefaults.style = this.defaultNodeStyle
@@ -271,10 +274,11 @@ export class DendrogramComponent {
       this.createAxisVisual(dendrogramRoot.dissimilarityValue)
       // create the cut-off visual
       this.createCutoffVisual()
+      // the cut-off visual has now sensibly placed itself, so we can set the initial cutoff to it's value
+      cutoff = this.cutOffVisual!.cutOffValue
       this.dendrogramComponent.fitGraphBounds(new Insets(60, 60, 60, 60))
-    } else {
-      this.updateDendrogram(result, cutoff)
     }
+    this.updateDendrogram(result, cutoff)
   }
 
   /**
@@ -298,7 +302,7 @@ export class DendrogramComponent {
     const moveInputMode = (this.dendrogramComponent.inputMode as GraphEditorInputMode).moveInputMode
     const contentRect = this.dendrogramComponent.contentRect
 
-    // create a rectangle with width 2
+    // create a rectangle with height 2
     const rectangle = new MutableRectangle(
       contentRect.x - 20,
       contentRect.y,
@@ -350,7 +354,11 @@ export class DendrogramComponent {
    * @param cutoff The given cutoff value
    */
   updateDendrogram(result: HierarchicalClusteringResult, cutoff: number): void {
-    const colors = generateColors(Color.DARK_BLUE, Color.CORNFLOWER_BLUE, result.clusters.size + 1)
+    const colors = generateColors(
+      DENDROGRAM_GRADIENT_START,
+      DENDROGRAM_GRADIENT_END,
+      result.clusters.size + 1
+    )
 
     this.visited = new Set<DendrogramNode>()
     result.clusters.forEach(cluster => {

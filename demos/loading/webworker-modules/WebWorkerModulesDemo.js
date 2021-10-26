@@ -54,6 +54,8 @@ import { initDemoStyles } from '../../resources/demo-styles.js'
 /** @type {GraphComponent} */
 let graphComponent = null
 
+/** @type {LayoutExecutorAsync} */
+let executor = null
 /** @type {Worker} */
 let worker
 
@@ -125,7 +127,7 @@ async function runWebWorkerLayout(clearUndo) {
   }
 
   // create an asynchronous layout executor that calculates a layout on the worker
-  const executor = new LayoutExecutorAsync({
+  executor = new LayoutExecutorAsync({
     messageHandler: webWorkerMessageHandler,
     graphComponent,
     layoutDescriptor,
@@ -137,12 +139,25 @@ async function runWebWorkerLayout(clearUndo) {
 
   // run the Web Worker layout
   await executor.start()
+  executor = null
 
   if (clearUndo) {
     graphComponent.graph.undoEngine.clear()
   }
 
   hideLoading()
+}
+
+/**
+ * Cancels the Web Worker and the layout executor. The layout is stopped and the graph stays the same.
+ * @returns {!Promise}
+ */
+async function cancelWebWorkerLayout() {
+  if (executor) {
+    await executor.cancel()
+    executor = null
+  }
+  return
 }
 
 /**
@@ -216,6 +231,7 @@ function registerCommands() {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 
   bindAction("button[data-command='Layout']", async () => runWebWorkerLayout(false))
+  bindAction("div[data-command='cancelLayout']", async () => cancelWebWorkerLayout())
 }
 
 /**

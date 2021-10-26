@@ -266,7 +266,7 @@ export default class ContextMenuSupport {
               inEdge.tag.targetSplitId === edge.tag.sourceSplitId
           )
         while (predecessor) {
-          if (visited.indexOf(predecessor) === -1) {
+          if (!visited.includes(predecessor)) {
             visited.push(predecessor)
           }
           sourceNode = predecessor.sourceNode!
@@ -289,7 +289,7 @@ export default class ContextMenuSupport {
               outEdge.tag.sourceSplitId === edge.tag.targetSplitId
           )
         while (successor) {
-          if (visited.includes(successor)) {
+          if (!visited.includes(successor)) {
             visited.push(successor)
           }
           targetNode = successor.targetNode!

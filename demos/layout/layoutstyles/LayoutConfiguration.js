@@ -29,6 +29,7 @@
 import {
   Class,
   FreeEdgeLabelModel,
+  GenericLayoutData,
   GraphComponent,
   IGraph,
   ILabel,
@@ -175,7 +176,7 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
    * to the mapper registry of the given graph. In addition, sets the label model of all edge labels to free
    * since that model can realizes any label placement calculated by a layout algorithm.
    */
-  addPreferredPlacementDescriptor: function (
+  createLabelingLayoutData: function (
     graph,
     placeAlongEdge,
     sideOfEdge,
@@ -189,19 +190,21 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
       distanceToEdge
     )
 
-    graph.mapperRegistry.createConstantMapper(
-      ILabel.$class,
-      PreferredPlacementDescriptor.$class,
-      LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-      descriptor
-    )
-
     // change to a free edge label model to support integrated edge labeling
     const model = new FreeEdgeLabelModel()
     graph.edgeLabels.forEach(label => {
       if (!(label.layoutParameter.model instanceof FreeEdgeLabelModel)) {
         graph.setLabelLayoutParameter(label, model.findBestParameter(label, model, label.layout))
       }
+    })
+
+    return new GenericLayoutData({
+      labelItemMappings: [
+        [
+          LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
+          label => descriptor
+        ]
+      ]
     })
   },
 

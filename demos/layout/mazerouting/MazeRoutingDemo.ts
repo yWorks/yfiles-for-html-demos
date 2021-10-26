@@ -91,7 +91,7 @@ function run(licenseData: object): void {
   initializeOptionEditor()
 
   // set some default styles
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, 'demo-palette-31')
 
   // create the input mode
   createEditorInputMode()
@@ -319,7 +319,7 @@ function setUIDisabled(disabled: boolean): void {
  */
 function createSampleGraph(graph: IGraph): void {
   const mazeNodeStyle = new ShapeNodeStyle({
-    fill: 'rgb(102, 153, 204)',
+    fill: '#242265',
     stroke: null
   })
 

@@ -26,14 +26,26 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
+import { GraphComponent, INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
+
+/**
+ * @typedef {*} SVGElementWithVueComponent
+ */
+
+/**
+ * @param {!SVGElement} svgElement
+ * @returns {!SVGElementWithVueComponent}
+ */
+function isSVGElementWithVueComponent(svgElement) {
+  return svgElement['data-vueComponent'] !== undefined
+}
 
 /**
  * A node style which uses a Vuejs component to display a node.
  */
 export default class VuejsNodeStyle extends NodeStyleBase {
   /**
-   * @param {function} vueComponentConstructor
+   * @param {!VueConstructor} vueComponentConstructor
    */
   constructor(vueComponentConstructor) {
     super()
@@ -42,10 +54,10 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
   /**
    * Creates a visual that uses a Vuejs component to display a node.
-   * @see Overrides {@link LabelStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @return {SvgVisual}
+   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // create the Vue component
@@ -68,22 +80,28 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
     // return an SvgVisual that uses the DOM element of the component
     const svgVisual = new SvgVisual(svgElement)
-    context.setDisposeCallback(svgVisual, (context, visual) => {
-      // clean up vue component instance after the visual is disposed
-      visual.svgElement['data-vueComponent'].$destroy()
+    context.setDisposeCallback(svgVisual, (context, visual, dispose) => {
+      if (visual instanceof SvgVisual && isSVGElementWithVueComponent(visual.svgElement)) {
+        // clean up vue component instance after the visual is disposed
+        visual.svgElement['data-vueComponent'].$destroy()
+      }
+      return null
     })
     return svgVisual
   }
 
   /**
    * Updates the visual by returning the old visual, as Vuejs handles updating the component.
-   * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {INode} node
-   * @return {SvgVisual}
+   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
+    if (!(oldVisual instanceof SvgVisual && isSVGElementWithVueComponent(oldVisual.svgElement))) {
+      return this.createVisual(context, node)
+    }
     const svgElement = oldVisual.svgElement
 
     // Update the location
@@ -91,8 +109,9 @@ export default class VuejsNodeStyle extends NodeStyleBase {
     // the zoom property is a primitive value, so we must update it manually on the component
     svgElement['data-vueComponent'].$data.zoom = context.zoom
     // set the focused property of each component
+    const graphComponent = context.canvasComponent
     svgElement['data-vueComponent'].$data.focused =
-      context.canvasComponent.focusIndicatorManager.focusedItem === node
+      graphComponent.focusIndicatorManager.focusedItem === node
     return oldVisual
   }
 }

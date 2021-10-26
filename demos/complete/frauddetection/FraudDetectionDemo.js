@@ -64,7 +64,8 @@ import {
   bindCommand,
   checkLicense,
   removeClass,
-  showApp
+  showApp,
+  showLoadingIndicator
 } from '../../resources/demo-app.js'
 import BankFraudData from './resources/BankFraudData.js'
 import InsuranceFraudData from './resources/InsuranceFraudData.js'
@@ -673,14 +674,14 @@ function loadSampleGraph(fraudData) {
  * Marks whether or not the demo is currently loading the sample graphs.
  * When busy, the mouse cursor is changed and the toolbar as well as the input modes are disabled.
  * @param {boolean} value state
+ * @returns {!Promise}
  */
-function setBusy(value) {
-  const loadingIndicator = document.getElementById('loadingIndicator')
+async function setBusy(value) {
   graphComponent.inputMode.waiting = value
   document.getElementById('sampleSelect').disabled = value
-  loadingIndicator.style.display = value ? 'block' : 'none'
   busy = value
   timelineComponent.busy = value
+  await showLoadingIndicator(value)
 }
 
 /**

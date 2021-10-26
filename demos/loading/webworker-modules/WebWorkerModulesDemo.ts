@@ -55,6 +55,7 @@ import { initDemoStyles } from '../../resources/demo-styles'
 
 let graphComponent: GraphComponent = null!
 
+let executor: LayoutExecutorAsync | null = null
 let worker: Worker
 
 const modulesWorkersSupported = detectChromeVersion() >= 80
@@ -120,7 +121,7 @@ async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
   }
 
   // create an asynchronous layout executor that calculates a layout on the worker
-  const executor = new LayoutExecutorAsync({
+  executor = new LayoutExecutorAsync({
     messageHandler: webWorkerMessageHandler,
     graphComponent,
     layoutDescriptor,
@@ -132,12 +133,24 @@ async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
 
   // run the Web Worker layout
   await executor.start()
+  executor = null
 
   if (clearUndo) {
     graphComponent.graph.undoEngine!.clear()
   }
 
   hideLoading()
+}
+
+/**
+ * Cancels the Web Worker and the layout executor. The layout is stopped and the graph stays the same.
+ */
+async function cancelWebWorkerLayout(): Promise<void> {
+  if (executor) {
+    await executor.cancel()
+    executor = null
+  }
+  return
 }
 
 /**
@@ -212,6 +225,7 @@ function registerCommands(): void {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 
   bindAction("button[data-command='Layout']", async (): Promise<void> => runWebWorkerLayout(false))
+  bindAction("div[data-command='cancelLayout']", async (): Promise<void> => cancelWebWorkerLayout())
 }
 
 /**

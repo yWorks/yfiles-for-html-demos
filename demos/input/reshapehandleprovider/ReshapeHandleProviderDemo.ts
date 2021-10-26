@@ -113,7 +113,7 @@ async function run(licenseData: any): Promise<void> {
  */
 function initializeGraphDefaults(graph: IGraph): void {
   const adaptedStyle = new ShapeNodeStyle({
-    fill: 'green',
+    fill: '#61A044',
     stroke: 'transparent'
   })
   graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter({
@@ -126,7 +126,7 @@ function initializeGraphDefaults(graph: IGraph): void {
   graph.nodeDefaults.ports.autoCleanUp = false
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '3px solid black'
+    stroke: '3px solid #2E282A'
   })
 }
 

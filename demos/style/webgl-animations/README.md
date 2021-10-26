@@ -14,11 +14,13 @@ The currently hovered component (or the rest of the graph) can be highlighted wi
 
 Note, that the animated items all share the same [WebGL2Animation](https://docs.yworks.com/yfileshtml/#/api/WebGL2Animation) object.
 
-## Things to try
+## Things to Try
 
 - Hover over a component and observe the animation.
 - Select different animations types for highlighting the currently hovered component:
-- For the component itself, "Pulse" is a fitting animation.
-- Use "Fade Out" or "Fade To Gray" animations for the rest of the graph to bring the component to attention.
-- For fade animations, shorter animation durations are more noticeable.
+
+- For the component itself, "Pulse" or "Shake" are fitting animations.
+- Use different "Fade" animations and hide or desaturate a component to bring this component to attention.
+
+- Note that for fade animations, shorter animation durations are more noticeable.
 - Experiment with other animation configurations, to achieve the desired effect.

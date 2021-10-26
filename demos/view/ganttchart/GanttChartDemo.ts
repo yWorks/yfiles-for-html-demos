@@ -85,9 +85,9 @@ import ActivityNodePortLocationModel from './ActivityNodePortLocationModel'
 import ActivityNodeStyle from './ActivityNodeStyle'
 import { checkLicense, showApp } from '../../resources/demo-app'
 import dataModel from './resources/datamodel'
+import type { Activity, Task } from './GanttMapper'
 import GanttMapper from './GanttMapper'
 import loadJson from '../../resources/load-json'
-import type { Activity, Task } from './GanttMapper'
 
 let mainComponent: GraphComponent
 

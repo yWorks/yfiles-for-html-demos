@@ -48,7 +48,7 @@ import {
   ICanvasObject
 } from 'yfiles'
 
-import { LayerFills } from './NodePlacerPanel.js'
+import { LayerColors } from './NodePlacerPanel.js'
 
 /**
  * An {@link IInputMode} which creates an edge along with a target node when dragging on an unselected
@@ -101,10 +101,11 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
 
         // initialize style so it matches the other nodes in this new layer
         this.targetNode.tag = { layer: Number(sourceNode.tag.layer) + 1 }
+        const layerColor = LayerColors[this.targetNode.tag.layer % LayerColors.length]
         this.targetNode.style = new ShapeNodeStyle({
           shape: 'round-rectangle',
-          stroke: 'white',
-          fill: LayerFills[this.targetNode.tag.layer % LayerFills.length]
+          stroke: layerColor.stroke,
+          fill: layerColor.fill
         })
 
         // do not show a target indicator, it is obvious that the new node will be the target

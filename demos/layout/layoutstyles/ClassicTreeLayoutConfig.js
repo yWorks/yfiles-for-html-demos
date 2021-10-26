@@ -45,7 +45,9 @@ import {
   TreeReductionStage,
   YBoolean,
   YNumber,
-  YString
+  YString,
+  LayoutData,
+  GenericLayoutData
 } from 'yfiles'
 
 import {
@@ -148,14 +150,6 @@ const ClassicTreeLayoutConfig = Class('ClassicTreeLayoutConfig', {
       layout.integratedEdgeLabeling = true
     }
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-
     return layout
   },
 
@@ -216,6 +210,16 @@ const ClassicTreeLayoutConfig = Class('ClassicTreeLayoutConfig', {
     layout.busAlignment = this.busAlignmentItem
 
     return layout
+  },
+
+  createConfiguredLayoutData: function (graphComponent, layout) {
+    return this.createLabelingLayoutData(
+      graphComponent.graph,
+      this.labelPlacementAlongEdgeItem,
+      this.labelPlacementSideOfEdgeItem,
+      this.labelPlacementOrientationItem,
+      this.labelPlacementDistanceItem
+    )
   },
 
   /** @type {OptionGroup} */

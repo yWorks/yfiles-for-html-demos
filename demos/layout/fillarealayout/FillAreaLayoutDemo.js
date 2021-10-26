@@ -49,7 +49,7 @@ import {
 } from 'yfiles'
 
 import {
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
@@ -82,7 +82,9 @@ function run(licenseData) {
   graphComponent = new GraphComponent('#graphComponent')
 
   initializeInputModes()
-  initializeGraph()
+
+  initDemoStyles(graphComponent.graph)
+  loadGraph('hierarchic')
 
   // bind the buttons to their commands
   registerCommands()
@@ -166,10 +168,7 @@ function getBounds(selection) {
 /**
  * Initializes styles and loads a sample graph.
  */
-function initializeGraph() {
-  initDemoStyles(graphComponent.graph)
-  loadGraph('hierarchic')
-}
+function initializeGraph() {}
 
 /**
  * Loads the sample graph associated with the given name
@@ -187,8 +186,7 @@ function loadGraph(sampleName) {
     data: data.nodes,
     id: 'id',
     parentId: 'parentId',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
-    labels: ['label']
+    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   if (data.groups) {
     builder.createGroupNodesSource({
@@ -226,30 +224,13 @@ function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindAction("button[data-command='PreviousSample']", () => {
-    const selectedIndex = sampleGraphs.selectedIndex
-    if (selectedIndex > 0) {
-      sampleGraphs.selectedIndex = selectedIndex - 1
-      loadGraph(sampleGraphs.options[sampleGraphs.selectedIndex].value)
-      updateButtons(sampleGraphs)
-    }
-  })
-  bindAction("button[data-command='NextSample']", () => {
-    const selectedIndex = sampleGraphs.selectedIndex
-    if (selectedIndex < sampleGraphs.options.length - 1) {
-      sampleGraphs.selectedIndex = selectedIndex + 1
-      loadGraph(sampleGraphs.options[sampleGraphs.selectedIndex].value)
-      updateButtons(sampleGraphs)
-    }
-  })
-
   const sampleGraphs = document.getElementById('sample-graphs')
   bindChangeListener("select[data-command='SelectSampleGraph']", () => {
     const selectedIndex = sampleGraphs.selectedIndex
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
-    updateButtons(sampleGraphs)
   })
+  addNavigationButtons(sampleGraphs)
 
   const assignmentStrategies = document.getElementById('component-assignment-strategies')
   bindChangeListener("select[data-command='SelectAssignmentStrategy']", () => {
@@ -266,20 +247,6 @@ function registerCommands() {
         break
     }
   })
-}
-
-/**
- * Updates the enabled state of the next- and previous-sample-button according to which sample is currently used.
- * @param {!HTMLSelectElement} sampleGraphs
- */
-function updateButtons(sampleGraphs) {
-  const selectedIndex = sampleGraphs.selectedIndex
-  const previousSample = document.getElementById('previous-sample-button')
-  const nextSample = document.getElementById('next-sample-button')
-  const maxReached = selectedIndex === sampleGraphs.options.length - 1
-  const minReached = selectedIndex === 0
-  nextSample.disabled = maxReached
-  previousSample.disabled = minReached
 }
 
 // start tutorial

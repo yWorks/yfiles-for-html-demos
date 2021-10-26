@@ -76,7 +76,6 @@ function initializeGraph() {
   initDemoStyles(graph)
   // use our custom node style
   graph.nodeDefaults.style = new CSS3NodeStyle()
-
   graph.nodeDefaults.size = new Size(80, 80)
 
   // Create some graph elements with the above defined styles.

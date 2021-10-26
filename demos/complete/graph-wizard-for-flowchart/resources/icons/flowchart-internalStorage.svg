@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="60px" height="40px" viewBox="0 0 60 40"
+     style="overflow: hidden; display: block; width: 60px; height: 40px;">
+  <defs></defs>
+  <g style="pointer-events:visiblePainted" transform="translate(5 5)" image-rendering="auto"
+     shape-rendering="auto">
+    <g>
+      <path d="M 0,0 L 50,0 L 50,30 L 0,30 Z" stroke="rgb(0,0,0)" stroke-opacity="1" stroke-width="1"
+            stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" fill="none"
+            fill-opacity="1"></path>
+      <path d="M 10,0 L 10,30 M 0,10 L 50,10 M 10,0 Z" stroke="rgb(0,0,0)" stroke-opacity="1" stroke-width="1"
+            stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" fill="none"
+            fill-opacity="1"></path>
+    </g>
+  </g>
+</svg>

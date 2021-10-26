@@ -121,21 +121,22 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @return The visual that provides the decoration.
    */
   private static createDecoration(context: IRenderContext, layout: IOrientedRectangle): SvgVisual {
-    const padding = 3
+    const xPadding = 3
+    const yPadding = 5
     const line1 = document.createElementNS(SVG_NS, 'line')
-    line1.x1.baseVal.value = -padding
-    line1.x2.baseVal.value = layout.width + padding
-    line1.y1.baseVal.value = -padding + 2
-    line1.y2.baseVal.value = -padding + 2
-    line1.setAttribute('stroke', '#336699')
+    line1.x1.baseVal.value = -xPadding
+    line1.x2.baseVal.value = layout.width + xPadding
+    line1.y1.baseVal.value = -yPadding + 2
+    line1.y2.baseVal.value = -yPadding + 2
+    line1.setAttribute('stroke', '#224556')
     line1.setAttribute('stroke-width', '2')
 
     const line2 = document.createElementNS(SVG_NS, 'line')
-    line2.x1.baseVal.value = -padding
-    line2.x2.baseVal.value = layout.width + padding
-    line2.y1.baseVal.value = layout.height + padding
-    line2.y2.baseVal.value = layout.height + padding
-    line2.setAttribute('stroke', '#336699')
+    line2.x1.baseVal.value = -xPadding
+    line2.x2.baseVal.value = layout.width + xPadding
+    line2.y1.baseVal.value = layout.height + yPadding
+    line2.y2.baseVal.value = layout.height + yPadding
+    line2.setAttribute('stroke', '#224556')
     line2.setAttribute('stroke-width', '2')
 
     const group = document.createElementNS(SVG_NS, 'g')

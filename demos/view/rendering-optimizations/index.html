@@ -39,6 +39,12 @@
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="resources/html-style.css">
 
+  <style>
+    .nav-buttons {
+      width: 10%;
+    }
+  </style>
+
   <script>
     // run yFiles in production mode for performance reasons
     window.process = { env: { NODE_ENV: 'production' } }
@@ -182,20 +188,10 @@ The sidebar for the different settings
   <h1 class="demo-sidebar-header">Samples</h1>
   <div class="demo-sidebar-content" style="position: relative; padding: 0;">
 
-    <div style="padding: 10px 10px 0 10px;">
-      <select data-type="ComboBox" data-command="GraphChanged" data-name="graphChooserBox" id="graphChooserBox"></select>
-      <p>
-        <button
-          id="previousButton"
-          data-name="previousButton" data-command="PreviousGraph"
-          title="Previous"
-          class="demo-icon-yIconPrevious" style="width: 48%; margin-right: 0"></button>
-        <button
-          id="nextButton"
-          data-name="nextButton" data-command="NextGraph"
-          title="Next"
-          class="demo-icon-yIconNext" style="float: right; width: 48%; margin-right: 0"></button>
-      </p>
+    <div style="padding: 10px;">
+      <div style='display: flex; justify-content: space-between'>
+      <select style='width: auto' data-type="ComboBox" data-command="GraphChanged" data-name="graphChooserBox" id="graphChooserBox"></select>
+      </div>
     </div>
     <div class="fieldset-indent">
       <div class="vertical-button-list">

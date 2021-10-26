@@ -29,7 +29,6 @@
 import {
   Arrow,
   ArrowType,
-  BendEventArgs,
   BezierEdgePathLabelModel,
   BezierEdgeSegmentLabelModel,
   BezierEdgeStyle,

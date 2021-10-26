@@ -1,5 +1,7 @@
 # Reshape Handle Provider Configuration Demo
 
+<img src="../../resources/image/reshape-handle.png" alt="demo-thumbnail" height="320"/>
+
 [You can also run this demo online](https://live.yworks.com/demos/input/reshapehandleconfiguration/index.html).
 
 This demo shows how resizing of nodes can be customized.
@@ -16,5 +18,7 @@ This is done with custom configurations of the default [IReshapeHandleProvider](
 
 - _Red nodes_ cannot be resized. They don't display resize handles.
 - _Green nodes_ show only four handles at the corners. During resizing, these handles always maintain the aspect ratio of the node.
+- _Dark blue nodes_ show only one handle in the bottom right corner. During resizing, this handle always maintains the center of the node.
+- _Purple nodes_ show four handles at the corners and four different handles at the sides. During resizing, the corner handles always maintain the aspect ratio of the node while the border handles don't.
 - _Orange nodes_ cannot extend beyond the black rectangle. Note that orange nodes can only be resized so that the new bounding box stays withing the bounding black rectangle.
-- _Blue nodes_ combine the behavior of the orange and green nodes.
+- _Light blue nodes_ combine the behavior of the orange and green nodes.

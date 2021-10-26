@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.4.
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Preact Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="style/index.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
+
+</head>
+<body class="demo-has-left">
+<!--
+  The sidebar for the description text
+  -->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>
+      This demo shows how to integrate yFiles in a
+      <a href="https://preactjs.com/" target="_blank" rel="noopener noreferrer">
+        Preact
+      </a>
+      application. It uses the
+      <a href='https://preactjs.com/guide/v10/getting-started#no-build-tools-route' target="_blank" rel="noopener noreferrer">"No build tools route"</a>
+      of the preact setup for simplicity. Note that //@ts-ignore comments have to be used when importing from unpkg URLs,
+      as TypeScript has no way of knowing the types of these packages.
+      The interoperability between the yFiles graph view
+      and the preact components that is demonstrated in this demo would not change with a
+      different configuration setup, though (e.g. Preact CLI, custom bundling pipeline).
+    </p>
+    <p>
+      The sample application shows how a collection of data items and connections can be
+      automatically synced with both a Preact view and a yFiles view.
+    </p>
+    <p>
+      To keep the yFiles view in sync with the application data, the yFiles <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> API is used.
+    </p>
+    <p>
+      The nodes are rendered via the <code>NodeTemplate</code> preact component.
+    </p>
+
+    <h2>Things to Try</h2>
+
+    <ul>
+      <li>
+        The item collection can be changed with the panel on the right-hand side.
+        <ul>
+          <li>'Add Item' creates a new data item and a random connection.</li>
+          <li>The item view contains a checkbox that toggles the item's "enabled" state.</li>
+          <li>Finally, items can also be removed in the Preact view.</li>
+        </ul>
+        Note how all of these operations are synced with the yFiles view.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class='preact-app'></div>
+</div>
+
+<script type="module" src="PreactDemo.js"></script>
+
+</body>
+</html>

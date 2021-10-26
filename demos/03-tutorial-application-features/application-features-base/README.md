@@ -11,3 +11,7 @@ This demo provides the base application for the feature specific demos in this t
 The base application provides a general toolbar and a ready to use [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) that is initialized with simple styles and a [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) to enable default graph editing gestures.
 
 See the sources for details.
+
+## App Generator
+
+Use the [App Generator](https://www.yworks.com/products/app-generator) to create visualization prototypes – quickly and easily.

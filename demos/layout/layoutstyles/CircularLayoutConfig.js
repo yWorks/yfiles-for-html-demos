@@ -163,14 +163,6 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
       bundled: this.edgeBundlingItem
     })
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-
     return layout
   },
 
@@ -189,7 +181,15 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
       layoutData.exteriorEdges.items = graphComponent.selection.selectedEdges.toList()
     }
 
-    return layoutData
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
   },
 
   /** @type {OptionGroup} */

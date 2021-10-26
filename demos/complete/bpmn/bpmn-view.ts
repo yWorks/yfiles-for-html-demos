@@ -957,9 +957,9 @@ const BPMN_CONSTANTS_PLACEMENTS_ACTIVITY_TASK_TYPE_MESSAGE = SLM.createScaledPar
 const BPMN_CONSTANTS_PLACEMENTS_DOUBLE_LINE = new InteriorStretchLabelModel({
   insets: new Insets(BPMN_CONSTANTS_DOUBLE_LINE_OFFSET)
 }).createParameter(InteriorStretchLabelModelPosition.CENTER)
-const BPMN_CONSTANTS_PLACEMENTS_THICK_LINE = new InteriorStretchLabelModel({
-  insets: new Insets(BPMN_CONSTANTS_DOUBLE_LINE_OFFSET * 0.5)
-}).createParameter(InteriorStretchLabelModelPosition.CENTER)
+const BPMN_CONSTANTS_PLACEMENTS_THICK_LINE = new InteriorStretchLabelModel().createParameter(
+  InteriorStretchLabelModelPosition.CENTER
+)
 const BPMN_CONSTANTS_PLACEMENTS_INSIDE_DOUBLE_LINE = ISLM_INSIDE_DOUBLE_LINE.createParameter(
   InteriorStretchLabelModelPosition.CENTER
 )
@@ -2031,17 +2031,18 @@ class VariableRectIcon extends Icon {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute(
       'd',
-      `M 0 ${this.topLeftRadius} Q 0 0 ${this.topLeftRadius} ${0} L ${
-        this.bounds.width - this.topRightRadius
-      } ${0} Q ${this.bounds.width} 0 ${this.bounds.width} ${this.topRightRadius} L ${
-        this.bounds.width
-      } ${this.bounds.height - this.bottomRightRadius} Q ${this.bounds.width} ${
-        this.bounds.height
-      } ${this.bounds.width - this.bottomRightRadius} ${this.bounds.height} L ${
-        this.bottomLeftRadius
-      } ${this.bounds.height} Q 0 ${this.bounds.height} 0 ${
-        this.bounds.height - this.bottomRightRadius
-      } Z`
+      `M 0 ${this.topLeftRadius}
+       Q 0 0
+         ${this.topLeftRadius} ${0}
+       L ${this.bounds.width - this.topRightRadius} ${0}
+       Q ${this.bounds.width} 0
+         ${this.bounds.width} ${this.topRightRadius}
+       L ${this.bounds.width} ${this.bounds.height - this.bottomRightRadius}
+       Q ${this.bounds.width} ${this.bounds.height}
+         ${this.bounds.width - this.bottomRightRadius} ${this.bounds.height}
+       L ${this.bottomLeftRadius} ${this.bounds.height}
+       Q 0 ${this.bounds.height} 0 ${this.bounds.height - this.bottomRightRadius}
+       Z`
     )
     Stroke.setStroke(this.stroke, path, context)
     Fill.setFill(this.fill, path, context)
@@ -2072,17 +2073,19 @@ class VariableRectIcon extends Icon {
     if (!oldCache.equals(newCache)) {
       path.setAttribute(
         'd',
-        `M 0 ${this.topLeftRadius} Q 0 0 ${this.topLeftRadius} ${0} L ${
-          this.bounds.width - this.topRightRadius
-        } ${0} Q ${this.bounds.width} 0 ${this.bounds.width} ${this.topRightRadius} L ${
-          this.bounds.width
-        } ${this.bounds.height - this.bottomRightRadius} Q ${this.bounds.width} ${
-          this.bounds.height
-        } ${this.bounds.width - this.bottomRightRadius} ${this.bounds.height} L ${
-          this.bottomLeftRadius
-        } ${this.bounds.height} Q 0 ${this.bounds.height} 0 ${
-          this.bounds.height - this.bottomRightRadius
-        } Z`
+        `M 0 ${this.topLeftRadius}
+         Q 0 0
+           ${this.topLeftRadius} ${0}
+         L ${this.bounds.width - this.topRightRadius} ${0}
+         Q ${this.bounds.width} 0
+           ${this.bounds.width} ${this.topRightRadius}
+         L ${this.bounds.width} ${this.bounds.height - this.bottomRightRadius}
+         Q ${this.bounds.width} ${this.bounds.height}
+           ${this.bounds.width - this.bottomRightRadius} ${this.bounds.height}
+         L ${this.bottomLeftRadius} ${this.bounds.height}
+         Q 0 ${this.bounds.height} 0
+           ${this.bounds.height - this.bottomRightRadius}
+         Z`
       )
       Stroke.setStroke(this.stroke, path, context)
       Fill.setFill(this.fill, path, context)
@@ -10185,9 +10188,12 @@ class DataObjectIcon extends Icon {
     const path1 = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path1.setAttribute(
       'd',
-      `M 0 0 L ${
-        boundsWidth - cornerSize
-      } 0 L ${boundsWidth} ${cornerSize} L ${boundsWidth} ${boundsHeight} L 0 ${boundsHeight} Z`
+      `M 0 0
+       L ${boundsWidth - cornerSize} 0
+       L ${boundsWidth} ${cornerSize}
+       L ${boundsWidth} ${boundsHeight}
+       L 0 ${boundsHeight}
+       Z`
     )
     Stroke.setStroke(this.stroke, path1, context)
     Fill.setFill(this.fill, path1, context)
@@ -10196,9 +10202,9 @@ class DataObjectIcon extends Icon {
     const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path2.setAttribute(
       'd',
-      `M ${boundsWidth - cornerSize} 0 L ${
-        boundsWidth - cornerSize
-      } ${cornerSize} L ${boundsWidth} ${cornerSize}`
+      `M ${boundsWidth - cornerSize} 0
+       L ${boundsWidth - cornerSize} ${cornerSize}
+       L ${boundsWidth} ${cornerSize}`
     )
     Stroke.setStroke(this.stroke, path2, context)
     Fill.setFill(this.fill, path2, context)
@@ -10226,15 +10232,18 @@ class DataObjectIcon extends Icon {
       const cornerSize = Math.min(this.bounds.width, this.bounds.height) * 0.4
       path1.setAttribute(
         'd',
-        `M 0 0 L ${this.bounds.width - cornerSize} 0 L ${this.bounds.width} ${cornerSize} L ${
-          this.bounds.width
-        } ${this.bounds.height} L 0 ${this.bounds.height} Z`
+        `M 0 0
+         L ${this.bounds.width - cornerSize} 0
+         L ${this.bounds.width} ${cornerSize}
+         L ${this.bounds.width} ${this.bounds.height}
+         L 0 ${this.bounds.height}
+         Z`
       )
       path2.setAttribute(
         'd',
-        `M ${this.bounds.width - cornerSize} 0 L ${
-          this.bounds.width - cornerSize
-        } ${cornerSize} L ${this.bounds.width} ${cornerSize}`
+        `M ${this.bounds.width - cornerSize} 0
+         L ${this.bounds.width - cornerSize} ${cornerSize}
+         L ${this.bounds.width} ${cornerSize}`
       )
     }
 

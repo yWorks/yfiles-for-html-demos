@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.4.
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Chord Diagram [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <style type="text/css">
+    .disabled-control {
+      opacity: 0.5;
+    }
+  </style>
+
+  <script src="../../resources/filesystem-warning.js"></script>
+</head>
+<body class="demo-has-left">
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how to arrange and visualize a graph as a chord diagram.
+    </p>
+    <p>
+      In a chord diagram, the nodes are arranged on a circle and the edges are
+      drawn as arcs. In this demo, nodes are visualized as circle segments, and
+      both the size of the nodes and thickness of the edges reflects their
+      weight or value.
+    </p>
+    <p>
+      This demo presents a custom layout algorithm implementation for this
+      layout style and corresponding styles for the nodes and edges.
+    </p>
+
+    <h2>Things to try</h2>
+    <ul>
+      <li>
+        Increase the size of the gaps between the nodes with the toolbar slider.</li>
+      <li>
+        Hover over a circle segment to highlight its corresponding edges.</li>
+      <li>
+        Hover over an edge to bring it to front.</li>
+      <li>
+        Select an edge and adjust its thickness with the toolbar slider.</li>
+      <li>
+        Toggle the 'Show Graph' button to see the raw result of the layout algorithm
+        in contrast to the final visual styling of the nodes and edges.</li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <input type="checkbox" id="toggle-actual-graph" class="demo-toggle-button labeled" data-command="ToggleShowActualGraph"/>
+    <label for="toggle-actual-graph" title="Toggles display of the actual graph">Show Graph</label>
+
+    <span class="demo-separator"></span>
+
+    <span id="thickness-label" class="disabled-control" disabled>Thickness of Selected Chord:</span>
+    <input id="thickness" class="disabled-control" style="width: 200px;" type="range" min="0.1" max="2.0" step="0.025" disabled>
+
+    <span id="gap-label">Gap Ratio</span>
+    <input id="gap_ratio" style="width: 200px;" type="range" min="0" max="0.5" step="0.025" value="0.25">
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+
+<script type="module" crossorigin="anonymous" src="ChordDiagramDemo.js"></script>
+</body>
+</html>

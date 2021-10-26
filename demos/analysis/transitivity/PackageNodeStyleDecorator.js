@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Color,
   GeneralPath,
   GraphComponent,
   ICanvasContext,
@@ -60,11 +59,11 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
   constructor(wrapped) {
     super()
     this.wrapped = wrapped || new ShapeNodeStyle()
-    this.selectionStyle = new ShapeNodeStyle()
+    this.selectionStyle = wrapped instanceof ShapeNodeStyle ? wrapped.clone() : new ShapeNodeStyle()
     if (wrapped instanceof ShapeNodeStyle) {
       this.selectionStyle.shape = wrapped.shape
     }
-    const selectionFill = new SolidColorFill(Color.fromArgb(255, 255, 140, 0))
+    const selectionFill = new SolidColorFill('#FF6C00')
     this.selectionStyle.stroke = new Stroke(selectionFill)
     this.selectionStyle.fill = selectionFill
   }

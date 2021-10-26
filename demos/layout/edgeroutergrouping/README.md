@@ -1,6 +1,6 @@
 # EdgeRouter Grouping Demo
 
-<img src="../../resources/image/edgeroutergrouping.png" alt="demo-thumbnail" height="320"/>
+<img src="../../resources/image/edge-router-grouping.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/edgeroutergrouping/index.html).
 

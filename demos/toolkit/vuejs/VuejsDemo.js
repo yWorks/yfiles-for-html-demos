@@ -37,17 +37,21 @@ import {
   IArrow,
   ICommand,
   IGraph,
+  IMapper,
   INode,
+  ItemCollection,
   ITreeLayoutNodePlacer,
   LayoutExecutor,
   LeftRightNodePlacer,
   License,
+  Mapper,
   PolylineEdgeStyle,
   RootAlignment,
   ShowFocusPolicy,
   Size,
   TreeBuilder,
   TreeLayout,
+  TreeLayoutData,
   TreeLayoutEdgeRoutingStyle
 } from 'yfiles'
 
@@ -67,6 +71,32 @@ const statusColors = {
 }
 
 /**
+ * @typedef {Object} Employee
+ * @property {string} position
+ * @property {string} name
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} fax
+ * @property {string} businessUnit
+ * @property {string} status
+ * @property {string} icon
+ * @property {Array.<Employee>} [subordinates]
+ * @property {Employee} [parent]
+ */
+
+/**
+ * @typedef {*} VueComponentWithGraphComponent
+ */
+
+/**
+ * @param {!ThisTypedComponentOptionsWithArrayProps} component
+ * @returns {!VueComponentWithGraphComponent}
+ */
+function isVueComponentWithGraphComponent(component) {
+  return component['$graphComponent'] !== undefined
+}
+
+/**
  * A data object that will be shared by multiple Vue instances to keep them in sync with each other.
  * @type {{focusedNodeData: object}}
  */
@@ -76,6 +106,9 @@ const sharedData = {
 
 loadJson().then(checkLicense).then(run)
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
 
@@ -84,18 +117,22 @@ function run(licenseData) {
    * Demo node template, but instead of using Template Bindings, Vuejs is used to keep the view in
    * sync with the data.
    */
-  // eslint-disable-next-line no-undef
   Vue.component('node', {
     template: '#vueNodeStyleTemplate',
-    data: () => ({
-      zoom: 1,
-      focused: false
-    }),
+    data() {
+      return {
+        zoom: 1,
+        focused: false
+      }
+    },
     // the node tag is passed as a prop
-    props: ['tag'],
+    props: {
+      tag: { type: Object }
+    },
     computed: {
       statusColor() {
-        return statusColors[this.tag.status]
+        const status = this.tag.status
+        return statusColors[status]
       },
       positionFirstLine() {
         const words = this.tag.position ? this.tag.position.split(' ') : []
@@ -120,7 +157,6 @@ function run(licenseData) {
    * and emits a custom event <code>focused-item-changed</code> when the focused item of the
    * GraphComponent changes.
    */
-  // eslint-disable-next-line no-undef
   Vue.component('graph-component', {
     template: '<div class="graph-component"></div>',
     created() {
@@ -144,43 +180,51 @@ function run(licenseData) {
 
       // emit custom event 'focused-item-changed' whenever the focused item of the GraphControl changes
       graphComponent.focusIndicatorManager.addPropertyChangedListener(() => {
-        this.$emit('focused-item-changed', graphComponent.focusIndicatorManager.focusedItem.tag)
+        this.$emit('focused-item-changed', graphComponent.focusIndicatorManager.focusedItem?.tag)
       })
     },
     mounted() {
-      // append the GraphComponent to the DOM when the Vue component is mounted
-      this.$el.appendChild(this.$graphComponent.div)
-      this.$graphComponent.div.style.height = '100%'
-      this.$graphComponent.fitGraphBounds()
+      if (isVueComponentWithGraphComponent(this)) {
+        // append the GraphComponent to the DOM when the Vue component is mounted
+        this.$el.appendChild(this.$graphComponent.div)
+        this.$graphComponent.div.style.height = '100%'
+        this.$graphComponent.fitGraphBounds()
+      }
     }
   })
 
   /**
    * Main Vue instance which starts the demo and serves as a mediator between other Vue instances.
    */
-  // eslint-disable-next-line no-undef,no-new
   new Vue({
     el: '#yfiles-vue-app',
     data: {
       sharedData
     },
     methods: {
+      getGraphComponent() {
+        return this.$refs.graphComponent !== undefined &&
+          isVueComponentWithGraphComponent(this.$refs.graphComponent)
+          ? // @ts-ignore
+            this.$refs.graphComponent.$graphComponent
+          : null
+      },
       zoomIn() {
-        ICommand.INCREASE_ZOOM.execute(null, this.$refs.graphComponent.$graphComponent)
+        ICommand.INCREASE_ZOOM.execute(null, this.getGraphComponent())
       },
       resetZoom() {
-        ICommand.ZOOM.execute(1, this.$refs.graphComponent.$graphComponent)
+        ICommand.ZOOM.execute(1, this.getGraphComponent())
       },
       zoomOut() {
-        ICommand.DECREASE_ZOOM.execute(null, this.$refs.graphComponent.$graphComponent)
+        ICommand.DECREASE_ZOOM.execute(null, this.getGraphComponent())
       },
       fitGraph() {
-        ICommand.FIT_GRAPH_BOUNDS.execute(null, this.$refs.graphComponent.$graphComponent)
+        ICommand.FIT_GRAPH_BOUNDS.execute(null, this.getGraphComponent())
       },
       /**
        * This is called when the custom <code>focused-item-changed</code> event is emitted on the
        * graph-control.
-       * @param {Object} tag - The tag of the currently focused node.
+       * @param tag The tag of the currently focused node or null if no node is focused.
        */
       focusedItemChanged(tag) {
         // update shared state
@@ -189,7 +233,7 @@ function run(licenseData) {
     },
     mounted() {
       // run the demo
-      showApp()
+      showApp(null)
     }
   })
 
@@ -253,26 +297,24 @@ function run(licenseData) {
    * @param {IGraph} tree
    */
   function doLayout(tree) {
-    const registry = tree.mapperRegistry
-    const nodePlacerMapper = registry.createMapper(TreeLayout.NODE_PLACER_DP_KEY)
-    const assistantMapper = registry.createMapper(AssistantNodePlacer.ASSISTANT_NODE_DP_KEY)
+    const nodePlacerMapper = new Mapper()
+    const assistantNodes = []
     tree.nodes.forEach(node => {
       if (tree.inDegree(node) === 0) {
-        setNodePlacers(node, nodePlacerMapper, assistantMapper, tree)
+        setNodePlacers(node, nodePlacerMapper, assistantNodes, tree)
       }
     })
-    tree.applyLayout(new TreeLayout())
-    tree.mapperRegistry.removeMapper(AssistantNodePlacer.ASSISTANT_NODE_DP_KEY)
-    tree.mapperRegistry.removeMapper(TreeLayout.NODE_PLACER_DP_KEY)
+
+    tree.applyLayout(
+      new TreeLayout(),
+      new TreeLayoutData({
+        nodePlacers: nodePlacerMapper,
+        assistantNodes: ItemCollection.from(assistantNodes)
+      })
+    )
   }
 
-  /**
-   * @param {INode} rootNode
-   * @param {IMapper.<ITreeLayoutNodePlacer>} nodePlacerMapper
-   * @param {IMapper.<INode>} assistantMapper
-   * @param {IGraph} tree
-   */
-  function setNodePlacers(rootNode, nodePlacerMapper, assistantMapper, tree) {
+  function setNodePlacers(rootNode, nodePlacerMapper, assistantNodes, tree) {
     const employee = rootNode.tag
     if (employee !== null) {
       const layout = employee.layout
@@ -322,13 +364,13 @@ function run(licenseData) {
         const assistantNodePlacer = new AssistantNodePlacer()
         assistantNodePlacer.childNodePlacer = oldParentPlacer
         nodePlacerMapper.set(parent, assistantNodePlacer)
-        assistantMapper.set(rootNode, true)
+        assistantNodes.push(rootNode)
       }
     }
 
     tree.outEdgesAt(rootNode).forEach(outEdge => {
-      const child = outEdge.targetPort.owner
-      setNodePlacers(child, nodePlacerMapper, assistantMapper, tree)
+      const child = outEdge.targetNode
+      setNodePlacers(child, nodePlacerMapper, assistantNodes, tree)
     })
   }
 }

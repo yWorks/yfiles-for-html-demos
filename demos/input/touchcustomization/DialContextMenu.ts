@@ -144,8 +144,9 @@ function createMenu(items: MenuItem[], location: Point): SVGElement {
       const position = (outerRadius + innerRadius) / 2
       icon.setAttribute(
         'transform',
-        `translate(${-16 + Math.sin(middleAngle) * position}, ${-16 -
-          Math.cos(middleAngle) * position})`
+        `translate(${-16 + Math.sin(middleAngle) * position}, ${
+          -16 - Math.cos(middleAngle) * position
+        })`
       )
       icon.setAttribute('class', 'demo-dial-icon')
       itemContainer.appendChild(icon)

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="60px" height="40px" viewBox="0 0 60 40"
+     style="overflow: hidden; display: block; width: 60px; height: 40px;">
+  <defs></defs>
+  <g style="pointer-events:visiblePainted" transform="translate(5 5)" image-rendering="auto"
+     shape-rendering="auto">
+    <g>
+      <path
+          d="M 25,30 C 11.195,30 0,23.283 0,15 C 0,6.716999999999999 11.195,0 25,0 C 38.805,0 50,6.716999999999999 50,15 C 50,23.283 38.805,30 25,30 Z"
+          stroke="rgb(0,0,0)" stroke-opacity="1" stroke-width="1" stroke-linecap="butt"
+          stroke-linejoin="miter" stroke-miterlimit="10" fill="none" fill-opacity="1"></path>
+    </g>
+  </g>
+</svg>

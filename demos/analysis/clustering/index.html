@@ -40,7 +40,7 @@
 
   <script src="../../resources/filesystem-warning.js"></script>
 
-  <style type="text/css">
+  <style>
     .demo-toolbar label {
       vertical-align: baseline;
       width: 4em;
@@ -131,8 +131,6 @@
 
     <span>Clustering Algorithms:</span>
 
-    <button data-command="PreviousFile" title="Open previous graph" id="previousButton"
-        class="demo-icon-yIconPrevious" disabled></button>
     <select data-command="AlgorithmSelectionChanged"
       title="Select a clustering algorithm graph" id="algorithmsComboBox">
     <option value="EdgeBetweenness">Edge Betweenness</option>
@@ -142,9 +140,6 @@
     <option value="LouvainModularity">Louvain Modularity</option>
     <option value="LabelPropagation">Label Propagation</option>
   </select>
-
-    <button data-command="NextFile" title="Open next graph" id="nextButton"
-        class="demo-icon-yIconNext"></button>
   </div>
 
   <div id="graphComponent"></div>
@@ -160,7 +155,7 @@
         <p>Partitions the graph into groups using edge betweenness centrality. The groups are detected by progressively
           removing the edge with the highest betweenness centrality from the graph.</p>
 
-        <h3>Things to try</h3>
+        <h3>Things to Try</h3>
         <ul>
           <li>Determine the desired minimum or maximum number of clusters. The algorithm will try to respect these values
             (if possible), unless the graph is disconnected.
@@ -201,7 +196,7 @@
           the cluster's mean (centroid) is minimized (refer to the crosses). The result is presented by means of a
           Voronoi diagram.</p>
 
-        <h3>Things to try</h3>
+        <h3>Things to Try</h3>
         <ul>
           <li>Determine the distance metric to be used.</li>
           <li>Determine the desired maximum number of clusters or the maximum number of iterations. The maximum number
@@ -243,7 +238,7 @@
           algorithm continues until all nodes belong to the same cluster. The result is a dendrogram which can be cut
           based on a given cut-off value.</p>
 
-        <h3>Things to try</h3>
+        <h3>Things to Try</h3>
         <ul>
           <li>Determine the linkage criterion that defines how the distance between sets of nodes will be measured.</li>
           <li>Move the red line of the dendrogram to determine a new cut-off value and examine the resulting clusters.
@@ -273,7 +268,7 @@
           biconnected. Nodes that belong to multiple biconnected components will be assigned to exactly one of these
           components.</p>
 
-        <h3>Things to try</h3>
+        <h3>Things to Try</h3>
         <ul>
           <li>Create/Remove nodes or edges to see how the result of the algorithm is influenced.</li>
         </ul>
@@ -292,7 +287,7 @@
           of the graph cannot be further improved.
         </p>
 
-        <h3>Things to try</h3>
+        <h3>Things to Try</h3>
         <ul>
           <li>Create/Remove nodes or edges to see how the result of the algorithm is influenced.</li>
         </ul>
@@ -309,7 +304,7 @@
           candidates the algorithm randomly chooses one of them. After applying the algorithm,
           all nodes with the same label belong to the same community.
         </p>
-        <h3>Things to try</h3>
+        <h3>Things to Try</h3>
         <ul>
           <li>Create/Remove nodes or edges to see how the result of the algorithm is influenced.</li>
         </ul>

@@ -336,7 +336,7 @@ export default class FlowchartLayout
    * Returns whether or not the current layout orientation is horizontal.
    */
   isHorizontalOrientation(): boolean {
-    return this.$layoutOrientation === LayoutOrientation.LEFT_TO_RIGHT
+    return this.layoutOrientation === LayoutOrientation.LEFT_TO_RIGHT
   }
 
   /**

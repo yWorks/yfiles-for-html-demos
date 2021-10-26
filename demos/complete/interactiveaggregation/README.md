@@ -12,7 +12,7 @@ For example, aggregating all nodes by _shape and color_ shows that there are no 
 
 The demo makes use of the _AggregationGraphWrapper_ class, that allows for aggregating graph items by hiding items and adding new items to a wrapped graph.
 
-## Things to try:
+## Things to Try
 
 - Right click on a node to open a _context menu_ with the different aggregation and expansion options.
 - Aggregate all nodes with the _same shape or color_ by selecting "Aggregate Nodes with Same ...".

@@ -64,7 +64,7 @@ import {
   Point,
   PolylineEdgeStyle,
   Rect,
-  ShapeNodeStyle
+  ShapeNodeShape
 } from 'yfiles'
 
 import * as ClusteringData from './resources/ClusteringData.js'
@@ -72,6 +72,7 @@ import VoronoiDiagram from './VoronoiDiagram.js'
 import { PolygonVisual, VoronoiVisual } from './DemoVisuals.js'
 import { DendrogramComponent } from './DendrogramSupport.js'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -79,6 +80,7 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { createBasicEdgeStyle, createBasicNodeStyle } from '../../resources/basic-demo-styles.js'
 
 /**
  * The {@link GraphComponent} which contains the {@link IGraph}.
@@ -172,21 +174,17 @@ function run(licenseData) {
  * @param {!IGraph} graph
  */
 function configureGraph(graph) {
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: 'orange',
-    stroke: null
-  })
+  const defaultNodeStyle = createBasicNodeStyle('demo-palette-401')
+  defaultNodeStyle.shape = ShapeNodeShape.ELLIPSE
+  graph.nodeDefaults.style = defaultNodeStyle
 
   // sets the default edge style as 'undirected'
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: IArrow.NONE
-  })
+  const basicEdgeStyle = createBasicEdgeStyle('demo-palette-401')
+  basicEdgeStyle.targetArrow = IArrow.NONE
+  graph.edgeDefaults.style = basicEdgeStyle
 
   // sets the edge style of the algorithms that support edge direction
-  directedEdgeStyle = new PolylineEdgeStyle({
-    targetArrow: IArrow.DEFAULT
-  })
+  directedEdgeStyle = createBasicEdgeStyle('demo-palette-401')
 
   // set the default style for node labels
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
@@ -210,11 +208,7 @@ function configureGraph(graph) {
 
   // highlight node style
   const nodeHighlight = new NodeStyleDecorationInstaller({
-    nodeStyle: new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: 'rgb(51, 102, 153)',
-      stroke: null
-    }),
+    nodeStyle: createBasicNodeStyle('demo-palette-23'),
     zoomPolicy: 'mixed',
     margins: 3
   })
@@ -646,18 +640,7 @@ function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
 
   const samplesComboBox = getElementById('algorithmsComboBox')
-  bindAction("button[data-command='PreviousFile']", () => {
-    samplesComboBox.selectedIndex = Math.max(0, samplesComboBox.selectedIndex - 1)
-    onAlgorithmChanged()
-  })
-  bindAction("button[data-command='NextFile']", () => {
-    samplesComboBox.selectedIndex = Math.min(
-      samplesComboBox.selectedIndex + 1,
-      samplesComboBox.options.length - 1
-    )
-    onAlgorithmChanged()
-  })
-
+  addNavigationButtons(samplesComboBox)
   bindChangeListener("select[data-command='AlgorithmSelectionChanged']", onAlgorithmChanged)
   bindAction("button[data-command='RunAlgorithm']", runAlgorithm)
 
@@ -805,9 +788,6 @@ function getEdgeWeight(edge) {
 function setUIDisabled(disabled) {
   const samplesComboBox = getElementById('algorithmsComboBox')
   samplesComboBox.disabled = disabled
-  getElementById('previousButton').disabled = disabled || samplesComboBox.selectedIndex === 0
-  getElementById('nextButton').disabled =
-    disabled || samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
   graphComponent.inputMode.waiting = disabled
   busy = disabled
 }

@@ -45,7 +45,7 @@
   <key id="d9" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
     <default>
       <yjs:NodeStylePortStyleAdapter renderSize="7,7">
-        <yjs:ShapeNodeStyle fill="GREEN">
+        <yjs:ShapeNodeStyle fill="#61A044">
           <yjs:ShapeNodeStyle.stroke>
             <yjs:Stroke fill="TRANSPARENT" lineCap="SQUARE"/>
           </yjs:ShapeNodeStyle.stroke>
@@ -57,10 +57,10 @@
   <data key="d10">
     <y:SharedData>
       <yjs:Font x:Key="1" fontSize="12" fontFamily="'Arial'"/>
-      <yjs:DefaultLabelStyle x:Key="2" font="{y:GraphMLReference 1}" textFill="BLACK"/>
-      <yjs:ShapeNodeStyle x:Key="3" stroke="TRANSPARENT" fill="GREEN"/>
-      <yjs:DefaultLabelStyle x:Key="4" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 1}" textFill="BLACK"/>
-      <yjs:ShapeNodeStyle x:Key="5" stroke="TRANSPARENT" fill="ROYAL_BLUE"/>
+      <yjs:DefaultLabelStyle x:Key="2" font="{y:GraphMLReference 1}" textFill="#2E282A"/>
+      <yjs:ShapeNodeStyle x:Key="3" stroke="TRANSPARENT" fill="#61A044"/>
+      <yjs:DefaultLabelStyle x:Key="4" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 1}" textFill="#2E282A"/>
+      <yjs:ShapeNodeStyle x:Key="5" stroke="TRANSPARENT" fill="#46A8D5"/>
       <y:PortAnchoredLabelModelParameter x:Key="6" LocationOffset="5,-3" LabelRatio="0,1"/>
       <y:PortAnchoredLabelModelParameter x:Key="7" LocationOffset="-5,-3" LabelRatio="1,1"/>
       <y:PortAnchoredLabelModelParameter x:Key="8" LocationOffset="-5,3" LabelRatio="1,0"/>
@@ -95,7 +95,7 @@
         <y:RectD X="0" Y="-185" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -172,7 +172,7 @@
         <y:RectD X="0" Y="-61" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -249,7 +249,7 @@
         <y:RectD X="124" Y="-71" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -309,7 +309,7 @@
         <y:RectD X="0" Y="-123" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -361,7 +361,7 @@
         <y:RectD X="231" Y="-155" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -406,7 +406,7 @@
         <y:RectD X="124" Y="-155" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -466,7 +466,7 @@
         <y:RectD X="427" Y="-160" Width="70" Height="120"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -609,7 +609,7 @@ Converter]]></y:Label.Text>
         <y:RectD X="327" Y="-160" Width="70" Height="120"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -743,7 +743,7 @@ Converter]]></y:Label.Text>
         <y:RectD X="565" Y="-145" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -810,7 +810,7 @@ Converter]]></y:Label.Text>
         <y:RectD X="565" Y="-40" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -855,7 +855,7 @@ Converter]]></y:Label.Text>
         <y:RectD X="699" Y="-50" Width="50" Height="30"/>
       </data>
       <data key="d3">
-        <yjs:ShapeNodeStyle fill="#00000000"/>
+        <yjs:ShapeNodeStyle fill="#00000000" stroke="#2E282A"/>
       </data>
       <port name="p0">
         <data key="d7">
@@ -920,7 +920,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -945,7 +945,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -964,7 +964,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -989,7 +989,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1014,7 +1014,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1039,7 +1039,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1058,7 +1058,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1077,7 +1077,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1096,7 +1096,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1121,7 +1121,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1140,7 +1140,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1165,7 +1165,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1190,7 +1190,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1215,7 +1215,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1234,7 +1234,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>
@@ -1253,7 +1253,7 @@ Converter]]></y:Label.Text>
       <data key="d6">
         <yjs:PolylineEdgeStyle>
           <yjs:PolylineEdgeStyle.stroke>
-            <yjs:Stroke fill="BLACK" thickness="3"/>
+            <yjs:Stroke fill="#2E282A" thickness="3"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
             <yjs:Arrow type="NONE" scale="3" stroke="#FF336699" fill="{y:GraphMLReference 13}"/>

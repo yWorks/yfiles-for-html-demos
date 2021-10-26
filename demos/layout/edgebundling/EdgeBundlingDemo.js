@@ -71,12 +71,13 @@ import { DemoEdgeStyle, DemoNodeStyle, HighlightManager } from './DemoStyles.js'
 import ContextMenu from '../../utils/ContextMenu.js'
 import {
   addClass,
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
   removeClass,
-  showApp
+  showApp,
+  showLoadingIndicator
 } from '../../resources/demo-app.js'
 import BalloonSampleData from './resources/balloon.js'
 import BccCircularSampleData from './resources/bccCircular.js'
@@ -124,15 +125,15 @@ const bundlesMap = new Mapper()
 
 // inits the UI's elements
 const samplesComboBox = document.getElementById('sample-combo-box')
-const previousButton = document.getElementById('previous-sample-button')
-const nextButton = document.getElementById('next-sample-button')
+addNavigationButtons(samplesComboBox)
 const bundlingStrengthSlider = document.getElementById('bundling-strength-slider')
 const bundlingStrengthLabel = document.getElementById('bundling-strength-label')
 
 /**
  * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -144,7 +145,7 @@ function run(licenseData) {
   initializeGraph()
 
   // load the sample graph and run the layout
-  onSampleChanged()
+  await onSampleChanged()
 
   // wire up the UI
   registerCommands()
@@ -169,15 +170,15 @@ function createInputMode() {
   mode.allowCreateBend = false
 
   // when an item is deleted, calculate the new components and apply the layout
-  mode.addDeletedSelectionListener(() => {
+  mode.addDeletedSelectionListener(async () => {
     calculateConnectedComponents()
-    applyLayout()
+    await applyLayout()
   })
 
   // when an edge is created, calculate the new components and apply the layout
-  mode.createEdgeInputMode.addEdgeCreatedListener(() => {
+  mode.createEdgeInputMode.addEdgeCreatedListener(async () => {
     calculateConnectedComponents()
-    applyLayout()
+    await applyLayout()
   })
 
   // when a node is created, calculate the new components
@@ -186,8 +187,8 @@ function createInputMode() {
   })
 
   // when a drag operation has finished, apply a layout
-  mode.moveInputMode.addDragFinishedListener(() => {
-    applyLayout()
+  mode.moveInputMode.addDragFinishedListener(async () => {
+    await applyLayout()
   })
 
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
@@ -326,8 +327,9 @@ function countBundledEdges(edges) {
  * Enables or disables the edge bundling for the given edge.
  * @param {!Array.<IEdge>} edges The edges to update
  * @param {boolean} isBundled True if the edges should be bundled, false otherwise
+ * @returns {!Promise}
  */
-function updateBundlingForSelectedEdges(edges, isBundled) {
+async function updateBundlingForSelectedEdges(edges, isBundled) {
   edges.forEach(edge => {
     bundlesMap.set(edge, isBundled)
     if (!isBundled) {
@@ -342,7 +344,7 @@ function updateBundlingForSelectedEdges(edges, isBundled) {
       bundleDescriptorMap.set(edge, null)
     }
   })
-  applyLayout()
+  await applyLayout()
 }
 
 /**
@@ -377,8 +379,9 @@ function initializeGraph() {
 
 /**
  * Called when the selected item in the graph chooser combo box has changed.
+ * @returns {!Promise}
  */
-function onSampleChanged() {
+async function onSampleChanged() {
   let sampleData
   switch (samplesComboBox.selectedIndex) {
     default:
@@ -403,20 +406,21 @@ function onSampleChanged() {
   // clear the current graph
   graphComponent.graph.clear()
   // set the UI busy
-  setBusy(true)
+  await setBusy(true)
 
   // load the graph
-  loadGraph(graphComponent.graph, sampleData)
-  runLayout()
+  await loadGraph(graphComponent.graph, sampleData)
+  await runLayout()
 }
 
 /**
  * Parses the JSON and creates the graph elements.
  * @param {!IGraph} graph The graph to populate with the items.
  * @param {!GraphData} graphData The JSON data
+ * @returns {!Promise}
  */
-function loadGraph(graph, graphData) {
-  setBusy(true)
+async function loadGraph(graph, graphData) {
+  await setBusy(true)
 
   graph.clear()
 
@@ -503,8 +507,8 @@ async function runLayout() {
   layoutAlgorithm = new CurveFittingLayoutStage({ coreLayout: layoutAlgorithm, maximumError: 1 })
 
   // run the layout
-  await graphComponent.morphLayout(layoutAlgorithm, '0.1s', layoutData)
-  setBusy(false)
+  await graphComponent.morphLayout(layoutAlgorithm, '0.0s', layoutData)
+  await setBusy(false)
   // if the selected algorithm is circular, change the node style to circular sectors
   if (
     selectedIndex === LayoutAlgorithm.SINGLE_CYCLE ||
@@ -708,44 +712,24 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindAction("button[data-command='PreviousFile']", () => {
-    updateUIState()
-    if (!previousButton.disabled) {
-      samplesComboBox.selectedIndex--
-      onSampleChanged()
-    }
-  })
-  bindAction("button[data-command='NextFile']", () => {
-    if (!nextButton.disabled) {
-      samplesComboBox.selectedIndex++
-      onSampleChanged()
-    }
-  })
   bindChangeListener("select[data-command='SampleSelectionChanged']", onSampleChanged)
 
   bundlingStrengthSlider.addEventListener(
     'change',
-    () => {
+    async () => {
       bundlingStrengthLabel.textContent = bundlingStrengthSlider.value.toString()
-      applyLayout()
+      await applyLayout()
     },
     true
   )
 }
 
 /**
- * Updates the elements of the UI's state and checks whether the buttons should be enabled or not.
- */
-function updateUIState() {
-  previousButton.disabled = samplesComboBox.selectedIndex === 0
-  nextButton.disabled = samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
-}
-
-/**
  * Configures the busy indicator and runs the layout.
+ * @returns {!Promise}
  */
-function applyLayout() {
-  setBusy(true)
+async function applyLayout() {
+  await setBusy(true)
   // set some small time out to enable the busy indicator
   setTimeout(() => {
     runLayout()
@@ -755,22 +739,17 @@ function applyLayout() {
 /**
  * Determines whether the UI is busy or not.
  * @param {boolean} isBusy True if the UI is busy, false otherwise
+ * @returns {!Promise}
  */
-function setBusy(isBusy) {
+async function setBusy(isBusy) {
+  graphComponent.inputMode.enabled = !isBusy
   if (isBusy) {
-    // adjust mouse cursor, disable user interaction and add loading indicator
-    graphComponent.inputMode.enabled = false
     addClass(graphComponent.div, 'gc-busy')
-    document.getElementById('loadingIndicator').style.display = 'block'
-    setUIDisabled(true)
   } else {
-    // restore mouse cursor and user interaction and remove loading indicator
-    graphComponent.inputMode.enabled = true
     removeClass(graphComponent.div, 'gc-busy')
-    document.getElementById('loadingIndicator').style.display = 'none'
-    setUIDisabled(false)
-    updateUIState()
   }
+  setUIDisabled(isBusy)
+  await showLoadingIndicator(isBusy)
 }
 
 /**
@@ -779,8 +758,6 @@ function setBusy(isBusy) {
  */
 function setUIDisabled(disabled) {
   samplesComboBox.disabled = disabled
-  previousButton.disabled = disabled
-  nextButton.disabled = disabled
 
   bundlingStrengthSlider.disabled = disabled
   bundlingStrengthLabel.disabled = disabled

@@ -88,6 +88,7 @@ import DemoStyles, {
 import * as RotatableNodes from './RotatableNodes'
 import { RotatableNodesSerializationListener, RotatableNodeStyleDecorator } from './RotatableNodes'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -99,6 +100,13 @@ import loadJson from '../../resources/load-json'
 let graphComponent: GraphComponent
 
 let graphmlSupport: GraphMLSupport
+
+const selectLayout = document.querySelector(
+  "select[data-command='SelectLayout']"
+) as HTMLSelectElement
+const selectSample = document.querySelector(
+  "select[data-command='SelectSample']"
+) as HTMLSelectElement
 
 function run(licenseData: object): void {
   License.value = licenseData
@@ -216,8 +224,8 @@ function initializeGraph(): void {
   graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
     new ShapeNodeStyle({
       shape: ShapeNodeShape.ELLIPSE,
-      fill: 'red',
-      stroke: 'red'
+      fill: '#662b00',
+      stroke: '#662b00'
     })
   )
   // Use a rotatable port model as default
@@ -390,7 +398,7 @@ function createPortCandidateProvider(node: INode) {
 Class.ensure(LayoutExecutor)
 
 /**
- * Loads the graph from json-data.
+ * Loads the graph data.
  */
 function loadGraph(sample: 'sine' | 'circle'): void {
   const graph = graphComponent.graph
@@ -478,6 +486,9 @@ async function applyLayout() {
   // wrap the algorithm in RotatedNodeLayoutStage to make it aware of the node rotations
   const rotatedNodeLayout = new RotatedNodeLayoutStage(layout)
   rotatedNodeLayout.edgeRoutingMode = getRoutingMode()
+
+  selectLayout.disabled = true
+  selectSample.disabled = true
   try {
     // apply the layout
     await graphComponent.morphLayout(rotatedNodeLayout, '700ms')
@@ -490,6 +501,9 @@ async function applyLayout() {
     } else {
       throw error
     }
+  } finally {
+    selectSample.disabled = false
+    selectLayout.disabled = false
   }
 }
 
@@ -498,9 +512,6 @@ async function applyLayout() {
  */
 function getLayoutAlgorithm(): ILayoutAlgorithm {
   const graph = graphComponent.graph
-  const selectLayout = document.querySelector(
-    "select[data-command='SelectLayout']"
-  ) as HTMLSelectElement
   switch (selectLayout.value) {
     default:
     case 'hierarchic':
@@ -538,9 +549,6 @@ function getLayoutAlgorithm(): ILayoutAlgorithm {
  * ports in the center of the node don't need to add a routing step.
  */
 function getRoutingMode(): 'no-routing' | 'shortest-straight-path-to-border' | 'fixed-port' {
-  const selectLayout = document.querySelector(
-    "select[data-command='SelectLayout']"
-  ) as HTMLSelectElement
   const value = selectLayout.value
   if (
     value === 'hierarchic' ||
@@ -597,8 +605,11 @@ function registerCommands(): void {
   })
 
   bindChangeListener("select[data-command='SelectSample']", value => loadGraph(value))
+  addNavigationButtons(selectSample)
 
   bindChangeListener("select[data-command='SelectLayout']", applyLayout)
+  addNavigationButtons(selectLayout)
+
   bindAction("button[data-command='ApplyLayout']", applyLayout)
 }
 

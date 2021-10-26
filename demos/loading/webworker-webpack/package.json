@@ -12,7 +12,7 @@
     "start": "npm run serve"
   },
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.3-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
   },
   "devDependencies": {
     "@babel/core": "7.14.6",

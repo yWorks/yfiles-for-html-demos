@@ -27,21 +27,18 @@
  **
  ***************************************************************************/
 import {
-  Arrow,
   DefaultEdgePathCropper,
-  DefaultLabelStyle,
   GraphComponent,
   GraphEditorInputMode,
   HierarchicNestingPolicy,
   IGraph,
+  INode,
   IPortCandidateProvider,
   License,
   NodeStylePortStyleAdapter,
-  PolylineEdgeStyle,
   PortCandidateValidity,
   Rect,
-  ShapeNodeStyle,
-  INode
+  ShapeNodeStyle
 } from 'yfiles'
 
 import OrangePortCandidateProvider from './OrangePortCandidateProvider'
@@ -49,8 +46,13 @@ import GreenPortCandidateProvider from './GreenPortCandidateProvider'
 import BluePortCandidateProvider from './BluePortCandidateProvider'
 import RedPortCandidateProvider from './RedPortCandidateProvider'
 import { checkLicense, showApp } from '../../resources/demo-app'
-import { DemoNodeStyle } from '../../resources/demo-styles'
 import loadJson from '../../resources/load-json'
+import type { ColorSetName } from '../../resources/basic-demo-styles'
+import {
+  createDemoNodeLabelStyle,
+  DemoNodeStyle,
+  initDemoStyles
+} from '../../resources/demo-styles'
 
 function run(licenseData: object): void {
   License.value = licenseData
@@ -65,17 +67,6 @@ function run(licenseData: object): void {
       shape: 'ellipse'
     })
   )
-
-  // Set the default style for edges
-  // Use a black Pen with thickness 2.
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '1px black',
-    targetArrow: new Arrow({
-      type: 'default',
-      stroke: '1px black',
-      fill: 'black'
-    })
-  })
 
   // Create a default editor input mode and configure it
   const graphEditorInputMode = new GraphEditorInputMode({
@@ -127,9 +118,9 @@ function registerPortCandidateProvider(graph: IGraph): void {
     // Check if it is a known tag and choose the respective implementation
     if (typeof nodeTag !== 'string') {
       return null
-    } else if (nodeTag === 'firebrick') {
+    } else if (nodeTag === 'red') {
       return new RedPortCandidateProvider(node)
-    } else if (nodeTag === 'royalblue') {
+    } else if (nodeTag === 'blue') {
       return new BluePortCandidateProvider(node)
     } else if (nodeTag === 'green') {
       return new GreenPortCandidateProvider(node)
@@ -148,15 +139,15 @@ function registerPortCandidateProvider(graph: IGraph): void {
 function createSampleGraph(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
 
-  createNode(graph, 100, 100, 80, 30, 'firebrick', 'No Edge')
-  createNode(graph, 350, 200, 80, 30, 'firebrick', 'No Edge')
-  createNode(graph, 350, 100, 80, 30, 'green', 'Green Only')
-  createNode(graph, 100, 200, 80, 30, 'green', 'Green Only')
+  createNode(graph, 100, 100, 80, 30, 'demo-red', 'red', 'No Edge')
+  createNode(graph, 350, 200, 80, 30, 'demo-red', 'red', 'No Edge')
+  createNode(graph, 350, 100, 80, 30, 'demo-green', 'green', 'Green Only')
+  createNode(graph, 100, 200, 80, 30, 'demo-green', 'green', 'Green Only')
 
-  const blue1 = createNode(graph, 100, 300, 80, 30, 'royalblue', 'One   Port')
+  const blue1 = createNode(graph, 100, 300, 80, 30, 'demo-lightblue', 'blue', 'One   Port')
   graph.addPortAt(blue1, blue1.layout.center)
 
-  const blue2 = createNode(graph, 350, 300, 100, 100, 'royalblue', 'Many Ports')
+  const blue2 = createNode(graph, 350, 300, 100, 100, 'demo-lightblue', 'blue', 'Many Ports')
   const portCandidateProvider = IPortCandidateProvider.fromShapeGeometry(blue2, 0, 0.25, 0.5, 0.75)
   const candidates = portCandidateProvider.getAllSourcePortCandidates(
     graphComponent.inputModeContext
@@ -166,10 +157,7 @@ function createSampleGraph(graphComponent: GraphComponent): void {
     .forEach(portCandidate => portCandidate.createPort(graphComponent.inputModeContext))
 
   // The orange node
-  const nodeStyle = new DemoNodeStyle()
-  nodeStyle.cssClass = 'orange'
-  const orange = graph.createNode(new Rect(100, 400, 100, 100), nodeStyle, 'orange')
-  graph.addLabel(orange, 'Dynamic Ports')
+  createNode(graph, 100, 400, 100, 100, 'demo-orange', 'orange', 'Dynamic Ports')
 
   // clear undo after initial graph loading
   graph.undoEngine!.clear()
@@ -183,6 +171,7 @@ function createSampleGraph(graphComponent: GraphComponent): void {
  * @param w The node's width
  * @param h The node's height
  * @param cssClass The given css class
+ * @param tag The tag to identify the port candidate provider
  * @param labelText The nodes label's text
  */
 function createNode(
@@ -191,21 +180,19 @@ function createNode(
   y: number,
   w: number,
   h: number,
-  cssClass: string,
+  cssClass: ColorSetName,
+  tag: string,
   labelText: string
 ): INode {
-  const whiteTextLabelStyle = new DefaultLabelStyle({
-    textFill: 'white'
+  const node = graph.createNode({
+    layout: new Rect(x, y, w, h),
+    style: new DemoNodeStyle(cssClass),
+    tag: tag
   })
-
-  const nodeStyle = new DemoNodeStyle()
-  nodeStyle.cssClass = cssClass
-
-  const node = graph.createNode(new Rect(x, y, w, h), nodeStyle, cssClass)
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: whiteTextLabelStyle
+    style: createDemoNodeLabelStyle(cssClass)
   })
   return node
 }

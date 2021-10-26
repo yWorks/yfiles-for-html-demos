@@ -30,6 +30,7 @@ import loadJson from '../../../resources/load-json.js'
 import { GraphComponent, GraphViewerInputMode, ICommand, License } from 'yfiles'
 import { bindAction, bindCommand, checkLicense, showApp } from '../../../resources/demo-app.js'
 import { createEdge, createNode } from './ItemFactory.js'
+import { initBasicDemoStyles } from '../../../resources/basic-demo-styles'
 
 function run(licenseData) {
   License.value = licenseData
@@ -38,6 +39,8 @@ function run(licenseData) {
   graphComponent.inputMode = new GraphViewerInputMode()
 
   graphComponent.fitGraphBounds()
+
+  initBasicDemoStyles(graphComponent.graph)
 
   registerCommands(graphComponent)
 

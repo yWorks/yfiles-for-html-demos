@@ -78,6 +78,12 @@ import { UMLClassModel } from './UMLClassModel'
 // additional spacing after certain elements
 const VERTICAL_SPACING = 2
 
+// additional spacing to account for rounded corners
+const ROUNDED_CORNER = 10
+
+// additional spacing for the text element background
+const BORDER_SPACING = 1
+
 // empty space before the text elements
 const LEFT_SPACING = 25
 
@@ -87,10 +93,11 @@ const LEFT_SPACING = 25
 export class UMLNodeStyle extends NodeStyleBase {
   private $fill: Fill
   private $highlightFill: Fill
+  private $backgroundFill: Fill
   private $model: UMLClassModel
 
   private dummyNode: SimpleNode = null!
-  private backgroundStyle: DefaultLabelStyle = null!
+  private backgroundLabelStyle: DefaultLabelStyle = null!
   private stretchLabelModel: InteriorStretchLabelModel = null!
   private categoryLabel: SimpleLabel = null!
   private elementLabel: SimpleLabel = null!
@@ -109,6 +116,7 @@ export class UMLNodeStyle extends NodeStyleBase {
     this.$model = model || new UMLClassModel()
     this.$fill = fill || new SolidColorFill(0x60, 0x7d, 0x8b)
     this.$highlightFill = highlightFill || new SolidColorFill(0xa3, 0xf1, 0xbb)
+    this.$backgroundFill = new SolidColorFill('white')
     this.initializeStyles()
   }
 
@@ -172,8 +180,6 @@ export class UMLNodeStyle extends NodeStyleBase {
 
     // add the class label
     this.stretchLabelModel.insets = new Insets(0, yOffset, 0, 0)
-    this.classLabel.text = ''
-    g.appendChild(newSvgElement(getCreator(this.classLabel, this.backgroundStyle), ctx))
     this.classLabel.text = data.className
     g.appendChild(newSvgElement(getCreator(this.classLabel), ctx))
 
@@ -198,11 +204,21 @@ export class UMLNodeStyle extends NodeStyleBase {
       selectedIndex = data.selectedIndex
     }
 
+    // a separator
+    const titleSectionOffset = createSvgRect(
+      BORDER_SPACING,
+      yOffset,
+      node.layout.width - 2 * BORDER_SPACING,
+      VERTICAL_SPACING,
+      getSvgColor(this.$backgroundFill)
+    )
+    g.appendChild(titleSectionOffset)
+
     yOffset += VERTICAL_SPACING
     this.stretchLabelModel.insets = new Insets(0, yOffset, 0, 0)
     this.categoryLabel.text = ''
     const attributesHeaderBackground = newSvgElement(
-      getCreator(this.categoryLabel, this.backgroundStyle),
+      getCreator(this.categoryLabel, this.backgroundLabelStyle),
       ctx
     )
     attributesHeaderBackground.setAttribute('cursor', 'pointer')
@@ -215,6 +231,16 @@ export class UMLNodeStyle extends NodeStyleBase {
 
     yOffset += this.categoryLabel.preferredSize.height
     const attributesHeaderOffset = yOffset
+
+    // draw a background for the attribute list
+    const attributeBackground = createSvgRect(
+      BORDER_SPACING,
+      yOffset,
+      node.layout.width - 2 * BORDER_SPACING,
+      data.attributesOpen ? this.elementLabel.preferredSize.height * data.attributes.length : 0,
+      getSvgColor(this.$backgroundFill)
+    )
+    g.appendChild(attributeBackground)
 
     let counter = 0
     let hasLocalSelection = false
@@ -253,7 +279,7 @@ export class UMLNodeStyle extends NodeStyleBase {
     this.stretchLabelModel.insets = new Insets(0, yOffset, 0, 0)
     this.categoryLabel.text = ''
     const operationsHeaderBackground = newSvgElement(
-      getCreator(this.categoryLabel, this.backgroundStyle),
+      getCreator(this.categoryLabel, this.backgroundLabelStyle),
       ctx
     )
     operationsHeaderBackground.setAttribute('cursor', 'pointer')
@@ -265,6 +291,17 @@ export class UMLNodeStyle extends NodeStyleBase {
     g.appendChild(operationsTextElement)
     yOffset += this.categoryLabel.preferredSize.height
     const operationsHeaderOffset = yOffset
+
+    // draw a background for the attribute list
+    const operationBackground = createSvgRect(
+      BORDER_SPACING,
+      yOffset,
+      node.layout.width - 2 * BORDER_SPACING,
+      data.operationsOpen ? this.elementLabel.preferredSize.height * data.operations.length : 0,
+      getSvgColor(this.$backgroundFill)
+    )
+    getSvgColor(this.$highlightFill)
+    g.appendChild(operationBackground)
 
     hasLocalSelection = false
     if (data.operationsOpen) {
@@ -295,6 +332,16 @@ export class UMLNodeStyle extends NodeStyleBase {
         hasLocalSelection
       )
     }
+
+    // a separator if the footer follows the operation header immediately
+    const footerSectionOffset = createSvgRect(
+      BORDER_SPACING,
+      yOffset,
+      node.layout.width - 2 * BORDER_SPACING,
+      !data.operationsOpen || data.operations.length == 0 ? VERTICAL_SPACING : 0,
+      getSvgColor(this.$backgroundFill)
+    )
+    g.appendChild(footerSectionOffset)
 
     SvgVisual.setTranslate(g, layout.x, layout.y)
     ;(g as any)['data-renderDataCache'] = {
@@ -358,7 +405,8 @@ export class UMLNodeStyle extends NodeStyleBase {
       this.classLabel.preferredSize.height +
       VERTICAL_SPACING + // title section
       this.categoryLabel.preferredSize.height * 2 + // both section titles
-      this.elementLabel.preferredSize.height * entries // visible entries
+      this.elementLabel.preferredSize.height * entries + // visible entries
+      ROUNDED_CORNER // offset to make space for the lower curvature
 
     // determine width
     let width = 125
@@ -618,6 +666,7 @@ export class UMLNodeStyle extends NodeStyleBase {
         data.selectedIndex <= data.attributes.length - 1
       ) {
         this.removeLabel(1, geim, node)
+        this.fitHeight(node, geim)
       } else {
         if (data.selectedIndex !== -1) {
           data.selectedIndex = -1
@@ -642,6 +691,7 @@ export class UMLNodeStyle extends NodeStyleBase {
         data.selectedIndex <= data.attributes.length + data.operations.length - 1
       ) {
         this.removeLabel(2, geim, node)
+        this.fitHeight(node, geim)
       } else {
         if (data.selectedIndex !== -1) {
           data.selectedIndex = -1
@@ -863,9 +913,13 @@ export class UMLNodeStyle extends NodeStyleBase {
       thickness: 2
     })
     stroke.freeze()
-    this.dummyNode.style = new ShapeNodeStyle({ stroke })
+    this.dummyNode.style = new ShapeNodeStyle({
+      stroke: stroke,
+      shape: 'round-rectangle',
+      fill: this.$fill
+    })
 
-    this.backgroundStyle = new DefaultLabelStyle({
+    this.backgroundLabelStyle = new DefaultLabelStyle({
       backgroundFill: this.$fill
     })
 
@@ -964,6 +1018,27 @@ function getFont(label: SimpleLabel): Font {
 
 function setBackgroundFill(label: SimpleLabel, fill: Fill | null): void {
   ;(label.style as DefaultLabelStyle).backgroundFill = fill
+}
+function createSvgRect(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  color: string
+): SVGRectElement {
+  const svgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+  svgRect.setAttribute('fill', color)
+  svgRect.setAttribute('x', String(x))
+  svgRect.setAttribute('y', String(y))
+  svgRect.setAttribute('width', String(width))
+  svgRect.setAttribute('height', String(height))
+  return svgRect
+}
+
+function getSvgColor(fill: Fill): string {
+  const color = (fill as SolidColorFill).color
+  const svgColor = `rgb(${color.r},${color.g},${color.b})`
+  return svgColor
 }
 
 /**

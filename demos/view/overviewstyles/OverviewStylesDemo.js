@@ -43,6 +43,7 @@ import {
 } from 'yfiles'
 import OverviewCanvasVisualCreator from './OverviewCanvasVisualCreator.js'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -51,7 +52,7 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-import { webGlSupported } from '../../utils/Workarounds.js'
+import { isWebGlSupported } from '../../utils/Workarounds.js'
 
 /**
  * The GraphComponent
@@ -71,6 +72,8 @@ let overviewComponent
  ** @type {GraphComponent}
  */
 let overviewGraphComponent
+
+const overViewStyleBox = document.getElementById('graphChooserBox')
 
 /**
  * Runs the demo.
@@ -107,9 +110,7 @@ function run(licenseData) {
 
   registerCommands()
 
-  const overViewStyleBox = document.getElementById('graphChooserBox')
-
-  if (!webGlSupported) {
+  if (!isWebGlSupported()) {
     // remove WebGL option if not supported by client
     document.getElementById('no-webgl-support').style.display = 'block'
     const webGLOption = overViewStyleBox.querySelector(
@@ -213,6 +214,7 @@ function registerCommands() {
   bindChangeListener("select[data-command='SelectedStyle']", selectedValue => {
     overviewStyling(selectedValue)
   })
+  addNavigationButtons(overViewStyleBox)
 }
 
 /**
@@ -253,11 +255,11 @@ function initializeConverters() {
     // converter function that return a color according to the employee's status
     colorConverter: value =>
       ({
-        busy: '#E7527C',
-        present: '#55B757',
-        travel: '#9945E9',
-        unavailable: '#8D8F91'
-      }[value] || '#8D8F91')
+        busy: '#AB2346',
+        present: '#76B041',
+        travel: '#A367DC',
+        unavailable: '#C1C1C1'
+      }[value] || '#C1C1C1')
   }
 }
 

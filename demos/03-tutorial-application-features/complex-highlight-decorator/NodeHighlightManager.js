@@ -64,11 +64,11 @@ export class NodeHighlightManager extends HighlightIndicatorManager {
       nodeStyle: new ShapeNodeStyle({
         // the tag of each node contains information about the appropriate shape for the highlight
         shape: NodeHighlightManager.getShape(node.tag),
-        stroke: '3px rgb(104, 176, 227)',
+        stroke: '3px #621B00',
         fill: 'transparent'
       }),
       // the margin from the actual node to its highlight visualization
-      margins: 3
+      margins: 4
     })
   }
 

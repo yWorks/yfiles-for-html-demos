@@ -56,7 +56,7 @@ export default class CityLabelStyle extends LabelStyleBase {
    */
   constructor(innerLabelStyle) {
     super()
-    this.connectorEdgeStyle = new PolylineEdgeStyle()
+    this.connectorEdgeStyle = new PolylineEdgeStyle({ stroke: '#662b00' })
     this.ownerPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
     this.labelPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
     // The style that will be use for the label rendering

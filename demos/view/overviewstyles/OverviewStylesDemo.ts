@@ -43,6 +43,7 @@ import {
 } from 'yfiles'
 import OverviewCanvasVisualCreator from './OverviewCanvasVisualCreator'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -51,7 +52,7 @@ import {
   showApp
 } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
-import { webGlSupported } from '../../utils/Workarounds'
+import { isWebGlSupported } from '../../utils/Workarounds'
 
 /**
  * The GraphComponent
@@ -68,6 +69,8 @@ let overviewComponent: GraphOverviewComponent
  * styles as the graphComponent.
  **/
 let overviewGraphComponent: GraphComponent
+
+const overViewStyleBox = document.getElementById('graphChooserBox') as HTMLSelectElement
 
 /**
  * Runs the demo.
@@ -103,9 +106,7 @@ function run(licenseData: object): void {
 
   registerCommands()
 
-  const overViewStyleBox = document.getElementById('graphChooserBox') as HTMLSelectElement
-
-  if (!webGlSupported) {
+  if (!isWebGlSupported()) {
     // remove WebGL option if not supported by client
     ;(document.getElementById('no-webgl-support') as HTMLElement).style.display = 'block'
     const webGLOption = overViewStyleBox.querySelector(
@@ -209,6 +210,7 @@ function registerCommands(): void {
   bindChangeListener("select[data-command='SelectedStyle']", selectedValue => {
     overviewStyling(selectedValue)
   })
+  addNavigationButtons(overViewStyleBox)
 }
 
 /**
@@ -250,12 +252,12 @@ function initializeConverters(): void {
     colorConverter: (value: string): string =>
       ((
         {
-          busy: '#E7527C',
-          present: '#55B757',
-          travel: '#9945E9',
-          unavailable: '#8D8F91'
+          busy: '#AB2346',
+          present: '#76B041',
+          travel: '#A367DC',
+          unavailable: '#C1C1C1'
         } as Record<string, string>
-      )[value] || '#8D8F91')
+      )[value] || '#C1C1C1')
   }
 }
 

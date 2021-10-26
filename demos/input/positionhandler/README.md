@@ -1,5 +1,7 @@
 # Position Handler Demo
 
+<img src="../../resources/image/position-handler.png" alt="demo-thumbnail" height="320"/>
+
 [You can also run this demo online](https://live.yworks.com/demos/input/positionhandler/index.html).
 
 This demo shows how to customize and restrict the movement behavior of nodes.

@@ -26,40 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
-import React, { Component } from 'react'
+import * as React from 'react'
+import './ItemElement.css'
 import { EdgeData, NodeData } from '../App'
 
-interface ItemElementProps {
-  item: NodeData | EdgeData
+function formatItem(item: NodeData | EdgeData) {
+  return JSON.stringify(item)
+    .replace(/([{,:])/g, '$1 ')
+    .replace(/(})/g, ' $1')
 }
 
-interface ItemElementState {
-  backgroundColor: string
-}
-
-export default class ItemElement extends Component<ItemElementProps, ItemElementState> {
-  constructor(props: ItemElementProps) {
-    super(props)
-    this.state = { backgroundColor: '#00d7ff' }
-  }
-
-  componentDidMount(): void {
-    this.setState(() => ({ backgroundColor: 'transparent' }))
-  }
-
-  render(): JSX.Element {
-    const style = {
-      backgroundColor: this.state.backgroundColor,
-      transition: 'background-color 1s ease-out'
-    }
-    const codeStyle = {
-      margin: 0
-    }
-    return (
-      <div style={style}>
-        <pre style={codeStyle}>{JSON.stringify(this.props.item)}</pre>
-      </div>
-    )
-  }
+export default function ItemElement({ item }: { item: NodeData | EdgeData }) {
+  return (
+    <div className="item-element">
+      <pre style={{ margin: 0 }}>{formatItem(item)}</pre>
+    </div>
+  )
 }

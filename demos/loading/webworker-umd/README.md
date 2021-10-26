@@ -1,6 +1,6 @@
 # Web Worker UMD Demo
 
-<img src="../../resources/image/webworker.png" alt="demo-thumbnail" height="320"/>
+<img src="../../resources/image/webworkerumd.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/loading/webworker-umd/index.html).
 
@@ -15,3 +15,4 @@ The graph, layout, and layout data are configured in the main thread and transfe
 ## Things to Try
 
 - Modify the graph structure by adding/removing nodes and edges, and re-run the web worker layout.
+- Observe the loading animation which continues while the layout algorithm is working. Calculating the layout in a Web Worker keeps the UI responsive.

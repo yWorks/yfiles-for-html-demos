@@ -48,6 +48,9 @@ require([
 ], (/** @param {yfiles} yfiles */ yfiles) => {
   const {
     License,
+    CollapsibleNodeStyleDecorator,
+    Color,
+    DefaultLabelStyle,
     GraphComponent,
     GraphEditorInputMode,
     WaitInputMode,
@@ -56,7 +59,8 @@ require([
     DefaultFolderNodeConverter,
     ShapeNodeStyle,
     PolylineEdgeStyle,
-    IArrow,
+    Arrow,
+    ArrowType,
     FreeEdgeLabelModel,
     InteriorLabelModel,
     LayoutExecutorAsync,
@@ -67,6 +71,7 @@ require([
 
   const layoutButton = document.getElementById('layoutBtn')
 
+  let executor = null
   const worker = new Worker('./WorkerLayout.js')
   worker.onmessage = e => {
     if (e.data === 'ready') {
@@ -78,7 +83,9 @@ require([
     License.value = licenseData
     graphComponent = new GraphComponent('graphComponent')
     // initialize styles as well as graph
-    graphComponent.inputMode = new GraphEditorInputMode()
+    graphComponent.inputMode = new GraphEditorInputMode({
+      allowGroupingOperations: true
+    })
     initializeGraph()
     createSampleGraph(graphComponent.graph)
     graphComponent.fitGraphBounds()
@@ -107,7 +114,7 @@ require([
     }
 
     // create an asynchronous layout executor that calculates a layout on the worker
-    const executor = new LayoutExecutorAsync({
+    executor = new LayoutExecutorAsync({
       messageHandler: webWorkerMessageHandler,
       graphComponent,
       layoutDescriptor,
@@ -125,6 +132,13 @@ require([
     }
 
     hideLoading()
+  }
+
+  /**
+   * Cancels the Web Worker and the layout executor. The layout is stopped and the graph stays the same.
+   */
+  async function cancelWebWorkerLayout() {
+    await executor.cancel()
   }
 
   /**
@@ -217,6 +231,18 @@ require([
       .addEventListener('click', () => {
         runWebWorkerLayout(false)
       })
+
+    function bindAction(selector, action) {
+      const element = document.querySelector(selector)
+      if (!element) {
+        return
+      }
+      element.addEventListener('click', e => {
+        action(e)
+      })
+    }
+
+    bindAction("div[data-command='cancelLayout']", () => cancelWebWorkerLayout())
   }
 
   /**
@@ -240,18 +266,35 @@ require([
 
     // Configure default styling etc.
     graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
-      fill: 'orange',
-      stroke: 'orange',
-      shape: 'rectangle'
+      fill: '#ff6c00',
+      stroke: '1.5px #662b00',
+      shape: 'round-rectangle'
     })
+    graphComponent.graph.groupNodeDefaults.style = new CollapsibleNodeStyleDecorator(
+      new ShapeNodeStyle({
+        fill: 'white',
+        stroke: '2px #0b7189'
+      })
+    )
     graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
-      targetArrow: IArrow.DEFAULT
+      stroke: '1.5px #662b00',
+      targetArrow: new Arrow({ type: ArrowType.TRIANGLE, color: Color.from('#662b00') })
     })
 
     // set default label styles
     graphComponent.graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
     graphComponent.graph.edgeDefaults.labels.layoutParameter =
       FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+    graphComponent.graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+      textFill: '#662b00',
+      backgroundFill: '#FFC398',
+      insets: [0, 2]
+    })
+    graphComponent.graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+      textFill: '#662b00',
+      backgroundFill: '#c1a998',
+      insets: [0, 2]
+    })
 
     // Add listeners for item created events to add a tag to each new item
     const masterGraph = manager.masterGraph

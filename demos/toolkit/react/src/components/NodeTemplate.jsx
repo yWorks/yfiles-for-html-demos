@@ -26,32 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
-export default class NodeTemplate extends Component {
-  render() {
-    return (
-      <g>
-        <rect
-          style={{ fill: '#00d7ff' }}
-          x={0}
-          y={0}
-          rx={10}
-          ry={10}
-          width={this.props.width}
-          height={this.props.height}
-        />
-        <text
-          x={this.props.width / 2}
-          y={this.props.height / 2}
-          style={{ fill: '#ffffff', textAnchor: 'middle', dominantBaseline: 'middle' }}
-        >
-          {this.props.tag.name}
-        </text>
-      </g>
-    )
-  }
+function NodeTemplate({ width, height, tag }) {
+  return (
+    <g>
+      <rect
+        style={{ fill: '#AA4586', stroke: '#66485B', strokeWidth: 1.5 }}
+        x={0}
+        y={0}
+        rx={10}
+        ry={10}
+        width={width}
+        height={height}
+      />
+      <text
+        x={width / 2}
+        y={height / 2}
+        style={{ fill: '#DCB4CE', textAnchor: 'middle', dominantBaseline: 'middle' }}
+      >
+        {tag.name}
+      </text>
+    </g>
+  )
 }
 
 NodeTemplate.propTypes = {
@@ -59,3 +57,5 @@ NodeTemplate.propTypes = {
   height: PropTypes.number,
   tag: PropTypes.object
 }
+
+export default NodeTemplate

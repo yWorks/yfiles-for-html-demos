@@ -48,12 +48,17 @@ import {
 import WebglBlobVisual from './WebglBlobVisual'
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
-import { webGlSupported } from '../../utils/Workarounds'
+import { isWebGlSupported } from '../../utils/Workarounds'
 
 let graphComponent: GraphComponent
 
+const blueColor = Color.from('#242265')
+const redColor = Color.from('#e01a4f')
+const greyColor = Color.from('#767586')
+const purpleColor = Color.from('#aa4586')
+
 function run(licenseData: object): void {
-  if (!webGlSupported) {
+  if (!isWebGlSupported()) {
     ;(document.getElementById('no-webgl-support') as HTMLDivElement).removeAttribute('style')
     showApp(null)
     return
@@ -70,27 +75,27 @@ function run(licenseData: object): void {
 
   createSampleGraph()
 
-  // add a blob visualization for the red group
+  // add a blob visualization for the reddish group
   graphComponent.backgroundGroup.addChild(
     new BlobBackground(
       (n: INode): boolean => {
         const color = ((n.style as ShapeNodeStyle).fill! as SolidColorFill).color
-        return color.g < color.r && color.r >= color.b
+        return color == redColor || color == purpleColor
       },
-      new Color(255, 128, 128, 196),
+      new Color(224, 113, 113, 196),
       120
     ),
     ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
   )
 
-  // add a blob visualization for the blue group
+  // add a blob visualization for the bluish group
   graphComponent.backgroundGroup.addChild(
     new BlobBackground(
       (n: INode): boolean => {
         const color = ((n.style as ShapeNodeStyle).fill! as SolidColorFill).color
-        return color.g < color.b && color.b >= color.r
+        return color == blueColor || color == purpleColor
       },
-      new Color(128, 128, 255, 196),
+      new Color(144, 142, 208, 196),
       150
     ),
     ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
@@ -103,10 +108,26 @@ function run(licenseData: object): void {
   showApp(graphComponent)
 }
 
-const redStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: 'red', stroke: null })
-const blueStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: 'blue', stroke: null })
-const purpleStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: 'purple', stroke: null })
-const greyStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: 'gray', stroke: null })
+const redStyle = new ShapeNodeStyle({
+  shape: 'ellipse',
+  fill: new SolidColorFill(redColor),
+  stroke: null
+})
+const blueStyle = new ShapeNodeStyle({
+  shape: 'ellipse',
+  fill: new SolidColorFill(blueColor),
+  stroke: null
+})
+const purpleStyle = new ShapeNodeStyle({
+  shape: 'ellipse',
+  fill: new SolidColorFill(purpleColor),
+  stroke: null
+})
+const greyStyle = new ShapeNodeStyle({
+  shape: 'ellipse',
+  fill: new SolidColorFill(greyColor),
+  stroke: null
+})
 
 /**
  * Creates the initial sample graph.
@@ -115,7 +136,10 @@ function createSampleGraph(): void {
   const graph = graphComponent.graph
 
   graph.nodeDefaults.size = new Size(50, 50)
-  graph.nodeDefaults.style = new ShapeNodeStyle({ shape: 'ellipse', fill: 'red' })
+  graph.nodeDefaults.style = new ShapeNodeStyle({
+    shape: 'ellipse',
+    fill: new SolidColorFill(redColor)
+  })
 
   graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.hideImplementation()
 

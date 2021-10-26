@@ -44,16 +44,17 @@
       display: none;
     }
     .node {
-      stroke: #00d8ff;
-      stroke-width: 0;
-      fill: darkorange;
+      stroke: #662b00;
+      stroke-width: 1.5;
+      fill: #FF6C00;
       transition: fill .2s ease-in-out, stroke .2s, stroke-width .2s;
     }
     .moving {
-      fill: #00d8ff;
+      fill: #0B7189;
+      stroke: #2C4B52;
     }
     .hovering {
-      stroke-width: 3px;
+      stroke-width: 3.5px;
     }
   </style>
 </head>
@@ -72,7 +73,7 @@
       <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a> will try to create free space by pushing away the other elements of the graph so that
       the dragged subtree is relocated to another parent.
     </p>
-    <h2>Things to Try:</h2>
+    <h2>Things to Try</h2>
     <p>
       Drag a node with its subtree to another location and see how the graph tries to accommodate it. The node that is
       highlighted will be the new parent of the moved subtree.

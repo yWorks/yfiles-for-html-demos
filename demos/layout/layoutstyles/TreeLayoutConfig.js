@@ -172,14 +172,6 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       layout.integratedEdgeLabeling = true
     }
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-
     return layout
   },
 
@@ -192,7 +184,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     }
 
     const graph = graphComponent.graph
-    return new TreeLayoutData({
+    const layoutData = new TreeLayoutData({
       gridNodePlacerRowIndices: node => {
         const predecessors = graph.predecessors(node)
         const parent = predecessors.firstOrDefault()
@@ -216,6 +208,16 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         return node.tag ? node.tag.assistant : null
       }
     })
+
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
   },
 
   createLayoutDataHorizontalVertical: function (graphComponent) {

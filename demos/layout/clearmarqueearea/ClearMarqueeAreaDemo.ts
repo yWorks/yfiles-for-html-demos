@@ -53,7 +53,7 @@ import {
 } from 'yfiles'
 
 import {
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
@@ -79,7 +79,10 @@ function run(licenseData: object) {
   graphComponent = new GraphComponent('#graphComponent')
 
   initializeInputModes()
-  initializeGraph()
+  initDemoStyles(graphComponent.graph)
+  loadGraph('hierarchic')
+
+  graphComponent.graph.undoEngine!.clear()
 
   // bind the buttons to their commands
   registerCommands()
@@ -130,8 +133,9 @@ function initializeInputModes(): void {
 class ClearRectTemplate extends BaseClass(IVisualTemplate) {
   createVisual(context: IRenderContext, bounds: Rect, dataObject: any): SvgVisual | null {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    rect.setAttribute('fill', 'rgba(255,0,0,0.67)')
-    rect.setAttribute('stroke', 'darkred')
+    rect.setAttribute('fill', 'rgba(0,187,255,0.65)')
+    rect.setAttribute('stroke', 'rgba(77,131,153,0.65)')
+    rect.setAttribute('stroke-width', '1.5')
     ClearRectTemplate.setBounds(rect, bounds)
     return new SvgVisual(rect)
   }
@@ -205,15 +209,6 @@ function getHitGroupNode(context: IInputModeContext, location: Point): INode | n
 }
 
 /**
- * Initializes styles and loads a sample graph.
- */
-function initializeGraph(): void {
-  initDemoStyles(graphComponent.graph)
-  loadGraph('hierarchic')
-  graphComponent.graph.undoEngine!.clear()
-}
-
-/**
  * Loads the sample graph associated with the given name
  */
 function loadGraph(sampleName: string): void {
@@ -229,8 +224,7 @@ function loadGraph(sampleName: string): void {
     data: data.nodes,
     id: 'id',
     parentId: 'parentId',
-    layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
-    labels: ['label']
+    layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   if (data.groups) {
     const nodesSource = builder.createGroupNodesSource({
@@ -274,29 +268,12 @@ function registerCommands(): void {
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 
-  bindAction("button[data-command='PreviousSample']", () => {
-    const selectedIndex = sampleGraphs.selectedIndex
-    if (selectedIndex > 0) {
-      sampleGraphs.selectedIndex = selectedIndex - 1
-      loadGraph(sampleGraphs.options[sampleGraphs.selectedIndex].value)
-      updateButtons(sampleGraphs)
-    }
-  })
-  bindAction("button[data-command='NextSample']", () => {
-    const selectedIndex = sampleGraphs.selectedIndex
-    if (selectedIndex < sampleGraphs.options.length - 1) {
-      sampleGraphs.selectedIndex = selectedIndex + 1
-      loadGraph(sampleGraphs.options[sampleGraphs.selectedIndex].value)
-      updateButtons(sampleGraphs)
-    }
-  })
-
   const sampleGraphs = document.getElementById('sample-graphs') as HTMLSelectElement
+  addNavigationButtons(sampleGraphs)
   bindChangeListener("select[data-command='SelectSampleGraph']", () => {
     const selectedIndex = sampleGraphs.selectedIndex
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
-    updateButtons(sampleGraphs)
   })
 
   const assignmentStrategies = document.getElementById(
@@ -338,19 +315,6 @@ function registerCommands(): void {
         break
     }
   })
-}
-
-/**
- * Updates the enabled state of the next- and previous-sample-button according to which sample is currently used.
- */
-function updateButtons(sampleGraphs: HTMLSelectElement): void {
-  const selectedIndex = sampleGraphs.selectedIndex
-  const previousSample = document.getElementById('previous-sample-button') as HTMLButtonElement
-  const nextSample = document.getElementById('next-sample-button') as HTMLButtonElement
-  const maxReached = selectedIndex === sampleGraphs.options.length - 1
-  const minReached = selectedIndex === 0
-  nextSample.disabled = maxReached
-  previousSample.disabled = minReached
 }
 
 // start demo

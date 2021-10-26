@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
-import React, { Component } from 'react'
+import * as React from 'react'
+import { Component, createRef, RefObject } from 'react'
 import './GraphOverviewComponent.css'
 import { GraphComponent, GraphOverviewComponent } from 'yfiles'
 
@@ -36,28 +36,25 @@ interface ReactGraphOverviewComponentProps {
 }
 
 export default class ReactGraphOverviewComponent extends Component<ReactGraphOverviewComponentProps> {
-  private readonly div: React.RefObject<HTMLDivElement>
+  private readonly div: RefObject<HTMLDivElement>
   private readonly graphComponent: GraphComponent
   private graphOverviewComponent: GraphOverviewComponent | null = null
 
   constructor(props: ReactGraphOverviewComponentProps) {
     super(props)
-    this.div = React.createRef<HTMLDivElement>()
+    this.div = createRef<HTMLDivElement>()
     this.graphComponent = props.graphComponent
   }
 
   async componentDidMount(): Promise<void> {
-    this.graphOverviewComponent = new GraphOverviewComponent(
-      '#graph-overview-component',
-      this.graphComponent
-    )
+    this.graphOverviewComponent = new GraphOverviewComponent(this.div.current!, this.graphComponent)
   }
 
   render() {
     return (
       <div className="overview-container">
         <div className="overview-title">Overview</div>
-        <div id="graph-overview-component" ref={this.div} />
+        <div className="graph-overview-component" ref={this.div} />
       </div>
     )
   }

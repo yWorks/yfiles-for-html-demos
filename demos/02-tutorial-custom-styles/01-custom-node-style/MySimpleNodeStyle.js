@@ -28,12 +28,12 @@
  ***************************************************************************/
 import {
   GeneralPath,
+  INode,
   INodeStyle,
+  IRenderContext,
   MutablePoint,
   NodeStyleBase,
-  SvgVisual,
-  IRenderContext,
-  INode
+  SvgVisual
 } from 'yfiles'
 
 /**

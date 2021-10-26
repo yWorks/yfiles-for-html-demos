@@ -735,11 +735,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
    */
   public getAggregatedItems<T extends IModelItem>(item: T): IListEnumerable<T> {
     if (item instanceof AggregationNode) {
-      return new ListEnumerable<T>((item.aggregatedNodes as unknown) as IList<T>)
+      return new ListEnumerable<T>(item.aggregatedNodes as unknown as IList<T>)
     }
 
     if (item instanceof AggregationEdge) {
-      return new ListEnumerable<T>((item.aggregatedEdges as unknown) as IList<T>)
+      return new ListEnumerable<T>(item.aggregatedEdges as unknown as IList<T>)
     }
 
     return IListEnumerable.EMPTY
@@ -824,11 +824,12 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     const isAggregationItem = this.isAggregationItem(port)
     let tmp
     // check the auto-cleanup policy to apply
-    const autoCleanUp = (isAggregationItem
-      ? this.aggregationNodeDefaults
-      : this.isGroupNode((tmp = port.owner) instanceof INode ? tmp : null)
-      ? this.wrappedGraph!.groupNodeDefaults
-      : this.wrappedGraph!.nodeDefaults
+    const autoCleanUp = (
+      isAggregationItem
+        ? this.aggregationNodeDefaults
+        : this.isGroupNode((tmp = port.owner) instanceof INode ? tmp : null)
+        ? this.wrappedGraph!.groupNodeDefaults
+        : this.wrappedGraph!.nodeDefaults
     ).ports.autoCleanUp
     if (!autoCleanUp) {
       return
@@ -2045,9 +2046,9 @@ class AggregationEdge extends BaseClass(IEdge) {
     if (port instanceof IPort) {
       return (port === this.sourcePort ? this.targetPort : this.sourcePort) as T
     } else {
-      return (((port as IPortOwner) === this.sourceNode
+      return ((port as IPortOwner) === this.sourceNode
         ? this.targetNode!
-        : this.sourceNode!) as unknown) as T
+        : this.sourceNode!) as unknown as T
     }
   }
 

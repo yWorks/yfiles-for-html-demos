@@ -51,7 +51,7 @@ import {
 
 import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-import { webGl2Supported } from '../../utils/Workarounds.js'
+import { isWebGl2Supported } from '../../utils/Workarounds.js'
 
 /**
  * @typedef {('Pulse'|'Fade'|'Shake')} BaseAnimation
@@ -71,7 +71,7 @@ import { webGl2Supported } from '../../utils/Workarounds.js'
  * @param {!object} licenseData
  */
 async function run(licenseData) {
-  if (!webGl2Supported) {
+  if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support').removeAttribute('style')
     showApp(null)
@@ -119,9 +119,12 @@ function configureUI() {
   const animationFrequencySelect = document.querySelector('#animationFrequency')
   const animationMagnitudeSelect = document.querySelector('#animationMagnitude')
   const fadeTypeSelect = document.querySelector('#fadeType')
-  const fadeDirectionSelect = document.querySelector('#fadeDirection')
+  const fadeDirectionFrom = document.querySelector('#fadeDirectionFrom')
+  const fadeDirectionTo = document.querySelector('#fadeDirectionTo')
   const animationDurationSelect = document.querySelector('#animationDuration')
   const animatedElementsSelect = document.querySelector('#animatedElements')
+  const fadeColorPicker1 = document.querySelector('#fadeColor1')
+  const fadeColorPicker2 = document.querySelector('#fadeColor2')
 
   const baseAnimationSelect = document.querySelector('#baseAnimation')
   baseAnimationSelect.addEventListener('change', e => {
@@ -131,15 +134,21 @@ function configureUI() {
       case 'Pulse':
         configureFrequencyMagnitudeSelects(true, 2, 2)
         animatedElementsSelect.disabled = false
+        fadeColorPicker1.disabled = true
+        fadeColorPicker2.disabled = true
         break
       case 'Fade':
         configureFrequencyMagnitudeSelects(false, 5, 2)
         animationDurationSelect.value = '1s'
         animatedElementsSelect.disabled = false
+        fadeColorPicker1.disabled = false
+        fadeColorPicker2.disabled = false
         break
       case 'Shake':
         configureFrequencyMagnitudeSelects(true, 10, 2)
         animatedElementsSelect.disabled = true
+        fadeColorPicker1.disabled = true
+        fadeColorPicker2.disabled = true
         break
     }
   })
@@ -150,7 +159,10 @@ function configureUI() {
     animationFrequencySelect.disabled = !enable
     animationMagnitudeSelect.disabled = !enable
     fadeTypeSelect.disabled = enable
-    fadeDirectionSelect.disabled = enable
+    fadeDirectionFrom.disabled = enable
+    fadeDirectionTo.disabled = enable
+    fadeColorPicker1.disabled = enable
+    fadeColorPicker2.disabled = enable
     if (enable) {
       animationDurationSelect.value = '10s'
     } else {
@@ -179,7 +191,7 @@ function setWebGLStyles(graphComponent, connectedComponents) {
     Color.CORNFLOWER_BLUE
   ]
 
-  connectedComponents.forEach((component, idx, components) => {
+  connectedComponents.forEach((component, idx) => {
     const color = colors[idx % connectedComponents.length]
     component.nodes.forEach(node => {
       gmm.setStyle(
@@ -371,7 +383,10 @@ function getConfiguredFadeColors() {
 function getAnimationConfiguration() {
   const baseAnimation = document.querySelector('#baseAnimation').value
   const animatedElements = document.querySelector('#animatedElements').value
-  const fadeDirection = document.querySelector('#fadeDirection').value
+  const fadeDirection =
+    document.querySelector('input[name="fadeDirection"]:checked').id === 'fadeDirectionFrom'
+      ? 'From'
+      : 'To'
   const fadeType = document.querySelector('#fadeType').value
   const animationFrequency = parseInt(document.querySelector('#animationFrequency').value)
   const animationMagnitude = parseInt(document.querySelector('#animationMagnitude').value)

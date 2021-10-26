@@ -40,9 +40,9 @@ export default class EventView {
    */
   get logElement(): HTMLElement {
     if (this._logElement === null) {
-      this._logElement = document.getElementById('log')!
+      this._logElement = document.getElementById('log')
     }
-    return this._logElement
+    return this._logElement!
   }
 
   /**

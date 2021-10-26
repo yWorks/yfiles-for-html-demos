@@ -43,7 +43,6 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   HierarchicLayout,
-  HierarchicLayoutData,
   IEdge,
   IGraph,
   IHitTestable,
@@ -60,8 +59,6 @@ import {
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
   PortCalculator,
-  PortConstraint,
-  PortSide,
   ShapeNodeStyle,
   Size,
   StringTemplateNodeStyle,
@@ -505,7 +502,7 @@ export class SchemaComponent {
     adjacencyNodesSourceDefinition.name = `Source ${this.newNodesSourcesCounter++}`
     adjacencyNodesSourceDefinition.data = ''
     adjacencyNodesSourceDefinition.idBinding = 'dataItem => dataItem'
-    adjacencyNodesSourceDefinition.template = `<rect fill="#ff6c00" stroke="white" rx="2" ry="2" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+    adjacencyNodesSourceDefinition.template = `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
 <text transform="translate(10 20)" data-content="{Binding id}" style="font-size:18px; fill:#000;"></text>`
     node.tag = this.createAdjacencyNodesSourceConnector(adjacencyNodesSourceDefinition)
     this.schemaGraphComponent.graph.addLabel(node, adjacencyNodesSourceDefinition.name)

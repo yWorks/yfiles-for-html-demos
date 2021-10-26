@@ -1,5 +1,7 @@
 # Size Constraint Provider Demo
 
+<img src="../../resources/image/size-constraint.png" alt="demo-thumbnail" height="320"/>
+
 [You can also run this demo online](https://live.yworks.com/demos/input/sizeconstraintprovider/index.html).
 
 This demo shows how resizing of nodes can be restricted.

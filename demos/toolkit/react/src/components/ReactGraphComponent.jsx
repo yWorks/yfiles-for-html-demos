@@ -31,13 +31,10 @@ import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import {
   Arrow,
-  DefaultLabelStyle,
-  Font,
   GraphBuilder,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  HierarchicLayout,
   ICommand,
   IEdge,
   INode,
@@ -52,15 +49,22 @@ import {
 import './ReactGraphComponent.css'
 import DemoToolbar from './DemoToolbar.jsx'
 import yFilesLicense from '../license.json'
-import { ReactComponentNodeStyle } from './ReactComponentNodeStyle'
+import ReactComponentNodeStyle from '../ReactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
-import LayoutWorker from 'worker-loader!./LayoutWorker.js'
+import LayoutWorker from 'worker-loader!../LayoutWorker.js'
 import { ContextMenu } from './ContextMenu'
 import ReactGraphOverviewComponent from './GraphOverviewComponent'
-import Tooltip from './Tooltip'
 import GraphSearch from '../utils/GraphSearch'
 
 const layoutWorker = new LayoutWorker()
+
+// helper function that performs the actual message passing to the web worker
+function webWorkerMessageHandler(data) {
+  return new Promise(resolve => {
+    layoutWorker.onmessage = e => resolve(e.data)
+    layoutWorker.postMessage(data)
+  })
+}
 
 export default class ReactGraphComponent extends Component {
   constructor(props) {
@@ -76,8 +80,7 @@ export default class ReactGraphComponent extends Component {
 
     // Newly created elements are animated during which the graph data should not be modified
     this.updating = false
-    this.isDirty = false
-    this.scheduledUpdate = null
+    this.scheduledUpdatePromise = Promise.resolve()
     this.nodesSource = null
     this.edgesSource = null
     this.$query = ''
@@ -106,10 +109,10 @@ export default class ReactGraphComponent extends Component {
     this.graphBuilder = this.createGraphBuilder()
     this.graphComponent.graph = this.graphBuilder.buildGraph()
     // ... and make sure it is centered in the view (this is the initial state of the layout animation)
-    this.graphComponent.fitGraphBounds()
+    await this.graphComponent.fitGraphBounds()
 
     // Layout the graph with the hierarchic layout style
-    await this.graphComponent.morphLayout(new HierarchicLayout(), '1s')
+    await this.runLayout()
     this.updating = false
 
     this.initializeGraphSearch()
@@ -122,9 +125,6 @@ export default class ReactGraphComponent extends Component {
     this.graphSearch = new NodeTagSearch(this.graphComponent)
     this.graphComponent.graph.addNodeCreatedListener(this.updateSearch.bind(this))
     this.graphComponent.graph.addNodeRemovedListener(this.updateSearch.bind(this))
-    this.graphComponent.graph.addLabelAddedListener(this.updateSearch.bind(this))
-    this.graphComponent.graph.addLabelRemovedListener(this.updateSearch.bind(this))
-    this.graphComponent.graph.addLabelTextChangedListener(this.updateSearch.bind(this))
   }
 
   /**
@@ -146,17 +146,14 @@ export default class ReactGraphComponent extends Component {
    * Sets default styles for the graph.
    */
   initializeDefaultStyles() {
-    this.graphComponent.graph.nodeDefaults.size = new Size(60, 40)
-    this.graphComponent.graph.nodeDefaults.style = new ReactComponentNodeStyle(NodeTemplate)
-    this.graphComponent.graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-      textFill: '#fff',
-      font: new Font('Robot, sans-serif', 14)
-    })
-    this.graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
+    const graph = this.graphComponent.graph
+    graph.nodeDefaults.size = new Size(60, 40)
+    graph.nodeDefaults.style = new ReactComponentNodeStyle(NodeTemplate)
+    graph.edgeDefaults.style = new PolylineEdgeStyle({
       smoothingLength: 25,
-      stroke: '5px #242265',
+      stroke: '4px #66485B',
       targetArrow: new Arrow({
-        fill: '#242265',
+        fill: '#66485B',
         scale: 2,
         type: 'circle'
       })
@@ -166,10 +163,8 @@ export default class ReactGraphComponent extends Component {
   /**
    * Helper function to update the context menu state.
    */
-  updateContextMenuState(key, value) {
-    const contextMenuState = { ...this.state.contextMenu }
-    contextMenuState[key] = value
-    this.setState({ contextMenu: contextMenuState })
+  updateContextMenuState(stateChange) {
+    this.setState({ contextMenu: { ...this.state.contextMenu, ...stateChange } })
   }
 
   /**
@@ -186,11 +181,13 @@ export default class ReactGraphComponent extends Component {
     })
 
     inputMode.addPopulateItemContextMenuListener((sender, args) => {
-      // select the item
       this.graphComponent.selection.clear()
-      this.graphComponent.selection.setSelected(args.item, true)
-      // populate the menu
-      this.populateContextMenu(args)
+      if (args.item) {
+        // select the item
+        this.graphComponent.selection.setSelected(args.item, true)
+        // populate the menu
+        this.populateContextMenu(args)
+      }
     })
     inputMode.contextMenuInputMode.addCloseMenuListener(this.hideMenu.bind(this))
   }
@@ -199,7 +196,7 @@ export default class ReactGraphComponent extends Component {
    * Hides the context menu.
    */
   hideMenu() {
-    this.updateContextMenuState('show', false)
+    this.updateContextMenuState({ show: false })
   }
 
   /**
@@ -207,9 +204,7 @@ export default class ReactGraphComponent extends Component {
    * @param {Point} location
    */
   openMenu(location) {
-    this.updateContextMenuState('x', location.x)
-    this.updateContextMenuState('y', location.y)
-    this.updateContextMenuState('show', true)
+    this.updateContextMenuState({ show: true, x: location.x, y: location.y })
   }
 
   /**
@@ -236,7 +231,7 @@ export default class ReactGraphComponent extends Component {
       })
     }
 
-    this.updateContextMenuState('items', contextMenuItems)
+    this.updateContextMenuState({ items: contextMenuItems })
     if (contextMenuItems.length > 0) {
       args.showMenu = true
     }
@@ -282,7 +277,7 @@ export default class ReactGraphComponent extends Component {
 
   /**
    * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
-   * show the latter by using a dynamically compiled Vue component.
+   * show the latter by using a dynamically compiled react component.
    * @param {IModelItem} item
    * @returns {HTMLElement}
    */
@@ -290,13 +285,14 @@ export default class ReactGraphComponent extends Component {
     const title = item instanceof INode ? 'Node Data' : 'Edge Data'
     const content = JSON.stringify(item.tag)
 
-    const props = {
-      title,
-      content
-    }
     const tooltipContainer = document.createElement('div')
-    const element = React.createElement(Tooltip, props)
-    ReactDOM.render(element, tooltipContainer)
+    ReactDOM.render(
+      <div className="tooltip">
+        <h4>{title}</h4>
+        <p>{content}</p>
+      </div>,
+      tooltipContainer
+    )
 
     return tooltipContainer
   }
@@ -312,7 +308,7 @@ export default class ReactGraphComponent extends Component {
       data: this.props.graphData.nodesSource,
       // Identifies the id property of a node object
       id: 'id',
-      // Use the 'name' property as node label
+      // Store the 'name' property in the node's tag
       tag: item => ({ name: item.name })
     })
     this.edgesSource = graphBuilder.createEdgesSource({
@@ -337,15 +333,10 @@ export default class ReactGraphComponent extends Component {
       this.props.graphData.edgesSource.length !== prevProps.graphData.edgesSource.length
     ) {
       if (!this.updating) {
-        this.updateGraph()
+        this.scheduledUpdatePromise = this.updateGraph()
       } else {
         // the graph is currently still updating and running the layout animation, thus schedule an update
-        if (this.scheduledUpdate !== null) {
-          window.clearTimeout(this.scheduledUpdate)
-        }
-        this.scheduledUpdate = setTimeout(() => {
-          this.updateGraph()
-        }, 500)
+        this.scheduledUpdatePromise = this.scheduledUpdatePromise.then(() => this.updateGraph())
       }
     }
   }
@@ -355,40 +346,36 @@ export default class ReactGraphComponent extends Component {
    * @return {Promise}
    */
   async updateGraph() {
-    this.isDirty = true
     if (this.updating) {
       return
     }
-    while (this.isDirty) {
-      this.updating = true
-      // update the graph based on the given graph data
-      this.graphBuilder.setData(this.nodesSource, this.props.graphData.nodesSource)
-      this.graphBuilder.setData(this.edgesSource, this.props.graphData.edgesSource)
-      this.graphBuilder.updateGraph()
-      this.isDirty = false
+    this.updating = true
+    // update the graph based on the given graph data
+    this.graphBuilder.setData(this.nodesSource, this.props.graphData.nodesSource)
+    this.graphBuilder.setData(this.edgesSource, this.props.graphData.edgesSource)
+    this.graphBuilder.updateGraph()
 
-      // apply a layout to re-arrange the new elements
+    // apply a layout to re-arrange the new elements
 
-      // create an asynchronous layout executor that calculates a layout on the worker
-      const executor = new LayoutExecutorAsync({
-        messageHandler: webWorkerMessageHandler,
-        graphComponent: this.graphComponent,
-        duration: '1s',
-        animateViewport: true,
-        easedAnimation: true
-      })
+    await this.runLayout()
+    this.updating = false
+  }
 
-      await executor.start()
-      this.updating = false
-    }
+  /**
+   * Runs a hierarchic layout asynchronously on a web worker
+   * @return {Promise<void>}
+   */
+  runLayout() {
+    // create an asynchronous layout executor that calculates a layout on the worker
+    const executor = new LayoutExecutorAsync({
+      messageHandler: webWorkerMessageHandler,
+      graphComponent: this.graphComponent,
+      duration: '1s',
+      animateViewport: true,
+      easedAnimation: true
+    })
 
-    // helper function that performs the actual message passing to the web worker
-    function webWorkerMessageHandler(data) {
-      return new Promise(resolve => {
-        layoutWorker.onmessage = e => resolve(e.data)
-        layoutWorker.postMessage(data)
-      })
-    }
+    return executor.start()
   }
 
   render() {

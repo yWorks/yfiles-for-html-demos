@@ -135,7 +135,7 @@ function createIoHandler() {
 
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   handler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   handler.addHandleSerializationListener(DemoSerializationListener)

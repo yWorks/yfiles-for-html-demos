@@ -44,12 +44,12 @@ import {
  */
 export default class SimpleSvgNodeStyle extends NodeStyleBase {
   /**
-   * Constructs a node style with the given color or an orange node style if no color is defined.
+   * Constructs a node style with the given color or a magenta node style if no color is defined.
    * @param color The fill color for the node.
    */
   constructor(private readonly color?: Color) {
     super()
-    this.color = color || new Color(255, 140, 0)
+    this.color = color || Color.from('#AB2346')
   }
 
   /**

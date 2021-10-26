@@ -37,7 +37,6 @@ const {
   GraphComponent,
   GraphEditorInputMode,
   HierarchicLayout,
-  IArrow,
   License,
   MinimumNodeSizeStage,
   PolylineEdgeStyle,
@@ -58,12 +57,13 @@ function run(licenseData) {
 
   // initialize default styles
   graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'orange',
-    stroke: 'orange',
-    shape: 'rectangle'
+    shape: 'round-rectangle',
+    fill: '#ff6c00',
+    stroke: '1.5px #662b00'
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: IArrow.DEFAULT
+    stroke: `1.5px #662b00`,
+    targetArrow: `#662b00 small triangle`
   })
 
   // create small sample graph

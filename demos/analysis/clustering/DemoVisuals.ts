@@ -48,6 +48,10 @@ import {
 } from 'yfiles'
 
 import VoronoiDiagram from './VoronoiDiagram'
+import { colorSets } from '../../resources/basic-demo-styles'
+
+const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
+const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
 
 /**
  * Sets the value of the attribute with the given name for the given element.
@@ -87,8 +91,8 @@ export class VoronoiVisual
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     const colors = generateColors(
-      Color.ROYAL_BLUE,
-      Color.LIGHT_CYAN,
+      GRADIENT_START,
+      GRADIENT_END,
       this.voronoiDiagram.voronoiFaces.length + 1
     )
 
@@ -130,7 +134,7 @@ export class VoronoiVisual
       point.x + offset
     },${point.y - offset} L${point.x - offset},${point.y + offset}`
     setAttribute(path, 'd', d)
-    setAttribute(path, 'stroke', '#666666')
+    setAttribute(path, 'stroke', '#363020')
     setAttribute(path, 'stroke-width', '4')
     container.appendChild(path)
   }
@@ -161,8 +165,8 @@ export class PolygonVisual
     }
   ) {
     super()
-    this.startColor = Color.ROYAL_BLUE
-    this.endColor = Color.LAVENDER
+    this.startColor = GRADIENT_START
+    this.endColor = GRADIENT_END
   }
 
   /**
@@ -333,7 +337,7 @@ export class CutoffVisual
 {
   public cutOffValue: number
 
-  constructor(public rectangle: IRectangle, private maxY: number) {
+  constructor(public rectangle: IRectangle, private readonly maxY: number) {
     super()
     this.rectangle = rectangle
     this.maxY = maxY

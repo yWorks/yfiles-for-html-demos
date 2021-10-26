@@ -35,10 +35,10 @@ import {
   IVisualCreator,
   Visual
 } from 'yfiles'
+import type { Task } from './GanttMapper'
 import GanttMapper from './GanttMapper'
 // import moment typings
 import moment, { MomentInput } from 'moment'
-import type { Task } from './GanttMapper'
 
 /**
  * Manages and renders the background of the main component.

@@ -29,24 +29,25 @@
 import {
   CollapsibleNodeStyleDecorator,
   DefaultGraph,
-  DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   ExteriorLabelModel,
   FoldingManager,
+  FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
+  IFoldingView,
   IGraph,
-  InteriorStretchLabelModel,
   License,
   PanelNodeStyle,
   Point,
-  ShapeNodeStyle,
-  Size,
-  IFoldingView
+  Size
 } from 'yfiles'
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -117,37 +118,35 @@ function enableFolding(): IFoldingView {
  * @param graph The graph.
  */
 function wrapGroupNodeStyle(graph: IGraph): void {
-  graph.groupNodeDefaults.style = new CollapsibleNodeStyleDecorator(graph.groupNodeDefaults.style)
+  graph.groupNodeDefaults.style = new CollapsibleNodeStyleDecorator({
+    wrapped: graph.groupNodeDefaults.style,
+    buttonPlacement: FreeNodeLabelModel.INSTANCE.createParameter({
+      layoutRatio: [0, 0],
+      layoutOffset: [2.5, 2.5],
+      labelRatio: [0, 0]
+    })
+  })
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
  *
  * @param graph The graph.
  */
 function initializeTutorialDefaults(graph: IGraph): void {
-  // configure defaults for normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
-  graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults for group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  // set sizes and locations specific for this tutorial
+  graph.nodeDefaults.size = new Size(40, 40)
+
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
+    insets: 5
+  }).createParameter('south')
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**

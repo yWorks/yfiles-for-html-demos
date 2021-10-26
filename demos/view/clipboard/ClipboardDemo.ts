@@ -32,7 +32,9 @@ import {
   GraphEditorInputMode,
   ICommand,
   IGraph,
+  IInputMode,
   ILabel,
+  IModelItem,
   INode,
   ISelectionModel,
   License,
@@ -40,15 +42,14 @@ import {
   Point,
   Size,
   TemplateNodeStyle,
-  YObject,
-  IInputMode,
-  IModelItem
+  YObject
 } from 'yfiles'
 
 import { ClipboardBusinessObject, createClipboardBusinessObject } from './ClipboardBusinessObject'
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { TagCopyItem, TaggedNodeClipboardHelper } from './ClipboardHelper'
+import { DemoEdgeStyle } from '../../resources/demo-styles'
 
 // This demo shows different ways of using the class GraphClipboard for Copy and Paste operations.
 
@@ -91,8 +92,9 @@ function initializeGraph(): void {
   graph.undoEngineEnabled = true
   graph.nodeDefaults.size = new Size(120, 60)
 
-  // Set the default style for new nodes
+  // Set the default style for new nodes and edges
   graph.nodeDefaults.style = new TemplateNodeStyle('ClipboardStyle')
+  graph.edgeDefaults.style = new DemoEdgeStyle('demo-palette-31')
 
   // Set the default locations for new labels
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
@@ -109,10 +111,10 @@ function initializeGraph(): void {
 
   // Register specialized copiers that can deal with our business objects
   graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener((sender, evt) => {
-    evt.copy!.tag = nodeCopiedOnPaste(evt.original!)
+    evt.copy.tag = nodeCopiedOnPaste(evt.original)
   })
   graphComponent.clipboard.toClipboardCopier.addNodeCopiedListener((sender, evt) => {
-    evt.copy!.tag = nodeCopiedOnCopy(evt.original!)
+    evt.copy.tag = nodeCopiedOnCopy(evt.original)
   })
 
   // Initialize the right graph

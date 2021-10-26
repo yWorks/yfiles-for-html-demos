@@ -26,37 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import './DemoToolbar.css'
 
-export default class DemoToolbar extends Component {
-  render() {
-    return (
-      <div className="demo-toolbar">
-        <button
-          className="demo-icon-yIconReload"
-          title="Reset Data"
-          onClick={this.props.resetData}
-        />
-        <span className="demo-separator" />
-        <button className="demo-icon-yIconZoomIn" title="Zoom In" onClick={this.props.zoomIn} />
-        <button
-          className="demo-icon-yIconZoomOriginal"
-          title="Reset Zoom"
-          onClick={this.props.resetZoom}
-        />
-        <button className="demo-icon-yIconZoomOut" title="Zoom Out" onClick={this.props.zoomOut} />
-        <button
-          className="demo-icon-yIconZoomFit"
-          title="Fit Diagram"
-          onClick={this.props.fitContent}
-        />
-        <span className="demo-separator" />
-        <input className="search" placeholder="Search Nodes" onChange={this.props.searchChange} />
-      </div>
-    )
-  }
+function DemoToolbar({ resetData, resetZoom, fitContent, zoomIn, zoomOut, searchChange }) {
+  return (
+    <div className="demo-toolbar">
+      <button className="demo-icon-yIconReload" title="Reset Data" onClick={resetData} />
+      <span className="demo-separator" />
+      <button className="demo-icon-yIconZoomIn" title="Zoom In" onClick={zoomIn} />
+      <button className="demo-icon-yIconZoomOriginal" title="Reset Zoom" onClick={resetZoom} />
+      <button className="demo-icon-yIconZoomOut" title="Zoom Out" onClick={zoomOut} />
+      <button className="demo-icon-yIconZoomFit" title="Fit Diagram" onClick={fitContent} />
+      <span className="demo-separator" />
+      <input className="search" placeholder="Search Nodes" onChange={searchChange} />
+    </div>
+  )
 }
 
 DemoToolbar.propTypes = {
@@ -67,3 +53,5 @@ DemoToolbar.propTypes = {
   fitContent: PropTypes.func,
   searchChange: PropTypes.func
 }
+
+export default DemoToolbar

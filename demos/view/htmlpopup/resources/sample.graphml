@@ -69,7 +69,7 @@
             </yjs:ImageNodeStyle>
             <yjs:PolylineEdgeStyle x:Key="7" targetArrow="NONE" sourceArrow="NONE">
               <yjs:PolylineEdgeStyle.stroke>
-                <yjs:Stroke thickness="2" lineCap="FLAT" lineJoin="MITER" fill="#ff249ae7" />
+                <yjs:Stroke thickness="1.5" lineCap="FLAT" lineJoin="MITER" fill="#16162C" />
               </yjs:PolylineEdgeStyle.stroke>
             </yjs:PolylineEdgeStyle>
         </y:SharedData>

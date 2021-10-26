@@ -145,14 +145,6 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
       layout.labeling = labeling
     }
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-
     return layout
   },
 
@@ -161,13 +153,24 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
    * @return The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
+    let layoutData
     if (this.centerStrategyItem === CenterNodesPolicy.CUSTOM) {
-      return new RadialLayoutData({
+      layoutData = new RadialLayoutData({
         centerNodes: node => graphComponent.selection.isSelected(node)
       })
     } else {
-      return new RadialLayoutData()
+      layoutData = new RadialLayoutData()
     }
+
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
   },
 
   /** @type {OptionGroup} */

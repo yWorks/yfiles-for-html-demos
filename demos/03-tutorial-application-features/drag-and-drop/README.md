@@ -12,3 +12,10 @@ This demo shows how to use [NodeDropInputMode](https://docs.yworks.com/yfileshtm
 - Drop nodes and group nodes on other group nodes to add them as their children.
 
 See the sources for details.
+
+## Related Demos
+
+- [Drag and Drop](../../input/draganddrop)
+- [Graph Drag and Drop](../../input/graph-drag-and-drop)
+- [Custom Drag and Drop](../../input/custom-drag-and-drop)
+- [Drag From Component](../../input/drag-from-component)

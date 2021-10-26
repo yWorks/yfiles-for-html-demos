@@ -44,7 +44,7 @@ import {
   Rect
 } from 'yfiles'
 
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
+import { DemoEdgeStyle } from '../../resources/demo-styles.js'
 import { checkLicense, showApp } from '../../resources/demo-app.js'
 import PortLookupEdgePortHandleProvider from './PortLookupEdgePortHandleProvider.js'
 import BlueBendCreator from './BlueBendCreator.js'
@@ -53,6 +53,7 @@ import OrangeOrthogonalEdgeHelper from './OrangeOrthogonalEdgeHelper.js'
 import PurpleOrthogonalEdgeHelper from './PurpleOrthogonalEdgeHelper.js'
 import RedOrthogonalEdgeHelper from './RedOrthogonalEdgeHelper.js'
 import loadJson from '../../resources/load-json.js'
+import { createBasicNodeStyle } from '../../resources/basic-demo-styles.js'
 
 /**
  * Registers different IOrthogonalEdgeHelpers to demonstrate various custom behaviour.
@@ -63,7 +64,7 @@ function registerOrthogonalEdgeHelperDecorators(graph) {
 
   // Add different IOrthogonalEdgeHelpers to demonstrate various custom behaviour
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
-    edge => edge.tag === 'firebrick',
+    edge => edge.tag === 'red',
     new RedOrthogonalEdgeHelper()
   )
 
@@ -85,7 +86,7 @@ function registerOrthogonalEdgeHelperDecorators(graph) {
   )
 
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
-    edge => edge.tag === 'royalblue',
+    edge => edge.tag === 'blue',
     new BlueOrthogonalEdgeHelper()
   )
 
@@ -97,7 +98,7 @@ function registerOrthogonalEdgeHelperDecorators(graph) {
   // Add a custom BendCreator for blue edges that ensures orthogonality
   // if a bend is added to the first or last (non-orthogonal) segment
   edgeDecorator.bendCreatorDecorator.setImplementation(
-    edge => edge.tag === 'royalblue',
+    edge => edge.tag === 'blue',
     new BlueBendCreator()
   )
 
@@ -167,13 +168,13 @@ function run(licenseData) {
  * @param {!IGraph} graph The input graph
  */
 function createSampleGraph(graph) {
-  createSubgraph(graph, 'firebrick', 0)
-  createSubgraph(graph, 'green', 110)
-  createSubgraph(graph, 'purple', 220, true)
-  createSubgraph(graph, 'orange', 330)
+  createSubgraph(graph, 0, 'demo-red', 'red')
+  createSubgraph(graph, 110, 'demo-green', 'green')
+  createSubgraph(graph, 220, 'demo-purple', 'purple', true)
+  createSubgraph(graph, 330, 'demo-orange', 'orange')
 
   // The blue edge has more bends than the other edges
-  const blueEdge = createSubgraph(graph, 'royalblue', 440)
+  const blueEdge = createSubgraph(graph, 440, 'demo-lightblue', 'blue')
   const blueBends = blueEdge.bends.toArray()
   graph.remove(blueBends[1])
   graph.remove(blueBends[0])
@@ -189,31 +190,30 @@ function createSampleGraph(graph) {
 /**
  * Creates the sample graph of the given color with two nodes and a single edge.
  * @param {!IGraph} graph
- * @param {!string} cssClass
  * @param {number} yOffset
+ * @param {!ColorSetName} cssClass
+ * @param {!string} tag
  * @param {boolean} [createPorts=false]
  * @returns {!IEdge}
  */
-function createSubgraph(graph, cssClass, yOffset, createPorts = false) {
+function createSubgraph(graph, yOffset, cssClass, tag, createPorts = false) {
   // Create two nodes
-  const nodeStyle = new DemoNodeStyle()
-  nodeStyle.cssClass = cssClass
+  const nodeStyle = createBasicNodeStyle(cssClass)
 
-  const n1 = graph.createNode(new Rect(110, 100 + yOffset, 40, 40), nodeStyle, cssClass)
-  const n2 = graph.createNode(new Rect(450, 130 + yOffset, 40, 40), nodeStyle, cssClass)
+  const n1 = graph.createNode(new Rect(110, 100 + yOffset, 40, 40), nodeStyle, tag)
+  const n2 = graph.createNode(new Rect(450, 130 + yOffset, 40, 40), nodeStyle, tag)
 
   // Create an edge, either between the two nodes or between the their ports
   let edge
-  const edgeStyle = new DemoEdgeStyle()
-  edgeStyle.cssClass = cssClass
+  const edgeStyle = new DemoEdgeStyle(cssClass)
   edgeStyle.showTargetArrows = false
 
   if (!createPorts) {
-    edge = graph.createEdge(n1, n2, edgeStyle, cssClass)
+    edge = graph.createEdge(n1, n2, edgeStyle, tag)
   } else {
     const p1 = createSamplePorts(graph, n1, true)
     const p2 = createSamplePorts(graph, n2, false)
-    edge = graph.createEdge(p1[1], p2[2], edgeStyle, cssClass)
+    edge = graph.createEdge(p1[1], p2[2], edgeStyle, tag)
   }
 
   // Add bends that create a vertical segment in the middle of the edge

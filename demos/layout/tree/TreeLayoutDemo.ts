@@ -51,14 +51,14 @@ import {
 import * as TreeData from './resources/TreeData'
 import CreateTreeEdgeInputMode from './CreateTreeEdgeInputMode'
 import {
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
   showApp
 } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
-import NodePlacerPanel, { LayerFills } from './NodePlacerPanel'
+import NodePlacerPanel, { LayerColors } from './NodePlacerPanel'
 import type { Configuration } from './TreeLayoutConfigurations'
 
 /**
@@ -269,7 +269,8 @@ async function loadGraph(): Promise<void> {
   graph.nodeDefaults.shareStyleInstance = false
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: 'triangle'
+    targetArrow: '#617984 medium triangle',
+    stroke: '1.5px solid #617984'
   })
 
   // select tree data
@@ -311,8 +312,10 @@ async function loadGraph(): Promise<void> {
 
   // update the node fill colors according to their layers
   graph.nodes.forEach(node => {
+    const layerColor = LayerColors[node.tag.layer % LayerColors.length]
     const style = node.style as ShapeNodeStyle
-    style.fill = LayerFills[node.tag.layer % LayerFills.length]
+    style.fill = layerColor.fill
+    style.stroke = layerColor.stroke
     if (node.tag.assistant) {
       style.stroke = Stroke.from('2px dashed black')
     }
@@ -342,20 +345,7 @@ function registerCommands(): void {
   bindChangeListener("select[data-command='SelectSample']", loadGraph)
 
   const samples = document.getElementById('select-sample') as HTMLSelectElement
-  const previousSample = document.getElementById('previous-sample') as HTMLButtonElement
-  const nextSample = document.getElementById('next-sample') as HTMLButtonElement
-  bindAction("button[data-command='PreviousSample']", () => {
-    samples.selectedIndex = Math.max(samples.selectedIndex - 1, 0)
-    loadGraph()
-    previousSample.disabled = samples.selectedIndex === 0
-    nextSample.disabled = samples.selectedIndex === samples.options.length - 1
-  })
-  bindAction("button[data-command='NextSample']", () => {
-    samples.selectedIndex = Math.min(samples.selectedIndex + 1, samples.options.length - 1)
-    loadGraph()
-    previousSample.disabled = samples.selectedIndex === 0
-    nextSample.disabled = samples.selectedIndex === samples.options.length - 1
-  })
+  addNavigationButtons(samples)
 }
 
 loadJson().then(checkLicense).then(run)

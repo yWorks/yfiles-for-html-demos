@@ -26,15 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
-import React, { Component } from 'react'
-// @ts-ignore
-import ReactDOM from 'react-dom'
+import * as React from 'react'
+import { Component, createRef, RefObject } from 'react'
+import * as ReactDOM from 'react-dom'
 import {
   Arrow,
-  DefaultLabelStyle,
   EdgesSource,
-  Font,
   GraphBuilder,
   GraphComponent,
   GraphItemTypes,
@@ -56,45 +53,32 @@ import {
 } from 'yfiles'
 import './ReactGraphComponent.css'
 import DemoToolbar from './DemoToolbar'
-// @ts-ignore
 import yFilesLicense from '../license.json'
 import { EdgeData, GraphData, NodeData } from '../App'
-// @ts-ignore
-import LayoutWorker from 'worker-loader!./LayoutWorker' // eslint-disable-line import/no-webpack-loader-syntax
-import { ReactComponentNodeStyle } from './ReactComponentNodeStyle'
+import LayoutWorker from 'worker-loader!../LayoutWorker' // eslint-disable-line import/no-webpack-loader-syntax
+import ReactComponentNodeStyle from '../ReactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
 import { ContextMenu, ContextMenuItem } from './ContextMenu'
-import Tooltip from './Tooltip'
 import ReactGraphOverviewComponent from './GraphOverviewComponent'
 import GraphSearch from '../utils/GraphSearch'
+
+const layoutWorker = new LayoutWorker()
 
 interface ReactGraphComponentProps {
   graphData: GraphData
   onResetData(): void
 }
 
-interface ReactGraphComponentState {
-  contextMenu: {
-    show: boolean
-    x: number
-    y: number
-    items: ContextMenuItem[]
-  }
-}
+type ContextMenuState = { show: boolean; x: number; y: number; items: ContextMenuItem[] }
 
-const layoutWorker = new LayoutWorker()
+interface ReactGraphComponentState {
+  contextMenu: ContextMenuState
+}
 
 export default class ReactGraphComponent extends Component<
   ReactGraphComponentProps,
   ReactGraphComponentState
 > {
-  private readonly div: React.RefObject<HTMLDivElement>
-  private updating: boolean
-  private isDirty: boolean
-  private scheduledUpdate: null | number
-  private readonly graphComponent: GraphComponent
-  private graphBuilder?: GraphBuilder
-
   static defaultProps = {
     graphData: {
       nodesSource: [],
@@ -102,10 +86,16 @@ export default class ReactGraphComponent extends Component<
     }
   }
 
-  private nodesSource: NodesSource<NodeData> | null
-  private edgesSource: EdgesSource<EdgeData> | null
-  private graphSearch: NodeTagSearch
-  private $query: string
+  private readonly div: RefObject<HTMLDivElement>
+  // Newly created elements are animated during which the graph data should not be modified
+  private updating = false
+  private isDirty = false
+  private readonly graphComponent: GraphComponent
+  private graphBuilder!: GraphBuilder
+  private nodesSource!: NodesSource<NodeData>
+  private edgesSource!: EdgesSource<EdgeData>
+  private graphSearch!: NodeTagSearch
+  private $query = ''
 
   constructor(props: ReactGraphComponentProps) {
     super(props)
@@ -117,15 +107,7 @@ export default class ReactGraphComponent extends Component<
         items: []
       }
     }
-    this.div = React.createRef<HTMLDivElement>()
-
-    // Newly created elements are animated during which the graph data should not be modified
-    this.updating = false
-    this.isDirty = false
-    this.scheduledUpdate = null
-    this.nodesSource = null
-    this.edgesSource = null
-    this.$query = ''
+    this.div = createRef<HTMLDivElement>()
 
     // include the yFiles License
     License.value = yFilesLicense
@@ -151,7 +133,7 @@ export default class ReactGraphComponent extends Component<
     this.graphBuilder = this.createGraphBuilder()
     this.graphComponent.graph = this.graphBuilder.buildGraph()
     // ... and make sure it is centered in the view (this is the initial state of the layout animation)
-    this.graphComponent.fitGraphBounds()
+    await this.graphComponent.fitGraphBounds()
 
     // Layout the graph with the hierarchic layout style
     await this.graphComponent.morphLayout(new HierarchicLayout(), '1s')
@@ -167,9 +149,6 @@ export default class ReactGraphComponent extends Component<
     this.graphSearch = new NodeTagSearch(this.graphComponent)
     this.graphComponent.graph.addNodeCreatedListener(this.updateSearch.bind(this))
     this.graphComponent.graph.addNodeRemovedListener(this.updateSearch.bind(this))
-    this.graphComponent.graph.addLabelAddedListener(this.updateSearch.bind(this))
-    this.graphComponent.graph.addLabelRemovedListener(this.updateSearch.bind(this))
-    this.graphComponent.graph.addLabelTextChangedListener(this.updateSearch.bind(this))
   }
 
   /**
@@ -182,7 +161,7 @@ export default class ReactGraphComponent extends Component<
   /**
    * Called when the search query has changed.
    */
-  onSearchQueryChanged(query) {
+  onSearchQueryChanged(query: string) {
     this.$query = query
     this.updateSearch()
   }
@@ -192,28 +171,20 @@ export default class ReactGraphComponent extends Component<
    */
   initializeDefaultStyles(): void {
     this.graphComponent.graph.nodeDefaults.size = new Size(60, 40)
-    this.graphComponent.graph.nodeDefaults.style = new ReactComponentNodeStyle<{ name?: string }>(
-      NodeTemplate
-    )
-    this.graphComponent.graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-      textFill: '#fff',
-      font: new Font('Robot, sans-serif', 14)
-    })
+    this.graphComponent.graph.nodeDefaults.style = new ReactComponentNodeStyle(NodeTemplate)
     this.graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
       smoothingLength: 25,
-      stroke: '5px #242265',
+      stroke: '4px #66485B',
       targetArrow: new Arrow({
-        fill: '#242265',
+        fill: '#66485B',
         scale: 2,
         type: 'circle'
       })
     })
   }
 
-  private updateContextMenuState(key: string, value: any): void {
-    const contextMenuState = { ...this.state.contextMenu }
-    ;(contextMenuState as any)[key] = value
-    this.setState({ contextMenu: contextMenuState })
+  private updateContextMenuState(stateChange: Partial<ContextMenuState>): void {
+    this.setState({ contextMenu: { ...this.state.contextMenu, ...stateChange } })
   }
 
   private initializeContextMenu(): void {
@@ -228,8 +199,10 @@ export default class ReactGraphComponent extends Component<
 
     inputMode.addPopulateItemContextMenuListener((sender, args) => {
       // select the item
-      this.graphComponent.selection.clear()
-      this.graphComponent.selection.setSelected(args.item, true)
+      if (args.item) {
+        this.graphComponent.selection.clear()
+        this.graphComponent.selection.setSelected(args.item, true)
+      }
       // populate the menu
       this.populateContextMenu(args)
     })
@@ -237,13 +210,11 @@ export default class ReactGraphComponent extends Component<
   }
 
   hideMenu(): void {
-    this.updateContextMenuState('show', false)
+    this.updateContextMenuState({ show: false })
   }
 
   openMenu(location: { x: number; y: number }): void {
-    this.updateContextMenuState('x', location.x)
-    this.updateContextMenuState('y', location.y)
-    this.updateContextMenuState('show', true)
+    this.updateContextMenuState({ show: true, x: location.x, y: location.y })
   }
 
   populateContextMenu(args: PopulateItemContextMenuEventArgs<IModelItem>): void {
@@ -266,7 +237,7 @@ export default class ReactGraphComponent extends Component<
       })
     }
 
-    this.updateContextMenuState('items', contextMenuItems)
+    this.updateContextMenuState({ items: contextMenuItems })
     if (contextMenuItems.length > 0) {
       args.showMenu = true
     }
@@ -303,7 +274,7 @@ export default class ReactGraphComponent extends Component<
       }
 
       // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
-      eventArgs.toolTip = this.createTooltipContent(eventArgs.item!)
+      eventArgs.toolTip = ReactGraphComponent.createTooltipContent(eventArgs.item!)
 
       // Indicate that the tooltip content has been set.
       eventArgs.handled = true
@@ -312,21 +283,22 @@ export default class ReactGraphComponent extends Component<
 
   /**
    * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
-   * show the latter by using a dynamically compiled Vue component.
+   * show the latter by using a dynamically compiled React component.
    * @param {IModelItem} item
    * @returns {HTMLElement}
    */
-  private createTooltipContent(item: IModelItem) {
+  private static createTooltipContent(item: IModelItem) {
     const title = item instanceof INode ? 'Node Data' : 'Edge Data'
     const content = JSON.stringify(item.tag)
 
-    const props = {
-      title,
-      content
-    }
     const tooltipContainer = document.createElement('div')
-    const element = React.createElement(Tooltip, props)
-    ReactDOM.render(element, tooltipContainer)
+    ReactDOM.render(
+      <div className="tooltip">
+        <h4>{title}</h4>
+        <p>{content}</p>
+      </div>,
+      tooltipContainer
+    )
 
     return tooltipContainer
   }
@@ -382,9 +354,9 @@ export default class ReactGraphComponent extends Component<
     while (this.isDirty) {
       this.updating = true
       // update the graph based on the given graph data
-      this.graphBuilder!.setData(this.nodesSource!, this.props.graphData.nodesSource)
-      this.graphBuilder!.setData(this.edgesSource!, this.props.graphData.edgesSource)
-      this.graphBuilder!.updateGraph()
+      this.graphBuilder.setData(this.nodesSource, this.props.graphData.nodesSource)
+      this.graphBuilder.setData(this.edgesSource, this.props.graphData.edgesSource)
+      this.graphBuilder.updateGraph()
       this.isDirty = false
 
       // apply a layout to re-arrange the new elements
@@ -417,21 +389,15 @@ export default class ReactGraphComponent extends Component<
         <div className="toolbar">
           <DemoToolbar
             resetData={this.props.onResetData}
-            zoomIn={(): void => ICommand.INCREASE_ZOOM.execute(null, this.graphComponent)}
-            zoomOut={(): void => ICommand.DECREASE_ZOOM.execute(null, this.graphComponent)}
-            resetZoom={(): void => ICommand.ZOOM.execute(1.0, this.graphComponent)}
-            fitContent={(): void => ICommand.FIT_GRAPH_BOUNDS.execute(null, this.graphComponent)}
+            zoomIn={() => ICommand.INCREASE_ZOOM.execute(null, this.graphComponent)}
+            zoomOut={() => ICommand.DECREASE_ZOOM.execute(null, this.graphComponent)}
+            resetZoom={() => ICommand.ZOOM.execute(1.0, this.graphComponent)}
+            fitContent={() => ICommand.FIT_GRAPH_BOUNDS.execute(null, this.graphComponent)}
             searchChange={evt => this.onSearchQueryChanged(evt.target.value)}
           />
         </div>
         <div className="graph-component-container" ref={this.div} />
-        <ContextMenu
-          x={this.state.contextMenu.x}
-          y={this.state.contextMenu.y}
-          show={this.state.contextMenu.show}
-          items={this.state.contextMenu.items}
-          hideMenu={() => this.hideMenu()}
-        />
+        <ContextMenu {...this.state.contextMenu} hideMenu={() => this.hideMenu()} />
         <div style={{ position: 'absolute', left: '20px', top: '120px' }}>
           <ReactGraphOverviewComponent graphComponent={this.graphComponent} />
         </div>

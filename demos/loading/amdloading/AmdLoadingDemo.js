@@ -29,6 +29,7 @@
 'use strict'
 
 // when using DOJO AMD loader, require.config is not defined
+
 require.config({
   packages: [
     {
@@ -41,7 +42,7 @@ require.config({
 
 // note that requirejs does not allow async functions as require/define callbacks
 require(['yfiles-umd/view-component'], /** @param {yfiles} yfiles */ yfiles => {
-  const { GraphComponent, ShapeNodeStyle, PolylineEdgeStyle, IArrow, ICommand, License } = yfiles
+  const { GraphComponent, ShapeNodeStyle, PolylineEdgeStyle, ICommand, License } = yfiles
 
   let graphComponent = null
 
@@ -54,12 +55,13 @@ require(['yfiles-umd/view-component'], /** @param {yfiles} yfiles */ yfiles => {
 
     // set a nice default style
     graph.nodeDefaults.style = new ShapeNodeStyle({
-      fill: 'orange',
-      stroke: 'orange',
-      shape: 'rectangle'
+      shape: 'round-rectangle',
+      fill: '#ff6c00',
+      stroke: '1.5px #662b00'
     })
     graph.edgeDefaults.style = new PolylineEdgeStyle({
-      targetArrow: IArrow.DEFAULT
+      stroke: `1.5px #662b00`,
+      targetArrow: `#662b00 small triangle`
     })
 
     // create small sample graph

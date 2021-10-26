@@ -51,7 +51,13 @@ import {
   TreeLayout
 } from 'yfiles'
 
-import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import {
+  addNavigationButtons,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import CollapseAndExpandNodes from './CollapseAndExpandNodes'
 import loadJson from '../../resources/load-json'
 
@@ -115,7 +121,7 @@ function createGraph(): FilteredGraphWrapper {
   // set the converters for the collapsible node styles
   TemplateNodeStyle.CONVERTERS.collapseDemo = {
     // converter function for node background
-    backgroundConverter: (data: any) => (data && data.collapsed ? '#FF8C00' : '#68B0E3'),
+    backgroundConverter: (data: any) => (data && data.collapsed ? '#f26419' : '#01baff'),
     // converter function for node icon
     iconConverter: (data: any) => (data && data.collapsed ? '#expand_icon' : '#collapse_icon')
   }
@@ -324,7 +330,9 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
+  addNavigationButtons(
+    document.querySelector("select[data-command='SelectLayout']") as HTMLSelectElement
+  )
   bindChangeListener("select[data-command='SelectLayout']", () => {
     runLayout(null, false)
   })

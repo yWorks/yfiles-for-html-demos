@@ -16,7 +16,7 @@ Every node has two labels, one using the [WebGL2DefaultLabelStyle](https://docs.
 
 Every row also has an edge style with a distinct arrow type for the source and target arrows.
 
-## Things to try
+## Things to Try
 
 You can configure the styles for newly created nodes, edges and labels. Note that labels are automatically added to new nodes according to the current label style configuration.
 

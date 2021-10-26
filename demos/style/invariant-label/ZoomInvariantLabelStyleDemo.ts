@@ -47,14 +47,21 @@ import {
   ZoomInvariantOutsideRangeLabelStyle,
   ZoomInvariantLabelStyleBase
 } from './ZoomInvariantLabelStyle'
-import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import {
+  addNavigationButtons,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { initDemoStyles } from '../../resources/demo-styles'
+import { createBasicNodeLabelStyle } from '../../resources/basic-demo-styles'
 
 let graphComponent: GraphComponent
 
 const ModeDescriptions = {
-  DEFAULT: 'Default Label Style',
+  DEFAULT: 'Default behaviour',
   FIXED_ABOVE_THRESHOLD: 'Fixed above zoom threshold',
   FIXED_BELOW_THRESHOLD: 'Fixed below zoom threshold',
   INVARIANT_OUTSIDE_RANGE: 'Fixed when outside specified range',
@@ -67,6 +74,9 @@ const zoomThresholdInput = document.getElementById('zoomThreshold') as HTMLInput
 const maxScaleLabel = document.getElementById('maxScaleLabel') as HTMLElement
 const maxScaleInput = document.getElementById('maxScale') as HTMLInputElement
 const zoomLevelDisplay = document.getElementById('zoomLevel') as HTMLElement
+
+// the general appearance of a label
+const wrappedLabelStyle = createBasicNodeLabelStyle('demo-orange')
 
 function run(licenseData: object): void {
   License.value = licenseData
@@ -127,7 +137,7 @@ function createNode(layout: IRectangle, label: string): INode {
     labels: [
       {
         text: label,
-        style: new ZoomInvariantBelowThresholdLabelStyle(new DefaultLabelStyle(), 1)
+        style: new ZoomInvariantBelowThresholdLabelStyle(wrappedLabelStyle, 1)
       }
     ]
   })
@@ -143,7 +153,7 @@ function createEdge(source: INode, target: INode, label: string) {
     labels: [
       {
         text: label,
-        style: new ZoomInvariantBelowThresholdLabelStyle(new DefaultLabelStyle(), 1)
+        style: new ZoomInvariantBelowThresholdLabelStyle(wrappedLabelStyle, 1)
       }
     ]
   })
@@ -196,15 +206,15 @@ function registerCommands(): void {
   bindChangeListener('#modeChooserBox', () => {
     const mode = modeChooserBox.value
     for (const label of graphComponent.graph.labels) {
-      let labelStyle: ILabelStyle = new DefaultLabelStyle()
+      let labelStyle: ILabelStyle = wrappedLabelStyle
       if (mode === 'FIXED_ABOVE_THRESHOLD') {
-        labelStyle = new ZoomInvariantAboveThresholdLabelStyle(labelStyle, 1)
+        labelStyle = new ZoomInvariantAboveThresholdLabelStyle(wrappedLabelStyle, 1)
       } else if (mode === 'FIXED_BELOW_THRESHOLD') {
-        labelStyle = new ZoomInvariantBelowThresholdLabelStyle(labelStyle, 1)
+        labelStyle = new ZoomInvariantBelowThresholdLabelStyle(wrappedLabelStyle, 1)
       } else if (mode === 'INVARIANT_OUTSIDE_RANGE') {
-        labelStyle = new ZoomInvariantOutsideRangeLabelStyle(labelStyle, 1, 3)
+        labelStyle = new ZoomInvariantOutsideRangeLabelStyle(wrappedLabelStyle, 1, 3)
       } else if (mode === 'FIT_OWNER') {
-        labelStyle = new FitOwnerLabelStyle(labelStyle)
+        labelStyle = new FitOwnerLabelStyle(wrappedLabelStyle)
       }
       graphComponent.graph.setStyle(label, labelStyle)
     }
@@ -223,6 +233,7 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  addNavigationButtons(modeChooserBox)
 }
 
 loadJson().then(checkLicense).then(run)

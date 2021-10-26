@@ -1,5 +1,7 @@
 # Interactive Organic Layout Demo
 
+<img src="../../resources/image/interactive-organic-layout.png" alt="demo-thumbnail" height="320"/>
+
 [You can also run this demo online](https://live.yworks.com/demos/layout/interactiveorganic/index.html).
 
 This demo shows the Interactive Organic layout algorithm. This variant of the general Organic layout algorithm calculates continuous updates for a changing diagram. The Organic layout is a force-directed layout style for multiple purposes.

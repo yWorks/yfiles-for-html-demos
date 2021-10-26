@@ -55,7 +55,6 @@ import {
   VoidNodeStyle
 } from 'yfiles'
 
-import UMLContextButtonsInputMode from './UMLContextButtonsInputMode'
 import {
   createAggregationStyle,
   createGeneralizationStyle,
@@ -66,6 +65,8 @@ import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/
 import * as umlModel from './UMLClassModel'
 import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UMLNodeStyle'
 import loadJson from '../../resources/load-json'
+import { ButtonInputMode, ButtonTrigger } from '../../input/button-input-mode/ButtonInputMode'
+import { createEdgeCreationButtons, createExtensibilityButtons } from './UMLContextButtonFactory'
 
 let graphComponent: GraphComponent
 
@@ -210,9 +211,22 @@ function createInputMode(): GraphEditorInputMode {
   }
 
   // add input mode that handles the edge creations buttons
-  const umlContextButtonsInputMode = new UMLContextButtonsInputMode()
-  umlContextButtonsInputMode.priority = mode.clickInputMode.priority - 1
-  mode.add(umlContextButtonsInputMode)
+  // const umlContextButtonsInputMode = new UMLContextButtonsInputMode()
+  // umlContextButtonsInputMode.priority = mode.clickInputMode.priority - 1
+  // mode.add(umlContextButtonsInputMode)
+  const bim = new ButtonInputMode()
+  bim.buttonTrigger = ButtonTrigger.CURRENT_ITEM
+  bim.addQueryButtonsListener((src, queryEvent) => {
+    if (queryEvent.owner instanceof INode) {
+      const node = queryEvent.owner
+      const style = node.style
+      if (style instanceof UMLNodeStyle) {
+        createExtensibilityButtons(src, queryEvent, style)
+        createEdgeCreationButtons(src, queryEvent)
+      }
+    }
+  })
+  mode.add(bim)
 
   // execute a layout after certain gestures
   mode.moveInputMode.addDragFinishedListener((src, args) => routeEdges())

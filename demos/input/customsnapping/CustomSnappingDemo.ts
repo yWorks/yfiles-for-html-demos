@@ -255,8 +255,8 @@ function createSampleGraph(graph: IGraph): void {
 
   const starShape = new ShapeNodeStyle({
     shape: 'star5',
-    fill: 'rgb(104, 176, 227)',
-    stroke: 'rgb(104, 176, 227)'
+    fill: '#46A8D5',
+    stroke: '#224556'
   })
 
   graph.createNode(new Rect(-100, 260, 75, 75), starShape)

@@ -1,6 +1,6 @@
 # Family Tree Demo
 
-<img src="../../resources/image/familyTree.png" alt="demo-thumbnail" height="320"/>
+<img src="../../resources/image/family-tree.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/familytree/index.html).
 

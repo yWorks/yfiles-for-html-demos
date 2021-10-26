@@ -1,5 +1,7 @@
 # Snapping Demo
 
+<img src="../../resources/image/custom-snapping.png" alt="demo-thumbnail" height="320"/>
+
 [You can also run this demo online](https://live.yworks.com/demos/input/customsnapping/index.html).
 
 This demo shows how the snapping feature can be customized.

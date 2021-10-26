@@ -27,32 +27,32 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
+  EdgePathLabelModel,
   EdgeSegmentLabelModel,
+  EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
   IEdge,
+  IGraph,
   ILabel,
   IModelItem,
   INode,
   IPort,
-  InteriorStretchLabelModel,
   License,
-  PanelNodeStyle,
-  Point,
-  Rect,
-  ShapeNodeStyle,
-  Size,
-  ToolTipQueryEventArgs,
   MouseHoverInputMode,
+  Point,
   QueryItemToolTipEventArgs,
-  TimeSpan
+  Rect,
+  Size,
+  TimeSpan,
+  ToolTipQueryEventArgs
 } from 'yfiles'
 
 import { addClass, bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -70,7 +70,7 @@ function run(licenseData: object): void {
   graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
-  initTutorialDefaults()
+  initTutorialDefaults(graphComponent.graph)
 
   // enable tooltips
   initializeTooltips()
@@ -162,33 +162,23 @@ function createTooltipContent(item: IModelItem): HTMLElement {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
+ *
+ * @param graph The graph.
  */
-function initTutorialDefaults(): void {
-  const graph = graphComponent.graph
+function initTutorialDefaults(graph: IGraph): void {
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
+  // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
-
-  // configure defaults group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
+    insets: 5
+  }).createParameter('south')
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**
@@ -204,7 +194,9 @@ function createGraph(): void {
   const node5 = graph.createNodeAt({ location: [100, 281], labels: ['Node 5'] })
 
   const group = graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-  graph.setNodeLayout(group, new Rect(47.05, -18, 160.05, 195))
+  // Enlarge the group node slightly to ensure that all labels also fit inside the node.
+  // They are typically not accounted for when calculating the group node size.
+  graph.setNodeLayout(group, group.layout.toRect().getEnlarged({ bottom: 25, horizontal: 5 }))
 
   const edge1 = graph.createEdge({ source: node1, target: node2, labels: ['Edge 1'] })
   const edge2 = graph.createEdge({ source: node1, target: node3, labels: ['Edge 2'] })

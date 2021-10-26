@@ -30,6 +30,7 @@ import {
   BaseClass,
   CanvasComponent,
   Class,
+  Color,
   DefaultGraph,
   GraphComponent,
   GraphModelManager,
@@ -81,7 +82,7 @@ import {
 
 import SvgEdgeStyle from './SvgEdgeStyle.js'
 import SimpleSvgNodeStyle from './SimpleSvgNodeStyle.js'
-import { webGlSupported } from '../../utils/Workarounds.js'
+import { isWebGlSupported } from '../../utils/Workarounds.js'
 
 /**
  * A {@link GraphModelManager} implementation that uses several optimizations
@@ -192,7 +193,7 @@ export class FastGraphModelManager extends GraphModelManager {
     this.portDescriptor = this.fastPortDescriptor
 
     // initialize the intermediate and overview styles with default values
-    if (webGlSupported) {
+    if (isWebGlSupported()) {
       this.overviewNodeStyle = new WebGLShapeNodeStyle()
       this.overviewEdgeStyle = new WebGLPolylineEdgeStyle()
       this._overviewNodeStyle = new WebGLShapeNodeStyle()
@@ -211,6 +212,9 @@ export class FastGraphModelManager extends GraphModelManager {
     this.overviewPortStyle = VoidPortStyle.INSTANCE
 
     this.imageRenderer = new ImageGraphRenderer(this)
+
+    this.zoomChangedHandler = () => this.onGraphComponentZoomChanged()
+    this.graphChangedHandler = () => this.onGraphComponentGraphChanged()
   }
 
   /**
@@ -223,8 +227,8 @@ export class FastGraphModelManager extends GraphModelManager {
     this._graphComponent = graphComponent
 
     // register to graphComponent events that could trigger a visualization change
-    graphComponent.addZoomChangedListener(this.onGraphComponentZoomChanged.bind(this))
-    graphComponent.addGraphChangedListener(this.onGraphComponentGraphChanged.bind(this))
+    graphComponent.addZoomChangedListener(this.zoomChangedHandler)
+    graphComponent.addGraphChangedListener(this.graphChangedHandler)
 
     this.hitTestInputChainLink = new HitTestInputChainLink(graphComponent)
     graphComponent.inputModeContextLookupChain.add(this.hitTestInputChainLink)
@@ -239,9 +243,14 @@ export class FastGraphModelManager extends GraphModelManager {
    * @param {!GraphComponent} graphComponent
    */
   uninstall(graphComponent) {
+    if (this._imageRendererCanvasObject) {
+      this._imageRendererCanvasObject.remove()
+      this._imageRendererCanvasObject = null
+    }
+
     // unregister to graphComponent events that could trigger a visualization change
-    graphComponent.removeZoomChangedListener(this.onGraphComponentZoomChanged.bind(this))
-    graphComponent.removeGraphChangedListener(this.onGraphComponentGraphChanged.bind(this))
+    graphComponent.removeGraphChangedListener(this.graphChangedHandler)
+    graphComponent.removeZoomChangedListener(this.zoomChangedHandler)
 
     graphComponent.inputModeContextLookupChain.remove(this.hitTestInputChainLink)
     this.hitTestInputChainLink = null
@@ -1539,7 +1548,7 @@ class GLVisual extends WebGLVisual {
     })
 
     this.nodeStyle = new WebGLShapeNodeStyle({
-      color: 'rgb(131, 68, 173)'
+      color: Color.from('#FF6C00')
     })
 
     this.visuals = null

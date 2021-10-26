@@ -100,6 +100,7 @@ import {
 } from '../../resources/demo-styles.js'
 import {
   addClass,
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -108,7 +109,7 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-import { webGlSupported } from '../../utils/Workarounds.js'
+import { isWebGlSupported } from '../../utils/Workarounds.js'
 import { createConfiguredGraphMLIOHandler } from './FaultTolerantGraphMLIOHandler.js'
 import { isSeparator, LayoutStyles, Presets } from './resources/LayoutSamples.js'
 import { LoremIpsum } from './resources/LoremIpsum.js'
@@ -144,9 +145,8 @@ const comboBoxSeparatorItem = '-----------'
 
 // get hold of some UI elements
 const layoutComboBox = getElementById('layout-select-box')
+addNavigationButtons(layoutComboBox, true, 'sidebar-button')
 const sampleComboBox = getElementById('sample-select-box')
-const nextButton = getElementById('next-sample-button')
-const previousButton = getElementById('previous-sample-button')
 const layoutButton = getElementById('apply-layout-button')
 
 // keep track of user interactions with the graph
@@ -1042,7 +1042,7 @@ function createEditorMode() {
   mode.createBendInputMode.priority = mode.moveInputMode.priority - 1
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
-  if (webGlSupported) {
+  if (isWebGlSupported()) {
     mode.handleInputMode.renderMode = RenderModes.WEB_GL
   }
 
@@ -1216,23 +1216,6 @@ function registerCommands() {
   bindChangeListener("select[data-command='LayoutSelectionChanged']", onLayoutChanged)
   bindChangeListener("select[data-command='SampleSelectionChanged']", onSampleChanged)
 
-  bindAction("button[data-command='PreviousStyle']", () => {
-    layoutComboBox.selectedIndex--
-    if (layoutComboBox.options[layoutComboBox.selectedIndex].disabled) {
-      // skip the '-------'
-      layoutComboBox.selectedIndex--
-    }
-    onLayoutChanged()
-  })
-  bindAction("button[data-command='NextStyle']", () => {
-    layoutComboBox.selectedIndex++
-    if (layoutComboBox.options[layoutComboBox.selectedIndex].disabled) {
-      // skip the '-------'
-      layoutComboBox.selectedIndex++
-    }
-    onLayoutChanged()
-  })
-
   bindAction("button[data-command='GenerateNodeLabels']", () => {
     onGenerateItemLabels(graphComponent.graph.nodes)
     updateModifiedGraphSample()
@@ -1294,8 +1277,6 @@ function setUIDisabled(disabled) {
   querySelector("button[data-command='Save']").disabled = disabled
   sampleComboBox.disabled = disabled
   layoutComboBox.disabled = disabled
-  nextButton.disabled = disabled
-  previousButton.disabled = disabled
   layoutButton.disabled = disabled
   graphComponent.inputMode.waiting = disabled
   presetsUiBuilder.setPresetButtonDisabled(disabled)
@@ -1304,8 +1285,6 @@ function setUIDisabled(disabled) {
 function updateUIState() {
   sampleComboBox.disabled = false
   layoutComboBox.disabled = false
-  nextButton.disabled = layoutComboBox.selectedIndex >= layoutComboBox.length - 1
-  previousButton.disabled = layoutComboBox.selectedIndex <= 0
   layoutButton.disabled = !(configOptionsValid && !inLayout)
   presetsUiBuilder.setPresetButtonDisabled(false)
 }

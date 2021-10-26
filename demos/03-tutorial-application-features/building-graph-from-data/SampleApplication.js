@@ -27,17 +27,15 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  ExteriorLabelModel,
+  EdgePathLabelModel,
+  EdgeSides,
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
   IEdge,
   IGraph,
   INode,
-  InteriorStretchLabelModel,
   License,
-  PanelNodeStyle,
   Point,
   ShapeNodeStyle,
   Size
@@ -45,6 +43,7 @@ import {
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -115,7 +114,7 @@ function buildGraph(graph, graphData) {
   // Iterate the group data and create the according group nodes.
   graphData.groupsSource.forEach(groupData => {
     groups[groupData.id] = graph.createGroupNode({
-      labels: [groupData.label || ''],
+      labels: groupData.label != null ? [groupData.label] : [],
       layout: groupData.layout,
       tag: groupData
     })
@@ -124,19 +123,15 @@ function buildGraph(graph, graphData) {
   // Iterate the node data and create the according nodes.
   graphData.nodesSource.forEach(nodeData => {
     const node = graph.createNode({
-      labels: [nodeData.label || ''],
+      labels: nodeData.label != null ? [nodeData.label] : [],
       layout: nodeData.layout,
       tag: nodeData
     })
     if (nodeData.fill) {
       // If the node data specifies an individual fill color, adjust the style.
-      graph.setStyle(
-        node,
-        new ShapeNodeStyle({
-          fill: nodeData.fill,
-          stroke: 'white'
-        })
-      )
+      const shapeNodeStyle = graph.nodeDefaults.style.clone()
+      shapeNodeStyle.fill = nodeData.fill
+      graph.setStyle(node, shapeNodeStyle)
     }
     nodes[nodeData.id] = node
   })
@@ -155,7 +150,7 @@ function buildGraph(graph, graphData) {
     graph.createEdge({
       source: nodes[edgeData.from] || groups[edgeData.from],
       target: nodes[edgeData.to] || groups[edgeData.to],
-      labels: [edgeData.label || ''],
+      labels: edgeData.label != null ? [edgeData.label] : [],
       tag: edgeData
     })
   })
@@ -178,33 +173,21 @@ function buildGraph(graph, graphData) {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
  *
  * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
-  // configure defaults for normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
-  graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults for group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  // set sizes and locations specific for this tutorial
+  graph.nodeDefaults.size = new Size(40, 40)
+
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**

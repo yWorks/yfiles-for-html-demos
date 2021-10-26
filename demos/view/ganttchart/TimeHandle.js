@@ -30,14 +30,14 @@ import {
   BaseClass,
   Cursor,
   HandleTypes,
+  IEnumerable,
   IHandle,
   IHandleProvider,
   IInputModeContext,
   INode,
   IPoint,
   List,
-  Point,
-  IEnumerable
+  Point
 } from 'yfiles'
 
 /**

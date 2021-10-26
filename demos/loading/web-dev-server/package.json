@@ -1,0 +1,19 @@
+{
+  "name": "web-dev-server-yfiles-for-html-example",
+  "version": "1.0.0",
+  "description": "Shows how to load yFiles for HTML with @web/dev-server",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "scripts": {
+    "start": "web-dev-server",
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json'); require('fs-extra').copySync('../../resources/style/demo.css', 'src/demo.css'); require('fs-extra').copySync('../../resources/icons', 'src/icons');\""
+  },
+  "dependencies": {
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
+  },
+  "devDependencies": {
+    "@web/dev-server": "^0.1.22",
+    "fs-extra": "^10.0.0"
+  }
+}

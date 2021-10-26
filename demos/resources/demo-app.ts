@@ -26,12 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { registerErrorDialog, INVALID_LICENSE_MESSAGE } from './demo-error'
+import { INVALID_LICENSE_MESSAGE, registerErrorDialog } from './demo-error'
 import {
+  detectInternetExplorerVersion,
   detectiOSVersion,
-  enableWorkarounds,
   detectSafariVersion,
-  detectInternetExplorerVersion
+  enableWorkarounds
 } from '../utils/Workarounds'
 import { DefaultGraph, GraphComponent, GraphMLIOHandler, License } from 'yfiles'
 
@@ -537,20 +537,24 @@ export function addNavigationButtons(
   prevButton.setAttribute('title', 'Previous')
   prevButton.setAttribute('class', 'demo-icon-yIconPrevious ' + classList)
   prevButton.addEventListener('click', e => {
-    const newIndex = selectElement.selectedIndex - 1
-    selectElement.selectedIndex =
-      newIndex >= 0 ? newIndex : wrapAround ? selectElement.options.length - 1 : 0
-    selectElement.dispatchEvent(new Event('change'))
+    const oldIndex = selectElement.selectedIndex
+    const newIndex = lastIndexOfEnabled(selectElement, oldIndex - 1, wrapAround)
+    if (oldIndex != newIndex && newIndex > -1) {
+      selectElement.selectedIndex = newIndex
+      selectElement.dispatchEvent(new Event('change'))
+    }
   })
 
   const nextButton = document.createElement('button')
   nextButton.setAttribute('title', 'Next')
   nextButton.setAttribute('class', 'demo-icon-yIconNext ' + classList)
   nextButton.addEventListener('click', e => {
-    const newIndex = selectElement.selectedIndex + 1
-    const lastIndex = selectElement.options.length - 1
-    selectElement.selectedIndex = newIndex <= lastIndex ? newIndex : wrapAround ? 0 : lastIndex
-    selectElement.dispatchEvent(new Event('change'))
+    const oldIndex = selectElement.selectedIndex
+    const newIndex = indexOfEnabled(selectElement, oldIndex + 1, wrapAround)
+    if (oldIndex != newIndex && newIndex > -1) {
+      selectElement.selectedIndex = newIndex
+      selectElement.dispatchEvent(new Event('change'))
+    }
   })
 
   selectElement.parentElement.insertBefore(prevButton, selectElement)
@@ -582,6 +586,61 @@ export function addNavigationButtons(
   })
   disabledObserver.observe(selectElement, { attributes: true })
   return selectElement
+}
+
+/**
+ * Finds the index of the first enabled option in the given HTMLSelectElement.
+ * @param selectElement the HTMLSelectElement whose options are searched for an enabled one.
+ * @param fromIndex the starting index from which to search.
+ * @param wrapAround determines if the search should find first enabled option with an index less
+ * than fromIndex if there is no enabled option with an index greater than fromIndex.
+ */
+function indexOfEnabled(
+  selectElement: HTMLSelectElement,
+  fromIndex: number,
+  wrapAround: boolean
+): number {
+  const n = selectElement.options.length
+  for (let idx = fromIndex; idx < n; ++idx) {
+    if (!selectElement.options[idx].disabled) {
+      return idx
+    }
+  }
+  if (wrapAround) {
+    for (let idx = 0; idx < fromIndex; ++idx) {
+      if (!selectElement.options[idx].disabled) {
+        return idx
+      }
+    }
+  }
+  return -1
+}
+
+/**
+ * Finds the index of the last enabled option in the given HTMLSelectElement.
+ * @param selectElement the HTMLSelectElement whose options are searched for an enabled one.
+ * @param fromIndex the starting index from which to search.
+ * @param wrapAround determines if the search should find last enabled option with an index greater
+ * than fromIndex if there is no enabled option with an index less than fromIndex.
+ */
+function lastIndexOfEnabled(
+  selectElement: HTMLSelectElement,
+  fromIndex: number,
+  wrapAround: boolean
+): number {
+  for (let idx = fromIndex; idx > -1; --idx) {
+    if (!selectElement.options[idx].disabled) {
+      return idx
+    }
+  }
+  if (wrapAround) {
+    for (let idx = selectElement.options.length - 1; idx > fromIndex; --idx) {
+      if (!selectElement.options[idx].disabled) {
+        return idx
+      }
+    }
+  }
+  return -1
 }
 
 /**
@@ -634,6 +693,20 @@ export function checkLicense(licenseData: object) {
   }, 200)
 
   return Promise.reject(new Error(INVALID_LICENSE_MESSAGE))
+}
+
+/**
+ * Displays or hides the loading indicator which is a div element with id 'loadingIndicator'.
+ * @param visible Whether to show or hide the loading indicator.
+ * @param message A text on the loading indicator.
+ */
+export async function showLoadingIndicator(visible: boolean, message?: string): Promise<void> {
+  const loadingIndicator = document.querySelector<HTMLElement>('#loadingIndicator')!
+  loadingIndicator.style.display = visible ? 'block' : 'none'
+  if (message) {
+    loadingIndicator.innerText = message
+  }
+  return new Promise(resolve => setTimeout(resolve, 0))
 }
 
 // initialize the application

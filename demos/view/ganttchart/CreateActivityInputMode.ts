@@ -41,8 +41,8 @@ import {
 } from 'yfiles'
 
 import ActivityNodeStyle from './ActivityNodeStyle'
-import GanttMapper from './GanttMapper'
 import type { Task } from './GanttMapper'
+import GanttMapper from './GanttMapper'
 
 /**
  * A customized MarqueeSelectionInputMode that makes it possible to create task nodes.

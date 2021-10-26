@@ -40,6 +40,7 @@ import {
   IModelItem,
   INode,
   InteriorStretchLabelModel,
+  ItemCollection,
   LayoutExecutor,
   License,
   List,
@@ -59,6 +60,7 @@ import GroupNodePortCandidateProvider from './GroupNodePortCandidateProvider'
 import DemoStyles, { DemoSerializationListener, initDemoStyles } from '../../resources/demo-styles'
 import {
   addClass,
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -133,10 +135,7 @@ let graphMLSupport: GraphMLSupport
 const graphChooserBox = document.querySelector(
   "select[data-command='SelectedFileChanged']"
 ) as HTMLSelectElement
-const nextButton = document.querySelector("button[data-command='NextFile']") as HTMLButtonElement
-const previousButton = document.querySelector(
-  "button[data-command='PreviousFile']"
-) as HTMLButtonElement
+addNavigationButtons(graphChooserBox)
 const restartButton = document.querySelector("button[data-command='Restart']") as HTMLButtonElement
 
 const showDecisionTreeButton = document.getElementById(
@@ -342,9 +341,8 @@ async function runIncrementalLayout(incrementalNodes: List<INode>) {
   ;(layout.nodePlacer as SimplexNodePlacer).barycenterMode = false
 
   // configure the incremental hints
-  const layoutData = new HierarchicLayoutData({
-    incrementalHints: { incrementalLayeringNodes: incrementalNodes }
-  })
+  const layoutData = new HierarchicLayoutData()
+  layoutData.incrementalHints.incrementalLayeringNodes = ItemCollection.from(incrementalNodes)
 
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
@@ -482,8 +480,6 @@ function registerCommands(): void {
       ICommand.ZOOM.execute(1, decisionTree.graphComponent)
     }
   })
-  bindAction("#toolbar-decisiontree button[data-command='PreviousFile']", onPreviousButtonClicked)
-  bindAction("#toolbar-decisiontree button[data-command='NextFile']", onNextButtonClicked)
   bindChangeListener(
     "#toolbar-decisiontree select[data-command='SelectedFileChanged']",
     async () => {
@@ -509,7 +505,7 @@ function enableGraphML(): void {
 
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
@@ -518,49 +514,15 @@ function enableGraphML(): void {
 }
 
 /**
- * Updates the previous/next button states.
- */
-function updatePrevNextButtons(): void {
-  nextButton.disabled = graphChooserBox.selectedIndex >= graphChooserBox.length - 1
-  previousButton.disabled = graphChooserBox.selectedIndex <= 0
-}
-
-/**
  * Updates the demo's UI depending on wheter or not a layout is currently calculated.
  * @param running true indicates that a layout is currently calculated
  */
 function setRunningLayout(running: boolean): void {
   runningLayout = running
-  if (running) {
-    nextButton.disabled = running
-    previousButton.disabled = running
-  } else {
-    updatePrevNextButtons()
-  }
   graphChooserBox.disabled = running
   restartButton.disabled = running
   showDecisionTreeButtonDisabled = running
   editDecisionTreeButtonDisabled = running
-}
-
-/**
- * Switches to the previous graph.
- */
-async function onPreviousButtonClicked(): Promise<void> {
-  graphChooserBox.selectedIndex--
-  setAsRootNode(null)
-  await readSampleGraph()
-  showDecisionTree()
-}
-
-/**
- * Switches to the next graph.
- */
-async function onNextButtonClicked(): Promise<void> {
-  graphChooserBox.selectedIndex++
-  setAsRootNode(null)
-  await readSampleGraph()
-  showDecisionTree()
 }
 
 /**
@@ -590,10 +552,6 @@ function updateShowDecisionTreeButton(): void {
  * @return A promise that is resolved when the graph is read.
  */
 async function readSampleGraph(): Promise<IGraph> {
-  // Disable navigation buttons while graph is loaded
-  nextButton.disabled = true
-  previousButton.disabled = true
-
   // first derive the file name
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   const fileName = `resources/${selectedItem}.graphml`
@@ -601,8 +559,6 @@ async function readSampleGraph(): Promise<IGraph> {
   const graph = await readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, fileName)
   // when done - fit the bounds
   graphComponent.fitGraphBounds()
-  // re-enable navigation buttons
-  updatePrevNextButtons()
   return graph
 }
 

@@ -78,27 +78,22 @@ function run(licenseData) {
  */
 function createSampleGraph(graph) {
   // create some group nodes ...
-  const group1 = createGroupNode(graph, 100, 100, 'royalblue', 'Only Blue Children')
-  const group2 = createGroupNode(graph, 160, 130, 'royalblue', 'Only Blue Children')
-  const greenGroup = createGroupNode(graph, 100, 350, 'green', 'Only Green Children')
-  createGroupNode(graph, 400, 350, 'green', 'Only Green Children')
+  const group1 = createGroupNode(graph, 100, 100, 'demo-lightblue', 'blue', 'Only Blue Children')
+  const group2 = createGroupNode(graph, 160, 130, 'demo-lightblue', 'blue', 'Only Blue Children')
+  const greenGroup = createGroupNode(graph, 100, 350, 'demo-green', 'green', 'Only Green Children')
+  createGroupNode(graph, 400, 350, 'demo-green', 'green', 'Only Green Children')
 
   // ... and some regular nodes
-  const blueNodeStyle = new DemoNodeStyle()
-  blueNodeStyle.cssClass = 'royalblue'
+  const blueNodeStyle = new DemoNodeStyle('demo-lightblue')
+  const greenNodeStyle = new DemoNodeStyle('demo-green')
+  const redNodeStyle = new DemoNodeStyle('demo-red')
 
-  const greenNodeStyle = new DemoNodeStyle()
-  greenNodeStyle.cssClass = 'green'
-
-  const redNodeStyle = new DemoNodeStyle()
-  redNodeStyle.cssClass = 'firebrick'
-
-  const blueNode = graph.createNode(new Rect(110, 130, 30, 30), blueNodeStyle, 'royalblue')
+  const blueNode = graph.createNode(new Rect(110, 130, 30, 30), blueNodeStyle, 'blue')
   const greenNode = graph.createNode(new Rect(130, 380, 30, 30), greenNodeStyle, 'green')
-  graph.createNode(new Rect(400, 100, 30, 30), redNodeStyle, 'firebrick')
+  graph.createNode(new Rect(400, 100, 30, 30), redNodeStyle, 'red')
   graph.createNode(new Rect(500, 100, 30, 30), greenNodeStyle, 'green')
-  graph.createNode(new Rect(400, 200, 30, 30), blueNodeStyle, 'royalblue')
-  graph.createNode(new Rect(500, 200, 30, 30), redNodeStyle, 'firebrick')
+  graph.createNode(new Rect(400, 200, 30, 30), blueNodeStyle, 'blue')
+  graph.createNode(new Rect(500, 200, 30, 30), redNodeStyle, 'red')
 
   graph.groupNodes(group1, [blueNode, group2])
   graph.groupNodes(greenGroup, [greenNode])
@@ -117,19 +112,18 @@ function createSampleGraph(graph) {
  * @param {!IGraph} graph The given graph
  * @param {number} x The node's x-coordinate
  * @param {number} y The node's y-coordinate
- * @param {!string} cssClass The CSS class that determines the node's styling
+ * @param {!ColorSetName} cssClass The CSS class that determines the node's styling
+ * @param {!string} tag The tag to identify the reparent handler
  * @param {!string} labelText The node's label text
  * @returns {!INode}
  */
-function createGroupNode(graph, x, y, cssClass, labelText) {
-  const groupNode = graph.createGroupNode()
-  const groupNodeStyle = new DemoGroupStyle()
-  groupNodeStyle.cssClass = cssClass
-
-  graph.setStyle(groupNode, groupNodeStyle)
-  graph.setNodeLayout(groupNode, new Rect(x, y, 130, 100))
-  graph.addLabel(groupNode, labelText)
-  groupNode.tag = cssClass
+function createGroupNode(graph, x, y, cssClass, tag, labelText) {
+  const groupNode = graph.createGroupNode({
+    layout: new Rect(x, y, 130, 100),
+    style: new DemoGroupStyle(cssClass),
+    tag: tag
+  })
+  graph.addLabel({ owner: groupNode, text: labelText })
 
   return groupNode
 }

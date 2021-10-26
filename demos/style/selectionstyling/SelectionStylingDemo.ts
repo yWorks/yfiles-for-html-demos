@@ -119,8 +119,8 @@ function initializeGraph(): void {
 
   // defaults for labels
   const simpleLabelStyle = new DefaultLabelStyle({
-    backgroundFill: 'rgb(104, 176, 227)',
-    textFill: 'white',
+    backgroundFill: '#FFC398',
+    textFill: '#662b00',
     insets: [3, 5, 3, 5]
   })
 
@@ -169,19 +169,19 @@ function initializeDecoration(): void {
   nodeDecorationInstaller = new NodeStyleDecorationInstaller({
     // we choose a shape node style
     nodeStyle: new ShapeNodeStyle({
-      shape: 'rectangle',
-      stroke: 'rgb(104, 176, 227)',
+      shape: 'round-rectangle',
+      stroke: '#01BAFF',
       fill: 'transparent'
     }),
     // with a margin for the decoration
-    margins: 10
+    margins: 8
   })
 
   // for edges..
   // just a thick polyline edge style
   edgeDecorationInstaller = new EdgeStyleDecorationInstaller({
     edgeStyle: new PolylineEdgeStyle({
-      stroke: '3px rgb(104, 176, 227)'
+      stroke: '3px #01BAFF'
     })
   })
 
@@ -191,8 +191,8 @@ function initializeDecoration(): void {
     // decoration
     labelStyle: new NodeStyleLabelStyleAdapter(
       new ShapeNodeStyle({
-        shape: 'round-rectangle',
-        stroke: 'rgb(104, 176, 227)',
+        shape: 'rectangle',
+        stroke: '#01BAFF',
         fill: 'transparent'
       }),
       VoidLabelStyle.INSTANCE

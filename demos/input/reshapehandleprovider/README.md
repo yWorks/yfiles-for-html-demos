@@ -1,5 +1,7 @@
 # Reshape Handle Provider Demo
 
+<img src="../../resources/image/reshape-port-handle.png" alt="demo-thumbnail" height="320"/>
+
 [You can also run this demo online](https://live.yworks.com/demos/input/reshapehandleprovider/index.html).
 
 This demo shows how to implement a custom [IReshapeHandleProvider](https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider).

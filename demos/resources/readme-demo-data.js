@@ -35,15 +35,15 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html",
     "summary": "Showcases the most used layout algorithms of yFiles, including hierarchic, organic, orthogonal, tree, circular, balloon, and several edge routing styles.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
       "layout",
-      "algorithms"
+      "edge routing"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
+      "layout styles samples",
       "options",
       "overview",
       "hierarchic",
@@ -54,17 +54,17 @@ function getDemoData() {
       "balloon",
       "radial",
       "series-parallel",
-      "edgerouter",
-      "polyline-router",
-      "channel-router",
-      "bus-router",
-      "organic-router",
-      "parallel-router",
-      "genericlabeling",
-      "component",
+      "edge router",
+      "polyline router",
+      "channel router",
+      "bus router",
+      "organic router",
+      "parallel router",
+      "generic labeling",
+      "components",
       "tabular",
       "partial",
-      "graph-transform",
+      "graph transformer",
       "label placement",
       "v2.4.0.0"
     ],
@@ -77,16 +77,16 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=hierarchic&sample=hierarchic",
     "summary": "Suitable for any kind of directed diagram, like flow charts, BPMN diagrams and more",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-hierarchic.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "hierarchic",
-      "layout"
+      "layout",
+      "hierarchic"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
+      "layout styles samples",
+      "layout algorithm",
       "HierarchicLayout",
       "hierarchy",
       "hierarchical",
@@ -114,7 +114,7 @@ function getDemoData() {
       "swimlane",
       "call graph",
       "pathways",
-      "entity-relationship",
+      "entity relationship",
       "workflow"
     ],
     "ts": true
@@ -126,35 +126,34 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=organic&sample=organic",
     "summary": "Suitable for many types of undirected graphs and complex networks, like social networks, WWW visualizations or knowledge representation.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-organic.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "organic",
-      "layout"
+      "layout",
+      "organic"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
+      "layout styles samples",
+      "layout algorithm",
       "OrganicLayout",
-      "force-directed",
-      "spring-embedder",
-      "energy-based",
-      "Kamada–Kawai",
-      "Fruchterman–Reingold",
+      "force directed",
+      "spring embedder",
+      "energy based",
+      "Kamada Kawai",
+      "Fruchterman Reingold",
       "physical",
       "social",
       "network",
       "networking",
-      "straight-line",
+      "straight line",
       "substructures",
       "stars",
       "chains",
       "cliques",
       "mesh",
       "undirected",
-      "straight-line",
-      "large-graphs"
+      "large graphs"
     ],
     "ts": true
   },
@@ -165,17 +164,17 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=edge-router&sample=edge-router",
     "summary": "For routing edges in an orthogonal, octilinear or curved style.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-edgerouter.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "edge",
-      "router"
+      "edge routing",
+      "polyline"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "routing-algorithm",
-      "EdgeRouter",
+      "layout styles samples",
+      "routing algorithm",
+      "edge router",
       "layout",
       "routing",
       "route",
@@ -199,19 +198,19 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=tree&sample=tree",
     "summary": "Suitable to visualize tree structures like organization charts or for dataflow analysis.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-tree.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "tree",
-      "layout"
+      "layout",
+      "tree"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
-      "TreeLayout",
+      "layout styles samples",
+      "layout algorithm",
+      "tree layout",
       "tree",
-      "nodeplacer",
+      "node placer",
       "org chart",
       "root",
       "directed",
@@ -228,22 +227,22 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=balloon&sample=balloon",
     "summary": "Suitable to visualize tree-like structures in a radial fashion.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-balloon.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "balloon",
-      "layout"
+      "layout",
+      "balloon"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "BalloonLayout",
+      "layout styles samples",
+      "balloon layout",
       "tree",
       "radial",
       "balloons",
       "stars",
-      "star-like",
-      "social-networks",
+      "star like",
+      "social networks",
       "organic"
     ],
     "ts": true
@@ -255,23 +254,23 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=orthogonal&sample=orthogonal",
     "summary": "Suitable for diagrams with orthogonal edges such as UML, database schemas, system management and more.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-orthogonal.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "orthogonal",
-      "layout"
+      "layout",
+      "orthogonal"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
-      "OrthogonalLayout",
+      "layout styles samples",
+      "layout algorithm",
+      "orthogonal layout",
       "tsm",
-      "topology-shape-metrics",
+      "topology shape metrics",
       "planar",
       "substructures",
       "perpendicular",
-      "system-management",
+      "system management",
       "uml"
     ],
     "ts": true
@@ -283,26 +282,26 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=circular&sample=circular",
     "summary": "Suitable for applications in social networking, for WWW visualization and network management",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-circular.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "circular",
-      "layout"
+      "layout",
+      "circular"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
-      "CircularLayout",
-      "cycle",
+      "layout styles samples",
+      "layout algorithm",
+      "circular layout",
+      "cycles",
       "circles",
       "elliptical",
       "bundling",
       "radial",
-      "straight-line",
+      "straight lines",
       "arcs",
-      "ring",
-      "chord"
+      "rings",
+      "chords"
     ],
     "ts": true
   },
@@ -313,16 +312,16 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=radial&sample=radial",
     "summary": "Suitable to visualize directed diagrams with a certain flow.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-radial.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "radial",
-      "layout"
+      "layout",
+      "radial"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "RadialLayout",
+      "layout styles samples",
+      "radial layout",
       "circles",
       "circular",
       "concentric",
@@ -343,24 +342,24 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=series-parallel&sample=series-parallel",
     "summary": "Suitable for diagrams with a main direction, like flow charts.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-seriesparallel.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "seriesparallel",
-      "layout"
+      "layout",
+      "seriesparallel"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
-      "SeriesParallelLayout",
+      "layout styles samples",
+      "layout algorithm",
+      "series parallel layout",
       "series",
       "parallel",
       "hierarchical",
       "orthogonal",
       "octilinear",
       "directed",
-      "sp-graph"
+      "sp graph"
     ],
     "ts": true
   },
@@ -371,22 +370,22 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=bus-router",
     "summary": "For routing edges in an orthogonal bus-style.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-busrouter.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "bus",
-      "router"
+      "edge routing",
+      "bus"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "routing-algorithm",
-      "BusRouter",
+      "layout styles samples",
+      "routing algorithm",
+      "bus router",
       "layout",
       "routing",
       "orthogonal",
-      "bus",
-      "backbone"
+      "buses",
+      "backbones"
     ],
     "ts": true
   },
@@ -397,17 +396,18 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=components&sample=components",
     "summary": "For arranging any kind of disconnected diagram components.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-components.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "component",
-      "layout"
+      "layout",
+      "component"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
-      "ComponentLayout"
+      "layout styles samples",
+      "layout algorithm",
+      "component layout",
+      "components"
     ],
     "ts": true
   },
@@ -418,17 +418,17 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=tabular&sample=tabular",
     "summary": "Suitable to arrange elements in rows and columns.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-tabular.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "tabular",
-      "layout"
+      "layout",
+      "tabular"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
-      "TabularLayout",
+      "layout styles samples",
+      "layout algorithm",
+      "tabular layout",
       "rows",
       "row-like",
       "columns",
@@ -436,7 +436,7 @@ function getDemoData() {
       "grid",
       "components",
       "disconnected",
-      "table"
+      "tables"
     ],
     "ts": true
   },
@@ -447,18 +447,16 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=labeling",
     "summary": "Places node and edge labels.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-labeling.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
-      "generic",
-      "label",
-      "placement"
+      "label placement"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "GenericLabeling",
-      "preferred-placement"
+      "layout styles samples",
+      "generic labeling",
+      "preferred placement"
     ],
     "ts": true
   },
@@ -469,18 +467,18 @@ function getDemoData() {
     "demoPath": "layout/layoutstyles/index.html?layout=partial",
     "summary": "Suitable for incremental scenarios where new elements should be added to an existing diagram layout.",
     "category": "layout",
+    "type": "layout-styles",
     "thumbnailPath": "resources/image/layoutstyles-partial.png",
     "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
     "tags": [
+      "layout",
       "partial",
-      "incremental",
-      "layout"
+      "incremental"
     ],
     "keywords": [
-      "layout-styles-samples",
-      "layoutstyles",
-      "layout-algorithm",
-      "PartialLayout",
+      "layout styles samples",
+      "layout algorithm",
+      "partial layout",
       "mental map",
       "subgraph",
       "fixed"
@@ -493,18 +491,21 @@ function getDemoData() {
     "demoPath": "complete/bpmn/index.html",
     "summary": "An editor for Business Process diagrams that features interactive editing, BPMN node styles and a specialized BPMN layout algorithm.",
     "category": "complete",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/bpmneditor.png",
     "sourcePath": "complete/bpmn/BpmnEditorDemo.js",
     "tags": [
-      "styles",
-      "layout"
+      "style",
+      "layout",
+      "interaction"
     ],
     "keywords": [
-      "contextmenu",
-      "draganddrop",
+      "context menu",
+      "drag and drop",
       "palette",
       "ports",
-      "overview"
+      "overview",
+      "dnd"
     ],
     "ts": true
   },
@@ -514,10 +515,11 @@ function getDemoData() {
     "demoPath": "complete/interactiveorgchart/index.html",
     "summary": "An interactive viewer for organization charts with automatic layout updates.",
     "category": "complete",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/interactiveorgchart.png",
     "sourcePath": "complete/interactiveorgchart/OrgChartDemo.js",
     "tags": [
-      "styles",
+      "style",
       "layout",
       "interaction"
     ],
@@ -527,10 +529,10 @@ function getDemoData() {
       "filtering",
       "search",
       "highlight",
-      "template",
+      "templates",
       "print",
-      "datapanel",
-      "structure",
+      "data panel",
+      "structures",
       "hide",
       "detail"
     ],
@@ -542,10 +544,11 @@ function getDemoData() {
     "demoPath": "complete/processmining/index.html",
     "summary": "Shows how to create an animated visualization of a process flow.",
     "category": "complete",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/processmining.png",
     "sourcePath": "complete/processmining/ProcessMiningDemo.js",
     "tags": [
-      "WebGL",
+      "webgl",
       "animation",
       "heatmap"
     ],
@@ -560,19 +563,21 @@ function getDemoData() {
     "demoPath": "view/ganttchart/index.html",
     "summary": "An editor for Gantt charts.",
     "category": "view",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/ganttchart.png",
     "sourcePath": "view/ganttchart/GanttChartDemo.js",
     "tags": [
-      "editor",
+      "style",
       "interaction"
     ],
     "keywords": [
       "activity",
+      "activities",
       "tasks",
-      "swimlanes",
+      "swim lanes",
       "calendar",
-      "date",
-      "time",
+      "dates",
+      "times",
       "schedule"
     ],
     "ts": true
@@ -583,6 +588,7 @@ function getDemoData() {
     "demoPath": "complete/frauddetection/index.html",
     "summary": "Example of a fraud detection application for time-dependent data.",
     "category": "complete",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/frauddetection.png",
     "sourcePath": "complete/frauddetection/FraudDetectionDemo.js",
     "tags": [
@@ -592,8 +598,8 @@ function getDemoData() {
     ],
     "keywords": [
       "filtering",
-      "animation",
-      "structure",
+      "animations",
+      "structures",
       "detail"
     ],
     "ts": true
@@ -604,11 +610,12 @@ function getDemoData() {
     "demoPath": "complete/isometricdrawing/index.html",
     "summary": "Displays graphs in 3D using an arbitrary projection and WebGL rendering.",
     "category": "complete",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/isometric-drawing.png",
     "sourcePath": "complete/isometricdrawing/IsometricDrawingDemo.js",
     "tags": [
-      "WebGL",
-      "styles",
+      "webgl",
+      "style",
       "layout",
       "projection"
     ],
@@ -619,7 +626,7 @@ function getDemoData() {
       "hierarchic",
       "orthogonal",
       "labels",
-      "3D",
+      "3d",
       "isometric"
     ],
     "ts": true
@@ -630,131 +637,179 @@ function getDemoData() {
     "demoPath": "complete/networkmonitoring/index.html",
     "summary": "Example of a monitoring tool for computer networks.",
     "category": "complete",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/networkmonitoring.png",
     "sourcePath": "complete/networkmonitoring/NetworkMonitoringDemo.js",
     "tags": [
-      "styles",
+      "style",
       "viewer",
       "animation"
     ],
     "keywords": [
-      "tooltip",
-      "datapanel",
+      "tool tips",
+      "data panel",
       "chart",
-      "structure",
-      "d3js"
+      "structures",
+      "d3js",
+      "d3.js"
     ],
     "ts": true
   },
   {
-    "id": "graph-analysis",
-    "name": "Graph Analysis",
-    "demoPath": "analysis/graphanalysis/index.html",
-    "summary": "Showcases a selection of graph algorithms such as shortest paths, flows, centrality measures, etc. that help analysing the structure of a graph.",
-    "category": "analysis",
-    "thumbnailPath": "resources/image/graphanalysis.png",
-    "sourcePath": "analysis/graphanalysis/GraphAnalysisDemo.js",
+    "id": "metaball-groups",
+    "name": "Metaball Groups",
+    "demoPath": "complete/metaballgroups/index.html",
+    "summary": "Shows how to render metaball-like background visualizations.",
+    "category": "complete",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/metaballgroups.png",
+    "sourcePath": "complete/metaballgroups/MetaballGroupsDemo.js",
     "tags": [
-      "algorithm",
+      "background",
+      "webgl"
+    ],
+    "keywords": [
+      "v2.2.0.0",
+      "overlapping",
+      "heatmap"
+    ],
+    "ts": true
+  },
+  {
+    "id": "interactive-map",
+    "name": "Interactive Map",
+    "demoPath": "complete/mapintegration/index.html",
+    "summary": "Draws a graph on top of an interactive map.",
+    "category": "complete",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/mapintegration.png",
+    "sourcePath": "complete/mapintegration/MapIntegrationDemo.js",
+    "tags": [
+      "style",
       "layout",
-      "styles"
+      "leaflet"
     ],
     "keywords": [
-      "contextmenu",
-      "centrality",
-      "connectivity",
-      "reachability",
-      "cycles",
-      "spanningtree",
-      "shortestpaths"
-    ],
-    "ts": true
-  },
-  {
-    "id": "edge-bundling",
-    "name": "Edge Bundling",
-    "demoPath": "layout/edgebundling/index.html",
-    "summary": "Shows how edge bundling can be applied for reducing visual cluttering in dense graphs.",
-    "category": "layout",
-    "thumbnailPath": "resources/image/edgebundling.png",
-    "sourcePath": "layout/edgebundling/EdgeBundlingDemo.js",
-    "tags": [
-      "styles",
-      "curves",
-      "layout"
-    ],
-    "keywords": [
-      "contextmenu",
-      "organic",
+      "v2.1.0.2",
+      "overlay",
+      "layers",
+      "controls",
       "radial",
-      "tree",
-      "balloon",
-      "bundle",
+      "tool tips",
+      "shortest paths",
+      "filtering",
+      "background",
+      "curves",
       "bezier"
     ],
     "ts": true
   },
   {
-    "id": "large-graphs",
-    "name": "Large Graphs",
-    "demoPath": "view/large-graphs/index.html",
-    "summary": "Shows how to display large graphs with both good performance in WebGL2 and high quality in SVG.",
-    "category": "view",
-    "thumbnailPath": "resources/image/large-graphs.png",
-    "sourcePath": "view/large-graphs/LargeGraphsDemo.js",
+    "id": "graph-wizard-flowchart",
+    "name": "GraphWizard for Flowchart",
+    "demoPath": "complete/graph-wizard-for-flowchart/index.html",
+    "summary": "Customizes defaults and input gestures to support fast creation of flowcharts.",
+    "category": "complete",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/graphwizard-flowchart.png",
+    "sourcePath": "complete/graph-wizard-for-flowchart/GraphWizardForFlowchartDemo.js",
     "tags": [
-      "performance",
-      "WebGL"
+      "wizard",
+      "flowchart"
     ],
     "keywords": [
-      "v2.4.0.0",
-      "rendering",
-      "large",
-      "huge",
-      "WebGL2",
-      "SVG"
+      "v2.4.0.4",
+      "flow",
+      "shapes",
+      "layout",
+      "input",
+      "button"
     ],
     "ts": true
   },
   {
-    "id": "large-graph-aggregation",
-    "name": "Large Graph Aggregation",
-    "demoPath": "complete/largegraphaggregation/index.html",
-    "summary": "Shows how to use the smart node aggregation for drill-down exploration of a large graph.",
+    "id": "flowchart-editor",
+    "name": "Flowchart Editor",
+    "demoPath": "complete/flowchart/index.html",
+    "summary": "An editor for Flowchart diagrams that features interactive editing, flowchart node styles, and automatic layout.",
     "category": "complete",
-    "thumbnailPath": "resources/image/largegraphaggregation.png",
-    "sourcePath": "complete/largegraphaggregation/LargeGraphAggregationDemo.js",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/flowchart-editor.png",
+    "sourcePath": "complete/flowchart/FlowchartDemo.js",
     "tags": [
-      "large graph",
-      "exploration"
+      "style",
+      "layout",
+      "drag and drop"
     ],
     "keywords": [
-      "v2.3.0.0",
-      "balloon",
-      "AggregationGraphWrapper",
-      "curve",
-      "bezier",
-      "cluster"
+      "hierarchic",
+      "palette",
+      "dnd"
     ],
     "ts": true
   },
   {
-    "id": "interactive-aggregation",
-    "name": "Interactive Aggregation",
-    "demoPath": "complete/interactiveaggregation/index.html",
-    "summary": "Shows how to analyze a graph by interactively aggregating nodes with common properties.",
+    "id": "uml-editor",
+    "name": "UML Editor",
+    "demoPath": "complete/uml/index.html",
+    "summary": "An editor for UML diagrams with a tailored UML node style, automatic layout, and a quick way to create new edges with the mouse or touch.",
     "category": "complete",
-    "thumbnailPath": "resources/image/interactiveaggregation.png",
-    "sourcePath": "complete/interactiveaggregation/InteractiveAggregationDemo.js",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/uml-editor.png",
+    "sourcePath": "complete/uml/UMLEditorDemo.js",
     "tags": [
-      "large graph",
-      "exploration"
+      "style",
+      "layout",
+      "interaction"
     ],
     "keywords": [
-      "v2.3.0.2",
-      "AggregationGraphWrapper",
-      "contextmenu",
-      "cluster"
+      "v2.1.0.1",
+      "context menu",
+      "labels",
+      "edge router",
+      "hierarchic",
+      "structures"
+    ],
+    "ts": true
+  },
+  {
+    "id": "decision-tree",
+    "name": "Decision Tree",
+    "demoPath": "complete/decisiontree/index.html",
+    "summary": "An interactive Decision Tree component that lets you design and explore your own decision graphs.",
+    "category": "complete",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/decisiontree.png",
+    "sourcePath": "complete/decisiontree/DecisionTreeDemo.js",
+    "tags": [
+      "layout",
+      "interaction"
+    ],
+    "keywords": [
+      "hierarchic",
+      "context menu"
+    ],
+    "ts": true
+  },
+  {
+    "id": "mindmap-editor",
+    "name": "Mindmap Editor",
+    "demoPath": "complete/mindmap/index.html",
+    "summary": "A Mindmap editor with a tailored node style, custom user interaction, and a specialized layoutthat automatically arranges new entries.",
+    "category": "complete",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/mindmap.png",
+    "sourcePath": "complete/mindmap/MindmapDemo.js",
+    "tags": [
+      "style",
+      "layout",
+      "interaction"
+    ],
+    "keywords": [
+      "context menu",
+      "tree",
+      "structures",
+      "labels"
     ],
     "ts": true
   },
@@ -764,17 +819,18 @@ function getDemoData() {
     "demoPath": "layout/sankey/index.html",
     "summary": "A diagram used for visualizing flow information in which the thickness of the edges is proportional to the flow quantity.",
     "category": "layout",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/sankey.png",
     "sourcePath": "layout/sankey/SankeyDemo.js",
     "tags": [
       "edge thickness",
-      "styles",
+      "style",
       "layout"
     ],
     "keywords": [
-      "contextmenu",
+      "context menu",
       "hierarchic",
-      "genericlabeling",
+      "generic labeling",
       "labels"
     ],
     "ts": true
@@ -785,535 +841,39 @@ function getDemoData() {
     "demoPath": "layout/treemap/index.html",
     "summary": "Shows disk usage of a directory tree with the Tree Map layout.",
     "category": "layout",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/treemap.png",
     "sourcePath": "layout/treemap/TreeMapDemo.js",
     "tags": [
-      "layout"
+      "layout",
+      "tree map"
     ],
     "keywords": [
-      "treemap",
+      "tree map",
       "v2.1.0.0",
-      "animation",
-      "tooltip"
+      "animations",
+      "tool tips"
     ],
     "ts": true
   },
   {
-    "id": "family-tree",
-    "name": "Family Tree",
-    "demoPath": "layout/familytree/index.html",
-    "summary": "Shows how to visualize genealogical graphs (family trees).",
-    "category": "layout",
-    "thumbnailPath": "resources/image/familyTree.png",
-    "sourcePath": "layout/familytree/FamilyTreeDemo.js",
+    "id": "tag-cloud",
+    "name": "Tag Cloud",
+    "demoPath": "complete/tag-cloud/index.html",
+    "summary": "Shows how to create a Tag Cloud.",
+    "category": "complete",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/tag-cloud.png",
+    "sourcePath": "complete/tag-cloud/TagCloudDemo.js",
     "tags": [
       "layout",
-      "genealogy"
+      "style"
     ],
     "keywords": [
-      "familytree",
-      "tree",
-      "layout",
-      "genealogical",
-      "v2.2.0.0",
-      "structure",
-      "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "template-styles",
-    "name": "Template Styles",
-    "demoPath": "style/templatestyles/index.html",
-    "summary": "Shows SVG template styles for nodes, labels and ports.",
-    "category": "style",
-    "packageType": "no-viewer",
-    "thumbnailPath": "resources/image/templatestyles.png",
-    "sourcePath": "style/templatestyles/TemplateStylesDemo.js",
-    "tags": [
-      "styles",
-      "data binding"
-    ],
-    "keywords": [
-      "v2.1.0.2",
-      "SVG",
-      "datapanel",
-      "template"
-    ],
-    "ts": true
-  },
-  {
-    "id": "webgl-styles",
-    "name": "WebGL2 Styles",
-    "demoPath": "style/webgl-styles/index.html",
-    "summary": "Shows the various graph element styles available in WebGL2 rendering.",
-    "category": "style",
-    "thumbnailPath": "resources/image/webgl-styles.png",
-    "sourcePath": "style/webgl-styles/WebGLStylesDemo.js",
-    "tags": [
-      "styles",
-      "WebGL2"
-    ],
-    "keywords": [
-      "v2.4.0.0"
-    ],
-    "ts": true
-  },
-  {
-    "id": "css-styling",
-    "name": "CSS Styling",
-    "demoPath": "style/cssstyling/index.html",
-    "summary": "Shows how to style indicators and other templates.",
-    "category": "style",
-    "thumbnailPath": "resources/image/cssstyling.png",
-    "sourcePath": "style/cssstyling/CSSStylingDemo.js",
-    "tags": [
-      "css",
-      "indicators",
-      "theme"
-    ],
-    "keywords": [
-      "stylesheet",
-      "v2.2.0.0",
-      "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "bezier-edge-style",
-    "name": "Bezier Edge Style",
-    "demoPath": "style/bezieredgestyle/index.html",
-    "summary": "Shows how to use the curved edge style consisting of Bezier splines.",
-    "category": "style",
-    "thumbnailPath": "resources/image/bezieredgestyle.png",
-    "sourcePath": "style/bezieredgestyle/BezierEdgeStyleDemo.js",
-    "tags": [
-      "curve",
-      "bezier",
-      "edges",
-      "interaction"
-    ],
-    "keywords": [
-      "v2.3.0.0",
-      "handles",
-      "indicator",
-      "bends",
-      "CreateEdgeInputMode",
-      "selection",
-      "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "overview",
-    "name": "Overview Styling",
-    "demoPath": "view/overviewstyles/index.html",
-    "summary": "Shows several different rendering techniques and styles for the overview.",
-    "category": "view",
-    "thumbnailPath": "resources/image/overview.png",
-    "sourcePath": "view/overviewstyles/OverviewStylesDemo.js",
-    "tags": [
-      "styles",
-      "Canvas"
-    ],
-    "keywords": [
-      "v2.2.0.0",
-      "overviewinputmode",
-      "svg",
-      "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "metaball-groups",
-    "name": "Metaball Groups",
-    "demoPath": "complete/metaballgroups/index.html",
-    "summary": "Shows how to render metaball-like background visualizations.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/metaballgroups.png",
-    "sourcePath": "complete/metaballgroups/MetaballGroupsDemo.js",
-    "tags": [
-      "background",
-      "WebGL"
-    ],
-    "keywords": [
-      "v2.2.0.0",
-      "overlapping",
-      "heatmap"
-    ],
-    "ts": true
-  },
-  {
-    "id": "maze-routing",
-    "name": "Maze Routing",
-    "demoPath": "layout/mazerouting/index.html",
-    "summary": "Shows how the automatic edge routing finds routes through a maze.",
-    "category": "layout",
-    "thumbnailPath": "resources/image/mazerouting.png",
-    "sourcePath": "layout/mazerouting/MazeRoutingDemo.js",
-    "tags": [
-      "layout",
-      "router"
-    ],
-    "keywords": [
-      "edgerouter",
-      "polylinerouter",
-      "background"
-    ],
-    "ts": true
-  },
-  {
-    "id": "interactive-map",
-    "name": "Interactive Map",
-    "demoPath": "complete/mapintegration/index.html",
-    "summary": "Draws a graph on top of an interactive map.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/mapintegration.png",
-    "sourcePath": "complete/mapintegration/MapIntegrationDemo.js",
-    "tags": [
-      "styles",
-      "layout",
-      "leaflet"
-    ],
-    "keywords": [
-      "v2.1.0.2",
-      "overlay",
-      "layer",
-      "control",
-      "radial",
-      "tooltip",
-      "shortestpaths",
-      "filtering",
-      "background",
-      "curve",
-      "bezier"
-    ],
-    "ts": true
-  },
-  {
-    "id": "uml-editor",
-    "name": "UML Editor",
-    "demoPath": "complete/uml/index.html",
-    "summary": "An editor for UML diagrams with a tailored UML node style, automatic layout, and a quick way to create new edges with the mouse or touch.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/umleditor.png",
-    "sourcePath": "complete/uml/UMLEditorDemo.js",
-    "tags": [
-      "styles",
-      "layout",
-      "interaction"
-    ],
-    "keywords": [
-      "v2.1.0.1",
-      "contextmenu",
-      "labels",
-      "edgerouter",
-      "hierarchic",
-      "structure"
-    ],
-    "ts": true
-  },
-  {
-    "id": "flowchart-editor",
-    "name": "Flowchart Editor",
-    "demoPath": "complete/flowchart/index.html",
-    "summary": "An editor for Flowchart diagrams that features interactive editing, flowchart node styles, and automatic layout.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/flowchart.png",
-    "sourcePath": "complete/flowchart/FlowchartDemo.js",
-    "tags": [
-      "styles",
-      "layout"
-    ],
-    "keywords": [
-      "hierarchic",
-      "palette",
-      "draganddrop",
-      "palette"
-    ],
-    "ts": true
-  },
-  {
-    "id": "decision-tree",
-    "name": "Decision Tree",
-    "demoPath": "complete/decisiontree/index.html",
-    "summary": "An interactive Decision Tree component that lets you design and explore your own decision graphs.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/decisiontree.png",
-    "sourcePath": "complete/decisiontree/DecisionTreeDemo.js",
-    "tags": [
-      "layout",
-      "interaction"
-    ],
-    "keywords": [
-      "hierarchic",
-      "contextmenu"
-    ],
-    "ts": true
-  },
-  {
-    "id": "mindmap-editor",
-    "name": "Mindmap Editor",
-    "demoPath": "complete/mindmap/index.html",
-    "summary": "A Mindmap editor with a tailored node style, custom user interaction, and a specialized layoutthat automatically arranges new entries.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/mindmap.png",
-    "sourcePath": "complete/mindmap/MindmapDemo.js",
-    "tags": [
-      "styles",
-      "layout"
-    ],
-    "keywords": [
-      "contextmenu",
-      "tree",
-      "structure",
-      "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "d3-chart-nodes",
-    "name": "d3 Chart Nodes",
-    "demoPath": "style/d3chartnodes/index.html",
-    "summary": "Presents a node style that visualizes dynamic data with d3.js.",
-    "category": "style",
-    "thumbnailPath": "resources/image/d3chartnodes.png",
-    "sourcePath": "style/d3chartnodes/D3ChartNodesDemo.js",
-    "tags": [
-      "styles",
-      "sparklines",
-      "bars",
-      "d3.js"
-    ],
-    "keywords": [
-      "v2.2.0.0"
-    ],
-    "ts": true
-  },
-  {
-    "id": "logic-gates",
-    "name": "Logic Gates",
-    "demoPath": "complete/logicgates/index.html",
-    "summary": "An editor for networks of logic gates, with tailored automatic layout.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/logicgates.png",
-    "sourcePath": "complete/logicgates/LogicGatesDemo.js",
-    "tags": [
-      "ports",
-      "styles",
-      "layout",
-      "structure"
-    ],
-    "keywords": [
-      "drag",
-      "drop",
-      "port",
-      "candidates",
-      "constraints",
-      "hierarchic",
-      "edgerouter",
-      "draganddrop",
-      "palette",
-      "reversed edge creation"
-    ],
-    "ts": true
-  },
-  {
-    "id": "component-drag-and-drop",
-    "name": "Component Drag and Drop",
-    "demoPath": "complete/componentdraganddrop/index.html",
-    "summary": "A demo that shows how to clear space for a dropped component in an existing layout.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/componentdraganddrop.png",
-    "sourcePath": "complete/componentdraganddrop/ComponentDragAndDropDemo.js",
-    "tags": [
+      "v2.4.0.4",
+      "words",
       "components",
-      "layout",
-      "interaction"
-    ],
-    "keywords": [
-      "v2.3.0.0",
-      "drag",
-      "drop",
-      "dropinputmode",
-      "create",
-      "space",
-      "clear",
-      "fill",
-      "area",
-      "cleararealayout",
-      "fillarealayout",
-      "draganddrop",
-      "palette",
-      "interactive"
-    ],
-    "ts": true
-  },
-  {
-    "id": "large-tree",
-    "name": "Large Collapsible Tree",
-    "demoPath": "complete/large-tree/index.html",
-    "summary": "Shows a tree graph, where a large number of nodes can be added interactively.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/large-tree.png",
-    "sourcePath": "complete/large-tree/LargeTreeDemo.js",
-    "tags": [
-      "performance",
-      "WebGL",
-      "interaction"
-    ],
-    "keywords": [
-      "v2.4.0.0",
-      "rendering",
-      "large",
-      "huge",
-      "WebGL2",
-      "SVG"
-    ],
-    "ts": true
-  },
-  {
-    "id": "collapsible-trees",
-    "name": "Collapsible Trees",
-    "demoPath": "complete/collapse/index.html",
-    "summary": "Shows interactive collapsing and expanding of subtrees of a graph.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/collapsibletree.png",
-    "sourcePath": "complete/collapse/CollapseDemo.js",
-    "tags": [
-      "layout",
-      "interaction",
-      "animation"
-    ],
-    "keywords": [
-      "hierarchic",
-      "organic",
-      "tree",
-      "balloon",
-      "filtering",
-      "hide"
-    ],
-    "ts": true
-  },
-  {
-    "id": "rotatable-nodes",
-    "name": "Rotatable Nodes",
-    "demoPath": "complete/rotatablenodes/index.html",
-    "summary": "Shows nodes that can be rotated with the mouse or touch.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/RotatableNodes.png",
-    "sourcePath": "complete/rotatablenodes/RotatableNodesDemo.js",
-    "tags": [
-      "interaction",
-      "styles",
-      "layout"
-    ],
-    "keywords": [
-      "handles",
-      "input",
-      "rotation",
-      "v2.1.0.1",
-      "labels",
-      "ports",
-      "hierarchic",
-      "organic",
-      "orthogonal",
-      "circular",
-      "tree",
-      "balloon",
-      "radial",
-      "edgerouter",
-      "polyline-router",
-      "organic-router",
-      "curves"
-    ],
-    "ts": true
-  },
-  {
-    "id": "contextual-toolbar",
-    "name": "Contextual Toolbar",
-    "demoPath": "view/contextualtoolbar/index.html",
-    "summary": "Shows a contextual toolbar for the current selection that enables fast and easy style changes.",
-    "category": "view",
-    "thumbnailPath": "resources/image/contextualtoolbar.png",
-    "sourcePath": "view/contextualtoolbar/ContextualToolbarDemo.js",
-    "tags": [
-      "interaction",
-      "overlay"
-    ],
-    "keywords": [
-      "v2.1.0.2",
-      "html",
-      "popup",
-      "contextmenu"
-    ],
-    "ts": true
-  },
-  {
-    "id": "graph-editor",
-    "name": "Graph Editor",
-    "demoPath": "view/grapheditor/index.html",
-    "summary": "Shows the graph editing features of the graph component.",
-    "category": "view",
-    "thumbnailPath": "resources/image/simpleeditor.png",
-    "sourcePath": "view/grapheditor/GraphEditorDemo.js",
-    "tags": [
-      "interaction"
-    ],
-    "keywords": [
-      "contextmenu",
-      "groups",
-      "folding",
-      "overview",
-      "Labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "table-editor",
-    "name": "Table Editor",
-    "demoPath": "complete/tableeditor/index.html",
-    "summary": "Shows the support for diagrams that are organized in a tabular way, for example in a grid or a swimlane layout.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/tableeditor.png",
-    "sourcePath": "complete/tableeditor/TableEditorDemo.js",
-    "tags": [
-      "table",
-      "interaction"
-    ],
-    "keywords": [
-      "drag",
-      "drop",
-      "draganddrop",
-      "palette",
-      "hierarchic",
-      "groups",
-      "contextmenu",
-      "move",
       "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "graph-viewer",
-    "name": "Graph Viewer",
-    "demoPath": "view/graphviewer/index.html",
-    "summary": "Displays sample graphs from various application domains.",
-    "category": "view",
-    "thumbnailPath": "resources/image/graphviewer.png",
-    "sourcePath": "view/graphviewer/GraphViewerDemo.js",
-    "tags": [
-      "styles",
-      "overview"
-    ],
-    "keywords": [
-      "tooltip",
-      "contextmenu",
-      "datapanel",
-      "search",
-      "highlight",
-      "curve",
-      "bezier"
     ],
     "ts": true
   },
@@ -1323,329 +883,97 @@ function getDemoData() {
     "demoPath": "complete/orgchartviewer/index.html",
     "summary": "A viewer for organization charts.",
     "category": "complete",
+    "type": "use-cases",
     "thumbnailPath": "resources/image/orgchart.png",
     "sourcePath": "complete/orgchartviewer/OrgChartViewerDemo.js",
     "tags": [
-      "styles",
+      "style",
       "layout"
     ],
     "keywords": [
       "orgchart",
       "search",
-      "template",
-      "datapanel",
+      "templates",
+      "data panel",
       "v2.2.0.0",
-      "structure",
-      "highlight"
+      "structures",
+      "highlights"
     ],
     "ts": true
   },
   {
-    "id": "rendering-optimizations",
-    "name": "Rendering Optimizations",
-    "demoPath": "view/rendering-optimizations/index.html",
-    "summary": "Illustrates optimizations of the rendering performance for large graphs.",
-    "category": "view",
-    "thumbnailPath": "resources/image/rendering-optimizations.png",
-    "sourcePath": "view/rendering-optimizations/RenderingOptimizationsDemo.js",
+    "id": "critical-path-analysis",
+    "name": "Critical Path Analysis (CPA)",
+    "demoPath": "analysis/criticalpathanalysis/index.html",
+    "summary": "Shows how to perform critical path analysis in project management.",
+    "category": "analysis",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/criticalpathanalysis.png",
+    "sourcePath": "analysis/criticalpathanalysis/CriticalPathAnalysisDemo.js",
     "tags": [
-      "performance",
-      "Canvas",
-      "WebGL"
+      "analysis",
+      "hierarchic",
+      "rank"
     ],
     "keywords": [
-      "v2.4.0.0",
-      "FPS",
-      "rendering",
-      "large",
-      "huge",
-      "WebGL2"
+      "critical",
+      "paths",
+      "project",
+      "management",
+      "slack",
+      "scheduling"
     ],
     "ts": true
   },
   {
-    "id": "events-viewer",
-    "name": "Events Viewer",
-    "demoPath": "view/events/index.html",
-    "summary": "Shows the multitude of events provided by the classes <code>IGraph</code>, <code>GraphComponent</code>, and the <em>Input Modes</em>.",
-    "category": "view",
-    "thumbnailPath": "resources/image/events.png",
-    "sourcePath": "view/events/EventsDemo.js",
-    "tags": [
-      "interaction"
-    ],
-    "keywords": [
-      "palette",
-      "draganddrop"
-    ],
-    "ts": true
-  },
-  {
-    "id": "z-order",
-    "name": "Z-Order",
-    "demoPath": "view/zorder/index.html",
-    "summary": "Shows how to adjust the z-order of graph elements and to keep this z-order consistent.",
-    "category": "view",
-    "thumbnailPath": "resources/image/zorder.png",
-    "sourcePath": "view/zorder/ZOrderDemo.js",
-    "tags": [
-      "rendering",
-      "z-index"
-    ],
-    "keywords": [
-      "v2.3.0.0",
-      "raise",
-      "lower",
-      "toFront",
-      "toBack",
-      "clipboard",
-      "graphml",
-      "zorder",
-      "zindex"
-    ],
-    "ts": true
-  },
-  {
-    "id": "custom-edge-creation",
-    "name": "Custom Edge Creation",
-    "demoPath": "complete/customedgecreation/index.html",
-    "summary": "Shows how to provide directional ports and demonstrates interactive routing during edge creation.",
+    "id": "logic-gates",
+    "name": "Logic Gates",
+    "demoPath": "complete/logicgates/index.html",
+    "summary": "An editor for networks of logic gates, with tailored automatic layout.",
     "category": "complete",
-    "thumbnailPath": "resources/image/customedgecreation.png",
-    "sourcePath": "complete/customedgecreation/CustomEdgeCreationDemo.js",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/logicgates.png",
+    "sourcePath": "complete/logicgates/LogicGatesDemo.js",
     "tags": [
-      "layout",
-      "interaction",
+      "port",
+      "style",
+      "layout"
+    ],
+    "keywords": [
       "ports",
-      "styles"
-    ],
-    "keywords": [
-      "v2.2.0.2",
-      "edgerouter",
-      "channel-edge-router",
-      "orthogonal",
-      "portcandidateprovider"
-    ],
-    "ts": true
-  },
-  {
-    "id": "touch-interaction",
-    "name": "Touch Interaction",
-    "demoPath": "input/touchcustomization/index.html",
-    "summary": "Shows how a graph editor application can be optimized for touch devices.",
-    "category": "input",
-    "thumbnailPath": "resources/image/custom_touch_interaction.png",
-    "sourcePath": "input/touchcustomization/TouchEditorDemo.js",
-    "tags": [
-      "interaction",
-      "mobile"
-    ],
-    "keywords": [
-      "v2.1.0.0",
+      "candidates",
+      "constraints",
+      "hierarchic",
+      "edge router",
+      "drag and drop",
       "palette",
-      "draganddrop",
-      "contextmenu",
-      "move"
+      "reversed edge creation",
+      "dnd"
     ],
     "ts": true
   },
   {
-    "id": "neighborhood-view",
-    "name": "Neighborhood View",
-    "demoPath": "complete/neighborhood/index.html",
-    "summary": "Shows the neighborhood of the currently selected node alongside the graph.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/neighborhoodview.png",
-    "sourcePath": "complete/neighborhood/NeighborhoodDemo.js",
+    "id": "graph-analysis",
+    "name": "Graph Analysis",
+    "demoPath": "analysis/graphanalysis/index.html",
+    "summary": "Showcases a selection of graph algorithms such as shortest paths, flows, centrality measures, etc. that help analysing the structure of a graph.",
+    "category": "analysis",
+    "type": "features",
+    "thumbnailPath": "resources/image/graphanalysis.png",
+    "sourcePath": "analysis/graphanalysis/GraphAnalysisDemo.js",
     "tags": [
+      "analysis",
       "layout",
-      "interaction"
+      "style"
     ],
     "keywords": [
-      "hierarchic",
-      "copy",
-      "detail"
-    ],
-    "ts": true
-  },
-  {
-    "id": "clustering-algorithms",
-    "name": "Clustering Algorithms",
-    "demoPath": "analysis/clustering/index.html",
-    "summary": "Showcases a selection of clustering algorithms such as edge betweenness, k-means, hierarchical and biconnected components clustering.",
-    "category": "analysis",
-    "thumbnailPath": "resources/image/clustering.png",
-    "sourcePath": "analysis/clustering/ClusteringDemo.js",
-    "tags": [
-      "algorithms"
-    ],
-    "keywords": [
-      "kmeans",
-      "hierarchical",
-      "voronoi",
-      "dendrogram",
-      "background"
-    ],
-    "ts": true
-  },
-  {
-    "id": "network-flows",
-    "name": "Network Flows",
-    "demoPath": "analysis/networkflows/index.html",
-    "summary": "Presents three network flow graph analysis algorithms that are applied on a network of water pipes.",
-    "category": "analysis",
-    "thumbnailPath": "resources/image/networkflows.png",
-    "sourcePath": "analysis/networkflows/NetworkFlowsDemo.js",
-    "tags": [
-      "algorithms",
-      "styles"
-    ],
-    "keywords": [
-      "networkflows",
-      "maximum",
-      "minimum",
-      "cut",
-      "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "transitivity",
-    "name": "Transitivity",
-    "demoPath": "analysis/transitivity/index.html",
-    "summary": "Shows how transitivity graph analysis algorithms can be applied to solve reachability problems.",
-    "category": "analysis",
-    "thumbnailPath": "resources/image/transitivity.png",
-    "sourcePath": "analysis/transitivity/TransitivityDemo.js",
-    "tags": [
-      "analysis"
-    ],
-    "keywords": [
-      "transitive",
-      "closure",
-      "reduction",
-      "npm",
-      "filtering",
-      "structure",
-      "highlight"
-    ],
-    "ts": true
-  },
-  {
-    "id": "edge-label-placement",
-    "name": "Edge Label Placement",
-    "demoPath": "layout/edgelabelplacement/index.html",
-    "summary": "Shows how to place edge labels at the preferred location with a labeling algorithm.",
-    "category": "layout",
-    "thumbnailPath": "resources/image/edgelabelplacement.png",
-    "sourcePath": "layout/edgelabelplacement/EdgeLabelPlacementDemo.js",
-    "tags": [
-      "labels",
-      "labeling"
-    ],
-    "keywords": [
-      "generic",
-      "integrated",
-      "text",
-      "genericlabeling",
-      "tree",
-      "hierarchic",
-      "orthogonal",
-      "edgerouter",
-      "move"
-    ],
-    "ts": true
-  },
-  {
-    "id": "node-label-placement",
-    "name": "Node Label Placement",
-    "demoPath": "layout/nodelabelplacement/index.html",
-    "summary": "Shows how to place node labels at the preferred location with a labeling algorithm.",
-    "category": "layout",
-    "thumbnailPath": "resources/image/nodelabelplacement.png",
-    "sourcePath": "layout/nodelabelplacement/NodeLabelPlacementDemo.js",
-    "tags": [
-      "labels",
-      "labeling"
-    ],
-    "keywords": [
-      "generic",
-      "genericlabeling",
-      "text",
-      "background"
-    ],
-    "ts": true
-  },
-  {
-    "id": "node-types",
-    "name": "Node Types",
-    "demoPath": "layout/nodetypes/index.html",
-    "summary": "Shows how different layout algorithms handle nodes with types.",
-    "category": "layout",
-    "thumbnailPath": "resources/image/nodetypes.png",
-    "sourcePath": "layout/nodetypes/NodeTypesDemo.js",
-    "tags": [
-      "types",
-      "node types"
-    ],
-    "keywords": [
-      "v2.4.0.0",
-      "type",
-      "tree",
-      "hierarchic",
-      "organic",
-      "component",
-      "circular"
-    ],
-    "ts": true
-  },
-  {
-    "id": "markdown-label",
-    "name": "Markdown Label",
-    "demoPath": "style/markdownlabel/index.html",
-    "summary": "Use markdown to format the label text.",
-    "category": "style",
-    "thumbnailPath": "resources/image/markdownlabel.png",
-    "sourcePath": "style/markdownlabel/MarkdownLabelDemo.js",
-    "tags": [
-      "styles",
-      "labels",
-      "markdown"
-    ],
-    "keywords": [
-      "v2.3.0.0",
-      "rich",
-      "text",
-      "styling",
-      "html",
-      "markdown"
-    ],
-    "ts": true
-  },
-  {
-    "id": "rich-text-label",
-    "name": "Rich Text Label",
-    "demoPath": "style/richtextlabel/index.html",
-    "summary": "Edit markup labels with a WYSIWYG text editor.",
-    "category": "style",
-    "thumbnailPath": "resources/image/richtextlabel.png",
-    "sourcePath": "style/richtextlabel/RichTextLabelDemo.js",
-    "tags": [
-      "styles",
-      "labels",
-      "richtext"
-    ],
-    "keywords": [
-      "v2.3.0.0",
-      "rich",
-      "text",
-      "styling",
-      "html",
-      "xml",
-      "markdown",
-      "markup",
-      "color",
-      "WYSIWYG"
+      "context menu",
+      "centrality",
+      "connectivity",
+      "reachability",
+      "cycles",
+      "spanning tree",
+      "shortest paths"
     ],
     "ts": true
   },
@@ -1655,6 +983,7 @@ function getDemoData() {
     "demoPath": "complete/hierarchicgrouping/index.html",
     "summary": "The hierarchic layout nicely expands and collapses sub-graphs organized in groups.",
     "category": "complete",
+    "type": "features",
     "thumbnailPath": "resources/image/hierarchicgrouping.png",
     "sourcePath": "complete/hierarchicgrouping/HierarchicGroupingDemo.js",
     "tags": [
@@ -1675,24 +1004,1175 @@ function getDemoData() {
     "demoPath": "layout/foldingwithlayout/index.html",
     "summary": "Shows how an automatic layout makes space for opening groups and reclaims the space of closing groups.",
     "category": "layout",
+    "type": "features",
     "thumbnailPath": "resources/image/foldingwithlayout.png",
     "sourcePath": "layout/foldingwithlayout/FoldingWithLayoutDemo.js",
     "tags": [
       "layout",
       "hierarchic",
-      "animation"
+      "grouping"
     ],
     "keywords": [
       "folding",
       "hide",
       "create",
       "space",
-      "clear",
-      "fill",
-      "area",
-      "cleararealayout",
-      "fillarealayout",
+      "clear area layout",
+      "fill area layout",
       "v2.3.0.2"
+    ],
+    "ts": true
+  },
+  {
+    "id": "large-graphs",
+    "name": "Large Graphs",
+    "demoPath": "view/large-graphs/index.html",
+    "summary": "Shows how to display large graphs with both good performance in WebGL2 and high quality in SVG.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/large-graphs.png",
+    "sourcePath": "view/large-graphs/LargeGraphsDemo.js",
+    "tags": [
+      "performance",
+      "webgl"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "rendering",
+      "large",
+      "huge",
+      "webgl2",
+      "svg"
+    ],
+    "ts": true
+  },
+  {
+    "id": "large-graph-aggregation",
+    "name": "Large Graph Aggregation",
+    "demoPath": "complete/largegraphaggregation/index.html",
+    "summary": "Shows how to use the smart node aggregation for drill-down exploration of a large graph.",
+    "category": "complete",
+    "type": "features",
+    "thumbnailPath": "resources/image/largegraphaggregation.png",
+    "sourcePath": "complete/largegraphaggregation/LargeGraphAggregationDemo.js",
+    "tags": [
+      "large graph",
+      "exploration"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "balloon",
+      "aggregation graph wrapper",
+      "curves",
+      "bezier",
+      "clusters"
+    ],
+    "ts": true
+  },
+  {
+    "id": "interactive-aggregation",
+    "name": "Interactive Aggregation",
+    "demoPath": "complete/interactiveaggregation/index.html",
+    "summary": "Shows how to analyze a graph by interactively aggregating nodes with common properties.",
+    "category": "complete",
+    "type": "features",
+    "thumbnailPath": "resources/image/interactiveaggregation.png",
+    "sourcePath": "complete/interactiveaggregation/InteractiveAggregationDemo.js",
+    "tags": [
+      "large graph",
+      "exploration"
+    ],
+    "keywords": [
+      "v2.3.0.2",
+      "aggregation graph wrapper",
+      "context menu",
+      "clusters"
+    ],
+    "ts": true
+  },
+  {
+    "id": "large-tree",
+    "name": "Large Collapsible Tree",
+    "demoPath": "complete/large-tree/index.html",
+    "summary": "Shows a tree graph, where a large number of nodes can be added interactively.",
+    "category": "complete",
+    "type": "features",
+    "thumbnailPath": "resources/image/large-tree.png",
+    "sourcePath": "complete/large-tree/LargeTreeDemo.js",
+    "tags": [
+      "performance",
+      "webgl",
+      "interaction"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "rendering",
+      "large",
+      "huge",
+      "webgl2",
+      "svg"
+    ],
+    "ts": true
+  },
+  {
+    "id": "collapsible-trees",
+    "name": "Collapsible Trees",
+    "demoPath": "complete/collapse/index.html",
+    "summary": "Shows interactive collapsing and expanding of subtrees of a graph.",
+    "category": "complete",
+    "type": "features",
+    "thumbnailPath": "resources/image/collapsibletree.png",
+    "sourcePath": "complete/collapse/CollapseDemo.js",
+    "tags": [
+      "layout",
+      "interaction",
+      "animation"
+    ],
+    "keywords": [
+      "hierarchic",
+      "organic",
+      "tree",
+      "balloon",
+      "filtering",
+      "hide"
+    ],
+    "ts": true
+  },
+  {
+    "id": "rendering-optimizations",
+    "name": "Rendering Optimizations",
+    "demoPath": "view/rendering-optimizations/index.html",
+    "summary": "Illustrates optimizations of the rendering performance for large graphs.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/rendering-optimizations.png",
+    "sourcePath": "view/rendering-optimizations/RenderingOptimizationsDemo.js",
+    "tags": [
+      "performance",
+      "canvas",
+      "webgl"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "fps",
+      "rendering",
+      "large",
+      "huge",
+      "webgl2"
+    ],
+    "ts": true
+  },
+  {
+    "id": "neighborhood-view",
+    "name": "Neighborhood View",
+    "demoPath": "complete/neighborhood/index.html",
+    "summary": "Shows the neighborhood of the currently selected node alongside the graph.",
+    "category": "complete",
+    "type": "features",
+    "thumbnailPath": "resources/image/neighborhoodview.png",
+    "sourcePath": "complete/neighborhood/NeighborhoodDemo.js",
+    "tags": [
+      "layout",
+      "interaction"
+    ],
+    "keywords": [
+      "hierarchic",
+      "copy",
+      "detail"
+    ],
+    "ts": true
+  },
+  {
+    "id": "contextual-toolbar",
+    "name": "Contextual Toolbar",
+    "demoPath": "view/contextualtoolbar/index.html",
+    "summary": "Shows a contextual toolbar for the current selection that enables fast and easy style changes.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/contextualtoolbar.png",
+    "sourcePath": "view/contextualtoolbar/ContextualToolbarDemo.js",
+    "tags": [
+      "interaction",
+      "overlay"
+    ],
+    "keywords": [
+      "v2.1.0.2",
+      "html",
+      "popup",
+      "context menu"
+    ],
+    "ts": true
+  },
+  {
+    "id": "css3-animations-and-transitions",
+    "name": "CSS3 Animations and Transitions",
+    "demoPath": "style/css3animationsandtransitions/index.html",
+    "summary": "Shows how CSS3 transformations and animations can be applied to graph items.",
+    "category": "style",
+    "type": "features",
+    "thumbnailPath": "resources/image/css3_animations_and_transitions.png",
+    "sourcePath": "style/css3animationsandtransitions/CSS3AnimationsAndTransitionsDemo.js",
+    "tags": [
+      "style",
+      "animation",
+      "transition"
+    ],
+    "keywords": [
+      "curves"
+    ],
+    "ts": true
+  },
+  {
+    "id": "webgl-animations",
+    "name": "WebGL2 Animations",
+    "demoPath": "style/webgl-animations/index.html",
+    "summary": "Shows howto use WebGL2 animations to highlight interesting parts of a graph.",
+    "category": "style",
+    "type": "features",
+    "thumbnailPath": "resources/image/webgl-animations.png",
+    "sourcePath": "style/webgl-animations/WebGLAnimationsDemo.js",
+    "tags": [
+      "animation",
+      "webgl2"
+    ],
+    "keywords": [
+      "v2.4.0.0"
+    ],
+    "ts": true
+  },
+  {
+    "id": "clustering-algorithms",
+    "name": "Clustering Algorithms",
+    "demoPath": "analysis/clustering/index.html",
+    "summary": "Showcases a selection of clustering algorithms such as edge betweenness, k-means, hierarchical and biconnected components clustering.",
+    "category": "analysis",
+    "type": "features",
+    "thumbnailPath": "resources/image/clustering.png",
+    "sourcePath": "analysis/clustering/ClusteringDemo.js",
+    "tags": [
+      "analysis"
+    ],
+    "keywords": [
+      "k-means",
+      "hierarchical",
+      "voronoi",
+      "dendrogram",
+      "background"
+    ],
+    "ts": true
+  },
+  {
+    "id": "network-flows",
+    "name": "Network Flows",
+    "demoPath": "analysis/networkflows/index.html",
+    "summary": "Presents three network flow graph analysis algorithms that are applied on a network of water pipes.",
+    "category": "analysis",
+    "type": "features",
+    "thumbnailPath": "resources/image/networkflows.png",
+    "sourcePath": "analysis/networkflows/NetworkFlowsDemo.js",
+    "tags": [
+      "analysis",
+      "style"
+    ],
+    "keywords": [
+      "network flows",
+      "maximum",
+      "minimum",
+      "cuts",
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "transitivity",
+    "name": "Transitivity",
+    "demoPath": "analysis/transitivity/index.html",
+    "summary": "Shows how transitivity graph analysis algorithms can be applied to solve reachability problems.",
+    "category": "analysis",
+    "type": "features",
+    "thumbnailPath": "resources/image/transitivity.png",
+    "sourcePath": "analysis/transitivity/TransitivityDemo.js",
+    "tags": [
+      "analysis"
+    ],
+    "keywords": [
+      "transitive",
+      "closures",
+      "reduction",
+      "filtering",
+      "structures",
+      "highlights"
+    ],
+    "ts": true
+  },
+  {
+    "id": "graph-editor",
+    "name": "Graph Editor",
+    "demoPath": "view/grapheditor/index.html",
+    "summary": "Shows the graph editing features of the graph component.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/simpleeditor.png",
+    "sourcePath": "view/grapheditor/GraphEditorDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "context menu",
+      "groups",
+      "folding",
+      "overview",
+      "Labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "table-editor",
+    "name": "Table Editor",
+    "demoPath": "complete/tableeditor/index.html",
+    "summary": "Shows the support for diagrams that are organized in a tabular way, for example in a grid or a swimlane layout.",
+    "category": "complete",
+    "type": "features",
+    "thumbnailPath": "resources/image/tableeditor.png",
+    "sourcePath": "complete/tableeditor/TableEditorDemo.js",
+    "tags": [
+      "table",
+      "interaction"
+    ],
+    "keywords": [
+      "drag and drop",
+      "palette",
+      "hierarchic",
+      "groups",
+      "context menu",
+      "move",
+      "labels",
+      "dnd"
+    ],
+    "ts": true
+  },
+  {
+    "id": "graph-viewer",
+    "name": "Graph Viewer",
+    "demoPath": "view/graphviewer/index.html",
+    "summary": "Displays sample graphs from various application domains.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/graphviewer.png",
+    "sourcePath": "view/graphviewer/GraphViewerDemo.js",
+    "tags": [
+      "style",
+      "overview"
+    ],
+    "keywords": [
+      "tool tips",
+      "context menu",
+      "data panel",
+      "search",
+      "highlight",
+      "curves",
+      "bezier"
+    ],
+    "ts": true
+  },
+  {
+    "id": "html-popup",
+    "name": "HTML Popup",
+    "demoPath": "view/htmlpopup/index.html",
+    "summary": "Shows HTML pop-up panels that displays additional information about a clicked node or edge.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/htmlpopup.png",
+    "sourcePath": "view/htmlpopup/HTMLPopupDemo.js",
+    "tags": [
+      "interaction",
+      "overlay"
+    ],
+    "keywords": [
+      "html popups",
+      "data panel",
+      "tool tips",
+      "structures",
+      "details"
+    ],
+    "ts": true
+  },
+  {
+    "id": "structure-view",
+    "name": "Structure View",
+    "demoPath": "view/structureview/index.html",
+    "summary": "A tree list component that shows the nesting of the groups and nodes.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/structureview.png",
+    "sourcePath": "view/structureview/StructureViewDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "lists",
+      "tree",
+      "overview",
+      "structures",
+      "v2.1.0.3",
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "rendering-order",
+    "name": "Rendering Order",
+    "demoPath": "view/renderingorder/index.html",
+    "summary": "Shows different rendering order settings.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/renderingorder.png",
+    "sourcePath": "view/renderingorder/RenderingOrderDemo.js",
+    "tags": [
+      "rendering",
+      "z-order",
+      "grouping"
+    ],
+    "keywords": [
+      "hierarchic nesting",
+      "ports",
+      "labels",
+      "groups"
+    ],
+    "ts": true
+  },
+  {
+    "id": "z-order",
+    "name": "Z-Order",
+    "demoPath": "view/zorder/index.html",
+    "summary": "Shows how to adjust the z-order of graph elements and to keep this z-order consistent.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/zorder.png",
+    "sourcePath": "view/zorder/ZOrderDemo.js",
+    "tags": [
+      "rendering",
+      "z-order"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "raise",
+      "lower",
+      "to Front",
+      "to Back",
+      "clipboard",
+      "graphml",
+      "z-index"
+    ],
+    "ts": true
+  },
+  {
+    "id": "rotatable-nodes",
+    "name": "Rotatable Nodes",
+    "demoPath": "complete/rotatablenodes/index.html",
+    "summary": "Shows nodes that can be rotated with the mouse or touch.",
+    "category": "complete",
+    "type": "features",
+    "thumbnailPath": "resources/image/RotatableNodes.png",
+    "sourcePath": "complete/rotatablenodes/RotatableNodesDemo.js",
+    "tags": [
+      "style",
+      "layout",
+      "interaction"
+    ],
+    "keywords": [
+      "handles",
+      "input",
+      "rotation",
+      "v2.1.0.1",
+      "labels",
+      "ports",
+      "hierarchic",
+      "organic",
+      "orthogonal",
+      "circular",
+      "tree",
+      "balloon",
+      "radial",
+      "edge router",
+      "polyline router",
+      "organic router",
+      "curves"
+    ],
+    "ts": true
+  },
+  {
+    "id": "touch-interaction",
+    "name": "Touch Interaction",
+    "demoPath": "input/touchcustomization/index.html",
+    "summary": "Shows how a graph editor application can be optimized for touch devices.",
+    "category": "input",
+    "type": "features",
+    "thumbnailPath": "resources/image/custom_touch_interaction.png",
+    "sourcePath": "input/touchcustomization/TouchEditorDemo.js",
+    "tags": [
+      "interaction",
+      "mobile"
+    ],
+    "keywords": [
+      "v2.1.0.0",
+      "palette",
+      "drag and drop",
+      "context menu",
+      "move",
+      "dnd"
+    ],
+    "ts": true
+  },
+  {
+    "id": "arrange-objects",
+    "name": "Arrange Objects",
+    "demoPath": "view/arrange-objects/index.html",
+    "summary": "Shows simple operations for aligning and distributing nodes.",
+    "category": "view",
+    "type": "features",
+    "thumbnailPath": "resources/image/arrange-objects.png",
+    "sourcePath": "view/arrange-objects/ArrangeObjectsDemo.js",
+    "tags": [
+      "viewer"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "arrange",
+      "align nodes",
+      "distribute nodes"
+    ],
+    "ts": true
+  },
+  {
+    "id": "custom-styles",
+    "name": "Custom Styles",
+    "demoPath": "style/customstyles/index.html",
+    "summary": "Shows how to create custom styles for nodes, edges, labels, ports, and edge arrows.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/customstyles.png",
+    "sourcePath": "style/customstyles/CustomStyleDemo.js",
+    "tags": [
+      "style",
+      "grouping"
+    ],
+    "keywords": [
+      "folding",
+      "labels",
+      "ports"
+    ],
+    "ts": true
+  },
+  {
+    "id": "template-styles",
+    "name": "Template Styles",
+    "demoPath": "style/templatestyles/index.html",
+    "summary": "Shows SVG template styles for nodes, labels and ports.",
+    "category": "style",
+    "type": "custom-styles",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/templatestyles.png",
+    "sourcePath": "style/templatestyles/TemplateStylesDemo.js",
+    "tags": [
+      "style",
+      "data binding"
+    ],
+    "keywords": [
+      "v2.1.0.2",
+      "svg",
+      "data panel",
+      "templates"
+    ],
+    "ts": true
+  },
+  {
+    "id": "string-template-node-style",
+    "name": "String Template Node Style",
+    "demoPath": "style/string-template-node-style/index.html",
+    "summary": "Presents a versatile and customizable template node style.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/string-template-node-style.png",
+    "sourcePath": "style/string-template-node-style/StringTemplateNodeStyleDemo.js",
+    "tags": [
+      "style",
+      "template"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "data bindings",
+      "data panel"
+    ],
+    "ts": true
+  },
+  {
+    "id": "vue.js-template-node-style",
+    "name": "Vue Template Node Style",
+    "demoPath": "style/vuejstemplatenodestyle/index.html",
+    "summary": "Presents a versatile and easily customizable template node style based on Vue.js.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/vuejstemplatenodestyle.png",
+    "sourcePath": "style/vuejstemplatenodestyle/VuejsTemplateNodeStyleDemo.js",
+    "tags": [
+      "style",
+      "template",
+      "vuejs"
+    ],
+    "keywords": [
+      "v2.1.0.0",
+      "data bindings",
+      "data panel",
+      "tree"
+    ],
+    "ts": true
+  },
+  {
+    "id": "webgl-styles",
+    "name": "WebGL2 Styles",
+    "demoPath": "style/webgl-styles/index.html",
+    "summary": "Shows the various graph element styles available in WebGL2 rendering.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/webgl-styles.png",
+    "sourcePath": "style/webgl-styles/WebGLStylesDemo.js",
+    "tags": [
+      "style",
+      "webgl2"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "styles"
+    ],
+    "ts": true
+  },
+  {
+    "id": "css-styling",
+    "name": "CSS Styling",
+    "demoPath": "style/cssstyling/index.html",
+    "summary": "Shows how to style indicators and other templates.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/cssstyling.png",
+    "sourcePath": "style/cssstyling/CSSStylingDemo.js",
+    "tags": [
+      "css",
+      "indicators",
+      "themes"
+    ],
+    "keywords": [
+      "stylesheets",
+      "v2.2.0.0",
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "isometric-bar-chart-style",
+    "name": "Isometric Bar Chart Node Style",
+    "demoPath": "style/isometric-bar-chart-style/index.html",
+    "summary": "Shows how a node style can be augmented with isometric bars.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/isometric-bar-chart-style.png",
+    "sourcePath": "style/isometric-bar-chart-style/IsometricBarChartStyleDemo.js",
+    "tags": [
+      "styles",
+      "projection",
+      "bars"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "organic",
+      "labels",
+      "3D",
+      "isometric",
+      "bars"
+    ],
+    "ts": true
+  },
+  {
+    "id": "d3-chart-nodes",
+    "name": "d3 Chart Nodes",
+    "demoPath": "style/d3chartnodes/index.html",
+    "summary": "Presents a node style that visualizes dynamic data with d3.js.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/d3chartnodes.png",
+    "sourcePath": "style/d3chartnodes/D3ChartNodesDemo.js",
+    "tags": [
+      "style",
+      "sparklines",
+      "bars",
+      "d3.js"
+    ],
+    "keywords": [
+      "v2.2.0.0",
+      "d3js"
+    ],
+    "ts": true
+  },
+  {
+    "id": "editable-path-style",
+    "name": "Editable Path Node Style",
+    "demoPath": "style/editablepathstyle/index.html",
+    "summary": "Shows a path-based node style whose control points can be moved by users.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/editablepath.png",
+    "sourcePath": "style/editablepathstyle/EditablePathNodeStyle.js",
+    "tags": [
+      "style",
+      "path",
+      "editing"
+    ],
+    "keywords": [
+      "v2.3.0.2",
+      "handles",
+      "general paths",
+      "interaction",
+      "editing"
+    ],
+    "ts": true
+  },
+  {
+    "id": "webgl-icon-node",
+    "name": "WebGL2 Icon Node",
+    "demoPath": "style/webgl-icon-node/index.html",
+    "summary": "Shows how to render icon nodes with WebGL2.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/webgl-icon-node.png",
+    "sourcePath": "style/webgl-icon-node/WebGLIconNodeDemo.js",
+    "tags": [
+      "style",
+      "webgl2"
+    ],
+    "keywords": [
+      "v2.4.0.0"
+    ],
+    "ts": true
+  },
+  {
+    "id": "list-node",
+    "name": "List Node",
+    "demoPath": "view/list-node/index.html",
+    "summary": "Shows a node which contains re-arrangeable rows.",
+    "category": "view",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/listnode.png",
+    "sourcePath": "view/list-node/ListNodeDemo.js",
+    "tags": [
+      "interaction",
+      "style",
+      "row",
+      "table"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "rows",
+      "tables"
+    ],
+    "ts": true
+  },
+  {
+    "id": "data-table",
+    "name": "Data Table",
+    "demoPath": "style/datatable/index.html",
+    "summary": "Shows a node style and a label style that display data in a tabular fashion.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/datatable.png",
+    "sourcePath": "style/datatable/DataTableDemo.js",
+    "tags": [
+      "style",
+      "label"
+    ],
+    "keywords": [
+      "data table",
+      "structures"
+    ],
+    "ts": true
+  },
+  {
+    "id": "bezier-edge-style",
+    "name": "Bezier Edge Style",
+    "demoPath": "style/bezieredgestyle/index.html",
+    "summary": "Shows how to use the curved edge style consisting of Bezier splines.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/bezieredgestyle.png",
+    "sourcePath": "style/bezieredgestyle/BezierEdgeStyleDemo.js",
+    "tags": [
+      "style",
+      "curve",
+      "interaction"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "handles",
+      "indicators",
+      "bends",
+      "create edge input mode",
+      "selection",
+      "labels",
+      "curves",
+      "bezier"
+    ],
+    "ts": true
+  },
+  {
+    "id": "directed-edge-label-style",
+    "name": "Directed Edge Label Style",
+    "demoPath": "style/directed-edge-label/index.html",
+    "summary": "Shows label styles displaying arrows that always point to the source or target port.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/directed-edge-label.png",
+    "sourcePath": "style/directed-edge-label/DirectedEdgeLabelDemo.js",
+    "tags": [
+      "style",
+      "label",
+      "edge"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "edges",
+      "directed",
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "markdown-label",
+    "name": "Markdown Label",
+    "demoPath": "style/markdownlabel/index.html",
+    "summary": "Use markdown to format the label text.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/markdownlabel.png",
+    "sourcePath": "style/markdownlabel/MarkdownLabelDemo.js",
+    "tags": [
+      "style",
+      "label",
+      "markdown"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "rich text",
+      "styling",
+      "html",
+      "markdown"
+    ],
+    "ts": true
+  },
+  {
+    "id": "rich-text-label",
+    "name": "Rich Text Label",
+    "demoPath": "style/richtextlabel/index.html",
+    "summary": "Edit markup labels with a WYSIWYG text editor.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/richtextlabel.png",
+    "sourcePath": "style/richtextlabel/RichTextLabelDemo.js",
+    "tags": [
+      "style",
+      "label",
+      "rich text"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "styling",
+      "html",
+      "xml",
+      "markdown",
+      "markup",
+      "colors",
+      "wysiwyg"
+    ],
+    "ts": true
+  },
+  {
+    "id": "overview",
+    "name": "Overview Styling",
+    "demoPath": "view/overviewstyles/index.html",
+    "summary": "Shows several different rendering techniques and styles for the overview.",
+    "category": "view",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/overview.png",
+    "sourcePath": "view/overviewstyles/OverviewStylesDemo.js",
+    "tags": [
+      "style",
+      "canvas"
+    ],
+    "keywords": [
+      "v2.2.0.0",
+      "overview input mode",
+      "svg",
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "html-label",
+    "name": "HTML Label",
+    "demoPath": "style/htmllabel/index.html",
+    "summary": "Shows how HTML can be used in label text with a custom label style.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/htmllabel.png",
+    "sourcePath": "style/htmllabel/HtmlLabelDemo.js",
+    "tags": [
+      "style",
+      "label"
+    ],
+    "keywords": [
+      "foreign object"
+    ],
+    "ts": true
+  },
+  {
+    "id": "invariant-label-style",
+    "name": "Zoom-invariant Label Style",
+    "demoPath": "style/invariant-label/index.html",
+    "summary": "Shows label styles that are independent of the zoom level.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/invariant-label.png",
+    "sourcePath": "style/invariant-label/ZoomInvariantLabelStyleDemo.js",
+    "tags": [
+      "style",
+      "label",
+      "zoom"
+    ],
+    "keywords": [
+      "v2.2.0.2",
+      "size",
+      "fit"
+    ],
+    "ts": true
+  },
+  {
+    "id": "selection-styling",
+    "name": "Selection Styling",
+    "demoPath": "style/selectionstyling/index.html",
+    "summary": "Shows customized selection painting of nodes, edges and labels by decorating these items with a corresponding\n      style.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/selectionstyling.png",
+    "sourcePath": "style/selectionstyling/SelectionStylingDemo.js",
+    "tags": [
+      "style",
+      "interaction"
+    ],
+    "keywords": [
+      "selection styling",
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "style-decorators",
+    "name": "Style Decorators",
+    "demoPath": "style/styledecorators/index.html",
+    "summary": "Shows how to create styles for nodes, edges, and labels that wrap existing styles and add visual decorators.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/styledecorators.png",
+    "sourcePath": "style/styledecorators/StyleDecoratorsDemo.js",
+    "tags": [
+      "style",
+      "decorators"
+    ],
+    "keywords": [
+      "ports"
+    ],
+    "ts": true
+  },
+  {
+    "id": "edge-bundling",
+    "name": "Edge Bundling",
+    "demoPath": "layout/edgebundling/index.html",
+    "summary": "Shows how edge bundling can be applied for reducing visual cluttering in dense graphs.",
+    "category": "layout",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/edgebundling.png",
+    "sourcePath": "layout/edgebundling/EdgeBundlingDemo.js",
+    "tags": [
+      "style",
+      "curve",
+      "layout"
+    ],
+    "keywords": [
+      "context menu",
+      "organic",
+      "radial",
+      "tree",
+      "balloon",
+      "bundles",
+      "bezier",
+      "curves"
+    ],
+    "ts": true
+  },
+  {
+    "id": "chord-diagram",
+    "name": "Chord Diagram",
+    "demoPath": "complete/chord-diagram/index.html",
+    "summary": "Shows a chord diagram that emphasizes the magnitude of connections between nodes.",
+    "category": "complete",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/chord-diagram.png",
+    "sourcePath": "complete/chord-diagram/ChordDiagramDemo.js",
+    "tags": [
+      "edge thickness",
+      "style",
+      "layout"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "chords",
+      "arcs",
+      "bezier",
+      "curves"
+    ],
+    "ts": true
+  },
+  {
+    "id": "arc-diagram",
+    "name": "Arc Diagram",
+    "demoPath": "layout/arc-diagram/index.html",
+    "summary": "Shows how to visualize a graph as an arc diagram.",
+    "category": "layout",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/arc-diagram.png",
+    "sourcePath": "layout/arc-diagram/ArcDiagramDemo.js",
+    "tags": [
+      "layout",
+      "curve"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "arcs",
+      "bezier",
+      "networks",
+      "curves"
+    ],
+    "ts": true
+  },
+  {
+    "id": "maze-routing",
+    "name": "Maze Routing",
+    "demoPath": "layout/mazerouting/index.html",
+    "summary": "Shows how the automatic edge routing finds routes through a maze.",
+    "category": "layout",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/mazerouting.png",
+    "sourcePath": "layout/mazerouting/MazeRoutingDemo.js",
+    "tags": [
+      "layout",
+      "edge routing",
+      "polyline"
+    ],
+    "keywords": [
+      "edge router",
+      "polyline router",
+      "background",
+      "layout"
+    ],
+    "ts": true
+  },
+  {
+    "id": "component-drag-and-drop",
+    "name": "Component Drag and Drop",
+    "demoPath": "complete/componentdraganddrop/index.html",
+    "summary": "A demo that shows how to clear space for a dropped component in an existing layout.",
+    "category": "complete",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/componentdraganddrop.png",
+    "sourcePath": "complete/componentdraganddrop/ComponentDragAndDropDemo.js",
+    "tags": [
+      "interactive layout",
+      "component"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "drop input mode",
+      "create",
+      "space",
+      "clear area layout",
+      "fill area layout",
+      "drag and drop",
+      "palette",
+      "dnd"
+    ],
+    "ts": true
+  },
+  {
+    "id": "edge-label-placement",
+    "name": "Edge Label Placement",
+    "demoPath": "layout/edgelabelplacement/index.html",
+    "summary": "Shows how to place edge labels at the preferred location with a labeling algorithm.",
+    "category": "layout",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/edgelabelplacement.png",
+    "sourcePath": "layout/edgelabelplacement/EdgeLabelPlacementDemo.js",
+    "tags": [
+      "label placement"
+    ],
+    "keywords": [
+      "integrated",
+      "texts",
+      "generic labeling",
+      "tree",
+      "hierarchic",
+      "orthogonal",
+      "edge router",
+      "move"
+    ],
+    "ts": true
+  },
+  {
+    "id": "node-label-placement",
+    "name": "Node Label Placement",
+    "demoPath": "layout/nodelabelplacement/index.html",
+    "summary": "Shows how to place node labels at the preferred location with a labeling algorithm.",
+    "category": "layout",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/nodelabelplacement.png",
+    "sourcePath": "layout/nodelabelplacement/NodeLabelPlacementDemo.js",
+    "tags": [
+      "label placement"
+    ],
+    "keywords": [
+      "generic labeling",
+      "text",
+      "background"
+    ],
+    "ts": true
+  },
+  {
+    "id": "node-types",
+    "name": "Node Types",
+    "demoPath": "layout/nodetypes/index.html",
+    "summary": "Shows how different layout algorithms handle nodes with types.",
+    "category": "layout",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/nodetypes.png",
+    "sourcePath": "layout/nodetypes/NodeTypesDemo.js",
+    "tags": [
+      "layout",
+      "node type"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "types",
+      "tree",
+      "hierarchic",
+      "organic",
+      "components",
+      "circular"
     ],
     "ts": true
   },
@@ -1702,11 +2182,13 @@ function getDemoData() {
     "demoPath": "layout/incrementalhierarchic/index.html",
     "summary": "The incremental mode of the hierarchic layout style can fit new nodes and edges into the existing drawing.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/incrementalhierarchic.png",
     "sourcePath": "layout/incrementalhierarchic/IncrementalHierarchicDemo.js",
     "tags": [
       "layout",
-      "hierarchic"
+      "hierarchic",
+      "incremental"
     ],
     "keywords": [
       "ports",
@@ -1720,11 +2202,12 @@ function getDemoData() {
     "demoPath": "layout/interactiveedgerouting/index.html",
     "summary": "After each edit the edge paths are re-routed if necessary.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/interactiveedgerouting.png",
     "sourcePath": "layout/interactiveedgerouting/InteractiveEdgeRoutingDemo.js",
     "tags": [
       "layout",
-      "edgerouter"
+      "edge routing"
     ],
     "keywords": [
       "v2.4.0.0",
@@ -1738,6 +2221,7 @@ function getDemoData() {
     "demoPath": "layout/edgegrouping/index.html",
     "summary": "The hierarchic layout can group the paths or ports of edges.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/edgegrouping.png",
     "sourcePath": "layout/edgegrouping/EdgeGroupingDemo.js",
     "tags": [
@@ -1746,11 +2230,11 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.1.0.3",
-      "edgegroups",
-      "portgroups",
+      "edge groups",
+      "port groups",
       "hierarchic",
       "ports",
-      "contextmenu",
+      "context menu",
       "groups",
       "bridges"
     ],
@@ -1762,20 +2246,21 @@ function getDemoData() {
     "demoPath": "layout/edgeroutergrouping/index.html",
     "summary": "The EdgeRouter can group the paths or ports of edges.",
     "category": "layout",
-    "thumbnailPath": "resources/image/edgeroutergrouping.png",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/edge-router-grouping.png",
     "sourcePath": "layout/edgeroutergrouping/EdgeRouterGroupingDemo.js",
     "tags": [
       "layout",
-      "edgerouter"
+      "edge routing"
     ],
     "keywords": [
       "v2.2.0.2",
-      "edgegroups",
-      "portgroups",
-      "edgerouter",
+      "edge groups",
+      "port groups",
+      "edge router",
       "polyline",
       "ports",
-      "contextmenu",
+      "context menu",
       "bridges"
     ],
     "ts": true
@@ -1786,13 +2271,14 @@ function getDemoData() {
     "demoPath": "layout/organicsubstructures/index.html",
     "summary": "Shows organic layout, and its substructures and node types features.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/organicsubstructures.png",
     "sourcePath": "layout/organicsubstructures/OrganicSubstructuresDemo.js",
     "tags": [
       "layout",
       "organic",
-      "substructures",
-      "node types"
+      "substructure",
+      "node type"
     ],
     "keywords": [
       "v2.4.0.0",
@@ -1808,16 +2294,17 @@ function getDemoData() {
     "demoPath": "layout/busrouting/index.html",
     "summary": "Shows how to group edges in bus structures.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/busrouting.png",
     "sourcePath": "layout/busrouting/BusRoutingDemo.js",
     "tags": [
       "layout",
-      "edgerouter"
+      "edge routing",
+      "bus"
     ],
     "keywords": [
       "v2.4.0.0",
-      "edgegroups",
-      "bus",
+      "edge groups",
       "bus structures"
     ],
     "ts": true
@@ -1828,11 +2315,12 @@ function getDemoData() {
     "demoPath": "layout/fillarealayout/index.html",
     "summary": "Shows how to fill free space after deleting nodes.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/fillarealayout.png",
     "sourcePath": "layout/fillarealayout/FillAreaLayoutDemo.js",
     "tags": [
       "layout",
-      "interaction"
+      "interactive layout"
     ],
     "keywords": [
       "v2.3.0.0",
@@ -1848,22 +2336,19 @@ function getDemoData() {
     "demoPath": "layout/clearmarqueearea/index.html",
     "summary": "Shows how to automatically keep a marquee area clear of graph elements.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/clearmarqueearea.png",
     "sourcePath": "layout/clearmarqueearea/ClearMarqueeAreaDemo.js",
     "tags": [
       "layout",
-      "interaction",
-      "clear area"
+      "interactive layout"
     ],
     "keywords": [
       "v2.3.0.2",
       "create",
       "space",
-      "clear",
-      "fill",
-      "area",
-      "cleararealayout",
-      "fillarealayout",
+      "clear area layout",
+      "fill area layout",
       "adjustment",
       "interactive"
     ],
@@ -1875,22 +2360,19 @@ function getDemoData() {
     "demoPath": "layout/clearrectanglearea/index.html",
     "summary": "Shows how to automatically keep a user-defined rectangular area clear of graph elements.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/clearrectanglearea.png",
     "sourcePath": "layout/clearrectanglearea/ClearRectangleAreaDemo.js",
     "tags": [
       "layout",
-      "interaction",
-      "clear area"
+      "interactive layout"
     ],
     "keywords": [
       "v2.3.0.2",
       "create",
       "space",
-      "clear",
-      "fill",
-      "area",
-      "cleararealayout",
-      "fillarealayout",
+      "clear area layout",
+      "fill area layout",
       "adjustment",
       "interactive"
     ],
@@ -1902,21 +2384,21 @@ function getDemoData() {
     "demoPath": "layout/nodeoverlapavoiding/index.html",
     "summary": "Shows how an automatic layout can remove node overlaps while a user interactively edits a graph.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/nodeoverlapavoiding.png",
     "sourcePath": "layout/nodeoverlapavoiding/NodeOverlapAvoidingDemo.js",
     "tags": [
       "layout",
-      "interaction"
+      "interactive layout"
     ],
     "keywords": [
       "v2.3.0.2",
       "move",
       "resize",
+      "resizing",
       "space",
-      "clear",
-      "fill",
-      "cleararealayout",
-      "fillarealayout",
+      "clear area layout",
+      "fill area layout",
       "adjustment",
       "interactive"
     ],
@@ -1928,6 +2410,7 @@ function getDemoData() {
     "demoPath": "layout/busstructures/index.html",
     "summary": "Bus structures in the hierarchic layout result in more compact arrangements.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/busstructures.png",
     "sourcePath": "layout/busstructures/BusStructuresDemo.js",
     "tags": [
@@ -1949,12 +2432,13 @@ function getDemoData() {
     "demoPath": "layout/subcomponents/index.html",
     "summary": "The hierarchic layout can arrange subcomponents with different layout styles.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/subcomponents.png",
     "sourcePath": "layout/subcomponents/SubcomponentsDemo.js",
     "tags": [
       "layout",
       "hierarchic",
-      "components"
+      "component"
     ],
     "keywords": [
       "tree",
@@ -1969,6 +2453,7 @@ function getDemoData() {
     "demoPath": "layout/criticalpaths/index.html",
     "summary": "The hierarchic and tree layout styles can emphasize critical (important) paths by aligning their nodes.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/CriticalPaths.png",
     "sourcePath": "layout/criticalpaths/CriticalPathsDemo.js",
     "tags": [
@@ -1977,7 +2462,7 @@ function getDemoData() {
       "tree"
     ],
     "keywords": [
-      "contextmenu"
+      "context menu"
     ],
     "ts": true
   },
@@ -1989,9 +2474,10 @@ function getDemoData() {
     "demoPath": "layout/custom-layout-stage/index.html",
     "thumbnailPath": "resources/image/CustomLayoutStage.png",
     "category": "layout",
+    "type": "layout-features",
     "tags": [
-      "layout stage",
-      "layout"
+      "layout",
+      "layout stage"
     ],
     "keywords": [
       "v2.4.0.0",
@@ -2018,6 +2504,7 @@ function getDemoData() {
     "demoPath": "layout/splitedges/index.html",
     "summary": "Shows how to align edges at group nodes using RecursiveGroupLayout with HierarchicLayout.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/splitedges.png",
     "sourcePath": "layout/splitedges/SplitEdgesDemo.js",
     "tags": [
@@ -2027,7 +2514,7 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.1.0.3",
-      "contextmenu",
+      "context menu",
       "recursive"
     ],
     "ts": true
@@ -2038,6 +2525,7 @@ function getDemoData() {
     "demoPath": "layout/partitiongrid/index.html",
     "summary": "Demonstrates the usage of a partition grid for hierarchic and organic layouts.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/partitiongrid.png",
     "sourcePath": "layout/partitiongrid/PartitionGridDemo.js",
     "tags": [
@@ -2054,6 +2542,7 @@ function getDemoData() {
     "demoPath": "layout/simplepartitiongrid/index.html",
     "summary": "Shows how to create a simple partition grid.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/simplePartitionGrid.png",
     "sourcePath": "layout/simplepartitiongrid/SimplePartitionGridDemo.js",
     "tags": [
@@ -2072,19 +2561,19 @@ function getDemoData() {
     "demoPath": "complete/interactivegraphrestructuring/index.html",
     "summary": "Shows how to interactively relocate subtrees from one parent to another.",
     "category": "complete",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/interactivegraphrestructuring.png",
     "sourcePath": "complete/interactivegraphrestructuring/InteractiveGraphRestructuringDemo.js",
     "tags": [
-      "layout",
-      "interaction",
+      "interactive layout",
       "animation"
     ],
     "keywords": [
       "v2.3.0.0",
       "tree",
-      "subtree",
-      "reparent",
-      "fill area",
+      "sub-tree",
+      "re-parent",
+      "fill area layout",
       "create space",
       "space maker"
     ],
@@ -2096,6 +2585,7 @@ function getDemoData() {
     "demoPath": "layout/layerconstraints/index.html",
     "summary": "Shows how to use layer constraints to prescribe the node layering in hierarchic layouts.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/layerconstraints.png",
     "sourcePath": "layout/layerconstraints/LayerConstraintsDemo.js",
     "tags": [
@@ -2110,6 +2600,7 @@ function getDemoData() {
     "demoPath": "layout/sequenceconstraints/index.html",
     "summary": "Shows how to use sequence constraints to prescribe the node sequencing in hierarchic layouts.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/sequenceconstraints.png",
     "sourcePath": "layout/sequenceconstraints/SequenceConstraintsDemo.js",
     "tags": [
@@ -2124,12 +2615,12 @@ function getDemoData() {
     "demoPath": "layout/interactiveorganic/index.html",
     "summary": "Shows the 'interactive organic' layout algorithm.",
     "category": "layout",
-    "thumbnailPath": "resources/image/InteractiveLayout.mp4",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/interactive-organic-layout.png",
     "sourcePath": "layout/interactiveorganic/InteractiveOrganicDemo.js",
     "tags": [
       "layout",
-      "interaction",
-      "animation"
+      "interactive layout"
     ],
     "keywords": [
       "organic",
@@ -2143,11 +2634,13 @@ function getDemoData() {
     "demoPath": "layout/recursivegroup/index.html",
     "summary": "Shows how to use different layout styles for the contents of groups and the overall graph.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/recursivegroup.png",
     "sourcePath": "layout/recursivegroup/RecursiveGroupDemo.js",
     "tags": [
       "layout",
-      "hierarchic"
+      "hierarchic",
+      "grouping"
     ],
     "keywords": [
       "groups",
@@ -2161,6 +2654,7 @@ function getDemoData() {
     "demoPath": "layout/multipage/index.html",
     "summary": "Shows how to divide a large model graph into several smaller page graphs, for example to print to multiple pages.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/multipage.png",
     "sourcePath": "layout/multipage/MultiPageDemo.js",
     "tags": [
@@ -2169,7 +2663,8 @@ function getDemoData() {
       "tree"
     ],
     "keywords": [
-      "multipage",
+      "multi page",
+      "multiple pages",
       "orthogonal",
       "circular",
       "organic",
@@ -2185,6 +2680,7 @@ function getDemoData() {
     "demoPath": "layout/tree/index.html",
     "summary": "Shows how to use different node placer in TreeLayout.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/treelayout.png",
     "sourcePath": "layout/tree/TreeLayoutDemo.js",
     "tags": [
@@ -2192,7 +2688,7 @@ function getDemoData() {
       "tree"
     ],
     "keywords": [
-      "nodeplacer",
+      "node placers",
       "v2.2.0.2"
     ],
     "ts": true
@@ -2203,18 +2699,194 @@ function getDemoData() {
     "demoPath": "layout/partial/index.html",
     "summary": "Shows how to integrate new graph elements into an existing graph layout.",
     "category": "layout",
+    "type": "layout-features",
     "thumbnailPath": "resources/image/partiallayout.png",
     "sourcePath": "layout/partial/PartialLayoutDemo.js",
     "tags": [
       "layout",
       "incremental",
-      "hierarchic"
+      "partial"
     ],
     "keywords": [
+      "hierarchic",
       "orthogonal",
       "organic",
       "circular",
       "curves"
+    ],
+    "ts": true
+  },
+  {
+    "id": "bridges",
+    "name": "Bridges",
+    "demoPath": "view/bridges/index.html",
+    "summary": "Shows the capabilities of the <code>BridgeManager</code> class for inserting bridges into edge paths.",
+    "category": "view",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/bridges.png",
+    "sourcePath": "view/bridges/BridgesDemo.js",
+    "tags": [
+      "line gaps",
+      "line jumps"
+    ],
+    "keywords": [
+      "intersection",
+      "intersecting",
+      "groups"
+    ],
+    "ts": true
+  },
+  {
+    "id": "custom-edge-creation",
+    "name": "Custom Edge Creation",
+    "demoPath": "complete/customedgecreation/index.html",
+    "summary": "Shows how to provide directional ports and demonstrates interactive routing during edge creation.",
+    "category": "complete",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/customedgecreation.png",
+    "sourcePath": "complete/customedgecreation/CustomEdgeCreationDemo.js",
+    "tags": [
+      "layout",
+      "edge routing",
+      "interaction"
+    ],
+    "keywords": [
+      "v2.2.0.2",
+      "edge router",
+      "channel edge router",
+      "orthogonal",
+      "port candidate provider",
+      "styles",
+      "ports"
+    ],
+    "ts": true
+  },
+  {
+    "id": "family-tree",
+    "name": "Family Tree",
+    "demoPath": "layout/familytree/index.html",
+    "summary": "Shows how to visualize genealogical graphs (family trees).",
+    "category": "layout",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/family-tree.png",
+    "sourcePath": "layout/familytree/FamilyTreeDemo.js",
+    "tags": [
+      "layout",
+      "genealogy"
+    ],
+    "keywords": [
+      "family tree",
+      "tree",
+      "layout",
+      "genealogical",
+      "v2.2.0.0",
+      "structures",
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "edge-to-edge",
+    "name": "Edge To Edge",
+    "demoPath": "view/edgetoedge/index.html",
+    "summary": "Shows edge-to-edge connections.",
+    "category": "view",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/edge_to_edge.png",
+    "sourcePath": "view/edgetoedge/EdgeToEdgeDemo.js",
+    "tags": [
+      "edge creation",
+      "interaction"
+    ],
+    "keywords": [
+      "port candidate providers"
+    ],
+    "ts": true
+  },
+  {
+    "id": "graph-builder",
+    "name": "Graph Builder",
+    "demoPath": "databinding/graphbuilder/index.html",
+    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>GraphBuilder</code>.",
+    "category": "databinding",
+    "type": "loading",
+    "thumbnailPath": "resources/image/graphbuilder.png",
+    "sourcePath": "databinding/graphbuilder/GraphBuilderDemo.js",
+    "tags": [
+      "json",
+      "data binding",
+      "layout"
+    ],
+    "keywords": [
+      "hierarchic",
+      "structures",
+      "labels",
+      "v2.3.0.0"
+    ],
+    "ts": true
+  },
+  {
+    "id": "tree-graph-builder",
+    "name": "Tree Builder",
+    "demoPath": "databinding/treebuilder/index.html",
+    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>TreeBuilder</code>.",
+    "category": "databinding",
+    "type": "loading",
+    "thumbnailPath": "resources/image/treebuilder.png",
+    "sourcePath": "databinding/treebuilder/TreeBuilderDemo.js",
+    "tags": [
+      "json",
+      "data binding",
+      "layout"
+    ],
+    "keywords": [
+      "hierarchic",
+      "structures",
+      "labels",
+      "v2.3.0.0"
+    ],
+    "ts": true
+  },
+  {
+    "id": "adjacency-graph-builder",
+    "name": "Adjacency Graph Builder",
+    "demoPath": "databinding/adjacencygraphbuilder/index.html",
+    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>AdjacencyGraphBuilder</code>.",
+    "category": "databinding",
+    "type": "loading",
+    "thumbnailPath": "resources/image/adjacencygraphbuilder.png",
+    "sourcePath": "databinding/adjacencygraphbuilder/AdjacencyGraphBuilderDemo.js",
+    "tags": [
+      "json",
+      "data binding",
+      "layout"
+    ],
+    "keywords": [
+      "hierarchic",
+      "structures",
+      "labels",
+      "v2.3.0.0"
+    ],
+    "ts": true
+  },
+  {
+    "id": "simple-graph-builder",
+    "name": "Simple Graph Builder",
+    "demoPath": "databinding/simplegraphbuilder/index.html",
+    "summary": "Automatically builds a graph from JSON business data using <code>GraphBuilder</code>, <code>AdjacencyGraphBuilder</code> or <code>TreeBuilder</code>.",
+    "category": "databinding",
+    "type": "loading",
+    "thumbnailPath": "resources/image/simplegraphbuilder.png",
+    "sourcePath": "databinding/simplegraphbuilder/SimpleGraphBuilderDemo.js",
+    "tags": [
+      "json",
+      "data binding",
+      "layout"
+    ],
+    "keywords": [
+      "hierarchic",
+      "labels",
+      "v2.3.0.0"
     ],
     "ts": true
   },
@@ -2224,15 +2896,16 @@ function getDemoData() {
     "demoPath": "view/imageexport/index.html",
     "summary": "Shows how to export the whole diagram or a part of it to a PNG image.",
     "category": "view",
+    "type": "export",
     "thumbnailPath": "resources/image/export.png",
     "sourcePath": "view/imageexport/ImageExportDemo.js",
     "tags": [
       "export",
-      "PNG",
-      "JPEG"
+      "png",
+      "jpg"
     ],
     "keywords": [
-      "JPG",
+      "jpeg",
       "bitmap",
       "save",
       "handles"
@@ -2245,18 +2918,19 @@ function getDemoData() {
     "demoPath": "view/svgexport/index.html",
     "summary": "Shows how to export the whole diagram or a part of it to an SVG image.",
     "category": "view",
+    "type": "export",
     "thumbnailPath": "resources/image/svgexport.png",
     "sourcePath": "view/svgexport/SvgExportDemo.js",
     "tags": [
       "export",
-      "SVG",
+      "svg",
       "vector graphics"
     ],
     "keywords": [
       "scalable vector graphics",
       "save",
       "handles",
-      "curve",
+      "curves",
       "bezier"
     ],
     "ts": true
@@ -2267,11 +2941,12 @@ function getDemoData() {
     "demoPath": "view/pdfexport/index.html",
     "summary": "Shows how to export the whole diagram or a part of it to a PDF.",
     "category": "view",
+    "type": "export",
     "thumbnailPath": "resources/image/pdfexport.png",
     "sourcePath": "view/pdfexport/PdfExportDemo.js",
     "tags": [
       "export",
-      "PDF"
+      "pdf"
     ],
     "keywords": [
       "vector graphics",
@@ -2285,119 +2960,56 @@ function getDemoData() {
     "demoPath": "view/printing/index.html",
     "summary": "Shows how to print the whole diagram or a part of it.",
     "category": "view",
+    "type": "export",
     "thumbnailPath": "resources/image/printing.png",
     "sourcePath": "view/printing/PrintingDemo.js",
     "tags": [
       "printing"
     ],
     "keywords": [
-      "poster",
+      "posters",
       "vector graphics",
       "handles"
     ],
     "ts": true
   },
   {
-    "id": "structure-view",
-    "name": "Structure View",
-    "demoPath": "view/structureview/index.html",
-    "summary": "A tree list component that shows the nesting of the groups and nodes.",
+    "id": "file-operations",
+    "name": "File Operations",
+    "demoPath": "view/fileoperations/index.html",
+    "summary": "shows various ways to open and save a graph as GraphML.",
     "category": "view",
-    "thumbnailPath": "resources/image/structureview.png",
-    "sourcePath": "view/structureview/StructureViewDemo.js",
+    "type": "integration",
+    "thumbnailPath": "resources/image/fileoperations.png",
+    "sourcePath": "view/fileoperations/FileOperationsDemo.js",
+    "tags": [
+      "i/o",
+      "export",
+      "graphml"
+    ],
+    "keywords": [
+      "load",
+      "save",
+      "io"
+    ],
+    "ts": true
+  },
+  {
+    "id": "events-viewer",
+    "name": "Events Viewer",
+    "demoPath": "view/events/index.html",
+    "summary": "Shows the multitude of events provided by the classes <code>IGraph</code>, <code>GraphComponent</code>, and the <em>Input Modes</em>.",
+    "category": "view",
+    "type": "integration",
+    "thumbnailPath": "resources/image/events.png",
+    "sourcePath": "view/events/EventsDemo.js",
     "tags": [
       "interaction"
     ],
     "keywords": [
-      "list",
-      "tree",
-      "overview",
-      "structure",
-      "v2.1.0.3",
-      "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "graph-builder",
-    "name": "Graph Builder",
-    "demoPath": "databinding/graphbuilder/index.html",
-    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>GraphBuilder</code>.",
-    "category": "databinding",
-    "thumbnailPath": "resources/image/graphbuilder.png",
-    "sourcePath": "databinding/graphbuilder/GraphBuilderDemo.js",
-    "tags": [
-      "JSON",
-      "binding",
-      "layout"
-    ],
-    "keywords": [
-      "hierarchic",
-      "structure",
-      "labels",
-      "v2.3.0.0"
-    ],
-    "ts": true
-  },
-  {
-    "id": "tree-graph-builder",
-    "name": "Tree Builder",
-    "demoPath": "databinding/treebuilder/index.html",
-    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>TreeBuilder</code>.",
-    "category": "databinding",
-    "thumbnailPath": "resources/image/treebuilder.png",
-    "sourcePath": "databinding/treebuilder/TreeBuilderDemo.js",
-    "tags": [
-      "JSON",
-      "binding",
-      "layout"
-    ],
-    "keywords": [
-      "hierarchic",
-      "structure",
-      "labels",
-      "v2.3.0.0"
-    ],
-    "ts": true
-  },
-  {
-    "id": "adjacency-graph-builder",
-    "name": "Adjacency Graph Builder",
-    "demoPath": "databinding/adjacencygraphbuilder/index.html",
-    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>AdjacencyGraphBuilder</code>.",
-    "category": "databinding",
-    "thumbnailPath": "resources/image/adjacencygraphbuilder.png",
-    "sourcePath": "databinding/adjacencygraphbuilder/AdjacencyGraphBuilderDemo.js",
-    "tags": [
-      "JSON",
-      "binding",
-      "layout"
-    ],
-    "keywords": [
-      "hierarchic",
-      "structure",
-      "labels",
-      "v2.3.0.0"
-    ],
-    "ts": true
-  },
-  {
-    "id": "simple-graph-builder",
-    "name": "Simple Graph Builder",
-    "demoPath": "databinding/simplegraphbuilder/index.html",
-    "summary": "Automatically builds a graph from JSON business data using <code>GraphBuilder</code>, <code>AdjacencyGraphBuilder</code> or <code>TreeBuilder</code>.",
-    "category": "databinding",
-    "thumbnailPath": "resources/image/simplegraphbuilder.png",
-    "sourcePath": "databinding/simplegraphbuilder/SimpleGraphBuilderDemo.js",
-    "tags": [
-      "JSON",
-      "binding",
-      "layout"
-    ],
-    "keywords": [
-      "hierarchic",
-      "labels",
-      "v2.3.0.0"
+      "palette",
+      "drag and drop",
+      "dnd"
     ],
     "ts": true
   },
@@ -2407,19 +3019,20 @@ function getDemoData() {
     "demoPath": "toolkit/angular/README.html",
     "summary": "Shows how to use yFiles for HTML in an Angular app (Angular 2 and newer) using Angular CLI.",
     "category": "integration",
+    "type": "integration",
     "packageType": "no-viewer",
     "thumbnailPath": "resources/image/angular.png",
-    "sourcePath": "",
+    "sourcePath": "toolkit/angular/src/main.ts",
     "tags": [
       "angular",
-      "binding",
+      "data binding",
       "typescript"
     ],
     "keywords": [
       "v2.1.0.0",
       "tools",
       "tree",
-      "datapanel",
+      "data panel",
       "integration"
     ],
     "ts": true
@@ -2430,19 +3043,226 @@ function getDemoData() {
     "demoPath": "toolkit/angular1/index.html",
     "summary": "Shows how to use yFiles for HTML in an AngularJS 1 app.",
     "category": "integration",
+    "type": "integration",
     "packageType": "no-viewer",
     "thumbnailPath": "resources/image/angularjs1.png",
     "sourcePath": "toolkit/angular1/app.js",
     "tags": [
       "angular",
+      "style",
       "layout"
     ],
     "keywords": [
       "styles",
       "tree",
-      "datapanel",
+      "data panel",
       "integration"
     ]
+  },
+  {
+    "id": "react",
+    "name": "React",
+    "demoPath": "toolkit/react/README.html",
+    "summary": "Shows how to use yFiles for HTML with the React library.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/react.png",
+    "sourcePath": "toolkit/react/src/index.js",
+    "tags": [
+      "react",
+      "json",
+      "webpack"
+    ],
+    "keywords": [
+      "v2.2.0.2",
+      "web worker",
+      "data",
+      "integration"
+    ]
+  },
+  {
+    "id": "react-typescript",
+    "name": "React With TypeScript",
+    "demoPath": "toolkit/react-typescript/README.html",
+    "summary": "Shows how to integrate yFiles in a basic React application with TypeScript based on Create React App.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/react-typescript.png",
+    "sourcePath": "toolkit/react-typescript/src/index.tsx",
+    "tags": [
+      "react",
+      "json"
+    ],
+    "keywords": [
+      "v2.2.0.2",
+      "data",
+      "integration"
+    ],
+    "ts": true
+  },
+  {
+    "id": "preact",
+    "name": "Preact",
+    "demoPath": "toolkit/preact/index.html",
+    "summary": "Shows how to integrate yFiles in a basic Preact application with TypeScript.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/preact.png",
+    "sourcePath": "toolkit/preact/PreactDemo.ts",
+    "tags": [
+      "react",
+      "preact",
+      "json"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "data",
+      "integration"
+    ],
+    "ts": true
+  },
+  {
+    "id": "vue.js",
+    "name": "Vue.js 2",
+    "demoPath": "toolkit/vuejs/index.html",
+    "summary": "Shows how to use yFiles for HTML with Vue.js 2.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/vuejs.png",
+    "sourcePath": "toolkit/vuejs/VuejsDemo.ts",
+    "tags": [
+      "vuejs",
+      "data binding"
+    ],
+    "keywords": [
+      "templates",
+      "data panel",
+      "tree",
+      "details",
+      "integration"
+    ],
+    "ts": true
+  },
+  {
+    "id": "vue2-cli",
+    "name": "Vue CLI (Vue 2) ",
+    "demoPath": "toolkit/vue2-cli/README.html",
+    "summary": "Shows how to integrate yFiles for HTML in a Vue 2 app with Vue CLI.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/vue-cli.png",
+    "sourcePath": "toolkit/vue2-cli/src/main.js",
+    "tags": [
+      "vuejs",
+      "vue cli"
+    ],
+    "keywords": [
+      "v2.2.0.2",
+      "components",
+      "single",
+      "files",
+      "integration",
+      "web worker"
+    ]
+  },
+  {
+    "id": "vue2-cli-typescript",
+    "name": "Vue CLI (Vue 2, TypeScript)",
+    "demoPath": "toolkit/vue2-cli-typescript/README.html",
+    "summary": "Shows how to integrate yFiles in a Vue 2 app with TypeScript and Vue CLI.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/vue-cli-typescript.png",
+    "sourcePath": "toolkit/vue2-cli-typescript/src/main.ts",
+    "tags": [
+      "vuejs",
+      "vue cli"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "component",
+      "single",
+      "file",
+      "integration",
+      "web worker"
+    ],
+    "ts": true
+  },
+  {
+    "id": "vue3-cli",
+    "name": "Vue CLI (Vue 3)",
+    "demoPath": "toolkit/vue3-cli/README.html",
+    "summary": "Shows how to integrate yFiles for HTML in a Vue 3 app with Vue CLI.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/vue-cli.png",
+    "sourcePath": "toolkit/vue3-cli/src/main.js",
+    "tags": [
+      "vuejs",
+      "vue cli"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "components",
+      "single",
+      "files",
+      "integration",
+      "web worker"
+    ]
+  },
+  {
+    "id": "vue3-cli-typescript",
+    "name": "Vue CLI (Vue 3, TypeScript)",
+    "demoPath": "toolkit/vue3-cli-typescript/README.html",
+    "summary": "Shows how to integrate yFiles in a Vue 3 app with TypeScript and Vue CLI.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/vue-cli-typescript.png",
+    "sourcePath": "toolkit/vue3-cli-typescript/src/main.ts",
+    "tags": [
+      "vuejs",
+      "vue cli",
+      "vue3"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "component",
+      "single",
+      "file",
+      "integration",
+      "web worker"
+    ],
+    "ts": true
+  },
+  {
+    "id": "svelte",
+    "name": "Svelte",
+    "demoPath": "toolkit/svelte/README.html",
+    "summary": "Shows how to integrate the yFiles library in a <a href=\"https://svelte.dev/\" target=\"_blank\">Svelte</a> project.",
+    "category": "integration",
+    "type": "integration",
+    "packageType": "no-viewer",
+    "thumbnailPath": "resources/image/svelte.png",
+    "sourcePath": "toolkit/svelte/src/index.ts",
+    "tags": [
+      "svelte",
+      "snowpack"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "web worker",
+      "hmr",
+      "integration"
+    ],
+    "ts": true
   },
   {
     "id": "graphql",
@@ -2450,6 +3270,7 @@ function getDemoData() {
     "demoPath": "toolkit/graphql/index.html",
     "summary": "Shows how to load data from a GraphQL service and display it with yFiles for HTML.",
     "category": "integration",
+    "type": "integration",
     "packageType": "no-viewer",
     "thumbnailPath": "resources/image/graphql.png",
     "sourcePath": "toolkit/graphql/GraphQlDemo.js",
@@ -2472,6 +3293,7 @@ function getDemoData() {
     "demoPath": "toolkit/neo4j/index.html",
     "summary": "Shows how to load data from a Neo4j database and display it with yFiles for HTML.",
     "category": "integration",
+    "type": "integration",
     "packageType": "no-viewer",
     "thumbnailPath": "resources/image/neo4j.png",
     "sourcePath": "toolkit/neo4j/Neo4jDemo.js",
@@ -2493,6 +3315,7 @@ function getDemoData() {
     "demoPath": "loading/nodejs/index.html",
     "summary": "Shows how to run a yFiles layout algorithm in a <a href='https://nodejs.org/' target='_blank'>Node.js&reg;</a> environment.",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/nodejs.png",
     "sourcePath": "loading/nodejs/NodeJsDemo.js",
     "tags": [
@@ -2503,49 +3326,8 @@ function getDemoData() {
       "folding",
       "hierarchic",
       "json",
-      "webworker"
+      "web worker"
     ]
-  },
-  {
-    "id": "react",
-    "name": "React",
-    "demoPath": "toolkit/react/README.html",
-    "summary": "Shows how to use yFiles for HTML with the React library.",
-    "category": "integration",
-    "packageType": "no-viewer",
-    "thumbnailPath": "resources/image/react.png",
-    "sourcePath": "",
-    "tags": [
-      "react",
-      "json",
-      "webpack"
-    ],
-    "keywords": [
-      "v2.2.0.2",
-      "webworker",
-      "data",
-      "integration"
-    ]
-  },
-  {
-    "id": "react-typescript",
-    "name": "React With TypeScript",
-    "demoPath": "toolkit/react-typescript/README.html",
-    "summary": "Shows how to integrate yFiles in a basic React application with TypeScript based on Create React App.",
-    "category": "integration",
-    "packageType": "no-viewer",
-    "thumbnailPath": "resources/image/react.png",
-    "sourcePath": "",
-    "tags": [
-      "react",
-      "json"
-    ],
-    "keywords": [
-      "v2.2.0.2",
-      "data",
-      "integration"
-    ],
-    "ts": true
   },
   {
     "id": "electron",
@@ -2553,8 +3335,9 @@ function getDemoData() {
     "demoPath": "toolkit/electron/README.html",
     "summary": "Shows how to create a desktop app with Electron and yFiles for HTML.",
     "category": "integration",
+    "type": "integration",
     "thumbnailPath": "resources/image/electron.png",
-    "sourcePath": "",
+    "sourcePath": "toolkit/electron/src/main/index.js",
     "tags": [
       "electron",
       "webpack",
@@ -2562,7 +3345,7 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.2.0.2",
-      "esmodules",
+      "es modules",
       "integration"
     ]
   },
@@ -2572,8 +3355,9 @@ function getDemoData() {
     "demoPath": "toolkit/dojo/README.html",
     "summary": "Shows the integration of yFiles for HTML in a basic Dojo app based on Dojo's cli-create-app.",
     "category": "integration",
+    "type": "integration",
     "thumbnailPath": "resources/image/demo-dojo.png",
-    "sourcePath": "",
+    "sourcePath": "toolkit/dojo/src/main.ts",
     "tags": [
       "dojo",
       "typescript"
@@ -2581,53 +3365,10 @@ function getDemoData() {
     "keywords": [
       "v2.2.0.2",
       "overview",
-      "esmodules",
+      "es modules",
       "integration"
     ],
     "ts": true
-  },
-  {
-    "id": "vue.js",
-    "name": "Vue.js",
-    "demoPath": "toolkit/vuejs/index.html",
-    "summary": "Shows how to use yFiles for HTML with Vue.js.",
-    "category": "integration",
-    "packageType": "no-viewer",
-    "thumbnailPath": "resources/image/vuejs.png",
-    "sourcePath": "toolkit/vuejs/VuejsDemo.js",
-    "tags": [
-      "vuejs",
-      "databinding"
-    ],
-    "keywords": [
-      "template",
-      "datapanel",
-      "tree",
-      "detail",
-      "integration"
-    ]
-  },
-  {
-    "id": "vue-cli",
-    "name": "Vue-CLI",
-    "demoPath": "toolkit/vue-cli/README.html",
-    "summary": "Shows how to integrate yFiles for HTML in a basic Vue-CLI setup.",
-    "category": "integration",
-    "packageType": "no-viewer",
-    "thumbnailPath": "resources/image/vuecli.png",
-    "sourcePath": "",
-    "tags": [
-      "vuejs",
-      "vue-cli"
-    ],
-    "keywords": [
-      "v2.2.0.2",
-      "component",
-      "single",
-      "file",
-      "integration",
-      "webworker"
-    ]
   },
   {
     "id": "web-components",
@@ -2635,341 +3376,15 @@ function getDemoData() {
     "demoPath": "toolkit/webcomponents/index.html",
     "summary": "Shows how to use yFiles for HTML with Web Components v1.",
     "category": "integration",
+    "type": "integration",
     "thumbnailPath": "resources/image/web_components.png",
     "sourcePath": "toolkit/webcomponents/WebComponentsDemo.js",
     "tags": [
-      "webcomponents",
-      "shadowdom",
-      "html import",
-      "integration"
+      "web components",
+      "shadow dom",
+      "html imports"
     ],
     "ts": true
-  },
-  {
-    "id": "html-popup",
-    "name": "HTML Popup",
-    "demoPath": "view/htmlpopup/index.html",
-    "summary": "Shows HTML pop-up panels that displays additional information about a clicked node or edge.",
-    "category": "view",
-    "thumbnailPath": "resources/image/htmlpopup.png",
-    "sourcePath": "view/htmlpopup/HTMLPopupDemo.js",
-    "tags": [
-      "interaction",
-      "overlay"
-    ],
-    "keywords": [
-      "htmlpopup",
-      "datapanel",
-      "tooltip",
-      "structure",
-      "detail"
-    ],
-    "ts": true
-  },
-  {
-    "id": "css3-animations-and-transitions",
-    "name": "CSS3 Animations and Transitions",
-    "demoPath": "style/css3animationsandtransitions/index.html",
-    "summary": "Shows how CSS3 transformations and animations can be applied to graph items.",
-    "category": "style",
-    "thumbnailPath": "resources/image/css3_animations_and_transitions.png",
-    "sourcePath": "style/css3animationsandtransitions/CSS3AnimationsAndTransitionsDemo.js",
-    "tags": [
-      "styles",
-      "animation",
-      "transition"
-    ],
-    "keywords": [
-      "curves"
-    ],
-    "ts": true
-  },
-  {
-    "id": "webgl-animations",
-    "name": "WebGL2 Animations",
-    "demoPath": "style/webgl-animations/index.html",
-    "summary": "Shows howto use WebGL2 animations to highlight interesting parts of a graph.",
-    "category": "style",
-    "thumbnailPath": "resources/image/webgl-animations.png",
-    "sourcePath": "style/webgl-animations/WebGLAnimationsDemo.js",
-    "tags": [
-      "animation",
-      "WebGL2"
-    ],
-    "keywords": [
-      "v2.4.0.0"
-    ],
-    "ts": true
-  },
-  {
-    "id": "editable-path-style",
-    "name": "Editable Path Node Style",
-    "demoPath": "style/editablepathstyle/index.html",
-    "summary": "Shows a path-based node style whose control points can be moved by users.",
-    "category": "style",
-    "thumbnailPath": "resources/image/editablepath.png",
-    "sourcePath": "style/editablepathstyle/EditablePathNodeStyle.js",
-    "tags": [
-      "node",
-      "path",
-      "editing"
-    ],
-    "keywords": [
-      "v2.3.0.2",
-      "handles",
-      "GeneralPath",
-      "path",
-      "interaction",
-      "editing"
-    ],
-    "ts": true
-  },
-  {
-    "id": "custom-styles",
-    "name": "Custom Styles",
-    "demoPath": "style/customstyles/index.html",
-    "summary": "Shows how to create custom styles for nodes, edges, labels, ports, and edge arrows.",
-    "category": "style",
-    "thumbnailPath": "resources/image/customstyles.png",
-    "sourcePath": "style/customstyles/CustomStyleDemo.js",
-    "tags": [
-      "styles",
-      "groups"
-    ],
-    "keywords": [
-      "folding",
-      "labels",
-      "ports"
-    ],
-    "ts": true
-  },
-  {
-    "id": "vue.js-template-node-style",
-    "name": "Vue.js Template Node Style",
-    "demoPath": "style/vuejstemplatenodestyle/index.html",
-    "summary": "Presents a very versatile and easily customizable template node style.",
-    "category": "style",
-    "thumbnailPath": "resources/image/vuejstemplatenodestyle.png",
-    "sourcePath": "",
-    "tags": [
-      "styles",
-      "template",
-      "vuejs"
-    ],
-    "keywords": [
-      "v2.1.0.0",
-      "databinding",
-      "datapanel",
-      "tree"
-    ],
-    "ts": true
-  },
-  {
-    "id": "webgl-icon-node",
-    "name": "WebGL2 Icon Node",
-    "demoPath": "style/webgl-icon-node/index.html",
-    "summary": "Shows how to render icon nodes with WebGL2.",
-    "category": "style",
-    "thumbnailPath": "resources/image/webgl-icon-node.png",
-    "sourcePath": "style/webgl-icon-node/WebGLIconNodeDemo.js",
-    "tags": [
-      "styles",
-      "WebGL2"
-    ],
-    "keywords": [
-      "v2.4.0.0"
-    ],
-    "ts": true
-  },
-  {
-    "id": "selection-styling",
-    "name": "Selection Styling",
-    "demoPath": "style/selectionstyling/index.html",
-    "summary": "Shows customized selection painting of nodes, edges and labels by decorating these items with a corresponding\n      style.",
-    "category": "style",
-    "thumbnailPath": "resources/image/selectionstyling.png",
-    "sourcePath": "style/selectionstyling/SelectionStylingDemo.js",
-    "tags": [
-      "styles",
-      "interaction"
-    ],
-    "keywords": [
-      "selectionstyling",
-      "labels"
-    ],
-    "ts": true
-  },
-  {
-    "id": "style-decorators",
-    "name": "Style Decorators",
-    "demoPath": "style/styledecorators/index.html",
-    "summary": "Shows how to create styles for nodes, edges, and labels that wrap existing styles and add visual decorators.",
-    "category": "style",
-    "thumbnailPath": "resources/image/styledecorators.png",
-    "sourcePath": "style/styledecorators/StyleDecoratorsDemo.js",
-    "tags": [
-      "styles",
-      "decorators"
-    ],
-    "keywords": [
-      "ports"
-    ],
-    "ts": true
-  },
-  {
-    "id": "data-table",
-    "name": "Data Table",
-    "demoPath": "style/datatable/index.html",
-    "summary": "Shows a node style and a label style that display data in a tabular fashion.",
-    "category": "style",
-    "thumbnailPath": "resources/image/datatable.png",
-    "sourcePath": "style/datatable/DataTableDemo.js",
-    "tags": [
-      "styles",
-      "labels"
-    ],
-    "keywords": [
-      "datatable",
-      "structure"
-    ],
-    "ts": true
-  },
-  {
-    "id": "html-label",
-    "name": "HTML Label",
-    "demoPath": "style/htmllabel/index.html",
-    "summary": "Shows how HTML can be used in label text with a custom label style.",
-    "category": "style",
-    "thumbnailPath": "resources/image/htmllabel.png",
-    "sourcePath": "style/htmllabel/HtmlLabelDemo.js",
-    "tags": [
-      "styles",
-      "labels"
-    ],
-    "keywords": [
-      "foreignObject"
-    ],
-    "ts": true
-  },
-  {
-    "id": "invariant-label-style",
-    "name": "Zoom-invariant Label Style",
-    "demoPath": "style/invariant-label/index.html",
-    "summary": "Shows label styles that are independent of the zoom level.",
-    "category": "style",
-    "thumbnailPath": "resources/image/invariant-label.png",
-    "sourcePath": "style/invariant-label/ZoomInvariantLabelStyleDemo.js",
-    "tags": [
-      "styles",
-      "labels",
-      "zoom"
-    ],
-    "keywords": [
-      "v2.2.0.2",
-      "size",
-      "fit"
-    ],
-    "ts": true
-  },
-  {
-    "id": "bridges",
-    "name": "Bridges",
-    "demoPath": "view/bridges/index.html",
-    "summary": "Shows the capabilities of the <code>BridgeManager</code> class for inserting bridges into edge paths.",
-    "category": "view",
-    "thumbnailPath": "resources/image/bridges.png",
-    "sourcePath": "view/bridges/BridgesDemo.js",
-    "tags": [
-      "line gaps",
-      "line jumps"
-    ],
-    "keywords": [
-      "intersection",
-      "intersecting",
-      "groups"
-    ],
-    "ts": true
-  },
-  {
-    "id": "edge-to-edge",
-    "name": "Edge To Edge",
-    "demoPath": "view/edgetoedge/index.html",
-    "summary": "Shows edge-to-edge connections.",
-    "category": "view",
-    "thumbnailPath": "resources/image/edge_to_edge.png",
-    "sourcePath": "view/edgetoedge/EdgeToEdgeDemo.js",
-    "tags": [
-      "edge creation",
-      "interaction"
-    ],
-    "keywords": [
-      "portcandidateprovider"
-    ],
-    "ts": true
-  },
-  {
-    "id": "file-operations",
-    "name": "File Operations",
-    "demoPath": "view/fileoperations/index.html",
-    "summary": "shows various ways to open and save a graph as GraphML.",
-    "category": "view",
-    "thumbnailPath": "resources/image/fileoperations.png",
-    "sourcePath": "view/fileoperations/FileOperationsDemo.js",
-    "tags": [
-      "I/O",
-      "export",
-      "GraphML"
-    ],
-    "keywords": [
-      "load",
-      "save",
-      "IO"
-    ],
-    "ts": true
-  },
-  {
-    "id": "graphml",
-    "name": "GraphML",
-    "demoPath": "view/graphml/index.html",
-    "summary": "Provides a live view of the graph's GraphML representation.",
-    "category": "view",
-    "thumbnailPath": "resources/image/graphml.png",
-    "sourcePath": "view/graphml/GraphMLDemo.js",
-    "tags": [
-      "GraphML",
-      "I/O"
-    ],
-    "keywords": [
-      "load",
-      "save",
-      "IO",
-      "datapanel",
-      "groups",
-      "folding",
-      "labels",
-      "curve",
-      "bezier"
-    ],
-    "ts": true
-  },
-  {
-    "id": "graphml-compatibility",
-    "name": "GraphML Compatibility",
-    "demoPath": "view/graphmlcompatibility/index.html",
-    "summary": "Shows how to enable read compatibility for GraphML files from older versions.",
-    "category": "view",
-    "thumbnailPath": "resources/image/graphmlcompatibility.png",
-    "sourcePath": "view/graphmlcompatibility/GraphMLCompatibilityDemo.js",
-    "tags": [
-      "GraphML",
-      "I/O"
-    ],
-    "keywords": [
-      "load",
-      "save",
-      "IO",
-      "1.3"
-    ]
   },
   {
     "id": "amd-loading",
@@ -2977,6 +3392,7 @@ function getDemoData() {
     "demoPath": "loading/amdloading/index.html",
     "summary": "Loads the yFiles library modules with the AMD loading standard (require.js).",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/amdloading.png",
     "sourcePath": "loading/amdloading/AmdLoadingDemo.js",
     "tags": [
@@ -2985,7 +3401,8 @@ function getDemoData() {
     ],
     "keywords": [
       "requirejs",
-      "nonsymbolic"
+      "require.js",
+      "non-symbolic"
     ]
   },
   {
@@ -2994,10 +3411,11 @@ function getDemoData() {
     "demoPath": "loading/esmodules/index.html",
     "summary": "Loads the yFiles module resources using ES module imports.",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/esmodules.png",
     "sourcePath": "loading/esmodules/ESModulesDemo.js",
     "tags": [
-      "ES modules",
+      "es modules",
       "import"
     ],
     "keywords": [
@@ -3011,6 +3429,7 @@ function getDemoData() {
     "demoPath": "loading/browserify/README.html",
     "summary": "Shows how to bundle the yFiles library in a <a href=\"http://browserify.org\" target=\"_blank\">Browserify</a> project.",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/browserify.png",
     "sourcePath": "loading/browserify/src/browserify-demo.js",
     "tags": [
@@ -3027,7 +3446,8 @@ function getDemoData() {
     "demoPath": "loading/rollupjs/README.html",
     "summary": "Shows how to bundle the yFiles library in a <a href=\"https://rollupjs.org\" target=\"_blank\">rollup</a> project.",
     "category": "loading",
-    "thumbnailPath": "resources/image/scriptloading.png",
+    "type": "integration",
+    "thumbnailPath": "resources/image/rollupjs.png",
     "sourcePath": "loading/rollupjs/src/RollupJsDemo.js",
     "tags": [
       "deployment",
@@ -3037,7 +3457,7 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.2.0.0",
-      "webworker"
+      "web worker"
     ]
   },
   {
@@ -3046,6 +3466,7 @@ function getDemoData() {
     "demoPath": "loading/scriptloading/index.html",
     "summary": "Loads the yFiles modules using plain old &lt;script&gt; tags.",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/scriptloading.png",
     "sourcePath": "loading/scriptloading/ScriptLoadingDemo.js",
     "tags": [
@@ -3053,8 +3474,8 @@ function getDemoData() {
       "modules"
     ],
     "keywords": [
-      "scriptloading",
-      "nonsymbolic"
+      "script loading",
+      "non-symbolic"
     ]
   },
   {
@@ -3063,17 +3484,16 @@ function getDemoData() {
     "demoPath": "loading/webworker-webpack/README.html",
     "summary": "Shows how to run a yFiles layout algorithm in a Web Worker task using Webpack.",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/webworker.png",
     "sourcePath": "loading/webworker-webpack/src/WebWorkerWebpackDemo.ts",
     "tags": [
+      "webpack",
       "web worker",
-      "layout",
-      "hierarchic",
-      "webpack"
+      "layout"
     ],
     "keywords": [
       "v2.4.0.0",
-      "webworker",
       "threads",
       "threading",
       "background",
@@ -3090,22 +3510,22 @@ function getDemoData() {
     "summary": "Shows how to run a layout in a Web Worker task using module workers.",
     "demoPath": "loading/webworker-modules/index.html",
     "sourcePath": "loading/webworker-modules/WebWorkerModulesDemo.js",
-    "thumbnailPath": "resources/image/webworkerlayout.png",
+    "thumbnailPath": "resources/image/webworkermodules.png",
     "category": "loading",
+    "type": "integration",
     "tags": [
+      "modules",
       "web worker",
-      "layout",
-      "hierarchic",
-      "modules"
+      "layout"
     ],
     "keywords": [
       "v2.4.0.0",
-      "webworker",
       "threads",
       "threading",
       "background",
       "async",
-      "modules"
+      "modules",
+      "hierarchic"
     ],
     "ts": true
   },
@@ -3115,24 +3535,23 @@ function getDemoData() {
     "demoPath": "loading/webworker-umd/index.html",
     "summary": "Shows how to run a yFiles layout algorithm in a Web Worker task using AMD modules.",
     "category": "loading",
-    "thumbnailPath": "resources/image/webworker.png",
+    "type": "integration",
+    "thumbnailPath": "resources/image/webworkerumd.png",
     "sourcePath": "loading/webworker-umd/WebWorkerDemo.js",
     "tags": [
+      "umd",
       "web worker",
-      "layout",
-      "hierarchic",
-      "umd"
+      "layout"
     ],
     "keywords": [
       "v2.4.0.0",
-      "webworker",
       "threads",
       "threading",
       "background",
       "json",
       "folding",
       "hierarchic",
-      "nonsymbolic",
+      "non-symbolic",
       "umd"
     ]
   },
@@ -3142,12 +3561,13 @@ function getDemoData() {
     "demoPath": "loading/webpack/README.html",
     "summary": "Shows how to integrate the yFiles library in a <a href=\"https://webpack.js.org\" target=\"_blank\">webpack</a> project using ES modules.",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/webpack.png",
     "sourcePath": "loading/webpack/src/webpack-demo.js",
     "tags": [
       "nodejs",
       "npm",
-      "ES Modules",
+      "es modules",
       "deployment",
       "layout"
     ],
@@ -3161,10 +3581,11 @@ function getDemoData() {
     "demoPath": "loading/webpack-lazy-yfiles/README.html",
     "summary": "Shows how to lazily load yFiles in a <a href=\"https://webpack.js.org/\" target=\"_blank\">webpack</a> project with dynamic imports.",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/webpack.png",
     "sourcePath": "loading/webpack-lazy-yfiles/src/webpack-demo.js",
     "tags": [
-      "ES Modules",
+      "es modules",
       "lazy",
       "deployment"
     ],
@@ -3180,10 +3601,11 @@ function getDemoData() {
     "demoPath": "loading/webpack-lazy-layout/README.html",
     "summary": "Shows how to lazily load selected yFiles modules in a <a href=\"https://webpack.js.org\" target=\"_blank\">webpack</a> project with dynamic imports.",
     "category": "loading",
+    "type": "integration",
     "thumbnailPath": "resources/image/webpack.png",
     "sourcePath": "loading/webpack-lazy-layout/src/webpack-demo.js",
     "tags": [
-      "ES Modules",
+      "es modules",
       "lazy",
       "deployment"
     ],
@@ -3194,391 +3616,84 @@ function getDemoData() {
     ]
   },
   {
-    "id": "clipboard",
-    "name": "Clipboard",
-    "demoPath": "view/clipboard/index.html",
-    "summary": "Shows different ways of using the class GraphClipboard for Copy & Paste operations.",
-    "category": "view",
-    "thumbnailPath": "resources/image/clipboard.png",
-    "sourcePath": "view/clipboard/ClipboardDemo.js",
+    "id": "vite",
+    "name": "Vite",
+    "demoPath": "loading/vite/README.html",
+    "summary": "Shows how to integrate the yFiles library in a <a href=\"https://vitejs.dev/\" target=\"_blank\">Vite</a> project.",
+    "category": "loading",
+    "type": "integration",
+    "thumbnailPath": "resources/image/vite.png",
+    "sourcePath": "loading/vite/src/main.js",
     "tags": [
-      "interaction",
-      "copy",
-      "paste"
+      "es modules",
+      "deployment",
+      "web worker"
     ],
     "keywords": [
-      "labels"
+      "v2.4.0.4",
+      "webworker"
     ],
     "ts": true
   },
   {
-    "id": "rendering-order",
-    "name": "Rendering Order",
-    "demoPath": "view/renderingorder/index.html",
-    "summary": "Shows different rendering order settings.",
-    "category": "view",
-    "thumbnailPath": "resources/image/renderingorder.png",
-    "sourcePath": "view/renderingorder/RenderingOrderDemo.js",
+    "id": "snowpack",
+    "name": "Snowpack",
+    "demoPath": "loading/snowpack/README.html",
+    "summary": "Shows how to integrate the yFiles library in a <a href=\"https://snowpack.dev\" target=\"_blank\">Snowpack</a> project.",
+    "category": "loading",
+    "type": "integration",
+    "thumbnailPath": "resources/image/snowpack.png",
+    "sourcePath": "loading/snowpack/src/index.ts",
     "tags": [
-      "rendering",
-      "zorder",
-      "nesting"
+      "es modules",
+      "deployment"
     ],
     "keywords": [
-      "hierarchicnesting",
-      "ports",
-      "labels",
-      "groups"
+      "v2.4.0.4",
+      "hierarchic",
+      "hmr"
     ],
     "ts": true
   },
   {
-    "id": "node-selection-resizing",
-    "name": "Node Selection Resizing",
-    "demoPath": "input/nodeselectionresizing/index.html",
-    "summary": "Shows how to reshape a selection of nodes as one unit.",
-    "category": "input",
-    "thumbnailPath": "resources/image/nodeselectionresizing.png",
-    "sourcePath": "input/nodeselectionresizing/NodeSelectionResizingDemo.js",
+    "id": "wmr",
+    "name": "WMR Loading Demo",
+    "demoPath": "loading/wmr/README.html",
+    "summary": "Shows how to load yFiles for HTML with <a href=\"https://wmr.dev/\" rel=\"noopener\" target=\"_blank\">WMR</a> as a loader.",
+    "category": "loading",
+    "type": "integration",
+    "thumbnailPath": "resources/image/wmr.png",
+    "sourcePath": "loading/wmr/public/index.ts",
     "tags": [
-      "interaction",
-      "resize",
-      "scale"
+      "deployment",
+      "web worker",
+      "layout"
     ],
     "keywords": [
-      "v2.3.0.0",
-      "inputmode"
+      "v2.4.0.4",
+      "organic",
+      "hierarchic"
     ],
     "ts": true
   },
   {
-    "id": "custom-label-model",
-    "name": "Custom Label Model",
-    "demoPath": "input/customlabelmodel/index.html",
-    "summary": "Shows how to implement and use a custom label model.",
-    "category": "input",
-    "thumbnailPath": "resources/image/custom_label_model.png",
-    "sourcePath": "input/customlabelmodel/CustomLabelModelDemo.js",
+    "id": "web-dev-server",
+    "name": "Web Dev Server",
+    "demoPath": "loading/web-dev-server/README.html",
+    "summary": "Shows how to integrate the yFiles library in a <a href=\"https://modern-web.dev/docs/dev-server/overview/\" target=\"_blank\">Web Dev Server</a> project.",
+    "category": "loading",
+    "type": "integration",
+    "thumbnailPath": "resources/image/web-dev-server.png",
+    "sourcePath": "loading/web-dev-server/src/index.js",
     "tags": [
-      "interaction",
-      "labels"
+      "ES Modules",
+      "deployment"
     ],
     "keywords": [
-      "placement"
-    ],
-    "ts": true
-  },
-  {
-    "id": "custom-port-location-model",
-    "name": "Custom Port Location Model",
-    "demoPath": "input/customportmodel/index.html",
-    "summary": "Shows how to implement and use a custom port location model.",
-    "category": "input",
-    "thumbnailPath": "resources/image/custom_port_model.png",
-    "sourcePath": "input/customportmodel/CustomPortModelDemo.js",
-    "tags": [
-      "interaction",
-      "ports"
-    ],
-    "keywords": [
-      "portcandidateprovider",
-      "placement"
-    ],
-    "ts": true
-  },
-  {
-    "id": "custom-snapping",
-    "name": "Custom Snapping",
-    "demoPath": "input/customsnapping/index.html",
-    "summary": "Shows how the snapping feature can be customized.",
-    "category": "input",
-    "thumbnailPath": "resources/image/CustomSnapping.mp4",
-    "sourcePath": "input/customsnapping/CustomSnappingDemo.js",
-    "tags": [
-      "interaction",
-      "snapping"
-    ],
-    "keywords": [
-      "guides",
-      "lines",
-      "labels",
-      "move"
-    ],
-    "ts": true
-  },
-  {
-    "id": "context-menu",
-    "name": "Context Menu",
-    "demoPath": "input/contextmenu/index.html",
-    "summary": "Shows how to add a context menu to the nodes of a graph and to the canvas background.",
-    "category": "input",
-    "thumbnailPath": "resources/image/contextmenu.png",
-    "sourcePath": "input/contextmenu/ContextMenuDemo.js",
-    "tags": [
-      "interaction"
-    ],
-    "keywords": [
-      "contextmenu",
-      "copy"
-    ],
-    "ts": true
-  },
-  {
-    "id": "drag-and-drop",
-    "name": "Drag and Drop",
-    "demoPath": "input/draganddrop/index.html",
-    "summary": "Shows drag and drop of nodes, groups and labels.",
-    "category": "input",
-    "thumbnailPath": "resources/image/draganddrop.png",
-    "sourcePath": "input/draganddrop/DragAndDropDemo.js",
-    "tags": [
-      "interaction"
-    ],
-    "keywords": [
-      "draganddrop",
-      "palette",
-      "ports",
-      "labels",
-      "groups",
-      "html5",
-      "native",
-      "move"
-    ],
-    "ts": true
-  },
-  {
-    "id": "edge-reconnection",
-    "name": "Edge Reconnection",
-    "demoPath": "input/edgereconnection/index.html",
-    "summary": "Shows how the reconnection of edge ports can be customized and restricted.",
-    "category": "input",
-    "thumbnailPath": "resources/image/edgereconnection.png",
-    "sourcePath": "input/edgereconnection/EdgeReconnectionPortCandidateProviderDemo.js",
-    "tags": [
-      "interaction"
-    ],
-    "keywords": [
-      "portcandidateprovider",
-      "ports"
-    ],
-    "ts": true
-  },
-  {
-    "id": "label-editing",
-    "name": "Label Editing",
-    "demoPath": "input/labelediting/index.html",
-    "summary": "Shows customizations of the interactive label editing.",
-    "category": "input",
-    "thumbnailPath": "resources/image/label_editing.png",
-    "sourcePath": "input/labelediting/LabelEditingDemo.js",
-    "tags": [
-      "interaction",
-      "labels"
-    ],
-    "keywords": [
-      "text",
-      "validation"
-    ],
-    "ts": true
-  },
-  {
-    "id": "label-handle-provider",
-    "name": "Label Handle Provider",
-    "demoPath": "input/labelhandleprovider/index.html",
-    "summary": "Shows how to implement custom handles that allow interactive resizing and rotation of labels.",
-    "category": "input",
-    "thumbnailPath": "resources/image/LabelHandleProvider.png",
-    "sourcePath": "input/labelhandleprovider/LabelHandleProviderDemo.js",
-    "tags": [
-      "interaction",
-      "labels"
-    ],
-    "keywords": [
-      "handles"
-    ],
-    "ts": true
-  },
-  {
-    "id": "move-unselected-nodes",
-    "name": "Move Unselected Nodes",
-    "demoPath": "input/moveunselectednodes/index.html",
-    "summary": "Shows a special input mode that allows you to move nodes without selecting them first.",
-    "category": "input",
-    "thumbnailPath": "resources/image/move_unselected_nodes.png",
-    "sourcePath": "input/moveunselectednodes/MoveUnselectedNodesDemo.js",
-    "tags": [
-      "interaction",
-      "selection"
-    ],
-    "keywords": [
-      "inputmode",
-      "move"
-    ],
-    "ts": true
-  },
-  {
-    "id": "orthogonal-edges",
-    "name": "Orthogonal Edges",
-    "demoPath": "input/orthogonaledges/index.html",
-    "summary": "Shows the customization of orthogonal edge editing.",
-    "category": "input",
-    "thumbnailPath": "resources/image/OrthogonalEdges.mp4",
-    "sourcePath": "input/orthogonaledges/OrthogonalEdgesDemo.js",
-    "tags": [
-      "interaction"
-    ],
-    "keywords": [
-      "orthogonaledges",
-      "move"
-    ],
-    "ts": true
-  },
-  {
-    "id": "port-candidate-provider",
-    "name": "Port Candidate Provider",
-    "demoPath": "input/portcandidateprovider/index.html",
-    "summary": "Shows how edge creation can be customized.",
-    "category": "input",
-    "thumbnailPath": "resources/image/portcandidateprovider.png",
-    "sourcePath": "input/portcandidateprovider/PortCandidateProviderDemo.js",
-    "tags": [
-      "interaction",
-      "ports"
-    ],
-    "keywords": [
-      "portcandidateprovider"
-    ],
-    "ts": true
-  },
-  {
-    "id": "position-handler",
-    "name": "Position Handler",
-    "demoPath": "input/positionhandler/index.html",
-    "summary": "Shows how to customize and restrict the movement behavior of nodes.",
-    "category": "input",
-    "thumbnailPath": "resources/image/PositionHandler.mp4",
-    "sourcePath": "input/positionhandler/PositionHandlerDemo.js",
-    "tags": [
-      "interaction"
-    ],
-    "keywords": [
-      "positionhandler",
-      "move"
-    ],
-    "ts": true
-  },
-  {
-    "id": "reparent-handler",
-    "name": "Reparent Handler",
-    "demoPath": "input/reparenthandler/index.html",
-    "summary": "Shows how reparenting of nodes can be customized.",
-    "category": "input",
-    "thumbnailPath": "resources/image/reparenthandler.png",
-    "sourcePath": "input/reparenthandler/ReparentHandlerDemo.js",
-    "tags": [
-      "interaction",
-      "groups"
-    ],
-    "keywords": [
-      "reparenthandler"
-    ],
-    "ts": true
-  },
-  {
-    "id": "reshape-handle-provider-configuration",
-    "name": "Reshape Handle Provider Configuration",
-    "demoPath": "input/reshapehandleconfiguration/index.html",
-    "summary": "Shows how resizing of nodes can be customized.",
-    "category": "input",
-    "thumbnailPath": "resources/image/ReshapeHandle.mp4",
-    "sourcePath": "input/reshapehandleconfiguration/ReshapeHandleProviderConfigurationDemo.js",
-    "tags": [
-      "interaction",
-      "resize",
-      "scale"
-    ],
-    "keywords": [
-      "v2.3.0.0",
-      "handles",
-      "reshape",
-      "size"
-    ],
-    "ts": true
-  },
-  {
-    "id": "reshape-handle-provider",
-    "name": "Reshape Handle Provider",
-    "demoPath": "input/reshapehandleprovider/index.html",
-    "summary": "Shows how to add resize handles to ports.",
-    "category": "input",
-    "thumbnailPath": "resources/image/ReshapePortHandle.mp4",
-    "sourcePath": "input/reshapehandleprovider/ReshapeHandleProviderDemo.js",
-    "tags": [
-      "interaction",
-      "resize",
-      "ports"
-    ],
-    "keywords": [
-      "v2.3.0.0",
-      "handles",
-      "reshape",
-      "size",
-      "scale"
-    ],
-    "ts": true
-  },
-  {
-    "id": "lasso-selection",
-    "name": "Lasso Selection",
-    "demoPath": "input/lassoselection/index.html",
-    "summary": "Shows how to configure a lasso tool for freeform selection.",
-    "category": "input",
-    "thumbnailPath": "resources/image/lassoselection.png",
-    "sourcePath": "input/lassoselection/LassoSelectionDemo.js",
-    "tags": [
-      "interaction",
-      "selection"
-    ],
-    "keywords": [
-      "v2.1.0.2",
-      "testable",
-      "free"
-    ],
-    "ts": true
-  },
-  {
-    "id": "single-selection",
-    "name": "Single Selection",
-    "demoPath": "input/singleselection/index.html",
-    "summary": "Shows how to configure GraphEditorInputMode for single selection mode.",
-    "category": "input",
-    "thumbnailPath": "resources/image/singleselection.png",
-    "sourcePath": "input/singleselection/SingleSelectionDemo.js",
-    "tags": [
-      "interaction",
-      "selection"
-    ],
-    "keywords": [
-      "singleselection"
-    ],
-    "ts": true
-  },
-  {
-    "id": "size-constraint-provider",
-    "name": "Size Constraint Provider",
-    "demoPath": "input/sizeconstraintprovider/index.html",
-    "summary": "Shows how resizing of nodes can be restricted.",
-    "category": "input",
-    "thumbnailPath": "resources/image/SizeConstraint.mp4",
-    "sourcePath": "input/sizeconstraintprovider/SizeConstraintProviderDemo.js",
-    "tags": [
-      "interaction"
-    ],
-    "keywords": [
-      "sizeconstraintprovider",
-      "handles"
-    ],
-    "ts": true
+      "v2.4.0.4",
+      "ES Modules",
+      "deployment"
+    ]
   },
   {
     "id": "webdriverio",
@@ -3586,6 +3701,7 @@ function getDemoData() {
     "demoPath": "testing/wdio/README.html",
     "summary": "Shows how to test a yFiles for HTML app in multiple browsers using WebdriverIO.",
     "category": "testing",
+    "type": "integration",
     "thumbnailPath": "resources/image/wdio.png",
     "sourcePath": "testing/wdio/integration/specs/WdioDemo.spec.js",
     "tags": [
@@ -3596,7 +3712,7 @@ function getDemoData() {
     "keywords": [
       "v2.2.0.2",
       "integration",
-      "webdriver",
+      "web driver",
       "end-to-end"
     ]
   },
@@ -3606,6 +3722,7 @@ function getDemoData() {
     "demoPath": "testing/jest/README.html",
     "summary": "Shows how to test a yFiles for HTML app using Jest.",
     "category": "testing",
+    "type": "integration",
     "thumbnailPath": "resources/image/jest.png",
     "sourcePath": "testing/jest/src/ItemFactory.test.js",
     "tags": [
@@ -3615,7 +3732,7 @@ function getDemoData() {
     "keywords": [
       "v2.3.0.4",
       "unit",
-      "test"
+      "tests"
     ]
   },
   {
@@ -3624,6 +3741,7 @@ function getDemoData() {
     "demoPath": "testing/jest-puppeteer/README.html",
     "summary": "Shows how to test a yFiles for HTML app using Jest with the Puppeteer environment.",
     "category": "testing",
+    "type": "integration",
     "thumbnailPath": "resources/image/jest-puppeteer.png",
     "sourcePath": "testing/jest-puppeteer/integration/app.test.js",
     "tags": [
@@ -3638,12 +3756,588 @@ function getDemoData() {
     ]
   },
   {
+    "id": "clipboard",
+    "name": "Clipboard",
+    "demoPath": "view/clipboard/index.html",
+    "summary": "Shows different ways of using the class GraphClipboard for Copy & Paste operations.",
+    "category": "view",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/clipboard.png",
+    "sourcePath": "view/clipboard/ClipboardDemo.js",
+    "tags": [
+      "interaction",
+      "copy",
+      "paste"
+    ],
+    "keywords": [
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "clipboard-deferred-cut",
+    "name": "Deferred Cut Clipboard",
+    "demoPath": "view/clipboard-deferred-cut/index.html",
+    "summary": "Shows a clipboard which grays elements out upon cut and only removes them when they are finally pasted.",
+    "category": "view",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/clipboarddeferredcut.png",
+    "sourcePath": "view/clipboard-deferred-cut/DeferredCutClipboardDemo.js",
+    "tags": [
+      "interaction",
+      "copy",
+      "paste"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "node-selection-resizing",
+    "name": "Node Selection Resizing",
+    "demoPath": "input/nodeselectionresizing/index.html",
+    "summary": "Shows how to reshape a selection of nodes as one unit.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/nodeselectionresizing.png",
+    "sourcePath": "input/nodeselectionresizing/NodeSelectionResizingDemo.js",
+    "tags": [
+      "interaction",
+      "resizing"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "input mode",
+      "scale"
+    ],
+    "ts": true
+  },
+  {
+    "id": "custom-label-model",
+    "name": "Custom Label Model",
+    "demoPath": "input/customlabelmodel/index.html",
+    "summary": "Shows how to implement and use a custom label model.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/custom_label_model.png",
+    "sourcePath": "input/customlabelmodel/CustomLabelModelDemo.js",
+    "tags": [
+      "interaction",
+      "label"
+    ],
+    "keywords": [
+      "placements"
+    ],
+    "ts": true
+  },
+  {
+    "id": "graphml",
+    "name": "GraphML",
+    "demoPath": "view/graphml/index.html",
+    "summary": "Provides a live view of the graph's GraphML representation.",
+    "category": "view",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/graphml.png",
+    "sourcePath": "view/graphml/GraphMLDemo.js",
+    "tags": [
+      "graphml",
+      "i/o"
+    ],
+    "keywords": [
+      "load",
+      "save",
+      "io",
+      "data panel",
+      "groups",
+      "folding",
+      "labels",
+      "curves",
+      "bezier"
+    ],
+    "ts": true
+  },
+  {
+    "id": "graphml-compatibility",
+    "name": "GraphML Compatibility",
+    "demoPath": "view/graphmlcompatibility/index.html",
+    "summary": "Shows how to enable read compatibility for GraphML files from older versions.",
+    "category": "view",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/graphmlcompatibility.png",
+    "sourcePath": "view/graphmlcompatibility/GraphMLCompatibilityDemo.js",
+    "tags": [
+      "graphml",
+      "i/o"
+    ],
+    "keywords": [
+      "load",
+      "save",
+      "io",
+      "v1.3"
+    ]
+  },
+  {
+    "id": "custom-port-location-model",
+    "name": "Custom Port Location Model",
+    "demoPath": "input/customportmodel/index.html",
+    "summary": "Shows how to implement and use a custom port location model.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/custom_port_model.png",
+    "sourcePath": "input/customportmodel/CustomPortModelDemo.js",
+    "tags": [
+      "interaction",
+      "port"
+    ],
+    "keywords": [
+      "port candidate providers",
+      "placements"
+    ],
+    "ts": true
+  },
+  {
+    "id": "custom-snapping",
+    "name": "Custom Snapping",
+    "demoPath": "input/customsnapping/index.html",
+    "summary": "Shows how the snapping feature can be customized.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/custom-snapping.png",
+    "sourcePath": "input/customsnapping/CustomSnappingDemo.js",
+    "tags": [
+      "interaction",
+      "snapping"
+    ],
+    "keywords": [
+      "guides",
+      "lines",
+      "labels",
+      "move"
+    ],
+    "ts": true
+  },
+  {
+    "id": "drag-from-component",
+    "name": "Drag From Component",
+    "demoPath": "input/drag-from-component/index.html",
+    "summary": "Shows how to drag graph items out of the graph component to another element.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/drag-from-component.png",
+    "sourcePath": "input/drag-from-component/DragFromComponentDemo.js",
+    "tags": [
+      "interaction",
+      "drag and drop"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "move",
+      "dnd"
+    ],
+    "ts": true
+  },
+  {
+    "id": "context-menu",
+    "name": "Context Menu",
+    "demoPath": "input/contextmenu/index.html",
+    "summary": "Shows how to add a context menu to the nodes of a graph and to the canvas background.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/contextmenu.png",
+    "sourcePath": "input/contextmenu/ContextMenuDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "context menu",
+      "copy"
+    ],
+    "ts": true
+  },
+  {
+    "id": "drag-and-drop",
+    "name": "Drag and Drop",
+    "demoPath": "input/draganddrop/index.html",
+    "summary": "Shows drag and drop of nodes, groups and labels.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/draganddrop.png",
+    "sourcePath": "input/draganddrop/DragAndDropDemo.js",
+    "tags": [
+      "interaction",
+      "drag and drop"
+    ],
+    "keywords": [
+      "palette",
+      "ports",
+      "labels",
+      "groups",
+      "html5",
+      "native",
+      "move",
+      "dnd"
+    ],
+    "ts": true
+  },
+  {
+    "id": "graph-drag-and-drop",
+    "name": "Graph Drag and Drop",
+    "demoPath": "input/graph-drag-and-drop/index.html",
+    "summary": "Shows drag and drop of graphs consisting of multiple items.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/graph-drag-and-drop.png",
+    "sourcePath": "input/graph-drag-and-drop/GraphDragAndDropDemo.js",
+    "tags": [
+      "interaction",
+      "drag and drop"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "palette",
+      "graphs",
+      "groups",
+      "dnd"
+    ],
+    "ts": true
+  },
+  {
+    "id": "custom-drag-and-drop",
+    "name": "Custom Drag and Drop",
+    "demoPath": "input/custom-drag-and-drop/index.html",
+    "summary": "Shows how to change the color of nodes and edges using drag and drop operations.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/color-dnd.png",
+    "sourcePath": "input/custom-drag-and-drop/CustomDragAndDropDemo.js",
+    "tags": [
+      "interaction",
+      "drag and drop"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "palette",
+      "colors",
+      "dnd"
+    ],
+    "ts": true
+  },
+  {
+    "id": "edge-reconnection",
+    "name": "Edge Reconnection",
+    "demoPath": "input/edgereconnection/index.html",
+    "summary": "Shows how the reconnection of edge ports can be customized and restricted.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/edgereconnection.png",
+    "sourcePath": "input/edgereconnection/EdgeReconnectionPortCandidateProviderDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "port candidate providers",
+      "ports"
+    ],
+    "ts": true
+  },
+  {
+    "id": "label-editing",
+    "name": "Label Editing",
+    "demoPath": "input/labelediting/index.html",
+    "summary": "Shows customizations of the interactive label editing.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/label_editing.png",
+    "sourcePath": "input/labelediting/LabelEditingDemo.js",
+    "tags": [
+      "interaction",
+      "label"
+    ],
+    "keywords": [
+      "texts",
+      "validation"
+    ],
+    "ts": true
+  },
+  {
+    "id": "label-handle-provider",
+    "name": "Label Handle Provider",
+    "demoPath": "input/labelhandleprovider/index.html",
+    "summary": "Shows how to implement custom handles that allow interactive resizing and rotation of labels.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/LabelHandleProvider.png",
+    "sourcePath": "input/labelhandleprovider/LabelHandleProviderDemo.js",
+    "tags": [
+      "interaction",
+      "label"
+    ],
+    "keywords": [
+      "handles"
+    ],
+    "ts": true
+  },
+  {
+    "id": "move-unselected-nodes",
+    "name": "Move Unselected Nodes",
+    "demoPath": "input/moveunselectednodes/index.html",
+    "summary": "Shows a special input mode that allows you to move nodes without selecting them first.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/move_unselected_nodes.png",
+    "sourcePath": "input/moveunselectednodes/MoveUnselectedNodesDemo.js",
+    "tags": [
+      "interaction",
+      "selection"
+    ],
+    "keywords": [
+      "input mode",
+      "move"
+    ],
+    "ts": true
+  },
+  {
+    "id": "orthogonal-edges",
+    "name": "Orthogonal Edges",
+    "demoPath": "input/orthogonaledges/index.html",
+    "summary": "Shows the customization of orthogonal edge editing.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/orthogonal-edges.png",
+    "sourcePath": "input/orthogonaledges/OrthogonalEdgesDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "orthogonal edges",
+      "move"
+    ],
+    "ts": true
+  },
+  {
+    "id": "port-candidate-provider",
+    "name": "Port Candidate Provider",
+    "demoPath": "input/portcandidateprovider/index.html",
+    "summary": "Shows how edge creation can be customized.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/portcandidateprovider.png",
+    "sourcePath": "input/portcandidateprovider/PortCandidateProviderDemo.js",
+    "tags": [
+      "interaction",
+      "port"
+    ],
+    "keywords": [
+      "port candidate providers"
+    ],
+    "ts": true
+  },
+  {
+    "id": "position-handler",
+    "name": "Position Handler",
+    "demoPath": "input/positionhandler/index.html",
+    "summary": "Shows how to customize and restrict the movement behavior of nodes.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/position-handler.png",
+    "sourcePath": "input/positionhandler/PositionHandlerDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "position handlers",
+      "move"
+    ],
+    "ts": true
+  },
+  {
+    "id": "reparent-handler",
+    "name": "Reparent Handler",
+    "demoPath": "input/reparenthandler/index.html",
+    "summary": "Shows how reparenting of nodes can be customized.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/reparenthandler.png",
+    "sourcePath": "input/reparenthandler/ReparentHandlerDemo.js",
+    "tags": [
+      "interaction",
+      "grouping"
+    ],
+    "keywords": [
+      "re-parent handlers"
+    ],
+    "ts": true
+  },
+  {
+    "id": "reshape-handle-provider-configuration",
+    "name": "Reshape Handle Provider Configuration",
+    "demoPath": "input/reshapehandleconfiguration/index.html",
+    "summary": "Shows how resizing of nodes can be customized.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/reshape-handle.png",
+    "sourcePath": "input/reshapehandleconfiguration/ReshapeHandleProviderConfigurationDemo.js",
+    "tags": [
+      "interaction",
+      "resizing"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "handles",
+      "reshape",
+      "size",
+      "scale"
+    ],
+    "ts": true
+  },
+  {
+    "id": "reshape-handle-provider",
+    "name": "Reshape Handle Provider",
+    "demoPath": "input/reshapehandleprovider/index.html",
+    "summary": "Shows how to add resize handles to ports.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/reshape-port-handle.png",
+    "sourcePath": "input/reshapehandleprovider/ReshapeHandleProviderDemo.js",
+    "tags": [
+      "interaction",
+      "resizing",
+      "port"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "handles",
+      "reshape",
+      "size",
+      "scale"
+    ],
+    "ts": true
+  },
+  {
+    "id": "restricted-editing",
+    "name": "Restricted Editing",
+    "demoPath": "input/restricted-editing/index.html",
+    "summary": "Shows how to restrict interactive editing with GraphEditorInputMode.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/restricted-editing.png",
+    "sourcePath": "input/restricted-editing/RestrictedEditingDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "editing",
+      "viewing"
+    ],
+    "ts": true
+  },
+  {
+    "id": "lasso-selection",
+    "name": "Lasso Selection",
+    "demoPath": "input/lassoselection/index.html",
+    "summary": "Shows how to configure a lasso tool for freeform selection.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/lassoselection.png",
+    "sourcePath": "input/lassoselection/LassoSelectionDemo.js",
+    "tags": [
+      "interaction",
+      "selection"
+    ],
+    "keywords": [
+      "v2.1.0.2",
+      "testable",
+      "free"
+    ],
+    "ts": true
+  },
+  {
+    "id": "marquee-node-creation",
+    "name": "Marquee Node Creation",
+    "demoPath": "input/marquee-node-creation/index.html",
+    "summary": "Shows how to customize the MarqueeSelectionInputMode class to create new nodes.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/marquee-node-creation.png",
+    "sourcePath": "input/marquee-node-creation/MarqueeNodeCreationDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "marquee",
+      "selection",
+      "creation",
+      "creating"
+    ],
+    "ts": true
+  },
+  {
+    "id": "single-selection",
+    "name": "Single Selection",
+    "demoPath": "input/singleselection/index.html",
+    "summary": "Shows how to configure GraphEditorInputMode for single selection mode.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/singleselection.png",
+    "sourcePath": "input/singleselection/SingleSelectionDemo.js",
+    "tags": [
+      "interaction",
+      "selection"
+    ],
+    "keywords": [
+      "single selection"
+    ],
+    "ts": true
+  },
+  {
+    "id": "size-constraint-provider",
+    "name": "Size Constraint Provider",
+    "demoPath": "input/sizeconstraintprovider/index.html",
+    "summary": "Shows how resizing of nodes can be restricted.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/size-constraint.png",
+    "sourcePath": "input/sizeconstraintprovider/SizeConstraintProviderDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "size constraint providers",
+      "handles"
+    ],
+    "ts": true
+  },
+  {
+    "id": "button-input-mode",
+    "name": "Button Input Mode",
+    "demoPath": "input/button-input-mode/index.html",
+    "summary": "Shows how to use a custom input mode adding temporary buttons for model items.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/button-input-mode.png",
+    "sourcePath": "input/button-input-mode/ButtonInputModeDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "buttons",
+      "input mode"
+    ],
+    "ts": true
+  },
+  {
     "id": "without-view",
     "name": "Layout Without View",
     "sourcePath": "layout/without-view/LayoutWithoutViewDemo.js",
     "demoPath": "layout/without-view/index.html",
     "summary": "Shows how to use the graph analysis and layout algorithms without a view and without the IGraph API",
     "category": "layout",
+    "type": "source-code",
     "packageType": "layout",
     "thumbnailPath": "resources/image/without-view.png",
     "tags": [
@@ -3673,6 +4367,7 @@ function getDemoData() {
       "tutorial",
       "getting started"
     ],
+    "sourcePath": "01-tutorial-getting-started/01-graphcomponent/SampleApplication.js",
     "ts": true
   },
   {
@@ -3691,6 +4386,7 @@ function getDemoData() {
       "edges",
       "labels"
     ],
+    "sourcePath": "01-tutorial-getting-started/02-graph-element-creation/SampleApplication.js",
     "ts": true
   },
   {
@@ -3708,6 +4404,7 @@ function getDemoData() {
       "zoom",
       "fit content"
     ],
+    "sourcePath": "01-tutorial-getting-started/03-managing-viewport/SampleApplication.js",
     "ts": true
   },
   {
@@ -3728,6 +4425,7 @@ function getDemoData() {
       "PolylineEdgeStyle",
       "Arrow"
     ],
+    "sourcePath": "01-tutorial-getting-started/04-setting-styles/SampleApplication.js",
     "ts": true
   },
   {
@@ -3745,6 +4443,7 @@ function getDemoData() {
       "InteriorLabelModel",
       "SmartEdgeLabelModel"
     ],
+    "sourcePath": "01-tutorial-getting-started/05-label-placement/SampleApplication.js",
     "ts": true
   },
   {
@@ -3758,6 +4457,7 @@ function getDemoData() {
       "tutorial",
       "getting started"
     ],
+    "sourcePath": "01-tutorial-getting-started/06-basic-interaction/SampleApplication.js",
     "ts": true
   },
   {
@@ -3777,6 +4477,7 @@ function getDemoData() {
       "paste",
       "redo"
     ],
+    "sourcePath": "01-tutorial-getting-started/07-undo-clipboard-support/SampleApplication.js",
     "ts": true
   },
   {
@@ -3794,6 +4495,7 @@ function getDemoData() {
       "PanelNodeStyle",
       "InteriorStretchLabelModel"
     ],
+    "sourcePath": "01-tutorial-getting-started/08-grouping/SampleApplication.js",
     "ts": true
   },
   {
@@ -3810,6 +4512,7 @@ function getDemoData() {
     "keywords": [
       "Mapper"
     ],
+    "sourcePath": "01-tutorial-getting-started/09-data-binding/SampleApplication.js",
     "ts": true
   },
   {
@@ -3828,6 +4531,7 @@ function getDemoData() {
     "keywords": [
       "morphLayout"
     ],
+    "sourcePath": "01-tutorial-getting-started/10-layout/SampleApplication.js",
     "ts": true
   },
   {
@@ -3846,6 +4550,7 @@ function getDemoData() {
       "v2.2.0.0",
       "hierarchic"
     ],
+    "sourcePath": "01-tutorial-getting-started/11-layout-data/SampleApplication.js",
     "ts": true
   },
   {
@@ -3853,7 +4558,7 @@ function getDemoData() {
     "name": "12 Analysis Algorithms",
     "summary": "Shows how to use the graph analysis algorithms.",
     "demoPath": "01-tutorial-getting-started/12-graph-analysis/index.html",
-    "thumbnailPath": "resources/image/tutorial1step10.png",
+    "thumbnailPath": "resources/image/tutorial1step12.png",
     "category": "tutorial-getting-started",
     "packageType": "no-viewer",
     "tags": [
@@ -3866,6 +4571,7 @@ function getDemoData() {
       "ShortestPaths",
       "v2.2.0.0"
     ],
+    "sourcePath": "01-tutorial-getting-started/12-graph-analysis/SampleApplication.js",
     "ts": true
   },
   {
@@ -3877,11 +4583,12 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
     "keywords": [
       "NodeStyleBase"
     ],
+    "sourcePath": "02-tutorial-custom-styles/01-custom-node-style/SampleApplication.js",
     "ts": true
   },
   {
@@ -3893,8 +4600,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/02-node-color/SampleApplication.js",
     "ts": true
   },
   {
@@ -3906,8 +4614,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/03-update-visual-and-render-data-cache/SampleApplication.js",
     "ts": true
   },
   {
@@ -3919,8 +4628,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/04-is-inside/SampleApplication.js",
     "ts": true
   },
   {
@@ -3932,8 +4642,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/05-hit-test/SampleApplication.js",
     "ts": true
   },
   {
@@ -3945,8 +4656,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/06-get-bounds/SampleApplication.js",
     "ts": true
   },
   {
@@ -3958,8 +4670,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/07-drop-shadow-performance/SampleApplication.js",
     "ts": true
   },
   {
@@ -3971,8 +4684,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/08-edge-from-node-to-label/SampleApplication.js",
     "ts": true
   },
   {
@@ -3984,8 +4698,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/09-is-visible/SampleApplication.js",
     "ts": true
   },
   {
@@ -3997,11 +4712,12 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
     "keywords": [
       "LabelStyleBase"
     ],
+    "sourcePath": "02-tutorial-custom-styles/10-custom-label-style/SampleApplication.js",
     "ts": true
   },
   {
@@ -4013,8 +4729,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/11-label-preferred-size/SampleApplication.js",
     "ts": true
   },
   {
@@ -4026,8 +4743,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/12-high-performance-label-rendering/SampleApplication.js",
     "ts": true
   },
   {
@@ -4039,8 +4757,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/13-label-edit-button/SampleApplication.js",
     "ts": true
   },
   {
@@ -4052,8 +4771,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/14-button-visibility/SampleApplication.js",
     "ts": true
   },
   {
@@ -4065,8 +4785,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/15-using-data-in-label-tag/SampleApplication.js",
     "ts": true
   },
   {
@@ -4078,11 +4799,12 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
     "keywords": [
       "EdgeStyleBase"
     ],
+    "sourcePath": "02-tutorial-custom-styles/16-custom-edge-style/SampleApplication.js",
     "ts": true
   },
   {
@@ -4094,8 +4816,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/17-edge-hit-test/SampleApplication.js",
     "ts": true
   },
   {
@@ -4107,8 +4830,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/18-edge-cropping/SampleApplication.js",
     "ts": true
   },
   {
@@ -4120,8 +4844,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/19-animated-edge-selection/SampleApplication.js",
     "ts": true
   },
   {
@@ -4133,8 +4858,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/20-custom-arrow/SampleApplication.js",
     "ts": true
   },
   {
@@ -4146,8 +4872,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/21-edge-performance/SampleApplication.js",
     "ts": true
   },
   {
@@ -4159,8 +4886,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/22-arrow-thickness/SampleApplication.js",
     "ts": true
   },
   {
@@ -4172,11 +4900,12 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
     "keywords": [
       "PortStyleBase"
     ],
+    "sourcePath": "02-tutorial-custom-styles/23-custom-ports/SampleApplication.js",
     "ts": true
   },
   {
@@ -4188,8 +4917,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "introduction"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/24-style-decorator/SampleApplication.js",
     "ts": true
   },
   {
@@ -4201,12 +4931,13 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
     "keywords": [
       "CollapsibleNodeStyleDecoratorRenderer",
       "NodeStyleBase"
     ],
+    "sourcePath": "02-tutorial-custom-styles/25-custom-group-style/SampleApplication.js",
     "ts": true
   },
   {
@@ -4218,8 +4949,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/26-custom-group-bounds/SampleApplication.js",
     "ts": true
   },
   {
@@ -4231,8 +4963,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/27-canvas-painting/SampleApplication.js",
     "ts": true
   },
   {
@@ -4244,8 +4977,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/28-bridge-support/SampleApplication.js",
     "ts": true
   },
   {
@@ -4257,8 +4991,9 @@ function getDemoData() {
     "category": "tutorial-custom-styles",
     "tags": [
       "tutorial",
-      "custom styles"
+      "custom style"
     ],
+    "sourcePath": "02-tutorial-custom-styles/29-label-line-wrapping/SampleApplication.js",
     "ts": true
   },
   {
@@ -4271,6 +5006,7 @@ function getDemoData() {
     "tags": [
       "tutorial"
     ],
+    "sourcePath": "03-tutorial-application-features/application-features-base/SampleApplication.js",
     "ts": true
   },
   {
@@ -4290,6 +5026,7 @@ function getDemoData() {
       "ICanvasObjectGroup",
       "backgroundGroup"
     ],
+    "sourcePath": "03-tutorial-application-features/background-image/SampleApplication.js",
     "ts": true
   },
   {
@@ -4300,17 +5037,18 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step3.png",
     "category": "tutorial-application-features",
     "tags": [
-      "JSON",
-      "I/O",
+      "json",
+      "i/o",
       "tutorial"
     ],
     "keywords": [
       "read",
       "write",
       "input",
-      "file",
-      "database"
+      "files",
+      "data base"
     ],
+    "sourcePath": "03-tutorial-application-features/building-graph-from-data/SampleApplication.js",
     "ts": true
   },
   {
@@ -4322,8 +5060,8 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "packageType": "no-viewer",
     "tags": [
-      "JSON",
-      "I/O",
+      "json",
+      "i/o",
       "table",
       "tutorial"
     ],
@@ -4331,9 +5069,10 @@ function getDemoData() {
       "read",
       "write",
       "input",
-      "file",
-      "database"
+      "files",
+      "data base"
     ],
+    "sourcePath": "03-tutorial-application-features/building-swimlanes-from-data/SampleApplication.js",
     "ts": true
   },
   {
@@ -4352,11 +5091,31 @@ function getDemoData() {
       "NodeDecorator",
       "ILookupDecorator",
       "NodeStyleBase",
-      "image",
-      "event",
-      "region",
+      "images",
+      "events",
+      "regions",
       "input mode"
     ],
+    "sourcePath": "03-tutorial-application-features/clickable-style-decorator/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-application-features--composite-node-style",
+    "name": "Composite Node Style",
+    "summary": "Shows how to combine node visualizations from several styles.",
+    "demoPath": "03-tutorial-application-features/composite-node-style/index.html",
+    "thumbnailPath": "resources/image/composite-node-style.png",
+    "category": "tutorial-application-features",
+    "tags": [
+      "style",
+      "icon",
+      "tutorial"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "composite"
+    ],
+    "sourcePath": "03-tutorial-application-features/composite-node-style/SampleApplication.js",
     "ts": true
   },
   {
@@ -4368,15 +5127,18 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "interaction",
-      "tutorial"
+      "tutorial",
+      "drag and drop"
     ],
     "keywords": [
       "DropInputMode",
       "addDragDroppedListener",
       "move",
-      "event",
-      "input mode"
+      "events",
+      "input mode",
+      "dnd"
     ],
+    "sourcePath": "03-tutorial-application-features/drag-and-drop/SampleApplication.js",
     "ts": true
   },
   {
@@ -4392,10 +5154,11 @@ function getDemoData() {
     ],
     "keywords": [
       "ItemHoverInputMode",
-      "CONTROL",
-      "event",
+      "control",
+      "events",
       "input mode"
     ],
+    "sourcePath": "03-tutorial-application-features/external-links/SampleApplication.js",
     "ts": true
   },
   {
@@ -4407,17 +5170,18 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "filtering",
-      "group",
+      "grouping",
       "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
       "FilteredGraphWrapper",
       "subset",
-      "predicate",
+      "predicates",
       "hide",
       "hiding"
     ],
+    "sourcePath": "03-tutorial-application-features/filtering/SampleApplication.js",
     "ts": true
   },
   {
@@ -4429,7 +5193,7 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "filtering",
-      "group",
+      "grouping",
       "tutorial"
     ],
     "keywords": [
@@ -4437,14 +5201,16 @@ function getDemoData() {
       "FilteredGraphWrapper",
       "subset",
       "folder",
+      "folding",
       "predicate",
       "masterGraph",
       "wrappedGraph",
       "FoldingManager",
-      "nest",
+      "nesting",
       "folded",
       "hide"
     ],
+    "sourcePath": "03-tutorial-application-features/filtering-with-folding/SampleApplication.js",
     "ts": true
   },
   {
@@ -4456,7 +5222,7 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "folding",
-      "group",
+      "grouping",
       "tutorial"
     ],
     "keywords": [
@@ -4466,9 +5232,10 @@ function getDemoData() {
       "FoldingManager",
       "collapse",
       "expand",
-      "nest",
+      "nesting",
       "hide"
     ],
+    "sourcePath": "03-tutorial-application-features/folding/SampleApplication.js",
     "ts": true
   },
   {
@@ -4489,6 +5256,7 @@ function getDemoData() {
       "cut",
       "paste"
     ],
+    "sourcePath": "03-tutorial-application-features/graph-copy/SampleApplication.js",
     "ts": true
   },
   {
@@ -4509,8 +5277,9 @@ function getDemoData() {
       "ILookupDecorator",
       "ports",
       "IPortCandidate",
-      "portcandidateprovider"
+      "port candidate providers"
     ],
+    "sourcePath": "03-tutorial-application-features/graph-decorator/SampleApplication.js",
     "ts": true
   },
   {
@@ -4531,6 +5300,7 @@ function getDemoData() {
       "NodeDecorator",
       "HighlightDecorator"
     ],
+    "sourcePath": "03-tutorial-application-features/simple-highlight-decorator/SampleApplication.js",
     "ts": true
   },
   {
@@ -4552,6 +5322,7 @@ function getDemoData() {
       "HighlightDecorator",
       "HighlightIndicatorManager"
     ],
+    "sourcePath": "03-tutorial-application-features/complex-highlight-decorator/SampleApplication.js",
     "ts": true
   },
   {
@@ -4568,9 +5339,12 @@ function getDemoData() {
     "keywords": [
       "v2.2.0.0",
       "query",
+      "queries",
       "match",
+      "matches",
       "find"
     ],
+    "sourcePath": "03-tutorial-application-features/graph-search/SampleApplication.js",
     "ts": true
   },
   {
@@ -4583,7 +5357,8 @@ function getDemoData() {
     "tags": [
       "grid",
       "interaction",
-      "tutorial"
+      "tutorial",
+      "snapping"
     ],
     "keywords": [
       "GraphSnapContext",
@@ -4591,9 +5366,10 @@ function getDemoData() {
       "GridSnapTypes",
       "GridVisualCreator",
       "align",
-      "visual",
+      "visuals",
       "interactive"
     ],
+    "sourcePath": "03-tutorial-application-features/grid-snapping/SampleApplication.js",
     "ts": true
   },
   {
@@ -4604,16 +5380,18 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step1.png",
     "category": "tutorial-application-features",
     "tags": [
-      "GraphML",
-      "I/O",
+      "graphml",
+      "i/o",
       "tutorial"
     ],
     "keywords": [
       "GraphMLSupport",
       "read",
       "write",
-      "file"
+      "files",
+      "io"
     ],
+    "sourcePath": "03-tutorial-application-features/input-output/SampleApplication.js",
     "ts": true
   },
   {
@@ -4624,8 +5402,8 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step1.png",
     "category": "tutorial-application-features",
     "tags": [
-      "GraphML",
-      "I/O",
+      "graphml",
+      "i/o",
       "tutorial"
     ],
     "keywords": [
@@ -4633,11 +5411,13 @@ function getDemoData() {
       "mapperRegistry",
       "GraphMLIOHandler",
       "data",
-      "JSON",
+      "json",
       "read",
       "write",
-      "file"
+      "files",
+      "io"
     ],
+    "sourcePath": "03-tutorial-application-features/custom-graphml/SampleApplication.js",
     "ts": true
   },
   {
@@ -4648,19 +5428,20 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step15.png",
     "category": "tutorial-application-features",
     "tags": [
-      "labels",
+      "label",
       "tutorial"
     ],
     "keywords": [
       "v2.3.0.0",
       "TextWrapping",
-      "linebreak",
+      "linebreaks",
       "rtl",
-      "character",
-      "word",
+      "characters",
+      "words",
       "right-to-left",
       "ellipsis"
     ],
+    "sourcePath": "03-tutorial-application-features/label-text-wrapping/SampleApplication.js",
     "ts": true
   },
   {
@@ -4671,19 +5452,19 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step16.png",
     "category": "tutorial-application-features",
     "tags": [
-      "styles",
+      "style",
       "performance",
       "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
-      "bind",
+      "data bindings",
       "readability",
       "hide",
       "rendering",
-      "data",
       "sketch"
     ],
+    "sourcePath": "03-tutorial-application-features/level-of-detail-style/SampleApplication.js",
     "ts": true
   },
   {
@@ -4694,19 +5475,19 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3markuplabels.png",
     "category": "tutorial-application-features",
     "tags": [
-      "styles",
-      "labels",
+      "style",
+      "label",
       "tutorial"
     ],
     "keywords": [
       "v2.3.0.0",
-      "rich",
-      "text",
+      "rich texts",
       "styling",
       "html",
       "xml",
       "color"
     ],
+    "sourcePath": "03-tutorial-application-features/markup-labels/SampleApplication.js",
     "ts": true
   },
   {
@@ -4718,16 +5499,17 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "interaction",
-      "styles",
+      "style",
       "tutorial"
     ],
     "keywords": [
       "NodeDecorator",
       "ILookupDecorator",
       "NodeStyleBase",
-      "event",
+      "events",
       "decorator"
     ],
+    "sourcePath": "03-tutorial-application-features/native-listeners/SampleApplication.js",
     "ts": true
   },
   {
@@ -4746,6 +5528,7 @@ function getDemoData() {
       "OrthogonalEdgeEditingContext",
       "OrthogonalEdgeEditingPolicy"
     ],
+    "sourcePath": "03-tutorial-application-features/orthogonal-edges/SampleApplication.js",
     "ts": true
   },
   {
@@ -4765,9 +5548,9 @@ function getDemoData() {
       "PositionHandler",
       "RectangleIndicatorInstaller",
       "RectangleHandle",
-      "webworker",
-      "handle"
+      "handles"
     ],
+    "sourcePath": "03-tutorial-application-features/rectangular-indicator/SampleApplication.js",
     "ts": true
   },
   {
@@ -4788,6 +5571,7 @@ function getDemoData() {
       "move",
       "interaction"
     ],
+    "sourcePath": "03-tutorial-application-features/smart-click-navigation/SampleApplication.js",
     "ts": true
   },
   {
@@ -4795,16 +5579,19 @@ function getDemoData() {
     "name": "Snapping",
     "summary": "Shows how to enable snapping (guide lines) for interactive changes.",
     "demoPath": "03-tutorial-application-features/snapping/index.html",
-    "thumbnailPath": "resources/image/tutorial3step1.png",
+    "thumbnailPath": "resources/image/tutorial3snapping.png",
     "category": "tutorial-application-features",
     "tags": [
       "interaction",
-      "tutorial"
+      "tutorial",
+      "snapping"
     ],
     "keywords": [
       "move",
-      "resize"
+      "resize",
+      "resizing"
     ],
+    "sourcePath": "03-tutorial-application-features/snapping/SampleApplication.js",
     "ts": true
   },
   {
@@ -4822,10 +5609,11 @@ function getDemoData() {
     "keywords": [
       "mouseHoverInputMode",
       "addQueryItemToolTipListener",
-      "event",
+      "events",
       "data",
-      "JSON"
+      "json"
     ],
+    "sourcePath": "03-tutorial-application-features/tooltips/SampleApplication.js",
     "ts": true
   },
   {
@@ -4842,11 +5630,12 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.3.0.0",
-      "tooltips",
+      "tool tips",
       "live",
       "region",
-      "screenreader"
+      "screen reader"
     ],
+    "sourcePath": "03-tutorial-application-features/accessibility/SampleApplication.js",
     "ts": true
   },
   {
@@ -4857,7 +5646,7 @@ function getDemoData() {
     "thumbnailPath": "resources/image/feature-webgl-rendering.png",
     "category": "tutorial-application-features",
     "tags": [
-      "WebGL2",
+      "webgl2",
       "performance",
       "tutorial"
     ],
@@ -4868,6 +5657,486 @@ function getDemoData() {
       "styles",
       "fast"
     ],
+    "sourcePath": "03-tutorial-application-features/webgl-rendering/WebGLRenderingDemo.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-application-features--overview",
+    "name": "Overview Component",
+    "summary": "Shows how to add an overview component to the application.",
+    "demoPath": "03-tutorial-application-features/overview/index.html",
+    "thumbnailPath": "resources/image/feature-overview-component.png",
+    "category": "tutorial-application-features",
+    "tags": [
+      "interaction",
+      "tutorial"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "overview",
+      "navigation",
+      "zoom"
+    ],
+    "sourcePath": "03-tutorial-application-features/overview/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--hierarchic",
+    "name": "Hierarchic Layout",
+    "summary": "Shows common configuration options for hierarchical layout.",
+    "demoPath": "04-tutorial-layout-features/hierarchic/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchic.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "orthogonal",
+      "octilinear",
+      "port-constraints",
+      "critical-path"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--hierarchic-incremental",
+    "name": "Incremental Hierarchic Layout",
+    "summary": "Shows how to run the hierarchical layout on a predefined set of nodes.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-incremental/index.html",
+    "thumbnailPath": "resources/image/tutorial4-hierarchic-incremental.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "incremental"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "subset",
+      "layout",
+      "nodes",
+      "set",
+      "node-set"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-incremental/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--portcandidateset",
+    "name": "Hierarchic Layout with PortCandidateSet",
+    "summary": "Shows how to use a PortCandidateSet with hierarchical layout.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-portcandidate-set/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchicportcandidateset.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "ports"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "ports",
+      "candidates",
+      "portcandidateset"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-portcandidate-set/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--hierarchic-edge-grouping",
+    "name": "Hierarchic Layout with Edge Grouping",
+    "summary": "Shows how to configure edge grouping for hierarchical layout.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-edge-grouping/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchicedgegrouping.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "edgegroups"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "groups"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-edge-grouping/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--hierarchic-with-given-layering",
+    "name": "Hierarchic Layout with Given Layering",
+    "summary": "Shows how to configure hierarchical layout with a given layering.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-given-layering/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchicgivenlayering.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "given",
+      "layers"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "hierarchic",
+      "given",
+      "layering",
+      "layers"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-given-layering/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--constraints",
+    "name": "Hierarchic Layout with Constraints",
+    "summary": "Shows how to use constraints to control layering and sequencing in the hierarchical layout.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-constraints/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchicconstraints.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "constraints"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-constraints/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--sequence-constraints",
+    "name": "Hierarchic Layout with Sequence Constraints",
+    "summary": "Shows how to use constraints to control sequencing in hierarchical layout.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-sequence-constraints/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchicsequenceconstraints.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "sequence",
+      "constraints"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "sequencing"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-sequence-constraints/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--layer-constraints",
+    "name": "Hierarchic Layout with Layer Constraints",
+    "summary": "Shows how to use constraints to control layering in hierarchical layout.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-layer-constraints/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchiclayerconstraints.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "layers",
+      "constraints"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "layering"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-layer-constraints/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--hierarchic-node-alignment",
+    "name": "Hierarchic Layout with Node Alignment",
+    "summary": "Shows how to align a set of nodes with hierarchical layout.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-node-alignment/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchicverticalnodealignment.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "alignment"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "alignment",
+      "critical",
+      "paths"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-node-alignment/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--hierarchic-edge-labeling",
+    "name": "Hierarchic Layout with Edge Labeling",
+    "summary": "Shows how to configure automatic label placement of hierarchical layout.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-edge-labeling/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchicedgelabeling.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "labeling"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "integrated-labeling",
+      "label-placement",
+      "auto-flipping"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-edge-labeling/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--hierarchic-compact-groups",
+    "name": "Compact Groups in Hierarchic Layout",
+    "summary": "Shows how to configure the hierarchical layout such that it yields maximally compact group nodes.",
+    "demoPath": "04-tutorial-layout-features/hierarchic-compact-groups/index.html",
+    "thumbnailPath": "resources/image/tutorial4hierarchiccompactgroups.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "hierarchic",
+      "compaction"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "recursive layering",
+      "SimplexNodePlacer",
+      "bendReduction",
+      "groupCompactionStrategy",
+      "groupCompactionPolicy"
+    ],
+    "sourcePath": "04-tutorial-layout-features/hierarchic-compact-groups/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--organic",
+    "name": "Organic Layout",
+    "summary": "Shows common configuration options for organic layout.",
+    "demoPath": "04-tutorial-layout-features/organic/index.html",
+    "thumbnailPath": "resources/image/tutorial4organic.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "organic"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "graph shape",
+      "compactness",
+      "node distance",
+      "simple"
+    ],
+    "sourcePath": "04-tutorial-layout-features/organic/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--organic-incremental",
+    "name": "Incremental Organic Layout",
+    "summary": "Shows how to run the organic layout on a predefined set of nodes.",
+    "demoPath": "04-tutorial-layout-features/organic-incremental/index.html",
+    "thumbnailPath": "resources/image/tutorial4organicincremental.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "organic",
+      "incremental"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "subset",
+      "nodes",
+      "set",
+      "node-set"
+    ],
+    "sourcePath": "04-tutorial-layout-features/organic-incremental/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--organic-substructures",
+    "name": "Organic Layout with Substructures",
+    "summary": "Shows how to configure the layout of substructures in the organic layout.",
+    "demoPath": "04-tutorial-layout-features/organic-substructures/index.html",
+    "thumbnailPath": "resources/image/tutorial4organicsubstructures.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "organic",
+      "substructures"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout"
+    ],
+    "sourcePath": "04-tutorial-layout-features/organic-substructures/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--edgerouter",
+    "name": "Edge Router",
+    "summary": "Shows common configuration options for the edge routing algorithm.",
+    "demoPath": "04-tutorial-layout-features/edge-router/index.html",
+    "thumbnailPath": "resources/image/tutorial4edgerouter.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "router"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "orthogonal",
+      "octilinear",
+      "port-candidates",
+      "edge-grouping",
+      "scope",
+      "routing-style",
+      "EdgeRouterEdgeLayoutDescriptor"
+    ],
+    "sourcePath": "04-tutorial-layout-features/edge-router/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--edge-router-incremental",
+    "name": "Incremental Edge Router",
+    "summary": "Shows how to run the edge router on a predefined set of edges.",
+    "demoPath": "04-tutorial-layout-features/edge-router-incremental/index.html",
+    "thumbnailPath": "resources/image/tutorial4edgerouterincremental.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "incremental",
+      "routing"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "subset",
+      "edges",
+      "set",
+      "edge-set"
+    ],
+    "sourcePath": "04-tutorial-layout-features/edge-router-incremental/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--edge-router-buses",
+    "name": "Edge Router with Buses",
+    "summary": "Shows how to configure the edge routing algorithm to produce orthogonal bus-style paths.",
+    "demoPath": "04-tutorial-layout-features/edge-router-buses/index.html",
+    "thumbnailPath": "resources/image/tutorial4edgerouterbuses.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "routing",
+      "orthogonal",
+      "bus"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "edgegroups",
+      "bus",
+      "bus structures",
+      "backbone",
+      "givenPoints",
+      "EdgeRouterBusDescriptor"
+    ],
+    "sourcePath": "04-tutorial-layout-features/edge-router-buses/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--tree",
+    "name": "Tree Layout",
+    "summary": "Shows common configuration options for the tree layout.",
+    "demoPath": "04-tutorial-layout-features/tree/index.html",
+    "thumbnailPath": "resources/image/tutorial4tree.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "tree"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "outedgecomparers",
+      "portassignment",
+      "nodeplacer"
+    ],
+    "sourcePath": "04-tutorial-layout-features/tree/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--tree-node-placers",
+    "name": "Tree Layout with Node Placers",
+    "summary": "Shows how to use different node placers in tree layout.",
+    "demoPath": "04-tutorial-layout-features/tree-node-placers/index.html",
+    "thumbnailPath": "resources/image/tutorial4treenodeplacers.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "tree",
+      "nodeplacer"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "nodes"
+    ],
+    "sourcePath": "04-tutorial-layout-features/tree-node-placers/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--orthogonal",
+    "name": "Orthogonal Layout",
+    "summary": "Shows common configuration options for the orthogonal layout.",
+    "demoPath": "04-tutorial-layout-features/orthogonal/index.html",
+    "thumbnailPath": "resources/image/tutorial4orthogonal.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "orthogonal"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout",
+      "directed",
+      "halo"
+    ],
+    "sourcePath": "04-tutorial-layout-features/orthogonal/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--recursive-group-layout",
+    "name": "Recursive Group Layout",
+    "summary": "Shows how to use different layouts for group nodes using the recursive group layout.",
+    "demoPath": "04-tutorial-layout-features/recursive-group-layout/index.html",
+    "thumbnailPath": "resources/image/tutorial4recursivegrouplayout.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "recursive",
+      "groups"
+    ],
+    "keywords": [
+      "v2.4.0.4",
+      "tutorial",
+      "layout"
+    ],
+    "sourcePath": "04-tutorial-layout-features/recursive-group-layout/SampleApplication.js",
     "ts": true
   }
 ]

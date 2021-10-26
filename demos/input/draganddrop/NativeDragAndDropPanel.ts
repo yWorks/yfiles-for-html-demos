@@ -71,12 +71,12 @@ export class NativeDragAndDropPanel {
   /**
    * Whether or not to show a preview during the drag.
    */
-  showPreview: boolean = true
+  showPreview = true
 
   /**
    * Whether the labels of the DnD node visual should be transferred to the created node or discarded.
    */
-  copyNodeLabels: boolean = true
+  copyNodeLabels = true
 
   /**
    * Adds the items in the given array to the palette.

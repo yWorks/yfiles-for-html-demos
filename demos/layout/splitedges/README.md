@@ -10,7 +10,7 @@ In combination with [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/
 
 ## Things to Try
 
-Change the graph and the split ids of the edges and see how the layout changes, too. Edges with split ids are colored different than grey.
+Change the graph and the split ids of the edges and see how the layout changes, too. Edges with split ids are colored different than black.
 
 - Align edges that connect to the same group nodes from the outside and the inside. Select two or more edges that are connected a group and choose 'Align Selected Edges' from the context menu.
 - Unalign edges to delete the split ids. Select at least one edge with a split id and choose 'Unalign Selected Edges' from the context menu.

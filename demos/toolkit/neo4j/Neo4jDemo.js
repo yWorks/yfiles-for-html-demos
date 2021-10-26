@@ -62,7 +62,13 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindCommand,
+  checkLicense,
+  showApp,
+  showLoadingIndicator
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { createGraphBuilder } from './Neo4jGraphBuilder.js'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil.js'
@@ -83,7 +89,6 @@ let nodes = []
 let edges = []
 
 // get hold of some UI elements
-const loadingIndicator = document.getElementById('loadingIndicator')
 const labelsContainer = document.getElementById('labels')
 const selectedNodeContainer = document.getElementById('selected-node-container')
 const propertyTable = document.getElementById('propertyTable')
@@ -271,7 +276,7 @@ function onCurrentItemChanged() {
  */
 async function loadGraph() {
   // show a loading indicator, as the queries can take a while to complete
-  loadingIndicator.hidden = false
+  await showLoadingIndicator(true)
   setUIDisabled(true)
 
   graphComponent.graph.clear()
@@ -323,7 +328,7 @@ async function loadGraph() {
   // apply a layout to the new graph
   await doLayout()
 
-  loadingIndicator.hidden = true
+  await showLoadingIndicator(false)
   setUIDisabled(false)
 }
 

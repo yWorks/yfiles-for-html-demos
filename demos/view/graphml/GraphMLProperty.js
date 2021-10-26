@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { KeyScope, KeyType } from 'yfiles'
+
 /**
  * Models a property of the GraphML content.
  */

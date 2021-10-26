@@ -1,0 +1,421 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.4.
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.demo-icon-yIconLayout {
+  background-image: url('./play2-16.svg');
+}
+html,
+body {
+  /* make the body expand to fill the visible window */
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  touch-action: none;
+  -ms-touch-action: none;
+  overscroll-behavior-y: contain;
+}
+body > * {
+  visibility: hidden;
+}
+body.loaded {
+  background: initial;
+}
+body.loaded > * {
+  visibility: visible;
+}
+body {
+  /* don't disable scrollbars on the html element as well
+     - otherwise, event coordinates will be wrong if scrolling
+     is re-enabled later */
+  overflow: hidden;
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 12px;
+  color: #343f4a;
+}
+.demo-sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 320px;
+  box-sizing: border-box;
+  background: #ebeef0;
+  z-index: 15;
+  line-height: 150%;
+  transition: left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
+    right 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s, width 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+}
+.demo-sidebar .demo-sidebar-header {
+  color: #666666;
+  padding-left: 0.2em;
+  font-size: 1.8em;
+  height: 60px;
+  line-height: 60px;
+  margin: 0;
+  box-sizing: border-box;
+}
+.demo-sidebar .demo-sidebar-content {
+  overflow-y: auto;
+  height: calc(100% - 70px);
+  padding: 0 25px;
+}
+.demo-sidebar .demo-sidebar-content h1,
+.demo-sidebar .demo-sidebar-content h2,
+.demo-sidebar .demo-sidebar-content h3,
+.demo-sidebar .demo-sidebar-content h4,
+.demo-sidebar .demo-sidebar-content h5,
+.demo-sidebar .demo-sidebar-content h6 {
+  color: #666666;
+}
+.demo-sidebar .demo-sidebar-content a,
+.demo-sidebar .demo-sidebar-content a:visited {
+  text-decoration: none;
+  color: #ff6c00;
+}
+.demo-sidebar .demo-sidebar-content a:hover {
+  text-decoration: underline;
+}
+.demo-sidebar .demo-sidebar-content ul {
+  padding-left: 1.3em;
+}
+.demo-sidebar .demo-sidebar-content li {
+  margin: 0.5em 0;
+}
+.demo-sidebar .demo-sidebar-content dt {
+  font-weight: bold;
+  color: #333;
+  margin-top: 4px;
+}
+.demo-sidebar .demo-sidebar-content dd {
+  margin-left: 10px;
+}
+.demo-sidebar.demo-left {
+  left: 0;
+  right: auto;
+}
+.demo-sidebar.demo-left .demo-sidebar-header {
+  padding-left: 65px;
+}
+.demo-left-hidden .demo-sidebar.demo-left {
+  left: -320px;
+}
+@media screen and (max-width: 640px) {
+  .demo-left-hidden .demo-sidebar.demo-left {
+    left: -100%;
+  }
+}
+@media screen and (max-width: 640px) {
+  .demo-hide-left-when-small .demo-sidebar.demo-left {
+    display: none;
+  }
+}
+.demo-sidebar.demo-right {
+  right: 0;
+  left: auto;
+}
+.demo-sidebar.demo-right .demo-sidebar-header {
+  padding-left: 25px;
+}
+.demo-right-hidden .demo-sidebar.demo-right {
+  right: -320px;
+}
+@media screen and (max-width: 640px) {
+  .demo-right-hidden .demo-sidebar.demo-right {
+    right: -100%;
+  }
+}
+@media screen and (max-width: 640px) {
+  .demo-hide-right-when-small .demo-sidebar.demo-right {
+    display: none;
+  }
+}
+@media screen and (max-width: 640px) {
+  .demo-sidebar {
+    width: 100%;
+  }
+}
+.demo-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
+    right 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+}
+.demo-has-left .demo-content {
+  left: 320px;
+}
+.demo-has-right .demo-content {
+  right: 320px;
+}
+.demo-left-hidden .demo-content {
+  left: 0;
+}
+.demo-right-hidden .demo-content {
+  right: 0;
+}
+@media screen and (max-width: 640px) {
+  .demo-hide-left-when-small .demo-content {
+    left: 0;
+  }
+}
+@media screen and (max-width: 640px) {
+  .demo-hide-right-when-small .demo-content {
+    right: 0;
+  }
+}
+.demo-header {
+  position: absolute;
+  top: 0;
+  height: 60px;
+  left: 0;
+  right: 0;
+  background: transparent linear-gradient(90deg, #29323c 0%, #38434f 100%) 0 0 no-repeat padding-box;
+  color: white;
+  transition: padding-left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+}
+@media screen and (max-height: 500px) {
+  .demo-header {
+    height: 30px;
+    font-size: 10px;
+  }
+}
+.demo-header .demo-y-logo {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  padding: 5px;
+  box-sizing: border-box;
+  border-color: transparent;
+}
+@media screen and (max-height: 500px) {
+  .demo-header .demo-y-logo {
+    height: 30px;
+    line-height: 30px;
+  }
+}
+.demo-header a {
+  display: inline-block;
+  height: 60px;
+  text-decoration: none;
+  color: white;
+  line-height: 60px;
+  padding: 0 5px;
+  vertical-align: top;
+  font-size: 1.5em;
+}
+@media screen and (max-height: 500px) {
+  .demo-header a {
+    height: 30px;
+    line-height: 30px;
+  }
+}
+.demo-header .demo-title {
+  display: inline-block;
+  padding: 0 5px 0 30px;
+  height: 60px;
+  line-height: 60px;
+  color: white;
+  cursor: default;
+  font-size: 1.5em;
+  letter-spacing: 1px;
+  background: url('./header-angle.svg') no-repeat 5px 50%;
+  background-size: 20px 20px;
+  vertical-align: top;
+}
+@media screen and (max-width: 960px) {
+  .demo-header .demo-title {
+    display: none;
+  }
+}
+@media screen and (max-height: 500px) {
+  .demo-header .demo-title {
+    height: 30px;
+    line-height: 30px;
+  }
+}
+.demo-has-left.demo-left-hidden .demo-header {
+  padding-left: 60px;
+}
+.demo-header + #graphComponent,
+.demo-header + a + #graphComponent,
+.demo-header + a + a + #graphComponent {
+  /* demos without toolbar */
+  top: 60px;
+}
+@media screen and (max-height: 500px) {
+  .demo-header + #graphComponent,
+  .demo-header + a + #graphComponent,
+  .demo-header + a + a + #graphComponent {
+    top: 30px;
+  }
+}
+.demo-toolbar {
+  position: absolute;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 9;
+  top: 60px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  user-select: none;
+  background-color: #ebeef0;
+  transition: left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
+    right 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+}
+@media screen and (max-height: 500px) {
+  .demo-toolbar {
+    top: 30px;
+    height: 30px;
+    line-height: 30px;
+  }
+}
+.demo-toolbar > * {
+  vertical-align: middle;
+}
+.demo-toolbar button {
+  line-height: normal;
+  height: 24px;
+}
+.demo-toolbar button,
+.demo-toolbar > label {
+  display: inline-block;
+  outline: none;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color: transparent;
+  height: 24px;
+  width: 24px;
+  line-height: 24px;
+  box-sizing: border-box;
+  padding: 0;
+  cursor: pointer;
+}
+.demo-toolbar button:hover,
+.demo-toolbar > label:hover {
+  background-color: #dedede;
+}
+.demo-toolbar button.labeled {
+  background-position-x: left;
+  width: inherit;
+  padding: 0 2px;
+}
+.demo-toolbar button.labeled[class*='demo-icon'] {
+  padding-left: 24px;
+  background-position-x: 2px;
+}
+.demo-toolbar input.demo-toggle-button {
+  display: none !important;
+}
+.demo-toolbar input.demo-toggle-button:checked + label {
+  background-color: #dedede;
+}
+.demo-toolbar input.demo-toggle-button:checked:hover + label {
+  background-color: #b2b2b2;
+}
+.demo-toolbar input.demo-toggle-button:disabled + label {
+  opacity: 0.5;
+  cursor: default;
+  background-color: transparent;
+}
+.demo-toolbar input.demo-toggle-button.labeled + label {
+  background-position-x: left;
+  width: inherit;
+  padding: 0 2px;
+  line-height: 24px;
+}
+.demo-toolbar input.demo-toggle-button.labeled + label.demo-icon {
+  width: inherit;
+  padding-left: 24px;
+  padding-right: 4px;
+  line-height: 24px;
+}
+.demo-toolbar input.demo-toggle-button.checked,
+.demo-toolbar input.demo-toggle-button.labeled + label.demo-icon {
+  background-position-x: 2px;
+}
+.demo-toolbar button:active,
+.demo-toolbar > label:active,
+.demo-toolbar .demo-toggle-button:checked:active + label {
+  background-color: #b2b2b2;
+}
+@media screen and (max-width: 640px) {
+  .demo-toolbar button.demo-unimportant {
+    display: none;
+  }
+}
+.demo-toolbar button:disabled,
+.demo-toolbar > .demo-toggle-button:disabled + label {
+  opacity: 0.5;
+  cursor: default;
+  background-color: transparent;
+}
+.demo-toolbar .demo-separator {
+  height: 20px;
+  width: 1px;
+  background: #999;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+.demo-left-hidden .demo-toolbar {
+  left: 0;
+}
+.demo-right-hidden .demo-toolbar {
+  right: 0;
+}
+@media screen and (max-width: 640px) {
+  .demo-hide-left-when-small .demo-toolbar {
+    left: 0;
+  }
+}
+@media screen and (max-width: 640px) {
+  .demo-hide-right-when-small .demo-toolbar {
+    right: 0;
+  }
+}
+#graphComponent {
+  position: absolute;
+  left: 0;
+  top: 100px;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff;
+}
+@media screen and (max-height: 500px) {
+  #graphComponent {
+    top: 60px;
+  }
+}

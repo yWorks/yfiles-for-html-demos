@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Color,
   CreateEdgeInputMode,
   EdgePathPortLocationModel,
   EventRecognizers,
@@ -51,6 +52,7 @@ import {
   PolylineEdgeStyle,
   PortRelocationHandleProvider,
   ShapeNodeStyle,
+  SolidColorFill,
   Stroke,
   Visualization
 } from 'yfiles'
@@ -104,7 +106,9 @@ function initializeGraph() {
   graph.undoEngineEnabled = true
 
   initDemoStyles(graph)
-  graph.edgeDefaults.style = new PolylineEdgeStyle()
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: new Stroke(new SolidColorFill(Color.from('#662b00')), 1.5)
+  })
   graph.edgeDefaults.shareStyleInstance = false
 
   // assign a port style for the ports at the edges
@@ -127,7 +131,7 @@ function initializeGraph() {
     IEdgeReconnectionPortCandidateProvider.ALL_NODE_AND_EDGE_CANDIDATES
   )
   graph.decorator.edgeDecorator.handleProviderDecorator.setFactory(edge => {
-    let portRelocationHandleProvider = new PortRelocationHandleProvider(null, edge)
+    const portRelocationHandleProvider = new PortRelocationHandleProvider(null, edge)
     portRelocationHandleProvider.visualization = Visualization.LIVE
     return portRelocationHandleProvider
   })
@@ -258,7 +262,7 @@ function setRandomEdgeColor(edge) {
       Math.round(Math.random() * 255),
       Math.round(Math.random() * 255),
       255,
-      2
+      1.5
     )
   }
 }

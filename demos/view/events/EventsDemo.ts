@@ -47,6 +47,7 @@ import {
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
   IEdgeStyle,
+  IEnumerable,
   IFoldingView,
   IGraph,
   IInputMode,
@@ -56,10 +57,10 @@ import {
   IModelItem,
   INode,
   INodeStyle,
+  InputModeEventArgs,
   IPort,
   IPortLocationModelParameter,
   IPortStyle,
-  InputModeEventArgs,
   ItemChangedEventArgs,
   ItemClickedEventArgs,
   ItemCopiedEventArgs,
@@ -97,8 +98,7 @@ import {
   TextEventArgs,
   ToolTipQueryEventArgs,
   TouchEventArgs,
-  VoidNodeStyle,
-  IEnumerable
+  VoidNodeStyle
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles'

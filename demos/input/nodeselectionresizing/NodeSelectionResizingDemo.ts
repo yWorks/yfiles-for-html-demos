@@ -113,8 +113,7 @@ function loadSampleGraph(): void {
     data: SampleData.nodes.filter(node => !node.isGroup),
     id: 'id',
     parentId: 'parent',
-    layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
-    labels: ['label']
+    layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   builder.createGroupNodesSource({
     data: SampleData.nodes.filter(node => node.isGroup),

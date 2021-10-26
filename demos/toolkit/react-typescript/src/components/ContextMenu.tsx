@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
-import React, { Component } from 'react'
+import * as React from 'react'
+import { Component } from 'react'
 import './ContextMenu.css'
 import { GraphComponent } from 'yfiles'
 import { detectiOSVersion, detectSafariVersion } from '../utils/Workarounds'
@@ -126,9 +126,10 @@ export class ContextMenu extends Component<ContextMenuProps> {
   }
 
   render() {
+    const { show, x, y, items } = this.props
     let contextMenuItems: JSX.Element[] = []
-    if (this.props.show) {
-      contextMenuItems = this.props.items.map((item, i) => {
+    if (show) {
+      contextMenuItems = items.map((item, i) => {
         return (
           <button onClick={() => this.runAction(item.action)} key={i}>
             {item.title}
@@ -141,9 +142,9 @@ export class ContextMenu extends Component<ContextMenuProps> {
       <div
         className="context-menu"
         style={{
-          display: this.props.show && this.props.items.length > 0 ? 'block' : 'none',
-          top: this.props.y,
-          left: this.props.x
+          display: show && items.length > 0 ? 'block' : 'none',
+          top: y,
+          left: x
         }}
       >
         {contextMenuItems}

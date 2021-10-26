@@ -52,31 +52,48 @@ import {
   RotatableNodePlacerMatrix,
   ShapeNodeStyle,
   SimpleNodePlacer,
+  Stroke,
   TreeLayout,
   TreeLayoutData,
   TreeLayoutEdgeRoutingStyle
 } from 'yfiles'
 
 import { setComboboxValue } from '../../resources/demo-app.js'
+import { DemoEdgeStyle } from '../../resources/demo-styles.js'
 
-// a list of fill colors that are assigned to the layers
-export const LayerFills = [
-  Fill.CRIMSON,
-  Fill.DARK_TURQUOISE,
-  Fill.CORNFLOWER_BLUE,
-  Fill.DARK_SLATE_BLUE,
-  Fill.GOLD,
-  Fill.MEDIUM_SLATE_BLUE,
-  Fill.FOREST_GREEN,
-  Fill.MEDIUM_VIOLET_RED,
-  Fill.DARK_CYAN,
-  Fill.CHOCOLATE,
-  Fill.ORANGE,
-  Fill.LIME_GREEN,
-  Fill.MEDIUM_ORCHID,
-  Fill.ROYAL_BLUE,
-  Fill.ORANGE_RED
+/**
+ * @typedef {Object} LayerColor
+ * @property {Fill} fill
+ * @property {Stroke} stroke
+ */
+
+// a list of colors that are assigned to the layers
+export const LayerColors = [
+  createLayerColor('#FFC914', '#998953'),
+  createLayerColor('#FF6C00', '#662b00'),
+  createLayerColor('#17BEBB', '#407271'),
+  createLayerColor('#0B7189', '#2C4B52'),
+  createLayerColor('#76B041', '#586a48'),
+  createLayerColor('#67B7DC', '#617984'),
+  createLayerColor('#FF6C00', '#662b00'),
+  createLayerColor('#111D4A', '#1B1F2C'),
+  createLayerColor('#AB2346', '#673E49'),
+  createLayerColor('#621B00', '#3B621D'),
+  createLayerColor('#2E282A', '#1C1A1A'),
+  createLayerColor('#6771DC', '#616484'),
+  createLayerColor('#242265', '#29283D'),
+  createLayerColor('#DC67CE', '#846180'),
+  createLayerColor('#A367DC', '#736184')
 ]
+
+/**
+ * @param {!string} fillColor
+ * @param {!string} strokeColor
+ * @returns {!LayerColor}
+ */
+function createLayerColor(fillColor, strokeColor) {
+  return { fill: Fill.from(fillColor), stroke: new Stroke(strokeColor, 1.5) }
+}
 
 /**
  * A panel that provides access to customize the node placers for each node.
@@ -434,15 +451,17 @@ function getConfigurationName(nodePlacer) {
  */
 function createPreviewGraph(graphComponent) {
   const graph = graphComponent.graph
+  const rootLayerColor = LayerColors[0]
   const root = graph.createNode({
     layout: new Rect(0, 0, 60, 30),
     style: new ShapeNodeStyle({
       shape: 'round-rectangle',
-      fill: 'crimson',
-      stroke: 'white'
+      fill: rootLayerColor.fill,
+      stroke: rootLayerColor.stroke
     })
   })
 
+  graphComponent.graph.edgeDefaults.style = new DemoEdgeStyle('demo-palette-22')
   for (let i = 0; i < 5; i++) {
     if (i > 0) {
       graph.createEdge(

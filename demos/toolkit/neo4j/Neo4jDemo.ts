@@ -62,7 +62,13 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindCommand,
+  checkLicense,
+  showApp,
+  showLoadingIndicator
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
 import type { Node, Record, Relationship, Result } from './Neo4jUtil'
@@ -79,7 +85,6 @@ let nodes: Node[] = []
 let edges: Relationship[] = []
 
 // get hold of some UI elements
-const loadingIndicator = document.getElementById('loadingIndicator') as HTMLDivElement
 const labelsContainer = document.getElementById('labels') as HTMLParagraphElement
 const selectedNodeContainer = document.getElementById('selected-node-container') as HTMLDivElement
 const propertyTable = document.getElementById('propertyTable') as HTMLTableElement
@@ -265,7 +270,7 @@ function onCurrentItemChanged(): void {
  */
 async function loadGraph(): Promise<void> {
   // show a loading indicator, as the queries can take a while to complete
-  loadingIndicator.hidden = false
+  await showLoadingIndicator(true)
   setUIDisabled(true)
 
   graphComponent.graph.clear()
@@ -317,7 +322,7 @@ async function loadGraph(): Promise<void> {
   // apply a layout to the new graph
   await doLayout()
 
-  loadingIndicator.hidden = true
+  await showLoadingIndicator(false)
   setUIDisabled(false)
 }
 

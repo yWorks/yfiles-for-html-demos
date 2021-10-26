@@ -54,9 +54,15 @@ import {
   WebGL2ShapeNodeStyle
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindCommand,
+  checkLicense,
+  showApp,
+  showLoadingIndicator
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
-import { webGl2Supported } from '../../utils/Workarounds'
+import { isWebGl2Supported } from '../../utils/Workarounds'
 
 /**
  * The current number of tree layers. Also the starting value for the demo
@@ -72,7 +78,7 @@ let webGL2EdgeStyle: WebGL2PolylineEdgeStyle
 const maxGraphSize = 250_000
 
 function run(licenseData: object): void {
-  if (!webGl2Supported) {
+  if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
     showApp(null)
@@ -96,7 +102,7 @@ function run(licenseData: object): void {
  * Initializes the WebGL2 node and edge styles
  */
 function initializeStyleDefaults(): void {
-  ;['#242265', '#C0FC1A', '#FF6C00', '#00D8FF', '#BA85FF', '#6E0E0A'].forEach(color => {
+  ;['#242265', '#01baff', '#f26419', '#fdca40'].forEach(color => {
     nodeStyles.push(new WebGL2ShapeNodeStyle('round-rectangle', color, '#0000'))
   })
 
@@ -152,16 +158,6 @@ function setUIDisabled(disabled: boolean): void {
   document.querySelector<HTMLButtonElement>('#addLayer')!.disabled = disabled
   document.querySelector<HTMLButtonElement>('#removeLayer')!.disabled = disabled
   document.querySelector<HTMLInputElement>('#childCountInput')!.disabled = disabled
-}
-
-/**
- * Displays or hides the loading indicator.
- */
-async function setLoadingIndicatorVisibility(visible: boolean, message = ''): Promise<void> {
-  const loadingIndicator = document.querySelector<HTMLElement>('#loadingIndicator')!
-  loadingIndicator.style.display = visible ? 'block' : 'none'
-  loadingIndicator.innerText = message
-  return new Promise(resolve => setTimeout(resolve, 0))
 }
 
 /**
@@ -237,14 +233,14 @@ async function addLayer(graphComponent: GraphComponent): Promise<void> {
   const numberChildren = queue.length * childCount
 
   if (numberChildren > 20_000) {
-    await setLoadingIndicatorVisibility(true, 'Creating child nodes...')
+    await showLoadingIndicator(true, 'Creating child nodes...')
   }
   extendTree(graphComponent, currentLayers, childCount, queue, fadeInAnimation)
 
   graph.tag = { maxLayer: currentLayers, childCount: childCount }
 
   await runExtendLayout(graphComponent, fadeInAnimation)
-  await setLoadingIndicatorVisibility(false)
+  await showLoadingIndicator(false)
   setUIDisabled(false)
 
   updateGraphInformation(graphComponent.graph)
@@ -334,12 +330,12 @@ async function removeLayer(graphComponent: GraphComponent): Promise<void> {
   })
 
   if (removeNodes.length > 20_000) {
-    await setLoadingIndicatorVisibility(true, 'Removing child nodes...')
+    await showLoadingIndicator(true, 'Removing child nodes...')
   }
   await reduceTree(graphComponent, removeNodes)
   graph.tag = { maxLayer: currentLayers, childCount: childCount }
 
-  await setLoadingIndicatorVisibility(false)
+  await showLoadingIndicator(false)
   setUIDisabled(false)
 
   updateGraphInformation(graphComponent.graph)

@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   Class,
+  Color,
   DefaultLabelStyle,
   Fill,
   GenericLabeling,
@@ -53,6 +54,7 @@ import {
   Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
+  SolidColorFill,
   Stroke,
   YObject
 } from 'yfiles'
@@ -74,31 +76,34 @@ let aggregateGraph: AggregationGraphWrapper = null
 // selectors for shape and/or color
 const shapeSelector = (n: INode): ShapeNodeShape => (n.style as ShapeNodeStyle).shape
 
-const fillSelector = (n: INode): Fill => (n.style as ShapeNodeStyle).fill!
+const fillColorSelector = (n: INode): Color => {
+  const fill = (n.style as ShapeNodeStyle).fill! as SolidColorFill
+  return fill.color
+}
 
 const shapeAndFillSelector = (n: INode): ShapeAndFill =>
-  new ShapeAndFill(shapeSelector(n), fillSelector(n))
+  new ShapeAndFill(shapeSelector(n), fillColorSelector(n))
 
-const grayBorder: Stroke = new Stroke(Fill.DIM_GRAY, 2.0)
+const grayBorder: Stroke = new Stroke('#77776E', 2.0)
 
 // style factories for aggregation nodes
 const shapeStyle = (shape: ShapeNodeShape): ShapeNodeStyle =>
   new ShapeNodeStyle({
-    fill: Fill.FLORAL_WHITE,
+    fill: '#C7C7A6',
     shape: shape,
     stroke: grayBorder
   })
 
-const fillStyle = (fill: Fill): ShapeNodeStyle =>
+const fillStyle = (fillColor: Color): ShapeNodeStyle =>
   new ShapeNodeStyle({
-    fill: fill,
+    fill: new SolidColorFill(fillColor),
     shape: ShapeNodeShape.ELLIPSE,
     stroke: grayBorder
   })
 
 const shapeAndFillStyle = (shapeAndFill: ShapeAndFill): ShapeNodeStyle =>
   new ShapeNodeStyle({
-    fill: shapeAndFill.fill,
+    fill: new SolidColorFill(shapeAndFill.fillColor),
     shape: shapeAndFill.shape,
     stroke: grayBorder
   })
@@ -212,7 +217,7 @@ function populateContextMenu(
       )
 
       contextMenu.addMenuItem('Aggregate Nodes with Same Color', () =>
-        aggregateSame(selectedNodes.toList(), fillSelector, fillStyle)
+        aggregateSame(selectedNodes.toList(), fillColorSelector, fillStyle)
       )
 
       contextMenu.addMenuItem('Aggregate Nodes with Same Shape & Color', () =>
@@ -233,7 +238,7 @@ function populateContextMenu(
     )
 
     contextMenu.addMenuItem('Aggregate All Nodes by Color', () =>
-      aggregateAll(fillSelector, fillStyle)
+      aggregateAll(fillColorSelector, fillStyle)
     )
 
     contextMenu.addMenuItem('Aggregate All Nodes by Shape & Color', () =>
@@ -447,15 +452,15 @@ async function runLayout(): Promise<void> {
  */
 class ShapeAndFill {
   public shape: ShapeNodeShape
-  public fill: Fill
+  public fillColor: Color
 
-  constructor(shape: ShapeNodeShape, fill: Fill) {
+  constructor(shape: ShapeNodeShape, fillColor: Color) {
     this.shape = shape
-    this.fill = fill
+    this.fillColor = fillColor
   }
 
   public equals(obj: ShapeAndFill): boolean {
-    return obj.shape === this.shape && obj.fill === this.fill
+    return obj.shape === this.shape && obj.fillColor.equals(this.fillColor)
   }
 }
 

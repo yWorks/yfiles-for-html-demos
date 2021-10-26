@@ -41,19 +41,19 @@ export default class OrgchartOverviewCanvasVisualCreator extends GraphOverviewCa
   paintNode(renderContext: IRenderContext, ctx: CanvasRenderingContext2D, node: INode): void {
     switch (node.tag.status) {
       case 'busy':
-        ctx.fillStyle = '#E7527C'
+        ctx.fillStyle = '#AB2346'
         break
       case 'present':
-        ctx.fillStyle = '#55B757'
+        ctx.fillStyle = '#76B041'
         break
       case 'travel':
-        ctx.fillStyle = '#9945E9'
+        ctx.fillStyle = '#A367DC'
         break
       case 'unavailable':
-        ctx.fillStyle = '#8D8F91'
+        ctx.fillStyle = '#C1C1C1'
         break
       default:
-        ctx.fillStyle = '#8D8F91'
+        ctx.fillStyle = '#C1C1C1'
     }
     const layout = node.layout
 

@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  DefaultLabelStyle,
   EventArgs,
   EventRecognizers,
   GraphComponent,
@@ -59,6 +60,8 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { colorSets } from '../../resources/basic-demo-styles.js'
+import { DemoEdgeStyle } from '../../resources/demo-styles.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -95,13 +98,17 @@ function initializeGraph() {
   const graph = graphComponent.graph
 
   // set the default node style
-  graph.nodeDefaults.style = new PanelNodeStyle({
-    color: 'orange',
-    labelInsetsColor: 'gold',
+  const nodeStyle = new PanelNodeStyle({
+    color: colorSets['demo-orange'].fill,
+    labelInsetsColor: colorSets['demo-orange'].fill,
     insets: [20, 5, 5, 5]
   })
+  graph.nodeDefaults.style = nodeStyle
   graph.nodeDefaults.size = new Size(60, 80)
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.NORTH
+  graph.nodeDefaults.labels.style = new DefaultLabelStyle({ textFill: 'white' })
+
+  graph.edgeDefaults.style = new DemoEdgeStyle('demo-orange')
 
   // Create a sample node
   graph.addLabel(graph.createNode(), 'Node')

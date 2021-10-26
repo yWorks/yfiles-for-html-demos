@@ -91,18 +91,16 @@ class ColorUtil {
    */
   private static newFills(): Fill[] {
     const fills = []
-    fills.push(Fill.RED) // sample graph edge color
-    fills.push(Fill.GREEN) // sample graph edge color
-    fills.push(Fill.BLUE) // sample graph edge color
-    fills.push(Fill.BLACK)
-    fills.push(Fill.ORANGE)
-    fills.push(Fill.DARK_CYAN)
-    fills.push(Fill.DARK_GRAY)
-    fills.push(Fill.BROWN)
-    fills.push(Fill.DARK_BLUE)
-    fills.push(Fill.DARK_MAGENTA)
-    fills.push(Fill.DARK_SLATE_BLUE)
-    fills.push(Fill.PURPLE)
+    fills.push(Fill.from('#AB2346')) // sample graph edge color
+    fills.push(Fill.from('#662b00')) // sample graph edge color
+    fills.push(Fill.from('#0B7189')) // sample graph edge color
+    fills.push(Fill.from('#0B7189'))
+    fills.push(Fill.from('#111D4A'))
+    fills.push(Fill.from('#17BEBB'))
+    fills.push(Fill.from('#FFC914'))
+    fills.push(Fill.from('#FF6C00'))
+    fills.push(Fill.from('#2E282A'))
+    fills.push(Fill.from('#76B041'))
     return fills
   }
 }
@@ -183,15 +181,15 @@ function configureGraph(graph: IGraph): void {
 
 /**
  * Creates a sample graph structure from the demo's sample data.
- * The sample graph will have edges in three different colors (i.e. red, green, and blue)
+ * The sample graph will have edges in three different colors (i.e. red, brown, and blue)
  * and thus start out with three edge busses.
  */
 function loadGraph(graph: IGraph) {
   // the style to be used for red edges
   const red = newEdgeStyle()
-  // the style to be used for green edges
-  const green = newEdgeStyle()
-  // the default style to be used for all edges that are neither red nor green
+  // the style to be used for brown edges
+  const brown = newEdgeStyle()
+  // the default style to be used for all edges that are neither red nor brown
   const blue = newEdgeStyle()
 
   // the demo's sample data
@@ -209,10 +207,10 @@ function loadGraph(graph: IGraph) {
     targetId: 'target', // uses the 'target' property to determine the target node for each created edge
     style: (item: any) => {
       // uses the 'color' property to determine the style for each created edge
-      if ('red' === item.color) {
+      if ('#AB2346' === item.color) {
         return red
-      } else if ('green' === item.color) {
-        return green
+      } else if ('#662b00' === item.color) {
+        return brown
       } else {
         return blue
       }

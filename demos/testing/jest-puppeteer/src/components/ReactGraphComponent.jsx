@@ -67,9 +67,9 @@ export default class ReactGraphComponent extends Component {
   initializeDefaultStyles() {
     this.graphComponent.graph.nodeDefaults.size = new Size(60, 40)
     this.graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
-      fill: '#00d7ff',
-      stroke: '#00d7ff',
-      shape: 'round-rectangle'
+      shape: 'round-rectangle',
+      fill: '#FF6C00',
+      stroke: `1.5px #662b00`
     })
     this.graphComponent.graph.nodeDefaults.labels.style = new DefaultLabelStyle({
       textFill: '#fff',
@@ -77,9 +77,9 @@ export default class ReactGraphComponent extends Component {
     })
     this.graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
       smoothingLength: 25,
-      stroke: '5px #242265',
+      stroke: '4px #662b00',
       targetArrow: new Arrow({
-        fill: '#242265',
+        fill: '#662b00',
         scale: 2,
         type: 'circle'
       })

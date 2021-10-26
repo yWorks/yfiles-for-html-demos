@@ -112,7 +112,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     this.layoutHelper.cancelLayout()
     this.subtree.nodes.forEach(node => {
       const style = node.style as DemoNodeStyle
-      style.cssClass = style.cssClass.replace(' moving', '')
+      style.cssClass = style.cssClass!.replace(' moving', '')
     })
   }
 
@@ -127,7 +127,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     this.layoutHelper.stopLayout()
     this.subtree.nodes.forEach(node => {
       const style = node.style as DemoNodeStyle
-      style.cssClass = style.cssClass.replace(' moving', '')
+      style.cssClass = style.cssClass!.replace(' moving', '')
     })
   }
 

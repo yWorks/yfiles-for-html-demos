@@ -40,12 +40,14 @@ import {
   IEdge,
   IGraph,
   ILayoutAlgorithm,
+  IMapper,
   IModelItem,
   INode,
   Insets,
   ITreeLayoutPortAssignment,
   LayoutExecutor,
   LayoutGraph,
+  Mapper,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
   StringTemplatePortStyle,
@@ -57,11 +59,13 @@ import {
 } from 'yfiles'
 
 export default class OrgChartGraph {
-  hiddenNodesSet: Set<INode> = new Set()
-  graphComponent: GraphComponent
-  completeGraph: IGraph
-  filteredGraph: FilteredGraphWrapper
-  doingLayout = false
+  private readonly hiddenNodesSet: Set<INode> = new Set()
+  private readonly graphComponent: GraphComponent
+  public readonly completeGraph: IGraph
+  public readonly filteredGraph: FilteredGraphWrapper
+  private doingLayout = false
+  // once the nodes have been arranged, remember their arrangement strategy for a more stable layout upon changes
+  private readonly compactNodePlacerStrategyMementos: IMapper<INode, any> = new Mapper()
 
   /**
    * Creates a new instance of this class.
@@ -253,15 +257,9 @@ export default class OrgChartGraph {
     // inform the filter that the predicate changed and thus the graphs needs to be updated
     this.filteredGraph.nodePredicateChanged()
 
-    // once the nodes have been arranged, remember their arrangement strategy for a more stable layout upon changes
-    const mapperRegistry = this.filteredGraph.mapperRegistry
-    if (mapperRegistry.getMapper(CompactNodePlacer.STRATEGY_MEMENTO_DP_KEY) == null) {
-      mapperRegistry.createMapper(CompactNodePlacer.STRATEGY_MEMENTO_DP_KEY)
-    }
-
     this.filteredGraph.applyLayout(
-      OrgChartGraph.createConfiguredLayout(false),
-      OrgChartGraph.createConfiguredLayoutData(this.filteredGraph)
+      this.createConfiguredLayout(false),
+      this.createConfiguredLayoutData(this.filteredGraph)
     )
     this.graphComponent.fitGraphBounds()
     this.limitViewport()
@@ -289,8 +287,8 @@ export default class OrgChartGraph {
       this.filteredGraph.nodePredicateChanged()
 
       this.filteredGraph.applyLayout(
-        OrgChartGraph.createConfiguredLayout(false),
-        OrgChartGraph.createConfiguredLayoutData(this.filteredGraph)
+        this.createConfiguredLayout(false),
+        this.createConfiguredLayoutData(this.filteredGraph)
       )
       this.limitViewport()
     }
@@ -313,19 +311,13 @@ export default class OrgChartGraph {
     }
     this.doingLayout = true
 
-    // once the nodes have been arranged, remember their arrangement strategy for a more stable layout upon changes
-    const mapperRegistry = this.filteredGraph.mapperRegistry
-    if (mapperRegistry.getMapper(CompactNodePlacer.STRATEGY_MEMENTO_DP_KEY) == null) {
-      mapperRegistry.createMapper(CompactNodePlacer.STRATEGY_MEMENTO_DP_KEY)
-    }
-
     if (!collapse) {
       // move the incremental nodes between their neighbors before expanding for a smooth animation
       this.prepareSmoothExpandLayoutAnimation(incrementalNodes)
     }
 
     // configure the tree layout
-    const treeLayout = OrgChartGraph.createConfiguredLayout(true)
+    const treeLayout = this.createConfiguredLayout(true)
 
     // create the layout (with a stage that fixes the center node in the coordinate system)
     const layout = new FixNodeLayoutStage(new TreeReductionStage(treeLayout))
@@ -345,7 +337,7 @@ export default class OrgChartGraph {
     }
 
     layoutData.items.add(
-      OrgChartGraph.createConfiguredLayoutData(this.filteredGraph, collapse ? incrementalNodes : [])
+      this.createConfiguredLayoutData(this.filteredGraph, collapse ? incrementalNodes : [])
     )
 
     // configure a LayoutExecutor
@@ -395,7 +387,7 @@ export default class OrgChartGraph {
    * @return A configured TreeLayoutData.
    * @private
    */
-  static createConfiguredLayoutData(
+  createConfiguredLayoutData(
     graph: IGraph = null!,
     incrementalNodes: INode[] = []
   ): TreeLayoutData {
@@ -433,7 +425,8 @@ export default class OrgChartGraph {
         return (): number => 0
       },
       nodeTypes: (node: INode): string | null =>
-        node.tag && node.tag.status ? node.tag.status : null
+        node.tag && node.tag.status ? node.tag.status : null,
+      compactNodePlacerStrategyMementos: this.compactNodePlacerStrategyMementos
     })
   }
 
@@ -442,7 +435,7 @@ export default class OrgChartGraph {
    * @return A configured TreeLayout.
    * @private
    */
-  static createConfiguredLayout(incremental: boolean): ILayoutAlgorithm {
+  createConfiguredLayout(incremental: boolean): ILayoutAlgorithm {
     const treeLayout = new TreeLayout()
     treeLayout.defaultPortAssignment = new (class extends BaseClass(ITreeLayoutPortAssignment) {
       assignPorts(graph: LayoutGraph, node: YNode): void {

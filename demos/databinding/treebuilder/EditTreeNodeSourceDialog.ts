@@ -26,9 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses'
+/* global CodeMirror */
 // import CodeMirror typings
 import CodeMirror, { EditorFromTextArea } from 'codemirror'
+import { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses'
 
 /**
  * Editing dialog for schema graph nodes business data ({@link TreeNodesSourceDefinition}

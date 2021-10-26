@@ -28,15 +28,15 @@
  ***************************************************************************/
 import {
   BaseClass,
+  BridgeCrossingStyle,
+  BridgeOrientationStyle,
   GeneralPath,
   IBridgeCreator,
   INode,
+  Insets,
   IObstacleProvider,
   IRenderContext,
-  Insets,
-  Point,
-  BridgeCrossingStyle,
-  BridgeOrientationStyle
+  Point
 } from 'yfiles'
 import { DemoGroupStyle } from '../../resources/demo-styles'
 

@@ -29,44 +29,45 @@
 import {
   Color,
   DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   GraphClipboard,
   GraphComponent,
   GraphEditorInputMode,
   HashMap,
   HierarchicLayout,
   ICommand,
+  IEdge,
   IGraph,
+  IModelItem,
   INode,
-  ITable,
   Insets,
   InteriorLabelModel,
-  InteriorStretchLabelModel,
+  ITable,
   LayoutExecutor,
   LayoutOrientation,
   License,
   MinimumNodeSizeStage,
   NodeStyleStripeStyleAdapter,
   OrthogonalEdgeEditingContext,
-  PanelNodeStyle,
   ParentNodeDetectionModes,
   Rect,
   ReparentStripeHandler,
   ShapeNodeStyle,
+  SimplexNodePlacer,
   Size,
+  SolidColorFill,
   Table,
   TableEditorInputMode,
   TableNodeStyle,
-  VoidStripeStyle,
-  SolidColorFill,
   TimeSpan,
-  SimplexNodePlacer,
-  IModelItem,
-  IEdge
+  VoidStripeStyle
 } from 'yfiles'
 
 import FileSaveSupport from '../../utils/FileSaveSupport.js'
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -85,7 +86,11 @@ function run(licenseData) {
     orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
   })
 
-  configureTableEditing(graphComponent.inputMode)
+  // Enable general undo support
+  graphComponent.graph.undoEngineEnabled = true
+
+  // configures the table editor input mode
+  configureTableEditing(graphComponent)
 
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
@@ -113,17 +118,22 @@ async function loadGraph() {
     // Automatically layout the swimlanes. The HierarchicLayout respects the node to cell assignment based on the
     // node's center position.
     await runLayout('0s')
-    // Finally, enable the undo engine. This prevents undoing of the graph creation
-    graphComponent.graph.undoEngineEnabled = true
+    // Finally, clear the undo engine to prevent undoing of the graph creation.
+    graphComponent.graph.undoEngine?.clear()
   } catch (e) {
     alert(e)
   }
 }
 
 /**
- * @param {!GraphEditorInputMode} graphEditorInputMode
+ * @param {!GraphComponent} graphComponent
  */
-function configureTableEditing(graphEditorInputMode) {
+function configureTableEditing(graphComponent) {
+  const graphEditorInputMode = graphComponent.inputMode
+
+  // use the undo support from the graph also for all future table instances
+  Table.installStaticUndoSupport(graphComponent.graph)
+
   const reparentStripeHandler = new ReparentStripeHandler()
   reparentStripeHandler.maxColumnLevel = 1
   reparentStripeHandler.maxRowLevel = 1
@@ -234,19 +244,15 @@ function buildGraph(graph, graphData) {
   graphData.nodesSource.forEach(nodeData => {
     const size = nodeData.size || [50, 50]
     const node = graph.createNode({
-      labels: [nodeData.label || nodeData.id],
+      labels: nodeData.label != null ? [nodeData.label] : [],
       layout: new Rect(0, 0, size[0], size[1]),
       tag: nodeData
     })
     if (nodeData.fill) {
       // If the node data specifies an individual fill color, adjust the style.
-      graph.setStyle(
-        node,
-        new ShapeNodeStyle({
-          fill: nodeData.fill,
-          stroke: 'white'
-        })
-      )
+      const shapeNodeStyle = graph.nodeDefaults.style.clone()
+      shapeNodeStyle.fill = nodeData.fill
+      graph.setStyle(node, shapeNodeStyle)
     }
     nodes[nodeData.id] = node
 
@@ -272,7 +278,7 @@ function buildGraph(graph, graphData) {
     graph.createEdge({
       source: nodes[edgeData.from],
       target: nodes[edgeData.to],
-      labels: [edgeData.label || ''],
+      labels: edgeData.label != null ? [edgeData.label] : [],
       tag: edgeData
     })
   })
@@ -398,33 +404,21 @@ function runLayout(duration) {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
  *
  * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
-  // configure defaults for normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
-  graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults for group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  // set sizes and locations specific for this tutorial
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**

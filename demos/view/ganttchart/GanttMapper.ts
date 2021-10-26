@@ -29,7 +29,7 @@
 /* global moment */
 
 // import moment typings
-import moment, { MomentInput, Moment } from 'moment'
+import moment, { Moment, MomentInput } from 'moment'
 
 /**
  * A helper class that handles the data model and maps graph coordinates to the corresponding dates.

@@ -12,13 +12,13 @@ The demo also utilizes [Quill](https://quilljs.com/), an open source WYSIWYG tex
 
 #### Creating and Editing Labels
 
-Press F2 or double click a label to open the text editor.
+Press F2 or double-click a label to open the text editor.
 
-Note how the editor is hooked up with yFiles such that user don't need to write HTML markup themselves but can rely on commonly known editor functions to format the text.
+Note how the editor is hooked up with yFiles such that users don't need to write HTML markup themselves, but can rely on commonly known editor functions to format the text.
 
 #### The MarkupLabelStyle
 
-Internally, the HTML markup that is created from the Quill editor is added as [ILabel](https://docs.yworks.com/yfileshtml/#/api/ILabel) with the [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle) to the graph.
+Internally, the HTML markup that is created from the Quill editor is added as an [ILabel](https://docs.yworks.com/yfileshtml/#/api/ILabel) with the [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle) to the graph.
 
 In general, the `MarkupLabelStyle` could also be used without a WYSIWYG editor. It supports the following tags:
 

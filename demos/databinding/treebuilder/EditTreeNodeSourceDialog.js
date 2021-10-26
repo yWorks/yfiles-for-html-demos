@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global CodeMirror */
 import { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses.js'
 
 /**

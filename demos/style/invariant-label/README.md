@@ -24,9 +24,9 @@ Zoom-invariant (Fixed when outside specified range)
 
 Labels don't scale when the zoom level is below the zoom threshold or above the maximum scale threshold.
 
-Default Label Style
+Default behaviour
 
-This is the [DefaultLabelStyle](https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle) that comes with the yFiles library. See how it's behavior compares to this custom label style implementation.
+This is the standard behaviour of a label. See how it compares to this custom label style implementation.
 
 ## Things to Try
 

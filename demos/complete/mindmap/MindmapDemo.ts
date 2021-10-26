@@ -345,12 +345,11 @@ function initializeEdgeStyle(): void {
   )
 
   graph.edgeDefaults.style = new ArcEdgeStyle({
-    stroke: '8px lightskyblue',
+    stroke: '8px #46A8D5',
     height: 50,
     targetArrow: new Arrow({
-      fill: 'lightskyblue',
-      stroke: 'lightskyblue',
-      scale: 2,
+      fill: '#CA0C3B',
+      stroke: '6px #46A8D5',
       type: ArrowType.SHORT
     }),
     provideHeightHandle: true
@@ -371,13 +370,11 @@ function initializeEdgeStyle(): void {
     new EdgeStyleDecorationInstaller({
       edgeStyle: new ArcEdgeStyle({
         renderer: new MyArcEdgeStyleRenderer(),
-        stroke: '6px rgb(255, 255, 0)',
+        stroke: '8px #f26419',
         height: 50,
         targetArrow: new Arrow({
-          fill: 'rgb(255, 255, 0)',
-          stroke: null,
-          cropLength: 0.5,
-          scale: 1.75,
+          fill: '#f26419',
+          stroke: '6px #f26419',
           type: ArrowType.SHORT
         })
       }),
@@ -502,15 +499,16 @@ function initializeNodePopups() {
   colorContainer.addEventListener('click', () => (nodePopupColor.currentItem = null), false)
   // create color popup menu
   const colors = [
-    '#FF6502',
-    '#D82622',
-    '#FF91FF',
-    '#80FF80',
-    '#57AD57',
-    '#2CAED4',
-    '#5050FF',
-    '#8B4513',
-    '#323232'
+    '#FF6C00',
+    '#242265',
+    '#56926E',
+    '#6DBC8D',
+    '#6C4F77',
+    '#4281A4',
+    '#E0E04F',
+    '#C1C1C1',
+    '#DB3A34',
+    '#2D4D3A'
   ]
   colors.forEach(color => {
     const div = window.document.createElement('div')

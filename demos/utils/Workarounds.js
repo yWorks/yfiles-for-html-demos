@@ -285,7 +285,7 @@ function detectPointerEventsSupported() {
  * Returns whether or not the browser supports WebGL rendering.
  * @returns {boolean}
  */
-function detectWebGlSupported() {
+export function isWebGlSupported() {
   const canvas = document.createElement('canvas')
   return !!canvas.getContext('webgl') || !!canvas.getContext('experimental-webgl')
 }
@@ -294,7 +294,7 @@ function detectWebGlSupported() {
  * Returns whether or not the browser supports WebGL2 rendering.
  * @returns {boolean}
  */
-function detectWebGl2Supported() {
+export function isWebGl2Supported() {
   const canvas = document.createElement('canvas')
   return !!canvas.getContext('webgl2')
 }
@@ -347,7 +347,3 @@ export const passiveSupported = detectPassiveSupported()
 export const nativeDragAndDropSupported = detectNativeDragAndDropSupported()
 /** States whether the browser supports the pointer-events CSS property */
 export const pointerEventsSupported = detectPointerEventsSupported()
-/** States whether the browser supports WebGL rendering */
-export const webGlSupported = detectWebGlSupported()
-/** States whether the browser supports WebGL2 rendering */
-export const webGl2Supported = detectWebGl2Supported()

@@ -38,12 +38,12 @@ import {
 
 import { configureIOHandler } from './graphml-compat.js'
 import {
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   readGraph,
-  showApp,
-  checkLicense
+  showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -64,9 +64,10 @@ import loadJson from '../../resources/load-json.js'
 let graphComponent = null
 let graphMLSupport = null
 
+/**
+ * @type {HTMLSelectElement}
+ */
 const graphChooserBox = document.getElementById('graphChooserBox')
-const nextButton = document.getElementById('nextFileButton')
-const previousButton = document.getElementById('previousFileButton')
 
 function run(licenseData) {
   License.value = licenseData
@@ -128,9 +129,8 @@ function enableGraphML() {
  * Helper method that reads the currently selected graphml from the combobox.
  */
 async function readSampleGraph() {
-  // Disable navigation buttons while graph is loaded
-  nextButton.disabled = true
-  previousButton.disabled = true
+  // Disable combobox while graph is loaded
+  graphChooserBox.disabled = true
 
   // first derive the file name
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
@@ -140,7 +140,7 @@ async function readSampleGraph() {
   // when done - fit the bounds
   ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
   // re-enable navigation buttons
-  setTimeout(updateButtons, 10)
+  setTimeout(() => (graphChooserBox.disabled = false), 10)
 }
 
 function registerCommands() {
@@ -152,33 +152,8 @@ function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindAction("button[data-command='PreviousFile']", onPreviousButtonClicked)
-  bindAction("button[data-command='NextFile']", onNextButtonClicked)
   bindChangeListener("select[data-command='SelectedFileChanged']", readSampleGraph)
-}
-
-/**
- * Updates the previous/next button states.
- */
-function updateButtons() {
-  nextButton.disabled = graphChooserBox.selectedIndex >= graphChooserBox.length - 1
-  previousButton.disabled = graphChooserBox.selectedIndex <= 0
-}
-
-/**
- * Switches to the previous graph.
- */
-function onPreviousButtonClicked() {
-  graphChooserBox.selectedIndex--
-  readSampleGraph()
-}
-
-/**
- * Switches to the next graph.
- */
-function onNextButtonClicked() {
-  graphChooserBox.selectedIndex++
-  readSampleGraph()
+  addNavigationButtons(graphChooserBox)
 }
 
 // run the demo

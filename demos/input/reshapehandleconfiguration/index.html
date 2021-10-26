@@ -38,32 +38,6 @@
 
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <style type="text/css">
-    .firebrick {
-      fill: #B02222;
-    }
-
-    .orange {
-      fill: #FF8C00;
-    }
-
-    .green {
-      fill: #008000;
-    }
-
-    .royalblue {
-      fill: #007FFF;
-    }
-
-    .purple {
-      fill: #800080;
-    }
-
-    .gray {
-      fill: #808080;
-    }
-  </style>
-
   <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
@@ -88,18 +62,27 @@
     <h2>Node Types</h2>
     <ul>
       <li>
-        <em class="demo-red demo-bold">Red nodes</em> cannot be resized. They don't display resize handles.
+        <em class="demo-bold">Red nodes</em> cannot be resized. They don't display resize handles.
       </li>
       <li>
-        <em class="demo-green demo-bold">Green nodes</em> show only four handles at the corners. During resizing,
+        <em class="demo-bold">Green nodes</em> show only four handles at the corners. During resizing,
         these handles always maintain the aspect ratio of the node.
       </li>
       <li>
-        <em class="demo-orange demo-bold">Orange nodes</em> cannot extend beyond the black rectangle. Note that
+        <em class="demo-bold">Dark blue nodes</em> show only one handle in the bottom right corner. During resizing,
+        this handle always maintains the center of the node.
+      </li>
+      <li>
+        <em class="demo-bold">Purple nodes</em> show four handles at the corners and four
+        different handles at the sides. During resizing, the corner handles always maintain the aspect ratio of the node while
+        the border handles don't.
+      </li>
+      <li>
+        <em class="demo-bold">Orange nodes</em> cannot extend beyond the black rectangle. Note that
         orange nodes can only be resized so that the new bounding box stays withing the bounding black rectangle.
       </li>
       <li>
-        <em class="demo-blue demo-bold">Blue nodes</em> combine the behavior of the orange and green nodes.
+        <em class="demo-bold">Light blue nodes</em> combine the behavior of the orange and green nodes.
       </li>
     </ul>
   </div>

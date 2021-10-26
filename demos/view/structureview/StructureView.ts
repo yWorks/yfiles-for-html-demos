@@ -27,16 +27,16 @@
  **
  ***************************************************************************/
 import {
-  delegate,
   DefaultGraph,
+  delegate,
   EventArgs,
   HashMap,
   IFoldingView,
   IGraph,
   ILabel,
   INode,
-  ItemEventArgs,
   ItemChangedEventArgs,
+  ItemEventArgs,
   LabelEventArgs,
   NodeEventArgs
 } from 'yfiles'

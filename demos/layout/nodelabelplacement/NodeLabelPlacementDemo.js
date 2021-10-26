@@ -49,7 +49,7 @@ import {
   License,
   Rect,
   SandwichLabelModel,
-  ShinyPlateNodeStyle,
+  ShapeNodeShape,
   Size
 } from 'yfiles'
 
@@ -57,6 +57,7 @@ import SampleData from './resources/sample.js'
 import MapVisualCreator from './MapVisualCreator.js'
 import CityLabelStyle from './CityLabelStyle.js'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -64,6 +65,10 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import {
+  createBasicNodeLabelStyle,
+  createBasicNodeStyle
+} from '../../resources/basic-demo-styles.js'
 
 /**
  * The graph component.
@@ -171,21 +176,15 @@ function initializeOptions() {
 function initializeGraph() {
   const graph = graphComponent.graph
   // set the default style for nodes
-  graph.nodeDefaults.style = new ShinyPlateNodeStyle({
-    drawShadow: false,
-    radius: 1,
-    fill: 'orange'
-  })
+  const nodeStyle = createBasicNodeStyle()
+  nodeStyle.shape = ShapeNodeShape.ELLIPSE
+  graph.nodeDefaults.style = nodeStyle
 
   // set the default size for nodes
   graph.nodeDefaults.size = new Size(10, 10)
 
   // set the default style for labels
-  const innerLabelStyle = new DefaultLabelStyle({
-    textSize: 10,
-    horizontalTextAlignment: HorizontalTextAlignment.CENTER
-  })
-  graph.nodeDefaults.labels.style = new CityLabelStyle(innerLabelStyle)
+  graph.nodeDefaults.labels.style = new CityLabelStyle(createBasicNodeLabelStyle())
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
 
   // add the background visual for the map
@@ -204,8 +203,9 @@ function initializeInputMode() {
     allowCreateEdge: false
   })
   // add a label for each newly created node
-  inputMode.addNodeCreatedListener((sender, args) => {
+  inputMode.addNodeCreatedListener(async (sender, args) => {
     graphComponent.graph.addLabel(args.item, 'City')
+    await placeLabels()
   })
   graphComponent.inputMode = inputMode
 }
@@ -244,7 +244,9 @@ async function placeLabels() {
       if (cityLabelStyle && cityLabelStyle.innerLabelStyle) {
         const updatedStyle = new DefaultLabelStyle({
           textSize,
-          horizontalTextAlignment: HorizontalTextAlignment.CENTER
+          horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+          backgroundFill: '#FFC398',
+          textFill: '662b00'
         })
         graph.setStyle(label, new CityLabelStyle(updatedStyle))
       }
@@ -254,7 +256,9 @@ async function placeLabels() {
   graph.nodeDefaults.labels.layoutParameter = labelModel.createDefaultParameter()
   const updatedStyle = new DefaultLabelStyle({
     textSize,
-    horizontalTextAlignment: HorizontalTextAlignment.CENTER
+    horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+    backgroundFill: '#FFC398',
+    textFill: '662b00'
   })
   graph.nodeDefaults.labels.style = new CityLabelStyle(updatedStyle)
   graphComponent.invalidate()
@@ -308,6 +312,8 @@ function registerCommands() {
   bindAction("button[data-command='PlaceLabels']", placeLabels)
   bindChangeListener("select[data-command='labelModelChanged']", placeLabels)
   document.getElementById('labelFontSizeField').addEventListener('change', placeLabels)
+  const labelModelComboBox = document.getElementById('labelModelComboBox')
+  addNavigationButtons(labelModelComboBox)
 }
 
 /**

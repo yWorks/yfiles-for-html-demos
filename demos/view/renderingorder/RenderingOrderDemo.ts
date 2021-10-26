@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultLabelStyle,
   ExteriorLabelModel,
   Font,
   FreeNodePortLocationModel,
@@ -37,27 +36,22 @@ import {
   HierarchicNestingPolicy,
   ICanvasObjectDescriptor,
   ICommand,
-  InteriorLabelModel,
-  InteriorStretchLabelModel,
   IRenderContext,
   IVisualCreator,
   LabelLayerPolicy,
   License,
   NodeStylePortStyleAdapter,
-  PanelNodeStyle,
-  PanelNodeStyleRenderer,
   Point,
   PortLayerPolicy,
   ShapeNodeStyle,
   Size,
   SmartEdgeLabelModel,
   SvgVisual,
-  TextWrapping,
-  VerticalTextAlignment,
   Visual
 } from 'yfiles'
 
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -65,6 +59,7 @@ import {
   showApp
 } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
+import { initDemoStyles } from '../../resources/demo-styles'
 
 let graphComponent: GraphComponent
 
@@ -132,43 +127,13 @@ function selectRenderingOrder(order: string): void {
  */
 function initDemoDefaults(): void {
   const graph = graphComponent.graph
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: '#eeff8c00',
-    stroke: 'white'
-  })
-  graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: VerticalTextAlignment.CENTER,
-    wrapping: TextWrapping.WORD_ELLIPSIS
-  })
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  initDemoStyles(graph)
   graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
     new ShapeNodeStyle({
-      fill: 'darkblue',
-      stroke: 'darkblue',
+      fill: '#111D4A',
       shape: 'ellipse'
     })
   )
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgba(214, 229, 248, 0.9)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)',
-    renderer: new GroupPanelNodeStyleRenderer()
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'center'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
-  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(
-    0,
-    5,
-    0
-  )
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
-    backgroundFill: 'white',
-    backgroundStroke: 'lightgrey',
-    insets: [3, 5, 3, 5]
-  })
 }
 
 /**
@@ -394,15 +359,9 @@ function registerCommands(): void {
   bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
   bindChangeListener("select[data-command='SelectRenderingOrder']", selectRenderingOrder)
-}
-
-/**
- * Create customized PanelNodeStyleRenderer which doesn't draw a drop shadow.
- */
-class GroupPanelNodeStyleRenderer extends PanelNodeStyleRenderer {
-  drawShadow(): boolean {
-    return false
-  }
+  addNavigationButtons(
+    document.querySelector("select[data-command='SelectRenderingOrder']") as HTMLSelectElement
+  )
 }
 
 /**

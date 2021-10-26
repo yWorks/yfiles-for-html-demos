@@ -30,11 +30,11 @@ import {
   GeneralPath,
   INode,
   INodeStyle,
+  IRenderContext,
   ITagOwner,
   MutablePoint,
   NodeStyleBase,
-  SvgVisual,
-  IRenderContext
+  SvgVisual
 } from 'yfiles'
 
 /**

@@ -43,7 +43,13 @@ import {
 } from 'yfiles'
 
 import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper.js'
-import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import {
+  addNavigationButtons,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -124,6 +130,7 @@ function configureBridges() {
  */
 function initializeToolBarElements() {
   const crossingStylesComboBox = document.getElementById('crossingStyleComboBox')
+  addNavigationButtons(crossingStylesComboBox)
   const crossingStylesElements = [
     {
       text: 'Arc',
@@ -161,6 +168,7 @@ function initializeToolBarElements() {
   fillComboBox(crossingStylesComboBox, crossingStylesElements)
 
   const crossingPolicyComboBox = document.getElementById('crossingPolicyComboBox')
+  addNavigationButtons(crossingPolicyComboBox)
   const crossingDeterminationElements = [
     {
       text: 'HorizontalBridgesVertical',
@@ -182,6 +190,7 @@ function initializeToolBarElements() {
   fillComboBox(crossingPolicyComboBox, crossingDeterminationElements)
 
   const bridgeOrientationComboBox = document.getElementById('bridgeOrientationComboBox')
+  addNavigationButtons(bridgeOrientationComboBox)
   const bridgeOrientationElements = [
     {
       text: 'Up',

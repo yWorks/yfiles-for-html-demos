@@ -28,8 +28,8 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-<!--Created by yFiles for HTML 2.4.0.3-->
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:x0="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!--Created by yFiles for HTML 2.4.0.4-->
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:x0="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -65,27 +65,27 @@
 			<x0:DemoGroupStyle x:Key="6" isCollapsible="true"/>
 			<yjs:PolylineEdgeStyle x:Key="7">
 				<yjs:PolylineEdgeStyle.stroke>
-					<yjs:Stroke fill="#FF336699" lineCap="SQUARE" lineJoin="ROUND">
+					<yjs:Stroke fill="#FF662b00" lineCap="SQUARE" lineJoin="ROUND">
 						<yjs:Stroke.dashStyle>
 							<yjs:DashStyle dashes="5" offset="0"/>
 						</yjs:Stroke.dashStyle>
 					</yjs:Stroke>
 				</yjs:PolylineEdgeStyle.stroke>
 				<yjs:PolylineEdgeStyle.sourceArrow>
-					<yjs:Arrow stroke="#FF336699" fill="#FF336699"/>
+					<yjs:Arrow stroke="#FF662b00" fill="#FF662b00"/>
 				</yjs:PolylineEdgeStyle.sourceArrow>
 			</yjs:PolylineEdgeStyle>
 			<yjs:PolylineEdgeStyle x:Key="8">
 				<yjs:PolylineEdgeStyle.stroke>
-					<yjs:Stroke fill="#FF336699" lineCap="SQUARE" lineJoin="ROUND"/>
+					<yjs:Stroke fill="#FF662b00" lineCap="SQUARE" lineJoin="ROUND"/>
 				</yjs:PolylineEdgeStyle.stroke>
 			</yjs:PolylineEdgeStyle>
 			<yjs:PolylineEdgeStyle x:Key="9">
 				<yjs:PolylineEdgeStyle.stroke>
-					<yjs:Stroke fill="#FF336699" lineCap="SQUARE" lineJoin="ROUND"/>
+					<yjs:Stroke fill="#FF662b00" lineCap="SQUARE" lineJoin="ROUND"/>
 				</yjs:PolylineEdgeStyle.stroke>
 				<yjs:PolylineEdgeStyle.targetArrow>
-					<yjs:Arrow stroke="#FF336699" fill="#FF336699"/>
+					<yjs:Arrow stroke="#FF662b00" fill="#FF662b00"/>
 				</yjs:PolylineEdgeStyle.targetArrow>
 			</yjs:PolylineEdgeStyle>
 			<yjs:SolidColorFill x:Key="10" color="#FF323232"/>
@@ -172,7 +172,7 @@
 		<node id="n3">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 2}" PreferredSize="29,32">
+					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
 						<y:Label.Text><![CDATA[Move
 me]]></y:Label.Text>
 					</y:Label>
@@ -221,7 +221,7 @@ me]]></y:Label.Text>
 		<node id="n5">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 2}" PreferredSize="39,32">
+					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
 						<y:Label.Text><![CDATA[Resize
 me]]></y:Label.Text>
 					</y:Label>
@@ -621,14 +621,8 @@ me]]></y:Label.Text>
 			</data>
 		</edge>
 		<edge id="e4" source="n3" target="n4" sourceport="p1" targetport="p0">
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 		</edge>
 		<edge id="e5" source="n8" target="n6" sourceport="p0" targetport="p0">
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 		</edge>
 		<edge id="e6" source="n6" target="n12::n1" sourceport="p1" targetport="p0">
 			<data key="d7">
@@ -701,14 +695,11 @@ me]]></y:Label.Text>
 			</data>
 		</edge>
 		<edge id="e8" source="n2" target="n9" sourceport="p1" targetport="p0">
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 		</edge>
 		<edge id="e9" source="n1" target="n5" sourceport="p1" targetport="p0">
 			<data key="d6">
 				<x:List>
-					<y:Label PreferredSize="57,32">
+					<y:Label>
 						<y:Label.Text><![CDATA[Move a
 node here]]></y:Label.Text>
 						<y:Label.LayoutParameter>
@@ -718,9 +709,6 @@ node here]]></y:Label.Text>
 								</y:SmartEdgeLabelModelParameter.Model>
 							</y:SmartEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
-						<y:Label.Style>
-							<yjs:DefaultLabelStyle font="{y:GraphMLReference 11}" textFill="{y:GraphMLReference 10}" backgroundFill="white" backgroundStroke="black"/>
-						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
@@ -730,19 +718,10 @@ node here]]></y:Label.Text>
 					<y:Bend Location="510,600"/>
 				</x:List>
 			</data>
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 		</edge>
 		<edge id="e10" source="n9" target="n5" sourceport="p1" targetport="p1">
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 		</edge>
 		<edge id="e11" source="n5" target="n12::n1" sourceport="p2" targetport="p2">
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 			<data key="d9">
 				<y:ViewState>
 					<y:FoldingEdgeState x:Key="n5|x|n12|c|view">
@@ -765,19 +744,10 @@ node here]]></y:Label.Text>
 			</data>
 		</edge>
 		<edge id="e12" source="n10" target="n5" sourceport="p0" targetport="p3">
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 		</edge>
 		<edge id="e13" source="n1" target="n3" sourceport="p2" targetport="p2">
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 		</edge>
 		<edge id="e14" source="n3" target="n2" sourceport="p3" targetport="p2">
-			<data key="d8">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
 		</edge>
 		<edge id="e15" source="n8" target="n11::n3" sourceport="p1" targetport="p1">
 			<data key="d7">

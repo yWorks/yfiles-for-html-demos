@@ -31,21 +31,21 @@ import {
   ICanvasContext,
   IHitTestable,
   IInputModeContext,
+  ImageNodeStyle,
+  IMarqueeTestable,
   INode,
   INodeStyle,
   IRectangle,
   IRenderContext,
-  ImageNodeStyle,
-  IMarqueeTestable,
   IVisibilityTestable,
   NodeStyleBase,
   Point,
   Rect,
   ShapeNodeStyle,
   SimpleNode,
+  SvgVisual,
   SvgVisualGroup,
-  Visual,
-  SvgVisual
+  Visual
 } from 'yfiles'
 
 /**

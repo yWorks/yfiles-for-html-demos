@@ -120,7 +120,7 @@ function configureGraph(graph: IGraph): void {
   )
 
   graph.nodeDefaults.labels.style = new LabelStyleDecorator(
-    new DefaultLabelStyle({ textFill: 'white' })
+    new DefaultLabelStyle({ textFill: '224556', backgroundFill: '#B4DBED' })
   )
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
 
@@ -179,7 +179,7 @@ function createSampleGraph(graph: IGraph): void {
  */
 function newBaseStyle(): INodeStyle {
   return new ShapeNodeStyle({
-    fill: 'rgb(102, 153, 204)',
+    fill: '#46A8D5',
     stroke: null,
     shape: 'rectangle'
   })

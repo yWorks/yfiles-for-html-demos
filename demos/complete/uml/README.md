@@ -1,6 +1,6 @@
 # UML Editor Demo
 
-<img src="../../resources/image/umleditor.png" alt="demo-thumbnail" height="320"/>
+<img src="../../resources/image/uml-editor.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/uml/index.html).
 

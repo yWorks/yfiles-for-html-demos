@@ -49,6 +49,7 @@ import {
   QueryOutputHandlersEventArgs,
   SmartEdgeLabelModel,
   StorageLocation,
+  Table,
   TableEditorInputMode
 } from 'yfiles'
 
@@ -116,8 +117,6 @@ async function run(licenseData) {
 
   registerCommands()
 
-  graphComponent.inputMode = createEditorMode()
-
   // Initialize IO
   graphmlSupport = new GraphMLSupport({
     graphComponent,
@@ -130,6 +129,15 @@ async function run(licenseData) {
   const graph = view.graph
   graphComponent.graph = graph
   foldingView = view
+
+  // enable undo/redo support
+  manager.masterGraph.undoEngineEnabled = true
+
+  // register graph interaction
+  graphComponent.inputMode = createEditorMode()
+
+  // also enable undo/redo for the tables in the sample graph
+  Table.installStaticUndoSupport(manager.masterGraph)
 
   // Assign the default demo styles
   initDemoStyles(graph)
@@ -165,8 +173,8 @@ async function run(licenseData) {
   initGraphModificationEvents()
   await loadSampleGraph(graphComponent.graph)
 
-  // enable undo/redo support
-  manager.masterGraph.undoEngineEnabled = true
+  // clear the undo engine to prevent undoing of the graph creation.
+  graphComponent.graph.undoEngine?.clear()
 
   showApp(graphComponent)
 }
@@ -300,7 +308,7 @@ function createGraphMLIOHandler() {
 
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   ioHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   ioHandler.addHandleSerializationListener(DemoSerializationListener)

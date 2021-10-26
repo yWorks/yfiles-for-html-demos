@@ -49,7 +49,7 @@
         "target": 4
       }
     ],
-    "color": "mediumseagreen"
+    "color": "#76b041"
   },
   {
     "nodeData": [
@@ -96,7 +96,7 @@
         "target": 0
       }
     ],
-    "color": "gold"
+    "color": "#ffc914"
   },
   {
     "nodeData": [
@@ -138,7 +138,7 @@
         "target": 3
       }
     ],
-    "color": "dodgerblue"
+    "color": "#2d728f"
   },
   {
     "nodeData": [
@@ -175,6 +175,6 @@
         "target": 2
       }
     ],
-    "color": "indianred"
+    "color": "#ff6c00"
   }
 ]

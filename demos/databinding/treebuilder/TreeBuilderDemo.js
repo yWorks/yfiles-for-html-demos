@@ -34,19 +34,19 @@ import {
   HierarchicLayoutLayeringStrategy,
   ICommand,
   IIncrementalHintsFactory,
-  ILabel,
   IList,
   IModelItem,
   INode,
   LabelPlacements,
   LabelSideReferences,
-  LayoutGraphAdapter,
   LayoutMode,
   License,
   PreferredPlacementDescriptor,
-  TemplateNodeStyle
+  TemplateNodeStyle,
+  TreeBuilder
 } from 'yfiles'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -57,18 +57,22 @@ import loadJson from '../../resources/load-json.js'
 import { SchemaComponent } from './SchemaComponent.js'
 import samples from './samples.js'
 
+const samplesComboBox = document.getElementById('samplesComboBox')
+
 /** @type {HierarchicLayout} */
-let layout = null
+let layout
+/** @type {HierarchicLayoutData} */
+let layoutData
 /** @type {boolean} */
 let layouting = false
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 /** @type {SchemaComponent} */
-let schemaComponent = null
+let schemaComponent
 
 /** @type {IList.<INode>} */
-let existingNodes = null
+let existingNodes
 
 /**
  * Shows building a graph from business data with class
@@ -91,27 +95,11 @@ function run(licenseData) {
     buildGraphFromData(true)
   })
 
-  const graph = graphComponent.graph
-
   // configure the input mode
   graphComponent.inputMode = new GraphViewerInputMode()
 
-  // configure label placement
-  const preferredPlacementDescriptor = new PreferredPlacementDescriptor({
-    sideOfEdge: LabelPlacements.RIGHT_OF_EDGE,
-    sideReference: LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH,
-    distanceToEdge: 5
-  })
-  preferredPlacementDescriptor.freeze()
-  graph.mapperRegistry.createConstantMapper(
-    ILabel.$class,
-    PreferredPlacementDescriptor.$class,
-    LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-    preferredPlacementDescriptor
-  )
-
-  // create a layout
-  layout = createLayout()
+  // initialize the layout algorithm used in this demo
+  initializeLayout()
 
   initializeSamplesComboBox()
 
@@ -135,23 +123,26 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
 
-  bindAction("button[data-command='BuildGraph']", () => {
-    // noinspection JSIgnoredPromiseFromCall
-    buildGraphFromData(false)
+  bindAction("button[data-command='BuildGraph']", async () => {
+    samplesComboBox.disabled = true
+    await buildGraphFromData(false)
+    samplesComboBox.disabled = false
   })
-  bindAction("button[data-command='UpdateGraph']", () => {
-    // noinspection JSIgnoredPromiseFromCall
-    buildGraphFromData(true)
+  bindAction("button[data-command='UpdateGraph']", async () => {
+    samplesComboBox.disabled = true
+    await buildGraphFromData(true)
+    samplesComboBox.disabled = false
   })
-  bindChangeListener("select[data-command='SetSampleData']", () => {
-    const i = document.getElementById('samplesComboBox').selectedIndex
+  bindChangeListener("select[data-command='SetSampleData']", async () => {
+    const i = samplesComboBox.selectedIndex
     if (samples && samples[i]) {
-      // noinspection JSIgnoredPromiseFromCall
-      loadSample(samples[i])
-      // noinspection JSIgnoredPromiseFromCall
-      buildGraphFromData(false)
+      samplesComboBox.disabled = true
+      await loadSample(samples[i])
+      await buildGraphFromData(true)
+      samplesComboBox.disabled = false
     }
   })
+  addNavigationButtons(samplesComboBox)
 }
 
 /**
@@ -204,20 +195,13 @@ async function applyLayout(update) {
     layout.layoutMode = LayoutMode.FROM_SCRATCH
   }
 
-  const layoutData = new HierarchicLayoutData({
-    incrementalHints: (item, hintsFactory) => {
-      if (INode.isInstance(item) && !existingNodes.includes(item)) {
-        return hintsFactory.createLayerIncrementallyHint(item)
-      }
-      return null
-    }
-  })
   layouting = true
   try {
     await graphComponent.morphLayout(layout, '1s', layoutData)
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reportError = window.reportError
+    if (typeof reportError === 'function') {
+      reportError(error)
     } else {
       throw error
     }
@@ -244,7 +228,6 @@ async function loadSample(sample) {
  * Initializes the samples combobox with the loaded sample data
  */
 function initializeSamplesComboBox() {
-  const samplesComboBox = document.getElementById('samplesComboBox')
   for (let i = 0; i < samples.length; i++) {
     const option = document.createElement('option')
     option.textContent = samples[i].name
@@ -254,16 +237,33 @@ function initializeSamplesComboBox() {
 }
 
 /**
- * Creates and configures a hierarchic layout.
- * @returns {!HierarchicLayout}
+ * Configures the demo's layout algorithm as well as suitable layout data.
  */
-function createLayout() {
-  const hierarchicLayout = new HierarchicLayout()
-  hierarchicLayout.orthogonalRouting = true
-  hierarchicLayout.integratedEdgeLabeling = true
-  hierarchicLayout.fromScratchLayeringStrategy =
-    HierarchicLayoutLayeringStrategy.HIERARCHICAL_TOPMOST
-  return hierarchicLayout
+function initializeLayout() {
+  // initialize layout algorithm
+  layout = new HierarchicLayout()
+  layout.orthogonalRouting = true
+  layout.integratedEdgeLabeling = true
+  layout.fromScratchLayeringStrategy = HierarchicLayoutLayeringStrategy.HIERARCHICAL_TOPMOST
+
+  // initialize layout data
+  // configure label placement
+  const preferredPlacementDescriptor = new PreferredPlacementDescriptor({
+    sideOfEdge: LabelPlacements.RIGHT_OF_EDGE,
+    sideReference: LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH,
+    distanceToEdge: 5
+  })
+  preferredPlacementDescriptor.freeze()
+
+  layoutData = new HierarchicLayoutData({
+    incrementalHints: (item, hintsFactory) => {
+      if (item instanceof INode && !existingNodes.includes(item)) {
+        return hintsFactory.createLayerIncrementallyHint(item)
+      }
+      return null
+    },
+    edgeLabelPreferredPlacement: preferredPlacementDescriptor
+  })
 }
 
 // run the demo

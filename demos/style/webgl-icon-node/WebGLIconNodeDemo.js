@@ -31,7 +31,8 @@ import {
   addOptions,
   bindCommand,
   checkLicense,
-  showApp
+  showApp,
+  showLoadingIndicator
 } from '../../resources/demo-app.js'
 import {
   Color,
@@ -55,17 +56,17 @@ import {
 } from 'yfiles'
 import loadJson from '../../resources/load-json.js'
 import { createFontAwesomeIcon, createUrlIcon } from '../../utils/IconCreation.js'
-import { webGl2Supported } from '../../utils/Workarounds.js'
+import { isWebGl2Supported } from '../../utils/Workarounds.js'
 
 const iconSize = new Size(128, 128)
 
 // Some selected colors to colorize the icons
 const iconColors = [
-  Color.from('#D00000'),
-  Color.from('#FFBA08'),
-  Color.from('#3F88C5'),
-  Color.from('#032B43'),
-  Color.from('#136F63')
+  Color.from('#DB3A34'),
+  Color.from('#F0C808'),
+  Color.from('#4281A4'),
+  Color.from('#242265'),
+  Color.from('#56926E')
 ]
 
 // the font awesome classes used in this sample
@@ -87,7 +88,7 @@ const faClasses = [
  * @param {!object} licenseData
  */
 function run(licenseData) {
-  if (!webGl2Supported) {
+  if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support').removeAttribute('style')
     showApp(null)
@@ -316,7 +317,7 @@ function configureInteraction(graphComponent) {
   // For calling WebGL2 specific methods, we use the WebGLGraphModelManager set on the GraphComponent.
   const gmm = graphComponent.graphModelManager
 
-  let graphEditorInputMode = new GraphEditorInputMode({
+  const graphEditorInputMode = new GraphEditorInputMode({
     allowCreateEdge: false,
     allowGroupingOperations: true,
     marqueeSelectableItems: GraphItemTypes.NODE | GraphItemTypes.BEND,
@@ -371,26 +372,14 @@ function initializeUI(graphComponent) {
         await createSmallSampleGraph(graphComponent)
         break
       case 'Large graph':
-        await setLoadingIndicatorVisibility(true, 'Creating 100.000 Font Awesome icons')
+        await showLoadingIndicator(true, 'Creating 100.000 Font Awesome icons')
         await createLargeSampleGraph(graphComponent)
-        await setLoadingIndicatorVisibility(false)
+        await showLoadingIndicator(false)
         break
     }
     graphComponent.fitGraphBounds()
   })
   addOptions(sampleSelectElement, 'Different icon types', 'Large graph')
-}
-
-/**
- * Displays or hides the loading indicator.
- * @param {boolean} visible
- * @param {!''} message
- */
-async function setLoadingIndicatorVisibility(visible, message = '') {
-  const loadingIndicator = document.querySelector('#loadingIndicator')
-  loadingIndicator.style.display = visible ? 'block' : 'none'
-  loadingIndicator.innerText = message
-  return new Promise(resolve => setTimeout(resolve, 0))
 }
 
 loadJson().then(checkLicense).then(run)

@@ -65,6 +65,8 @@ export default class PropertiesView {
     const editButton = document.createElement('button')
     editButton.setAttribute('class', 'demo-edit-name-button')
     editButton.setAttribute('title', 'Click to Edit')
+    editButton.style.position = 'absolute'
+    editButton.style.right = '0'
     heading.appendChild(editButton)
     heading.appendChild(createElement('div', employee.position))
 

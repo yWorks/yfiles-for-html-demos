@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
@@ -41,12 +40,12 @@ import {
   NodeReshapeHandleProvider,
   Rect
 } from 'yfiles'
-
-import { DemoNodeStyle } from '../../resources/demo-styles'
 import { checkLicense, showApp } from '../../resources/demo-app'
 import LimitingRectangleDescriptor from './LimitingRectangleDescriptor'
 import PurpleNodeReshapeHandleProvider from './PurpleNodeReshapeHandleProvider'
 import loadJson from '../../resources/load-json'
+import type { ColorSetName } from '../../resources/basic-demo-styles'
+import { createDemoNodeLabelStyle, DemoNodeStyle } from '../../resources/demo-styles'
 
 /**
  * Registers a callback function as a decorator that provides a customized
@@ -62,17 +61,17 @@ function registerReshapeHandleProvider(graph: IGraph, boundaryRectangle: Rect): 
 
   // deactivate reshape handling for the red node
   nodeDecorator.reshapeHandleProviderDecorator.hideImplementation(
-    (node: any): boolean => node.tag === 'firebrick'
+    (node: any): boolean => node.tag === 'red'
   )
 
   // return customized reshape handle provider for the orange, blue and green node
   nodeDecorator.reshapeHandleProviderDecorator.setFactory(
     (node: any): boolean =>
       node.tag === 'orange' ||
-      node.tag === 'royalblue' ||
+      node.tag === 'blue' ||
       node.tag === 'green' ||
       node.tag === 'purple' ||
-      node.tag === 'gray',
+      node.tag === 'darkblue',
     (node: any): NodeReshapeHandleProvider => {
       // Obtain the tag from the node
       const nodeTag = node.tag
@@ -89,7 +88,7 @@ function registerReshapeHandleProvider(graph: IGraph, boundaryRectangle: Rect): 
         // Show only handles at the corners and always use aspect ratio resizing
         provider.handlePositions = HandlePositions.CORNERS
         provider.ratioReshapeRecognizer = EventRecognizers.ALWAYS
-      } else if (nodeTag === 'royalblue') {
+      } else if (nodeTag === 'blue') {
         // Restrict the node bounds to the boundaryRectangle and
         // show only handles at the corners and always use aspect ratio resizing
         provider.maximumBoundingArea = boundaryRectangle
@@ -97,7 +96,7 @@ function registerReshapeHandleProvider(graph: IGraph, boundaryRectangle: Rect): 
         provider.ratioReshapeRecognizer = EventRecognizers.ALWAYS
       } else if (nodeTag === 'purple') {
         provider = new PurpleNodeReshapeHandleProvider(node, reshapeHandler)
-      } else if (nodeTag === 'gray') {
+      } else if (nodeTag === 'darkblue') {
         provider.handlePositions = HandlePositions.SOUTH_EAST
         provider.centerReshapeRecognizer = EventRecognizers.ALWAYS
       }
@@ -143,19 +142,19 @@ function run(licenseData: any): void {
  * @param graph The input graph
  */
 function createSampleGraph(graph: IGraph): void {
-  createNode(graph, 80, 100, 140, 30, 'firebrick', 'whitesmoke', 'Fixed Size')
-  createNode(graph, 300, 100, 140, 30, 'green', 'whitesmoke', 'Keep Aspect Ratio')
-  createNode(graph, 80, 250, 140, 50, 'gray', 'whitesmoke', 'Keep Center')
-  createNode(graph, 300, 250, 140, 50, 'purple', 'whitesmoke', 'Keep Aspect Ratio\nat corners')
-  createNode(graph, 80, 410, 140, 30, 'orange', 'black', 'Limited to Rectangle')
+  createNode(graph, 80, 100, 140, 30, 'demo-red', 'red', 'Fixed Size')
+  createNode(graph, 300, 100, 140, 30, 'demo-green', 'green', 'Keep Aspect Ratio')
+  createNode(graph, 80, 250, 140, 50, 'demo-blue', 'darkblue', 'Keep Center')
+  createNode(graph, 300, 250, 140, 50, 'demo-purple', 'purple', 'Keep Aspect Ratio\nat corners')
+  createNode(graph, 80, 410, 140, 30, 'demo-orange', 'orange', 'Limited to Rectangle')
   createNode(
     graph,
     300,
     400,
     140,
     50,
-    'royalblue',
-    'whitesmoke',
+    'demo-lightblue',
+    'blue',
     'Limited to Rectangle\nand Keep Aspect Ratio'
   )
 
@@ -171,7 +170,7 @@ function createSampleGraph(graph: IGraph): void {
  * @param w The node's width
  * @param h The node's height
  * @param cssClass The given css class
- * @param textColor The color of the text
+ * @param tag The tag to identify the reshape handler
  * @param labelText The nodes label's text
  */
 function createNode(
@@ -180,22 +179,20 @@ function createNode(
   y: number,
   w: number,
   h: number,
-  cssClass: string,
-  textColor: string,
+  cssClass: ColorSetName,
+  tag: string,
   labelText: string
 ): void {
-  const textLabelStyle = new DefaultLabelStyle({
-    textFill: textColor
+  const node = graph.createNode({
+    layout: new Rect(x, y, w, h),
+    style: new DemoNodeStyle(cssClass),
+    tag: tag
   })
 
-  const nodeStyle = new DemoNodeStyle()
-  nodeStyle.cssClass = cssClass
-
-  const node = graph.createNode(new Rect(x, y, w, h), nodeStyle, cssClass)
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: textLabelStyle
+    style: createDemoNodeLabelStyle(cssClass)
   })
 }
 

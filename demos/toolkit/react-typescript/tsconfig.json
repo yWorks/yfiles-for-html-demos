@@ -14,8 +14,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "noFallthroughCasesInSwitch": true,
-    "types": ["yfiles"]
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/assets/assets.d.ts"]
+  "include": ["src/**/*.ts", "src/assets/assets.d.ts", "src/**/*.tsx"]
 }

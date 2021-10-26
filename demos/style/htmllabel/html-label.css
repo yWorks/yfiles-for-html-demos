@@ -52,27 +52,27 @@ a {
 }
 
 .executive {
-  border-color: #dc143c;
+  border-color: #ab2346;
 }
 
 .production {
-  border-color: #0077cc;
+  border-color: #242265;
 }
 
 .sales {
-  border-color: #26a65b;
+  border-color: #76b041;
 }
 
 .engineering {
-  border-color: #878787;
+  border-color: #c1c1c1;
 }
 
 .marketing {
-  border-color: #80417f;
+  border-color: #a367dc;
 }
 
 .accounting {
-  border-color: #e68300;
+  border-color: #ff6c00;
 }
 
 .subordinates {

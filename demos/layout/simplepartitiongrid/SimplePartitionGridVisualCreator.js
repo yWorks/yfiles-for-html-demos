@@ -63,7 +63,7 @@ export default class SimplePartitionGridVisualCreator extends BaseClass(IVisualC
         rect.setAttribute('width', `${w}`)
         rect.setAttribute('height', `${h}`)
         rect.setAttribute('stroke', 'white')
-        rect.setAttribute('fill', 'lightsteelblue')
+        rect.setAttribute('fill', '#DAD5C1')
         container.appendChild(rect)
       }
     }

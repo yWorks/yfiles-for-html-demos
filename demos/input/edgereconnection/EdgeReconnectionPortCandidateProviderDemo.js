@@ -42,7 +42,7 @@ import {
   ShapeNodeStyle
 } from 'yfiles'
 
-import { DemoNodeStyle, DemoEdgeStyle } from '../../resources/demo-styles.js'
+import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
 import { checkLicense, showApp } from '../../resources/demo-app.js'
 import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider.js'
 import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider.js'
@@ -66,11 +66,11 @@ function registerEdgePortCandidateProvider(graph) {
     // Check if it is a known tag and choose the respective implementation
     if (typeof edgeTag !== 'string') {
       return null
-    } else if (edgeTag === 'firebrick') {
+    } else if (edgeTag === 'red') {
       return new RedEdgePortCandidateProvider(edge)
     } else if (edgeTag === 'orange') {
       return new OrangeEdgePortCandidateProvider(edge)
-    } else if (edgeTag === 'royalblue') {
+    } else if (edgeTag === 'blue') {
       return new BlueEdgePortCandidateProvider()
     } else if (edgeTag === 'green') {
       return new GreenEdgePortCandidateProvider()
@@ -132,12 +132,12 @@ function createSampleGraph(graphComponent) {
       shape: 'ellipse'
     })
   )
-  createSubgraph(graph, 'firebrick', 0)
-  createSubgraph(graph, 'orange', 200)
-  createSubgraph(graph, 'green', 600)
+  createSubgraph(graph, 'demo-red', 'red', 0)
+  createSubgraph(graph, 'demo-orange', 'orange', 200)
+  createSubgraph(graph, 'demo-green', 'green', 600)
 
   // the blue nodes have some additional ports besides the ones used by the edge
-  const nodes = createSubgraph(graph, 'royalblue', 400)
+  const nodes = createSubgraph(graph, 'demo-lightblue', 'blue', 400)
   graph.addPort(
     nodes[0],
     FreeNodePortLocationModel.INSTANCE.createParameterForRatios(new Point(1.0, 0.2)),
@@ -165,23 +165,21 @@ function createSampleGraph(graphComponent) {
 /**
  * Creates the sample graph of the given css class for different colored graphs.
  * @param {!IGraph} graph The given graph
- * @param {!string} cssClass The given cssClass
+ * @param {!ColorSetName} cssClass The given cssClass
+ * @param {!string} tag
  * @param {number} yOffset An y-offset
  * @returns {!Array.<INode>}
  */
-function createSubgraph(graph, cssClass, yOffset) {
-  const nodeStyle = new DemoNodeStyle()
-  nodeStyle.cssClass = cssClass
+function createSubgraph(graph, cssClass, tag, yOffset) {
+  const nodeStyle = new DemoNodeStyle(cssClass)
 
-  const n1 = graph.createNode(new Rect(100, 100 + yOffset, 60, 60), nodeStyle, cssClass)
-  const n2 = graph.createNode(new Rect(500, 100 + yOffset, 60, 60), nodeStyle, cssClass)
-  const n3 = graph.createNode(new Rect(300, 160 + yOffset, 60, 60), nodeStyle, cssClass)
+  const n1 = graph.createNode(new Rect(100, 100 + yOffset, 60, 60), nodeStyle, tag)
+  const n2 = graph.createNode(new Rect(500, 100 + yOffset, 60, 60), nodeStyle, tag)
+  const n3 = graph.createNode(new Rect(300, 160 + yOffset, 60, 60), nodeStyle, tag)
 
-  const edgeStyle = new DemoEdgeStyle()
-  edgeStyle.cssClass = cssClass
+  const edgeStyle = new DemoEdgeStyle(cssClass)
   edgeStyle.showTargetArrows = false
-
-  graph.createEdge(n1, n2, edgeStyle, cssClass)
+  graph.createEdge(n1, n2, edgeStyle, tag)
   return [n1, n2, n3]
 }
 

@@ -29,10 +29,10 @@
 import {
   HandleInputMode,
   HandlePositions,
+  IHandle,
   INodeHitTester,
   IReshapeHandleProvider,
-  Point,
-  IHandle
+  Point
 } from 'yfiles'
 import { TimeHandle } from './TimeHandle.js'
 

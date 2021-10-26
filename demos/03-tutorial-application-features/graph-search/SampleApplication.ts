@@ -28,23 +28,24 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Arrow,
-  DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   GraphComponent,
   ICommand,
   IGraph,
   ILabel,
   INode,
-  InteriorStretchLabelModel,
+  InteriorLabelModel,
   License,
   NodeStyleDecorationInstaller,
-  PolylineEdgeStyle,
   Rect,
-  ShapeNodeStyle
+  ShapeNodeStyle,
+  Size
 } from 'yfiles'
 
 import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
 
 /**
  * Application Features - Graph Search
@@ -87,8 +88,8 @@ function initSearchHighlightingStyle(graph: IGraph): void {
   const searchHighlightStyle = new NodeStyleDecorationInstaller({
     // we choose a shape node style
     nodeStyle: new ShapeNodeStyle({
-      shape: 'rectangle',
-      stroke: '3px rgb(104, 176, 227)',
+      shape: 'round-rectangle',
+      stroke: '3px #0B7189',
       fill: 'transparent'
     }),
     // with a margin for the decoration
@@ -130,32 +131,22 @@ function matches(node: INode, text: string): boolean {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
+ *
  * @param graph The graph.
  */
 function initTutorialDefaults(graph: IGraph): void {
-  // configure the styles of the nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'darkorange'
-  })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    textSize: 12,
-    horizontalTextAlignment: 'center',
-    verticalTextAlignment: 'center',
-    wrapping: 'word'
-  })
-  graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure the style of the edges
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: 'rgb(51,102,153)',
-    targetArrow: new Arrow({
-      type: 'default',
-      stroke: 'rgb(51,102,153)',
-      fill: 'rgb(51,102,153)'
-    })
-  })
+  // set sizes and locations specific for this tutorial
+  graph.nodeDefaults.size = new Size(40, 40)
+
+  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**
@@ -210,7 +201,7 @@ function createGraph(graph: IGraph): void {
   })
   const node8 = graph.createNode({
     layout: new Rect(343, 530, 70, 40),
-    labels: ['Science Fiction']
+    labels: ['Science\nFiction']
   })
   const node9 = graph.createNode({
     layout: new Rect(137, 503, 70, 40),
@@ -218,11 +209,11 @@ function createGraph(graph: IGraph): void {
   })
   const node10 = graph.createNode({
     layout: new Rect(201, 30, 100, 40),
-    labels: ['Cops and Robbers']
+    labels: ['Cops and\nRobbers']
   })
   const node11 = graph.createNode({
     layout: new Rect(422, 85, 90, 40),
-    labels: ['The Settlers of Catan']
+    labels: ['The Settlers\nof Catan']
   })
   const node12 = graph.createNode({
     layout: new Rect(341, 0, 70, 40),

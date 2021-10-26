@@ -66,7 +66,10 @@ import {
   YNumber,
   YPoint,
   YString,
-  SimplexNodePlacer
+  SimplexNodePlacer,
+  List,
+  HashMap,
+  MapEntry
 } from 'yfiles'
 
 import LayoutConfiguration, {
@@ -269,14 +272,6 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     layout.backLoopRoutingForSelfLoops = this.backloopRoutingForSelfLoopsItem
     layout.maximumDuration = this.maximumDurationItem * 1000
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-
     if (this.gridEnabledItem) {
       layout.gridSpacing = this.gridSpacingItem
     }
@@ -358,19 +353,25 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     }
 
     if (this.subComponentsItem) {
+      // layout all siblings with label 'TL' separately with tree layout
       const treeLayout = new TreeLayout()
       treeLayout.defaultNodePlacer = new LeftRightNodePlacer()
-      layoutData.subComponents.add(treeLayout).delegate = node =>
-        node.labels.size > 0 && node.labels.first().text === 'TL'
+      for (const listOfNodes of this.findSubComponents(graph, 'TL')) {
+        layoutData.subComponents.add(treeLayout).items = listOfNodes
+      }
+      // layout all siblings with label 'HL' separately with hierarchical layout
       const hierarchicLayout = new HierarchicLayout()
       hierarchicLayout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
-      layoutData.subComponents.add(hierarchicLayout).delegate = node =>
-        node.labels.size > 0 && node.labels.first().text === 'HL'
+      for (const listOfNodes of this.findSubComponents(graph, 'HL')) {
+        layoutData.subComponents.add(hierarchicLayout).items = listOfNodes
+      }
+      // layout all siblings with label 'OL' separately with organic layout
       const organicLayout = new OrganicLayout()
       organicLayout.preferredEdgeLength = 100
       organicLayout.deterministic = true
-      layoutData.subComponents.add(organicLayout).delegate = node =>
-        node.labels.size > 0 && node.labels.first().text === 'OL'
+      for (const listOfNodes of this.findSubComponents(graph, 'OL')) {
+        layoutData.subComponents.add(organicLayout).items = listOfNodes
+      }
     }
 
     if (this.highlightCriticalPath) {
@@ -416,7 +417,15 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
       })
     }
 
-    return layoutData
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
   },
 
   getBusEdges: function (graph, node, allBusNodes, edges) {
@@ -471,6 +480,25 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     }
 
     return finalBusEdges
+  },
+
+  /**
+   * Determines sub-components by label text and group membership.
+   * This is necessary because {@link HierarchicLayout} does not support sub-components with nodes
+   * that belong to different parent groups.
+   */
+  findSubComponents(graph, labelText) {
+    const nodeToComponent = new HashMap()
+    for (const node of graph.nodes) {
+      if (node.labels.size > 0 && node.labels.first().text === labelText) {
+        const parent = graph.getParent(node)
+        if (!nodeToComponent.has(parent)) {
+          nodeToComponent.add(new MapEntry(parent, new List()))
+        }
+        nodeToComponent.get(parent).add(node)
+      }
+    }
+    return nodeToComponent.values
   },
 
   /** @type {boolean} */

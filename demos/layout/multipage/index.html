@@ -41,68 +41,7 @@
 
   <script src="../../resources/filesystem-warning.js"></script>
 
-  <script type="text/yfiles-template">
-    <g id="NormalNodeTemplate">
-      <rect fill="#99CCFF" stroke="#99CCFF" stroke-width="1" rx="2" ry="2" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
-      <text data-content="{TemplateBinding item, Converter=multipage.labelConverter}"
-          transform="{TemplateBinding width, Converter=multipage.transformConverter}"
-          style="font-size:10px; font-family:Arial, sans-serif; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
-    </g>
-    <g id="ConnectorNodeTemplate">
-      <rect fill="#FF8C00" stroke="#FF8C00" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
-      <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
-      <text data-content="{TemplateBinding item, Converter=multipage.labelConverter}"
-          transform="{TemplateBinding width, Converter=multipage.transformConverter}"
-          style="font-size:10px; font-family:Arial, sans-serif; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
-      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-    </g>
-    <g id="ProxyNodeTemplate">
-      <rect fill="#99CC33" stroke="#99CC33" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
-      <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
-      <text data-content="{TemplateBinding item, Converter=multipage.labelConverter}"
-          transform="{TemplateBinding width, Converter=multipage.transformConverter}"
-          style="font-size:10px; font-family:Arial, sans-serif; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
-      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-    </g>
-    <g id="ProxyReferenceNodeTemplate">
-      <rect fill="#F23802" stroke="#F23802" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
-      <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
-      <text data-content="{TemplateBinding item, Converter=multipage.labelConverter}"
-          transform="{TemplateBinding width, Converter=multipage.transformConverter}"
-          style="font-size:10px; font-family:Arial, sans-serif; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
-      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-    </g>
-  </script>
   <style>
-    #loadingIndicator {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      height: 200px;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-      margin-top: -100px;
-      background-color: rgba(0, 0, 0, 0.6);
-      color: #FFFFFF;
-      padding-top: 80px;
-      text-align: center;
-    }
-
-    .hoverable {
-      fill-opacity: 0;
-    }
-
-    .yfiles-highlighted .hoverable {
-      fill-opacity: 0.5;
-    }
-
     .option-input {
       width: 100%;
     }
@@ -163,10 +102,11 @@
     <h2>Auxiliary Nodes</h2>
 
     <p>
-      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="40">
+      <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
         <g>
-          <rect fill="#FF8C00" stroke="none" rx="5" ry="5" x="10%" width="80%" height="40"></rect>
-          <text x="50%" y="50%" text-anchor="middle" dy=".3em">Connector</text>
+          <rect fill="#ff6c00" stroke="none" rx="3.5" ry="3.5" x="10%" width="80%" height="40"></rect>
+          <rect fill="#ffc398" fill-opacity="1" x="103" y="11" ry="3" width="62" rx="3" height="17"></rect>
+          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#662b00">Connector</text>
         </g>
       </svg>
       The layout algorithm replaces edges between nodes on different pages by so-called connector nodes. More precisely,
@@ -175,10 +115,11 @@
       as node v. Click on a connector node to switch to the page graph that holds the related element.
     </p>
     <p>
-      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="40">
+      <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
         <g>
-          <rect fill="#99CC33" stroke="none" rx="5" ry="5" x="10%" width="80%" height="40"></rect>
-          <text x="50%" y="50%" text-anchor="middle" dy=".3em">Proxy</text>
+          <rect fill="#76B041" stroke="none" rx="3.5" ry="3.5" x="10%" width="80%" height="40"></rect>
+          <rect fill="#c7deb2" fill-opacity="1" x="115" y="11" ry="3" width="40" rx="3" height="17"></rect>
+          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#324820">Proxy</text>
         </g>
       </svg>
       The layout algorithm may also replicate a node as one or more proxy nodes, if the original node and its direct
@@ -186,10 +127,11 @@
       proxy node to switch to the page graph that holds the replicated node.
     </p>
     <p>
-      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="40">
+      <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
         <g>
-          <rect fill="#F23802" stroke="none" rx="5" ry="5" x="10%" width="80%" height="40"></rect>
-          <text x="50%" y="50%" text-anchor="middle" dy=".3em">Proxy Reference</text>
+          <rect fill="#AB2346" stroke="none" rx="3.5" ry="3.5" x="10%" width="80%" height="40"></rect>
+          <rect fill="#DCA6B4" fill-opacity="1" x="88" y="11" ry="3" width="93" rx="3" height="17"></rect>
+          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#461622">Proxy Reference</text>
         </g>
       </svg>
       For each proxy node the layout algorithm creates a so-called proxy reference node in the page graph that holds the

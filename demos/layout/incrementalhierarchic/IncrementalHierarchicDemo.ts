@@ -46,7 +46,6 @@ import {
   Mapper,
   MinimumNodeSizeStage,
   PortConstraint,
-  PortConstraintKeys,
   Size,
   IInputMode
 } from 'yfiles'
@@ -251,7 +250,9 @@ async function updateLayout() {
   const layoutData = new HierarchicLayoutData({
     incrementalHints: hintMapper,
     givenLayersLayererIds: layerMapper,
-    layerIndices: layerMapper
+    layerIndices: layerMapper,
+    sourcePortConstraints: sourcePortConstraints,
+    targetPortConstraints: targetPortConstraints
   })
 
   // apply the layout
@@ -306,18 +307,13 @@ function initializeGraph(): void {
   graph.nodeDefaults.size = new Size(60, 30)
 
   // set some nice defaults
-  initDemoStyles(graph)
+  initDemoStyles(graph, 'demo-palette-21')
 
-  // register mappers for the layers
-  const mapperRegistry = graph.mapperRegistry
-  layerMapper = mapperRegistry.createMapper(GivenLayersLayerer.LAYER_ID_DP_KEY)
+  // create mappers for the layers
+  layerMapper = new Mapper<INode, number>()
   // and the port constraints
-  sourcePortConstraints = mapperRegistry.createMapper(
-    PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY
-  )
-  targetPortConstraints = mapperRegistry.createMapper(
-    PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY
-  )
+  sourcePortConstraints = new Mapper<IEdge, PortConstraint>()
+  targetPortConstraints = new Mapper<IEdge, PortConstraint>()
 
   // register a custom PositionHandler for the nodes.
   // this enables interactive layer reassignment with layer preview

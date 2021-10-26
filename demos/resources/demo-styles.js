@@ -34,10 +34,10 @@ import yfiles, {
   CanvasComponent,
   Class,
   CollapsibleNodeStyleDecoratorRenderer,
+  DefaultEdgePathCropper,
   DefaultLabelStyle,
   DropInputMode,
   EdgeStyleBase,
-  Fill,
   GeneralPath,
   GraphComponent,
   GraphMLAttribute,
@@ -69,19 +69,64 @@ import yfiles, {
   Point,
   Rect,
   Size,
-  SolidColorFill,
   SvgVisual,
-  TextWrapping,
   TypeAttribute,
   Visual,
   YBoolean,
   YString
 } from 'yfiles'
+import {
+  createBasicEdgeLabelStyle,
+  createBasicNodeLabelStyle,
+  isColorSetName
+} from './basic-demo-styles.js'
 
+/**
+ * @typedef {Object} CssClassNames
+ * @property {ColorSetName} [node]
+ * @property {ColorSetName} [nodeLabel]
+ * @property {ColorSetName} [edge]
+ * @property {ColorSetName} [edgeLabel]
+ * @property {ColorSetName} [group]
+ * @property {ColorSetName} [groupLabel]
+ */
+
+/**
+ * @typedef {*} ColorSetName
+ */
+
+/**
+ * Creates a new label style whose colors match the given well-known CSS rule.
+ * @param {!(string|ColorSetName)} [cssClass]
+ * @returns {!DefaultLabelStyle}
+ */
+export function createDemoNodeLabelStyle(cssClass) {
+  return cssClass && isColorSetName(cssClass)
+    ? createBasicNodeLabelStyle(cssClass)
+    : createBasicNodeLabelStyle()
+}
+
+/**
+ * Creates a new label style whose colors match the given well-known CSS rule.
+ * @param {!(string|ColorSetName)} [cssClass]
+ * @returns {!DefaultLabelStyle}
+ */
+export function createDemoEdgeLabelStyle(cssClass) {
+  return cssClass && isColorSetName(cssClass)
+    ? createBasicEdgeLabelStyle(cssClass)
+    : createBasicEdgeLabelStyle()
+}
+
+/**
+ * A custom demo node style whose colors match the given well-known CSS rule.
+ */
 export class DemoNodeStyle extends NodeStyleBase {
-  constructor() {
+  /**
+   * @param {!(string|ColorSetName)} [cssClass]
+   */
+  constructor(cssClass) {
     super()
-    this.cssClass = ''
+    this.cssClass = cssClass
   }
 
   /**
@@ -93,17 +138,19 @@ export class DemoNodeStyle extends NodeStyleBase {
   createVisual(renderContext, node) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const { x, y, width, height } = node.layout
-    const nodeRounding = '2'
+    const nodeRounding = '3.5'
+
     rect.width.baseVal.value = width
     rect.height.baseVal.value = height
     rect.setAttribute('rx', nodeRounding)
     rect.setAttribute('ry', nodeRounding)
-    rect.setAttribute('fill', '#FF8C00')
-    rect.setAttribute('stroke', '#FFF')
-    rect.setAttribute('stroke-width', '1px')
+    rect.setAttribute('fill', '#FF6C00')
+    rect.setAttribute('stroke', '#662b00')
+    rect.setAttribute('stroke-width', '1.5px')
 
     if (this.cssClass) {
-      rect.setAttribute('class', this.cssClass)
+      const attribute = isColorSetName(this.cssClass) ? this.cssClass + '-node' : this.cssClass
+      rect.setAttribute('class', attribute)
     }
 
     rect['data-renderDataCache'] = {
@@ -152,7 +199,8 @@ export class DemoNodeStyle extends NodeStyleBase {
 
     if (cache.cssClass !== this.cssClass) {
       if (this.cssClass) {
-        rect.setAttribute('class', this.cssClass)
+        const attribute = isColorSetName(this.cssClass) ? this.cssClass + '-node' : this.cssClass
+        rect.setAttribute('class', attribute)
       } else {
         rect.removeAttribute('class')
       }
@@ -170,15 +218,21 @@ const BORDER_THICKNESS = 4
 const BORDER_THICKNESS2 = BORDER_THICKNESS + BORDER_THICKNESS
 const HEADER_THICKNESS = 22
 
+/**
+ * A custom demo group style whose colors match the given well-known CSS rule.
+ */
 export class DemoGroupStyle extends NodeStyleBase {
-  constructor() {
+  /**
+   * @param {!(string|ColorSetName)} [cssClass]
+   */
+  constructor(cssClass) {
     super()
-    this.cssClass = ''
+    this.cssClass = cssClass
     this.isCollapsible = false
     this.solidHitTest = false
-    this.borderColor = '#68B0E3'
-    this.folderFrontColor = '#68B0E3'
-    this.folderBackColor = '#3C679B'
+    this.borderColor = '#0B7189'
+    this.folderFrontColor = '#9CC5CF'
+    this.folderBackColor = '#0B7189'
   }
 
   /**
@@ -224,6 +278,37 @@ export class DemoGroupStyle extends NodeStyleBase {
   }
 
   /**
+   * @param {number} width
+   * @param {number} height
+   * @param {number} rounding
+   * @returns {!string}
+   */
+  static createFolderPath(width, height, rounding) {
+    // L, R, T, B is for left, right, top and bottom
+    const insetLRB = 0.5
+    const insetT = 2
+    const radiusB = rounding - insetLRB
+    const arcB = `a ${radiusB} ${radiusB} 0 0 0`
+    const radiusT = rounding - insetT
+    const arcT = ` a ${radiusT} ${radiusT} 0 0 0`
+
+    return `
+      M ${insetLRB + radiusT},17
+      ${arcT} ${-radiusT} ${radiusT}
+      L ${insetLRB},${height - rounding}
+      ${arcB} ${radiusB} ${radiusB}
+      l ${width - 2 * rounding},0
+      ${arcB} ${radiusB} ${-radiusB}
+      L ${width - insetLRB},${rounding}
+      ${arcT} ${-radiusT} ${-radiusT}
+      l ${-25 + radiusT},0
+      q -2,0 -4,3.75
+      l -4,7.5
+      q -2,3.75 -4,3.75
+      Z`
+  }
+
+  /**
    * Helper function to create a collapsed group node visual inside the given container.
    * @param {!INode} node
    * @param {!Element} container
@@ -231,19 +316,16 @@ export class DemoGroupStyle extends NodeStyleBase {
    */
   renderFolder(node, container, ctx) {
     const { x, y, width, height } = node.layout
+    const nodeRounding = 3.5
 
     const backgroundRect = document.createElementNS(SVG_NS, 'rect')
+    backgroundRect.setAttribute('rx', String(nodeRounding))
+    backgroundRect.setAttribute('ry', String(nodeRounding))
     backgroundRect.setAttribute('fill', this.folderBackColor)
-    backgroundRect.setAttribute('stroke', '#FFF')
-    backgroundRect.setAttribute('stroke-width', '1px')
     backgroundRect.width.baseVal.value = width
     backgroundRect.height.baseVal.value = height
 
-    const path = `M ${
-      width - 0.5
-    },2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,${height - 0.5} l ${
-      width - 1
-    },0 Z`
+    const path = DemoGroupStyle.createFolderPath(width, height, nodeRounding)
 
     const folderPath = document.createElementNS(SVG_NS, 'path')
     folderPath.setAttribute('d', path)
@@ -258,7 +340,10 @@ export class DemoGroupStyle extends NodeStyleBase {
     container.appendChild(expandButton.svgElement)
 
     if (this.cssClass) {
-      container.setAttribute('class', `${this.cssClass}-collapsed`)
+      const attribute = isColorSetName(this.cssClass)
+        ? `${this.cssClass}-group-collapsed`
+        : `${this.cssClass}-collapsed`
+      container.setAttribute('class', attribute)
       backgroundRect.setAttribute('class', 'folder-background')
       folderPath.setAttribute('class', 'folder-foreground')
     }
@@ -286,20 +371,16 @@ export class DemoGroupStyle extends NodeStyleBase {
       return
     }
 
-    const width = node.layout.width
-    const height = node.layout.height
+    const { width, height } = node.layout
+    const nodeRounding = 3.5
     let path, backgroundRect, folderPath
 
     if (!cache.collapsed) {
       // transition from expanded state
-      path = `M ${width - 0.5},2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,${
-        height - 0.5
-      } l ${width - 1},0 Z`
+      const path = DemoGroupStyle.createFolderPath(width, height, nodeRounding)
 
       backgroundRect = container.childNodes.item(0)
       backgroundRect.setAttribute('fill', this.folderBackColor)
-      backgroundRect.setAttribute('stroke', '#FFF')
-      backgroundRect.setAttribute('stroke-width', '1px')
 
       folderPath = document.createElementNS(SVG_NS, 'path')
       folderPath.setAttribute('d', path)
@@ -321,7 +402,10 @@ export class DemoGroupStyle extends NodeStyleBase {
       // css class
 
       if (this.cssClass) {
-        container.setAttribute('class', this.cssClass + '-collapsed')
+        const attribute = isColorSetName(this.cssClass)
+          ? `${this.cssClass}-group-collapsed`
+          : `${this.cssClass}-collapsed`
+        container.setAttribute('class', attribute)
         backgroundRect.setAttribute('class', 'folder-background')
         folderPath.setAttribute('class', 'folder-foreground')
         minus.setAttribute('class', 'folder-foreground')
@@ -339,9 +423,7 @@ export class DemoGroupStyle extends NodeStyleBase {
       backgroundRect.width.baseVal.value = width
       backgroundRect.height.baseVal.value = height
 
-      path = `M ${width - 0.5},2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,${
-        height - 0.5
-      } l ${width - 1},0 Z`
+      path = DemoGroupStyle.createFolderPath(width, height, nodeRounding)
       folderPath = container.childNodes.item(1)
       folderPath.setAttribute('d', path)
 
@@ -352,8 +434,7 @@ export class DemoGroupStyle extends NodeStyleBase {
       cache.height = height
     }
 
-    const x = node.layout.x
-    const y = node.layout.y
+    const { x, y } = node.layout
     if (cache.x !== x || cache.y !== y) {
       container.transform.baseVal.getItem(0).setTranslate(x, y)
       cache.x = x
@@ -369,13 +450,13 @@ export class DemoGroupStyle extends NodeStyleBase {
    */
   renderGroup(node, container, ctx) {
     const layout = node.layout
-    const width = layout.width
-    const height = layout.height
+    const { width, height } = node.layout
+    const nodeRounding = '3.5'
 
     const outerRect = document.createElementNS(SVG_NS, 'rect')
+    outerRect.setAttribute('rx', nodeRounding)
+    outerRect.setAttribute('ry', nodeRounding)
     outerRect.setAttribute('fill', this.borderColor)
-    outerRect.setAttribute('stroke', '#FFF')
-    outerRect.setAttribute('stroke-width', '1px')
     outerRect.width.baseVal.value = width
     outerRect.height.baseVal.value = height
 
@@ -405,7 +486,10 @@ export class DemoGroupStyle extends NodeStyleBase {
     }
 
     if (this.cssClass) {
-      container.setAttribute('class', this.cssClass + '-expanded')
+      const attribute = isColorSetName(this.cssClass)
+        ? `${this.cssClass}-group-expanded`
+        : `${this.cssClass}-expanded`
+      container.setAttribute('class', attribute)
       outerRect.setAttribute('class', 'group-border')
     }
 
@@ -462,7 +546,10 @@ export class DemoGroupStyle extends NodeStyleBase {
       buttonGroup.removeChild(buttonGroup.childNodes.item(2))
 
       if (this.cssClass) {
-        container.setAttribute('class', this.cssClass + '-expanded')
+        const attribute = isColorSetName(this.cssClass)
+          ? `${this.cssClass}-group-expanded`
+          : `${this.cssClass}-expanded`
+        container.setAttribute('class', attribute)
         backgroundRect.setAttribute('class', 'group-border')
         const minus = buttonGroup.childNodes.item(1)
         minus.setAttribute('class', 'group-border')
@@ -513,8 +600,8 @@ export class DemoGroupStyle extends NodeStyleBase {
     rect.setAttribute('fill', '#FFF')
     rect.setAttribute('width', '12')
     rect.setAttribute('height', '12')
-    rect.setAttribute('rx', '1')
-    rect.setAttribute('ry', '1')
+    rect.setAttribute('rx', '1.5')
+    rect.setAttribute('ry', '1.5')
 
     const minus = document.createElementNS(SVG_NS, 'rect')
     minus.setAttribute('width', '8')
@@ -671,10 +758,16 @@ export class DemoGroupStyle extends NodeStyleBase {
   }
 }
 
+/**
+ * A custom demo arrow style whose colors match the given well-known CSS rule.
+ */
 export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
-  constructor() {
+  /**
+   * @param {!(string|ColorSetName)} [cssClass]
+   */
+  constructor(cssClass) {
     super()
-    this.cssClass = ''
+    this.cssClass = cssClass
     this.anchor = null
     this.direction = null
     this.arrowFigure = null
@@ -757,10 +850,13 @@ export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider
 
     const path = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute('d', this.arrowFigure.createSvgPathData())
-    path.setAttribute('fill', '#336699')
+    path.setAttribute('fill', '#662b00')
 
     if (this.cssClass) {
-      path.setAttribute('class', this.cssClass)
+      const attribute = isColorSetName(this.cssClass)
+        ? `${this.cssClass}-edge-arrow`
+        : this.cssClass
+      path.setAttribute('class', attribute)
     }
 
     // Rotate arrow and move it to correct position
@@ -863,10 +959,16 @@ function detectSafariWebkit() {
   return detectSafariVersion() > -1 || !!/(CriOS|FxiOS)/.exec(window.navigator.userAgent)
 }
 
+/**
+ * A custom demo edge style whose colors match the given well-known CSS style.
+ */
 export class DemoEdgeStyle extends EdgeStyleBase {
-  constructor() {
+  /**
+   * @param {!(string|ColorSetName)} [cssClass]
+   */
+  constructor(cssClass) {
     super()
-    this.cssClass = ''
+    this.cssClass = cssClass
 
     this.hiddenArrow = new Arrow({
       type: ArrowType.NONE,
@@ -921,11 +1023,17 @@ export class DemoEdgeStyle extends EdgeStyleBase {
     const pathData = gp.size === 0 ? '' : gp.createSvgPathData()
     path.setAttribute('d', pathData)
     path.setAttribute('fill', 'none')
-    path.setAttribute('stroke', '#336699')
+    path.setAttribute('stroke', '#662b00')
+    path.setAttribute('stroke-width', '1.5px')
 
     if (this.cssClass) {
-      path.setAttribute('class', this.cssClass)
-      this.fallbackArrow.cssClass = this.cssClass + '-arrow'
+      if (isColorSetName(this.cssClass)) {
+        path.setAttribute('class', `${this.cssClass}-edge`)
+        this.fallbackArrow.cssClass = this.cssClass
+      } else {
+        path.setAttribute('class', this.cssClass)
+        this.fallbackArrow.cssClass = `${this.cssClass}-arrow`
+      }
     }
 
     if (!isBrowserWithBadMarkerSupport && this.useMarkerArrows) {
@@ -1206,13 +1314,13 @@ export class DemoEdgeStyle extends EdgeStyleBase {
 }
 
 /**
- * Manages the arrow markers as svg definitions.
+ * Manages the arrow markers as SVG definitions.
  */
 export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
   /**
-   * @param {!''} cssClass
+   * @param {!(string|ColorSetName)} [cssClass]
    */
-  constructor(cssClass = '') {
+  constructor(cssClass) {
     super()
     this.cssClass = cssClass
   }
@@ -1225,7 +1333,7 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
   createDefsElement(context) {
     const markerElement = document.createElementNS(SVG_NS, 'marker')
     markerElement.setAttribute('viewBox', '0 0 15 10')
-    markerElement.setAttribute('refX', '2')
+    markerElement.setAttribute('refX', '5')
     markerElement.setAttribute('refY', '5')
     markerElement.setAttribute('markerWidth', '7')
     markerElement.setAttribute('markerHeight', '7')
@@ -1233,10 +1341,13 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
 
     const path = document.createElementNS(SVG_NS, 'path')
     path.setAttribute('d', 'M 0 0 L 15 5 L 0 10 z')
-    path.setAttribute('fill', '#336699')
+    path.setAttribute('fill', '#662b00')
 
     if (this.cssClass) {
-      path.setAttribute('class', this.cssClass + '-arrow')
+      const attribute = isColorSetName(this.cssClass)
+        ? `${this.cssClass}-edge-arrow`
+        : `${this.cssClass}-arrow`
+      path.setAttribute('class', attribute)
     }
 
     markerElement.appendChild(path)
@@ -1267,7 +1378,7 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
 }
 
 /**
- * A custom IObstacleProvider implementation for this style.
+ * A custom {@link IObstacleProvider} implementation for {@link DemoEdgeStyle}.
  */
 export class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
   /**
@@ -1320,41 +1431,50 @@ export class DemoStyleOverviewPaintable extends GraphOverviewCanvasVisualCreator
 }
 
 /**
- * Initializes graph defaults using the demo styles
- * @param {!IGraph} graph
+ * Initializes graph defaults with the demo styles.
+ *
+ * @param {!IGraph} graph The graph on which the default styles and style-related setting are set.
+ * @param {!(CssClassNames|ColorSetName)} theme Optional CSS classes for some or all of the set demo styles.
  */
-export function initDemoStyles(graph) {
-  // set graph defaults
-  graph.nodeDefaults.style = new DemoNodeStyle()
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+export function initDemoStyles(graph, theme = {}) {
+  if (typeof theme === 'string') {
+    theme = { node: theme, edge: theme, group: theme }
+  }
 
-  const nodeLabelStyle = new DefaultLabelStyle()
-  // #5f8ac4
-  nodeLabelStyle.textFill = new SolidColorFill(50, 50, 50)
-  graph.nodeDefaults.labels.style = nodeLabelStyle
+  theme.node = theme.node || 'demo-orange'
+  theme.nodeLabel = theme.nodeLabel || theme.node
+  theme.edge = theme.edge || theme.node || 'demo-orange'
+  theme.edgeLabel = theme.edgeLabel || theme.edge
+  theme.group = theme.group || 'demo-palette-12'
+  theme.groupLabel = theme.groupLabel || theme.group
 
-  const edgeLabelStyle = new DefaultLabelStyle()
-  edgeLabelStyle.textFill = nodeLabelStyle.textFill
-  graph.edgeDefaults.labels.style = edgeLabelStyle
+  graph.nodeDefaults.style = new DemoNodeStyle(theme.node)
+  graph.nodeDefaults.labels.style = createDemoNodeLabelStyle(theme.nodeLabel)
 
-  const foldingEnabled = graph.foldingView !== null
-  const groupStyle = new DemoGroupStyle()
-  groupStyle.isCollapsible = foldingEnabled
+  graph.edgeDefaults.style = new DemoEdgeStyle(theme.edge)
+  graph.edgeDefaults.labels.style = createDemoEdgeLabelStyle(theme.edgeLabel)
 
-  graph.groupNodeDefaults.style = groupStyle
-
-  // A label model with insets for the expand/collapse button
-  const groupLabelModel = new InteriorStretchLabelModel()
-  groupLabelModel.insets = new Insets(4, 4, foldingEnabled ? 18 : 4, 4)
-
-  graph.groupNodeDefaults.labels.layoutParameter = groupLabelModel.createParameter(
-    InteriorStretchLabelModelPosition.NORTH
+  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
+    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 2.0 })
   )
 
-  const groupLabelStyle = new DefaultLabelStyle()
-  groupLabelStyle.textFill = Fill.WHITE
-  groupLabelStyle.wrapping = TextWrapping.CHARACTER_ELLIPSIS
-  graph.groupNodeDefaults.labels.style = groupLabelStyle
+  const foldingEnabled = graph.foldingView !== null
+
+  const groupLabelTextColor = '#EEE'
+  const groupStyle = new DemoGroupStyle(theme.group)
+  groupStyle.isCollapsible = foldingEnabled
+  graph.groupNodeDefaults.style = groupStyle
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    textFill: groupLabelTextColor,
+    wrapping: 'character-ellipsis',
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: 'left'
+  })
+
+  // A label model with insets for the expand/collapse button
+  graph.groupNodeDefaults.labels.layoutParameter = new InteriorStretchLabelModel({
+    insets: new Insets(4, 4, foldingEnabled ? 18 : 4, 4)
+  }).createParameter(InteriorStretchLabelModelPosition.NORTH)
 }
 
 class DemoNodeStyleExtension extends MarkupExtension {

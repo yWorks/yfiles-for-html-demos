@@ -203,14 +203,6 @@ const BalloonLayoutConfig = (Class as any)('BalloonLayoutConfig', {
       })
     }
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-
     return layout
   },
 
@@ -231,7 +223,15 @@ const BalloonLayoutConfig = (Class as any)('BalloonLayoutConfig', {
       }
     }
 
-    return layoutData
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
   },
 
   /** @type {OptionGroup} */

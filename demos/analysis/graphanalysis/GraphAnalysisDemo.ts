@@ -47,8 +47,8 @@ import {
   ILayoutAlgorithm,
   IModelItem,
   INode,
+  LabelingData,
   LabelPlacements,
-  LayoutGraphAdapter,
   License,
   Mapper,
   NodeStyleDecorationInstaller,
@@ -73,6 +73,7 @@ import ConnectivityConfig from './ConnectivityConfig'
 import MinimumSpanningTreeConfig from './MinimumSpanningTreeConfig'
 import SubstructuresConfig from './SubstructuresConfig'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -141,10 +142,6 @@ let graphComponent: GraphComponent
 let algorithmComboBox: HTMLSelectElement
 
 let sampleComboBox: HTMLSelectElement
-
-let nextButton: HTMLButtonElement
-
-let previousButton: HTMLButtonElement
 
 let directionComboBox: HTMLSelectElement
 
@@ -259,9 +256,9 @@ async function run(licenseData: any) {
 function init(): void {
   graphComponent = new GraphComponent('graphComponent')
   algorithmComboBox = document.getElementById('algorithm-select-box') as HTMLSelectElement
+  addNavigationButtons(algorithmComboBox)
   sampleComboBox = document.getElementById('sampleComboBox') as HTMLSelectElement
-  nextButton = document.getElementById('nextButton') as HTMLButtonElement
-  previousButton = document.getElementById('previousButton') as HTMLButtonElement
+  addNavigationButtons(sampleComboBox)
   directionComboBox = document.getElementById('directionComboBox') as HTMLSelectElement
   uniformEdgeWeightsComboBox = document.getElementById(
     'uniformEdgeWeightsComboBox'
@@ -281,7 +278,7 @@ function initializeGraph(): void {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'ellipse',
     fill: 'lightgray',
-    stroke: 'black'
+    stroke: '3px darkgray'
   })
 
   const selectionNodeStyle = new ShapeNodeStyle({
@@ -307,6 +304,10 @@ function initializeGraph(): void {
   const decorator = graphComponent.graph.decorator
   decorator.nodeDecorator.selectionDecorator.setImplementation(selectionInstaller)
   decorator.nodeDecorator.focusIndicatorDecorator.setImplementation(focusIndicatorInstaller)
+
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '3px darkgray'
+  })
 
   graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
@@ -720,6 +721,7 @@ async function runLayout(
     // changes the node sizes before resolving node overlaps
     layout = new OrganicRemoveOverlapsStage(layout)
   }
+
   const graph = graphComponent.graph
   graph.mapperRegistry.createDelegateMapper(
     IEdge.$class,
@@ -732,6 +734,9 @@ async function runLayout(
   setUIDisabled(true)
   try {
     await graphComponent.morphLayout(layout, '0.5s', organicLayoutData)
+
+    graph.mapperRegistry.removeMapper('EDGE_WEIGHTS')
+
     // apply graph algorithms after layout
     if (runAlgorithm) {
       applyAlgorithm()
@@ -757,21 +762,14 @@ async function runLayout(
         mapper.set(label, preferredPlacementDescriptor)
       }
     })
-    graph.mapperRegistry.addMapper(
-      ILabel.$class,
-      PreferredPlacementDescriptor.$class,
-      LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-      mapper
-    )
-    await graphComponent.morphLayout(genericLabeling, '0.2s')
+    const labelingData = new LabelingData()
+    labelingData.edgeLabelPreferredPlacement.mapper = mapper
+
+    await graphComponent.morphLayout(genericLabeling, '0.2s', labelingData)
+
     if (clearUndo && graph.undoEngine) {
       graph.undoEngine.clear()
     }
-    // clean up data provider
-    graph.mapperRegistry.removeMapper(OrganicLayout.AFFECTED_NODES_DP_KEY)
-    graph.mapperRegistry.removeMapper(
-      LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
-    )
     incrementalNodesMapper.clear()
   } catch (error) {
     handleError(error)
@@ -790,8 +788,6 @@ async function onSampleChanged(): Promise<void> {
     return
   }
   const sampleSelectedIndex = sampleComboBox.selectedIndex
-  previousButton.disabled = sampleSelectedIndex === 0
-  nextButton.disabled = sampleSelectedIndex === sampleComboBox.options.length - 1
 
   directed = algorithmSupportsDirectedEdges() && directionComboBox.selectedIndex === 1
 
@@ -1148,8 +1144,8 @@ function resetStyles(): void {
 
   const defaultEdgeStyle = graph.edgeDefaults.style as PolylineEdgeStyle
   const arrow = new Arrow({
-    fill: 'black',
-    stroke: 'black',
+    fill: 'darkgray',
+    stroke: 'darkgray',
     type: 'default'
   })
   // special treatment for the strongly connected components that are always
@@ -1321,8 +1317,6 @@ function releaseLocks(): void {
  */
 function setUIDisabled(disabled: boolean): void {
   sampleComboBox.disabled = disabled
-  nextButton.disabled = disabled
-  previousButton.disabled = disabled
   directionComboBox.disabled = disabled
   algorithmComboBox.disabled = disabled
   uniformEdgeWeightsComboBox.disabled = disabled
@@ -1342,9 +1336,6 @@ function setUIDisabled(disabled: boolean): void {
 function updateUIState(): void {
   sampleComboBox.disabled = false
   algorithmComboBox.disabled = false
-
-  nextButton.disabled = sampleComboBox.selectedIndex >= sampleComboBox.options.length - 1
-  previousButton.disabled = sampleComboBox.selectedIndex <= 0
 
   directionComboBox.disabled =
     !configOptionsValid ||
@@ -1415,7 +1406,7 @@ function createSampleGraph(graph: IGraph): void {
 function handleError(error: any): void {
   const reportError = (window as any).reportError
   if (typeof reportError === 'function') {
-    reportError()
+    reportError(error)
   } else {
     throw error
   }

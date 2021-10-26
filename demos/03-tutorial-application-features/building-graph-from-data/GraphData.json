@@ -3,9 +3,9 @@
     {
       "id": "0",
       "layout": {
-        "x": 10,
+        "x": 0,
         "y": 0,
-        "width": 40,
+        "width": 60,
         "height": 40
       },
       "label": "Source"
@@ -59,7 +59,7 @@
         "height": 40
       },
       "group": "group1",
-      "fill": "red"
+      "fill": "#17BEBB"
     },
     {
       "id": "6",
@@ -70,7 +70,7 @@
         "height": 40
       },
       "group": "group1",
-      "fill": "green"
+      "fill": "#76B041"
     },
     {
       "id": "7",
@@ -155,9 +155,9 @@
     {
       "id": "15",
       "layout": {
-        "x": 203,
+        "x": 193,
         "y": 639,
-        "width": 40,
+        "width": 60,
         "height": 40
       },
       "label": "Target"

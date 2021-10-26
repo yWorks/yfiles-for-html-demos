@@ -442,23 +442,23 @@ export class FraudHighlightManager extends HighlightIndicatorManager {
 function getColor(edge) {
   const tag = edge.tag
   if (tag && tag.fraud && !tag.type) {
-    return 'orangered'
+    return '#ff6c00'
   }
   switch (tag.type) {
     case 'witnesses':
-      return 'mediumseagreen'
+      return '#56926e'
     case 'involves':
-      return 'salmon'
+      return '#db3a34'
     case 'drives':
-      return 'darkseagreen'
+      return '#2D4D3A'
     case 'isPassenger':
-      return 'yellowgreen'
+      return '#e0e04f'
     case 'represents':
-      return 'dodgerblue'
+      return '#242265'
     case 'heals':
-      return 'lightskyblue'
+      return '#4281a4'
     default:
-      return 'lightgray'
+      return '#c1c1c1'
   }
 }
 
@@ -469,33 +469,33 @@ function getColor(edge) {
  */
 function getFillColor(node) {
   if (node.tag.fraud) {
-    return 'orangered'
+    return '#ff6c00'
   }
   switch (node.tag.type) {
     case 'Account Holder':
-      return 'dodgerblue'
+      return '#242265'
     case 'Address':
-      return 'lightskyblue'
+      return '#4281a4'
     case 'Phone Number':
-      return 'plum'
+      return '#6c4f77'
     case 'Bank Branch':
-      return 'salmon'
+      return '#db3a34'
     case 'New Account':
-      return 'gold'
+      return '#f0c808'
     case 'Loan':
-      return 'mediumseagreen'
+      return '#56926e'
     case 'Credit Card':
-      return 'mediumseagreen'
+      return '#56926e'
     case 'Payment':
-      return 'lightgreen'
+      return '#6dbc8d'
     case 'Participant':
     case 'Doctor':
     case 'Lawyer':
     case 'Car':
     case 'Accident':
-      return 'lightgray'
+      return '#c1c1c1'
     default:
-      return 'yellowgreen'
+      return '#e0e04f'
   }
 }
 
@@ -506,36 +506,36 @@ function getFillColor(node) {
  */
 function getStrokeColor(node) {
   if (node.tag.fraud) {
-    return 'orangered'
+    return '#ff6c00'
   }
   switch (node.tag.type) {
     case 'Account Holder':
-      return 'dodgerblue'
+      return '#242265'
     case 'Address':
-      return 'lightskyblue'
+      return '#4281a4'
     case 'Phone Number':
-      return 'plum'
+      return '#6c4f77'
     case 'Bank Branch':
-      return 'salmon'
+      return '#db3a34'
     case 'New Account':
-      return 'gold'
+      return '#f0c808'
     case 'Loan':
-      return 'mediumseagreen'
+      return '#56926e'
     case 'Credit Card':
-      return 'mediumseagreen'
+      return '#56926e'
     case 'Payment':
-      return 'lightgreen'
+      return '#6dbc8d'
     case 'Participant':
-      return 'mediumseagreen'
+      return '#56926e'
     case 'Doctor':
-      return 'lightskyblue'
+      return '#4281a4'
     case 'Lawyer':
-      return 'dodgerblue'
+      return '#242265'
     case 'Car':
-      return 'gold'
+      return '#f0c808'
     case 'Accident':
-      return 'salmon'
+      return '#db3a34'
     default:
-      return 'yellowgreen'
+      return '#e0e04f'
   }
 }

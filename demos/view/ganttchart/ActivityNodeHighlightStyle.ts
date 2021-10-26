@@ -51,9 +51,9 @@ export default class ActivityNodeHighlightStyle extends NodeStyleBase {
     const layout = node.layout
 
     // get the width of the lead an followUp decorations
-    const leadWidth =
+    const leadWidth: number =
       typeof tag.leadTimeWidth === 'number' && tag.leadTimeWidth > 0 ? tag.leadTimeWidth : 0
-    const followUpWidth =
+    const followUpWidth: number =
       typeof tag.followUpTimeWidth === 'number' && tag.followUpTimeWidth > 0
         ? tag.followUpTimeWidth
         : 0

@@ -58,7 +58,7 @@ import DemoStyles, {
   initDemoStyles
 } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
-import { webGlSupported } from '../../utils/Workarounds.js'
+import { isWebGlSupported } from '../../utils/Workarounds.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -134,7 +134,7 @@ function createEditorMode() {
   mode.createBendInputMode.priority = mode.moveInputMode.priority - 1
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
-  if (webGlSupported) {
+  if (isWebGlSupported()) {
     mode.handleInputMode.renderMode = RenderModes.WEB_GL
   }
 
@@ -202,7 +202,7 @@ function enableGraphML(graphComponent) {
 
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)

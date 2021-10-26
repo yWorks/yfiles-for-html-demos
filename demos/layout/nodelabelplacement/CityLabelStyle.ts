@@ -50,7 +50,7 @@ import {
  * For each label, an edge is created that connects the label to its owner node.
  */
 export default class CityLabelStyle extends LabelStyleBase {
-  private connectorEdgeStyle = new PolylineEdgeStyle()
+  private connectorEdgeStyle = new PolylineEdgeStyle({ stroke: '#662b00' })
   private ownerPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
   private labelPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
 

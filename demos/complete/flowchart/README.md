@@ -1,6 +1,6 @@
 # Flowchart Demo
 
-<img src="../../resources/image/flowchart.png" alt="demo-thumbnail" height="320"/>
+<img src="../../resources/image/flowchart-editor.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/flowchart/index.html).
 

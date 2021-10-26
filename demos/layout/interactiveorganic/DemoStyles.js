@@ -86,7 +86,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    * @param {!CanvasRenderingContext2D} ctx
    */
   paint(renderContext, ctx) {
-    ctx.fillStyle = 'rgba(255,140,0,1)'
+    ctx.fillStyle = '#FF6C00'
     const l = this.layout
     ctx.fillRect(l.x, l.y, l.width, l.height)
   }
@@ -164,7 +164,8 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
    */
   paint(renderContext, ctx) {
     // simply draw a blue line from the source port location via all bends to the target port location
-    ctx.strokeStyle = 'rgb(51,102,153)'
+    ctx.strokeStyle = '#662b00'
+    ctx.lineWidth = 1.5
 
     ctx.beginPath()
     let location = this.sourcePortLocation

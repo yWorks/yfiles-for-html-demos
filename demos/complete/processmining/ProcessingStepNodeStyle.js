@@ -74,7 +74,7 @@ function getDummyLabel(width, height) {
     style: new DefaultLabelStyle({
       verticalTextAlignment: 'center',
       textFill: '#d0d0d0',
-      backgroundFill: '#3e3e3e',
+      backgroundFill: '#494949',
       clipText: true,
       insets: { top: 0, right: 0, bottom: 0, left: height + 3 }
     })

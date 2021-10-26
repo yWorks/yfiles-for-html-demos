@@ -67,20 +67,6 @@
     #bundling-strength-label {
       width: 30px;
     }
-
-    #loadingIndicator {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      height: 200px;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-      margin-top: -100px;
-      background-color: rgba(0, 0, 0, 0.6);
-      color: #FFFFFF;
-      padding-top: 80px;
-      text-align: center;
-    }
   </style>
 </head>
 <body class="demo-has-left">
@@ -132,8 +118,6 @@
     <span class="demo-separator"></span>
 
     <span>Sample</span>
-    <button data-command="PreviousFile" title="Open previous graph" class="demo-icon-yIconPrevious"
-        id="previous-sample-button"></button>
     <select data-command="SampleSelectionChanged" title="Select a sample graph" id="sample-combo-box">
       <option>Single Cycle Layout</option>
       <option>Circular Layout</option>
@@ -142,8 +126,6 @@
       <option>Tree Layout</option>
       <option>Bundled Routing</option>
     </select>
-    <button data-command="NextFile" title="Open next graph" class="demo-icon-yIconNext"
-        id="next-sample-button"></button>
 
     <span class="demo-separator"></span>
 

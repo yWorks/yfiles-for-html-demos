@@ -65,6 +65,7 @@ import FlowchartLayoutData from './FlowchartLayoutData.js'
 import FlowchartLayout from './FlowchartLayout.js'
 import {
   addClass,
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -345,16 +346,8 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   const select = document.getElementById('select-sample')
+  addNavigationButtons(select)
   bindChangeListener("select[data-command='SelectSample']", () => {
-    updateGraph()
-  })
-
-  bindAction("button[data-command='PreviousSample']", () => {
-    select.selectedIndex = Math.max(0, select.selectedIndex - 1)
-    updateGraph()
-  })
-  bindAction("button[data-command='NextSample']", () => {
-    select.selectedIndex = Math.min(select.selectedIndex + 1, select.options.length - 1)
     updateGraph()
   })
 
@@ -416,9 +409,6 @@ function setUIDisabled(disabled) {
   // keep the enabled state for the next/previous button when enabling the ui
   const selectSample = document.getElementById('select-sample')
   selectSample.disabled = disabled
-  document.getElementById('previous-sample').disabled = disabled || selectSample.selectedIndex === 0
-  document.getElementById('next-sample').disabled =
-    disabled || selectSample.selectedIndex === selectSample.options.length - 1
   document.getElementById('select-positive-branch-direction').disabled = disabled
   document.getElementById('select-negative-branch-direction').disabled = disabled
   document.getElementById('select-in-edge-grouping').disabled = disabled

@@ -57,6 +57,7 @@ import { detectInternetExplorerVersion } from './utils/Workarounds'
 License.value = licenseData
 
 let graphComponent: GraphComponent
+let executor: LayoutExecutorAsync | null
 let worker: Worker
 
 const layoutButton = document.getElementById('layoutBtn') as HTMLButtonElement
@@ -111,7 +112,7 @@ async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
   }
 
   // create an asynchronous layout executor that calculates a layout on the worker
-  const executor = new LayoutExecutorAsync({
+  executor = new LayoutExecutorAsync({
     messageHandler: webWorkerMessageHandler,
     graphComponent,
     layoutDescriptor,
@@ -123,12 +124,24 @@ async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
 
   // run the Web Worker layout
   await executor.start()
+  executor = null
 
   if (clearUndo) {
     graphComponent.graph.undoEngine!.clear()
   }
 
   hideLoading()
+}
+
+/**
+ * Cancels the Web Worker and the layout executor. The layout is stopped and the graph stays the same.
+ */
+async function cancelWebWorkerLayout() {
+  if (executor) {
+    await executor.cancel()
+    executor = null
+  }
+  return
 }
 
 /**
@@ -218,6 +231,21 @@ function bindCommand(selector: string, command: any, target: any, parameter?: an
 }
 
 /**
+ * Helper function to register click listener at HTML elements.
+ * @param selector
+ * @param action
+ */
+function bindAction(selector: string, action: (arg0: Event) => any): void {
+  const element = document.querySelector(selector)
+  if (!element) {
+    return
+  }
+  element.addEventListener('click', (e: Event) => {
+    action(e)
+  })
+}
+
+/**
  * Registers the JavaScript commands for the GUI elements, typically the
  * tool bar buttons, during the creation of this application.
  */
@@ -233,6 +261,8 @@ function registerCommands() {
     .addEventListener('click', () => {
       runWebWorkerLayout(false)
     })
+
+  bindAction("div[data-command='cancelLayout']", async (): Promise<void> => cancelWebWorkerLayout())
 }
 
 /**

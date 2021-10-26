@@ -13,3 +13,7 @@ The following Vue.js features are shown:
 - A separate view shows the currently selected node using the same Vue component that renders the graph nodes.
 - Employee properties can be edited using v-model bindings. The properties will update automatically in all views.
 - The currently selected item is propagated to the application component using a Vue custom event.
+
+## App Generator
+
+Use the [App Generator](https://www.yworks.com/products/app-generator) to create visualization prototypes – quickly and easily.

@@ -103,6 +103,11 @@ export function createConfiguredGraphMLIOHandler(
   const graphMLIOHandler = new FaultTolerantGraphMLIOHandler()
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   graphMLIOHandler.addXamlNamespaceMapping(
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
+    DemoStyles
+  )
+  // map the previous version of the demo-style to the new implementation
+  graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles
   )

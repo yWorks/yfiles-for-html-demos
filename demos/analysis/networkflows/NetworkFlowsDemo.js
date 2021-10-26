@@ -75,6 +75,7 @@ import {
 } from './NetworkFlowsHelper.js'
 import { MinCutLine, NetworkFlowEdgeStyle, NetworkFlowNodeStyle } from './DemoStyles.js'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -139,6 +140,18 @@ let nodesToChange = []
  * @type {ICompoundEdit}
  */
 let compoundEdit
+
+const newButton = document.getElementById('newButton')
+const algorithmComboBox = document.getElementById('algorithmComboBox')
+const reloadButton = document.getElementById('reloadButton')
+const layoutButton = document.getElementById('layoutButton')
+const edgePopupContent = document.getElementById('edgePopupContent')
+const costForm = document.getElementById('cost-form')
+const flowLabel = document.getElementById('flowInformationLabel')
+const flowInput = document.getElementById('flowValue')
+const costPlusButton = document.getElementById('costPlus')
+const costMinusButton = document.getElementById('costMinus')
+const applyButton = document.getElementById('apply')
 
 /**
  * Runs the demo.
@@ -206,7 +219,6 @@ function initializeGraphComponent() {
   minCutLine = new MinCutLine()
   graphComponent.highlightGroup.addChild(minCutLine, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
 
-  const edgePopupContent = document.getElementById('edgePopupContent')
   // We use the EdgePathLabelModel for the edge pop-up
   const edgeLabelModel = new EdgePathLabelModel({
     autoRotation: false,
@@ -334,7 +346,7 @@ function createEditorInputMode() {
     event.item.tag = {
       supply: 0,
       flow: 0,
-      adjustable: document.getElementById('algorithmComboBox').selectedIndex === MIN_COST_FLOW
+      adjustable: algorithmComboBox.selectedIndex === MIN_COST_FLOW
     }
   })
 
@@ -352,7 +364,7 @@ function createEditorInputMode() {
 function onClicked(sender, args) {
   const item = args.item
   if (item instanceof ILabel && item.tag === 'cost') {
-    document.getElementById('cost-form').value = parseInt(item.text).toString()
+    costForm.value = parseInt(item.text).toString()
     edgePopup.currentItem = item.owner
     return
   }
@@ -391,7 +403,6 @@ function updateEdgeThickness(edge) {
     })
 
     // add label for cost
-    const algorithmComboBox = document.getElementById('algorithmComboBox')
     if (algorithmComboBox.selectedIndex === MIN_COST_FLOW) {
       graphComponent.graph.addLabel({
         owner: edge,
@@ -418,7 +429,6 @@ function runFlowAlgorithm() {
   graphComponent.graph.nodes.forEach(node => (node.tag.cut = false))
 
   // determine the algorithm to run
-  const algorithmComboBox = document.getElementById('algorithmComboBox')
   let flowValue
   switch (algorithmComboBox.selectedIndex) {
     case MAX_FLOW_MIN_CUT:
@@ -434,10 +444,8 @@ function runFlowAlgorithm() {
   }
 
   // update flow information
-  const flowLabel = document.getElementById('flowInformationLabel')
   flowLabel.innerHTML = `${algorithmComboBox[algorithmComboBox.selectedIndex].text}`
   flowLabel.style.display = 'inline-block'
-  const flowInput = document.getElementById('flowValue')
   flowInput.style.display = 'inline-block'
   flowInput.value = flowValue.toString()
 }
@@ -607,7 +615,6 @@ function getDemandNodes(graph) {
  */
 async function runLayout(incremental, additionalIncrementalNodes) {
   const graph = graphComponent.graph
-  const algorithmComboBox = document.getElementById('algorithmComboBox')
 
   if (inLayout || graph.nodes.size === 0) {
     return
@@ -878,6 +885,7 @@ function registerCommands() {
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
   bindChangeListener("select[data-command='AlgorithmSelectionChanged']", onAlgorithmChanged)
+  addNavigationButtons(algorithmComboBox)
   bindAction("button[data-command='Reload']", () => {
     edgePopup.currentItem = null
     createSampleGraph()
@@ -886,9 +894,9 @@ function registerCommands() {
     edgePopup.currentItem = null
     runLayout(false)
   })
-  document.getElementById('costPlus').addEventListener('click', () => updateCostForm(1), true)
-  document.getElementById('costMinus').addEventListener('click', () => updateCostForm(-1), true)
-  document.getElementById('apply').addEventListener(
+  costPlusButton.addEventListener('click', () => updateCostForm(1), true)
+  costMinusButton.addEventListener('click', () => updateCostForm(-1), true)
+  applyButton.addEventListener(
     'click',
     () => {
       runFlowAlgorithm()
@@ -910,7 +918,6 @@ async function onAlgorithmChanged() {
 
   const graph = graphComponent.graph
   if (graph.nodes.size > 0) {
-    const algorithmComboBox = document.getElementById('algorithmComboBox')
     minCutLine.visible = algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT
 
     // make sure that there is flow in case the algorithm changed to "Minimum Cost Problem"
@@ -934,7 +941,7 @@ async function onAlgorithmChanged() {
  * Updates the description text based on the selected algorithm.
  */
 function updateDescriptionText() {
-  const selectedIndex = document.getElementById('algorithmComboBox').selectedIndex
+  const selectedIndex = algorithmComboBox.selectedIndex
   const descriptionText = document.getElementById('description')
   let i = 0
   for (let child = descriptionText.firstElementChild; child; child = child.nextElementSibling) {
@@ -948,7 +955,7 @@ function updateDescriptionText() {
  * @param {number} newValue The new value to be set
  */
 function updateCostForm(newValue) {
-  const form = document.getElementById('cost-form')
+  const form = costForm
   form.value = Math.max(parseInt(form.value) + newValue, 0).toString()
 
   const currentItem = edgePopup.currentItem
@@ -972,10 +979,10 @@ function updateCostForm(newValue) {
  * @param {boolean} disabled True if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.getElementById('newButton').disabled = disabled
-  document.getElementById('algorithmComboBox').disabled = disabled
-  document.getElementById('reloadButton').disabled = disabled
-  document.getElementById('layoutButton').disabled = disabled
+  newButton.disabled = disabled
+  algorithmComboBox.disabled = disabled
+  reloadButton.disabled = disabled
+  layoutButton.disabled = disabled
 }
 
 /**
@@ -1140,7 +1147,7 @@ function createSampleGraph() {
     node.tag = {
       supply,
       flow: 0.5 * node.layout.height,
-      adjustable: document.getElementById('algorithmComboBox').selectedIndex === MIN_COST_FLOW
+      adjustable: algorithmComboBox.selectedIndex === MIN_COST_FLOW
     }
 
     calculateNodeSize(node)

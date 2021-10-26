@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-empty-interface */
 import { Class } from 'yfiles'
 
 export enum Components {

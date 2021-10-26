@@ -136,7 +136,7 @@ function initializeInputMode(): void {
     if (subTree !== null) {
       subTree.nodes.forEach(node => {
         const style = node.style as DemoNodeStyle
-        style.cssClass = style.cssClass.replace(' hovering', '')
+        style.cssClass = style.cssClass!.replace(' hovering', '')
       })
     }
 

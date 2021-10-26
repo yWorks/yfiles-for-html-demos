@@ -51,7 +51,7 @@ import {
 } from 'yfiles'
 
 import {
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
@@ -66,8 +66,7 @@ import { LayoutHelper } from './LayoutHelper'
 import { HidingEdgeDescriptor } from './HidingEdgeDescriptor'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 function run(licenseData: object) {
   License.value = licenseData
@@ -180,7 +179,7 @@ function initializeInputModes(): void {
       // clear the current selection before the layout starts because GraphEditorInputMode cannot
       // do this while the layout is running (the selection is usually cleared after this event)
       graphComponent.selection.clear()
-      makeSpace(args.copy!)
+      makeSpace(args.copy)
     }
   )
   graphComponent.clipboard.duplicateCopier.addNodeCopiedListener(
@@ -188,7 +187,7 @@ function initializeInputModes(): void {
       // clear the current selection before the layout starts because GraphEditorInputMode cannot
       // do this while the layout is running (the selection is usually cleared after this event)
       graphComponent.selection.clear()
-      makeSpace(args.copy!)
+      makeSpace(args.copy)
     }
   )
 }
@@ -225,8 +224,7 @@ function loadGraph(sampleName: string): void {
     data: data.nodes,
     id: 'id',
     parentId: 'parentId',
-    layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
-    labels: ['label']
+    layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   if (data.groups) {
     builder.createGroupNodesSource({
@@ -264,43 +262,13 @@ function registerCommands(): void {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindAction("button[data-command='PreviousSample']", () => {
-    const selectedIndex = sampleGraphs.selectedIndex
-    if (selectedIndex > 0) {
-      sampleGraphs.selectedIndex = selectedIndex - 1
-      loadGraph(sampleGraphs.options[sampleGraphs.selectedIndex].value)
-      updateButtons(sampleGraphs)
-    }
-  })
-  bindAction("button[data-command='NextSample']", () => {
-    const selectedIndex = sampleGraphs.selectedIndex
-    if (selectedIndex < sampleGraphs.options.length - 1) {
-      sampleGraphs.selectedIndex = selectedIndex + 1
-      loadGraph(sampleGraphs.options[sampleGraphs.selectedIndex].value)
-      updateButtons(sampleGraphs)
-    }
-  })
-
   const sampleGraphs = document.getElementById('sample-graphs') as HTMLSelectElement
+  addNavigationButtons(sampleGraphs)
   bindChangeListener("select[data-command='SelectSampleGraph']", () => {
     const selectedIndex = sampleGraphs.selectedIndex
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
-    updateButtons(sampleGraphs)
   })
-}
-
-/**
- * Updates the enabled state of the next- and previous-sample-button according to which sample is currently used.
- */
-function updateButtons(sampleGraphs: HTMLSelectElement): void {
-  const selectedIndex = sampleGraphs.selectedIndex
-  const previousSample = document.getElementById('previous-sample-button') as HTMLButtonElement
-  const nextSample = document.getElementById('next-sample-button') as HTMLButtonElement
-  const maxReached = selectedIndex === sampleGraphs.options.length - 1
-  const minReached = selectedIndex === 0
-  nextSample.disabled = maxReached
-  previousSample.disabled = minReached
 }
 
 // start demo

@@ -51,25 +51,22 @@ import {
 } from 'yfiles'
 
 import { DemoGroupStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
+import { colorSets } from '../../resources/basic-demo-styles.js'
 
-const pathNodeStyle = new DemoNodeStyle()
-pathNodeStyle.cssClass = 'path-node'
-const sideNodeStyle = new DemoNodeStyle()
-sideNodeStyle.cssClass = 'side-node'
-const clickableNodeStyle = new DemoNodeStyle()
-clickableNodeStyle.cssClass = 'clickable-node'
-const endNodeStyle = new DemoNodeStyle()
-endNodeStyle.cssClass = 'end-node'
-const groupNodeStyle = new DemoGroupStyle()
+const pathNodeStyle = new DemoNodeStyle('demo-palette-403')
+const sideNodeStyle = new DemoNodeStyle('demo-palette-44')
+const clickableNodeStyle = new DemoNodeStyle('demo-palette-13')
+const endNodeStyle = new DemoNodeStyle('demo-palette-402')
+const groupNodeStyle = new DemoGroupStyle('demo-palette-42')
 const edgeStyle = new PolylineEdgeStyle({
   smoothingLength: 30,
   targetArrow: new Arrow({
     type: 'triangle',
-    stroke: 'rgb(51, 102, 153)',
-    fill: 'rgb(51, 102, 153)',
+    stroke: colorSets['demo-palette-44'].stroke,
+    fill: colorSets['demo-palette-44'].stroke,
     cropLength: 1
   }),
-  stroke: '2px rgb(51, 102, 153)'
+  stroke: colorSets['demo-palette-44'].stroke
 })
 
 const targetZoom = 2

@@ -48,7 +48,13 @@ import TreeBuilderDataJson from './tree-builder-data-json.js'
 import TreeBuilderDataArray from './tree-builder-data-array.js'
 import AdjacentBuilderIdDataArray from './adjacent-builder-id-data-array.js'
 import GraphBuilderData from './graph-builder-data.js'
-import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import {
+  addNavigationButtons,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 import { initDataView, updateDataView } from './data-view.js'
@@ -289,11 +295,14 @@ function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindChangeListener("select[data-command='SelectBuilder']", selectedValue => {
+  bindChangeListener("select[data-command='SelectBuilder']", async selectedValue => {
     // build graph from new data
+    selectBox.disabled = true
     buildGraph(graphComponent.graph, selectedValue)
-    arrangeGraph(graphComponent)
+    await arrangeGraph(graphComponent)
+    selectBox.disabled = false
   })
+  addNavigationButtons(selectBox)
 }
 
 // run the demo

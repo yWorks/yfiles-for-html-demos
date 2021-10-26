@@ -167,13 +167,6 @@ const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
     layout.treeSize = this.treeSubstructureSizeItem
     layout.treeOrientation = this.treeSubstructureOrientationItem
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
     return layout
   },
 
@@ -184,15 +177,26 @@ const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
     graphComponent: GraphComponent,
     layout: OrthogonalLayout
   ): LayoutData {
+    let layoutData
     if (this.considerEdgeDirectionItem) {
-      return new OrthogonalLayoutData({
+      layoutData = new OrthogonalLayoutData({
         directedEdges: graphComponent.selection.selectedEdges
       })
     } else {
-      return new OrthogonalLayoutData({
+      layoutData = new OrthogonalLayoutData({
         directedEdges: edge => false
       })
     }
+
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
   },
 
   /** @type {OptionGroup} */

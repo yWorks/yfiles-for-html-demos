@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global canvg */
+
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
 import { detectFirefoxVersion, detectInternetExplorerVersion } from '../../utils/Workarounds'
 

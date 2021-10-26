@@ -40,6 +40,7 @@ import {
   InteriorStretchLabelModelPosition,
   License,
   Point,
+  PolylineEdgeStyle,
   ShapeNodeStyle,
   Size,
   SmartEdgeLabelModel
@@ -184,16 +185,24 @@ function populateGraph(): void {
 function setDefaultStyles(): void {
   const graph = graphComponent.graph
 
-  // Creates a nice ShinyPlateNodeStyle instance, using an orange Fill.
+  // Creates a nice ShapeNodeStyle instance, using an orange Fill.
   // Sets this style as the default for all nodes that don't have another
   // style assigned explicitly
   graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
+    shape: 'round-rectangle',
+    fill: '#ff6c00',
+    stroke: '1.5px #662b00'
   })
 
   // Sets the default size for nodes explicitly to 40x40
   graph.nodeDefaults.size = new Size(40, 40)
+
+  // Creates a PolylineEdgeStyle which will be used as default for all edges
+  // that don't have another style assigned explicitly
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '1.5px #662b00',
+    targetArrow: '#662b00 small triangle'
+  })
 
   // Creates a label style with the label font set to Tahoma and a black text color
   const defaultLabelStyle = new DefaultLabelStyle({

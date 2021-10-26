@@ -1,0 +1,106 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.4.
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.wizard-legend {
+  width: 400px;
+  height: 100%;
+  background-color: #fff;
+  padding: 10px;
+  font-size: 12pt;
+}
+
+.wizard-legend em {
+  color: #336699;
+  font-style: normal;
+  background-color: #ddd;
+  padding: 0px 4px;
+  border-radius: 4px;
+}
+
+.wizard-legend div {
+  line-height: 14pt;
+}
+
+legend {
+  color: grey;
+  padding: 3px 6px;
+  font: 1rem 'Fira Sans', sans-serif;
+}
+
+.demo-overview-container {
+  width: inherit;
+  height: inherit;
+}
+
+.shortcut {
+  margin: 0 0.15em;
+  padding: 0.2em 0.5em;
+  vertical-align: middle;
+  position: relative;
+  top: -0.1em;
+  background-color: #e1e3e5;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgb(0 0 0), 0 0 0 0.1em #fff inset;
+  white-space: nowrap;
+  font-style: normal;
+  color: #000;
+}
+
+.tooltip-shortcuts {
+  padding-left: 8px;
+}
+
+.legend-shortcuts {
+  float: right;
+  margin: 0;
+}
+
+.tooltip-container {
+  line-height: 1.5;
+  padding: 8px;
+  font-size: 10pt;
+}
+
+.legend-container {
+  line-height: 1.5;
+  padding: 6px;
+  font-size: 10pt;
+}
+
+.yfiles-tooltip {
+  background-color: rgba(97, 97, 97, 0.9);
+  border-radius: 2px;
+  border-style: none;
+  color: #fff;
+  padding: 0px;
+}
+
+.container-drop-shadow {
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
+}

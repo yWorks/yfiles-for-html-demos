@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, IModelItem, IParseContext, InputHandlerBase, KeyType, YObject } from 'yfiles'
+import { IGraph, IModelItem, InputHandlerBase, IParseContext, KeyType, YObject } from 'yfiles'
 import GraphMLProperty from './GraphMLProperty'
 import { PropertiesPanel } from './PropertiesPanel'
 

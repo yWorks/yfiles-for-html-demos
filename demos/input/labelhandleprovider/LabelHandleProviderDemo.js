@@ -27,9 +27,7 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EdgeSegmentLabelModel,
-  EdgeSides,
   FreeEdgeLabelModel,
   FreeLabelModel,
   FreeNodeLabelModel,
@@ -49,9 +47,9 @@ import {
 } from 'yfiles'
 
 import LabelHandleProvider from './LabelHandleProvider.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
 import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { createDemoNodeLabelStyle, initDemoStyles } from '../../resources/demo-styles.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -111,21 +109,11 @@ function initializeGraph() {
   initDemoStyles(graph)
   graphComponent.graph.nodeDefaults.size = new Size(100, 50)
 
-  // create a label style that shows the labels bounds
-  const labelStyle = new DefaultLabelStyle({
-    backgroundFill: 'rgb(119, 204, 255)',
-    backgroundStroke: 'lightgray',
-    horizontalTextAlignment: 'center',
-    insets: [3, 5]
-  })
-  graph.nodeDefaults.labels.style = labelStyle
   // Our resize logic does not work together with all label models resp. label model parameters
   // for simplicity, we just use a centered label for nodes
   graph.nodeDefaults.labels.layoutParameter = new GenericLabelModel(
     InteriorLabelModel.CENTER
   ).createDefaultParameter()
-
-  graph.edgeDefaults.labels.style = labelStyle
 
   const labelModel = new EdgeSegmentLabelModel({ distance: 10 })
   graph.edgeDefaults.labels.layoutParameter = labelModel.createParameterFromSource(
@@ -139,19 +127,15 @@ function initializeGraph() {
     location: [100, 100],
     labels: ['Centered Node Label. Resizes symmetrically.']
   })
+  const rotatingLabelStyle = createDemoNodeLabelStyle('demo-palette-13')
+  rotatingLabelStyle.autoFlip = false
   const n2 = graph.createNodeAt({
     location: [500, 0],
     labels: [
       {
         text: 'Free Node Label.\nSupports rotation and asymmetric resizing',
         layoutParameter: new FreeNodeLabelModel().createParameter([0.5, 0.5], [0, 0], [0.5, 0.5]),
-        style: new DefaultLabelStyle({
-          backgroundFill: 'rgb(119, 204, 255)',
-          backgroundStroke: 'lightgray',
-          horizontalTextAlignment: 'center',
-          autoFlip: false,
-          insets: [3, 5]
-        })
+        style: rotatingLabelStyle
       }
     ]
   })

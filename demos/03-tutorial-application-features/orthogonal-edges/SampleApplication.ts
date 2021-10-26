@@ -27,23 +27,23 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
-  InteriorStretchLabelModel,
+  IGraph,
   License,
   OrthogonalEdgeEditingContext,
   OrthogonalEdgeEditingPolicy,
-  PanelNodeStyle,
   Point,
-  ShapeNodeStyle,
   Size
 } from 'yfiles'
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -61,7 +61,7 @@ function run(licenseData: object): void {
   graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
-  initTutorialDefaults()
+  initTutorialDefaults(graphComponent.graph)
 
   // Enables orthogonal edge editing
   enableOrthogonalEdges()
@@ -87,33 +87,23 @@ function enableOrthogonalEdges(): void {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
+ *
+ * @param graph The graph.
  */
-function initTutorialDefaults(): void {
-  const graph = graphComponent.graph
+function initTutorialDefaults(graph: IGraph): void {
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
+  // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
-
-  // configure defaults group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
+    insets: 5
+  }).createParameter('south')
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**

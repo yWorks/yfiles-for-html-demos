@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="styles.css">
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.4.
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Snowpack Loading Demo [yFiles for HTML]</title>
+</head>
+<body class="demo-has-left demo-hide-left-when-small loaded">
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>This demo shows how to load yFiles for HTML with <a href="https://snowpack.dev/" rel="noopener" target="_blank">Snowpack</a>
+      as a loader for efficient web development and easy builds.</p>
+    <p>See the sources for details.</p>
+
+    <h2>Running the demo</h2>
+    <p>First, install the required npm modules in the demo directory:</p>
+
+    <code>
+        > npm install
+      </code>
+
+    <h3>Development</h3>
+    <p>
+      For development, Snowpack offers convenient live reloading support to minimize turnaround times.
+    </p>
+    <p>To run the development server:</p>
+
+    <code>
+        > npm start
+      </code>
+
+    <p>
+      When the server runs, try making changes to the source code and see how the app will be
+      updated in the browser immediately.
+    </p>
+
+    <p>
+      Debugging of application files in the browser's developer tools should work fine,
+      since the source files are only minimally preprocessed.
+    </p>
+
+    <h3>Production</h3>
+
+    <p>
+      Snowpack is capable of creating a highly optimized production build. No extra configuration
+      is required.
+    </p>
+
+    <p>To run the production build:</p>
+
+    <code>
+        > npm run build
+      </code>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-header">
+    <a href="https://www.yworks.com" target="_blank"><img src="ylogo.svg" class="demo-y-logo"> </a> <a
+    href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">Snowpack Loading Demo [yFiles for HTML]</span>
+  </div>
+  <div class="demo-toolbar">
+    <button disabled data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script type="module" src="dist/index.js"></script>
+</body>
+</html>

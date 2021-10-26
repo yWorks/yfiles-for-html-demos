@@ -53,7 +53,7 @@ import {
   Stroke,
   SvgExport
 } from 'yfiles'
-import { ComponentDropInputMode } from './ComponentDropInputMode'
+import { GraphDropInputMode } from '../../input/graph-drag-and-drop/GraphDropInputMode'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
 import {
   addClass,
@@ -129,12 +129,12 @@ function initializeInputModes(): void {
   // add a new component id to nodes in duplicated component
   const duplicateCopier = graphComponent.clipboard.duplicateCopier
   duplicateCopier.addNodeCopiedListener((sender, event) => {
-    event.copy!.tag = { component: componentCount }
+    event.copy.tag = { component: componentCount }
   })
   // add a new component id to nodes in copied component
   const fromCopier = graphComponent.clipboard.fromClipboardCopier
   fromCopier.addNodeCopiedListener((sender, event) => {
-    event.copy!.tag = { component: componentCount }
+    event.copy.tag = { component: componentCount }
   })
   graphEditorInputMode.addElementsDuplicatedListener(() => {
     updateGraph()
@@ -152,7 +152,7 @@ function initializeInputModes(): void {
   graphEditorInputMode.moveInputMode.addDragCanceledListener(onDragCanceled)
 
   // add the input mode to drop components
-  const graphDropInputMode = new ComponentDropInputMode()
+  const graphDropInputMode = new GraphDropInputMode()
   graphDropInputMode.addDragEnteredListener(onDragStarted)
   graphDropInputMode.addDragOverListener(onDragged)
   graphDropInputMode.addItemCreatedListener(onDragFinished)
@@ -225,12 +225,12 @@ function updateGraph(): void {
 function initializeGraph(): void {
   graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: ShapeNodeShape.ELLIPSE,
-    fill: 'dark-gray',
+    fill: '#c1c1c1',
     stroke: null
   })
 
   graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '5px dark-gray'
+    stroke: '5px #c1c1c1'
   })
 }
 
@@ -268,7 +268,7 @@ function addComponentVisual(component: any, panel: HTMLElement): void {
     const dragPreview = document.createElement('div')
     dragPreview.appendChild(img.cloneNode(true))
 
-    const dragSource = ComponentDropInputMode.startDrag(
+    const dragSource = GraphDropInputMode.startDrag(
       div,
       componentGraph,
       DragDropEffects.ALL,
@@ -350,7 +350,7 @@ function createComponentVisual(componentGraph: IGraph): string {
  */
 function onDragStarted(sender: object): void {
   let component
-  if (sender instanceof ComponentDropInputMode) {
+  if (sender instanceof GraphDropInputMode) {
     const graphDropInputMode = sender
     const graph = graphDropInputMode.dropData as IGraph
     component = graph.nodes
@@ -371,7 +371,7 @@ function onDragStarted(sender: object): void {
  * For each drag a new layout is calculated and applied if the previous one is completed.
  */
 function onDragged(sender: object): void {
-  if (sender instanceof ComponentDropInputMode) {
+  if (sender instanceof GraphDropInputMode) {
     const graphDropInputMode = sender
     layoutHelper.location = graphDropInputMode.mousePosition.toPoint()
   } else if (sender instanceof MoveInputMode) {
@@ -398,7 +398,7 @@ function onDragFinished(
   sender: object,
   itemEventArgs: ItemEventArgs<IGraph> | InputModeEventArgs
 ): void {
-  if (sender instanceof ComponentDropInputMode) {
+  if (sender instanceof GraphDropInputMode) {
     const graphDropInputMode = sender
     const eventArgs = itemEventArgs as ItemEventArgs<IGraph>
     layoutHelper.location = graphDropInputMode.dropLocation

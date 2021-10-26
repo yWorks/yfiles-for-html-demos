@@ -38,14 +38,16 @@ import {
   ICommand,
   IModelItem,
   INode,
+  INodeInsetsProvider,
+  Insets,
   InteriorLabelModel,
   InteriorStretchLabelModel,
   ItemEventArgs,
   License,
   Mapper,
   MouseHoverInputMode,
-  PanelNodeStyle,
   Point,
+  PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
   QueryItemToolTipEventArgs,
   ShapeNodeStyle,
@@ -249,22 +251,33 @@ function enableUndo(): void {
  */
 function configureGroupNodeStyles(): void {
   const graph = graphComponent.graph
-  // PanelNodeStyle is a style especially suited to group nodes
-  // Creates a panel with a light blue background
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
+  // Creates a rectangular shape with a white background
+  graph.groupNodeDefaults.style = new ShapeNodeStyle({
+    fill: 'white',
+    stroke: '2px #0b7189'
   })
 
   // Sets a label style with right-aligned text
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
+    horizontalTextAlignment: 'right',
+    textFill: 'white',
+    backgroundFill: '#0b7189',
+    insets: [2, 5]
   })
 
   // Places the label at the top inside of the panel.
-  // For PanelNodeStyle, InteriorStretchLabelModel is usually the most appropriate label model
+  // For group nodes, InteriorStretchLabelModel is usually the most appropriate label model
   graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+
+  // reserve space for the label by setting larger top insets
+  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementationWrapper(
+    (node, provider) => {
+      if (graph.isGroupNode(node)) {
+        return INodeInsetsProvider.create(() => new Insets(10, 25, 10, 10))
+      }
+      return provider
+    }
+  )
 }
 
 /**
@@ -395,16 +408,24 @@ function populateGraph(): void {
 function setDefaultStyles(): void {
   const graph = graphComponent.graph
 
-  // Creates a nice ShinyPlateNodeStyle instance, using an orange Fill.
+  // Creates a nice ShapeNodeStyle instance, using an orange Fill.
   // Sets this style as the default for all nodes that don't have another
   // style assigned explicitly
   graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
+    shape: 'round-rectangle',
+    fill: '#ff6c00',
+    stroke: '1.5px #662b00'
   })
 
   // Sets the default size for nodes explicitly to 40x40
   graph.nodeDefaults.size = new Size(40, 40)
+
+  // Creates a PolylineEdgeStyle which will be used as default for all edges
+  // that don't have another style assigned explicitly
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '1.5px #662b00',
+    targetArrow: '#662b00 small triangle'
+  })
 
   // Creates a label style with the label font set to Tahoma and a black text color
   const defaultLabelStyle = new DefaultLabelStyle({

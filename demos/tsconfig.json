@@ -15,11 +15,18 @@
     "forceConsistentCasingInFileNames": true
   },
   "exclude": [
+    "loading/snowpack",
+    "loading/vite",
     "loading/webworker-umd",
     "loading/webworker-webpack",
+    "loading/wmr",
     "node_modules",
     "toolkit/angular",
     "toolkit/dojo",
-    "toolkit/react-typescript"
+    "toolkit/preact",
+    "toolkit/react-typescript",
+    "toolkit/svelte",
+    "toolkit/vue2-cli-typescript",
+    "toolkit/vue3-cli-typescript"
   ]
 }

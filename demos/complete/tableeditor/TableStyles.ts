@@ -141,6 +141,8 @@ class TableBackgroundStyle extends NodeStyleBase {
       const rec = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       rec.x.baseVal.value = 0
       rec.y.baseVal.value = 0
+      rec.rx.baseVal.value = 1
+      rec.ry.baseVal.value = 1
       rec.width.baseVal.value = cache.w
       rec.height.baseVal.value = cache.h
       rec.setAttribute('class', 'table-background')

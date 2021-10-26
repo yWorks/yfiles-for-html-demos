@@ -8,7 +8,7 @@ This demo shows how the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/Ed
 
 The graph consists of the nodes that form the maze and the normal ones. The maze nodes are visible only during the layout and serve as obstacles for the algorithm. Also, a non-editable background visual is created from these maze nodes and is displayed inside the graph component.
 
-## Things to try
+## Things to Try
 
 - Change the settings of the `EdgeRouter` from the configuration panel on the right to see how the routing of the edges changes.
 - Modify the graph with one of the following operations to see how the affected edges are rerouted:

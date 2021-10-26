@@ -28,14 +28,14 @@
  ***************************************************************************/
 import {
   Font,
+  ILabel,
+  IOrientedRectangle,
+  IRenderContext,
   LabelStyleBase,
   Size,
   SvgVisual,
   TextRenderSupport,
-  TextWrapping,
-  ILabel,
-  IRenderContext,
-  IOrientedRectangle
+  TextWrapping
 } from 'yfiles'
 
 const HORIZONTAL_INSET = 2

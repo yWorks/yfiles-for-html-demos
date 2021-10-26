@@ -43,7 +43,13 @@ import {
 } from 'yfiles'
 
 import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper'
-import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import {
+  addNavigationButtons,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import { initDemoStyles } from '../../resources/demo-styles'
 import loadJson from '../../resources/load-json'
 
@@ -120,7 +126,10 @@ function configureBridges(): void {
  * Initializes the combo boxes and the text-boxes of the toolbar.
  */
 function initializeToolBarElements(): void {
-  const crossingStylesComboBox = document.getElementById('crossingStyleComboBox')
+  const crossingStylesComboBox = document.getElementById(
+    'crossingStyleComboBox'
+  ) as HTMLSelectElement
+  addNavigationButtons(crossingStylesComboBox)
   const crossingStylesElements = [
     {
       text: 'Arc',
@@ -157,7 +166,10 @@ function initializeToolBarElements(): void {
   ]
   fillComboBox(crossingStylesComboBox, crossingStylesElements)
 
-  const crossingPolicyComboBox = document.getElementById('crossingPolicyComboBox')
+  const crossingPolicyComboBox = document.getElementById(
+    'crossingPolicyComboBox'
+  ) as HTMLSelectElement
+  addNavigationButtons(crossingPolicyComboBox)
   const crossingDeterminationElements = [
     {
       text: 'HorizontalBridgesVertical',
@@ -178,7 +190,10 @@ function initializeToolBarElements(): void {
   ]
   fillComboBox(crossingPolicyComboBox, crossingDeterminationElements)
 
-  const bridgeOrientationComboBox = document.getElementById('bridgeOrientationComboBox')
+  const bridgeOrientationComboBox = document.getElementById(
+    'bridgeOrientationComboBox'
+  ) as HTMLSelectElement
+  addNavigationButtons(bridgeOrientationComboBox)
   const bridgeOrientationElements = [
     {
       text: 'Up',

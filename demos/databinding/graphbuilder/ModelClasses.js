@@ -37,10 +37,7 @@ import {
   NodesSource,
   PolylineEdgeStyle,
   StringTemplateNodeStyle,
-  Stroke,
-  TemplateNodeStyle,
-  INodeStyle,
-  VoidNodeStyle
+  Stroke
 } from 'yfiles'
 
 /**
@@ -295,12 +292,12 @@ export class SourcesFactory {
 
     const edgeCreator = edgesSource.edgeCreator
     edgeCreator.defaults.style = new PolylineEdgeStyle({
-      stroke: '1px #336699',
-      targetArrow: new Arrow({ color: '#336699', type: 'simple' })
+      stroke: '1.5px #662b00',
+      targetArrow: new Arrow({ color: '#662b00', type: 'triangle' })
     })
     edgeCreator.defaults.shareStyleInstance = false
     edgeCreator.styleBindings.addBinding('stroke', edgeDataItem =>
-      definition.strokeProvider ? definition.strokeProvider(edgeDataItem) : 'black'
+      definition.strokeProvider ? definition.strokeProvider(edgeDataItem) : '#662b00'
     )
 
     edgeCreator.addEdgeUpdatedListener((sender, evt) => {

@@ -49,6 +49,7 @@ import PriorityPanel from './PriorityPanel'
 import * as SampleData from './resources/SampleData'
 import { DemoNodeStyle } from '../../resources/demo-styles'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -95,7 +96,7 @@ function run(licenseData: any): void {
 function loadGraph(sample: 'hierarchic' | 'tree'): void {
   const graph = graphComponent.graph
   graph.clear()
-  graph.nodeDefaults.style = new DemoNodeStyle()
+  graph.nodeDefaults.style = new DemoNodeStyle('demo-palette-44')
   graph.edgeDefaults.style = new PolylineEdgeStyle()
   graph.edgeDefaults.shareStyleInstance = false
 
@@ -132,17 +133,17 @@ function setPriority(edge: IEdge, priority: number): void {
 function getStroke(priority: number): Stroke {
   switch (priority) {
     case 1:
-      return new Stroke('gold', 3)
+      return new Stroke('#336699', 3)
     case 2:
-      return new Stroke('orange', 3)
+      return new Stroke('#56926E', 3)
     case 3:
-      return new Stroke('darkorange', 3)
+      return new Stroke('#F0C808', 3)
     case 4:
-      return new Stroke('orangered', 3)
+      return new Stroke('#FF6C00', 3)
     case 5:
-      return new Stroke('firebrick', 3)
+      return new Stroke('#DB3A34', 3)
     default:
-      return new Stroke(51, 102, 153, 255, 1)
+      return new Stroke('#C7C7A6', 1)
   }
 }
 
@@ -328,6 +329,8 @@ function registerCommands(): void {
     loadGraph(layoutStyle)
     runLayout()
   })
+  const samples = document.querySelector("select[data-command='ChangeSample']") as HTMLSelectElement
+  addNavigationButtons(samples)
 }
 
 loadJson().then(checkLicense).then(run)

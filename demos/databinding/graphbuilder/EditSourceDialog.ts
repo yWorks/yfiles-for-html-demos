@@ -26,13 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global CodeMirror */
+// import CodeMirror typings
+import CodeMirror, { EditorFromTextArea } from 'codemirror'
+
 import {
   EdgesSourceDefinitionBuilderConnector,
   NodesSourceDefinitionBuilderConnector
 } from './ModelClasses'
-// import CodeMirror typings
-import CodeMirror, { EditorFromTextArea } from 'codemirror'
-
 import { addClass } from '../../resources/demo-app'
 
 /**

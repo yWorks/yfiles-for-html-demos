@@ -1,5 +1,7 @@
 # Orthogonal Edge Editing Demo
 
+<img src="../../resources/image/orthogonal-edges.png" alt="demo-thumbnail" height="320"/>
+
 [You can also run this demo online](https://live.yworks.com/demos/input/orthogonaledges/index.html).
 
 This demo shows the customization of orthogonal edge editing.

@@ -26,9 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { AdjacencyNodesSourceDefinitionBuilderConnector } from './ModelClasses'
+/* global CodeMirror */
 // import CodeMirror typings
 import CodeMirror, { EditorFromTextArea } from 'codemirror'
+import { AdjacencyNodesSourceDefinitionBuilderConnector } from './ModelClasses'
 
 /**
  * Editing dialog for schema graph nodes business data ({@link AdjacencyNodesSourceDefinition}

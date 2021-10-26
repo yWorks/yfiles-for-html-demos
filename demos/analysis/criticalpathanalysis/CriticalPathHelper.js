@@ -1,0 +1,177 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.4.
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+import {
+  GraphComponent,
+  HierarchicLayout,
+  HierarchicLayoutData,
+  IEdge,
+  IGraph,
+  IMapper,
+  INode,
+  LabelPlacements,
+  PortCalculator,
+  PreferredPlacementDescriptor,
+  RankAssignmentAlgorithm,
+  ShortestPath,
+  YGraphAdapter
+} from 'yfiles'
+
+/**
+ * Calculates the critical path in this graph network. We run first the rank assignment algorithm and we
+ * assign to each node a number that represents its rank and to each edge a number that represents its slack.
+ * The slack is the amount of time by which a task can be delayed without delaying the completion time of the project.
+ * Afterwards, we find the nodes with the smallest/highest ranking and we calculate the shortest path between
+ * them for which we take into consideration the slack values of each edge.
+ * @param {!GraphComponent} graphComponent The input graphComponent
+ */
+export function calculateCriticalPathEdges(graphComponent) {
+  const graph = graphComponent.graph
+  // the duration of each task is stored in the node's tag
+  const taskDuration = node => node.tag.duration | 0
+  // the duration when moving from the source's task to the target's task
+  const transitionDuration = edge => edge.tag.transitionDuration | 0
+
+  // runs the rank assignment algorithm
+  const results = runRankAssignmentAlgorithm(graph, taskDuration, transitionDuration)
+
+  // Finds the nodes with the lowest/highest ranking...
+  // In this graph, it is not really necessary since START and FINISH nodes will be the marked as
+  // lowest/highest but for the general case, we have to find them based on the result of the algorithm
+  const { lowestNode, highestNode } = findHighestLowestNodes(graph, results.rank)
+
+  // Calculates the shortest path between these two nodes on the graph when the edges
+  // are weighted by their slack number
+  const criticalPathEdges = new ShortestPath({
+    source: lowestNode,
+    sink: highestNode,
+    costs: results.slack,
+    directed: true
+  }).run(graph).edges
+
+  // adds the result information to the edges' tags
+  const criticalEdgeSet = new Set(criticalPathEdges)
+  graph.edges.forEach(edge => {
+    edge.tag.slack = results.slack(edge)
+    if (criticalEdgeSet.has(edge)) {
+      edge.tag.critical = true
+    }
+  })
+}
+
+/**
+ * Returns the nodes with the lowest and highest ranking
+ * @param {!IGraph} graph The input graph
+ * @param {!IMapper.<INode,number>} rank The mapper that contains the node ranking
+ */
+export function findHighestLowestNodes(graph, rank) {
+  const order = graph.nodes.orderBy(
+    node => rank.get(node) || 0,
+    (a, b) => Math.sign(Number(a) - Number(b))
+  )
+  const lowestNode = order.first()
+  const highestNode = order.last()
+  lowestNode.tag.lowestNode = true
+  highestNode.tag.highestNode = true
+  return { lowestNode, highestNode }
+}
+
+/**
+ * Runs the rank assignment algorithm.
+ * @param {!IGraph} graph The input graph
+ * @param {!function} taskDuration The duration of each task represented by nodes
+ * @param {!function} transitionDuration The duration when moving from one task to another (edge transition duration)
+ * @returns {!object}
+ */
+function runRankAssignmentAlgorithm(graph, taskDuration, transitionDuration) {
+  const adapter = new YGraphAdapter(graph)
+  const layerMap = adapter.yGraph.createNodeMap()
+  const layerMapper = adapter.createNodeMapper(layerMap)
+  // for each edge the min distance is the time needed for the task of each source node to be completed
+  // plus the time needed to move from the source task to the target task
+  const minDistance = edge => {
+    return transitionDuration(edge) + taskDuration(edge.sourceNode)
+  }
+
+  // run the simplex version of the rank assignment algorithm
+  RankAssignmentAlgorithm.simplex(
+    adapter.yGraph,
+    layerMap,
+    null,
+    adapter.createEdgeMap(minDistance)
+  )
+  // store the ranking of each node at its tag
+  graph.nodes.forEach(node => {
+    node.tag.layerId = layerMapper.get(node)
+  })
+
+  return {
+    rank: layerMapper,
+    slack: edge =>
+      (layerMapper.get(edge.targetNode) || 0) -
+      (layerMapper.get(edge.sourceNode) || 0) -
+      minDistance(edge)
+  }
+}
+
+/**
+ * Configures the HierarchicLayout algorithm. Nodes will be placed in layers based on their ranks,
+ * while edges that belong to the critical path will gain priority so that the corresponding nodes
+ * incident to them are aligned.
+ * @param {!GraphComponent} graphComponent The given graphComponent
+ * @returns {!Promise}
+ */
+export async function runLayout(graphComponent) {
+  // the layering is calculated based on the result of the rank assignment
+  const layout = new HierarchicLayout({
+    fromScratchLayeringStrategy: 'user-defined',
+    layoutOrientation: 'left-to-right',
+    integratedEdgeLabeling: true,
+    considerNodeLabels: true,
+    orthogonalRouting: true
+  })
+
+  const layoutData = new HierarchicLayoutData({
+    // the information about the layering is stored in the node tags
+    givenLayersLayererIds: node => node.tag.layerId,
+    // edges that belong to the critical path have priority
+    criticalEdgePriorities: edge => (edge.tag.critical ? 1 : 0),
+    // configure the edge placement
+    edgeLabelPreferredPlacement: () => {
+      const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
+      preferredPlacementDescriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
+      preferredPlacementDescriptor.placeAlongEdge = LabelPlacements.AT_TARGET
+      preferredPlacementDescriptor.distanceToEdge = 5
+      return preferredPlacementDescriptor
+    }
+  })
+
+  // run the layout
+  await graphComponent.morphLayout(new PortCalculator(layout), '0.5s', layoutData)
+  await graphComponent.fitGraphBounds()
+}

@@ -28,6 +28,8 @@
  ***************************************************************************/
 import {
   DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -37,10 +39,8 @@ import {
   INode,
   InteriorLabelModel,
   License,
-  PanelNodeStyle,
   Point,
   Rect,
-  ShapeNodeStyle,
   Size,
   WebGL2GraphModelManager,
   WebGL2SelectionIndicatorManager
@@ -48,7 +48,8 @@ import {
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
-import { webGl2Supported } from '../../utils/Workarounds'
+import { isWebGl2Supported } from '../../utils/Workarounds'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -57,7 +58,7 @@ let graphComponent: GraphComponent = null
  * Bootstraps the demo.
  */
 async function run(licenseData: object) {
-  if (!webGl2Supported) {
+  if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
     showApp(null)
@@ -125,22 +126,16 @@ function initInteraction(graphComponent: GraphComponent) {
  * @param graph The graph.
  */
 function initTutorialDefaults(graph: IGraph): void {
-  // configure defaults for normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
-  graph.nodeDefaults.size = new Size(120, 120)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'center'
-  })
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults for group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: '#bbb',
-    insets: [5, 5, 5, 5]
-  })
+  // set sizes and locations specific for this tutorial
+  graph.nodeDefaults.size = new Size(120, 120)
+  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
     horizontalTextAlignment: 'center'
   })

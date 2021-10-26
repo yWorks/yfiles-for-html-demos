@@ -1,0 +1,24 @@
+{
+  "name": "vue3-cli-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "scripts": {
+    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.js', './src/utils/Workarounds.js'); require('fs-extra').copySync('../../utils/GraphSearch.js', './src/utils/GraphSearch.js');\"",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "vue": "^3.0.0",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@yworks/optimizer": "^1.6.0",
+    "worker-loader": "^3.0.8"
+  }
+}

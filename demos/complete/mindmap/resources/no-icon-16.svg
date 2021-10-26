@@ -1,52 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.1"
-   id="svg2"
-   viewBox="0 0 16 16"
-   height="16"
-   width="16">
-  <defs
-     id="defs4" />
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     transform="matrix(1.2262546,0,0,1.2972613,-50.227534,-606.34108)"
-     id="layer1">
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 16 16"
+  height="16"
+  width="16">
+  <g transform="matrix(1.2262546,0,0,1.2972613,-50.227534,-606.34108)">
     <g
-       style="fill:#808080"
-       id="g6372"
-       transform="matrix(1.1462436,0,0,1.1462436,-6.9949187,-69.107624)">
+      style="fill:#808080"
+      transform="matrix(1.1462436,0,0,1.1462436,-6.9949187,-69.107624)">
       <rect
-         transform="matrix(0.72671572,-0.68693832,0.72671572,0.68693832,0,0)"
-         y="373.33344"
-         x="-312.53421"
-         height="7.9348693"
-         width="1.2695791"
-         id="rect6355"
-         style="fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.29999995;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098" />
+        transform="matrix(0.72671572,-0.68693832,0.72671572,0.68693832,0,0)"
+        y="373.33344"
+        x="-312.53421"
+        height="7.9348693"
+        width="1.2695791"
+        style="fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.29999995;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098"/>
       <rect
-         transform="matrix(0.72671573,0.68693831,-0.72671573,0.68693831,0,0)"
-         y="307.93195"
-         x="376.66605"
-         height="7.9348698"
-         width="1.2695791"
-         id="rect6355-5"
-         style="fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.29999995;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098" />
+        transform="matrix(0.72671573,0.68693831,-0.72671573,0.68693831,0,0)"
+        y="307.93195"
+        x="376.66605"
+        height="7.9348698"
+        width="1.2695791"
+        style="fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.29999995;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8745098"/>
     </g>
   </g>
 </svg>

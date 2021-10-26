@@ -35,13 +35,12 @@ export default class ReactGraphOverviewComponent extends Component {
   constructor(props) {
     super(props)
     this.div = React.createRef()
-    this.graphComponent = props.graphComponent
   }
 
   async componentDidMount() {
     this.graphOverviewComponent = new GraphOverviewComponent(
-      '#graph-overview-component',
-      this.graphComponent
+      this.div.current,
+      this.props.graphComponent
     )
   }
 
@@ -49,7 +48,7 @@ export default class ReactGraphOverviewComponent extends Component {
     return (
       <div className="overview-container">
         <div className="overview-title">Overview</div>
-        <div id="graph-overview-component" ref={this.div} />
+        <div className="graph-overview-component" ref={this.div} />
       </div>
     )
   }

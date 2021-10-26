@@ -31,6 +31,7 @@ import {
   FamilyTreeLayout,
   FamilyTreeLayoutData,
   FamilyType,
+  FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
@@ -38,7 +39,6 @@ import {
   ICommand,
   IGraph,
   INode,
-  InteriorLabelModel,
   License,
   PolylineEdgeStyle,
   Rect,
@@ -111,13 +111,13 @@ function runLayout(graphComponent: GraphComponent): void {
 function createSampleGraph(graph: IGraph): void {
   // Create styles for the nodes
   const maleStyle = new ShapeNodeStyle({
-    fill: 'rgb(176,224,230)',
-    stroke: 'white',
+    fill: '#67b7dc',
+    stroke: '#617984',
     shape: ShapeNodeShape.ROUND_RECTANGLE
   })
   const femaleStyle = new ShapeNodeStyle({
-    fill: 'rgb(255,182,193)',
-    stroke: 'white',
+    fill: '#dc67ce',
+    stroke: '#846180',
     shape: ShapeNodeShape.ROUND_RECTANGLE
   })
   const familyKnot = new ShapeNodeStyle({
@@ -127,16 +127,31 @@ function createSampleGraph(graph: IGraph): void {
   })
 
   // Create styles for the labels in the nodes
-  const namesStyle = new DefaultLabelStyle({
+  const nameMaleStyle = new DefaultLabelStyle({
     font: '14px Tahoma',
-    textFill: 'black',
+    backgroundFill: '#c1e1f1',
+    textFill: '#2d4a59',
     horizontalTextAlignment: 'center',
-    insets: [-10, 0, 0, 0]
+    insets: 3
   })
-  const dateStyle = new DefaultLabelStyle({
+  const nameFemaleStyle = new DefaultLabelStyle({
+    font: '14px Tahoma',
+    backgroundFill: '#f1c1ea',
+    textFill: '#592d53',
+    horizontalTextAlignment: 'center',
+    insets: 3
+  })
+  const dateMaleStyle = new DefaultLabelStyle({
     font: '11px Tahoma',
-    textFill: 'rgb(119,136,153)',
-    insets: [5, 5, 5, 5]
+    backgroundFill: '#c1e1f1',
+    textFill: '#2d4a59',
+    insets: 3
+  })
+  const dateFemaleStyle = new DefaultLabelStyle({
+    font: '11px Tahoma',
+    backgroundFill: '#f1c1ea',
+    textFill: '#592d53',
+    insets: 3
   })
 
   // Use the GraphBuilder to create the graph items from data
@@ -162,21 +177,47 @@ function createSampleGraph(graph: IGraph): void {
     }
   }
 
-  const labelCreator = nodeCreator.createLabelsSource(data => data.labels).labelCreator
+  const labelCreator = nodeCreator.createLabelsSource(data =>
+    data.labels.map(label => ({ text: label.text, familyType: data.familyType }))
+  ).labelCreator
   labelCreator.textProvider = data => data.text
   labelCreator.layoutParameterProvider = data => {
     const text = data.text
     if (isBirthDate(text)) {
-      return InteriorLabelModel.SOUTH_WEST
+      return FreeNodeLabelModel.INSTANCE.createParameter({
+        layoutRatio: [0, 1],
+        layoutOffset: [5, -5],
+        labelRatio: [0, 1]
+      })
     } else if (isDeathDate(text)) {
-      return InteriorLabelModel.SOUTH_EAST
+      return FreeNodeLabelModel.INSTANCE.createParameter({
+        layoutRatio: [1, 1],
+        layoutOffset: [-5, -5],
+        labelRatio: [1, 1]
+      })
     }
-    return InteriorLabelModel.CENTER
+    return FreeNodeLabelModel.INSTANCE.createParameter({
+      layoutRatio: [0.5, 0],
+      layoutOffset: [0, 7],
+      labelRatio: [0.5, 0]
+    })
   }
   // Configure the styles to use for labels
   labelCreator.styleProvider = data => {
     const text = data.text
-    return isBirthDate(text) || isDeathDate(text) ? dateStyle : namesStyle
+    if (isBirthDate(text) || isDeathDate(text)) {
+      return data.familyType === 'MALE'
+        ? dateMaleStyle
+        : data.familyType === 'FEMALE'
+        ? dateFemaleStyle
+        : null
+    } else {
+      return data.familyType === 'MALE'
+        ? nameMaleStyle
+        : data.familyType === 'FEMALE'
+        ? nameFemaleStyle
+        : null
+    }
   }
 
   builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')

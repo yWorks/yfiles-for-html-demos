@@ -28,9 +28,6 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Arrow,
-  ArrowType,
-  DefaultLabelStyle,
   EdgeStyleDecorationInstaller,
   GraphBuilder,
   GraphComponent,
@@ -41,19 +38,18 @@ import {
   IGraph,
   IModelItem,
   INode,
-  InteriorLabelModel,
   ItemClickedEventArgs,
   License,
   NodeStyleDecorationInstaller,
   Point,
   PolylineEdgeStyle,
-  ShapeNodeStyle,
-  Size
+  ShapeNodeStyle
 } from 'yfiles'
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import GraphBuilderData from './resources/graph'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
 
 const graphChooserBox = document.getElementById('graphChooserBox') as HTMLSelectElement
 
@@ -132,7 +128,7 @@ function initHighlightingStyle(graph: IGraph): void {
     // We choose a shape node style
     nodeStyle: new ShapeNodeStyle({
       shape: 'rectangle',
-      stroke: '3px rgb(104, 176, 227)',
+      stroke: '3px #621B00',
       fill: 'transparent'
     }),
     // With a margin for the decoration
@@ -143,12 +139,7 @@ function initHighlightingStyle(graph: IGraph): void {
   const edgeHighlightStyle = new EdgeStyleDecorationInstaller({
     // We choose a shape node style
     edgeStyle: new PolylineEdgeStyle({
-      targetArrow: new Arrow({
-        type: 'default',
-        stroke: '3px rgb(104, 176, 227)',
-        fill: 'rgb(104, 176, 227)'
-      }),
-      stroke: '3px rgb(104, 176, 227)'
+      stroke: '3px #621B00'
     })
   })
   graph.decorator.edgeDecorator.highlightDecorator.setImplementation(edgeHighlightStyle)
@@ -246,31 +237,13 @@ function updateHighlight(item: IModelItem): void {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
+ *
  * @param graph The graph.
  */
 function initTutorialDefaults(graph: IGraph): void {
-  // Configure defaults for normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
-  graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-
-  // Configure defaults for edges and their labels
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: new Arrow({
-      type: ArrowType.DEFAULT,
-      stroke: 'black',
-      fill: 'black'
-    }),
-    stroke: '1px black'
-  })
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 }
 
 /**

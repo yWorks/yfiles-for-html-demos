@@ -30,7 +30,7 @@ import { BaseClass, CanvasComponent, IAnimation, Point, TimeSpan } from 'yfiles'
 
 export default class ZoomAnimation extends BaseClass<IAnimation>(IAnimation) implements IAnimation {
   private readonly targetZoomLog: number
-  private _preferredDuration: TimeSpan
+  private readonly _preferredDuration: TimeSpan
 
   constructor(
     private canvas: CanvasComponent,
@@ -55,12 +55,12 @@ export default class ZoomAnimation extends BaseClass<IAnimation>(IAnimation) imp
   /**
    * The zoom level difference between the initial and the target zoom level.
    */
-  delta: number = 0
+  delta = 0
 
   /**
    * Binary logarithm of the initial zoom level.
    */
-  initialZoomLog: number = 0
+  initialZoomLog = 0
 
   /**
    * Initializes the animation.

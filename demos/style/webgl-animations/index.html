@@ -65,6 +65,13 @@
       width: 6px;
       height: 16px;
     }
+
+    input:disabled {
+      cursor: not-allowed;
+    }
+    select:disabled {
+      cursor: not-allowed;
+    }
   </style>
 
 </head>
@@ -95,20 +102,21 @@
       Note, that the animated items all share the same <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2Animation" target="_blank">WebGL2Animation</a> object.
     </p>
 
-    <h2>Things to try</h2>
+    <h2>Things to Try</h2>
     <ul>
       <li>Hover over a component and observe the animation.</li>
       <li>
         Select different animations types for highlighting the currently hovered
         component:
       </li>
-      <li>For the component itself, "Pulse" is a fitting animation.</li>
+      <ul>
+        <li>For the component itself, "Pulse" or "Shake" are fitting animations.</li>
+        <li>
+          Use different "Fade" animations and hide or desaturate a component to bring this component to attention.
+        </li>
+      </ul>
       <li>
-        Use "Fade Out" or "Fade To Gray" animations for the rest of the graph to
-        bring the component to attention.
-      </li>
-      <li>
-        For fade animations, shorter animation durations are more noticeable.
+        Note that for fade animations, shorter animation durations are more noticeable.
       </li>
       <li>
         Experiment with other animation configurations, to achieve the desired effect.
@@ -151,16 +159,22 @@
     </select>
 
     <h3>Fade Direction</h3>
-    <p>Choose, whether to fade <em>to</em> an effect or away <em>from</em> it. Not available for 'Pulse' and 'Shake'.</p>
-    <select id="fadeDirection" title="For fade animations, whether to animate to the effect or away from it." style="width: 130px">
-      <option value='From'>From</option>
-      <option selected>To</option>
-    </select>
+    <p>Choose, whether to fade <em>to</em> an effect or away <em>from</em> it. Only available for "Fade" animations.</p>
+    <input type="radio" id="fadeDirectionTo" name="fadeDirection" checked>
+    <label for="fadeDirectionTo">To</label>
+    <input type="radio" id="fadeDirectionFrom" name="fadeDirection">
+    <label for="fadeDirectionFrom">From</label>
 
     <h3>Fade Colors</h3>
-    <p>Only relevant for color fade animation.</p>
-    <label for="fadeColor1">Color 1 </label><input type="color" id="fadeColor1" value="#00ff00" style="width: 180px; border:none"><br>
-    <label for="fadeColor2">Color 2 </label><input type="color" id="fadeColor2"  value="#00ffff" style="width: 180px; border: none">
+    <p>
+      Choose two colors that mark the range of color values to or from which a fading animation will change the original
+      colors. That means when color 1 and color 2 are different grey values, the result is a greyscale version of the
+      original graph.
+    </p>
+    <label for="fadeColor1">Color 1 </label>
+    <input type="color" id="fadeColor1" value="#00ff00" style="width: 180px; border:none" title="Color range for fade animations"><br>
+    <label for="fadeColor2">Color 2 </label>
+    <input type="color" id="fadeColor2" value="#00ffff" style="width: 180px; border: none" title="Color range for fade animations">
 
     <h3>Animation Frequency</h3>
     <p>Choose the animation frequency. Not available for fade animations.</p>
@@ -182,6 +196,7 @@
     </select>
 
     <h3>Animation Duration</h3>
+    <p>Choose the time that the animation will take.</p>
     <select id="animationDuration" title="Animation duration" style="width: 130px">
       <option value='500ms'>500ms</option>
       <option value='1s'>1s</option>

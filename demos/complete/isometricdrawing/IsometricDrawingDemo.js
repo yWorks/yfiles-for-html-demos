@@ -77,7 +77,7 @@ import { bindAction, bindInputListener, checkLicense, showApp } from '../../reso
 import loadJson from '../../resources/load-json.js'
 import IsometricWebGLNodeStyle from './IsometricWebGLNodeStyle.js'
 import HeightHandleProvider from './HeightHandleProvider.js'
-import { webGlSupported } from '../../utils/Workarounds.js'
+import { isWebGlSupported } from '../../utils/Workarounds.js'
 
 const MINIMUM_NODE_HEIGHT = 3
 
@@ -100,7 +100,7 @@ let gridVisualCreator = null
  * @param {!object} licenseData
  */
 function run(licenseData) {
-  if (!webGlSupported) {
+  if (!isWebGlSupported()) {
     document.getElementById('no-webgl-support').removeAttribute('style')
     showApp(null)
     return

@@ -52,7 +52,7 @@ import {
   Stroke,
   SvgExport
 } from 'yfiles'
-import { ComponentDropInputMode } from './ComponentDropInputMode.js'
+import { GraphDropInputMode } from '../../input/graph-drag-and-drop/GraphDropInputMode.js'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper.js'
 import {
   addClass,
@@ -157,7 +157,7 @@ function initializeInputModes() {
   graphEditorInputMode.moveInputMode.addDragCanceledListener(onDragCanceled)
 
   // add the input mode to drop components
-  const graphDropInputMode = new ComponentDropInputMode()
+  const graphDropInputMode = new GraphDropInputMode()
   graphDropInputMode.addDragEnteredListener(onDragStarted)
   graphDropInputMode.addDragOverListener(onDragged)
   graphDropInputMode.addItemCreatedListener(onDragFinished)
@@ -230,12 +230,12 @@ function updateGraph() {
 function initializeGraph() {
   graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: ShapeNodeShape.ELLIPSE,
-    fill: 'dark-gray',
+    fill: '#c1c1c1',
     stroke: null
   })
 
   graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '5px dark-gray'
+    stroke: '5px #c1c1c1'
   })
 }
 
@@ -276,7 +276,7 @@ function addComponentVisual(component, panel) {
     const dragPreview = document.createElement('div')
     dragPreview.appendChild(img.cloneNode(true))
 
-    const dragSource = ComponentDropInputMode.startDrag(
+    const dragSource = GraphDropInputMode.startDrag(
       div,
       componentGraph,
       DragDropEffects.ALL,
@@ -363,7 +363,7 @@ function createComponentVisual(componentGraph) {
  */
 function onDragStarted(sender) {
   let component
-  if (sender instanceof ComponentDropInputMode) {
+  if (sender instanceof GraphDropInputMode) {
     const graphDropInputMode = sender
     const graph = graphDropInputMode.dropData
     component = graph.nodes
@@ -381,7 +381,7 @@ function onDragStarted(sender) {
  * @param {!object} sender
  */
 function onDragged(sender) {
-  if (sender instanceof ComponentDropInputMode) {
+  if (sender instanceof GraphDropInputMode) {
     const graphDropInputMode = sender
     layoutHelper.location = graphDropInputMode.mousePosition.toPoint()
   } else if (sender instanceof MoveInputMode) {
@@ -407,7 +407,7 @@ function onDragCanceled() {
  * @param {!(ItemEventArgs.<IGraph>|InputModeEventArgs)} itemEventArgs
  */
 function onDragFinished(sender, itemEventArgs) {
-  if (sender instanceof ComponentDropInputMode) {
+  if (sender instanceof GraphDropInputMode) {
     const graphDropInputMode = sender
     const eventArgs = itemEventArgs
     layoutHelper.location = graphDropInputMode.dropLocation

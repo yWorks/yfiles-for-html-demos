@@ -166,14 +166,6 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
       layout.appendLayout(genericLabeling)
     }
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-
     return layout
   },
 
@@ -297,7 +289,15 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
       }
     }
 
-    return layoutData
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
   },
 
   createBusDescriptor: function (): EdgeRouterBusDescriptor {

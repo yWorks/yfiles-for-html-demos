@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global d3 */
 import DeviceStyle from './DeviceStyle.js'
 import { INode } from 'yfiles'
 

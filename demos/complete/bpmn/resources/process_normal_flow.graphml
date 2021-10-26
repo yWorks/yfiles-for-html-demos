@@ -114,7 +114,7 @@ group active]]></y:Label.Text>
 				<y:RectD X="170.3952532728773" Y="-82.38650793650794" Width="50" Height="50"/>
 			</data>
 			<data key="d4">
-				<bpmn:EventNodeStyle type="TIMER" minimumSize="20,20"/>
+				<bpmn:EventNodeStyle type="TIMER" characteristic="CATCHING" minimumSize="20,20"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1">

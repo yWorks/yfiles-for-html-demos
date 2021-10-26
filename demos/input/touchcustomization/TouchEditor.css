@@ -31,8 +31,8 @@
 }
 
 .freeform-selection-path {
-  fill: #53a2d9;
-  stroke: #53a2d9;
+  fill: #67b7dc;
+  stroke: #67b7dc;
   stroke-width: 3px;
   fill-opacity: 0.04;
 }
@@ -42,15 +42,15 @@
   stroke: rgba(255, 255, 255, 0.7);
 }
 .demo-handle.demo-handle-move {
-  fill: rgba(192, 17, 10, 0.9);
+  fill: #ab2346;
   stroke: rgba(255, 255, 255, 0.7);
 }
 .demo-handle.demo-handle-resize {
-  fill: rgba(64, 128, 192, 0.9);
+  fill: #0b7189;
   stroke: rgba(255, 255, 255, 0.7);
 }
 .demo-handle-move-bend {
-  fill: rgba(11, 85, 23, 0.9);
+  fill: #621b00;
   stroke: rgba(255, 255, 255, 0.7);
 }
 
@@ -60,12 +60,12 @@
 }
 
 .demo-dial-menu-item > path {
-  fill: rgb(134, 175, 213);
+  fill: #67b7dc;
   stroke: #fff;
 }
 
 .demo-dial-menu-item.disabled > path {
-  fill: rgb(197, 215, 235);
+  fill: #c1e1f1;
 }
 
 .demo-dial-menu-item.disabled > .demo-dial-icon {
@@ -73,7 +73,7 @@
 }
 
 .demo-dial-menu-item.highlighted > path {
-  fill: rgb(102, 153, 204);
+  fill: #617984;
 }
 
 .demo-dial-menu-item > .demo-dial-icon {
@@ -81,11 +81,11 @@
 }
 
 .demo-dial-menu-item > .demo-dial-title > text {
-  fill: white;
+  fill: #2d4a59;
 }
 
 .demo-dial-menu-item > .demo-dial-title > rect {
-  fill: rgba(102, 153, 204, 0.8);
+  fill: #a8b5bb;
   rx: 4;
   ry: 4;
 }
@@ -167,8 +167,8 @@
   position: absolute;
   left: 30px;
   top: 20px;
-  color: white;
-  background-color: rgb(231, 93, 104);
+  color: #5a1225;
+  background-color: #f3a2b8;
   border: none;
   padding: 10px;
   border-radius: 10px;
@@ -210,7 +210,7 @@
   width: 120px;
   margin: auto;
   border-radius: 5px;
-  background-color: #68b0e3;
+  background-color: #0b7189;
 }
 
 #snapPanningBox select {

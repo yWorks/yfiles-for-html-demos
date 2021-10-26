@@ -49,13 +49,8 @@
   <script src="../../resources/filesystem-warning.js"></script>
 
   <script type="text/yfiles-template">
-    <defs>
-      <clipPath id="myClip">
-        <rect width="260" height="60"></rect>
-      </clipPath>
-    </defs>
-    <g id="nodeTemplate" clip-path="url(#myClip)">
-      <rect fill="#FF8C00" stroke="#FFF" stroke-width="1" rx="2" ry="2"
+    <g id="nodeTemplate">
+      <rect fill="#FF6C00" stroke="#662b00 " stroke-width="1.5" rx="3.5" ry="3.5"
           width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
       <text transform="translate(10 20)" data-content="{Binding name}"
           style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"></text>

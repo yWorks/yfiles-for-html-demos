@@ -51,12 +51,10 @@ import {
   IEdgeStyle,
   IGraph,
   ILabelModelParameter,
-  ILabelStyle,
   IMap,
   IMementoSupport,
   IModelItem,
   INode,
-  INodeStyle,
   Insets,
   InteriorLabelModel,
   InteriorLabelModelPosition,
@@ -72,7 +70,6 @@ import {
   PolylineEdgeStyle,
   PortAdjustmentPolicy,
   Rect,
-  ShapeNodeStyle,
   SimplexNodePlacer,
   Size,
   TransitiveClosure,
@@ -87,14 +84,17 @@ import PackageNodeStyleDecorator from './PackageNodeStyleDecorator'
 import MagnifyNodeHighlightInstaller from './MagnifyNodeHighlightInstaller'
 import {
   addClass,
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
   checkLicense,
   removeClass,
-  showApp
+  showApp,
+  showLoadingIndicator
 } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
+import { createBasicNodeStyle } from '../../resources/basic-demo-styles'
 
 type NpmPackageInfo = {
   name: string
@@ -115,18 +115,6 @@ const maxNpmModules = 50
  * The {@link GraphComponent} which contains the {@link IGraph}.
  */
 let graphComponent: GraphComponent
-
-/**
- * The node style that is applied to all nodes.
- * It provides an icon and buttons to reveal additional dependents/dependencies.
- */
-let defaultNodeStyle: INodeStyle
-
-/**
- * The node label style that is applied to all labels.
- * It provides a label without background and white text.
- */
-let nodeLabelStyle: ILabelStyle
 
 /**
  * The parameter for all node labels.
@@ -187,7 +175,7 @@ let busy = false
  */
 function setBusy(isBusy: boolean): void {
   setUIDisabled(isBusy)
-  setLoadingIndicatorVisibility(isBusy)
+  showLoadingIndicator(isBusy)
   busy = isBusy
 }
 
@@ -295,6 +283,7 @@ function run(licenseData: any): void {
 
   samplesComboBox = document.getElementById('samplesComboBox') as HTMLSelectElement
   algorithmComboBox = document.getElementById('algorithmComboBox') as HTMLSelectElement
+  addNavigationButtons(algorithmComboBox)
 
   // use a filtered graph to have control over which nodes and edges are visible at any time
   filteredGraph = new FilteredGraphWrapper(graphComponent.graph, nodePredicate, edgePredicate)
@@ -307,8 +296,6 @@ function run(licenseData: any): void {
   initializeGraph()
 
   loadGraph()
-
-  setLoadingIndicatorVisibility(false)
 
   registerCommands()
 
@@ -357,7 +344,7 @@ function registerCommands(): void {
   const gvim = (graphComponent.inputMode as GraphViewerInputMode)!
   gvim.keyboardInputMode.addCommandBinding(
     ICommand.UNDO,
-    (command, parameter, source) => {
+    () => {
       getUndoEngine(graphComponent).undo()
       return true
     },
@@ -366,7 +353,7 @@ function registerCommands(): void {
 
   gvim.keyboardInputMode.addCommandBinding(
     ICommand.REDO,
-    (command, parameter, source) => {
+    () => {
       getUndoEngine(graphComponent).redo()
       return true
     },
@@ -443,6 +430,9 @@ function initializeInputModes(): void {
   graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setImplementation(
     new MagnifyNodeHighlightInstaller()
   )
+
+  // disable default focus indicator
+  graphComponent.graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
 
   mode.addItemClickedListener(async (sender, args): Promise<void> => {
     // check if the clicked item is a node or if the loaded graph is yfiles/modules, since this graph has
@@ -555,42 +545,30 @@ function animateViewPort(hoveredItem: INode): void {
  * Initializes the styles to use for the graph.
  */
 function initializeStyles(): void {
-  const shapeNodeStyle = new ShapeNodeStyle({
-    shape: 'round-rectangle',
-    stroke: 'rgb(102, 153, 204)',
-    fill: 'rgb(102, 153, 204)'
-  })
-  defaultNodeStyle = new PackageNodeStyleDecorator(shapeNodeStyle)
-
   normalEdgeStyle = new PolylineEdgeStyle({
-    stroke: '2px black',
+    stroke: '1.5px #203744',
     targetArrow: IArrow.TRIANGLE,
     smoothingLength: 10
   })
 
   addedEdgeStyle = new PolylineEdgeStyle({
-    stroke: '2px rgb(51, 102, 153)',
+    stroke: '1.5px #DB3A34',
     targetArrow: new Arrow({
-      fill: 'rgb(51, 102, 153)',
-      stroke: 'rgb(51, 102, 153)',
+      fill: '#DB3A34',
+      stroke: '#DB3A34',
       type: ArrowType.TRIANGLE
     }),
     smoothingLength: 10
   })
 
   removedEdgeStyle = new PolylineEdgeStyle({
-    stroke: '2px dashed gray',
+    stroke: '1.5px dashed #c1c1c1',
     targetArrow: new Arrow({
-      fill: 'gray',
-      stroke: 'gray',
+      fill: '#c1c1c1',
+      stroke: '#c1c1c1',
       type: ArrowType.TRIANGLE
     }),
     smoothingLength: 10
-  })
-
-  nodeLabelStyle = new DefaultLabelStyle({
-    font: 'Arial',
-    textFill: 'white'
   })
 
   const nodeLabelModel = new InteriorLabelModel({
@@ -604,10 +582,14 @@ function initializeStyles(): void {
  */
 function initializeGraph(): void {
   const graph = filteredGraph
-  graph.nodeDefaults.style = defaultNodeStyle
+  graph.nodeDefaults.style = new PackageNodeStyleDecorator(createBasicNodeStyle('demo-palette-56'))
+  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+    textFill: 'white'
+  })
+
   graph.nodeDefaults.size = new Size(80, 30)
   graph.edgeDefaults.style = normalEdgeStyle
-  graph.nodeDefaults.labels.style = nodeLabelStyle
+
   graph.undoEngineEnabled = true
 }
 
@@ -1429,14 +1411,6 @@ function resetTable(packageName: string): void {
   table.rows[2].cells[1].innerHTML = ''
   table.rows[3].cells[1].innerHTML = ''
   table.rows[4].cells[1].innerHTML = ''
-}
-
-/**
- * Displays or hides the loading indicator.
- */
-function setLoadingIndicatorVisibility(visible: boolean): void {
-  const loadingIndicator = document.getElementById('loadingIndicator') as HTMLDivElement
-  loadingIndicator.style.display = visible ? 'block' : 'none'
 }
 
 /**

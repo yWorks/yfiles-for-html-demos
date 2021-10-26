@@ -55,7 +55,11 @@ import loadJson from '../../resources/load-json.js'
 import MoveNodesAsideStage from './MoveNodesAsideStage.js'
 import AlignmentStage from './AlignmentStage.js'
 import ZigZagEdgesStage from './ZigZagEdgesStage.js'
-import { DemoNodeStyle } from '../../resources/demo-styles.js'
+import {
+  createDemoNodeLabelStyle,
+  DemoEdgeStyle,
+  DemoNodeStyle
+} from '../../resources/demo-styles.js'
 
 /**
  * The graph component in which the graph is displayed.
@@ -223,10 +227,9 @@ function createCoreLayout() {
 function createGraph(graph) {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.style = new DemoNodeStyle()
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: 'triangle'
-  })
+  graph.edgeDefaults.style = new DemoEdgeStyle()
   graph.edgeDefaults.shareStyleInstance = false
+  graph.nodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-21')
 
   const nodeLocations = [
     [150, 0],
@@ -247,16 +250,16 @@ function createGraph(graph) {
   // We have a few special nodes in this sample
   const greenNodeStyle = new ShapeNodeStyle({
     shape: 'ellipse',
-    fill: 'darkgreen',
-    stroke: 'white'
+    fill: '#76B041',
+    stroke: '1.5px #586a48'
   })
   graph.setStyle(nodes[9], greenNodeStyle)
   graph.setStyle(nodes[10], greenNodeStyle)
   graph.setStyle(nodes[11], greenNodeStyle)
 
   const blueNodeStyle = new ShapeNodeStyle({
-    fill: 'cornflowerblue',
-    stroke: 'white'
+    fill: '#17BEBB',
+    stroke: '1.5px #407271'
   })
   graph.setStyle(nodes[7], blueNodeStyle)
   graph.setStyle(nodes[8], blueNodeStyle)
@@ -273,7 +276,7 @@ function createGraph(graph) {
   graph.createEdge(nodes[3], nodes[7])
   graph.createEdge(nodes[6], nodes[8])
   const dashedEdgeStyle = new PolylineEdgeStyle({
-    stroke: '1px dashed darkgray'
+    stroke: '1.5px dashed darkgray'
   })
   const e1 = graph.createEdge(nodes[0], nodes[9], dashedEdgeStyle)
   const e2 = graph.createEdge(nodes[1], nodes[10], dashedEdgeStyle)

@@ -372,7 +372,7 @@ async function updateGraph(graph, samplePath) {
   const reader = new GraphMLIOHandler()
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   reader.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   reader.addHandleSerializationListener(DemoSerializationListener)

@@ -1,49 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   width="16"
-   height="16"
-   viewBox="0 0 16 16"
-   id="svg2"
-   version="1.1">
-  <defs
-     id="defs4" />
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     transform="matrix(1.2262546,0,0,1.2972613,-50.227534,-606.34108)">
-    <g
-       transform="translate(0.08141415,-0.07730325)"
-       id="g5802">
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  viewBox="0 0 16 16">
+  <g transform="matrix(1.2262546,0,0,1.2972613,-50.227534,-606.34108)">
+    <g transform="translate(0.08141415,-0.07730325)">
       <ellipse
-         style="fill:#29abe2;fill-opacity:1;stroke:#0476c0;stroke-width:1.03071666;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="path5782"
-         cx="47.429546"
-         cy="473.64734"
-         rx="5.9645357"
-         ry="5.6098533" />
+        style="fill:#67B7DC;fill-opacity:1;stroke:#67B7DC;stroke-width:1.03071666;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+        cx="47.429546"
+        cy="473.64734"
+        rx="5.9645357"
+        ry="5.6098533"/>
       <text
-         transform="scale(1.0285453,0.97224692)"
-         id="text9137"
-         y="491.07574"
-         x="43.649807"
-         style="font-style:normal;font-weight:normal;font-size:10.59194756px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         xml:space="preserve"><tspan
+        transform="scale(1.0285453,0.97224692)"
+        y="491.07574"
+        x="43.649807"
+        style="font-style:normal;font-weight:normal;font-size:10.59194756px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+        xml:space="preserve"><tspan
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Tahoma;-inkscape-font-specification:Tahoma;fill:#ffffff"
            y="491.07574"
            x="43.649807"

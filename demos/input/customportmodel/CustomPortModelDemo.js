@@ -125,7 +125,7 @@ function enableGraphML() {
 
   // enable serialization of demo styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
@@ -153,12 +153,12 @@ function initializeGraph(graph) {
   // set the default port style and size for this demo
   const shapeNodeStyle = new ShapeNodeStyle({
     shape: 'ellipse',
-    fill: 'rgb(51, 102, 153)',
+    fill: '#224556',
     stroke: null
   })
   graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter({
     nodeStyle: shapeNodeStyle,
-    renderSize: [5, 5]
+    renderSize: [10, 10]
   })
   graph.nodeDefaults.size = new Size(100, 100)
 

@@ -41,10 +41,13 @@ import {
   IArrow,
   ICommand,
   IGraph,
+  IMapper,
   INode,
+  ItemCollection,
   LayoutExecutor,
   LeftRightNodePlacer,
   License,
+  Mapper,
   NodeStyleDecorationInstaller,
   OrganicEdgeRouter,
   Point,
@@ -54,6 +57,7 @@ import {
   ShowFocusPolicy,
   Size,
   TreeLayout,
+  TreeLayoutData,
   TreeLayoutEdgeRoutingStyle,
   TreeReductionStage
 } from 'yfiles'
@@ -368,35 +372,28 @@ module.factory('Layout', () => {
     /**
      * @param {IGraph} tree
      */
-    configureLayout(tree) {
-      const registry = tree.mapperRegistry
-
-      const nodePlacerMapper = registry.createMapper(TreeLayout.NODE_PLACER_DP_KEY)
-      const assistantMapper = registry.createMapper(AssistantNodePlacer.ASSISTANT_NODE_DP_KEY)
+    createTreeLayoutData(tree) {
+      const nodePlacerMapper = new Mapper()
+      const assistantNodes = []
 
       tree.nodes.forEach(node => {
         if (tree.inDegree(node) === 0) {
-          setNodePlacers(node, nodePlacerMapper, assistantMapper, tree)
+          setNodePlacers(node, nodePlacerMapper, assistantNodes, tree)
         }
+      })
+
+      return new TreeLayoutData({
+        nodePlacers: nodePlacerMapper,
+        assistantNodes: ItemCollection.from(assistantNodes)
       })
     },
 
     /**
      * @param {IGraph} graph
      */
-    cleanUp(graph) {
-      const registry = graph.mapperRegistry
-      registry.removeMapper(AssistantNodePlacer.ASSISTANT_NODE_DP_KEY)
-      registry.removeMapper(TreeLayout.NODE_PLACER_DP_KEY)
-    },
-
-    /**
-     * @param {IGraph} graph
-     */
     doLayout(graph) {
-      this.configureLayout(graph)
-      graph.applyLayout(this.treeLayout)
-      this.cleanUp(graph)
+      const layoutData = this.createTreeLayoutData(graph)
+      graph.applyLayout(this.treeLayout, layoutData)
     },
 
     /**
@@ -404,27 +401,25 @@ module.factory('Layout', () => {
      */
     async morphLayout(graphComponent) {
       try {
-        this.configureLayout(graphComponent.graph)
-        await graphComponent.morphLayout(this.treeLayout, '0.5s')
+        const layoutData = this.createTreeLayoutData(graphComponent.graph)
+        await graphComponent.morphLayout(this.treeLayout, '0.5s', layoutData)
       } catch (error) {
         if (typeof window.reportError === 'function') {
           window.reportError(error)
         } else {
           throw error
         }
-      } finally {
-        this.cleanUp(graphComponent.graph)
       }
     }
   }
 
   /**
    * @param {INode} rootNode
-   * @param {IMapper.<INodePlacer>} nodePlacerMapper
-   * @param {IMapper.<INode>} assistantMapper
+   * @param {IMapper.<INode, INodePlacer>} nodePlacerMapper
+   * @param {INode[]} assistantNodes
    * @param {IGraph} tree
    */
-  function setNodePlacers(rootNode, nodePlacerMapper, assistantMapper, tree) {
+  function setNodePlacers(rootNode, nodePlacerMapper, assistantNodes, tree) {
     const employee = rootNode.tag.item
     if (employee !== null) {
       switch (employee.layout) {
@@ -474,13 +469,13 @@ module.factory('Layout', () => {
         const assistantNodePlacer = new AssistantNodePlacer()
         assistantNodePlacer.childNodePlacer = oldParentPlacer
         nodePlacerMapper.set(parent, assistantNodePlacer)
-        assistantMapper.set(rootNode, true)
+        assistantNodes.push(rootNode)
       }
     }
 
     tree.outEdgesAt(rootNode).forEach(outEdge => {
       const child = outEdge.targetPort.owner
-      setNodePlacers(child, nodePlacerMapper, assistantMapper, tree)
+      setNodePlacers(child, nodePlacerMapper, assistantNodes, tree)
     })
   }
 

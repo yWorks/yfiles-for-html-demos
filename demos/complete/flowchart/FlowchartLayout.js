@@ -328,7 +328,7 @@ export default class FlowchartLayout extends BaseClass(ILayoutAlgorithm) {
    * @returns {boolean}
    */
   isHorizontalOrientation() {
-    return this.$layoutOrientation === LayoutOrientation.LEFT_TO_RIGHT
+    return this.layoutOrientation === LayoutOrientation.LEFT_TO_RIGHT
   }
 
   /**

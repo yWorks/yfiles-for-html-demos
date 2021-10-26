@@ -32,7 +32,9 @@ import {
   GraphEditorInputMode,
   ICommand,
   IGraph,
+  IInputMode,
   ILabel,
+  IModelItem,
   INode,
   ISelectionModel,
   License,
@@ -40,9 +42,7 @@ import {
   Point,
   Size,
   TemplateNodeStyle,
-  YObject,
-  IInputMode,
-  IModelItem
+  YObject
 } from 'yfiles'
 
 import {
@@ -52,6 +52,7 @@ import {
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { TagCopyItem, TaggedNodeClipboardHelper } from './ClipboardHelper.js'
+import { DemoEdgeStyle } from '../../resources/demo-styles.js'
 
 // This demo shows different ways of using the class GraphClipboard for Copy and Paste operations.
 
@@ -99,8 +100,9 @@ function initializeGraph() {
   graph.undoEngineEnabled = true
   graph.nodeDefaults.size = new Size(120, 60)
 
-  // Set the default style for new nodes
+  // Set the default style for new nodes and edges
   graph.nodeDefaults.style = new TemplateNodeStyle('ClipboardStyle')
+  graph.edgeDefaults.style = new DemoEdgeStyle('demo-palette-31')
 
   // Set the default locations for new labels
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH

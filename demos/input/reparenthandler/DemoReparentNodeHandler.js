@@ -58,7 +58,7 @@ export default class DemoReparentNodeHandler extends ReparentNodeHandler {
    * @returns {boolean} Whether the node may be detached and reparented.
    */
   shouldReparent(context, node) {
-    return node.tag !== 'firebrick'
+    return node.tag !== 'red'
   }
 
   /**

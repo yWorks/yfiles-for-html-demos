@@ -158,7 +158,7 @@ export function createChild(
   const data: NodeData = {
     depth: parentNodeData.depth + 1,
     isLeft: left,
-    color: '#4477FF',
+    color: '#4281a4',
     isCollapsed: false,
     stateIcon: 0
   }

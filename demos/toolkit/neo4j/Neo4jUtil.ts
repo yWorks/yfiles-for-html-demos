@@ -26,10 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global neo4j */
-
 declare const neo4j: any
 
+/* global neo4j */
 /**
  * @yjs:keep=types,Node
  */

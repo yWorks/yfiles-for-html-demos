@@ -65,7 +65,7 @@ import { LayoutOptions } from './LayoutOptions'
 import { RectanglePositionHandler } from './RectanglePositionHandler'
 
 import {
-  bindAction,
+  addNavigationButtons,
   bindChangeListener,
   bindCommand,
   checkLicense,
@@ -86,9 +86,6 @@ const clearingStrategyComboBox = document.getElementById(
 const componentAssignmentStrategyComboBox = document.getElementById(
   'component-assignment-strategy-combobox'
 ) as HTMLSelectElement
-
-const previousButton = document.getElementById('previous-sample-button') as HTMLInputElement
-const nextButton = document.getElementById('next-sample-button') as HTMLInputElement
 
 /**
  * The rectangular area used for clearing
@@ -122,8 +119,7 @@ let nodeHitTester: INodeHitTester | null
 /**
  * The GraphComponent
  */
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * Runs the demo.
@@ -150,7 +146,6 @@ function initializeUI(): void {
   samplesComboBox.selectedIndex = 0
   clearingStrategyComboBox.selectedIndex = options.clearAreaStrategy.valueOf()
   componentAssignmentStrategyComboBox.selectedIndex = options.componentAssignmentStrategy.valueOf()
-  updateSampleButtonStates()
 }
 
 /**
@@ -164,25 +159,10 @@ function registerCommands(): void {
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 
-  bindAction("button[data-command='PreviousFile']", () => {
-    if (!previousButton.disabled) {
-      samplesComboBox.selectedIndex--
-      loadGraph(samplesComboBox.options[samplesComboBox.selectedIndex].value)
-    }
-    updateSampleButtonStates()
-  })
-
-  bindAction("button[data-command='NextFile']", () => {
-    if (!nextButton.disabled) {
-      samplesComboBox.selectedIndex++
-      loadGraph(samplesComboBox.options[samplesComboBox.selectedIndex].value)
-    }
-    updateSampleButtonStates()
-  })
+  addNavigationButtons(samplesComboBox)
 
   bindChangeListener("select[data-command='SetSampleGraph']", () => {
     loadGraph(samplesComboBox.options[samplesComboBox.selectedIndex].value)
-    updateSampleButtonStates()
   })
 
   bindChangeListener("select[data-command='SetClearingStrategy']", onClearingStrategyChanged)
@@ -213,14 +193,6 @@ function onComponentAssignmentStrategyChanged(): void {
   options.componentAssignmentStrategy = ComponentAssignmentStrategy[
     strategy as keyof typeof ComponentAssignmentStrategy
   ] as ComponentAssignmentStrategy
-}
-
-/**
- * enables/disables the sample buttons depending on sample combo selected index
- */
-function updateSampleButtonStates(): void {
-  previousButton.disabled = samplesComboBox.selectedIndex === 0
-  nextButton.disabled = samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
 }
 
 /**
@@ -420,8 +392,7 @@ function loadGraph(sampleName: string): void {
     data: data.nodes,
     id: 'id',
     parentId: 'parentId',
-    layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
-    labels: ['label']
+    layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   if (data.groups) {
     const nodesSource = builder.createGroupNodesSource({
@@ -465,8 +436,9 @@ class ClearRectTemplate extends BaseClass(IVisualTemplate) {
   createVisual(context: IRenderContext, bounds: Rect, dataObject: object): SvgVisual | null {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
 
-    rect.setAttribute('fill', 'rgba(0,0,255,0.3)')
-    rect.setAttribute('stroke', 'rgba(0,0,255,0.7)')
+    rect.setAttribute('fill', 'rgba(0,187,255,0.65)')
+    rect.setAttribute('stroke', 'rgba(77,131,153,0.65)')
+    rect.setAttribute('stroke-width', '1.5')
     rect.setAttribute('x', `${bounds.x}`)
     rect.setAttribute('y', `${bounds.y}`)
     rect.setAttribute('width', `${bounds.width}`)

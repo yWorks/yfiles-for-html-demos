@@ -56,12 +56,12 @@ import {
   OrganicDemoConfiguration
 } from './LargeGraphDemoConfiguration'
 import OrgChartDemoConfiguration from './OrgChartDemoConfiguration'
-import { webGl2Supported } from '../../utils/Workarounds'
+import { isWebGl2Supported } from '../../utils/Workarounds'
 
 let renderingTypesManager: RenderingTypesManager = null!
 
 async function run(licenseData: object): Promise<void> {
-  if (!webGl2Supported) {
+  if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
     showApp(null)

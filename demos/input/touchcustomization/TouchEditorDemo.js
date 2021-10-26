@@ -84,6 +84,7 @@ import TouchHandleInputMode from './TouchHandleInputMode.js'
 import { checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import PortCandidateTemplate from './PortCandidateTemplate.js'
+import { colorSets } from '../../resources/basic-demo-styles.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -651,7 +652,7 @@ function configureSelectionDecoration(graphComponent) {
   decorator.edgeDecorator.selectionDecorator.setImplementation(
     new EdgeStyleDecorationInstaller({
       edgeStyle: new PolylineEdgeStyle({
-        stroke: new Stroke(new SolidColorFill(86, 143, 195, 255), 4)
+        stroke: '4px #2C4B52'
       })
     })
   )
@@ -695,7 +696,7 @@ function createConfiguredGraph() {
 
   initDemoStyles(graph)
 
-  const fill = new SolidColorFill(51, 102, 153, 255)
+  const fill = '#662b00'
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke(fill, 4),
     targetArrow: new Arrow({
@@ -829,7 +830,7 @@ function createDnDPanelNodes() {
   // Create a new temporary graph for the nodes
   const nodeContainer = new DefaultGraph()
 
-  // Create some nodes
+  // Create a group node
   const groupNodeStyle = new DemoGroupStyle()
   groupNodeStyle.isCollapsible = true
   groupNodeStyle.solidHitTest = true
@@ -849,21 +850,26 @@ function createDnDPanelNodes() {
     groupLabelStyle
   )
 
-  const nodeColor = new Color(255, 140, 0, 255)
-  const orangeFill = new SolidColorFill(nodeColor)
-  orangeFill.freeze()
-  nodeContainer.createNode(new Rect(0, 0, 100, 60), new DemoNodeStyle())
+  // create a node with standard demo node styling
+  nodeContainer.createNode(new Rect(0, 0, 100, 60), new DemoNodeStyle('demo-palette-13'))
 
+  // create a shape style node
   const shapeNodeStyle = new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
-    stroke: new Stroke(orangeFill),
-    fill: orangeFill
+    stroke: new Stroke(colorSets['demo-palette-14'].stroke),
+    fill: new SolidColorFill(colorSets['demo-palette-14'].fill)
   })
   nodeContainer.createNode(new Rect(0, 0, 100, 60), shapeNodeStyle)
-  nodeContainer.createNode(new Rect(0, 0, 100, 60), new BevelNodeStyle({ color: nodeColor }))
 
+  // create a bevel style node
+  nodeContainer.createNode(
+    new Rect(0, 0, 100, 60),
+    new BevelNodeStyle({ color: colorSets['demo-palette-15'].fill })
+  )
+
+  // create a shiny plate style node
   const shinyPlateNodeStyle = new ShinyPlateNodeStyle({
-    fill: orangeFill,
+    fill: colorSets['demo-palette-11'].fill,
     drawShadow: false
   })
   nodeContainer.createNode(new Rect(0, 0, 100, 60), shinyPlateNodeStyle)

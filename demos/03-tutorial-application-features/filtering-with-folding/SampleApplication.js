@@ -29,10 +29,12 @@
 import {
   CollapsibleNodeStyleDecorator,
   DefaultGraph,
-  DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   ExteriorLabelModel,
   FilteredGraphWrapper,
   FoldingManager,
+  FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -41,17 +43,15 @@ import {
   IFoldingView,
   IGraph,
   INode,
-  InteriorStretchLabelModel,
   License,
-  PanelNodeStyle,
   Point,
-  ShapeNodeStyle,
   Size,
   UndoUnitBase
 } from 'yfiles'
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -113,12 +113,17 @@ function enableFilteringAndFolding() {
   const fullGraph = new DefaultGraph()
 
   // set default styles for newly created graph elements
-  initializeTutorialDefaults(fullGraph)
+  initTutorialDefaults(fullGraph)
 
   // add a collapse/expand button to the group node style
-  fullGraph.groupNodeDefaults.style = new CollapsibleNodeStyleDecorator(
-    fullGraph.groupNodeDefaults.style
-  )
+  fullGraph.groupNodeDefaults.style = new CollapsibleNodeStyleDecorator({
+    wrapped: fullGraph.groupNodeDefaults.style,
+    buttonPlacement: FreeNodeLabelModel.INSTANCE.createParameter({
+      layoutRatio: [0, 0],
+      layoutOffset: [2.5, 2.5],
+      labelRatio: [0, 0]
+    })
+  })
 
   // we want to hide items whose tag contains the string 'filtered'
   const nodePredicate = node => !node.tag || !node.tag.filtered
@@ -147,33 +152,24 @@ function filterItemWithUndoUnit(item, state) {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
  *
  * @param {!IGraph} graph The graph.
  */
-function initializeTutorialDefaults(graph) {
-  // configure defaults for normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
-  graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
+function initTutorialDefaults(graph) {
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults for group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  // set sizes and locations specific for this tutorial
+  graph.nodeDefaults.size = new Size(40, 40)
+
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
+    insets: 5
+  }).createParameter('south')
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**

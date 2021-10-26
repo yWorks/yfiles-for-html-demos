@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -37,14 +36,13 @@ import {
   MutableRectangle,
   Rect
 } from 'yfiles'
-
-import { DemoNodeStyle } from '../../resources/demo-styles.js'
 import { checkLicense, showApp } from '../../resources/demo-app.js'
 import LimitingRectangleDescriptor from './LimitedRectangleDescriptor.js'
 import GreenPositionHandler from './GreenPositionHandler.js'
 import RedPositionHandler from './RedPositionHandler.js'
 import OrangePositionHandler from './OrangePositionHandler.js'
 import loadJson from '../../resources/load-json.js'
+import { createDemoNodeLabelStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
 
 /**
  * Registers a callback function as decorator that provides a custom
@@ -74,10 +72,10 @@ function registerPositionHandler(graph, boundaryRectangle) {
       case 'orange':
         // This implementation delegates certain behavior to the default implementation
         return new OrangePositionHandler(boundaryRectangle, node, delegateHandler)
-      case 'firebrick':
+      case 'red':
         // A simple implementation that prohibits moving
         return new RedPositionHandler()
-      case 'royalblue':
+      case 'blue':
         // Implementation that uses two levels of delegation to create a combined behavior
         return new OrangePositionHandler(
           boundaryRectangle,
@@ -139,17 +137,17 @@ function configureUserInteraction(graphComponent) {
  * @param {!IGraph} graph The graph displayed in the demo's graph component.
  */
 function createSampleGraph(graph) {
-  createNode(graph, 100, 100, 100, 30, 'firebrick', 'whitesmoke', 'Unmovable')
-  createNode(graph, 300, 100, 100, 30, 'green', 'whitesmoke', 'One Axis')
-  createNode(graph, 80, 250, 140, 40, 'orange', 'black', 'Limited to Rectangle')
+  createNode(graph, 100, 100, 100, 30, 'demo-red', 'red', 'Unmovable')
+  createNode(graph, 300, 100, 100, 30, 'demo-green', 'green', 'One Axis')
+  createNode(graph, 80, 250, 140, 40, 'demo-orange', 'orange', 'Limited to Rectangle')
   createNode(
     graph,
     280,
     250,
     140,
     40,
-    'royalblue',
-    'whitesmoke',
+    'demo-lightblue',
+    'blue',
     'Limited to Rectangle\nand One Axis'
   )
 }
@@ -161,23 +159,20 @@ function createSampleGraph(graph) {
  * @param {number} y The node's y-coordinate
  * @param {number} w The node's width
  * @param {number} h The node's height
- * @param {!string} cssClass The given css class
- * @param {!string} textColor The color of the text
- * @param {!string} labelText The nodes label's text
+ * @param {!ColorSetName} cssClass The given css class
+ * @param {!string} tag The tag to identify the position handler
+ * @param {!string} labelText The node's label text
  */
-function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
-  const textLabelStyle = new DefaultLabelStyle({
-    textFill: textColor
+function createNode(graph, x, y, w, h, cssClass, tag, labelText) {
+  const node = graph.createNode({
+    layout: new Rect(x, y, w, h),
+    style: new DemoNodeStyle(cssClass),
+    tag: tag
   })
-
-  const nodeStyle = new DemoNodeStyle()
-  nodeStyle.cssClass = cssClass
-
-  const node = graph.createNode(new Rect(x, y, w, h), nodeStyle, cssClass)
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: textLabelStyle
+    style: createDemoNodeLabelStyle(cssClass)
   })
 }
 

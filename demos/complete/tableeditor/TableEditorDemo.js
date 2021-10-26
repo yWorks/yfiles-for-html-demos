@@ -116,6 +116,9 @@ function run(licenseData) {
   // configures the drag and drop panel
   configureDndPanel()
 
+  // Enable general undo support
+  graph.undoEngineEnabled = true
+
   // configures the table editor input mode
   const tableEditorInputMode = configureTableEditing()
 
@@ -127,9 +130,6 @@ function run(licenseData) {
 
   // bind toolbar commands
   registerCommands()
-
-  // Enable general undo support
-  graph.undoEngineEnabled = true
 
   // initialize the demo
   showApp(graphComponent)
@@ -151,7 +151,7 @@ async function createGraph() {
     TableStyles
   )
   graphMLSupport.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   graphMLSupport.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)

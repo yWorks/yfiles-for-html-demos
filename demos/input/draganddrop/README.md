@@ -25,3 +25,10 @@ The native drag and drop approach is disabled in Internet Explorer because the H
 - Drag an edge from the palette onto the empty canvas to create a new node with an edge creation in progress.
 - Drag an edge from the palette onto another edge to just apply the style of the dragged edge.
 - Switch off the _Preview_ or the _Snapping and Preview_ features.
+
+## Related Demos
+
+- [Graph Drag and Drop](../graph-drag-and-drop)
+- [Drag From Component](../drag-from-component)
+- [Custom Drag and Drop](../custom-drag-and-drop)
+- [Tutorial: Drag and Drop](../../03-tutorial-application-features/drag-and-drop/index.html)

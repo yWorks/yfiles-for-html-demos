@@ -34,10 +34,10 @@ import {
   HandleTypes,
   IHandle,
   IInputModeContext,
+  IModelItem,
   INode,
   IReshapeHandleProvider,
-  Point,
-  IModelItem
+  Point
 } from 'yfiles'
 
 /**

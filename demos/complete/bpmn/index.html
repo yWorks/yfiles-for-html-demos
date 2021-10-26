@@ -193,11 +193,12 @@
 
   <div class="demo-toolbar">
     <button id="newButton" data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+    <button data-command="Open" title="Open a GraphML or BPMN file" class="demo-icon-yIconOpen"
+            onclick="document.getElementById('file-input').click();">
+    </button>
+    <input type="file" id="file-input" style="display: none"/>
     <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
     <span class="demo-separator"></span>
-    <button data-command="PreviousSample" title="Open previous sample" id="previousButton"
-        class="demo-icon-yIconPrevious" disabled></button>
     <select data-command="SampleSelectionChanged" title="Select a sample graph" id="SampleComboBox">
       <option value="business">Business</option>
       <option value="collaboration">Collaboration</option>
@@ -212,8 +213,6 @@
       <option value="vertical_swimlanes">Vertical Swimlanes</option>
       <option value="bpmn_di_sample" data-type="bpmn-di">BPMN DI Sample</option>
     </select>
-    <button data-command="NextSample" title="Open next sample" id="nextButton"
-        class="demo-icon-yIconNext"></button>
     <span class="demo-separator"></span>
     <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
     <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>

@@ -43,6 +43,7 @@ import {
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle'
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -67,7 +68,7 @@ function run(licenseData: object): void {
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // set default styles for the nodes and the edges
-  registerElementDefaults(graphComponent.graph)
+  initTutorialDefaults(graphComponent.graph)
 
   // check the zooming level and update the Popup text that shows in which level we are now
   updateDetailLevelIndicator()
@@ -83,6 +84,29 @@ function run(licenseData: object): void {
 
   // initialize the application's CSS and JavaScript for the description
   showApp(graphComponent)
+}
+
+/**
+ * Initializes the defaults for the styling in this tutorial.
+ *
+ * @param graph The graph.
+ */
+function initTutorialDefaults(graph: IGraph): void {
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
+
+  // set styles, sizes and locations specific for this tutorial
+  levelOfDetailNodeStyle = new LevelOfDetailNodeStyle(
+    new TemplateNodeStyle('detailNodeStyleTemplate'),
+    new TemplateNodeStyle('intermediateNodeStyleTemplate'),
+    new TemplateNodeStyle('overviewNodeStyleTemplate')
+  )
+  graph.nodeDefaults.style = levelOfDetailNodeStyle
+  graph.nodeDefaults.size = new Size(285, 100)
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '2px rgb(170, 170, 170)',
+    targetArrow: IArrow.NONE
+  })
 }
 
 /**
@@ -134,23 +158,6 @@ function registerCommands(): void {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindAction("button[data-command='ZoomOriginal']", (): void => {
     ICommand.ZOOM.execute(1.0, graphComponent)
-  })
-}
-
-/**
- * Sets style defaults for nodes and edges.
- */
-function registerElementDefaults(graph: IGraph): void {
-  levelOfDetailNodeStyle = new LevelOfDetailNodeStyle(
-    new TemplateNodeStyle('detailNodeStyleTemplate'),
-    new TemplateNodeStyle('intermediateNodeStyleTemplate'),
-    new TemplateNodeStyle('overviewNodeStyleTemplate')
-  )
-  graph.nodeDefaults.style = levelOfDetailNodeStyle
-  graph.nodeDefaults.size = new Size(285, 100)
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px rgb(170, 170, 170)',
-    targetArrow: IArrow.NONE
   })
 }
 

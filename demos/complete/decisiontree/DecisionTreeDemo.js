@@ -40,6 +40,7 @@ import {
   IModelItem,
   INode,
   InteriorStretchLabelModel,
+  ItemCollection,
   LayoutExecutor,
   License,
   List,
@@ -62,6 +63,7 @@ import DemoStyles, {
 } from '../../resources/demo-styles.js'
 import {
   addClass,
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -139,8 +141,7 @@ function run(licenseData) {
 let graphMLSupport
 
 const graphChooserBox = document.querySelector("select[data-command='SelectedFileChanged']")
-const nextButton = document.querySelector("button[data-command='NextFile']")
-const previousButton = document.querySelector("button[data-command='PreviousFile']")
+addNavigationButtons(graphChooserBox)
 const restartButton = document.querySelector("button[data-command='Restart']")
 
 const showDecisionTreeButton = document.getElementById('showDecisionTreeButton')
@@ -346,9 +347,8 @@ async function runIncrementalLayout(incrementalNodes) {
   layout.nodePlacer.barycenterMode = false
 
   // configure the incremental hints
-  const layoutData = new HierarchicLayoutData({
-    incrementalHints: { incrementalLayeringNodes: incrementalNodes }
-  })
+  const layoutData = new HierarchicLayoutData()
+  layoutData.incrementalHints.incrementalLayeringNodes = ItemCollection.from(incrementalNodes)
 
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
@@ -486,8 +486,6 @@ function registerCommands() {
       ICommand.ZOOM.execute(1, decisionTree.graphComponent)
     }
   })
-  bindAction("#toolbar-decisiontree button[data-command='PreviousFile']", onPreviousButtonClicked)
-  bindAction("#toolbar-decisiontree button[data-command='NextFile']", onNextButtonClicked)
   bindChangeListener(
     "#toolbar-decisiontree select[data-command='SelectedFileChanged']",
     async () => {
@@ -513,7 +511,7 @@ function enableGraphML() {
 
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     DemoStyles
   )
   gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
@@ -522,51 +520,15 @@ function enableGraphML() {
 }
 
 /**
- * Updates the previous/next button states.
- */
-function updatePrevNextButtons() {
-  nextButton.disabled = graphChooserBox.selectedIndex >= graphChooserBox.length - 1
-  previousButton.disabled = graphChooserBox.selectedIndex <= 0
-}
-
-/**
  * Updates the demo's UI depending on wheter or not a layout is currently calculated.
  * @param {boolean} running true indicates that a layout is currently calculated
  */
 function setRunningLayout(running) {
   runningLayout = running
-  if (running) {
-    nextButton.disabled = running
-    previousButton.disabled = running
-  } else {
-    updatePrevNextButtons()
-  }
   graphChooserBox.disabled = running
   restartButton.disabled = running
   showDecisionTreeButtonDisabled = running
   editDecisionTreeButtonDisabled = running
-}
-
-/**
- * Switches to the previous graph.
- * @returns {!Promise}
- */
-async function onPreviousButtonClicked() {
-  graphChooserBox.selectedIndex--
-  setAsRootNode(null)
-  await readSampleGraph()
-  showDecisionTree()
-}
-
-/**
- * Switches to the next graph.
- * @returns {!Promise}
- */
-async function onNextButtonClicked() {
-  graphChooserBox.selectedIndex++
-  setAsRootNode(null)
-  await readSampleGraph()
-  showDecisionTree()
 }
 
 /**
@@ -596,10 +558,6 @@ function updateShowDecisionTreeButton() {
  * @returns {!Promise.<IGraph>} A promise that is resolved when the graph is read.
  */
 async function readSampleGraph() {
-  // Disable navigation buttons while graph is loaded
-  nextButton.disabled = true
-  previousButton.disabled = true
-
   // first derive the file name
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   const fileName = `resources/${selectedItem}.graphml`
@@ -607,8 +565,6 @@ async function readSampleGraph() {
   const graph = await readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, fileName)
   // when done - fit the bounds
   graphComponent.fitGraphBounds()
-  // re-enable navigation buttons
-  updatePrevNextButtons()
   return graph
 }
 

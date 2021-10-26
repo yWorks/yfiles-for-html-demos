@@ -41,18 +41,19 @@ import {
   IMapper,
   IModelItem,
   INode,
+  INodeInsetsProvider,
+  Insets,
   InteriorStretchLabelModel,
   ItemEventArgs,
   LayoutExecutor,
   License,
   Mapper,
   MouseHoverInputMode,
-  PanelNodeStyle,
   Point,
+  PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
   QueryItemToolTipEventArgs,
   Reachability,
-  Rect,
   ShapeNodeStyle,
   ShortestPath,
   Size,
@@ -62,7 +63,7 @@ import {
 import ContextMenu from '../../utils/ContextMenu.js'
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-import GraphBuilderData from '../10-layout/resources/graph.js'
+import GraphBuilderData from './resources/graph.js'
 
 // enable 'view-layout-bridge' module to prevent tree-shaking tools from stripping it
 Class.ensure(LayoutExecutor)
@@ -135,6 +136,9 @@ function run(licenseData) {
  * Demonstrates how to quickly configure and run the Reachability algorithm
  */
 function runReachabilityAlgorithm() {
+  // first reset the highlighting
+  graphComponent.highlightIndicatorManager.clearHighlights()
+
   const graph = graphComponent.graph
   // create, configure and run the algorithm in a single step
   const results = new Reachability({
@@ -145,13 +149,9 @@ function runReachabilityAlgorithm() {
     startNodes: graphComponent.selection.selectedNodes
   }).run(graph)
 
-  // we can only clear the selection after we have run the algorithm, since we are using
-  // a dynamic enumerable to determine the start nodes, above
-  graphComponent.selection.clear()
-
   // iterate over the results and select the reachable nodes
   results.reachableNodes.forEach(n => {
-    graphComponent.selection.setSelected(n, true)
+    graphComponent.highlightIndicatorManager.addHighlight(n)
   })
 }
 
@@ -160,15 +160,15 @@ function runReachabilityAlgorithm() {
  * using different ways for the configuration
  */
 function runShortestPathAlgorithm() {
+  // first reset the highlighting
+  graphComponent.highlightIndicatorManager.clearHighlights()
+
   const graph = graphComponent.graph
   // choose a random sink node for the path finding algorithm
   const sinkNode = graph.nodes.lastOrDefault()
   // and see if the user selected a source node
   const hasSourceNode = INode.isInstance(graphComponent.currentItem)
   if (sinkNode && hasSourceNode) {
-    // first reset the highlighting
-    graphComponent.highlightIndicatorManager.clearHighlights()
-
     // then we create the algorithm
     const algorithm = new ShortestPath({
       // this time we use the properties on the instance for the configuration
@@ -191,12 +191,9 @@ function runShortestPathAlgorithm() {
 
     // see if we found a path
     if (isFinite(result.distance)) {
-      // we clear the previous selection
-      graphComponent.selection.clear()
-
-      // and we iterate over all nodes in the path and highlight them
-      result.path.nodes.forEach(n => {
-        graphComponent.highlightIndicatorManager.addHighlight(n)
+      // we iterate over all nodes in the path and highlight them
+      result.path.nodes.forEach(node => {
+        graphComponent.highlightIndicatorManager.addHighlight(node)
       })
 
       // for the edges we use the predicate provided by the result
@@ -204,7 +201,7 @@ function runShortestPathAlgorithm() {
       graph.edges
         .filter(edge => result.edges.contains(edge))
         // and we select all matching edges
-        .forEach(edge => graphComponent.selection.selectedEdges.setSelected(edge, true))
+        .forEach(edge => graphComponent.highlightIndicatorManager.addHighlight(edge))
 
       // finally we use the explicit "path.end" field to show the distance as a tooltip above
       // the sink node
@@ -231,7 +228,8 @@ function createSampleGraph() {
   builder.createGroupNodesSource({
     data: GraphBuilderData.groups,
     id: 'id',
-    layout: 'layout'
+    layout: 'layout',
+    labels: ['label']
   })
   builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')
 
@@ -369,22 +367,33 @@ function enableUndo() {
  */
 function configureGroupNodeStyles() {
   const graph = graphComponent.graph
-  // PanelNodeStyle is a style especially suited to group nodes
-  // Creates a panel with a light blue background
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
+  // Creates a rectangular shape with a white background
+  graph.groupNodeDefaults.style = new ShapeNodeStyle({
+    fill: 'white',
+    stroke: '2px #0b7189'
   })
 
   // Sets a label style with right-aligned text
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right'
+    horizontalTextAlignment: 'right',
+    textFill: 'white',
+    backgroundFill: '#0b7189',
+    insets: [2, 5]
   })
 
   // Places the label at the top inside of the panel.
-  // For PanelNodeStyle, InteriorStretchLabelModel is usually the most appropriate label model
+  // For group nodes, InteriorStretchLabelModel is usually the most appropriate label model
   graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+
+  // reserve space for the label by setting larger top insets
+  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementationWrapper(
+    (node, provider) => {
+      if (graph.isGroupNode(node)) {
+        return INodeInsetsProvider.create(() => new Insets(10, 25, 10, 10))
+      }
+      return provider
+    }
+  )
 }
 
 /**
@@ -427,16 +436,24 @@ function setDefaultLabelLayoutParameters() {
 function setDefaultStyles() {
   const graph = graphComponent.graph
 
-  // Creates a nice ShinyPlateNodeStyle instance, using an orange Fill.
+  // Creates a nice ShapeNodeStyle instance, using an orange Fill.
   // Sets this style as the default for all nodes that don't have another
   // style assigned explicitly
   graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
+    shape: 'round-rectangle',
+    fill: '#ff6c00',
+    stroke: '1.5px #662b00'
   })
 
   // Sets the default size for nodes explicitly to 40x40
   graph.nodeDefaults.size = new Size(40, 40)
+
+  // Creates a PolylineEdgeStyle which will be used as default for all edges
+  // that don't have another style assigned explicitly
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '1.5px #662b00',
+    targetArrow: '#662b00 small triangle'
+  })
 
   // Creates a label style with the label font set to Tahoma and a black text color
   const defaultLabelStyle = new DefaultLabelStyle({

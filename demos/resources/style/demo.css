@@ -26,6 +26,1203 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+.demo-orange-node {
+  fill: #ff6c00;
+  stroke: #662b00;
+}
+.demo-orange-edge {
+  stroke: #662b00;
+}
+.demo-orange-edge-arrow {
+  fill: #662b00;
+}
+.demo-orange-group-expanded .group-border {
+  fill: #ff6c00;
+}
+.demo-orange-group-collapsed .folder-foreground {
+  fill: #ffc499;
+}
+.demo-orange-group-collapsed .folder-background {
+  fill: #ff6c00;
+}
+.demo-blue-node {
+  fill: #242265;
+  stroke: #0e0e28;
+}
+.demo-blue-edge {
+  stroke: #0e0e28;
+}
+.demo-blue-edge-arrow {
+  fill: #0e0e28;
+}
+.demo-blue-group-expanded .group-border {
+  fill: #242265;
+}
+.demo-blue-group-collapsed .folder-foreground {
+  fill: #a7a7c1;
+}
+.demo-blue-group-collapsed .folder-background {
+  fill: #242265;
+}
+.demo-red-node {
+  fill: #ca0c3b;
+  stroke: #510518;
+}
+.demo-red-edge {
+  stroke: #510518;
+}
+.demo-red-edge-arrow {
+  fill: #510518;
+}
+.demo-red-group-expanded .group-border {
+  fill: #ca0c3b;
+}
+.demo-red-group-collapsed .folder-foreground {
+  fill: #ea9eb1;
+}
+.demo-red-group-collapsed .folder-background {
+  fill: #ca0c3b;
+}
+.demo-green-node {
+  fill: #61a044;
+  stroke: #27401b;
+}
+.demo-green-edge {
+  stroke: #27401b;
+}
+.demo-green-edge-arrow {
+  fill: #27401b;
+}
+.demo-green-group-expanded .group-border {
+  fill: #61a044;
+}
+.demo-green-group-collapsed .folder-foreground {
+  fill: #c0d9b4;
+}
+.demo-green-group-collapsed .folder-background {
+  fill: #61a044;
+}
+.demo-purple-node {
+  fill: #a37ab3;
+  stroke: #413148;
+}
+.demo-purple-edge {
+  stroke: #413148;
+}
+.demo-purple-edge-arrow {
+  fill: #413148;
+}
+.demo-purple-group-expanded .group-border {
+  fill: #a37ab3;
+}
+.demo-purple-group-collapsed .folder-foreground {
+  fill: #dacae1;
+}
+.demo-purple-group-collapsed .folder-background {
+  fill: #a37ab3;
+}
+.demo-lightblue-node {
+  fill: #46a8d5;
+  stroke: #1c4355;
+}
+.demo-lightblue-edge {
+  stroke: #1c4355;
+}
+.demo-lightblue-edge-arrow {
+  fill: #1c4355;
+}
+.demo-lightblue-group-expanded .group-border {
+  fill: #46a8d5;
+}
+.demo-lightblue-group-collapsed .folder-foreground {
+  fill: #b5dcee;
+}
+.demo-lightblue-group-collapsed .folder-background {
+  fill: #46a8d5;
+}
+.demo-palette-11-node {
+  fill: #111d4a;
+  stroke: #070c1e;
+}
+.demo-palette-11-edge {
+  stroke: #070c1e;
+}
+.demo-palette-11-edge-arrow {
+  fill: #070c1e;
+}
+.demo-palette-11-group-expanded .group-border {
+  fill: #111d4a;
+}
+.demo-palette-11-group-collapsed .folder-foreground {
+  fill: #a0a5b7;
+}
+.demo-palette-11-group-collapsed .folder-background {
+  fill: #111d4a;
+}
+.demo-palette-12-node {
+  fill: #0b7189;
+  stroke: #042d37;
+}
+.demo-palette-12-edge {
+  stroke: #042d37;
+}
+.demo-palette-12-edge-arrow {
+  fill: #042d37;
+}
+.demo-palette-12-group-expanded .group-border {
+  fill: #0b7189;
+}
+.demo-palette-12-group-collapsed .folder-foreground {
+  fill: #9dc6d0;
+}
+.demo-palette-12-group-collapsed .folder-background {
+  fill: #0b7189;
+}
+.demo-palette-13-node {
+  fill: #ff6c00;
+  stroke: #662b00;
+}
+.demo-palette-13-edge {
+  stroke: #662b00;
+}
+.demo-palette-13-edge-arrow {
+  fill: #662b00;
+}
+.demo-palette-13-group-expanded .group-border {
+  fill: #ff6c00;
+}
+.demo-palette-13-group-collapsed .folder-foreground {
+  fill: #ffc499;
+}
+.demo-palette-13-group-collapsed .folder-background {
+  fill: #ff6c00;
+}
+.demo-palette-14-node {
+  fill: #ab2346;
+  stroke: #440e1c;
+}
+.demo-palette-14-edge {
+  stroke: #440e1c;
+}
+.demo-palette-14-edge-arrow {
+  fill: #440e1c;
+}
+.demo-palette-14-group-expanded .group-border {
+  fill: #ab2346;
+}
+.demo-palette-14-group-collapsed .folder-foreground {
+  fill: #dda7b5;
+}
+.demo-palette-14-group-collapsed .folder-background {
+  fill: #ab2346;
+}
+.demo-palette-15-node {
+  fill: #621b00;
+  stroke: #270b00;
+}
+.demo-palette-15-edge {
+  stroke: #270b00;
+}
+.demo-palette-15-edge-arrow {
+  fill: #270b00;
+}
+.demo-palette-15-group-expanded .group-border {
+  fill: #621b00;
+}
+.demo-palette-15-group-collapsed .folder-foreground {
+  fill: #c0a499;
+}
+.demo-palette-15-group-collapsed .folder-background {
+  fill: #621b00;
+}
+.demo-palette-21-node {
+  fill: #17bebb;
+  stroke: #094c4b;
+}
+.demo-palette-21-edge {
+  stroke: #094c4b;
+}
+.demo-palette-21-edge-arrow {
+  fill: #094c4b;
+}
+.demo-palette-21-group-expanded .group-border {
+  fill: #17bebb;
+}
+.demo-palette-21-group-collapsed .folder-foreground {
+  fill: #a2e5e4;
+}
+.demo-palette-21-group-collapsed .folder-background {
+  fill: #17bebb;
+}
+.demo-palette-22-node {
+  fill: #ffc914;
+  stroke: #665008;
+}
+.demo-palette-22-edge {
+  stroke: #665008;
+}
+.demo-palette-22-edge-arrow {
+  fill: #665008;
+}
+.demo-palette-22-group-expanded .group-border {
+  fill: #ffc914;
+}
+.demo-palette-22-group-collapsed .folder-foreground {
+  fill: #ffe9a1;
+}
+.demo-palette-22-group-collapsed .folder-background {
+  fill: #ffc914;
+}
+.demo-palette-23-node {
+  fill: #ff6c00;
+  stroke: #662b00;
+}
+.demo-palette-23-edge {
+  stroke: #662b00;
+}
+.demo-palette-23-edge-arrow {
+  fill: #662b00;
+}
+.demo-palette-23-group-expanded .group-border {
+  fill: #ff6c00;
+}
+.demo-palette-23-group-collapsed .folder-foreground {
+  fill: #ffc499;
+}
+.demo-palette-23-group-collapsed .folder-background {
+  fill: #ff6c00;
+}
+.demo-palette-24-node {
+  fill: #2e282a;
+  stroke: #121011;
+}
+.demo-palette-24-edge {
+  stroke: #121011;
+}
+.demo-palette-24-edge-arrow {
+  fill: #121011;
+}
+.demo-palette-24-group-expanded .group-border {
+  fill: #2e282a;
+}
+.demo-palette-24-group-collapsed .folder-foreground {
+  fill: #aba9aa;
+}
+.demo-palette-24-group-collapsed .folder-background {
+  fill: #2e282a;
+}
+.demo-palette-25-node {
+  fill: #76b041;
+  stroke: #2f461a;
+}
+.demo-palette-25-edge {
+  stroke: #2f461a;
+}
+.demo-palette-25-edge-arrow {
+  fill: #2f461a;
+}
+.demo-palette-25-group-expanded .group-border {
+  fill: #76b041;
+}
+.demo-palette-25-group-collapsed .folder-foreground {
+  fill: #c8dfb3;
+}
+.demo-palette-25-group-collapsed .folder-background {
+  fill: #76b041;
+}
+.demo-palette-31-node {
+  fill: #67b7dc;
+  stroke: #294958;
+}
+.demo-palette-31-edge {
+  stroke: #294958;
+}
+.demo-palette-31-edge-arrow {
+  fill: #294958;
+}
+.demo-palette-31-group-expanded .group-border {
+  fill: #67b7dc;
+}
+.demo-palette-31-group-collapsed .folder-foreground {
+  fill: #c2e2f1;
+}
+.demo-palette-31-group-collapsed .folder-background {
+  fill: #67b7dc;
+}
+.demo-palette-32-node {
+  fill: #6771dc;
+  stroke: #292d58;
+}
+.demo-palette-32-edge {
+  stroke: #292d58;
+}
+.demo-palette-32-edge-arrow {
+  fill: #292d58;
+}
+.demo-palette-32-group-expanded .group-border {
+  fill: #6771dc;
+}
+.demo-palette-32-group-collapsed .folder-foreground {
+  fill: #c2c6f1;
+}
+.demo-palette-32-group-collapsed .folder-background {
+  fill: #6771dc;
+}
+.demo-palette-33-node {
+  fill: #242265;
+  stroke: #0e0e28;
+}
+.demo-palette-33-edge {
+  stroke: #0e0e28;
+}
+.demo-palette-33-edge-arrow {
+  fill: #0e0e28;
+}
+.demo-palette-33-group-expanded .group-border {
+  fill: #242265;
+}
+.demo-palette-33-group-collapsed .folder-foreground {
+  fill: #a7a7c1;
+}
+.demo-palette-33-group-collapsed .folder-background {
+  fill: #242265;
+}
+.demo-palette-34-node {
+  fill: #dc67ce;
+  stroke: #582952;
+}
+.demo-palette-34-edge {
+  stroke: #582952;
+}
+.demo-palette-34-edge-arrow {
+  fill: #582952;
+}
+.demo-palette-34-group-expanded .group-border {
+  fill: #dc67ce;
+}
+.demo-palette-34-group-collapsed .folder-foreground {
+  fill: #f1c2eb;
+}
+.demo-palette-34-group-collapsed .folder-background {
+  fill: #dc67ce;
+}
+.demo-palette-35-node {
+  fill: #a367dc;
+  stroke: #412958;
+}
+.demo-palette-35-edge {
+  stroke: #412958;
+}
+.demo-palette-35-edge-arrow {
+  fill: #412958;
+}
+.demo-palette-35-group-expanded .group-border {
+  fill: #a367dc;
+}
+.demo-palette-35-group-collapsed .folder-foreground {
+  fill: #dac2f1;
+}
+.demo-palette-35-group-collapsed .folder-background {
+  fill: #a367dc;
+}
+.demo-palette-41-node {
+  fill: #363020;
+  stroke: #16130d;
+}
+.demo-palette-41-edge {
+  stroke: #16130d;
+}
+.demo-palette-41-edge-arrow {
+  fill: #16130d;
+}
+.demo-palette-41-group-expanded .group-border {
+  fill: #363020;
+}
+.demo-palette-41-group-collapsed .folder-foreground {
+  fill: #afaca6;
+}
+.demo-palette-41-group-collapsed .folder-background {
+  fill: #363020;
+}
+.demo-palette-42-node {
+  fill: #605c4e;
+  stroke: #26251f;
+}
+.demo-palette-42-edge {
+  stroke: #26251f;
+}
+.demo-palette-42-edge-arrow {
+  fill: #26251f;
+}
+.demo-palette-42-group-expanded .group-border {
+  fill: #605c4e;
+}
+.demo-palette-42-group-collapsed .folder-foreground {
+  fill: #bfbeb8;
+}
+.demo-palette-42-group-collapsed .folder-background {
+  fill: #605c4e;
+}
+.demo-palette-43-node {
+  fill: #a49966;
+  stroke: #423d29;
+}
+.demo-palette-43-edge {
+  stroke: #423d29;
+}
+.demo-palette-43-edge-arrow {
+  fill: #423d29;
+}
+.demo-palette-43-group-expanded .group-border {
+  fill: #a49966;
+}
+.demo-palette-43-group-collapsed .folder-foreground {
+  fill: #dbd6c2;
+}
+.demo-palette-43-group-collapsed .folder-background {
+  fill: #a49966;
+}
+.demo-palette-44-node {
+  fill: #c7c7a6;
+  stroke: #505042;
+}
+.demo-palette-44-edge {
+  stroke: #505042;
+}
+.demo-palette-44-edge-arrow {
+  fill: #505042;
+}
+.demo-palette-44-group-expanded .group-border {
+  fill: #c7c7a6;
+}
+.demo-palette-44-group-collapsed .folder-foreground {
+  fill: #e9e9db;
+}
+.demo-palette-44-group-collapsed .folder-background {
+  fill: #c7c7a6;
+}
+.demo-palette-45-node {
+  fill: #eaffda;
+  stroke: #5e6657;
+}
+.demo-palette-45-edge {
+  stroke: #5e6657;
+}
+.demo-palette-45-edge-arrow {
+  fill: #5e6657;
+}
+.demo-palette-45-group-expanded .group-border {
+  fill: #eaffda;
+}
+.demo-palette-45-group-collapsed .folder-foreground {
+  fill: #f7fff0;
+}
+.demo-palette-45-group-collapsed .folder-background {
+  fill: #eaffda;
+}
+.demo-palette-46-node {
+  fill: #a4778b;
+  stroke: #423038;
+}
+.demo-palette-46-edge {
+  stroke: #423038;
+}
+.demo-palette-46-edge-arrow {
+  fill: #423038;
+}
+.demo-palette-46-group-expanded .group-border {
+  fill: #a4778b;
+}
+.demo-palette-46-group-collapsed .folder-foreground {
+  fill: #dbc9d1;
+}
+.demo-palette-46-group-collapsed .folder-background {
+  fill: #a4778b;
+}
+.demo-palette-47-node {
+  fill: #aa4586;
+  stroke: #441c36;
+}
+.demo-palette-47-edge {
+  stroke: #441c36;
+}
+.demo-palette-47-edge-arrow {
+  fill: #441c36;
+}
+.demo-palette-47-group-expanded .group-border {
+  fill: #aa4586;
+}
+.demo-palette-47-group-collapsed .folder-foreground {
+  fill: #ddb5cf;
+}
+.demo-palette-47-group-collapsed .folder-background {
+  fill: #aa4586;
+}
+.demo-palette-48-node {
+  fill: #177e89;
+  stroke: #093237;
+}
+.demo-palette-48-edge {
+  stroke: #093237;
+}
+.demo-palette-48-edge-arrow {
+  fill: #093237;
+}
+.demo-palette-48-group-expanded .group-border {
+  fill: #177e89;
+}
+.demo-palette-48-group-collapsed .folder-foreground {
+  fill: #a2cbd0;
+}
+.demo-palette-48-group-collapsed .folder-background {
+  fill: #177e89;
+}
+.demo-palette-401-node {
+  fill: #f26419;
+  stroke: #61280a;
+}
+.demo-palette-401-edge {
+  stroke: #61280a;
+}
+.demo-palette-401-edge-arrow {
+  fill: #61280a;
+}
+.demo-palette-401-group-expanded .group-border {
+  fill: #f26419;
+}
+.demo-palette-401-group-collapsed .folder-foreground {
+  fill: #fac1a3;
+}
+.demo-palette-401-group-collapsed .folder-background {
+  fill: #f26419;
+}
+.demo-palette-402-node {
+  fill: #e01a4f;
+  stroke: #5a0a20;
+}
+.demo-palette-402-edge {
+  stroke: #5a0a20;
+}
+.demo-palette-402-edge-arrow {
+  fill: #5a0a20;
+}
+.demo-palette-402-group-expanded .group-border {
+  fill: #e01a4f;
+}
+.demo-palette-402-group-collapsed .folder-foreground {
+  fill: #f3a3b9;
+}
+.demo-palette-402-group-collapsed .folder-background {
+  fill: #e01a4f;
+}
+.demo-palette-403-node {
+  fill: #01baff;
+  stroke: #004a66;
+}
+.demo-palette-403-edge {
+  stroke: #004a66;
+}
+.demo-palette-403-edge-arrow {
+  fill: #004a66;
+}
+.demo-palette-403-group-expanded .group-border {
+  fill: #01baff;
+}
+.demo-palette-403-group-collapsed .folder-foreground {
+  fill: #99e3ff;
+}
+.demo-palette-403-group-collapsed .folder-background {
+  fill: #01baff;
+}
+.demo-palette-51-node {
+  fill: #ff6c00;
+  stroke: #662b00;
+}
+.demo-palette-51-edge {
+  stroke: #662b00;
+}
+.demo-palette-51-edge-arrow {
+  fill: #662b00;
+}
+.demo-palette-51-group-expanded .group-border {
+  fill: #ff6c00;
+}
+.demo-palette-51-group-collapsed .folder-foreground {
+  fill: #ffc499;
+}
+.demo-palette-51-group-collapsed .folder-background {
+  fill: #ff6c00;
+}
+.demo-palette-52-node {
+  fill: #242265;
+  stroke: #0e0e28;
+}
+.demo-palette-52-edge {
+  stroke: #0e0e28;
+}
+.demo-palette-52-edge-arrow {
+  fill: #0e0e28;
+}
+.demo-palette-52-group-expanded .group-border {
+  fill: #242265;
+}
+.demo-palette-52-group-collapsed .folder-foreground {
+  fill: #a7a7c1;
+}
+.demo-palette-52-group-collapsed .folder-background {
+  fill: #242265;
+}
+.demo-palette-53-node {
+  fill: #56926e;
+  stroke: #223a2c;
+}
+.demo-palette-53-edge {
+  stroke: #223a2c;
+}
+.demo-palette-53-edge-arrow {
+  fill: #223a2c;
+}
+.demo-palette-53-group-expanded .group-border {
+  fill: #56926e;
+}
+.demo-palette-53-group-collapsed .folder-foreground {
+  fill: #bbd3c5;
+}
+.demo-palette-53-group-collapsed .folder-background {
+  fill: #56926e;
+}
+.demo-palette-54-node {
+  fill: #6dbc8d;
+  stroke: #2c4b38;
+}
+.demo-palette-54-edge {
+  stroke: #2c4b38;
+}
+.demo-palette-54-edge-arrow {
+  fill: #2c4b38;
+}
+.demo-palette-54-group-expanded .group-border {
+  fill: #6dbc8d;
+}
+.demo-palette-54-group-collapsed .folder-foreground {
+  fill: #c5e4d1;
+}
+.demo-palette-54-group-collapsed .folder-background {
+  fill: #6dbc8d;
+}
+.demo-palette-55-node {
+  fill: #6c4f77;
+  stroke: #2b2030;
+}
+.demo-palette-55-edge {
+  stroke: #2b2030;
+}
+.demo-palette-55-edge-arrow {
+  fill: #2b2030;
+}
+.demo-palette-55-group-expanded .group-border {
+  fill: #6c4f77;
+}
+.demo-palette-55-group-collapsed .folder-foreground {
+  fill: #c4b9c9;
+}
+.demo-palette-55-group-collapsed .folder-background {
+  fill: #6c4f77;
+}
+.demo-palette-56-node {
+  fill: #4281a4;
+  stroke: #1a3442;
+}
+.demo-palette-56-edge {
+  stroke: #1a3442;
+}
+.demo-palette-56-edge-arrow {
+  fill: #1a3442;
+}
+.demo-palette-56-group-expanded .group-border {
+  fill: #4281a4;
+}
+.demo-palette-56-group-collapsed .folder-foreground {
+  fill: #b3cddb;
+}
+.demo-palette-56-group-collapsed .folder-background {
+  fill: #4281a4;
+}
+.demo-palette-57-node {
+  fill: #e0e04f;
+  stroke: #5a5a20;
+}
+.demo-palette-57-edge {
+  stroke: #5a5a20;
+}
+.demo-palette-57-edge-arrow {
+  fill: #5a5a20;
+}
+.demo-palette-57-group-expanded .group-border {
+  fill: #e0e04f;
+}
+.demo-palette-57-group-collapsed .folder-foreground {
+  fill: #f3f3b9;
+}
+.demo-palette-57-group-collapsed .folder-background {
+  fill: #e0e04f;
+}
+.demo-palette-58-node {
+  fill: #c1c1c1;
+  stroke: #4d4d4d;
+}
+.demo-palette-58-edge {
+  stroke: #4d4d4d;
+}
+.demo-palette-58-edge-arrow {
+  fill: #4d4d4d;
+}
+.demo-palette-58-group-expanded .group-border {
+  fill: #c1c1c1;
+}
+.demo-palette-58-group-collapsed .folder-foreground {
+  fill: #e6e6e6;
+}
+.demo-palette-58-group-collapsed .folder-background {
+  fill: #c1c1c1;
+}
+.demo-palette-59-node {
+  fill: #db3a34;
+  stroke: #581715;
+}
+.demo-palette-59-edge {
+  stroke: #581715;
+}
+.demo-palette-59-edge-arrow {
+  fill: #581715;
+}
+.demo-palette-59-group-expanded .group-border {
+  fill: #db3a34;
+}
+.demo-palette-59-group-collapsed .folder-foreground {
+  fill: #f1b0ae;
+}
+.demo-palette-59-group-collapsed .folder-background {
+  fill: #db3a34;
+}
+.demo-palette-510-node {
+  fill: #f0c808;
+  stroke: #605003;
+}
+.demo-palette-510-edge {
+  stroke: #605003;
+}
+.demo-palette-510-edge-arrow {
+  fill: #605003;
+}
+.demo-palette-510-group-expanded .group-border {
+  fill: #f0c808;
+}
+.demo-palette-510-group-collapsed .folder-foreground {
+  fill: #f9e99c;
+}
+.demo-palette-510-group-collapsed .folder-background {
+  fill: #f0c808;
+}
+.demo-palette-511-node {
+  fill: #2d4d3a;
+  stroke: #121f17;
+}
+.demo-palette-511-edge {
+  stroke: #121f17;
+}
+.demo-palette-511-edge-arrow {
+  fill: #121f17;
+}
+.demo-palette-511-group-expanded .group-border {
+  fill: #2d4d3a;
+}
+.demo-palette-511-group-collapsed .folder-foreground {
+  fill: #abb8b0;
+}
+.demo-palette-511-group-collapsed .folder-background {
+  fill: #2d4d3a;
+}
+.demo-palette-61-node {
+  fill: #ab2346;
+  stroke: #440e1c;
+}
+.demo-palette-61-edge {
+  stroke: #440e1c;
+}
+.demo-palette-61-edge-arrow {
+  fill: #440e1c;
+}
+.demo-palette-61-group-expanded .group-border {
+  fill: #ab2346;
+}
+.demo-palette-61-group-collapsed .folder-foreground {
+  fill: #dda7b5;
+}
+.demo-palette-61-group-collapsed .folder-background {
+  fill: #ab2346;
+}
+.demo-palette-62-node {
+  fill: #76b041;
+  stroke: #2f461a;
+}
+.demo-palette-62-edge {
+  stroke: #2f461a;
+}
+.demo-palette-62-edge-arrow {
+  fill: #2f461a;
+}
+.demo-palette-62-group-expanded .group-border {
+  fill: #76b041;
+}
+.demo-palette-62-group-collapsed .folder-foreground {
+  fill: #c8dfb3;
+}
+.demo-palette-62-group-collapsed .folder-background {
+  fill: #76b041;
+}
+.demo-palette-63-node {
+  fill: #a367dc;
+  stroke: #412958;
+}
+.demo-palette-63-edge {
+  stroke: #412958;
+}
+.demo-palette-63-edge-arrow {
+  fill: #412958;
+}
+.demo-palette-63-group-expanded .group-border {
+  fill: #a367dc;
+}
+.demo-palette-63-group-collapsed .folder-foreground {
+  fill: #dac2f1;
+}
+.demo-palette-63-group-collapsed .folder-background {
+  fill: #a367dc;
+}
+.demo-palette-64-node {
+  fill: #c1c1c1;
+  stroke: #4d4d4d;
+}
+.demo-palette-64-edge {
+  stroke: #4d4d4d;
+}
+.demo-palette-64-edge-arrow {
+  fill: #4d4d4d;
+}
+.demo-palette-64-group-expanded .group-border {
+  fill: #c1c1c1;
+}
+.demo-palette-64-group-collapsed .folder-foreground {
+  fill: #e6e6e6;
+}
+.demo-palette-64-group-collapsed .folder-background {
+  fill: #c1c1c1;
+}
+.demo-palette-65-node {
+  fill: #ff6c00;
+  stroke: #662b00;
+}
+.demo-palette-65-edge {
+  stroke: #662b00;
+}
+.demo-palette-65-edge-arrow {
+  fill: #662b00;
+}
+.demo-palette-65-group-expanded .group-border {
+  fill: #ff6c00;
+}
+.demo-palette-65-group-collapsed .folder-foreground {
+  fill: #ffc499;
+}
+.demo-palette-65-group-collapsed .folder-background {
+  fill: #ff6c00;
+}
+.demo-palette-71-node {
+  fill: #ffc914;
+  stroke: #665008;
+}
+.demo-palette-71-edge {
+  stroke: #665008;
+}
+.demo-palette-71-edge-arrow {
+  fill: #665008;
+}
+.demo-palette-71-group-expanded .group-border {
+  fill: #ffc914;
+}
+.demo-palette-71-group-collapsed .folder-foreground {
+  fill: #ffe9a1;
+}
+.demo-palette-71-group-collapsed .folder-background {
+  fill: #ffc914;
+}
+.demo-palette-72-node {
+  fill: #ff6c00;
+  stroke: #662b00;
+}
+.demo-palette-72-edge {
+  stroke: #662b00;
+}
+.demo-palette-72-edge-arrow {
+  fill: #662b00;
+}
+.demo-palette-72-group-expanded .group-border {
+  fill: #ff6c00;
+}
+.demo-palette-72-group-collapsed .folder-foreground {
+  fill: #ffc499;
+}
+.demo-palette-72-group-collapsed .folder-background {
+  fill: #ff6c00;
+}
+.demo-palette-73-node {
+  fill: #76b041;
+  stroke: #2f461a;
+}
+.demo-palette-73-edge {
+  stroke: #2f461a;
+}
+.demo-palette-73-edge-arrow {
+  fill: #2f461a;
+}
+.demo-palette-73-group-expanded .group-border {
+  fill: #76b041;
+}
+.demo-palette-73-group-collapsed .folder-foreground {
+  fill: #c8dfb3;
+}
+.demo-palette-73-group-collapsed .folder-background {
+  fill: #76b041;
+}
+.demo-palette-74-node {
+  fill: #2d728f;
+  stroke: #122e39;
+}
+.demo-palette-74-edge {
+  stroke: #122e39;
+}
+.demo-palette-74-edge-arrow {
+  fill: #122e39;
+}
+.demo-palette-74-group-expanded .group-border {
+  fill: #2d728f;
+}
+.demo-palette-74-group-collapsed .folder-foreground {
+  fill: #abc7d2;
+}
+.demo-palette-74-group-collapsed .folder-background {
+  fill: #2d728f;
+}
+.demo-palette-75-node {
+  fill: #c1c1c1;
+  stroke: #4d4d4d;
+}
+.demo-palette-75-edge {
+  stroke: #4d4d4d;
+}
+.demo-palette-75-edge-arrow {
+  fill: #4d4d4d;
+}
+.demo-palette-75-group-expanded .group-border {
+  fill: #c1c1c1;
+}
+.demo-palette-75-group-collapsed .folder-foreground {
+  fill: #e6e6e6;
+}
+.demo-palette-75-group-collapsed .folder-background {
+  fill: #c1c1c1;
+}
+.demo-palette-81-node {
+  fill: #242265;
+  stroke: #0e0e28;
+}
+.demo-palette-81-edge {
+  stroke: #0e0e28;
+}
+.demo-palette-81-edge-arrow {
+  fill: #0e0e28;
+}
+.demo-palette-81-group-expanded .group-border {
+  fill: #242265;
+}
+.demo-palette-81-group-collapsed .folder-foreground {
+  fill: #a7a7c1;
+}
+.demo-palette-81-group-collapsed .folder-background {
+  fill: #242265;
+}
+.demo-palette-82-node {
+  fill: #01baff;
+  stroke: #004a66;
+}
+.demo-palette-82-edge {
+  stroke: #004a66;
+}
+.demo-palette-82-edge-arrow {
+  fill: #004a66;
+}
+.demo-palette-82-group-expanded .group-border {
+  fill: #01baff;
+}
+.demo-palette-82-group-collapsed .folder-foreground {
+  fill: #99e3ff;
+}
+.demo-palette-82-group-collapsed .folder-background {
+  fill: #01baff;
+}
+.demo-palette-83-node {
+  fill: #f26419;
+  stroke: #61280a;
+}
+.demo-palette-83-edge {
+  stroke: #61280a;
+}
+.demo-palette-83-edge-arrow {
+  fill: #61280a;
+}
+.demo-palette-83-group-expanded .group-border {
+  fill: #f26419;
+}
+.demo-palette-83-group-collapsed .folder-foreground {
+  fill: #fac1a3;
+}
+.demo-palette-83-group-collapsed .folder-background {
+  fill: #f26419;
+}
+.demo-palette-84-node {
+  fill: #fdca40;
+  stroke: #65511a;
+}
+.demo-palette-84-edge {
+  stroke: #65511a;
+}
+.demo-palette-84-edge-arrow {
+  fill: #65511a;
+}
+.demo-palette-84-group-expanded .group-border {
+  fill: #fdca40;
+}
+.demo-palette-84-group-collapsed .folder-foreground {
+  fill: #feeab3;
+}
+.demo-palette-84-group-collapsed .folder-background {
+  fill: #fdca40;
+}
+.demo-palette-91-node {
+  fill: #ff6c00;
+  stroke: #662b00;
+}
+.demo-palette-91-edge {
+  stroke: #662b00;
+}
+.demo-palette-91-edge-arrow {
+  fill: #662b00;
+}
+.demo-palette-91-group-expanded .group-border {
+  fill: #ff6c00;
+}
+.demo-palette-91-group-collapsed .folder-foreground {
+  fill: #ffc499;
+}
+.demo-palette-91-group-collapsed .folder-background {
+  fill: #ff6c00;
+}
+.demo-palette-92-node {
+  fill: #242265;
+  stroke: #0e0e28;
+}
+.demo-palette-92-edge {
+  stroke: #0e0e28;
+}
+.demo-palette-92-edge-arrow {
+  fill: #0e0e28;
+}
+.demo-palette-92-group-expanded .group-border {
+  fill: #242265;
+}
+.demo-palette-92-group-collapsed .folder-foreground {
+  fill: #a7a7c1;
+}
+.demo-palette-92-group-collapsed .folder-background {
+  fill: #242265;
+}
+.demo-palette-93-node {
+  fill: #61a044;
+  stroke: #27401b;
+}
+.demo-palette-93-edge {
+  stroke: #27401b;
+}
+.demo-palette-93-edge-arrow {
+  fill: #27401b;
+}
+.demo-palette-93-group-expanded .group-border {
+  fill: #61a044;
+}
+.demo-palette-93-group-collapsed .folder-foreground {
+  fill: #c0d9b4;
+}
+.demo-palette-93-group-collapsed .folder-background {
+  fill: #61a044;
+}
+.demo-palette-94-node {
+  fill: #a37ab3;
+  stroke: #413148;
+}
+.demo-palette-94-edge {
+  stroke: #413148;
+}
+.demo-palette-94-edge-arrow {
+  fill: #413148;
+}
+.demo-palette-94-group-expanded .group-border {
+  fill: #a37ab3;
+}
+.demo-palette-94-group-collapsed .folder-foreground {
+  fill: #dacae1;
+}
+.demo-palette-94-group-collapsed .folder-background {
+  fill: #a37ab3;
+}
+.demo-palette-95-node {
+  fill: #ca0c3b;
+  stroke: #510518;
+}
+.demo-palette-95-edge {
+  stroke: #510518;
+}
+.demo-palette-95-edge-arrow {
+  fill: #510518;
+}
+.demo-palette-95-group-expanded .group-border {
+  fill: #ca0c3b;
+}
+.demo-palette-95-group-collapsed .folder-foreground {
+  fill: #ea9eb1;
+}
+.demo-palette-95-group-collapsed .folder-background {
+  fill: #ca0c3b;
+}
+.demo-palette-96-node {
+  fill: #46a8d5;
+  stroke: #1c4355;
+}
+.demo-palette-96-edge {
+  stroke: #1c4355;
+}
+.demo-palette-96-edge-arrow {
+  fill: #1c4355;
+}
+.demo-palette-96-group-expanded .group-border {
+  fill: #46a8d5;
+}
+.demo-palette-96-group-collapsed .folder-foreground {
+  fill: #b5dcee;
+}
+.demo-palette-96-group-collapsed .folder-background {
+  fill: #46a8d5;
+}
 .demo-icon-yIconZoomOriginal {
   background-image: url('../icons/zoom-original3-16.svg');
 }
@@ -157,6 +1354,30 @@
 }
 .demo-icon-yIconZOrderBottom {
   background-image: url('../icons/z-order-bottom-16.svg');
+}
+.demo-icon-yIconAlignBottom {
+  background-image: url('../icons/align-bottom-16.svg');
+}
+.demo-icon-yIconAlignHorizontal {
+  background-image: url('../icons/align-horizontal-16.svg');
+}
+.demo-icon-yIconAlignLeft {
+  background-image: url('../icons/align-left-16.svg');
+}
+.demo-icon-yIconAlignRight {
+  background-image: url('../icons/align-right-16.svg');
+}
+.demo-icon-yIconAlignTop {
+  background-image: url('../icons/align-top-16.svg');
+}
+.demo-icon-yIconAlignVertical {
+  background-image: url('../icons/align-vertical-16.svg');
+}
+.demo-icon-yIconDistributeHorizontally {
+  background-image: url('../icons/distribute-horizontal-16.svg');
+}
+.demo-icon-yIconDistributeVertically {
+  background-image: url('../icons/distribute-vertical-16.svg');
 }
 html,
 body {
@@ -1199,4 +2420,18 @@ body {
   .vsdx-export-banner {
     display: none;
   }
+}
+#loadingIndicator {
+  display: none;
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 200px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-top: -100px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #FFFFFF;
+  padding-top: 80px;
+  text-align: center;
 }

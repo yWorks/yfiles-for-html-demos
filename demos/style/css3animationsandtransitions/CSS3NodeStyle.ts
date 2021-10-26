@@ -78,7 +78,7 @@ export default class CSS3NodeStyle extends NodeStyleBase {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const shine = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const layout = node.layout
-    const nodeRounding = 2
+    const nodeRounding = 3.5
     rect.width.baseVal.value = layout.width
     rect.height.baseVal.value = layout.height
     shine.width.baseVal.value = layout.width / 5
@@ -86,8 +86,8 @@ export default class CSS3NodeStyle extends NodeStyleBase {
     rect.setAttribute('rx', `${nodeRounding}`)
     rect.setAttribute('ry', `${nodeRounding}`)
     rect.setAttribute('fill', '#FF8C00')
-    rect.setAttribute('stroke', '#FFF')
-    rect.setAttribute('stroke-width', '1px')
+    rect.setAttribute('stroke', '#662b00')
+    rect.setAttribute('stroke-width', '1.5px')
     shine.setAttribute('fill', '#FFFFFF')
 
     // set some identifying CSS classes on the elements of this visual

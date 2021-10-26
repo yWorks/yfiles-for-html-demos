@@ -30,18 +30,18 @@ import {
   Arrow,
   ArrowType,
   BaseClass,
+  Class,
+  Fill,
   GeneralPath,
   IArrow,
+  IEdge,
   IEdgeStyle,
+  IEdgeStyleRenderer,
   List,
   PathBasedEdgeStyleRenderer,
   Point,
   SolidColorFill,
   Stroke,
-  IEdge,
-  Class,
-  Fill,
-  IEdgeStyleRenderer,
   Tangent
 } from 'yfiles'
 

@@ -14,7 +14,7 @@ The configuration panel provides access to the most important settings of the ag
 
 The _Aggregation Mode_ determines if nodes are combined in clusters based on the structure of the graph or based on their geometric locations.
 
-## Things to try
+## Things to Try
 
 - Click on an aggregated node to **show** its children in the aggregation hierarchy.
 - Click on an separated node to **hide** its children in the aggregation hierarchy.

@@ -1900,7 +1900,7 @@ export class BpmnDiParser {
 
     // Use boundary event port, if source is a boundary event
     if (sourceVar.name === 'boundaryEvent') {
-      sourcePort = sourceVar.port!
+      sourcePort = sourceVar.port
       if (sourcePort) {
         sourceNode = sourcePort.owner! as INode
       } else {
@@ -1915,7 +1915,7 @@ export class BpmnDiParser {
 
     // Use boundary event port, if target is a boundary event
     if (targetVar.name === 'boundaryEvent') {
-      targetPort = targetVar.port!
+      targetPort = targetVar.port
       if (targetPort) {
         targetNode = targetPort.owner! as INode
       } else {
@@ -3000,7 +3000,7 @@ export class BpmnElement {
     }
 
     // The value (string text between XML tags) of this Element
-    this.value = xNode.textContent!
+    this.value = xNode.textContent
     // The name of the element type
     this.name = xNode.localName
     switch (this.name) {

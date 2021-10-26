@@ -260,7 +260,7 @@
 				<y:RectD X="330.00000000000006" Y="73.5" Width="57.02610447887166" Height="23"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":1,"isLeft":false,"color":"#FF6502","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":1,"isLeft":false,"color":"#56926e","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="2"/>
@@ -298,7 +298,7 @@
 				<y:RectD X="-38.04065073053624" Y="51" Width="78.04065073053623" Height="23"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":1,"isLeft":true,"color":"#80FF80","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":1,"isLeft":true,"color":"#4281a4","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="2"/>
@@ -326,7 +326,7 @@
 				<y:RectD X="330.00000000000006" Y="163.5" Width="51.03199300098155" Height="23"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":1,"isLeft":false,"color":"#5050FF","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":1,"isLeft":false,"color":"#ff6c00","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="2"/>
@@ -364,7 +364,7 @@
 				<y:RectD X="432.0261044788717" Y="105" Width="126.63203955820845" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":false,"color":"#D82622","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":false,"color":"#B2D2BF","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="4"/>
@@ -387,7 +387,7 @@
 				<y:RectD X="432.0261044788717" Y="75" Width="142.63193952757408" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":false,"color":"#8B4513","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":false,"color":"#B2D2BF","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="4"/>
@@ -410,7 +410,7 @@
 				<y:RectD X="432.0261044788717" Y="45" Width="69.69489552659877" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":false,"color":"#FF91FF","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":false,"color":"#B2D2BF","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="4"/>
@@ -433,7 +433,7 @@
 				<y:RectD X="432.0261044788717" Y="135" Width="46.56222765096811" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":false,"color":"#80FF80","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":false,"color":"#FFAC70","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -456,7 +456,7 @@
 				<y:RectD X="432.0261044788717" Y="165" Width="104.37436621215247" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":false,"color":"#5050FF","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":false,"color":"#FFAC70","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -479,7 +479,7 @@
 				<y:RectD X="432.02610447887156" Y="195" Width="54.585614989121666" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":false,"color":"#80FF80","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":false,"color":"#FFAC70","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -502,7 +502,7 @@
 				<y:RectD X="-3.016406977761932" Y="111" Width="43.01640697776194" Height="23"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":1,"isLeft":true,"color":"#D82622","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":1,"isLeft":true,"color":"#db3a34","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="8"/>
@@ -540,7 +540,7 @@
 				<y:RectD X="13.990346262292832" Y="186" Width="26.009653737707172" Height="23"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":1,"isLeft":true,"color":"#2CAED4","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":1,"isLeft":true,"color":"#AA5F82","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="8"/>
@@ -573,7 +573,7 @@
 				<y:RectD X="-137.61064081734406" Y="52.5" Width="54.569990086807834" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":true,"color":"#2CAED4","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":true,"color":"#99C1D6","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -596,7 +596,7 @@
 				<y:RectD X="-144.72778382129525" Y="82.5" Width="61.68713309075905" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":true,"color":"#8B4513","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":true,"color":"#EA8986","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -629,7 +629,7 @@
 				<y:RectD X="-133.1653561090584" Y="112.5" Width="50.12470537852217" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":true,"color":"#D82622","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":true,"color":"#EA8986","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -652,7 +652,7 @@
 				<y:RectD X="-142.08717533025737" Y="142.5" Width="59.04652459972117" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":true,"color":"#FF6502","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":true,"color":"#EA8986","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -675,7 +675,7 @@
 				<y:RectD X="-213.18078095010344" Y="67.5" Width="23.452997128808196" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":3,"isLeft":true,"color":"#8B4513","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":3,"isLeft":true,"color":"#F3BCBA","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -698,7 +698,7 @@
 				<y:RectD X="-222.95415734740635" Y="97.5" Width="33.22637352611112" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":3,"isLeft":true,"color":"#8B4513","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":3,"isLeft":true,"color":"#F3BCBA","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -721,7 +721,7 @@
 				<y:RectD X="-116.26702425664735" Y="172.5" Width="33.22637352611112" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":true,"color":"#4477FF","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":true,"color":"#D5AFC1","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>
@@ -744,7 +744,7 @@
 				<y:RectD X="-133.18879346252913" Y="202.5" Width="50.14814273199292" Height="20"/>
 			</data>
 			<data key="d2">
-				<y:Json>{"depth":2,"isLeft":true,"color":"#4477FF","isCollapsed":false,"stateIcon":0}</y:Json>
+				<y:Json>{"depth":2,"isLeft":true,"color":"#D5AFC1","isCollapsed":false,"stateIcon":0}</y:Json>
 			</data>
 			<data key="d3">
 				<y:GraphMLReference ResourceKey="6"/>

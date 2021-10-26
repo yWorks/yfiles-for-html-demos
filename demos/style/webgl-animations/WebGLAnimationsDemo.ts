@@ -51,7 +51,7 @@ import {
 
 import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
-import { webGl2Supported } from '../../utils/Workarounds'
+import { isWebGl2Supported } from '../../utils/Workarounds'
 
 type BaseAnimation = 'Pulse' | 'Fade' | 'Shake'
 type AnimatedElements = 'Nodes And Edges' | 'Node Effect'
@@ -62,7 +62,7 @@ type FadeType = 'Color' | 'Gray' | 'Invisible'
  * Bootstraps the demo.
  */
 async function run(licenseData: object) {
-  if (!webGl2Supported) {
+  if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
     showApp(null)
@@ -109,9 +109,12 @@ function configureUI() {
   const animationFrequencySelect = document.querySelector<HTMLSelectElement>('#animationFrequency')!
   const animationMagnitudeSelect = document.querySelector<HTMLSelectElement>('#animationMagnitude')!
   const fadeTypeSelect = document.querySelector<HTMLSelectElement>('#fadeType')!
-  const fadeDirectionSelect = document.querySelector<HTMLSelectElement>('#fadeDirection')!
+  const fadeDirectionFrom = document.querySelector<HTMLInputElement>('#fadeDirectionFrom')!
+  const fadeDirectionTo = document.querySelector<HTMLInputElement>('#fadeDirectionTo')!
   const animationDurationSelect = document.querySelector<HTMLSelectElement>('#animationDuration')!
   const animatedElementsSelect = document.querySelector<HTMLSelectElement>('#animatedElements')!
+  const fadeColorPicker1 = document.querySelector<HTMLInputElement>('#fadeColor1')!
+  const fadeColorPicker2 = document.querySelector<HTMLInputElement>('#fadeColor2')!
 
   const baseAnimationSelect = document.querySelector<HTMLSelectElement>('#baseAnimation')!
   baseAnimationSelect.addEventListener('change', e => {
@@ -121,15 +124,21 @@ function configureUI() {
       case 'Pulse':
         configureFrequencyMagnitudeSelects(true, 2, 2)
         animatedElementsSelect.disabled = false
+        fadeColorPicker1.disabled = true
+        fadeColorPicker2.disabled = true
         break
       case 'Fade':
         configureFrequencyMagnitudeSelects(false, 5, 2)
         animationDurationSelect.value = '1s'
         animatedElementsSelect.disabled = false
+        fadeColorPicker1.disabled = false
+        fadeColorPicker2.disabled = false
         break
       case 'Shake':
         configureFrequencyMagnitudeSelects(true, 10, 2)
         animatedElementsSelect.disabled = true
+        fadeColorPicker1.disabled = true
+        fadeColorPicker2.disabled = true
         break
     }
   })
@@ -144,7 +153,10 @@ function configureUI() {
     animationFrequencySelect.disabled = !enable
     animationMagnitudeSelect.disabled = !enable
     fadeTypeSelect.disabled = enable
-    fadeDirectionSelect.disabled = enable
+    fadeDirectionFrom.disabled = enable
+    fadeDirectionTo.disabled = enable
+    fadeColorPicker1.disabled = enable
+    fadeColorPicker2.disabled = enable
     if (enable) {
       animationDurationSelect.value = '10s'
     } else {
@@ -171,7 +183,7 @@ function setWebGLStyles(graphComponent: GraphComponent, connectedComponents: Arr
     Color.CORNFLOWER_BLUE
   ]
 
-  connectedComponents.forEach((component, idx, components) => {
+  connectedComponents.forEach((component, idx) => {
     const color = colors[idx % connectedComponents.length]
     component.nodes.forEach(node => {
       gmm.setStyle(
@@ -379,8 +391,10 @@ function getAnimationConfiguration(): {
     .value as BaseAnimation
   const animatedElements = document.querySelector<HTMLSelectElement>('#animatedElements')!
     .value as AnimatedElements
-  const fadeDirection = document.querySelector<HTMLSelectElement>('#fadeDirection')!
-    .value as FadeDirection
+  const fadeDirection =
+    document.querySelector('input[name="fadeDirection"]:checked')!.id === 'fadeDirectionFrom'
+      ? 'From'
+      : 'To'
   const fadeType = document.querySelector<HTMLSelectElement>('#fadeType')!.value as FadeType
   const animationFrequency = parseInt(
     document.querySelector<HTMLSelectElement>('#animationFrequency')!.value

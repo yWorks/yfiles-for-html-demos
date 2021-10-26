@@ -130,7 +130,7 @@ export default class AdditionalSnapLineVisualCreator
     line.setAttribute('x2', this.to.x.toString())
     line.setAttribute('y2', this.to.y.toString())
     line.setAttribute('stroke-width', '2')
-    line.setAttribute('stroke', 'firebrick')
+    line.setAttribute('stroke', '#CA0C3B')
     return new SvgVisual(line)
   }
 

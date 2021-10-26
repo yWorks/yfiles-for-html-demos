@@ -823,12 +823,12 @@ export default class MultiPageIGraphBuilder {
     const referencingNode = nodeInfo.referencingNode
     const targetPage = this.layout.getNodeInfo(referencingNode).pageNo
     const style =
-      this.proxyNodeDefaults.labels.style !== NULL_LABEL_STYLE
-        ? this.proxyNodeDefaults.labels.getStyleInstance(viewNode)
+      this.proxyReferenceNodeDefaults.labels.style !== NULL_LABEL_STYLE
+        ? this.proxyReferenceNodeDefaults.labels.getStyleInstance(viewNode)
         : pageView.nodeDefaults.labels.getStyleInstance(viewNode)
     const parameter =
-      this.proxyNodeDefaults.labels.layoutParameter !== NULL_LABEL_MODEL_PARAMETER
-        ? this.proxyNodeDefaults.labels.getLayoutParameterInstance(viewNode)
+      this.proxyReferenceNodeDefaults.labels.layoutParameter !== NULL_LABEL_MODEL_PARAMETER
+        ? this.proxyReferenceNodeDefaults.labels.getLayoutParameterInstance(viewNode)
         : pageView.nodeDefaults.labels.getLayoutParameterInstance(viewNode)
     pageView.addLabel(viewNode, `p${targetPage + 1}`, parameter, style)
     return viewNode

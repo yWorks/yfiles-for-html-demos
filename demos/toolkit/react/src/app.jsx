@@ -161,12 +161,11 @@ export default class App extends Component {
         <div className="demo-content">
           <div className="demo-header">
             <a href="https://www.yworks.com" target="_blank" rel="noopener noreferrer">
-              {' '}
-              <img src={yLogo} className="demo-y-logo" alt="yWorks Logo" />{' '}
-            </a>{' '}
+              <img src={yLogo} className="demo-y-logo" alt="yWorks Logo" />
+            </a>
             <a href="../../../README.html" target="_blank">
               yFiles for HTML
-            </a>{' '}
+            </a>
             <span className="demo-title">React Demo [yFiles for HTML]</span>
           </div>
 

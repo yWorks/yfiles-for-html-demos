@@ -169,20 +169,6 @@ div.row {
   transition: color 0.1s ease-in-out;
 }
 
-#loadingIndicator {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  height: 200px;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  margin-top: -100px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #ffffff;
-  padding-top: 80px;
-  text-align: center;
-}
-
 .warning {
   float: right;
   background-image: url('fraud-warning-16.svg');

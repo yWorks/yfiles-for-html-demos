@@ -476,7 +476,7 @@ export default class NeighborhoodView {
     orangePen.freeze()
 
     this.highlightStyle = new ShapeNodeStyle({
-      shape: 'rectangle',
+      shape: 'round-rectangle',
       stroke: orangePen,
       fill: 'transparent'
     })

@@ -524,8 +524,8 @@ export default class AlgorithmConfiguration {
     })
 
     const arrow = new Arrow({
-      fill: 'black',
-      stroke: 'black',
+      fill: 'darkgray',
+      stroke: 'darkgray',
       type: 'default'
     })
     const defaultEdgeStyle = graph.edgeDefaults.style

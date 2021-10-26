@@ -33,3 +33,5 @@ const fs = require('fs-extra')
 
 fs.copySync('../../utils/Workarounds.ts', './src/utils/Workarounds.ts')
 fs.copySync('../../resources/demo-styles.ts', './src/resources/demo-styles.ts')
+fs.copySync('../../resources/basic-demo-styles.ts', './src/resources/basic-demo-styles.ts')
+fs.copySync('../../resources/demo-colors.ts', './src/resources/demo-colors.ts')

@@ -124,6 +124,7 @@ import { DragAndDropPanel } from '../../utils/DndPanel.js'
 import loadJson from '../../resources/load-json.js'
 import { BpmnDiParser } from './bpmn-di.js'
 import { pointerEventsSupported } from '../../utils/Workarounds.js'
+import { addNavigationButtons } from '../../resources/demo-app.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -157,6 +158,7 @@ let popupSupport
  * The combo box to choose the sample graphs from.
  */
 const graphChooserBox = document.getElementById('SampleComboBox')
+addNavigationButtons(graphChooserBox)
 
 /**
  * Starts the BPMN editor.
@@ -427,6 +429,20 @@ function enableFolding() {
 }
 
 /**
+ * Create a GraphMLIOHandler that supports reading and writing the BPMN demo styles.
+ */
+function createGraphMLIOHandler() {
+  const graphmlHandler = new GraphMLIOHandler()
+  // enable serialization of the bpmn styles - without a namespace mapping, serialization will fail
+  graphmlHandler.addXamlNamespaceMapping(
+    'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
+    BpmnView
+  )
+  graphmlHandler.addNamespace('http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0', 'bpmn')
+  return graphmlHandler
+}
+
+/**
  * Helper method that reads the currently selected GraphML from the combo box.
  * @returns {!Promise}
  */
@@ -447,14 +463,7 @@ async function onGraphChooserBoxSelectionChanged() {
     }
   } else {
     const fileName = `resources/${graphName}.graphml`
-
-    const graphmlHandler = new GraphMLIOHandler()
-    // enable serialization of the bpmn styles - without a namespace mapping, serialization will fail
-    graphmlHandler.addXamlNamespaceMapping(
-      'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
-      BpmnView
-    )
-    graphmlHandler.addNamespace('http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0', 'bpmn')
+    const graphmlHandler = createGraphMLIOHandler()
 
     // and then load the graph and when done - fit the bounds
     await DemoApp.readGraph(graphmlHandler, graphComponent.graph, fileName)
@@ -538,7 +547,6 @@ function registerCommands() {
     graphComponent.graph.clear()
     graphComponent.fitGraphBounds()
   })
-  DemoApp.bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
   DemoApp.bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
   DemoApp.bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
   DemoApp.bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
@@ -555,17 +563,6 @@ function registerCommands() {
   DemoApp.bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   DemoApp.bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  DemoApp.bindAction("button[data-command='PreviousSample']", () => {
-    graphChooserBox.selectedIndex = Math.max(0, graphChooserBox.selectedIndex - 1)
-    onGraphChooserBoxSelectionChanged()
-  })
-  DemoApp.bindAction("button[data-command='NextSample']", () => {
-    graphChooserBox.selectedIndex = Math.min(
-      graphChooserBox.selectedIndex + 1,
-      graphChooserBox.options.length - 1
-    )
-    onGraphChooserBoxSelectionChanged()
-  })
   DemoApp.bindChangeListener(
     "select[data-command='SampleSelectionChanged']",
     onGraphChooserBoxSelectionChanged
@@ -574,6 +571,44 @@ function registerCommands() {
 
   // initialize commands for the item popups that are used to change the item's style properties
   popupSupport.registerPopupCommands()
+
+  const fileInput = document.getElementById('file-input')
+  if (fileInput) {
+    fileInput.addEventListener('change', onFileSelected)
+  }
+}
+
+/**
+ * Opens a BPMN or GraphML file that was selected via file chooser.
+ * @param {!Event} e A file changed event containing the selected file to open.
+ * @returns {!Promise}
+ */
+async function onFileSelected(e) {
+  const files = e.target.files
+  if (files && files.length === 1) {
+    const file = files[0]
+    // check if the selected file is a BPMN or GraphML file
+    const isBPMN = file.name.toLowerCase().endsWith('.bpmn')
+    const isGraphML = file.name.toLowerCase().endsWith('.graphml')
+    if (isBPMN || isGraphML) {
+      const reader = new FileReader()
+      reader.onload = async ev => {
+        // get the file content that shall be parsed by a BpmnDiParser or a GraphMLIOHandler
+        const content = ev.target.result
+        if (isBPMN) {
+          const bpmnDiParser = new BpmnDiParser()
+          await bpmnDiParser.load(graphComponent.graph, content)
+        } else {
+          const graphmlHandler = createGraphMLIOHandler()
+          await graphmlHandler.readFromGraphMLText(graphComponent.graph, content)
+        }
+        graphComponent.fitGraphBounds()
+        graphComponent.graph.undoEngine.clear()
+        setUIDisabled(false)
+      }
+      reader.readAsText(file)
+    }
+  }
 }
 
 /**
@@ -622,10 +657,6 @@ function initializeContextMenu() {
  */
 function setUIDisabled(disabled) {
   graphChooserBox.disabled = disabled
-  document.getElementById('previousButton').disabled =
-    disabled || graphChooserBox.selectedIndex === 0
-  document.getElementById('nextButton').disabled =
-    disabled || graphChooserBox.selectedIndex === graphChooserBox.childElementCount - 1
   document.getElementById('layoutButton').disabled = disabled
   document.getElementById('newButton').disabled = disabled
   graphComponent.inputMode.waitInputMode.waiting = disabled

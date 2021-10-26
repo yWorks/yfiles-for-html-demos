@@ -12,7 +12,7 @@ Adding and removing nodes is animated with layout and WebGL2 fade animations run
 
 The maximum graph size is limited to 250000 nodes.
 
-### Things to try
+### Things to Try
 
 Use the controls to manipulate the graph:
 

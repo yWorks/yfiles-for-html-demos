@@ -26,6 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+const mimeTypesByExtension: Record<string, string> = {
+  txt: 'text/plain',
+  json: 'application/json',
+  svg: 'image/svg+xml',
+  png: 'image/png',
+  graphml: 'application/xml',
+  pdf: 'application/pdf'
+}
+
 /**
  * Provides helper methods for file saving.
  */
@@ -42,37 +51,10 @@ export default class FileSaveSupport {
     return new Promise((resolve, reject) => {
       // extract file format
       const format = fileName.split('.')[1].toLowerCase()
+      const mimeType = mimeTypesByExtension[format] || 'text/plain'
 
       if (FileSaveSupport.isFileConstructorAvailable()) {
-        if (
-          format === 'txt' ||
-          format === 'json' ||
-          format === 'svg' ||
-          format === 'graphml' ||
-          format === 'pdf' ||
-          format === 'png'
-        ) {
-          let mimeType = ''
-          switch (format) {
-            case 'txt':
-            case 'json':
-            default:
-              mimeType = 'text/plain'
-              break
-            case 'svg':
-              mimeType = 'image/svg+xml'
-              break
-            case 'png':
-              mimeType = 'image/png'
-              break
-            case 'graphml':
-              mimeType = 'application/xml'
-              break
-            case 'pdf':
-              mimeType = 'text/plain; charset=x-user-defined'
-              break
-          }
-
+        if (format in mimeTypesByExtension) {
           let blob = null
           if (format === 'pdf') {
             // encode content to make transparent images work correctly
@@ -129,7 +111,7 @@ export default class FileSaveSupport {
           for (let i = 0; i < fileContent.length; i++) {
             uint8Array[i] = fileContent.charCodeAt(i)
           }
-          blob = new Blob([uint8Array], { type: 'text/plain; charset=x-user-defined' })
+          blob = new Blob([uint8Array], { type: mimeType })
         } else {
           blob = new Blob([fileContent])
         }

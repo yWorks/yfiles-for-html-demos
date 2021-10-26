@@ -35,11 +35,10 @@ import {
   INode,
   INodeStyle,
   Point,
-  WebGL2PolylineEdgeStyle,
-  WebGL2IconNodeStyle,
-  WebGL2ShapeNodeStyle,
   Rect,
-  IPort
+  WebGL2IconNodeStyle,
+  WebGL2PolylineEdgeStyle,
+  WebGL2ShapeNodeStyle
 } from 'yfiles'
 
 /**
@@ -130,7 +129,7 @@ export abstract class DemoConfiguration {
     for (const nodeData of graphData.nodeList) {
       const id = nodeData.id
       const l = nodeData.l
-      let layout = new Rect(l.x, l.y, l.w, l.h)
+      const layout = new Rect(l.x, l.y, l.w, l.h)
       const node = this.createNode(graph, id, layout, nodeData)
 
       nodeMap.set(id, node)

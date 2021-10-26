@@ -27,12 +27,13 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EdgeRouter,
   EdgeRouterScope,
+  FixNodeLayoutData,
   FixNodeLayoutStage,
   FreeEdgeLabelModel,
   GenericLabeling,
+  GenericLayoutData,
   Geom,
   GraphComponent,
   GraphEditorInputMode,
@@ -63,8 +64,9 @@ import {
   TreeReductionStage
 } from 'yfiles'
 
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
+import { createDemoEdgeLabelStyle, DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -97,7 +99,7 @@ let graph: IGraph
  * The mapper which provides a PreferredPlacementDescriptor for each edge label.
  * This mapper is used by the layout algorithms to consider the preferred placement for the edge labels.
  */
-let descriptorMapper: Mapper<ILabel, PreferredPlacementDescriptor> = null!
+let descriptorMapper: Mapper<ILabel, PreferredPlacementDescriptor>
 
 /**
  * Flag to prevent re-entrant layouts.
@@ -134,6 +136,8 @@ function run(licenseData: object): void {
   graphComponent = new GraphComponent('graphComponent')
   graph = graphComponent.graph
 
+  descriptorMapper = new Mapper<ILabel, PreferredPlacementDescriptor>()
+
   registerCommands()
 
   initializeGraph()
@@ -144,6 +148,8 @@ function run(licenseData: object): void {
   initializeLayoutComboBox()
 
   createSampleGraph()
+
+  graph.undoEngineEnabled = true
 
   showApp(graphComponent)
 }
@@ -160,15 +166,28 @@ async function doLayout(fitViewToContent: boolean) {
     setUIDisabled(true)
 
     // retrieve current labeling/layout algorithm from the combo-box
-    const layoutAlgorithm = (
+    const layout = (
       layoutComboBox.options[layoutComboBox.selectedIndex] as EdgeLabelPlacementOption
     ).myValue as ILayoutAlgorithm
 
+    // provide preferred placement data to the layout algorithm
+    const layoutData = new GenericLayoutData({
+      labelItemMappings: [
+        [
+          LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
+          descriptorMapper
+        ]
+      ]
+    })
+
+    // fix node port stage is used to keep the bounding box of the graph in the view port
+    layoutData.combineWith(new FixNodeLayoutData({ fixedNodes: () => true }))
+
     // initialize layout executor
-    const layout = new MinimumNodeSizeStage(new FixNodeLayoutStage(layoutAlgorithm))
     const layoutExecutor = new LayoutExecutor({
       graphComponent,
-      layout,
+      layout: new MinimumNodeSizeStage(new FixNodeLayoutStage(layout)),
+      layoutData,
       duration: '0.5s',
       animateViewport: fitViewToContent
     })
@@ -215,10 +234,6 @@ function onLabelPropertyChanged(source: HTMLElement): void {
  * @param source The HTMLElement that reported a change.
  */
 function updateLabelValues(labels: IEnumerable<ILabel>, source: HTMLElement): void {
-  if (descriptorMapper === null) {
-    return
-  }
-
   labels.forEach(edgeLabel => {
     const oldDescriptor = descriptorMapper.get(edgeLabel)
     const descriptor = oldDescriptor
@@ -297,10 +312,6 @@ function updateLabelValues(labels: IEnumerable<ILabel>, source: HTMLElement): vo
  * @param labels The affected labels.
  */
 function updateLabelProperties(labels: IEnumerable<ILabel>): void {
-  if (descriptorMapper === null) {
-    return
-  }
-
   let valuesUndefined = true
   let text: string | null = null
   let placement: LabelPlacements | null = null
@@ -430,6 +441,8 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
 
+  addNavigationButtons(layoutComboBox)
+
   bindAction("button[data-command='Layout']", () => doLayout(true))
   bindChangeListener("select[data-command='SelectLayout']", () => doLayout(true))
   bindAction("button[data-command='PlacementAlongEdgeChanged']", () =>
@@ -470,19 +483,10 @@ function registerCommands(): void {
 }
 
 /**
- * Adds mappers and label edit listeners to the graph.
+ * Adds label listeners to the graph which ensure that each label has an associated preferred
+ * placement descriptor.
  */
 function initializeGraph(): void {
-  // the mapper for the preferred placement information
-  descriptorMapper = graph.mapperRegistry.createMapper(
-    ILabel.$class,
-    PreferredPlacementDescriptor.$class,
-    LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
-  )
-
-  // fix node port stage is used to keep the bounding box of the graph in the view port
-  graph.mapperRegistry.createConstantMapper(FixNodeLayoutStage.FIXED_NODE_DP_KEY, true)
-
   // add preferred placement information to each new label
   graph.addLabelAddedListener((source, event) => {
     descriptorMapper.set(event.item, new PreferredPlacementDescriptor())
@@ -490,8 +494,6 @@ function initializeGraph(): void {
   graph.addLabelRemovedListener((source, event) => {
     descriptorMapper.delete(event.item)
   })
-
-  graph.undoEngineEnabled = true
 }
 
 /**
@@ -504,13 +506,7 @@ function initializeStyles(): void {
   graph.edgeDefaults.style = new DemoEdgeStyle()
   graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
-  // the label style indicates the label's borders and does not auto-flip to show the actual placement
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
-    backgroundStroke: 'lightblue',
-    backgroundFill: 'rgba(255, 255, 255, 0.5)',
-    autoFlip: false,
-    insets: [3, 5, 3, 5]
-  })
+  graph.edgeDefaults.labels.style = createDemoEdgeLabelStyle()
 }
 
 /**

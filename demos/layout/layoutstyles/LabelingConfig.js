@@ -119,17 +119,6 @@ const LabelingConfig = Class('LabelingConfig', {
       labeling.affectedLabelsDpKey = SELECTED_LABELS_KEY
     }
 
-    if (this.placeEdgeLabelsItem) {
-      this.addPreferredPlacementDescriptor(
-        graphComponent.graph,
-        this.labelPlacementAlongEdgeItem,
-        this.labelPlacementSideOfEdgeItem,
-        this.labelPlacementOrientationItem,
-        this.labelPlacementDistanceItem
-      )
-      this.setupEdgeLabelModels(graphComponent)
-    }
-
     return labeling
   },
 
@@ -145,6 +134,19 @@ const LabelingConfig = Class('LabelingConfig', {
       layoutData.affectedLabels.dpKey = SELECTED_LABELS_KEY
       layoutData.affectedLabels.delegate = label =>
         selection.isSelected(label) || selection.isSelected(label.owner)
+    }
+
+    if (this.placeEdgeLabelsItem) {
+      this.setupEdgeLabelModels(graphComponent)
+      return layoutData.combineWith(
+        this.createLabelingLayoutData(
+          graphComponent.graph,
+          this.labelPlacementAlongEdgeItem,
+          this.labelPlacementSideOfEdgeItem,
+          this.labelPlacementOrientationItem,
+          this.labelPlacementDistanceItem
+        )
+      )
     }
 
     return layoutData

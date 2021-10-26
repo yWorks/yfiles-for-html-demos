@@ -44,6 +44,46 @@ import {
 import { LogicGateType } from './LogicGatesHelper.js'
 
 export class GateNodeStyle extends NodeStyleBase {
+  /** 
+    color for input pins
+  * @type {'#E01A4F'}
+   */
+  static get IN_COLOR() {
+    if (typeof GateNodeStyle.$IN_COLOR === 'undefined') {
+      GateNodeStyle.$IN_COLOR = '#E01A4F'
+    }
+
+    return GateNodeStyle.$IN_COLOR
+  }
+
+  /** 
+    color for input pins
+  * @type {'#E01A4F'}
+   */
+  static set IN_COLOR(IN_COLOR) {
+    GateNodeStyle.$IN_COLOR = IN_COLOR
+  }
+
+  /** 
+    color for output pins
+  * @type {'#01BAFF'}
+   */
+  static get OUT_COLOR() {
+    if (typeof GateNodeStyle.$OUT_COLOR === 'undefined') {
+      GateNodeStyle.$OUT_COLOR = '#01BAFF'
+    }
+
+    return GateNodeStyle.$OUT_COLOR
+  }
+
+  /** 
+    color for output pins
+  * @type {'#01BAFF'}
+   */
+  static set OUT_COLOR(OUT_COLOR) {
+    GateNodeStyle.$OUT_COLOR = OUT_COLOR
+  }
+
   /**
    * @param {!LogicGateType} gateType
    */
@@ -64,6 +104,17 @@ export class AndGateNodeStyle extends GateNodeStyle {
    */
   constructor(negated) {
     super(negated ? LogicGateType.NAND : LogicGateType.AND)
+
+    // colors for normal version of gate
+    this.fillColor = '#363020'
+
+    this.strokeColor = '#201F1A'
+    this.labelColor = '#FFFFFF'
+
+    // colors for inverted version of gate
+    this.negatedFillColor = '#605C4E'
+
+    this.negatedStrokeColor = '#3A3834'
   }
 
   /**
@@ -131,9 +182,6 @@ export class AndGateNodeStyle extends GateNodeStyle {
     const width = size.width
     const height = size.height
 
-    const fillId = `AndGateNodeStyle_fill${getFillId()}`
-    appendGradient(container, size, fillId)
-
     const isNegated = this.gateType === LogicGateType.NAND
 
     const x1 = width * 0.15
@@ -156,13 +204,18 @@ export class AndGateNodeStyle extends GateNodeStyle {
     const extremaX = getPointOnCurve(0.5, firstPoint, endPoint, c1, c2)
     generalPath.lineTo(new Point(x1, height))
     generalPath.close()
-    createPath(container, generalPath, `url(#${fillId})`)
+    createPath(
+      container,
+      generalPath,
+      isNegated ? this.negatedFillColor : this.fillColor,
+      isNegated ? this.negatedStrokeColor : this.strokeColor
+    )
 
     // create output port
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(new Point(isNegated ? extremaX + 2 * width * 0.03 : extremaX, y2))
     outputPortPath.lineTo(new Point(width, y2))
-    const outputStroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
+    const outputStroke = node.tag && node.tag.targetHighlight ? AndGateNodeStyle.OUT_COLOR : 'black'
     createPath(container, outputPortPath, 'none', outputStroke)
 
     // create input port
@@ -171,23 +224,16 @@ export class AndGateNodeStyle extends GateNodeStyle {
     inputPortPath.lineTo(new Point(x1, y1))
     inputPortPath.moveTo(new Point(x1, y3))
     inputPortPath.lineTo(new Point(0, y3))
-    const inputStroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
+    const inputStroke = node.tag && node.tag.sourceHighlight ? AndGateNodeStyle.IN_COLOR : 'black'
     createPath(container, inputPortPath, 'none', inputStroke)
 
     if (isNegated) {
-      appendEllipse(
-        container,
-        extremaX + width * 0.03,
-        height * 0.5,
-        width * 0.03,
-        width * 0.03,
-        fillId
-      )
+      appendEllipse(container, extremaX + width * 0.03, height * 0.5, width * 0.03, width * 0.03)
     }
 
     const fontSize = Math.floor(node.layout.height * 0.25)
     const textContent = isNegated ? 'NAND' : 'AND'
-    const text = createText(textContent, fontSize)
+    const text = createText(textContent, fontSize, this.labelColor)
     const textSize = TextRenderSupport.measureText(
       text.textContent || '',
       new Font({
@@ -210,6 +256,9 @@ export class AndGateNodeStyle extends GateNodeStyle {
 export class NotNodeStyle extends GateNodeStyle {
   constructor() {
     super(LogicGateType.NOT)
+    this.fillColor = '#EAFFDA'
+    this.strokeColor = '#92998E'
+    this.labelColor = '#000000'
   }
 
   /**
@@ -275,9 +324,6 @@ export class NotNodeStyle extends GateNodeStyle {
     const width = size.width
     const height = size.height
 
-    const fillId = `NAndNodeStyle_fill${getFillId()}`
-    appendGradient(container, size, fillId)
-
     const x1 = width * 0.2
     const x2 = width * 0.7
 
@@ -286,25 +332,25 @@ export class NotNodeStyle extends GateNodeStyle {
     generalPath.lineTo(new Point(x2, height * 0.5))
     generalPath.lineTo(new Point(x1, height))
     generalPath.close()
-    createPath(container, generalPath, `url(#${fillId})`)
-    appendEllipse(container, x2 + width * 0.03, height * 0.5, width * 0.03, width * 0.03, fillId)
+    createPath(container, generalPath, this.fillColor, this.strokeColor)
+    appendEllipse(container, x2 + width * 0.03, height * 0.5, width * 0.03, width * 0.03)
 
     // create input port
     const inputPortPath = new GeneralPath()
     inputPortPath.moveTo(new Point(0, height * 0.5))
     inputPortPath.lineTo(new Point(x1, height * 0.5))
-    const inputStroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
+    const inputStroke = node.tag && node.tag.sourceHighlight ? NotNodeStyle.IN_COLOR : 'black'
     createPath(container, inputPortPath, 'none', inputStroke)
 
     // create output port
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(new Point(x2 + 2 * width * 0.03, height * 0.5))
     outputPortPath.lineTo(new Point(width, height * 0.5))
-    const outputStroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
+    const outputStroke = node.tag && node.tag.targetHighlight ? NotNodeStyle.OUT_COLOR : 'black'
     createPath(container, outputPortPath, 'none', outputStroke)
 
     const fontSize = Math.floor(node.layout.height * 0.25)
-    const text = createText('NOT', fontSize)
+    const text = createText('NOT', fontSize, this.labelColor)
     const textSize = TextRenderSupport.measureText(
       text.textContent || '',
       new Font({
@@ -339,6 +385,18 @@ export class OrNodeStyle extends GateNodeStyle {
    */
   constructor(negated) {
     super(negated ? LogicGateType.NOR : LogicGateType.OR)
+
+    // colors for normal version of gate
+    this.fillColor = '#A49966'
+
+    this.strokeColor = '#625F50'
+    this.labelColor = '#FFFFFF'
+
+    //colors for inverted version of gate
+    this.negatedFillColor = '#C7C7A6'
+
+    this.negatedStrokeColor = '#77776E'
+    this.negatedLabelColor = '#000000'
   }
 
   /**
@@ -407,8 +465,8 @@ export class OrNodeStyle extends GateNodeStyle {
     const width = size.width
     const height = size.height
 
-    const fillId = `OrNodeStyle_fill${getFillId()}`
-    appendGradient(container, size, fillId)
+    // is inverted output
+    const isNegated = this.gateType === LogicGateType.NOR
 
     const x1 = width * 0.15
     const x2 = width * 0.8
@@ -437,7 +495,12 @@ export class OrNodeStyle extends GateNodeStyle {
     c2 = new Point(endPoint.x + width * 0.1, endPoint.y + height * 0.1)
     generalPath.cubicTo(c1, c2, endPoint)
     generalPath.close()
-    createPath(container, generalPath, `url(#${fillId})`)
+    createPath(
+      container,
+      generalPath,
+      isNegated ? this.negatedFillColor : this.fillColor,
+      isNegated ? this.negatedStrokeColor : this.strokeColor
+    )
 
     // create input port
     const inputPortPath = new GeneralPath()
@@ -447,24 +510,27 @@ export class OrNodeStyle extends GateNodeStyle {
     inputPortPath.lineTo(x11, y1)
     inputPortPath.moveTo(0, y3)
     inputPortPath.lineTo(x21, y3)
-    let stroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
+    let stroke = node.tag && node.tag.sourceHighlight ? OrNodeStyle.IN_COLOR : 'black'
     createPath(container, inputPortPath, 'none', stroke)
 
     // create output port
-    const isNegated = this.gateType === LogicGateType.NOR
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(isNegated ? x2 + 2 * width * 0.03 : x2, y2)
     outputPortPath.lineTo(width, y2)
-    stroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
+    stroke = node.tag && node.tag.targetHighlight ? OrNodeStyle.OUT_COLOR : 'black'
     createPath(container, outputPortPath, 'none', stroke)
 
     if (isNegated) {
-      appendEllipse(container, x2 + width * 0.03, height * 0.5, width * 0.03, width * 0.03, fillId)
+      appendEllipse(container, x2 + width * 0.03, height * 0.5, width * 0.03, width * 0.03)
     }
 
     const fontSize = Math.floor(node.layout.height * 0.25)
     const textContent = isNegated ? 'NOR' : 'OR'
-    const text = createText(textContent, fontSize)
+    const text = createText(
+      textContent,
+      fontSize,
+      isNegated ? this.negatedLabelColor : this.labelColor
+    )
     const textSize = TextRenderSupport.measureText(
       text.textContent || '',
       new Font({
@@ -490,6 +556,17 @@ export class XOrNodeStyle extends GateNodeStyle {
    */
   constructor(negated) {
     super(negated ? LogicGateType.XNOR : LogicGateType.XOR)
+
+    // colors for normal version of gate
+    this.fillColor = '#A4778B'
+
+    this.strokeColor = '#62555B'
+    this.labelColor = '#FFFFFF'
+
+    // colors for inverted version of gate
+    this.negatedFillColor = '#AA4586'
+
+    this.negatedStrokeColor = '#66485B'
   }
 
   /**
@@ -557,9 +634,6 @@ export class XOrNodeStyle extends GateNodeStyle {
     const size = cache.size
     const width = size.width
     const height = size.height
-
-    const fillId = `XOrNodeStyle_fill${getFillId()}`
-    appendGradient(container, size, fillId)
 
     const x1 = width * 0.18
     const x2 = width * 0.25
@@ -592,7 +666,12 @@ export class XOrNodeStyle extends GateNodeStyle {
     generalPath.cubicTo(c1, c2, endPoint)
     generalPath.close()
 
-    createPath(container, generalPath, `url(#${fillId})`)
+    createPath(
+      container,
+      generalPath,
+      isNegated ? this.negatedFillColor : this.fillColor,
+      isNegated ? this.negatedStrokeColor : this.strokeColor
+    )
 
     generalPath = new GeneralPath()
     generalPath.moveTo(x1, height)
@@ -611,23 +690,23 @@ export class XOrNodeStyle extends GateNodeStyle {
     inputPortPath.lineTo(x11, y1)
     inputPortPath.moveTo(0, y3)
     inputPortPath.lineTo(x21, y3)
-    const inputStroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
+    const inputStroke = node.tag && node.tag.sourceHighlight ? XOrNodeStyle.IN_COLOR : 'black'
     createPath(container, inputPortPath, 'none', inputStroke)
 
     // create output port
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(isNegated ? x3 + 2 * width * 0.03 : x3, y2)
     outputPortPath.lineTo(width, y2)
-    const outputStroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
+    const outputStroke = node.tag && node.tag.targetHighlight ? XOrNodeStyle.OUT_COLOR : 'black'
     createPath(container, outputPortPath, 'none', outputStroke)
 
     if (isNegated) {
-      appendEllipse(container, x3 + width * 0.03, height * 0.5, width * 0.03, width * 0.03, fillId)
+      appendEllipse(container, x3 + width * 0.03, height * 0.5, width * 0.03, width * 0.03)
     }
 
     const fontSize = Math.floor(node.layout.height * 0.25)
     const textContent = isNegated ? 'XNOR' : 'XOR'
-    const text = createText(textContent, fontSize)
+    const text = createText(textContent, fontSize, this.labelColor)
     const textSize = TextRenderSupport.measureText(
       text.textContent || '',
       new Font({
@@ -686,58 +765,20 @@ function createRenderDataCache(node) {
 }
 
 /**
- * Creates a linear gradient and appends it to the given container element.
- * @param {!Element} container The svg element to append the gradient to
- * @param {!Size} size The node's size
- * @param {!string} gradientId The id for the gradient
- * @returns {!Element} A linear gradient
- */
-function appendGradient(container, size, gradientId) {
-  // Create the defs section in container
-  const defs = window.document.createElementNS('http://www.w3.org/2000/svg', 'defs')
-  container.appendChild(defs)
-
-  // max and min needed for reflection effect calculation
-  const max = Math.max(size.width, size.height)
-
-  const gradient = window.document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient')
-  gradient.id = gradientId
-  setAttribute(gradient, 'x1', '0')
-  setAttribute(gradient, 'y1', '0')
-  setAttribute(gradient, 'x2', 0.5 / (size.width / max))
-  setAttribute(gradient, 'y2', 1 / (size.height / max))
-  setAttribute(gradient, 'spreadMethod', 'pad')
-  const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-  setAttribute(stop1, 'stop-color', 'white')
-  setAttribute(stop1, 'stop-opacity', '0.7')
-  setAttribute(stop1, 'offset', '0')
-  const stop2 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-  setAttribute(stop2, 'stop-color', 'rgb(102,153,204)')
-  setAttribute(stop2, 'stop-opacity', '0.5')
-  setAttribute(stop2, 'offset', '0.7')
-  gradient.appendChild(stop1)
-  gradient.appendChild(stop2)
-  defs.appendChild(gradient)
-
-  return gradient
-}
-
-/**
  * Creates an svg ellipse and appends it to the given container element.
  * @param {!Element} container The svg element to append the ellipse to
  * @param {number} cx The x coordinate of the center of the ellipse
  * @param {number} cy The y coordinate of the center of the ellipse
  * @param {number} rx The horizontal radius
  * @param {number} ry The vertical radius
- * @param {!string} id The gradient id
  */
-function appendEllipse(container, cx, cy, rx, ry, id) {
+function appendEllipse(container, cx, cy, rx, ry) {
   const ellipse = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
   ellipse.cx.baseVal.value = cx
   ellipse.cy.baseVal.value = cy
   ellipse.rx.baseVal.value = rx
   ellipse.ry.baseVal.value = ry
-  setAttribute(ellipse, 'fill', `url(#${id})`)
+  setAttribute(ellipse, 'fill', 'white')
   setAttribute(ellipse, 'stroke', 'black')
   setAttribute(ellipse, 'stroke-width', '2')
   container.appendChild(ellipse)
@@ -765,27 +806,17 @@ function createPath(container, generalPath, fill, stroke) {
  * Creates an svg text element with the given content and font size.
  * @param {!string} textContent The text content
  * @param {number} fontSize The font size
+ * @param {!string} color The text color
  * @returns {!Element} The created text element
  */
-function createText(textContent, fontSize) {
+function createText(textContent, fontSize, color) {
   const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
   text.textContent = textContent
   setAttribute(text, 'font-family', 'Arial')
-  setAttribute(text, 'fill', '#333333')
+  setAttribute(text, 'fill', color)
 
   setAttribute(text, 'font-size', `${fontSize}px`)
   setAttribute(text, 'font-family', 'Arial')
   setAttribute(text, 'font-weight', 'bold')
   return text
-}
-
-/** @type {number} */
-let fillId = 0
-
-/**
- * Counts the number of gradient fills used to generate a unique id.
- * @returns {number}
- */
-function getFillId() {
-  return fillId++
 }

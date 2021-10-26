@@ -27,25 +27,24 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
+  EdgePathLabelModel,
+  EdgeSides,
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
   IEdge,
+  IGraph,
   ILabel,
   ILabelOwner,
   IModelItem,
   INode,
   InteriorLabelModel,
-  InteriorStretchLabelModel,
   IPort,
   License,
   MouseHoverInputMode,
-  PanelNodeStyle,
   Point,
   QueryItemToolTipEventArgs,
   Rect,
-  ShapeNodeStyle,
   Size,
   TimeSpan,
   ToolTipQueryEventArgs
@@ -59,6 +58,7 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -78,7 +78,7 @@ function run(licenseData) {
   graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
-  initTutorialDefaults()
+  initTutorialDefaults(graphComponent.graph)
 
   // enable tooltips
   initializeTooltips()
@@ -214,29 +214,21 @@ function createTooltipContent(item) {
 }
 
 /**
- * Initializes the defaults for the styles in this tutorial.
+ * Initializes the defaults for the styling in this tutorial.
+ *
+ * @param {!IGraph} graph The graph.
  */
-function initTutorialDefaults() {
-  const graph = graphComponent.graph
+function initTutorialDefaults(graph) {
+  // set styles that are the same for all tutorials
+  initBasicDemoStyles(graph)
 
-  // configure defaults normal nodes and their labels
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'darkorange',
-    stroke: 'white'
-  })
+  // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-
-  // configure defaults group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [18, 5, 5, 5],
-    labelInsetsColor: 'rgb(214, 229, 248)'
-  })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'center'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5,
+    autoRotation: true
+  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**

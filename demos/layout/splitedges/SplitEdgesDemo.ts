@@ -118,6 +118,8 @@ async function runLayout() {
   setUIDisabled(true)
   await graphComponent.morphLayout(recursiveGroupLayout, '700ms', layoutData)
   setUIDisabled(false)
+
+  graphComponent.graph.mapperRegistry.removeMapper(GroupingKeys.GROUP_NODE_INSETS_DP_KEY)
 }
 
 /**
@@ -142,52 +144,52 @@ async function createSampleGraph(): Promise<void> {
   graph.createEdge({
     source: nodes[0],
     target: groupNode1,
-    tag: { targetSplitId: 'split0', color: 'crimson' }
+    tag: { targetSplitId: 'split0', color: '#DB3A34' }
   })
   graph.createEdge({
     source: groupNode1,
     target: groupNode3,
-    tag: { sourceSplitId: 'split0', targetSplitId: 'split0', color: 'crimson' }
+    tag: { sourceSplitId: 'split0', targetSplitId: 'split0', color: '#DB3A34' }
   })
   graph.createEdge({
     source: groupNode3,
     target: groupNode2,
-    tag: { sourceSplitId: 'split0', targetSplitId: 'split0', color: 'crimson' }
+    tag: { sourceSplitId: 'split0', targetSplitId: 'split0', color: '#DB3A34' }
   })
   graph.createEdge({
     source: groupNode2,
     target: nodes[2],
-    tag: { sourceSplitId: 'split0', color: 'crimson' }
+    tag: { sourceSplitId: 'split0', color: '#DB3A34' }
   })
   graph.createEdge({
     source: nodes[1],
     target: groupNode3,
-    tag: { targetSplitId: 'split1', color: 'darkturquoise' }
+    tag: { targetSplitId: 'split1', color: '#56926E' }
   })
   graph.createEdge({
     source: groupNode3,
     target: nodes[3],
-    tag: { sourceSplitId: 'split1', color: 'darkturquoise' }
+    tag: { sourceSplitId: 'split1', color: '#56926E' }
   })
   graph.createEdge({
     source: groupNode3,
     target: nodes[5],
-    tag: { sourceSplitId: 'split2', color: 'cornflowerblue' }
+    tag: { sourceSplitId: 'split2', color: '#4281A4' }
   })
   graph.createEdge({
     source: nodes[4],
     target: groupNode3,
-    tag: { targetSplitId: 'split2', color: 'cornflowerblue' }
+    tag: { targetSplitId: 'split2', color: '#4281A4' }
   })
   graph.createEdge({
     source: groupNode2,
     target: groupNode3,
-    tag: { targetSplitId: 'split3', color: 'darkslateblue' }
+    tag: { targetSplitId: 'split3', color: '#FF6C00' }
   })
   graph.createEdge({
     source: groupNode3,
     target: nodes[6],
-    tag: { sourceSplitId: 'split3', color: 'darkslateblue' }
+    tag: { sourceSplitId: 'split3', color: '#FF6C00' }
   })
   graph.createEdge({
     source: nodes[0],
@@ -233,9 +235,9 @@ function initializeDefaults(): void {
   graph.groupNodeDefaults.style = groupNodeStyle
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '3px #BBBBBB',
+    stroke: '3px #4E4E4E',
     targetArrow: new Arrow({
-      fill: '#BBBBBB',
+      fill: '#4E4E4E',
       type: 'triangle',
       scale: 1.5
     }),

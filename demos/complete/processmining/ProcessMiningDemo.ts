@@ -42,7 +42,7 @@ import {
 
 import loadJson from '../../resources/load-json'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
-import { webGlSupported, detectInternetExplorerVersion } from '../../utils/Workarounds'
+import { isWebGlSupported, detectInternetExplorerVersion } from '../../utils/Workarounds'
 
 import { AnimationController } from './AnimationController'
 import { ProcessingStepNodeStyle } from './ProcessingStepNodeStyle'
@@ -60,7 +60,7 @@ Class.ensure(LayoutExecutor)
  * Initializes the graph and wires up the UI
  */
 async function initialize(license: object): Promise<void> {
-  if (!webGlSupported) {
+  if (!isWebGlSupported()) {
     document.getElementById('no-webgl-support')!.removeAttribute('style')
     showApp(null)
     return

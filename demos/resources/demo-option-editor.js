@@ -36,9 +36,9 @@ import {
   List,
   PropertyInfo,
   YBoolean,
+  yfiles,
   YNumber,
-  YString,
-  yfiles
+  YString
 } from 'yfiles'
 
 /**

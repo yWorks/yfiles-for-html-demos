@@ -62,6 +62,7 @@ import {
 
 import { DemoEdgeStyle, DemoGroupStyle, DemoNodeStyle } from '../../resources/demo-styles'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -147,29 +148,33 @@ function getSubgraphLayout(): ILayoutAlgorithm {
   const distance = Number.parseFloat(getElementById<HTMLInputElement>('node-distance').value)
   const layout: string = getElementById<HTMLInputElement>('subgraph-layout').value
   switch (layout) {
-    default:
-    case 'Hierarchic': {
+    case 'hierarchic': {
       return new HierarchicLayout({
         minimumLayerDistance: distance,
         nodeToNodeDistance: distance
       })
     }
-    case 'Orthogonal': {
+    case 'orthogonal': {
       return new OrthogonalLayout({
         gridSpacing: distance
       })
     }
-    case 'Organic': {
+    case 'organic': {
       return new OrganicLayout({
         minimumNodeDistance: distance
       })
     }
-    case 'Circular': {
+    case 'circular': {
       const circularLayout = new CircularLayout()
       circularLayout.singleCycleLayout.minimumNodeDistance = distance
       circularLayout.balloonLayout.minimumNodeDistance = distance
       return circularLayout
     }
+    default:
+      return new HierarchicLayout({
+        minimumLayerDistance: distance,
+        nodeToNodeDistance: distance
+      })
   }
 }
 
@@ -179,11 +184,12 @@ function getSubgraphLayout(): ILayoutAlgorithm {
 function getComponentAssignmentStrategy(): ComponentAssignmentStrategy {
   const componentAssignment: string = getElementById<HTMLInputElement>('component-assignment').value
   switch (componentAssignment) {
-    default:
-    case 'Single':
+    case 'single':
       return ComponentAssignmentStrategy.SINGLE
-    case 'Connected':
+    case 'connected':
       return ComponentAssignmentStrategy.CONNECTED
+    default:
+      return ComponentAssignmentStrategy.SINGLE
   }
 }
 
@@ -194,11 +200,12 @@ function getComponentAssignmentStrategy(): ComponentAssignmentStrategy {
 function getSubgraphPlacement(): SubgraphPlacement {
   const placement: string = getElementById<HTMLInputElement>('subgraph-positioning').value
   switch (placement) {
-    default:
-    case 'Barycenter':
+    case 'barycenter':
       return SubgraphPlacement.BARYCENTER
-    case 'From Sketch':
+    case 'from-sketch':
       return SubgraphPlacement.FROM_SKETCH
+    default:
+      return SubgraphPlacement.BARYCENTER
   }
 }
 
@@ -208,17 +215,18 @@ function getSubgraphPlacement(): SubgraphPlacement {
 function getEdgeRoutingStrategy(): PartialLayoutEdgeRoutingStrategy {
   const edgeRouting: string = getElementById<HTMLInputElement>('edge-routing-style').value
   switch (edgeRouting) {
-    default:
-    case 'Automatic':
+    case 'automatic':
       return PartialLayoutEdgeRoutingStrategy.AUTOMATIC
-    case 'Orthogonal':
+    case 'orthogonal':
       return PartialLayoutEdgeRoutingStrategy.ORTHOGONAL
-    case 'Straightline':
+    case 'straightline':
       return PartialLayoutEdgeRoutingStrategy.STRAIGHTLINE
-    case 'Organic':
+    case 'organic':
       return PartialLayoutEdgeRoutingStrategy.ORGANIC
-    case 'Octilinear':
+    case 'octilinear':
       return PartialLayoutEdgeRoutingStrategy.OCTILINEAR
+    default:
+      return PartialLayoutEdgeRoutingStrategy.AUTOMATIC
   }
 }
 
@@ -229,17 +237,17 @@ function getLayoutOrientation(): PartialLayoutOrientation {
   const orientation: string = getElementById<HTMLInputElement>('layout-orientation').value
   switch (orientation) {
     default:
-    case 'None':
+    case 'none':
       return PartialLayoutOrientation.NONE
-    case 'Auto-detect':
+    case 'auto-detect':
       return PartialLayoutOrientation.AUTO_DETECT
-    case 'Top to Bottom':
+    case 'top-to-bottom':
       return PartialLayoutOrientation.TOP_TO_BOTTOM
-    case 'Bottom to Top':
+    case 'bottom-to-top':
       return PartialLayoutOrientation.BOTTOM_TO_TOP
-    case 'Left to Right':
+    case 'left-to-right':
       return PartialLayoutOrientation.LEFT_TO_RIGHT
-    case 'Right to Left':
+    case 'right-to-left':
       return PartialLayoutOrientation.RIGHT_TO_LEFT
   }
 }
@@ -440,6 +448,9 @@ function registerCommands(): void {
   bindAction("button[data-command='Layout']", runLayout)
 
   bindChangeListener("select[data-command='SelectSample']", loadScenario)
+  addNavigationButtons(
+    document.querySelector("select[data-command='SelectSample']") as HTMLSelectElement
+  )
   bindAction("button[data-command='Refresh']", loadScenario)
 }
 

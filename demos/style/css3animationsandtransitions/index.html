@@ -42,7 +42,9 @@
 
   <style>
     .node .node-rect {
-      fill: #FFAF00;
+      fill: #FF6C00;
+      stroke: #662b00;
+      stroke-width: 1.5;
       transform-origin: center;
     }
 
@@ -59,17 +61,18 @@
     }
 
     .node.node-created .node-rect {
-      transform-origin: 40px 40px;
+      transform-origin: 15px 15px;
       animation: 0.3s ease-out nodeCreatedAnimation;
     }
 
     .node.node-focused .node-rect{
-      fill: #336699;
+      fill: #242265;
+      stroke: #24113D;
       transition: fill 0.3s ease-out;
     }
 
     .node.node-selected .node-rect {
-      stroke: #ff7b2c;
+      stroke: #AB2346;
       stroke-width: 3;
       stroke-dasharray: 4;
       animation: 0.3s linear infinite selectedAnimation;
@@ -86,16 +89,16 @@
 
     @keyframes nodeHoverAnimation {
       0% {
-        transform: translate(-80px, 0);
+        transform: translate(-30px, 0);
       }
       40% {
-        transform: translate(20px, 0);
+        transform: translate(8px, 0);
       }
       60% {
-        transform: translate(40px, 0);
+        transform: translate(16px, 0);
       }
       100% {
-        transform: translate(80px, 0);
+        transform: translate(30px, 0);
       }
     }
 

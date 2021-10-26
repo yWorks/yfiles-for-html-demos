@@ -75,6 +75,7 @@ import {
 } from './NetworkFlowsHelper'
 import { MinCutLine, NetworkFlowEdgeStyle, NetworkFlowNodeStyle } from './DemoStyles'
 import {
+  addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
@@ -133,6 +134,18 @@ let nodesToChange: INode[] = []
  * which are created during dragging.
  */
 let compoundEdit: ICompoundEdit
+
+const newButton = document.getElementById('newButton') as HTMLButtonElement
+const algorithmComboBox = document.getElementById('algorithmComboBox') as HTMLSelectElement
+const reloadButton = document.getElementById('reloadButton') as HTMLButtonElement
+const layoutButton = document.getElementById('layoutButton') as HTMLButtonElement
+const edgePopupContent = document.getElementById('edgePopupContent') as HTMLElement
+const costForm = document.getElementById('cost-form') as HTMLInputElement
+const flowLabel = document.getElementById('flowInformationLabel') as HTMLElement
+const flowInput = document.getElementById('flowValue') as HTMLInputElement
+const costPlusButton = document.getElementById('costPlus') as HTMLButtonElement
+const costMinusButton = document.getElementById('costMinus') as HTMLButtonElement
+const applyButton = document.getElementById('apply') as HTMLButtonElement
 
 /**
  * Runs the demo.
@@ -199,7 +212,6 @@ function initializeGraphComponent(): void {
   minCutLine = new MinCutLine()
   graphComponent.highlightGroup.addChild(minCutLine, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
 
-  const edgePopupContent = document.getElementById('edgePopupContent') as HTMLElement
   // We use the EdgePathLabelModel for the edge pop-up
   const edgeLabelModel = new EdgePathLabelModel({
     autoRotation: false,
@@ -327,9 +339,7 @@ function createEditorInputMode(): void {
     event.item.tag = {
       supply: 0,
       flow: 0,
-      adjustable:
-        (document.getElementById('algorithmComboBox') as HTMLSelectElement).selectedIndex ===
-        MIN_COST_FLOW
+      adjustable: algorithmComboBox.selectedIndex === MIN_COST_FLOW
     }
   })
 
@@ -347,9 +357,7 @@ function createEditorInputMode(): void {
 function onClicked(sender: any, args: ItemClickedEventArgs<IModelItem>): void {
   const item = args.item
   if (item instanceof ILabel && item.tag === 'cost') {
-    ;(document.getElementById('cost-form') as HTMLInputElement).value = parseInt(
-      item.text
-    ).toString()
+    costForm.value = parseInt(item.text).toString()
     edgePopup.currentItem = item.owner
     return
   }
@@ -388,7 +396,6 @@ function updateEdgeThickness(edge: IEdge): void {
     })
 
     // add label for cost
-    const algorithmComboBox = document.getElementById('algorithmComboBox') as HTMLSelectElement
     if (algorithmComboBox.selectedIndex === MIN_COST_FLOW) {
       graphComponent.graph.addLabel({
         owner: edge,
@@ -415,7 +422,6 @@ function runFlowAlgorithm(): void {
   graphComponent.graph.nodes.forEach(node => (node.tag.cut = false))
 
   // determine the algorithm to run
-  const algorithmComboBox = document.getElementById('algorithmComboBox') as HTMLSelectElement
   let flowValue: number
   switch (algorithmComboBox.selectedIndex) {
     case MAX_FLOW_MIN_CUT:
@@ -431,12 +437,10 @@ function runFlowAlgorithm(): void {
   }
 
   // update flow information
-  const flowLabel = document.getElementById('flowInformationLabel') as HTMLElement
   flowLabel.innerHTML = `${
     (algorithmComboBox[algorithmComboBox.selectedIndex] as HTMLOptionElement).text
   }`
   flowLabel.style.display = 'inline-block'
-  const flowInput = document.getElementById('flowValue') as HTMLInputElement
   flowInput.style.display = 'inline-block'
   flowInput.value = flowValue.toString()
 }
@@ -607,7 +611,6 @@ async function runLayout(
   additionalIncrementalNodes?: INode[]
 ): Promise<void> {
   const graph = graphComponent.graph
-  const algorithmComboBox = document.getElementById('algorithmComboBox') as HTMLSelectElement
 
   if (inLayout || graph.nodes.size === 0) {
     return
@@ -878,6 +881,7 @@ function registerCommands(): void {
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
   bindChangeListener("select[data-command='AlgorithmSelectionChanged']", onAlgorithmChanged)
+  addNavigationButtons(algorithmComboBox)
   bindAction("button[data-command='Reload']", () => {
     edgePopup.currentItem = null
     createSampleGraph()
@@ -886,17 +890,9 @@ function registerCommands(): void {
     edgePopup.currentItem = null
     runLayout(false)
   })
-  ;(document.getElementById('costPlus') as HTMLButtonElement).addEventListener(
-    'click',
-    () => updateCostForm(1),
-    true
-  )
-  ;(document.getElementById('costMinus') as HTMLButtonElement).addEventListener(
-    'click',
-    () => updateCostForm(-1),
-    true
-  )
-  ;(document.getElementById('apply') as HTMLButtonElement).addEventListener(
+  costPlusButton.addEventListener('click', () => updateCostForm(1), true)
+  costMinusButton.addEventListener('click', () => updateCostForm(-1), true)
+  applyButton.addEventListener(
     'click',
     () => {
       runFlowAlgorithm()
@@ -918,7 +914,6 @@ async function onAlgorithmChanged() {
 
   const graph = graphComponent.graph
   if (graph.nodes.size > 0) {
-    const algorithmComboBox = document.getElementById('algorithmComboBox') as HTMLSelectElement
     minCutLine.visible = algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT
 
     // make sure that there is flow in case the algorithm changed to "Minimum Cost Problem"
@@ -942,8 +937,7 @@ async function onAlgorithmChanged() {
  * Updates the description text based on the selected algorithm.
  */
 function updateDescriptionText(): void {
-  const selectedIndex = (document.getElementById('algorithmComboBox') as HTMLSelectElement)
-    .selectedIndex
+  const selectedIndex = algorithmComboBox.selectedIndex
   const descriptionText = document.getElementById('description') as HTMLElement
   let i = 0
   for (let child = descriptionText.firstElementChild; child; child = child.nextElementSibling) {
@@ -957,7 +951,7 @@ function updateDescriptionText(): void {
  * @param newValue The new value to be set
  */
 function updateCostForm(newValue: number): void {
-  const form = document.getElementById('cost-form') as HTMLInputElement
+  const form = costForm
   form.value = Math.max(parseInt(form.value) + newValue, 0).toString()
 
   const currentItem = edgePopup.currentItem as ILabelOwner
@@ -981,10 +975,10 @@ function updateCostForm(newValue: number): void {
  * @param disabled True if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled: boolean): void {
-  ;(document.getElementById('newButton') as HTMLButtonElement).disabled = disabled
-  ;(document.getElementById('algorithmComboBox') as HTMLButtonElement).disabled = disabled
-  ;(document.getElementById('reloadButton') as HTMLButtonElement).disabled = disabled
-  ;(document.getElementById('layoutButton') as HTMLButtonElement).disabled = disabled
+  newButton.disabled = disabled
+  algorithmComboBox.disabled = disabled
+  reloadButton.disabled = disabled
+  layoutButton.disabled = disabled
 }
 
 /**
@@ -1149,9 +1143,7 @@ function createSampleGraph(): void {
     node.tag = {
       supply,
       flow: 0.5 * node.layout.height,
-      adjustable:
-        (document.getElementById('algorithmComboBox') as HTMLSelectElement).selectedIndex ===
-        MIN_COST_FLOW
+      adjustable: algorithmComboBox.selectedIndex === MIN_COST_FLOW
     }
 
     calculateNodeSize(node)

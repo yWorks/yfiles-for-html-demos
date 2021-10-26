@@ -40,7 +40,6 @@ import {
   HierarchicLayoutData,
   HierarchicLayoutEdgeRoutingStyle,
   HierarchicLayoutRoutingStyle,
-  IBend,
   IEdge,
   IEnumerable,
   IGraph,
@@ -62,26 +61,20 @@ import {
 
 export default class HierarchicGrouping {
   /**
-   * The graph component associated with this instance.
-   */
-  graphComponent: GraphComponent
-  /**
    * The last group node that was collapsed/expanded.
    */
-  changedGroupNode: INode = null!
+  private changedGroupNode: INode = null!
   /**
    * A mapper containing alternative bounds for the collapsed/expanded group node.
    */
-  alternativeGroupBounds: Mapper<INode, IRectangle>
+  private readonly alternativeGroupBounds: Mapper<INode, IRectangle>
   /**
    * A mapper containing alternative path for the edges connecting to groups,
    * group content or folder nodes.
    */
-  alternativeEdgePaths: Mapper<IEdge, List<IPoint>>
+  private readonly alternativeEdgePaths: Mapper<IEdge, List<IPoint>>
 
-  constructor(graphComponent: GraphComponent) {
-    this.graphComponent = graphComponent
-
+  constructor(private readonly graphComponent: GraphComponent) {
     this.alternativeGroupBounds = new Mapper()
     this.alternativeEdgePaths = new Mapper()
 
@@ -93,9 +86,8 @@ export default class HierarchicGrouping {
    * registers event listeners for the expand and collapse commands that trigger the automatic layout.
    *
    * @param inputMode The input mode to be configured.
-   * @private
    */
-  configureInputMode(inputMode: GraphInputMode): void {
+  private configureInputMode(inputMode: GraphInputMode): void {
     // Create an input mode and set a group node alignment policy that makes sure that the
     // expand/collapse button of the current group node keeps its location.
     // Note that the corresponding 'fix point policy' is used for the FixNodeLayoutStage in
@@ -126,41 +118,35 @@ export default class HierarchicGrouping {
   }
 
   /**
-   * Stores information about the current layout before expanding a group.
+   * Stores information about the layout of a group before expanding the group.
    *
    * @param group The group that will be expanded.
-   * @private
    */
-  beforeExpandingGroup(group: INode): void {
-    const graph = this.graphComponent.graph
-    const foldingView = graph.foldingView!
-    const layout = group.layout
-
-    // store the expanded group node
-    this.changedGroupNode = group
-
-    // store the group bounds of the expanded group node before layout
-    this.alternativeGroupBounds.clear()
-    this.alternativeGroupBounds.set(foldingView.getMasterItem(group), layout.toRect())
-
-    // store all edge paths that connect to the expanded group before layout
-    this.alternativeEdgePaths.clear()
-    graph.edgesAt(group).forEach(edge => {
-      const points = new List<IPoint>()
-      points.add(edge.sourcePort!.location)
-      edge.bends.forEach(bend => points.add(bend.location))
-      points.add(edge.targetPort!.location)
-      this.alternativeEdgePaths.set(foldingView.getMasterItem(edge), points)
-    })
+  private beforeExpandingGroup(group: INode): void {
+    const edgesToBackup = (graph: IGraph, group: INode) => graph.edgesAt(group)
+    this.beforeGroupStateChanged(group, edgesToBackup)
   }
 
   /**
-   * Stores the layout of the group node and its descendants before collapsing it.
+   * Stores information about the layout of a group before collapsing the group.
    *
    * @param group The group that will be collapsed.
-   * @private
    */
-  beforeCollapsingGroup(group: INode): void {
+  private beforeCollapsingGroup(group: INode): void {
+    const edgesToBackup = (graph: IGraph, group: INode) => this.getAffectedEdges(graph, group)
+    this.beforeGroupStateChanged(group, edgesToBackup)
+  }
+
+  /**
+   * Stores information about the layout of a group before collapsing or expanding the group.
+   *
+   * @param group The group that will be collapsed or expanded.
+   * @param edgesToBackup The edges whose paths should be stored as well.
+   */
+  private beforeGroupStateChanged(
+    group: INode,
+    edgesToBackup: (graph: IGraph, group: INode) => Iterable<IEdge>
+  ): void {
     const graph = this.graphComponent.graph
     const foldingView = graph.foldingView!
     const layout = group.layout
@@ -174,22 +160,17 @@ export default class HierarchicGrouping {
 
     // store all edge paths that connect to/into the collapsed group before layout
     this.alternativeEdgePaths.clear()
-    this.getAffectedEdges(group, graph).forEach(edge => {
-      const points = new List<IPoint>()
-      points.add(edge.sourcePort!.location)
-      edge.bends.forEach((bend: IBend) => points.add(bend.location))
-      points.add(edge.targetPort!.location)
-      this.alternativeEdgePaths.set(foldingView.getMasterItem(edge), points)
-    })
+    for (const edge of edgesToBackup(graph, group)) {
+      this.alternativeEdgePaths.set(foldingView.getMasterItem(edge), getPointList(edge))
+    }
   }
 
   /**
    * Performs an incremental layout on the graph after a group was closed/expanded interactively.
    *
    * @param group The group that was expanded or collapsed.
-   * @private
    */
-  afterGroupStateChanged(group: INode): void {
+  private afterGroupStateChanged(group: INode): void {
     // store the current locations of nodes and edges to keep them for incremental layout
     const graph = this.graphComponent.graph
     const nodesCoordinates = new Mapper<INode, IPoint>()
@@ -205,11 +186,7 @@ export default class HierarchicGrouping {
         graph.edgesAt(childNode).forEach(edge => {
           // store path and clear bends afterwards
           if (!visitedEdges.has(edge)) {
-            const bends = new List<IPoint>()
-            edge.bends.forEach(bend => {
-              bends.add(bend.location)
-            })
-            edgesCoordinates.set(edge, bends)
+            edgesCoordinates.set(edge, getPointList(edge))
             graph.clearBends(edge)
             visitedEdges.add(edge)
           }
@@ -225,11 +202,7 @@ export default class HierarchicGrouping {
     // reset adjacent edge paths to get smoother layout transitions
     graph.edgesAt(group).forEach(edge => {
       // store path and clear bends afterwards
-      const bends = new List<IPoint>()
-      edge.bends.forEach(bend => {
-        bends.add(bend.location)
-      })
-      edgesCoordinates.set(edge, bends)
+      edgesCoordinates.set(edge, getPointList(edge))
       graph.clearBends(edge)
     })
 
@@ -255,7 +228,6 @@ export default class HierarchicGrouping {
       HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL
     )
     layout.edgeLayoutDescriptor.recursiveEdgeStyle = RecursiveEdgeStyle.DIRECTED
-    layout.prependStage(new GivenCoordinatesStage())
 
     // The FixNodeLayoutStage is used to make sure that the expanded/collapsed group stays at their location.
     // Note that an input mode with the corresponding 'group node alignment policy' is used, too.
@@ -297,14 +269,16 @@ export default class HierarchicGrouping {
       easedAnimation: true,
       duration: '0.5s'
     })
-    await layoutExecutor.start().catch(error => {
-      if (typeof (window as any).reportError === 'function') {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        ;(window as any).reportError(error)
+    try {
+      await layoutExecutor.start()
+    } catch (error) {
+      const reportError = (window as any).reportError
+      if (typeof reportError === 'function') {
+        reportError(error)
       } else {
         throw error
       }
-    })
+    }
     this.graphComponent.updateContentRect()
   }
 
@@ -312,13 +286,12 @@ export default class HierarchicGrouping {
    * Retrieves the affected edges when a group node is collapsed.
    * Edges are affected when they connect to the group node directly or to a descendant of the group node.
    *
-   * @param group The group node which is collapsed.
    * @param graph The graph to which the group node belongs.
+   * @param group The group node which is collapsed.
    *
    * @return An array of all affected edges.
-   * @private
    */
-  getAffectedEdges(group: INode, graph: IGraph): IEdge[] {
+  private getAffectedEdges(graph: IGraph, group: INode): IEdge[] {
     // Collect all edges that connect to the group node.
     const crossingEdges = graph.edgesAt(group).toArray()
 
@@ -342,4 +315,20 @@ export default class HierarchicGrouping {
 
     return crossingEdges
   }
+}
+
+/**
+ * Returns the control points of the given edge.
+ * The control points of an edge are its source port location, its bend locations, and its target
+ * port location.
+ * @param edge the edge whose control points are collected.
+ */
+function getPointList(edge: IEdge): List<IPoint> {
+  const points = new List<IPoint>()
+  points.add(edge.sourcePort!.location)
+  for (const bend of edge.bends) {
+    points.add(bend.location)
+  }
+  points.add(edge.targetPort!.location)
+  return points
 }

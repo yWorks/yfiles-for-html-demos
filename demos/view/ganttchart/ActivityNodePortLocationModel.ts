@@ -65,7 +65,7 @@ export default class ActivityNodePortLocationModel extends BaseClass<IPortLocati
       switch (locationParameter.position) {
         case PortPosition.RIGHT: {
           // get followUp time
-          const followUpTime = tag.followUpTimeWidth ? tag.followUpTimeWidth : 0
+          const followUpTime: number = tag.followUpTimeWidth ? tag.followUpTimeWidth : 0
           return new Point(layout.x + layout.width + followUpTime, layout.y + layout.height * 0.5)
         }
         case PortPosition.LEFT:

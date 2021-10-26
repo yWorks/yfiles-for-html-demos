@@ -177,14 +177,6 @@ const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
     layout.parallelSubstructureStyle = this.parallelSubstructureItem
     layout.parallelSubstructureSize = this.parallelSubstructureSizeItem
 
-    this.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-
     return layout
   },
 
@@ -246,7 +238,15 @@ const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       layoutData.targetGroupIds.constant = 'Group'
     }
 
-    return layoutData
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
   },
 
   configureOutputRestrictions: function (

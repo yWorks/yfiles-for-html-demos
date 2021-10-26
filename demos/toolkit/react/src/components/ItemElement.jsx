@@ -26,33 +26,22 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import './ItemElement.css'
 
-export default class ItemElement extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { backgroundColor: '#00d7ff' }
-  }
+function formatItem(item) {
+  return JSON.stringify(item)
+    .replace(/([{,:])/g, '$1 ')
+    .replace(/(})/g, ' $1')
+}
 
-  componentDidMount() {
-    this.setState({ backgroundColor: 'transparent' })
-  }
-
-  render() {
-    const style = {
-      backgroundColor: this.state.backgroundColor,
-      transition: 'background-color 1s ease-out'
-    }
-    const codeStyle = {
-      margin: 0
-    }
-    return (
-      <div style={style}>
-        <pre style={codeStyle}>{JSON.stringify(this.props.item)}</pre>
-      </div>
-    )
-  }
+export default function ItemElement({ item }) {
+  return (
+    <div className="item-element">
+      <pre style={{ margin: 0 }}>{formatItem(item)}</pre>
+    </div>
+  )
 }
 
 ItemElement.propTypes = {

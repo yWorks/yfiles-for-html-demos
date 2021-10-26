@@ -54,8 +54,8 @@ import {
 
 import DemoCommands from './DemoCommands'
 import { passiveSupported } from '../../utils/Workarounds'
-import { hasChildNodes } from './MindmapUtil'
 import type { NodeData } from './MindmapUtil'
+import { hasChildNodes } from './MindmapUtil'
 
 /**
  * A node style decorator that adds a collapse button to the node.
@@ -122,9 +122,9 @@ export default class CollapseDecorator extends NodeStyleBase {
       },
       passiveSupported
         ? {
-            passive: false,
-            capture: true
-          }
+          passive: false,
+          capture: true
+        }
         : true
     )
 
@@ -145,6 +145,10 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @see Overrides {@link NodeStyleBase#updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual {
+    if (!(oldVisual instanceof SvgVisual) || !('wrappedStyle-visual' in oldVisual.svgElement)) {
+      return this.createVisual(context, node)
+    }
+
     const container = (oldVisual as SvgVisual).svgElement
     // retrieve the wrappedStyle visual from the container
     const wrappedStyleVisual = (container as any)['wrappedStyle-visual'] as SvgVisual
@@ -182,7 +186,7 @@ export default class CollapseDecorator extends NodeStyleBase {
 
     // create a label that acts as a dummy item to render the icon
     const label = createDummyLabel(node)
-    // store the label with the visual for updating
+      // store the label with the visual for updating
     ;(g as any)['data-renderCache'] = label
 
     if (visible) {

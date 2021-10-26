@@ -56,6 +56,7 @@ import {
 import EditablePathNodeStyle, { PathHandle, updateHandles } from './EditablePathNodeStyle'
 import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
+import { createBasicEdgeStyle } from '../../resources/basic-demo-styles'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -106,10 +107,13 @@ function initializeGraph(): void {
 
   // Create a new style and use it as default node style
   graph.nodeDefaults.style = new EditablePathNodeStyle({
-    fill: 'orange',
-    stroke: '1px solid light-gray'
+    fill: '#FF6C00',
+    stroke: '1.5px #662b00'
   })
-  graph.nodeDefaults.size = new Size(50, 50)
+  graph.nodeDefaults.size = new Size(200, 200)
+
+  // Set some defaults for the edges
+  graph.edgeDefaults.style = createBasicEdgeStyle('demo-orange')
 
   // Create some graph elements with the above defined styles.
   createSampleGraph()
@@ -321,8 +325,8 @@ function createSampleGraph(): void {
   path.close()
 
   const n2 = graph.createNode({
-    layout: [100, 50, 50, 50],
-    style: new EditablePathNodeStyle({ path, fill: 'orange', stroke: '1px solid grey' })
+    layout: [300, 0, 200, 100],
+    style: new EditablePathNodeStyle({ path, fill: '#FF6C00', stroke: '1.5px #662b00' })
   })
 
   graph.createEdge(n1, n2)
