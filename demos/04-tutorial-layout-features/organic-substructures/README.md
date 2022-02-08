@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/organic-substructures/index.html).
 
-## Organic Layout with Substructures
+Layout Features Tutorial
+
+# Organic Layout with Substructures
 
 This demo shows the ability of [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) to consider substructures in the graph.
 

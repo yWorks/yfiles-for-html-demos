@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,58 +34,72 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>List Node Demo [yFiles for HTML]</title>
+    <title>List Node Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>List Node Demo</h1>
 
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to display a node with sections arranged in rows. The sections can be re-arranged
-      interactively. When a section is moved, its edges are moved as well.
-    </p>
+        <p>
+          This demo shows how to display a node with sections arranged in rows. The sections can be
+          re-arranged interactively. When a section is moved, its edges are moved as well.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Add new rows with the context menu (right click). Note that rows which support outgoing edges have a port on the
-        right side of the node. Rows which support incoming edges have a port that is placed at the left.
-      </li>
-      <li>
-        Connect edges to the ports at the rows by dragging from a port. Edges will always go from the right side to the
-        left side of a node, no matter on which side the edge creation was started.
-      </li>
-      <li>Move rows up and down by dragging with the mouse.</li>
-      <li>Move an entire node by dragging with the mouse at its header.</li>
-      <li>Rename nodes and rows by clicking on a node or row label and pressing <code>F2</code>.</li>
-      <li>Remove rows with the context menu by right-clicking on them.</li>
-    </ul>
-  </div>
-</aside>
+        <ul>
+          <li>
+            Add new rows with the context menu (right click). Note that rows which support outgoing
+            edges have a port on the right side of the node. Rows which support incoming edges have
+            a port that is placed at the left.
+          </li>
+          <li>
+            Connect edges to the ports at the rows by dragging from a port. Edges will always go
+            from the right side to the left side of a node, no matter on which side the edge
+            creation was started.
+          </li>
+          <li>Move rows up and down by dragging with the mouse.</li>
+          <li>Move an entire node by dragging with the mouse at its header.</li>
+          <li>
+            Rename nodes and rows by clicking on a node or row label and pressing <code>F2</code>.
+          </li>
+          <li>Remove rows with the context menu by right-clicking on them.</li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  <div class="demo-toolbar">
+        <span class="demo-separator"></span>
+      </div>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-    <span class="demo-separator"></span>
-
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="ListNodeDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="ListNodeDemo.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/directed-edge-label/index.html).
 
+# Directed Edge Label Style Demo
+
 This demo shows a custom label style which visualizes an edge label with an additional arrow which points in the direction of the edge label flow.
 
 ## Things to Try

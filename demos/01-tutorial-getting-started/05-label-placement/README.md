@@ -4,9 +4,11 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/01-tutorial-getting-started/05-label-placement/index.html).
 
-## Tutorial Demo 5
+Getting Started Tutorial - Step 5
 
-### How to influence the placement of labels.
+# Placing Labels
+
+How to influence the placement of labels.
 
 This step shows how to [control label placement](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-placing_labels) with the help of so called label model parameters.
 

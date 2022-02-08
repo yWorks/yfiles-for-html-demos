@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,11 +30,13 @@
 // see https://vitejs.dev/guide/features.html#web-workers for details
 import LayoutWorker from './layout-worker?worker'
 
-function getWebWorkerMessageHandler(licenseString: string): Promise<typeof webWorkerMessageHandler> {
+function getWebWorkerMessageHandler(
+  licenseString: string
+): Promise<typeof webWorkerMessageHandler> {
   const worker = new LayoutWorker()
   worker.postMessage(licenseString)
 
-  function webWorkerMessageHandler(data:  Object): Promise<Object> {
+  function webWorkerMessageHandler(data: Object): Promise<Object> {
     return new Promise(resolve => {
       worker.onmessage = (e: any) => resolve(e.data)
       worker.postMessage(data)
@@ -54,9 +56,11 @@ function getWebWorkerMessageHandler(licenseString: string): Promise<typeof webWo
 
 let promise: Promise<(data: Object) => Promise<Object>> | null = null
 
-export function getLayoutExecutorAsyncMessageHandler(license: Object): Promise<(data: Object) => Promise<Object>> {
+export function getLayoutExecutorAsyncMessageHandler(
+  license: Object
+): Promise<(data: Object) => Promise<Object>> {
   if (!promise) {
     promise = getWebWorkerMessageHandler(JSON.stringify(license))
   }
-  return promise;
+  return promise
 }

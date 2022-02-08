@@ -6,11 +6,14 @@
 
     <div class="demo-content">
       <div class="demo-header">
-        <a href="https://www.yworks.com" target="_blank">
+        <a href="https://www.yworks.com/products/yfiles" target="_blank">
           <img src="../../../resources/icons/ylogo.svg" class="demo-y-logo" />
         </a>
-        <a href="../../../README.html" target="_blank">yFiles for HTML</a>
-        <span class="demo-title">Vue CLI (Vue 2) TypeScript Demo [yFiles for HTML]</span>
+        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+        <a href="../../../README.html" style="cursor: pointer" target="_blank" class="demo-title"
+          >Demos</a
+        >
+        <span class="demo-title">Vue CLI (Vue 2) TypeScript Demo</span>
       </div>
 
       <diagram-component ref="GraphComponent"></diagram-component>
@@ -41,7 +44,6 @@ export default class App extends Vue {
 </script>
 
 <style>
-html,
 body {
   position: fixed;
   margin: 0;
@@ -53,7 +55,7 @@ body {
   overscroll-behavior-y: contain;
   overflow: hidden;
   font-family: Tahoma, Verdana, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   color: #333333;
 }
 </style>
@@ -65,16 +67,23 @@ body {
   left: 320px;
   right: 0;
   bottom: 0;
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 14px;
+  color: #343f4a;
 }
 
 .demo-header {
+  display: flex;
   position: absolute;
   top: 0;
   height: 60px;
   left: 0;
   right: 0;
-  background-color: #29323c;
+  background: transparent linear-gradient(90deg, #29323c 0%, #38434f 100%) 0 0 no-repeat padding-box;
   color: white;
+  font-size: 1.1rem;
+  z-index: 16;
+  transition: padding-left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 
 .demo-y-logo {
@@ -94,50 +103,50 @@ body {
   line-height: 60px;
   padding: 0 5px;
   vertical-align: top;
-  font-size: 1.5em;
 }
 
 .demo-title {
   display: inline-block;
-  padding: 0 5px 0 30px;
+  padding: 0 5px 0 30px !important;
   height: 60px;
   line-height: 60px;
   color: white;
   cursor: default;
-  font-size: 1.5em;
   letter-spacing: 1px;
   background: url('./assets/header-angle.svg') no-repeat 5px 50%;
   background-size: 20px 20px;
   vertical-align: top;
 }
-
 .demo-sidebar {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 320px;
   box-sizing: border-box;
-  background: #f7f7f7;
+  background: #e0edf0;
   z-index: 15;
-  line-height: 150%;
-  left: 0;
+  line-height: 140%;
   overflow-y: auto;
+  color: #343f4a;
+  padding-left: 0.2em;
 }
-
+.demo-sidebar.demo-description {
+  left: 0;
+  width: 320px;
+  overflow: hidden;
+  right: auto;
+  background-color: #e0edf0;
+  padding-top: 60px;
+}
 @media screen and (max-height: 500px) {
   .demo-header {
     height: 30px;
-    font-size: 10px;
-  }
-
-  .toolbar {
-    top: 30px;
-    height: 30px;
-    line-height: 30px;
+    font-size: 12px;
   }
 
   .demo-header .demo-y-logo {
     height: 30px;
+    width: 30px;
     line-height: 30px;
   }
 
@@ -149,6 +158,7 @@ body {
   .demo-title {
     height: 30px;
     line-height: 30px;
+    background-size: 12px 12px;
   }
 }
 

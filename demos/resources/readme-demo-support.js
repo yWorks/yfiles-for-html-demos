@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 /* eslint-disable no-var,no-eval */
-;(function() {
+;(function () {
   var enableES6warning =
     window.location.hostname.indexOf('yworks.') < 0 &&
     window.location.pathname.indexOf('es5/demos') < 0 &&
@@ -59,11 +59,11 @@
     for (var i = 0; i < aElementList.length; i++) {
       var link = aElementList[i]
       if (link.getAttribute('href').indexOf('index.html') > 0) {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
           window.scrollTo(0, 0)
           var notice = document.getElementById('no-ecmascript6')
           notice.setAttribute('class', notice.getAttribute('class') + ' highlight-important')
-          window.setTimeout(function() {
+          window.setTimeout(function () {
             notice.setAttribute(
               'class',
               notice.getAttribute('class').replace(' highlight-important', '')
@@ -75,7 +75,7 @@
     }
   }
 })()
-;(function() {
+;(function () {
   // Check whether the demo data is available. Otherwise, this is used in a README file of the tutorials
   if (window.getDemoData == null) {
     return
@@ -124,12 +124,12 @@
     'view'
   ]
 
-  var demos = window.getDemoData().filter(function(demo) {
+  var demos = window.getDemoData().filter(function (demo) {
     return !demo.hidden
   })
 
   if (isTsReadme) {
-    var tsDemosFirst = function(a, b) {
+    var tsDemosFirst = function (a, b) {
       if (a.ts && !b.ts) {
         return -1
       } else if (b.ts && !a.ts) {
@@ -140,14 +140,14 @@
     }
     demos.sort(tsDemosFirst)
 
-    demos.forEach(function(demo) {
+    demos.forEach(function (demo) {
       if (demo.thumbnailPath != null) {
         demo.thumbnailPath = '../demos-js/' + demo.thumbnailPath
       }
     })
   }
 
-  demos.forEach(function(item) {
+  demos.forEach(function (item) {
     item.availableInPackage =
       isCompletePackage ||
       (isViewerPackage &&
@@ -162,25 +162,25 @@
   function createGridItem(demo, index) {
     var gridItem = document.createElement('div')
     gridItem.className = 'grid-item'
-    gridItem.innerHTML = gridItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function(
-      match,
-      propertyName
-    ) {
-      if (propertyName === 'demoPath' && isTsReadme && !demo.ts) {
-        return '../demos-js/' + demo.demoPath
-      } else if (propertyName === 'index') {
-        return index + 2
-      } else if (propertyName === 'video' && demo.thumbnailPath.indexOf('.mp4') > -1) {
-        return '<video src="' + demo.thumbnailPath + '" loop="true" autoplay="true">'
-      } else if (Object.prototype.hasOwnProperty.call(demo, propertyName)) {
-        return demo[propertyName]
-      } else {
-        return ''
+    gridItem.innerHTML = gridItemTemplate.innerHTML.replace(
+      /{{([^}]+)}}/gi,
+      function (match, propertyName) {
+        if (propertyName === 'demoPath' && isTsReadme && !demo.ts) {
+          return '../demos-js/' + demo.demoPath
+        } else if (propertyName === 'index') {
+          return index + 2
+        } else if (propertyName === 'video' && demo.thumbnailPath.indexOf('.mp4') > -1) {
+          return '<video src="' + demo.thumbnailPath + '" loop="true" autoplay="true">'
+        } else if (Object.prototype.hasOwnProperty.call(demo, propertyName)) {
+          return demo[propertyName]
+        } else {
+          return ''
+        }
       }
-    })
+    )
     if (demo.tags) {
       var tagContainer = gridItem.querySelector('.tags')
-      demo.tags.forEach(function(tag) {
+      demo.tags.forEach(function (tag) {
         var tagItem = document.createElement('span')
         var anchor = document.createElement('a')
         anchor.setAttribute('href', '#' + encodeURIComponent(tag))
@@ -221,19 +221,19 @@
 
   function createAccordionItem(category) {
     var tmpDiv = document.createElement('div')
-    tmpDiv.innerHTML = accordionItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function(
-      match,
-      propertyName
-    ) {
-      if (Object.prototype.hasOwnProperty.call(category, propertyName)) {
-        return category[propertyName]
-      } else {
-        // console.warn("Property '" + propertyName + "' not found in demo: " + demo.name);
-        return ''
+    tmpDiv.innerHTML = accordionItemTemplate.innerHTML.replace(
+      /{{([^}]+)}}/gi,
+      function (match, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(category, propertyName)) {
+          return category[propertyName]
+        } else {
+          // console.warn("Property '" + propertyName + "' not found in demo: " + demo.name);
+          return ''
+        }
       }
-    })
+    )
     var item = tmpDiv.firstElementChild
-    item.querySelector('.accordion-title').addEventListener('click', function() {
+    item.querySelector('.accordion-title').addEventListener('click', function () {
       if (item.className.indexOf('expanded') >= 0) {
         item.className = item.className.replace(' expanded', '')
         if (searchBox.value.indexOf(category.identifier) === 0) {
@@ -305,10 +305,10 @@
     }
     var words = needle.split(/[^.\w/]/)
     return words
-      .map(function(word) {
+      .map(function (word) {
         return matchWord(demo, word)
       })
-      .reduce(function(prev, curr) {
+      .reduce(function (prev, curr) {
         if (categoryFilter) {
           // when filtering a specific demo category avoid any priorities, but show demos in the given order
           return prev > 0 || curr > 0 ? 1 : 0
@@ -372,7 +372,7 @@
     unAvailableGridHeader.style.display = 'block'
   }
 
-  demos.forEach(function(demo, index) {
+  demos.forEach(function (demo, index) {
     var gridItem = createGridItem(demo, index)
     if (demo.category === 'tutorial-getting-started') {
       tutGettingStartedGrid.appendChild(gridItem)
@@ -406,10 +406,10 @@
 
   searchBox.addEventListener('input', debounce(searchBoxChanged, 300, false))
   searchBox.addEventListener('click', searchBoxClicked)
-  searchBox.addEventListener('blur', function(e) {
+  searchBox.addEventListener('blur', function (e) {
     searchBox.addEventListener('click', searchBoxClicked)
   })
-  resetSearchButton.addEventListener('click', function() {
+  resetSearchButton.addEventListener('click', function () {
     searchBox.value = ''
     searchBoxChanged()
   })
@@ -440,14 +440,14 @@
     }
 
     var noSearchResults = true
-    tutorialIds.forEach(function(id) {
+    tutorialIds.forEach(function (id) {
       document.getElementById(id).style.display = 'none'
       document.getElementById(id + '-header').style.display = 'block'
     })
     document.getElementById('general-intro').style.display = 'block'
 
     var searchBoxEmpty = searchBox.value.trim() === ''
-    var sortedDemos = demos.map(function(demo) {
+    var sortedDemos = demos.map(function (demo) {
       return {
         demo: demo,
         prio: matchDemo(demo, searchBox.value, categoryFilter)
@@ -455,7 +455,7 @@
     })
 
     if (!searchBoxEmpty) {
-      sortedDemos.sort(function(i1, i2) {
+      sortedDemos.sort(function (i1, i2) {
         if (i1.prio === i2.prio) {
           return 0
         }
@@ -469,7 +469,7 @@
       })
     }
 
-    sortedDemos.forEach(function(item) {
+    sortedDemos.forEach(function (item) {
       var demo = item.demo
       // Reorder the nodes in each grid section
       demo.element.parentElement.appendChild(demo.element)
@@ -499,7 +499,7 @@
       }
     })
 
-    tutorialIds.forEach(function(id) {
+    tutorialIds.forEach(function (id) {
       var children = document.getElementById(id + '-grid').childNodes
       var allHidden = true
       for (var i = 0; i < children.length; i++) {
@@ -518,13 +518,13 @@
   }
 
   function changeTextContent(text) {
-    tutorialIds.forEach(function(id) {
+    tutorialIds.forEach(function (id) {
       document.getElementById(id).style.display = 'none'
     })
     if (text.indexOf('tutorial-') === 0) {
       var content = document.getElementById(text)
       if (content != null) {
-        tutorialIds.forEach(function(id) {
+        tutorialIds.forEach(function (id) {
           document.getElementById(id + '-header').style.display = 'none'
         })
         document.getElementById('general-intro').style.display = 'none'
@@ -545,10 +545,10 @@
    */
   function debounce(func, delay, immediate) {
     var timeout
-    return function() {
+    return function () {
       var context = this,
         args = arguments
-      var later = function() {
+      var later = function () {
         timeout = null
         if (!immediate) {
           func.apply(context, args)

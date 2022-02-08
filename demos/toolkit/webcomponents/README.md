@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/toolkit/webcomponents/index.html).
 
+# Web Components Integration Demo
+
 This demo shows how yFiles for HTML can be used with Web Components v1.
 
 Please note that [Web Components](https://github.com/w3c/webcomponents) are currently not well supported by most browsers and require polyfills which have a significant impact on the application's performance. Also note that there are [browser issues](https://github.com/w3c/webcomponents/issues/179) besides unsupported features that should be considered before committing to the usage of Web Components.

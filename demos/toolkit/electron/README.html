@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,90 +32,98 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Electron Demo</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-</head>
-<body>
-<div id="header" class="simple-header">
-  Electron Demo
-</div>
-<main>
-  <div class="content-centered">
-    <div class="content">
-      <div class="breadcrumbs">
-        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Electron Demo
-      </div>
+    <title>Electron Demo</title>
+    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
+    <div id="header" class="simple-header">Electron Demo</div>
+    <main>
+      <div class="content-centered">
+        <div class="content">
+          <div class="breadcrumbs">
+            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Electron
+            Demo
+          </div>
 
-      <h1>Electron Demo</h1>
+          <h1>Electron Demo</h1>
 
-      <p>
-        This demo shows how to integrate yFiles for HTML in a basic <a href="https://electronjs.org/" target="_blank">Electron</a>
-        desktop application. It uses <a
-        href="https://github.com/electron-userland/electron-webpack">electron-webpack</a> for support for ES module
-        imports.
-      </p>
+          <p>
+            This demo shows how to integrate yFiles for HTML in a basic
+            <a href="https://electronjs.org/" target="_blank">Electron</a> desktop application. It
+            uses
+            <a href="https://github.com/electron-userland/electron-webpack">electron-webpack</a> for
+            support for ES module imports.
+          </p>
 
-      <div>
-        <h2>Building the Demo</h2>
-        <ol>
-          <li>
-            Go to the demo's directory <code>demos-js/toolkit/electron</code>.
-          </li>
-          <li>
-            Run <code>yarn install</code>.
-          </li>
-          <li>
-            Run <code>yarn dev</code>.
-          </li>
-        </ol>
-        <p>This will start the development server of the Electron application which creates a desktop application with
-          integrated hot reloading.</p>
+          <div>
+            <h2>Building the Demo</h2>
+            <ol>
+              <li>Go to the demo's directory <code>demos-js/toolkit/electron</code>.</li>
+              <li>Run <code>yarn install</code>.</li>
+              <li>Run <code>yarn dev</code>.</li>
+            </ol>
+            <p>
+              This will start the development server of the Electron application which creates a
+              desktop application with integrated hot reloading.
+            </p>
 
-        <h2>Deployment</h2>
-        <p>
-          A binary of the application can be built with <code>yarn dist</code>. This will run the <a
-          href="https://github.com/electron-userland/electron-builder" target="_blank">electron-builder</a> that creates
-          an executable in the <code>dist</code> directory.
-        </p>
-        <p>
-          yFiles modules and usages are obfuscated in the production build with the <a
-          href="https://www.npmjs.com/package/@yworks/optimizer" target="_blank">yFiles for HTML Optimizer</a>.
-        </p>
+            <h2>Deployment</h2>
+            <p>
+              A binary of the application can be built with <code>yarn dist</code>. This will run
+              the
+              <a href="https://github.com/electron-userland/electron-builder" target="_blank"
+                >electron-builder</a
+              >
+              that creates an executable in the <code>dist</code> directory.
+            </p>
+            <p>
+              yFiles modules and usages are obfuscated in the production build with the
+              <a href="https://www.npmjs.com/package/@yworks/optimizer" target="_blank"
+                >yFiles for HTML Optimizer</a
+              >.
+            </p>
 
-        <h2>Things to Note</h2>
-        <p>
-          In order to load ES modules from external libraries such as yFiles, they must be whitelisted in the <code>electronWebpack</code>
-          configuration, see also <a href="https://webpack.electron.build/configuration.html#white-listing-externals"
-          target="_blank">White-listing Externals</a>:
-        </p>
-        <pre>
+            <h2>Things to Note</h2>
+            <p>
+              In order to load ES modules from external libraries such as yFiles, they must be
+              whitelisted in the <code>electronWebpack</code> configuration, see also
+              <a
+                href="https://webpack.electron.build/configuration.html#white-listing-externals"
+                target="_blank"
+                >White-listing Externals</a
+              >:
+            </p>
+            <pre>
 "electronWebpack": {
   "whiteListedModules": [
     "yfiles"
   ],
   ...
 }
-  </pre>
+  </pre
+            >
 
-        <p>
-          Also, in order to use <code>*.ejs</code> templates, the <a href="https://webpack.electron.build/add-ons#ejs"
-          target="_blank">EJS</a> loader needs to be registered explicitly in an additional webpack configuration:
-        </p>
-        <pre>
+            <p>
+              Also, in order to use <code>*.ejs</code> templates, the
+              <a href="https://webpack.electron.build/add-ons#ejs" target="_blank">EJS</a> loader
+              needs to be registered explicitly in an additional webpack configuration:
+            </p>
+            <pre>
 "electronWebpack": {
   ...
   "renderer": {
     "webpackConfig": "webpack.renderer.additions.js"
   }
 }
-  </pre>
+  </pre
+            >
+          </div>
+        </div>
+        <!-- populated by readme-style.js -->
+        <div id="footer-detailed"></div>
       </div>
-    </div>
-    <!-- populated by readme-style.js -->
-    <div id="footer-detailed"></div>
-  </div>
-</main>
-<script src="../../../doc/readme-style.js"></script>
-</body>
+    </main>
+    <script src="../../../doc/readme-style.js"></script>
+  </body>
 </html>

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -48,7 +48,7 @@ import {
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-import { detectChromeVersion } from '../../utils/Workarounds.js'
+import { isModuleSupportedInWorker } from '../../utils/Workarounds.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 
 /** @type {GraphComponent} */
@@ -59,11 +59,9 @@ let executor = null
 /** @type {Worker} */
 let worker
 
-const modulesWorkersSupported = detectChromeVersion() >= 80
-
 const layoutButton = document.getElementById('layoutBtn')
 
-if (modulesWorkersSupported) {
+if (isModuleSupportedInWorker()) {
   // create a new module web worker
   worker = new Worker('./WorkerLayout.js', {
     type: 'module'

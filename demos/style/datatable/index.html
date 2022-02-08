@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,117 +34,135 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Data Table Demo [yFiles for HTML]</title>
+    <title>Data Table Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style type="text/css">
-    .myTableNode.background {
-      stroke: none;
-      fill: #46A8D5;
-    }
+    <style>
+      .myTableNode.background {
+        stroke: none;
+        fill: #46a8d5;
+      }
 
-    .myTableNode.grid, .myTableNode.border {
-      stroke-width: 1;
-      stroke: #224556;
-      fill: none;;
-    }
+      .myTableNode.grid,
+      .myTableNode.border {
+        stroke-width: 1;
+        stroke: #224556;
+        fill: none;
+      }
 
-    .myTableNode.border {
-      stroke-width: 2;
-    }
+      .myTableNode.border {
+        stroke-width: 2;
+      }
 
-    .myTableLabel.background {
-      stroke: none;
-      fill: #FDCA40;
-    }
+      .myTableLabel.background {
+        stroke: none;
+        fill: #fdca40;
+      }
 
-    .myTableLabel.grid, .myTableLabel.border {
-      stroke-width: 1;
-      stroke: #655220;
-      fill: none;
-    }
+      .myTableLabel.grid,
+      .myTableLabel.border {
+        stroke-width: 1;
+        stroke: #655220;
+        fill: none;
+      }
 
-    .myTableLabel.border {
-      stroke-width: 2;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<!--
+      .myTableLabel.border {
+        stroke-width: 2;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for description text
   -->
-<aside class="demo-sidebar demo-left demo-description">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <aside class="demo-sidebar demo-left demo-description">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Data Table Demo</h1>
 
-    <p>This demo shows a node style and a label style that display data in a tabular fashion.</p>
+        <p>
+          This demo shows a node style and a label style that display data in a tabular fashion.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Resize a node: Its content is clipped on its bounds.
-      </li>
-      <li>
-        Toggle labels for all nodes with the toolbar button.
-      </li>
-    </ul>
+        <ul>
+          <li>Resize a node: Its content is clipped on its bounds.</li>
+          <li>Toggle labels for all nodes with the toolbar button.</li>
+        </ul>
 
-    <h2>Description</h2>
+        <h2>Description</h2>
 
-    <ul>
-      <li>
-        Labels measure their content and resize to the minimum bounds.
-      </li>
-      <li>
-        The components of the tabular visualization can be styled with CSS.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <ul>
+          <li>Labels measure their content and resize to the minimum bounds.</li>
+          <li>The components of the tabular visualization can be styled with CSS.</li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <button
+          data-command="Open"
+          title="Open a GraphML file"
+          class="demo-icon-yIconOpen"
+        ></button>
+        <button
+          data-command="Save"
+          title="Save a GraphML file"
+          class="demo-icon-yIconSave"
+        ></button>
 
+        <span class="demo-separator"></span>
 
-  <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
-    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
 
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <input
+          type="checkbox"
+          id="ToggleLabels"
+          class="demo-toggle-button labeled"
+          title="Toggle Labels"
+          data-command="ToggleLabels"
+        /><label for="ToggleLabels">Toggle Labels</label>
+      </div>
 
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-    <span class="demo-separator"></span>
-
-    <input type="checkbox" id="ToggleLabels" class="demo-toggle-button labeled" title="Toggle Labels"
-        data-command="ToggleLabels"/><label for="ToggleLabels">Toggle Labels</label>
-
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="DataTableDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="DataTableDemo.js"></script>
+  </body>
 </html>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,216 +32,266 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>yFiles for HTML Programming Samples and Tutorials </title>
-  <link rel="stylesheet" type="text/css" href="../doc/readme-style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>yFiles for HTML Programming Samples and Tutorials </title>
+    <link rel="stylesheet" type="text/css" href="../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-  <style>
-    .first-paragraph {
-      margin-top: 0;
-    }
+    <style>
+      .first-paragraph {
+        margin-top: 0;
+      }
 
-    .hidden {
-      display: none;
-    }
+      .hidden {
+        display: none;
+      }
 
-    #no-search-results {
-      text-align: center;
-      padding: 24px;
-      line-height: 2;
-      font-size: 20px;
-    }
+      #no-search-results {
+        text-align: center;
+        padding: 24px;
+        line-height: 2;
+        font-size: 20px;
+      }
 
-    .btn {
-      display: inline-block;
-      background-color: #ea720b;
-      color: #f7f7f7;
-      padding: 8px;
-      text-decoration: none;
-      margin-top: 8px;
-    }
+      .btn {
+        display: inline-block;
+        background-color: #ea720b;
+        color: #f7f7f7;
+        padding: 8px;
+        text-decoration: none;
+        margin-top: 8px;
+      }
 
-    .btn:hover {
-      text-decoration: none;
-    }
+      .btn:hover {
+        text-decoration: none;
+      }
 
-    .js .ts-only, .ts .js-only {
-      display: none;
-    }
-
-  </style>
-  <script>window.isReadme = true</script>
-  <script src="../demos-js/resources/filesystem-warning.js"></script>
-  <script> window.tsReadme=true</script>
+      .js .ts-only,
+      .ts .js-only {
+        display: none;
+      }
+    </style>
+    <script>
+      window.isReadme = true
+    </script>
+    <script src="../demos-js/resources/filesystem-warning.js"></script>
+    <script> window.tsReadme=true</script>
 </head>
-<body>
-<div id="no-ie">
-  <h2>Your browser does not support modern CSS</h2>
-  <p>This page will be displayed incorrectly. We recommend using a more recent browser.</p>
-  <p>Note that yFiles for HTML itself does not rely on these features.</p>
-</div>
-
-<div id="header" class="hide-toggle-sidebar-button">Demo Applications</div>
-<main class="demo-browser-main">
-  <div class="readme-sidebar demo-browser-sidebar">
-    <div class="search-container">
-      <input id="search" type="search" value="" title="Search" placeholder="Search" autofocus tabindex="1">
-      <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-        <path fill="#706f6f"
-          d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-        <path d="M0 0h24v24H0z" fill="none"></path>
-      </svg>
+  <body>
+    <div id="no-ie">
+      <h2>Your browser does not support modern CSS</h2>
+      <p>This page will be displayed incorrectly. We recommend using a more recent browser.</p>
+      <p>Note that yFiles for HTML itself does not rely on these features.</p>
     </div>
-  </div>
-  <div class="content-centered">
-    <div class="content-wide">
-      <div id="general-intro">
-        <p class="first-paragraph">
-          All <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML 2.4.0.4</a> demo applications are available in JavaScript, and demos
-          that are additionally available in TypeScript are labeled with <span class="ts-badge">TS</span>.
-        </p>
-        <div class="js-only">
+
+    <div id="header" class="hide-toggle-sidebar-button">Demo Applications</div>
+    <main class="demo-browser-main">
+      <div class="readme-sidebar demo-browser-sidebar">
+        <div class="search-container">
+          <input
+            id="search"
+            type="search"
+            value=""
+            title="Search"
+            placeholder="Search"
+            autofocus
+            tabindex="1"
+          />
+          <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              fill="#706f6f"
+              d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+            ></path>
+            <path d="M0 0h24v24H0z" fill="none"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="content-centered">
+        <div class="content-wide">
+          <div id="general-intro">
+            <p class="first-paragraph">
+              The <a href='https://www.yworks.com/products/yfiles-for-html'>yFiles for HTML 2.4.0.5</a> demo applications are available in both JavaScript and
+              TypeScript, with only a few exceptions.
+            </p>
+            <div class="js-only">
+              <p>
+                This page links the <strong>JavaScript</strong> version of the demos. Browse the
+                TypeScript version on the
+                <a href="../demos-ts/README.html">TypeScript Demos</a> page, and see the
+                <a href="../doc/api/index.html#/dguide/demos">Developer's Guide</a> for more
+                details.
+              </p>
+            </div>
+            <div class="ts-only">
+              <p>
+                This page links the <strong>TypeScript</strong> version of a demo, if available.
+                Browse the JavaScript version on the
+                <a href="../demos-js/README.html">JavaScript Demos</a> page, and see the
+                <a href="../doc/api/index.html#/dguide/demos">Developer's Guide</a> for more
+                details.
+              </p>
+            </div>
+          </div>
+
+          <div id="tutorial-getting-started" class="hidden">
+            <p>
+              This Getting Started Tutorial is a step-by-step introduction to the concepts and main
+              features of the yFiles for HTML diagramming library. Topics include basic styling, user
+              interaction, Undo/Redo, clipboard, group nodes and folding.
+            </p>
+            <p>
+              It is intended for developers who want to get started with the library in an effective
+              way. If you are new to the yFiles for HTML diagramming library, we recommend to start by
+              going through the projects in this tutorial one by one. In addition, have a look at
+              the
+              <a href="../doc/api/index.html#/dguide/getting_started">Getting Started</a> chapter of
+              the Developer's Guide.
+            </p>
+            <p>
+              To make full use of the tutorial, we also recommend to review and possibly modify the
+              source code for each sample project.
+            </p>
+          </div>
+
+          <div id="tutorial-custom-styles" class="hidden">
+            <p>
+              This tutorial is a step-by-step guide to customizing the visual representation of
+              graph elements. It shows the creation of custom styles for nodes, edges, labels, and
+              ports. Moreover, it presents a custom arrowhead rendering, a customized edge
+              selection, and a visual representation of graph elements that depends on the current
+              application state. Finally, several optimization strategies are discussed.
+            </p>
+            <p>
+              It is intended for users who want to learn how to create custom styles from scratch.
+              If you are new to styles, in particular to their customization, we recommend to start
+              by going through the tutorial steps that show the basics one by one. Of the
+              specialized topics, you can skip the ones that doesn't apply to your use case. To make
+              full use of the tutorial, we recommend to review and possibly modify the source code
+              of the sample projects.
+            </p>
+          </div>
+
+          <div id="tutorial-application-features" class="hidden">
+            <p>
+              This tutorial is an introduction to the features of the yFiles for HTML diagramming library
+              for building an application. It covers a broad range of topics including building
+              graphs from JSON data, drag and drop, tooltips, snapping (guide lines), etc.
+            </p>
+            <p>
+              It is intended for developers who are interested in how to implement specific
+              application features. If you are new to the yFiles for HTML diagramming library, we
+              recommend to start with the
+              <a href="#tutorial-getting-started">Getting Started</a> tutorial. Then, have a look at
+              the samples of this tutorial that cover the features you are interested in.
+            </p>
+            <p>
+              To make full use of this tutorial, we also recommend to review and possibly modify the
+              source code for each sample project.
+            </p>
+          </div>
+
+          <div id="tutorial-layout-features" class="hidden">
+            <p>
+              This tutorial showcases important features of the layout algorithms of the yFiles for HTML
+              library and provides guidance for each feature on how to configure the algorithm
+              properly.
+            </p>
+            <p>
+              It is intended for developers who are interested in how to implement specific layout
+              features. If you are new to the yFiles for HTML diagramming library, we recommend to start
+              with the <a href="#tutorial-getting-started">Getting Started</a> tutorial. Then, have
+              a look at the samples of this tutorial that cover the features you are interested in.
+            </p>
+            <p>
+              To make full use of this tutorial, we recommend to review and possibly modify the
+              source code for each sample project. The source code for layout configurations shown
+              in the tutorial can often be directly reused in another application.
+            </p>
+          </div>
+
           <p>
-            This page links the <strong>JavaScript</strong> version of the demos. Browse the TypeScript version on the
-            <a href="../demos-ts/README.html">TypeScript Demos</a> page, and see the <a
-            href="../doc/api/index.html#/dguide/demos">Developer's Guide</a> for more details.
+            The complete source code of all of these demos is part of the yFiles for HTML package and
+            available at <a href="https://github.com/yWorks/yfiles-for-html-demos">GitHub</a>.
           </p>
-        </div>
-        <div class="ts-only">
-          <p>
-            This page links the <strong>TypeScript</strong> version of a demo, if available. Browse the JavaScript
-            version on the <a href="../demos-js/README.html">JavaScript Demos</a> page, and see the <a
-            href="../doc/api/index.html#/dguide/demos">Developer's Guide</a> for more details.
+
+          <p id="online-notice">
+            All of these demos are also hosted at the
+            <a href="https://live.yworks.com/demos/" target="_blank"
+              >yFiles for HTML Online Demos page</a
+            >.
           </p>
+
+          <div class="important" id="no-ecmascript6" style="display: none">
+            <p>These demos use ECMAScript 6 features that your browser does not support.</p>
+            <p>
+              Please switch to a browser with support for ECMAScript 6, for example Chrome, Firefox,
+              Edge, or Safari, or use the included
+              <a href="../deployment/demos-es5/README.html">deployment tool</a> to convert the demos
+              to ECMAScript 5. The converted demos are also
+              <a href="https://live.yworks.com/demos/" target="_blank">available online</a>.
+            </p>
+            <p>
+              Note that ECMAScript 6 is a requirement of the demos, only. The yFiles for HTML
+              library itself is compatible with ECMAScript 5.
+            </p>
+          </div>
+
+          <div class="demo-grid">
+            <div id="no-search-results" style="display: none">
+              No demos match your search query. <br />
+              <a href="#" class="reset-search btn"> Click here to see all demos </a>
+            </div>
+            <noscript>
+              Please enable JavaScript to see and search the list of the available demos.
+            </noscript>
+            <div id="non-tutorial-grid"></div>
+            <div class="tutorial-header" id="tutorial-getting-started-header">
+              Tutorial: Getting Started
+            </div>
+            <div id="tutorial-getting-started-grid"></div>
+            <div class="tutorial-header" id="tutorial-custom-styles-header">
+              Tutorial: Custom Styles
+            </div>
+            <div id="tutorial-custom-styles-grid"></div>
+            <div class="tutorial-header" id="tutorial-application-features-header">
+              Tutorial: Application Features
+            </div>
+            <div id="tutorial-application-features-grid"></div>
+            <div class="tutorial-header" id="tutorial-layout-features-header">
+              Tutorial: Layout Features
+            </div>
+            <div id="tutorial-layout-features-grid"></div>
+            <div class="tutorial-header" id="unavailable-header" style="display: none">
+              Demos Available in Complete Package
+            </div>
+            <div id="unavailable-grid" style="display: none"></div>
+          </div>
         </div>
       </div>
+    </main>
 
-      <div id="tutorial-getting-started" class="hidden">
-        <p>
-          This Getting Started Tutorial is a step-by-step introduction to the concepts and main features of the
-          yFiles for HTML diagramming library. Topics include basic styling, user interaction, Undo/Redo, clipboard, group
-          nodes and folding. </p>
-        <p>
-          It is intended for developers who want to get started with the library in an effective way. If you are new to
-          the yFiles for HTML diagramming library, we recommend to start by going through the projects in this tutorial one by
-          one. In addition, have a look at the <a href="../doc/api/index.html#/dguide/getting_started">Getting
-          Started</a> chapter of the Developer's Guide. </p>
-        <p>
-          To make full use of the tutorial, we also recommend to review and possibly modify the source code for each
-          sample project. </p>
-      </div>
-
-      <div id="tutorial-custom-styles" class="hidden">
-        <p>
-          This tutorial is a step-by-step guide to customizing the visual representation of graph elements. It shows the
-          creation of custom styles for nodes, edges, labels, and ports. Moreover, it presents a custom arrowhead
-          rendering, a customized edge selection, and a visual representation of graph elements that depends on the
-          current application state. Finally, several optimization strategies are discussed. </p>
-        <p>
-          It is intended for users who want to learn how to create custom styles from scratch. If you are new to styles,
-          in particular to their customization, we recommend to start by going through the tutorial steps that show the
-          basics one by one. Of the specialized topics, you can skip the ones that doesn't apply to your use case. To
-          make full use of the tutorial, we recommend to review and possibly modify the source code of the sample
-          projects. </p>
-      </div>
-
-      <div id="tutorial-application-features" class="hidden">
-        <p>
-          This tutorial is an introduction to the features of the yFiles for HTML diagramming library for building an
-          application. It covers a broad range of topics including building graphs from JSON data, drag and drop,
-          tooltips, snapping (guide lines), etc. </p>
-        <p>
-          It is intended for developers who are interested in how to implement specific application features. If you are
-          new to the yFiles for HTML diagramming library, we recommend to start with the <a
-          href="#tutorial-getting-started">Getting Started</a> tutorial. Then, have a look at the samples of this
-          tutorial that cover the features you are interested in.</p>
-        <p>
-          To make full use of this tutorial, we also recommend to review and possibly modify the source code for each
-          sample project. </p>
-      </div>
-
-      <div id="tutorial-layout-features" class="hidden">
-        <p>
-          This tutorial showcases important features of the layout algorithms of the yFiles for HTML
-          library and provides guidance for each feature on how to configure the algorithm properly.</p>
-        <p>
-          It is intended for developers who are interested in how to implement specific layout features. If you are
-          new to the yFiles for HTML diagramming library, we recommend to start with the <a
-          href="#tutorial-getting-started">Getting Started</a> tutorial. Then, have a look at the samples of this
-          tutorial that cover the features you are interested in.</p>
-        <p>
-          To make full use of this tutorial, we recommend to review and possibly modify the source code for each
-          sample project. The source code for layout configurations shown in the tutorial can often be directly
-          reused in another application.</p>
-      </div>
-      <p>
-        The complete source code of all of these samples is part of the yFiles for HTML package and available at <a
-        href="https://github.com/yWorks/yfiles-for-html-demos">GitHub</a>.</p>
-
-      <p id="online-notice">
-        All of these demos are also hosted at the <a href="https://live.yworks.com/demos/" target="_blank">yFiles for
-        HTML Online Demos page</a>.</p>
-
-      <div class="important" id="no-ecmascript6" style="display: none">
-        <p>These demos use ECMAScript 6 features that your browser does not support.</p>
-        <p>
-          Please switch to a browser with support for ECMAScript 6, for example Chrome, Firefox, Edge, or Safari, or use
-          the included <a href="../deployment/demos-es5/README.html">deployment tool</a> to convert the demos to
-          ECMAScript 5. The converted demos are also <a href="https://live.yworks.com/demos/" target="_blank">available
-          online</a>. </p>
-        <p>
-          Note that ECMAScript 6 is a requirement of the demos, only. The yFiles for HTML library itself is compatible
-          with ECMAScript 5. </p>
-      </div>
-
-      <div class="demo-grid">
-        <div id="no-search-results" style="display: none;">
-          No demos match your search query. <br> <a href="#" class="reset-search btn"> Click here to see all demos </a>
-
+    <!-- populated by readme-style.js -->
+    <div id="footer-detailed"></div>
+    <template id="grid-item-template">
+      <div class="thumbnail">
+        <a href="{{demoPath}}" style="background-image: url({{thumbnailPath}})">{{video}}</a>
+        <div class="actions">
+          <a href="{{demoPath}}" class="action-run"></a>
         </div>
-        <noscript>
-          Please enable JavaScript to see and search the list of the available demos.
-        </noscript>
-        <div id="non-tutorial-grid"></div>
-        <div class="tutorial-header" id="tutorial-getting-started-header">Tutorial: Getting Started</div>
-        <div id="tutorial-getting-started-grid"></div>
-        <div class="tutorial-header" id="tutorial-custom-styles-header">Tutorial: Custom Styles</div>
-        <div id="tutorial-custom-styles-grid"></div>
-        <div class="tutorial-header" id="tutorial-application-features-header">Tutorial: Application Features</div>
-        <div id="tutorial-application-features-grid"></div>
-        <div class="tutorial-header" id="tutorial-layout-features-header">Tutorial: Layout Features</div>
-        <div id="tutorial-layout-features-grid"></div>
-        <div class="tutorial-header" id="unavailable-header" style="display: none;">Demos Available in Complete Package
-        </div>
-        <div id="unavailable-grid" style="display: none;"></div>
       </div>
-    </div>
-  </div>
-</main>
-
-<!-- populated by readme-style.js -->
-<div id="footer-detailed"></div>
-<template id="grid-item-template">
-  <div class="thumbnail">
-    <a href="{{demoPath}}" style="background-image: url({{thumbnailPath}})">{{video}}</a>
-    <div class="actions">
-      <a href="{{demoPath}}" class="action-run"></a>
-    </div>
-  </div>
-  <div class="description">
-    <h2 class="title"><a href="{{demoPath}}" tabindex="{{index}}">{{name}}</a></h2>
-    <p class="details">{{summary}}</p>
-    <div class="tags"></div>
-  </div>
-</template>
-<template id="accordion-template">
-  <div class="accordion-pane">
-    <h5 class="accordion-title">{{title}}<i class="accordion-icon"></i></h5>
-    <div class="accordion-content demo-items demo-items-{{identifier}}"></div>
-  </div>
-</template>
-<script src="../demos-js/resources/readme-demo-data.js"></script>
-<script src="../demos-js/resources/readme-demo-support.js"></script>
-<script src="../doc/readme-style.js"></script>
-</body>
+      <div class="description">
+        <h2 class="title"><a href="{{demoPath}}" tabindex="{{index}}">{{name}}</a></h2>
+        <p class="details">{{summary}}</p>
+        <div class="tags"></div>
+      </div>
+    </template>
+    <template id="accordion-template">
+      <div class="accordion-pane">
+        <h5 class="accordion-title">{{title}}<i class="accordion-icon"></i></h5>
+        <div class="accordion-content demo-items demo-items-{{identifier}}"></div>
+      </div>
+    </template>
+    <script src="../demos-js/resources/readme-demo-data.js"></script>
+    <script src="../demos-js/resources/readme-demo-support.js"></script>
+    <script src="../doc/readme-style.js"></script>
+  </body>
 </html>

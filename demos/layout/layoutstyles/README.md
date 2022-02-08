@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/layoutstyles/index.html).
 
+# Layout Styles Demo
+
 This demo showcases the most used layout algorithms of yFiles, including hierarchic, organic, orthogonal, tree, circular, balloon, and several edge routing styles.
 
 The configuration panel provides access to the settings of each algorithm. Typically, an algorithm allows even more options in code.

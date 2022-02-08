@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/nodeselectionresizing/index.html).
 
+# Node Selection Resizing Demo
+
 This demo shows how to implement resizing handles for a selection of nodes. When multiple nodes are selected, dragging the reshape handles will resize the selection as a whole. This demo supports two modes:
 
 - **Resize Nodes:** Scales the selected items uniformly by scaling both the locations and the node sizes.

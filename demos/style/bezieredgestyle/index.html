@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,112 +34,160 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Bezier Edge Style Demo [yFiles for HTML]</title>
+    <title>Bezier Edge Style Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <!-- enable debugging -->
-  <script src="../../resources/filesystem-warning.js"></script>
+    <!-- enable debugging -->
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .option-element {
-      width: 47%;
-    }
+    <style>
+      .option-element {
+        width: 47%;
+      }
 
-    input[type='range'] {
-      margin: 0;
-      padding: 0;
-      vertical-align: middle;
-    }
+      input[type='range'] {
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+      }
 
-    .demo-properties label.option-label {
-      width: 50%;
-    }
+      .demo-properties label.option-label {
+        width: 50%;
+      }
 
-    .demo-properties .demo-form-block input[type='range'] {
-      width: 38%;
-    }
-  </style>
-</head>
-<body class="demo-has-left demo-has-right">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <a href="https://docs.yworks.com/yfileshtml/#/api/BezierEdgeStyle" target="_blank">BezierEdgeStyle</a> allows for smooth curved edge routes. This demo shows how to use this style and
-    interactively edit the bezier curves.
-
-    <h3>Creating Edges</h3>
-    Start dragging at an unselected node and click on the canvas to add bends or control points for the bezier curve.
-    <p>
-      When <em>Smooth Editing</em> is enabled, the edge path will consist of only smooth curves, otherwise there will
-      occur sharp bends every other spline.
-    </p>
-
-    <h3>Label Handling</h3>
-    Labels can also be arranged at the curved splines. They can be aligned with different orientations.
-    <p>
-      Select an edge and press <code>F2</code> to add a label or use the sample <em>Graph with Labels</em> which
-      provides labels with varying settings.
-    </p>
-    <ul>
-      <li><em>Auto Rotation</em> will rotate the label according to its position at the curved path.</li>
-      <li><em>Auto Snapping</em> moves the label as close to the edge path as possible.</li>
-      <li>The <em>Angle</em> rotates the label. If <em>Auto Rotation</em> is enabled, the angle will be added to the
-        rotation resulting from the curved path.
-      </li>
-    </ul>
-  </div>
-</aside>
-
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Options</h1>
-  <div class="demo-sidebar-content">
-    <div class="demo-properties">
-      <h2>Bezier Editing</h2>
-      <div class="demo-form-block">
-        <label for="bezier-editing" class="option-label">Enable Editing</label>
-        <input type="checkbox" id="bezier-editing" class="option-element" data-command="BezierEditing" checked/>
-        <label for="smooth-editing" class="option-label">Smooth Editing</label>
-        <input type="checkbox" id="smooth-editing" class="option-element" data-command="SmoothEditing" checked/>
+      .demo-properties .demo-form-block input[type='range'] {
+        width: 37%;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
       </div>
-      <h2>Label Handling</h2>
-      <div class="demo-form-block">
-        <label for="auto-rotation" class="option-label">Auto Rotation</label>
-        <input type="checkbox" id="auto-rotation" class="option-element" data-command="AutoRotation" checked/>
-        <label for="auto-snapping" class="option-label">Auto Snapping</label>
-        <input type="checkbox" id="auto-snapping" class="option-element" data-command="AutoSnapping" checked/>
+      <div class="demo-sidebar-content">
+        <h1>Bezier Edge Style Demo</h1>
 
-        <label for="angle-range" class="option-label">Angle:</label>
-        <input type="range" id="angle-range" min="-360" max="360" value="0" data-command="Angle">
-        <label id="angle-label">0</label>
+        <a href="https://docs.yworks.com/yfileshtml/#/api/BezierEdgeStyle" target="_blank">BezierEdgeStyle</a> allows for smooth curved edge routes. This demo shows how to use
+        this style and interactively edit the bezier curves.
+
+        <h3>Creating Edges</h3>
+        Start dragging at an unselected node and click on the canvas to add bends or control points
+        for the bezier curve.
+        <p>
+          When <em>Smooth Editing</em> is enabled, the edge path will consist of only smooth curves,
+          otherwise there will occur sharp bends every other spline.
+        </p>
+
+        <h3>Label Handling</h3>
+        Labels can also be arranged at the curved splines. They can be aligned with different
+        orientations.
+        <p>
+          Select an edge and press <code>F2</code> to add a label or use the sample
+          <em>Graph with Labels</em> which provides labels with varying settings.
+        </p>
+        <ul>
+          <li>
+            <em>Auto Rotation</em> will rotate the label according to its position at the curved
+            path.
+          </li>
+          <li><em>Auto Snapping</em> moves the label as close to the edge path as possible.</li>
+          <li>
+            The <em>Angle</em> rotates the label. If <em>Auto Rotation</em> is enabled, the angle
+            will be added to the rotation resulting from the curved path.
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <div class="demo-properties">
+          <h2>Options</h2>
+          <h3>Bezier Editing</h3>
+          <div class="demo-form-block">
+            <label for="bezier-editing" class="option-label">Enable Editing</label>
+            <input
+              type="checkbox"
+              id="bezier-editing"
+              class="option-element"
+              data-command="BezierEditing"
+              checked=""
+            />
+            <label for="smooth-editing" class="option-label">Smooth Editing</label>
+            <input
+              type="checkbox"
+              id="smooth-editing"
+              class="option-element"
+              data-command="SmoothEditing"
+              checked=""
+            />
+          </div>
+          <h3>Label Handling</h3>
+          <div class="demo-form-block">
+            <label for="auto-rotation" class="option-label">Auto Rotation</label>
+            <input
+              type="checkbox"
+              id="auto-rotation"
+              class="option-element"
+              data-command="AutoRotation"
+              checked=""
+            />
+            <label for="auto-snapping" class="option-label">Auto Snapping</label>
+            <input
+              type="checkbox"
+              id="auto-snapping"
+              class="option-element"
+              data-command="AutoSnapping"
+              checked=""
+            />
+
+            <label for="angle-range" class="option-label">Angle</label>
+            <input
+              type="range"
+              id="angle-range"
+              min="-360"
+              max="360"
+              value="0"
+              data-command="Angle"
+            />
+            <label id="angle-label">0</label>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+
+        <span class="demo-separator"></span>
+
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+        <span class="demo-separator"></span>
+
+        <label style="width: 3.5em">Sample: </label>
+        <select data-command="SwitchSample" title="Select a sample graph">
+          <option value="circle">Circular Layout</option>
+          <option value="labels">Graph with Labels</option>
+        </select>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
       </div>
     </div>
-  </div>
-</aside>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-    <span class="demo-separator"></span>
-
-    <label style="width: 3.5em">Sample: </label>
-    <select data-command="SwitchSample" title="Select a sample graph">
-      <option value="circle">Circular Layout</option>
-      <option value="labels">Graph with Labels</option>
-    </select>
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="BezierEdgeStyleDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="BezierEdgeStyleDemo.js"></script>
+  </body>
 </html>

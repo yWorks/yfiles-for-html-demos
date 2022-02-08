@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/partial/index.html).
 
+# Partial Layout Demo
+
 Shows how to integrate (new) graph elements into an existing graph layout with [PartialLayout](https://docs.yworks.com/yfileshtml/#/api/PartialLayout).
 
 This layout algorithm changes the coordinates of a given set of graph elements (called _partial_ elements) and leaves the location and size of all other elements (called _fixed_ elements) unchanged. The algorithm aims to place the partial elements such that the resulting drawing (including the fixed elements) has a good quality with respect to common graph drawing aesthetics.

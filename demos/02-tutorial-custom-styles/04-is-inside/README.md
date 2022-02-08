@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/04-is-inside/index.html).
 
+Custom Styles Tutorial
+
+# IsInside
+
 This step shows how to override `isInside()` and `getOutline()` of [NodeStyleBase](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase).
 
 ## Things to Try

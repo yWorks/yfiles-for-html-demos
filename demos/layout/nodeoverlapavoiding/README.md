@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/nodeoverlapavoiding/index.html).
 
+# Node Overlap Avoiding Demo
+
 A demo that shows how to interactively edit graphs without creating overlaps.
 
 Every time a node is added, moved or resized interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout) will push away the other elements so there is enough space for the changed node.

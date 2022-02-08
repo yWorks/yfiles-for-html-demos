@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/28-bridge-support/index.html).
 
+Custom Styles Tutorial
+
+# Bridge Support
+
 This step shows how to enable bridges for a custom edge style.
 
 ## Description

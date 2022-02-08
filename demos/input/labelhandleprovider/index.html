@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,52 +34,69 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Label Handle Provider Demo [yFiles for HTML]</title>
+    <title>Label Handle Provider Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left demo-description">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Label Handle Provider Demo</h1>
 
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left demo-description">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to implement custom <a href="https://docs.yworks.com/yfileshtml/#/api/IHandle" target="_blank">IHandle</a>s that allow interactive resizing and rotation of labels.
-    </p>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Select a node label or an edge label and change its size by dragging its resize handle (the square).
-      </li>
-      <li>
-        The <em>Free Node Label</em> can also be rotated: Select that label and drag its rotate handle (the dot).
-      </li>
-      <li>
-        Take a look at the source code, especially <em>LabelHandleProvider</em>, <em>LabelResizeHandle</em>, and <em>LabelRotateHandle</em>.
-      </li>
-    </ul>
-    <p>
-      Note that the actual resize behavior depends on the label model parameter, since some
-      parameters constrain the label's center to stay at the same position. For these parameters,
-      the label is resized symmetrically in both directions.
-    </p>
-  </div>
-</aside>
+        <p>
+          This demo shows how to implement custom <a href="https://docs.yworks.com/yfileshtml/#/api/IHandle" target="_blank">IHandle</a>s that allow interactive
+          resizing and rotation of labels.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Select a node label or an edge label and change its size by dragging its resize handle
+            (the square).
+          </li>
+          <li>
+            The <em>Free Node Label</em> can also be rotated: Select that label and drag its rotate
+            handle (the dot).
+          </li>
+          <li>
+            Take a look at the source code, especially <em>LabelHandleProvider</em>,
+            <em>LabelResizeHandle</em>, and <em>LabelRotateHandle</em>.
+          </li>
+        </ul>
+        <p>
+          Note that the actual resize behavior depends on the label model parameter, since some
+          parameters constrain the label's center to stay at the same position. For these
+          parameters, the label is resized symmetrically in both directions.
+        </p>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-  <div id="graphComponent"></div>
-</div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-<script type="module" crossorigin="anonymous" src="LabelHandleProviderDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="LabelHandleProviderDemo.js"></script>
+  </body>
 </html>

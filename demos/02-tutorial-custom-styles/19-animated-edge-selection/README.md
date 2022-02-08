@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/19-animated-edge-selection/index.html).
 
+Custom Styles Tutorial
+
+# Animated Edge Selection
+
 This step shows how to change the style of an edge if the edge is selected.
 
 Also, this steps demonstrates how to create an animated linear gradient fill.

@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/29-label-line-wrapping/index.html).
 
+Custom Styles Tutorial
+
+# Label Line Wrapping
+
 This step shows how to enhance a custom label style to support different line wrapping (trimming) styles as well as text clipping at the label bounds.
 
 ## Description

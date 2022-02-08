@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,6 +38,7 @@ import {
   ICommand,
   IEdge,
   License,
+  OrthogonalEdgeEditingContext,
   RoutingPolicy,
   Size,
   StorageLocation
@@ -113,11 +114,11 @@ function createInputMode() {
   const mode = new GraphEditorInputMode()
   mode.allowGroupingOperations = true
   // disable bend handling: the edge path will be routed
-  mode.createEdgeInputMode.allowCreateBend = false
   mode.createBendInputMode.enabled = false
   mode.showHandleItems = GraphItemTypes.NODE
   mode.selectableItems = GraphItemTypes.NODE
   mode.marqueeSelectableItems = GraphItemTypes.NODE
+  mode.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
 
   // register listener which trigger a re-routing after each
   mode.moveInputMode.addDragFinishedListener((sender, evt) => reRouteEdges())

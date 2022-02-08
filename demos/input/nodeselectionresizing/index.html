@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,84 +34,105 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Node Selection Resizing Demo [yFiles for HTML]</title>
+    <title>Node Selection Resizing Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to implement resizing handles for a selection of nodes. When multiple nodes are selected,
-      dragging the reshape handles will resize the selection as a whole. This demo supports two modes:
-    </p>
-    <ul>
-      <li>
-        <b>Resize Nodes:</b> Scales the selected items uniformly by scaling both the locations and the node sizes.
-      </li>
-      <li>
-        <b>Scale Locations:</b> Scales the item locations while preserving node sizes.
-      </li>
-    </ul>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Select a single item to get the default move and resize behavior.
-      </li>
-      <li>
-        Select <em>multiple nodes</em> and drag the handles to resize the selection.
-      </li>
-      <li>
-        Hold down the <code>SHIFT</code> key while resizing to preserve the aspect ratio. Hold down the <code>ALT</code>
-        key to resize around the center. You can do both at the same time.
-      </li>
-      <li>
-        Switch between the two resize modes in the toolbar to see their effect.
-      </li>
-      <li>
-        Turn on <em>orthogonal edge editing</em> in the toolbar to see how it affects bend movement.
-      </li>
-      <li>
-        Turn on <em>snapping</em> in the toolbar to let the selected nodes snap to other items in the graph.
-      </li>
-      <li>
-        Make the selection rectangle very small or very large to see how resizing respects <em>size constraints</em>.
-      </li>
-    </ul>
-    <p>
-      This feature is implemented as custom <a href="https://docs.yworks.com/yfileshtml/#/api/IInputMode" target="_blank">IInputMode</a> that can be added to a
-      <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
-    </p>
-  </div>
-</aside>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Node Selection Resizing Demo</h1>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <p>
+          This demo shows how to implement resizing handles for a selection of nodes. When multiple
+          nodes are selected, dragging the reshape handles will resize the selection as a whole.
+          This demo supports two modes:
+        </p>
+        <ul>
+          <li>
+            <b>Resize Nodes:</b> Scales the selected items uniformly by scaling both the locations
+            and the node sizes.
+          </li>
+          <li><b>Scale Locations:</b> Scales the item locations while preserving node sizes.</li>
+        </ul>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Select a single item to get the default move and resize behavior.</li>
+          <li>Select <em>multiple nodes</em> and drag the handles to resize the selection.</li>
+          <li>
+            Hold down the <code>SHIFT</code> key while resizing to preserve the aspect ratio. Hold
+            down the <code>ALT</code>
+            key to resize around the center. You can do both at the same time.
+          </li>
+          <li>Switch between the two resize modes in the toolbar to see their effect.</li>
+          <li>
+            Turn on <em>orthogonal edge editing</em> in the toolbar to see how it affects bend
+            movement.
+          </li>
+          <li>
+            Turn on <em>snapping</em> in the toolbar to let the selected nodes snap to other items
+            in the graph.
+          </li>
+          <li>
+            Make the selection rectangle very small or very large to see how resizing respects
+            <em>size constraints</em>.
+          </li>
+        </ul>
+        <p>
+          This feature is implemented as custom <a href="https://docs.yworks.com/yfileshtml/#/api/IInputMode" target="_blank">IInputMode</a> that can be added to a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
+        </p>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button"/> <label for="demo-snapping-button"
-    class="demo-icon-yIconSnapping" title="Snapping"></label> <input type="checkbox" id="demo-orthogonal-editing-button"
-    class="demo-toggle-button" checked/><label for="demo-orthogonal-editing-button" class="demo-icon-yIconOrthogonal"
-    title="Orthogonal Edge Editing"></label>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" />
+        <label for="demo-snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
+        <input
+          type="checkbox"
+          id="demo-orthogonal-editing-button"
+          class="demo-toggle-button"
+          checked=""
+        /><label
+          for="demo-orthogonal-editing-button"
+          class="demo-icon-yIconOrthogonal"
+          title="Orthogonal Edge Editing"
+        ></label>
 
-    <span>Resize Mode</span> <select data-command="ChangeResizeMode" id="change-resize-mode">
-    <option value="resize">Resize Nodes</option>
-    <option value="scale">Scale Locations</option>
-  </select>
-  </div>
+        <span class="demo-separator"></span>
 
-  <div id="graphComponent"></div>
-</div>
+        <span>Resize Mode</span>
+        <select data-command="ChangeResizeMode" id="change-resize-mode">
+          <option value="resize">Resize Nodes</option>
+          <option value="scale">Scale Locations</option>
+        </select>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="NodeSelectionResizingDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="NodeSelectionResizingDemo.js"></script>
+  </body>
 </html>

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/hierarchic-incremental/index.html).
 
-## Incremental Hierarchic Layout
+Layout Features Tutorial
+
+# Incremental Hierarchic Layout
 
 This demo shows how to run the hierarchic layout algorithm on a predefined subset of nodes (and edges) in a graph.
 
@@ -33,4 +35,4 @@ You can also take a look at more extensive demos that take advantage of this fea
 
 ### Documentation
 
-The Developer's Guide has detailed information about the [hierarchic layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and about [how to run the algorithm on a subset of nodes](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-incremental_layout) specifically.
+The Developer's Guide has detailed information about the [hierarchic layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and about how to run the algorithm on a subset of nodes specifically.

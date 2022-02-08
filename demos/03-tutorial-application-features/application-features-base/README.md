@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/application-features-base/index.html).
 
-## Base Application
+Application Features Tutorial
+
+# Base Application
 
 This demo provides the base application for the feature specific demos in this tutorial. The specific application feature demos will enhance this base application with feature specific implementations.
 

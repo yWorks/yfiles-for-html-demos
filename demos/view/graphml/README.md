@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/graphml/index.html).
 
+# GraphML Demo
+
 This demo provides a live view of the graph's [GraphML](https://docs.yworks.com/yfileshtml/index.html#/dguide/customizing_io_graphml#customizing_io_graphml) representation. GraphML is the default serialization format for yFiles graphs.
 
 ## Things to Try

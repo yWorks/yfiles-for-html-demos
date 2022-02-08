@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/level-of-detail-style/index.html).
 
-## Three styles for Three zoom levels
+Application Features Tutorial
+
+# Level of Details
 
 This demo shows how to display different styles depending on the current zoom level in order to implement a level of detail rendering.
 

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/smart-click-navigation/index.html).
 
-## Smart Click Navigation
+Application Features Tutorial
+
+# Smart Click Navigation
 
 This demos shows how to navigate in a large graph, especially when only a part of the graph is visible in the viewport.
 

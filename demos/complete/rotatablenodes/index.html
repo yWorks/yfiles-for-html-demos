@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,98 +34,164 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Rotatable Nodes [yFiles for HTML]</title>
+    <title>Rotatable Nodes [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    This demo shows how support for rotated node visualizations can be implemented on top of the yFiles library.
-    A custom <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a> implementation is used to encapsulate most of the added functionality.
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Rotatable Nodes</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Select a node by clicking it and note the additional rotation handle.</li>
-      <li>Rotate a node by dragging the rotation handle.</li>
-      <li>Enable snapping to snap the rotation to the coordinate axis and other rotated nodes. You can hold Shift to prevent snapping.</li>
-      <li>Create edges between nodes. Note that port candidates are rotated with the node, as are ports.</li>
-      <li>Add a label to a node and rotate the node. Observe how the label rotates with the node. Try moving the label to see how possible label positions are also affected by the node's rotation.</li>
-      <li>Run a layout. Observe how rotated nodes fit naturally into the computed layout.</li>
-      <li>Load your own graph and rotated its nodes. Note that the contained styles need to be from the library or demos. Keep attention when saving this graph because the GraphML output is changed due to the additional rotation style and information.</li>
-    </ul>
-  </div>
-</aside>
+        This demo shows how support for rotated node visualizations can be implemented on top of the
+        yFiles library. A custom <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a> implementation is used to encapsulate most of
+        the added functionality.
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
-    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Select a node by clicking it and note the additional rotation handle.</li>
+          <li>Rotate a node by dragging the rotation handle.</li>
+          <li>
+            Enable snapping to snap the rotation to the coordinate axis and other rotated nodes. You
+            can hold Shift to prevent snapping.
+          </li>
+          <li>
+            Create edges between nodes. Note that port candidates are rotated with the node, as are
+            ports.
+          </li>
+          <li>
+            Add a label to a node and rotate the node. Observe how the label rotates with the node.
+            Try moving the label to see how possible label positions are also affected by the node's
+            rotation.
+          </li>
+          <li>Run a layout. Observe how rotated nodes fit naturally into the computed layout.</li>
+          <li>
+            Load your own graph and rotated its nodes. Note that the contained styles need to be
+            from the library or demos. Keep attention when saving this graph because the GraphML
+            output is changed due to the additional rotation style and information.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          data-command="Open"
+          title="Open a GraphML file"
+          class="demo-icon-yIconOpen"
+        ></button>
+        <button
+          data-command="Save"
+          title="Save a GraphML file"
+          class="demo-icon-yIconSave"
+        ></button>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
 
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
 
-    <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button">
-    <label for="demo-snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
-    <input type="checkbox" id="demo-orthogonal-editing-button" class="demo-toggle-button" checked>
-    <label for="demo-orthogonal-editing-button" class="demo-icon-yIconOrthogonal" title="Enable Orthogonal Edges"></label>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" />
+        <label for="demo-snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
+        <input
+          type="checkbox"
+          id="demo-orthogonal-editing-button"
+          class="demo-toggle-button"
+          checked=""
+        />
+        <label
+          for="demo-orthogonal-editing-button"
+          class="demo-icon-yIconOrthogonal"
+          title="Enable Orthogonal Edges"
+        ></label>
 
-    <button data-command="GroupSelection" title="Group Selected Elements" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup Selected Elements" class="demo-icon-yIconUngroup"></button>
-    <button data-command="EnterGroup" title="Enter group" class="demo-icon-yIconEnterGroup"></button>
-    <button data-command="ExitGroup" title="Leave group" class="demo-icon-yIconExitGroup"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group Selected Elements"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup Selected Elements"
+          class="demo-icon-yIconUngroup"
+        ></button>
+        <button
+          data-command="EnterGroup"
+          title="Enter group"
+          class="demo-icon-yIconEnterGroup"
+        ></button>
+        <button
+          data-command="ExitGroup"
+          title="Leave group"
+          class="demo-icon-yIconExitGroup"
+        ></button>
 
-    <select data-command="SelectSample" title="Select a Sample Graph">
-      <option value="sine">Sample: Sine Wave</option>
-      <option value="circle">Sample: Circle</option>
-    </select>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <select data-command="SelectSample" title="Select a Sample Graph">
+          <option value="sine">Sample: Sine Wave</option>
+          <option value="circle">Sample: Circle</option>
+        </select>
 
-    <select data-command="SelectLayout" title="Select a Layout Algorithm">
-      <option value="hierarchic">Layout: Hierarchic</option>
-      <option value="organic">Layout: Organic</option>
-      <option value="orthogonal">Layout: Orthogonal</option>
-      <option value="circular">Layout: Circular</option>
-      <option value="tree">Layout: Tree</option>
-      <option value="balloon">Layout: Balloon</option>
-      <option value="radial">Layout: Radial</option>
-      <option disabled>------------------</option>
-      <option value="router-polyline">Routing: Polyline</option>
-      <option value="router-organic">Routing: Organic</option>
-    </select>
-    <button data-command="ApplyLayout" title="Apply the Selected Layout Algorithm" class="demo-icon-yIconLayout"></button>
-  </div>
+        <span class="demo-separator"></span>
 
-  <div id="graphComponent"></div>
-</div>
+        <select data-command="SelectLayout" title="Select a Layout Algorithm">
+          <option value="hierarchic">Layout: Hierarchic</option>
+          <option value="organic">Layout: Organic</option>
+          <option value="orthogonal">Layout: Orthogonal</option>
+          <option value="circular">Layout: Circular</option>
+          <option value="tree">Layout: Tree</option>
+          <option value="balloon">Layout: Balloon</option>
+          <option value="radial">Layout: Radial</option>
+          <option disabled="">------------------</option>
+          <option value="router-polyline">Routing: Polyline</option>
+          <option value="router-organic">Routing: Organic</option>
+        </select>
+        <button
+          data-command="ApplyLayout"
+          title="Apply the Selected Layout Algorithm"
+          class="demo-icon-yIconLayout"
+        ></button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="RotatableNodesDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="RotatableNodesDemo.js"></script>
+  </body>
 </html>

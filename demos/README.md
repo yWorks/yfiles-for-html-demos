@@ -193,6 +193,7 @@ This folder and its subfolders contain demo applications which demonstrate how t
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Demo | Description
 --- | --- | ---
+<img src="resources/image/magnifying-glass.png" alt="Magnifying Glass screenshot" width="128" height="96" /> | [Magnifying Glass](input/magnifying-glass) | Shows a floating lens that magnifies the cursor's surroundings.
 <img src="resources/image/custom_touch_interaction.png" alt="Touch Interaction screenshot" width="128" height="96" /> | [Touch Interaction](input/touchcustomization) | Shows how a graph editor application can be optimized for touch devices.
 <img src="resources/image/nodeselectionresizing.png" alt="Node Selection Resizing screenshot" width="128" height="96" /> | [Node Selection Resizing](input/nodeselectionresizing) | Shows how to reshape a selection of nodes as one unit.
 <img src="resources/image/custom_label_model.png" alt="Custom Label Model screenshot" width="128" height="96" /> | [Custom Label Model](input/customlabelmodel) | Shows how to implement and use a custom label model.

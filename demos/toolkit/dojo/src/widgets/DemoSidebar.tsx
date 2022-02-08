@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,8 +35,11 @@ export default class DemoSidebar extends WidgetBase {
   protected render(): DNode {
     return (
       <div>
-        <h1 class="demo-sidebar-header">Description</h1>
+        <div class="demo-sidebar-header">
+          <a href="https://www.yworks.com/products/yfiles" class={'demo-left-logo'} />
+        </div>
         <div class="demo-sidebar-content">
+          <h1>Dojo Demo</h1>
           <p>
             This demo shows how to integrate yFiles in a basic{' '}
             <a href="https://dojo.io/" target="_blank" rel="noreferrer">

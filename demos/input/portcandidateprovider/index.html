@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,87 +34,102 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Port Candidate Provider Demo [yFiles for HTML]</title>
+    <title>Port Candidate Provider Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <style type="text/css">
-    path.firebrick {
-      stroke: #B02222;
-    }
+    <style>
+      path.firebrick {
+        stroke: #b02222;
+      }
 
-    rect.firebrick {
-      fill: #B02222;
-    }
+      rect.firebrick {
+        fill: #b02222;
+      }
 
-    path.orange {
-      stroke: #FF8C00;
-    }
+      path.orange {
+        stroke: #ff8c00;
+      }
 
-    rect.orange {
-      fill: #FF8C00;
-    }
+      rect.orange {
+        fill: #ff8c00;
+      }
 
-    path.green {
-      stroke: #008000;
-    }
+      path.green {
+        stroke: #008000;
+      }
 
-    rect.green {
-      fill: #008000;
-    }
+      rect.green {
+        fill: #008000;
+      }
 
-    path.royalblue {
-      stroke: #007FFF;
-    }
+      path.royalblue {
+        stroke: #007fff;
+      }
 
-    rect.royalblue {
-      fill: #007FFF;
-    }
-  </style>
+      rect.royalblue {
+        fill: #007fff;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Port Candidate Provider Demo</h1>
 
-    <p>This demo shows how edge creation can be customized by implementing the <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider" target="_blank">IPortCandidateProvider</a>
-      interface.</p>
+        <p>
+          This demo shows how edge creation can be customized by implementing the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider" target="_blank">IPortCandidateProvider</a> interface.
+        </p>
 
-    <p>Add the custom implementation as decoration to the edge decorator of the graph to use it.</p>
+        <p>
+          Add the custom implementation as decoration to the edge decorator of the graph to use it.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <p>Initiate edge creation by dragging from an unselected node (with the left mouse button pressed). Releasing the
-      button finishes edge creation if the mouse is on a valid target and creates a bend otherwise.</p>
+        <p>
+          Initiate edge creation by dragging from an unselected node (with the left mouse button
+          pressed). Releasing the button finishes edge creation if the mouse is on a valid target
+          and creates a bend otherwise.
+        </p>
 
-    <h2>Node Types</h2>
-    <ul>
-      <li>
-        <em class="demo-red demo-bold">Red nodes</em> cannot have any edges. You cannot start or end an edge at them.
-        A red port candidate highlights that these nodes are invalid targets.
-      </li>
-      <li>
-        Only edges from other <em class="demo-green demo-bold">green nodes</em> can end at green nodes.
-      </li>
-      <li>
-        <em class="demo-blue demo-bold">Blue nodes</em> provide a set of predefined ports. Only one edge can be
-        connected to each of these ports. Occupied ports are highlighted in red.
-      </li>
-      <li>
-        <em class="demo-orange demo-bold">Orange nodes</em> provide dynamic port candidates. Edges can start and end
-        anywhere inside these nodes when the Shift key is pressed.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Node Types</h2>
+        <ul>
+          <li>
+            <em class="demo-red demo-bold">Red nodes</em> cannot have any edges. You cannot start or
+            end an edge at them. A red port candidate highlights that these nodes are invalid
+            targets.
+          </li>
+          <li>
+            Only edges from other <em class="demo-green demo-bold">green nodes</em> can end at green
+            nodes.
+          </li>
+          <li>
+            <em class="demo-blue demo-bold">Blue nodes</em> provide a set of predefined ports. Only
+            one edge can be connected to each of these ports. Occupied ports are highlighted in red.
+          </li>
+          <li>
+            <em class="demo-orange demo-bold">Orange nodes</em> provide dynamic port candidates.
+            Edges can start and end anywhere inside these nodes when the Shift key is pressed.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-<script type="module" crossorigin="anonymous" src="PortCandidateProviderDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="PortCandidateProviderDemo.js"></script>
+  </body>
 </html>

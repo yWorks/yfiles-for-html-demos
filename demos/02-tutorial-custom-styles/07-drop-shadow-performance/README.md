@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/07-drop-shadow-performance/index.html).
 
+Custom Styles Tutorial
+
+# Dropshadow Performance
+
 This step replaces the simple drop shadow in the last steps with a more visually appealing, blurred one. The dropshadow is pre-rendered into an image using a HTML canvas drawing. This image is placed in the defs section of the svg and referenced in each node visualization using a use element.
 
 For this purpose, we need an implementation of [ISvgDefsCreator](https://docs.yworks.com/yfileshtml/#/api/ISvgDefsCreator) which in this demo is performed in `MySimpleNodeStyle#createDropShadow`.

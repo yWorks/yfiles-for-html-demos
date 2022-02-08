@@ -1,6 +1,6 @@
 {
   "name": "demos-for-yfiles-for-html",
-  "version": "24.0.4",
+  "version": "24.0.5",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
@@ -12,13 +12,13 @@
     "watch": "tsc --watch"
   },
   "dependencies": {
-    "yfiles": "../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
+    "yfiles": "../lib-dev/es-modules/yfiles-24.0.5-dev.tgz"
   },
   "devDependencies": {
     "typescript": "~3.9.9",
     "@types/d3": "~6.7.1",
     "@types/leaflet": "~1.7.3",
-    "@types/moment": "~2.13.0",
+    "@types/luxon": "~2.0.7",
     "@types/codemirror": "~5.60.0"
   }
 }

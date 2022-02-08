@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/12-high-performance-label-rendering/index.html).
 
+Custom Styles Tutorial
+
+# High Performance Rendering of Label
+
 This step shows how to implement high-performance rendering for labels.
 
 To do this, you need to implement [LabelStyleBase#updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual) which is called when the container decides to update the visual representation of a label. In contrast to [LabelStyleBase#createVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#createVisual), we try to re-use the old visual instead of creating a new one.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global luxon */
+
 import {
   AdjustContentRectPolicy,
   Animator,
@@ -85,8 +87,10 @@ import ActivityNodePortLocationModel from './ActivityNodePortLocationModel.js'
 import ActivityNodeStyle from './ActivityNodeStyle.js'
 import { checkLicense, showApp } from '../../resources/demo-app.js'
 import dataModel from './resources/datamodel.js'
-import GanttMapper from './GanttMapper.js'
+import { GanttMapper } from './GanttMapper.js'
 import loadJson from '../../resources/load-json.js'
+
+const { DateTime } = luxon
 
 /** @type {GraphComponent} */
 let mainComponent
@@ -163,8 +167,8 @@ function createGraph() {
   const newNodesMap = new Map()
   // create the activity nodes
   dataModel.activities.forEach(activity => {
-    const minX = mapper.getX(activity.startDate)
-    const maxX = mapper.getX(activity.endDate)
+    const minX = mapper.getX(DateTime.fromISO(activity.startDate))
+    const maxX = mapper.getX(DateTime.fromISO(activity.endDate))
     const y = mapper.getActivityY(activity)
     const height = GanttMapper.activityHeight
 
@@ -624,7 +628,7 @@ function showInfoBox(handle) {
     const label = handle.isFollowUpTime ? 'Follow-up Time' : 'Lead Time'
     text = `${label}: ${duration} h`
   } else {
-    text = mapper.getDate(location.x).format('Do MMM HH:mm')
+    text = mapper.getDate(location.x).toFormat('Do MMM HH:mm')
   }
 
   showInfo(text, location)
@@ -641,12 +645,12 @@ function createCreateActivityInputMode() {
   createActivityInputMode.addDragStartedListener(() => {
     hideActivityInfo()
     const dummyNode = createActivityInputMode.dummyNode
-    const text = dummyNode.tag.activity.endDate.format('Do MMM HH:mm')
+    const text = dummyNode.tag.activity.endDate.toFormat('Do MMM HH:mm')
     showInfo(text, dummyNode.layout.topRight)
   })
   createActivityInputMode.addDraggedListener(() => {
     const dummyNode = createActivityInputMode.dummyNode
-    const text = dummyNode.tag.activity.endDate.format('Do MMM HH:mm')
+    const text = dummyNode.tag.activity.endDate.toFormat('Do MMM HH:mm')
     showInfo(text, dummyNode.layout.topRight)
   })
   createActivityInputMode.addDragFinishedListener(hideInfo)
@@ -710,14 +714,16 @@ function showActivityInfo(activity, location) {
 
   const duration = mapper.getTotalActivityDuration(activity)
 
+  const formatted = isoString => {
+    return DateTime.fromISO(isoString).toFormat('DDDD, T')
+  }
+
   document.querySelector('#nodeInfo span[data-name="name"]').textContent = activity.name
-  document.querySelector('#nodeInfo span[data-name="start"]').textContent = GanttMapper.format(
-    activity.startDate,
-    'dddd, LL, HH:mm:ss'
+  document.querySelector('#nodeInfo span[data-name="start"]').textContent = formatted(
+    activity.startDate
   )
-  document.querySelector('#nodeInfo span[data-name="end"]').textContent = GanttMapper.format(
-    activity.endDate,
-    'dddd, LL, HH:mm:ss'
+  document.querySelector('#nodeInfo span[data-name="end"]').textContent = formatted(
+    activity.endDate
   )
   document.querySelector('#nodeInfo span[data-name="lead"]').textContent = `${
     activity.leadTime || 0
@@ -769,7 +775,7 @@ function configureMoveInputMode(graphEditorInputMode) {
     // show info box
     const item = moveUnselectedInputMode.affectedItems.first()
     const location = item.layout.topLeft
-    const text = mapper.getDate(location.x).format('Do MMM HH:mm')
+    const text = mapper.getDate(location.x).toFormat('Do MMM HH:mm')
 
     showInfo(text, location)
   })
@@ -781,7 +787,7 @@ function configureMoveInputMode(graphEditorInputMode) {
     // show info box
     const item = moveUnselectedInputMode.affectedItems.first()
     const location = item.layout.topLeft
-    const text = mapper.getDate(location.x).format('Do MMM HH:mm')
+    const text = mapper.getDate(location.x).toFormat('Do MMM HH:mm')
 
     showInfo(text, location)
   })
@@ -817,7 +823,7 @@ function onStartDateChanged(node) {
   // synchronize start time
   const activity = node.tag.activity
   const startDate = mapper.getDate(node.layout.x)
-  activity.startDate = startDate.format('YYYY-MM-DDTHH:mm:ssZ')
+  activity.startDate = startDate.toFormat('YYYY-MM-DDTHH:mm:ssZ')
   onGraphModified()
 }
 
@@ -829,7 +835,7 @@ function onEndDateChanged(node) {
   // synchronize end time
   const activity = node.tag.activity
   const endDate = mapper.getDate(node.layout.topRight.x)
-  activity.endDate = endDate.format('YYYY-MM-DDTHH:mm:ssZ')
+  activity.endDate = endDate.toFormat('YYYY-MM-DDTHH:mm:ssZ')
   onGraphModified()
 }
 
@@ -878,8 +884,8 @@ function updateModel(node) {
   // synchronize start and end time
   const activity = node.tag.activity
   const layout = node.layout
-  activity.startDate = mapper.getDate(layout.x).format('YYYY-MM-DDTHH:mm:ssZ')
-  activity.endDate = mapper.getDate(layout.topRight.x).format('YYYY-MM-DDTHH:mm:ssZ')
+  activity.startDate = mapper.getDate(layout.x).toFormat('YYYY-MM-DDTHH:mm:ssZ')
+  activity.endDate = mapper.getDate(layout.topRight.x).toFormat('YYYY-MM-DDTHH:mm:ssZ')
 
   const newTask = mapper.getTask(layout.y)
   if (activity.taskId !== newTask.id) {
@@ -916,6 +922,7 @@ function createMainGraphComponent() {
   graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.ALWAYS
   // switch off mouse wheel zoom
   graphComponent.mouseWheelBehavior = MouseWheelBehaviors.SCROLL
+  graphComponent.mouseWheelScrollFactor = 50
 
   // disable animated scroll
   graphComponent.animateScrollCommands = false

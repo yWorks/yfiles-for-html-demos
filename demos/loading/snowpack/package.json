@@ -9,7 +9,7 @@
     "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json')\""
   },
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.5-dev.tgz"
   },
   "devDependencies": {
     "@snowpack/plugin-typescript": "^1.2.1",

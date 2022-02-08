@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,66 +33,97 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Hierarchic Layout with PortCandidateSet - Layout Features Tutorial [yFiles for HTML]</title>
+    <title>
+      Hierarchic Layout with PortCandidateSet - Layout Features Tutorial [yFiles for HTML]
+    </title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Layout Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Hierarchic Layout with PortCandidateSet</h2>
-    <p>
-      This demo shows how to use a <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidateSet" target="_blank">PortCandidateSet</a> for the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a>
-      to define the port locations for a node as well as control how many edges can be connected to each port.
-    </p>
-    <p>
-      For the <span style="color: #17BEBB; font-weight: bold">turquoise node</span>, a <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidateSet" target="_blank">PortCandidateSet</a> is
-      used that contains four port candidates, one for each side of the node.
-    </p>
-    <p>
-      Each <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a> only allows for one connecting edge,
-      hence the four incoming edges are distributed to the four port candidates.
-    </p>
-    <p>
-      Click the button in the toolbar to toggle between <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a> with
-      and without a configured port candidate set.
-    </p>
+        <h1>Hierarchic Layout with PortCandidateSet</h1>
 
-    <h3>Code Snippet</h3>
+        <p>
+          This demo shows how to use a <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidateSet" target="_blank">PortCandidateSet</a> for the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a>
+          to define the port locations for a node as well as control how many edges can be connected
+          to each port.
+        </p>
+        <p>
+          For the <span style="color: #17bebb; font-weight: bold">turquoise node</span>, a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidateSet" target="_blank">PortCandidateSet</a> is used that contains four port candidates, one for each side
+          of the node.
+        </p>
+        <p>
+          Each <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a> only allows for one connecting edge, hence the four incoming
+          edges are distributed to the four port candidates.
+        </p>
+        <p>
+          Click the button in the toolbar to toggle between
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a> with and without a configured port
+          candidate set.
+        </p>
 
-    <p>You can copy the code snippet to configure the layout from
-      <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/hierarchic-portcandidate-set/HierarchicPortcandidateSet.ts"
-         target="_blank">GitHub</a>.</p>
+        <h3>Code Snippet</h3>
 
-    <h3>Documentation</h3>
-    <p>
-      See the <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-port_locations" target="_blank">Restricting Port Locations</a>
-      section in the Developer's Guide for an in-depth discussion of the relevant concepts.
-    </p>
-  </div>
-</aside>
+        <p>
+          You can copy the code snippet to configure the layout from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/hierarchic-portcandidate-set/HierarchicPortcandidateSet.ts"
+            target="_blank"
+            >GitHub</a
+          >.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
+        <h3>Documentation</h3>
+        <p>
+          See the <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-port_locations" target="_blank">Restricting Port Locations</a>
+          section in the Developer's Guide for an in-depth discussion of the relevant concepts.
+        </p>
+      </div>
+    </aside>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
 
-    <input type="checkbox" id="toggleFeature" class="demo-toggle-button labeled" title="Use PortCandidateSet" checked
-           data-command="ToggleFeature"/><label for="toggleFeature">Use PortCandidateSet</label>
+        <input
+          type="checkbox"
+          id="toggleFeature"
+          class="demo-toggle-button labeled"
+          title="Use PortCandidateSet"
+          checked=""
+          data-command="ToggleFeature"
+        /><label for="toggleFeature">Use PortCandidateSet</label>
+      </div>
 
-  </div>
-  <div id="graphComponent"></div>
-</div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/editablepathstyle/index.html).
 
+# Editable Path Styles Demo
+
 This demo shows how to use [GeneralPathNodeStyle](https://docs.yworks.com/yfileshtml/#/api/GeneralPathNodeStyle) and provide interactive editing handles for the control points of the path.
 
 ## Things to Try

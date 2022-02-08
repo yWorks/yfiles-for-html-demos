@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/large-tree/index.html).
 
+# Large Collapsible Tree Demo
+
 The Large Tree Demo uses [WebGL2](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) as the rendering technique to display a large tree graph in order to optimize performance.
 
 The graph can be manipulated by adding or removing layers. The child count of new layers can be changed with the slider control.

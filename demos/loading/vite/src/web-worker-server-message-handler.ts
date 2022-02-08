@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,8 +30,9 @@ import { LayoutDescriptor, LayoutExecutorAsyncWorker, LayoutGraph, License } fro
 
 const workerSelf = self as unknown as Worker
 
-export function createLayoutExecutorAsyncWorker(handler: (graph: LayoutGraph, descriptor: LayoutDescriptor) => (Promise<void> | void)): LayoutExecutorAsyncWorker {
-
+export function createLayoutExecutorAsyncWorker(
+  handler: (graph: LayoutGraph, descriptor: LayoutDescriptor) => Promise<void> | void
+): LayoutExecutorAsyncWorker {
   const executorWorker = new LayoutExecutorAsyncWorker(handler)
   let initialized = false
 
@@ -39,14 +40,15 @@ export function createLayoutExecutorAsyncWorker(handler: (graph: LayoutGraph, de
   workerSelf.addEventListener(
     'message',
     e => {
-      if (!initialized){
+      if (!initialized) {
         License.value = JSON.parse(e.data)
         workerSelf.postMessage('started')
-        initialized = true;
+        initialized = true
       } else {
         // send it to the executor for processing and post the results
         // back to the caller
-        executorWorker.process(e.data)
+        executorWorker
+          .process(e.data)
           .then(data => workerSelf.postMessage(data))
           .catch(errorObj => workerSelf.postMessage(errorObj))
       }
@@ -55,4 +57,3 @@ export function createLayoutExecutorAsyncWorker(handler: (graph: LayoutGraph, de
   )
   return executorWorker
 }
-

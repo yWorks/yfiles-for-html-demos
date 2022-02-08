@@ -1,8 +1,10 @@
-# Multi-Page Layout Demo
+# Multi-page Layout Demo
 
 <img src="../../resources/image/multipage.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/multipage/index.html).
+
+# Multi-page Layout Demo
 
 This demo shows the multi-page layout that divides a large graph into several smaller page graphs.
 

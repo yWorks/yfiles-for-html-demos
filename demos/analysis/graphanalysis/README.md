@@ -4,7 +4,7 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/analysis/graphanalysis/index.html).
 
-## Demo Description
+# Graph Analysis Demo
 
 This demo showcases a selection of algorithms to analyse the structure of a graph.
 

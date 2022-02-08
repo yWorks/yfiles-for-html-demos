@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/htmlpopup/index.html).
 
+# HTML Popup Demo
+
 This demo shows HTML pop-up panels that display additional information about a clicked node or edge.
 
 The pop-up is displayed in the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) above the graph items but below the scrollbars, and rendered zoom-invariant with a fixed size.

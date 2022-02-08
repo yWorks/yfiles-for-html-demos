@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -60,7 +60,8 @@ import {
   NinePositionsEdgeLabelModel,
   Rect,
   StorageLocation,
-  StyleDecorationZoomPolicy
+  StyleDecorationZoomPolicy,
+  TreeAnalysis
 } from 'yfiles'
 
 import MindmapPopupSupport from './MindmapPopupSupport.js'
@@ -738,10 +739,24 @@ async function openFile() {
   try {
     await gs.openFile(filteredGraph.wrappedGraph)
 
-    graphComponent.graph.nodes.forEach(node => {
+    const graph = graphComponent.graph
+    graph.nodes.forEach(node => {
       const nodeData = node.tag
       node.tag = { ...nodeData }
     })
+
+    // check whether the loaded graph is a tree, excluding the cross-reference edges
+    try {
+      const treeAnalysis = new TreeAnalysis({
+        subgraphEdges: e => !isCrossReference(e)
+      })
+      treeAnalysis.run(graph)
+    } catch (err) {
+      alert(
+        `The input graph is not a tree. Maybe the graph is not created by this demo. Only mindmap diagrams that have been created with this demo can be opened.`
+      )
+      loadFallbackGraph()
+    }
     onGraphChanged()
   } catch (error) {
     alert(

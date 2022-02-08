@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,204 +34,246 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>SVG Export Demo [yFiles for HTML]</title>
+    <title>SVG Export Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <link rel="stylesheet" href="./resources/styles.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./resources/styles.css" />
 
-  <style>
-    .demo-properties label.short {
-      width: 6em;
-    }
+    <style>
+      .demo-properties label.short {
+        width: 6em;
+      }
 
-    .demo-properties input[type=number] {
-      width: 5em;
-    }
+      .demo-properties input[type='number'] {
+        width: 5em;
+      }
 
-    .demo-properties button.export-button {
-      width: 6.5em;
-      height: 10ex;
-      margin: auto;
-      vertical-align: middle;
-    }
+      .demo-properties button.export-button {
+        width: 6.5em;
+        height: 10ex;
+        margin: auto;
+        vertical-align: middle;
+      }
 
-    .demo-exportDialog {
-      z-index: 10000;
-      position: absolute;
-      left: 25%;
-      right: 25%;
-      top: 20%;
-      bottom: 20%;
-      background: #F9F9F9;
-      border: 1px solid #ccc;
-      box-shadow: 0 0 12px rgba(0, 0, 0, .3);
-      text-align: center;
-      font-size: 12px;
-    }
+      .demo-exportDialog {
+        z-index: 10000;
+        position: absolute;
+        left: 25%;
+        right: 25%;
+        top: 20%;
+        bottom: 20%;
+        background: #f9f9f9;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        font-size: 12px;
+      }
 
-    .demo-exportDialog h2 {
-      font-size: 14pt;
-      font-weight: bold;
-      font-family: Helvetica, Arial, sans-serif;
-      line-height: 20pt;
-      margin: 20px;
-      white-space: nowrap;
-    }
+      .demo-exportDialog h2 {
+        font-size: 14pt;
+        font-weight: bold;
+        font-family: Helvetica, Arial, sans-serif;
+        line-height: 20pt;
+        margin: 20px;
+        white-space: nowrap;
+      }
 
-    .outer {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      height: 100%;
-    }
+      .outer {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-    .outer div {
-      margin-bottom: 7px;
-    }
+      .outer div {
+        margin-bottom: 7px;
+      }
 
-    .outer label {
-      font-size: larger;
-    }
+      .outer label {
+        font-size: larger;
+      }
 
-    .outer select {
-      min-width: 80px;
-    }
+      .outer select {
+        min-width: 80px;
+      }
 
-    .exportImageContainer {
-      width: calc(100% - 40px);
-      height: calc(100% - 120px);
-      display: block;
-      margin: 20px;
-      overflow: auto;
-    }
+      .exportImageContainer {
+        width: calc(100% - 40px);
+        height: calc(100% - 120px);
+        display: block;
+        margin: 20px;
+        overflow: auto;
+      }
 
-    .exportImageContainer button {
-      margin: 0 auto;
-    }
+      .exportImageContainer button {
+        margin: 0 auto;
+      }
 
-    .exportImageContainer > div {
-      margin: 0 auto;
-      height: 100%;
-    }
+      .exportImageContainer > div {
+        margin: 0 auto;
+        height: 100%;
+      }
 
-    #imageContainer svg {
-      margin: auto;
-      display: block;
-    }
+      #imageContainer svg {
+        margin: auto;
+        display: block;
+      }
 
-    .demo-exportDialog button {
-      border: 1px solid #7D7D7D;
-      background: #eeeeee;
-      margin: 10px;
-      padding: 2px 5px;
-    }
+      .demo-exportDialog button {
+        border: 1px solid #7d7d7d;
+        background: #eeeeee;
+        margin: 10px;
+        padding: 2px 5px;
+      }
 
-    .hidden {
-      display: none;
-    }
+      .hidden {
+        display: none;
+      }
 
-    #svgContainerInner {
-      background-color: darkgrey;
-      padding: 5px;
-      box-sizing: border-box;
-      overflow: auto;
-    }
+      #svgContainerInner {
+        background-color: darkgrey;
+        padding: 5px;
+        box-sizing: border-box;
+        overflow: auto;
+      }
 
-    #svgContainerInner svg {
-      background-color: white;
-      box-shadow: 0 0 12px rgba(0, 0, 0, .3);
-    }
+      #svgContainerInner svg {
+        background-color: white;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+      }
+    </style>
 
-  </style>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>SVG Export Demo</h1>
 
-  <script src="../../resources/filesystem-warning.js"></script>
+        <p>This demo shows how to export the whole diagram or a part of it to an SVG file.</p>
 
-</head>
-<body class="demo-has-left demo-has-right">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This demo shows how to export the whole diagram or a part of it to an SVG file.</p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Resize and move the hatched rectangle to control the region which will be exported.
+          </li>
+          <li>
+            <em>Export</em> shows the exported drawing in a popup with an option to save as SVG
+            file.
+          </li>
+          <li>
+            Disable <em>Export Rectangle Contents</em> to export the complete graph instead of the
+            rectangle's region.
+          </li>
+          <li>Explore the setting for scale.</li>
+        </ul>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Resize and move the hatched rectangle to control the region which will be exported.
-      </li>
-      <li>
-        <em>Export</em> shows the exported drawing in a popup with an option to save as SVG file.
-      </li>
-      <li>
-        Disable <em>Export Rectangle Contents</em> to export the complete graph instead of the rectangle's region.
-      </li>
-      <li>
-        Explore the setting for scale.
-      </li>
-    </ul>
+        <h2>Details</h2>
 
-    <h2>Details</h2>
+        <p>
+          The approach used in this demo completely runs in the user's browser. It is supported by
+          the latest versions of all major browsers. However, the save to file button won't work in
+          IE9 but it can still be saved with right-click on the exported SVG and "Save as...".
+        </p>
+      </div>
+    </aside>
 
-    <p>
-      The approach used in this demo completely runs in the user's browser. It is supported by the latest versions of
-      all major browsers. However, the save to file button won't work in IE9 but it can still be saved with
-      right-click on the exported SVG and "Save as...".</p>
-  </div>
-</aside>
-
-<!--
+    <!--
   The GraphComponent
   -->
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-<!--
-  Export Properties
-  -->
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Export</h1>
-  <div class="demo-sidebar-content">
-    <div class="demo-properties">
-      <div id="formContainer">
-        <fieldset>
-          <legend>Export Properties</legend>
-          <div class="demo-form-block"><label for="useRect">Export Rectangle Contents</label> <input id="useRect"
-              data-name="inputUseRect" type="checkbox" name="useRect" checked="checked"></div>
-          <div class="demo-form-block">
-            <label for="scale" class="short">Scale</label> <input id="scale" data-name="inputScale" type="number"
-              min="0.1" max="200.0" step="0.1" name="scale" value="1.0">
-          </div>
-        </fieldset>
-        <button data-name="ExportButton" data-command="Export" value="Export">Export</button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
       </div>
     </div>
-    <a href="https://www.yworks.com/products/yfiles-for-html/vsdx-export" target="_blank" class="vsdx-export-banner">
-      <p>Looking for an option to export to Microsoft Visio<span class="registered-icon">®</span>?</p>
-      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNjQuMiA5My43NiI+PHRpdGxlPnZzZHgtZXhwb3J0LWxvZ29fbm9mb250PC90aXRsZT48cGF0aCBkPSJNMCwzNy40MS4wOSw1Ni43N0EyNy41MSwyNy41MSwwLDAsMCwxNCw4MC41NGwxNi44MSw5LjZBMjcuNTIsMjcuNTIsMCwwLDAsNTguMyw5MEw3NSw4MC4yNUEyNy40OSwyNy40OSwwLDAsMCw4OC42Niw1Ni4zNkw4OC41NywzN0EyNy40OSwyNy40OSwwLDAsMCw3NC43LDEzLjIzTDU3Ljg5LDMuNjJhMjcuNTUsMjcuNTUsMCwwLDAtMjcuNTIuMTNMMTMuNjUsMTMuNTFBMjcuNSwyNy41LDAsMCwwLDAsMzcuNDEiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTE5LjY2LDM5LjU4di4wOUwxMTIuODcsNTRoLTEuNWwtNi43NS0xNC4zMXYtLjA5aDMuODRsMi43OCw2LjRhMTUuNzUsMTUuNzUsMCwwLDEsLjksMi42OEExOSwxOSwwLDAsMSwxMTMsNDZsMi43OS02LjRaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTEyMC44NCw1Mi42bDEuMzgtMi40NmE3LjM3LDcuMzcsMCwwLDAsMy45LDEuMThjMS4yOCwwLDIuMTEtLjU4LDIuMTEtMS40NywwLTEuMDYtMS4zNC0xLjU3LTIuNzUtMi4xMS0yLjI3LS44Ny00LTIuMDUtNC00LjM5LDAtMi42MiwyLjM0LTQsNS4wNi00YTksOSwwLDAsMSw0LjY3LDEuMjhMMTMwLDQzYTcuMjQsNy4yNCwwLDAsMC0zLjE3LS44M2MtMS4wOCwwLTIsLjMyLTIsMS4yMXMxLDEuNDcsMi41OSwyYzIuNS45Myw0LjI5LDIuMTEsNC4yOSw0LjQ4LDAsMi42NS0yLjE1LDQuMzItNS4yOCw0LjMyQTkuOTEsOS45MSwwLDAsMSwxMjAuODQsNTIuNloiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTQ4Ljg3LDMwLjgxdjIzaC0yLjRsLS42LTIuMTVhNi4xNiw2LjE2LDAsMCwxLTUuMTYsMi41Yy00LjA5LDAtNi44OC0zLjA3LTYuODgtNy41OCwwLTQuMjksMi44OC03LjM5LDYuODgtNy4zOWE2LjI5LDYuMjksMCwwLDEsNC43NywyYy0uMDYtMS4zMS0uMDktMi41Mi0uMDktNC4wOVYzMC44MVptLTMuMzYsMTUuOWMwLTIuNjItMS42My00LjQxLTQuMDktNC40MXMtNC4wNywxLjc5LTQuMDcsNC40MSwxLjY0LDQuNDUsNC4wNyw0LjQ1UzE0NS41MSw0OS4zNywxNDUuNTEsNDYuNzFaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE1MS40Nyw1My43OGw0LjgtNy4zNi00LjM5LTYuNzV2LS4wOWgzLjkxbDEuNzksMi45NGExNS41MywxNS41MywwLDAsMSwuODksMS43bDEtMS43MywxLjgzLTIuOTFoMy44MXYuMDlsLTQuMzYsNi43NSw0LjgsNy4zNnYuMDdoLTMuOTNsLTIuMDgtMy4zM2MtLjM1LS41OC0uNjQtMS4xNS0xLTEuOTJhMTcuNjMsMTcuNjMsMCwwLDEtMSwxLjkybC0yLjExLDMuMzNoLTMuODdaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE4OC4yNiw0Ni4yYTE2LjYzLDE2LjYzLDAsMCwxLS4xMiwxLjY2SDE3Ny45YTQuMjcsNC4yNywwLDAsMCw0LjU0LDMuNTJBNS40Myw1LjQzLDAsMCwwLDE4Ni4yMiw1MGwxLjQ3LDIuMjRhOC40Miw4LjQyLDAsMCwxLTUuNTcsMmMtNC41OCwwLTcuNzEtMy4xLTcuNzEtNy41OGE3LjI0LDcuMjQsMCwwLDEsNy4zNi03LjQ5QzE4NS44LDM5LjE5LDE4OC4yNiw0MS45MSwxODguMjYsNDYuMlptLTEwLjMzLS43aDdjLS4xLTIuMjctMS40NC0zLjQ2LTMuMjctMy40NkEzLjc5LDMuNzksMCwwLDAsMTc3LjkzLDQ1LjVaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE4OS44Nyw1My43OGw0Ljc5LTcuMzYtNC4zOC02Ljc1di0uMDloMy45MUwxOTYsNDIuNTJhMTUuNTMsMTUuNTMsMCwwLDEsLjg5LDEuN2wxLTEuNzMsMS44My0yLjkxaDMuOHYuMDlsLTQuMzUsNi43NSw0LjgsNy4zNnYuMDdIMjAwbC0yLjA4LTMuMzNjLS4zNi0uNTgtLjY0LTEuMTUtMS0xLjkyYTE3LjYzLDE3LjYzLDAsMCwxLTEsMS45MmwtMi4xMSwzLjMzaC0zLjg3WiIgc3R5bGU9ImZpbGw6IzJhMmE2MSIvPjxwYXRoIGQ9Ik0yMjEuNTQsNDYuNjVjMCw0LjQ1LTIuODQsNy41NS02LjgxLDcuNTVhNi41LDYuNSwwLDAsMS00LjgtMmMuMDYsMSwuMDYsMi4xNC4wNiwzLjM5djUuMjhIMjA2LjVWMzkuNThoMi4zN2wuNjcsMi4xN2E2LjMyLDYuMzIsMCwwLDEsNS4xOS0yLjUyQzIxOC42NiwzOS4yMywyMjEuNTQsNDIuMzYsMjIxLjU0LDQ2LjY1Wm0tMy41NS4wOWMwLTIuNjUtMS42LTQuNDQtNC00LjQ0YTQsNCwwLDAsMC00LjEyLDQuMzhjMCwyLjY5LDEuNjksNC40OCw0LjEyLDQuNDhTMjE4LDQ5LjM0LDIxOCw0Ni43NFoiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMjIzLjkxLDQ2LjcxYTcuNjcsNy42NywwLDAsMSwxNS4zMywwLDcuNjcsNy42NywwLDAsMS0xNS4zMywwWm0xMS43OCwwYzAtMi42Mi0xLjY3LTQuNDQtNC4xMy00LjQ0YTQuMTEsNC4xMSwwLDAsMC00LjEzLDQuNDQsNC4xMSw0LjExLDAsMCwwLDQuMTMsNC40NUMyMzQsNTEuMTYsMjM1LjY5LDQ5LjM0LDIzNS42OSw0Ni43MVoiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMjUyLjA3LDM5Ljg2bC0uODksM2E1LjQzLDUuNDMsMCwwLDAtMS44Ni0uMzIsMy4yNCwzLjI0LDAsMCwwLTMuMzksMy41OHY3Ljc4aC0zLjQ5VjM5LjU4aDIuMzdsLjY3LDIuMTFhNC4zOCw0LjM4LDAsMCwxLDQuMTMtMi40M0E0Ljg3LDQuODcsMCwwLDEsMjUyLjA3LDM5Ljg2WiIgc3R5bGU9ImZpbGw6IzJhMmE2MSIvPjxwYXRoIGQ9Ik0yNTUuMzcsNDkuNXYtN2wtMi41My0uMTlWMzkuNThoMi41M2wuMDktNC41OGgzLjR2NC41OGg0LjQxdjNoLTQuNDF2Ni41OWMwLDEuNDEuNjQsMS44MywxLjU2LDEuODNhNC4zLDQuMywwLDAsMCwyLjQtLjc0bDEuMTIsMi42M2E3LjgsNy44LDAsMCwxLTQuMzIsMS4zMUMyNTcuMDYsNTQuMTcsMjU1LjM3LDUyLjcsMjU1LjM3LDQ5LjVaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTEwNi44OSw3MC44aC0xLjI1di0uNzNoMS4yNVY2OC4zNGExLjkzLDEuOTMsMCwwLDEsMS45NC0yLjE4LDIuNDIsMi40MiwwLDAsMSwxLjU1LjUzbC0uMzguNmExLjc2LDEuNzYsMCwwLDAtMS4wNy0uMzVjLS43NCwwLTEuMjEuNDctMS4yMSwxLjR2MS43M2gydi43M2gtMnY1LjI4aC0uODNaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTExMC4yMyw3My4wN2EzLjEyLDMuMTIsMCwxLDEsMy4xLDMuMTVBMywzLDAsMCwxLDExMC4yMyw3My4wN1ptNS4zOCwwYTIuMjcsMi4yNywwLDEsMC0yLjI4LDIuMzhBMi4yMywyLjIzLDAsMCwwLDExNS42MSw3My4wN1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTIxLjY2LDcwLjE1bC0uMjUuNzNhMi4yNCwyLjI0LDAsMCwwLS44LS4xNUExLjY0LDEuNjQsMCwwLDAsMTE5LDcyLjU5djMuNDloLS44M3YtNmguNjJsLjE3Ljg4YTEuODYsMS44NiwwLDAsMSwxLjc1LTFBMi40LDIuNCwwLDAsMSwxMjEuNjYsNzAuMTVaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTEzMC44LDcwLjA3djBsLTMuNjksOWgtLjg3djBsMS4zMy0zLjExTDEyNSw3MC4wOXYwaC44N2wxLjcyLDMuODRjLjE1LjM2LjMuNy40NCwxLjEyLjEzLS40Mi4yNy0uNzguNC0xLjEyTDEzMCw3MC4wN1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTMyLjI0LDY2LjgzaDUuNTZ2LjgyaC00LjY2djMuNTJoNC4xOVY3MmgtNC4xOXY0LjFoLS45WiIgc3R5bGU9ImZpbGw6IzJhMmE2MSIvPjxwYXRoIGQ9Ik0xMzksNjcuODlhLjU5LjU5LDAsMCwxLC42Mi0uNjIuNjEuNjEsMCwxLDEsMCwxLjIyQS41OS41OSwwLDAsMSwxMzksNjcuODlabS4yLDIuMThoLjgzdjZoLS44M1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTQyLjA4LDY2LjMzaC44M3Y5Ljc1aC0uODNaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE1MC4xOSw3Mi44M2EzLjg2LDMuODYsMCwwLDEsMCwuNThoLTQuODFhMi4yLDIuMiwwLDAsMCwyLjI0LDIsMi4zNSwyLjM1LDAsMCwwLDEuODQtLjczbC40OC41OWEzLjE3LDMuMTcsMCwwLDEtMi4zLjkxLDMuMTUsMy4xNSwwLDAsMS0uMDctNi4zQTIuNTksMi41OSwwLDAsMSwxNTAuMTksNzIuODNabS00LjgyLS4xNWg0YTEuOCwxLjgsMCwwLDAtMS44Ni0yQTIuMTUsMi4xNSwwLDAsMCwxNDUuMzcsNzIuNjhaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE1MS4yMSw3NS41MmwuNDItLjY1YTIuOSwyLjksMCwwLDAsMS43Ny41NGMuNzMsMCwxLjIxLS4zNywxLjIxLS45MXMtLjY3LS44OS0xLjM5LTEuMTdjLTEtLjM4LTEuNzktLjg0LTEuNzktMS44MXMuOTItMS41MiwxLjk0LTEuNTJhMy4zMiwzLjMyLDAsMCwxLDEuODIuNTRsLS4zNi42YTMsMywwLDAsMC0xLjQyLS4zOGMtLjYxLDAtMS4xNS4yLTEuMTUuNzZzLjU2LjgyLDEuMjYsMS4wOWMxLjA5LjQxLDEuOTIuODgsMS45MiwxLjg5cy0uODYsMS42OC0yLDEuNjhBMy44LDMuOCwwLDAsMSwxNTEuMjEsNzUuNTJaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE2MC4zOCw3MC44aC0xLjI1di0uNzNoMS4yNVY2OC4zNGExLjkzLDEuOTMsMCwwLDEsMi0yLjE4LDIuNDQsMi40NCwwLDAsMSwxLjU1LjUzbC0uMzguNmExLjc3LDEuNzcsMCwwLDAtMS4wOC0uMzVjLS43MywwLTEuMjEuNDctMS4yMSwxLjR2MS43M2gydi43M2gtMnY1LjI4aC0uODNaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE2My44Niw3My4wN2EzLjEyLDMuMTIsMCwxLDEsMy4xLDMuMTVBMywzLDAsMCwxLDE2My44Niw3My4wN1ptNS4zOCwwQTIuMjcsMi4yNywwLDEsMCwxNjcsNzUuNDUsMi4yMywyLjIzLDAsMCwwLDE2OS4yNCw3My4wN1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTc1LjE4LDcwLjE1bC0uMjQuNzNhMi4yNCwyLjI0LDAsMCwwLS44LS4xNSwxLjY1LDEuNjUsMCwwLDAtMS42NSwxLjg2djMuNDloLS44M3YtNmguNjNsLjE2Ljg4YTEuODYsMS44NiwwLDAsMSwxLjc1LTFBMi40LDIuNCwwLDAsMSwxNzUuMTgsNzAuMTVaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE4NC4zNiw3Mi40djMuNjhoLS44M3YtMy43YzAtMS0uNDEtMS42Ni0xLjQyLTEuNjYtMS4yOCwwLTIsMS4wOS0yLDIuMzl2M2gtLjgzVjY2LjMzaC44M3YzLjg5YzAsLjI5LDAsLjU4LDAsLjkzYTIuMjQsMi4yNCwwLDAsMSwyLjA4LTEuMjFDMTgzLjY2LDY5Ljk0LDE4NC4zNiw3MC44NywxODQuMzYsNzIuNFoiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTg2LjcsNzQuMzhWNzAuOGwtMS4xNywwdi0uNjhoMS4xN3YtMmguODN2MmgyLjE1di43M2gtMi4xNXYzLjU4YzAsLjc2LjMyLDEsLjg1LDFhMiwyLDAsMCwwLDEuMTgtLjQxbC4zNy42MmEyLjcxLDIuNzEsMCwwLDEtMS42NC41N0MxODcuMzIsNzYuMTgsMTg2LjcsNzUuNjEsMTg2LjcsNzQuMzhaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE5OS44OSw3Mi4zMXYzLjc3aC0uODNWNzIuMjdjMC0xLS40OS0xLjU1LTEuMzMtMS41NUEyLDIsMCwwLDAsMTk1Ljg5LDczdjMuMTNoLS44M1Y3Mi4yNWExLjM1LDEuMzUsMCwwLDAtMS4zMy0xLjUzQTIsMiwwLDAsMCwxOTEuODgsNzN2My4xM2gtLjgzdi02aC42M2wuMTksMWEyLjEzLDIuMTMsMCwwLDEsMS45NS0xLjE2LDEuODcsMS44NywwLDAsMSwxLjg3LDEuMjEsMi4yMywyLjIzLDAsMCwxLDIuMDktMS4yMUMxOTkuMTUsNjkuOTQsMTk5Ljg5LDcwLjg1LDE5OS44OSw3Mi4zMVoiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMjAxLjgxLDY2LjMzaC44M2wwLDkuNzVoLS44M1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNNzQuNzMsNDYuODJjMC0zLjU2LTMuMjMtNS41OC02LjQ3LTYtMS42Ni0uMTktMy4zMi0uMjItNS0uNTdBMTYuNzMsMTYuNzMsMCwwLDEsNTUuMzksMzZ2MGExNi4yNCwxNi4yNCwwLDAsMS00LjMxLTcuNzljLS4zNi0xLjYyLS4zOC0zLjI2LS41OC00Ljg5LS4zOC0zLjItMi40NC02LjM5LTYuMDUtNi4zOWgtLjE5Yy0zLjYxLDAtNS42NiwzLjE5LTYsNi4zOUMzOCwyNSwzOCwyNi42MSwzNy42MywyOC4yM0ExNi4yNCwxNi4yNCwwLDAsMSwzMy4zMiwzNmwwLDBhMTYuNzEsMTYuNzEsMCwwLDEtNy45LDQuMjVjLTEuNjQuMzUtMy4zLjM4LTUsLjU3LTMuMjQuMzgtNi40OCwyLjQtNi40Nyw2di4xMWMwLDMuNTYsMy4yMyw1LjU5LDYuNDcsNiwxLjY2LjE5LDMuMzIuMjEsNSwuNTZhMTYuNzUsMTYuNzUsMCwwLDEsNy45LDQuMjZoMGExNi4yNiwxNi4yNiwwLDAsMSw0LjMxLDcuOGMuMzYsMS42MS4zOCwzLjI2LjU4LDQuODkuMzgsMy4yLDIuNDMsNi4zOSw2LDYuMzhoLjE5YzMuNjEsMCw1LjY3LTMuMTgsNi4wNS02LjM4LjItMS42My4yMi0zLjI4LjU4LTQuODlhMTYuMjYsMTYuMjYsMCwwLDEsNC4zMS03LjhoMGExNi43NywxNi43NywwLDAsMSw3LjkxLTQuMjZjMS42NC0uMzUsMy4zLS4zNyw1LS41NiwzLjI0LS4zOCw2LjQ4LTIuNDEsNi40Ny02LDAsMCwwLDAsMCwwUzc0LjczLDQ2Ljg0LDc0LjczLDQ2LjgyWk01My44NCw1Ni4yaDBjLTIuMDgsMi4wNS00LDUuMTItNyw3LjI5YTQuNjksNC42OSwwLDAsMS0yLjQ2LjcyLDQuNjMsNC42MywwLDAsMS0yLjQ1LS43MmMtMy4wOC0yLjE3LTUtNS4yNC03LTcuMjlsMCwwYy0yLjA3LTItNS4xNi0zLjg5LTcuMzYtNi45MWE0LjUxLDQuNTEsMCwwLDEsLjA4LTQuOTJjMi4xOS0zLDUuMjMtNC43OSw3LjI4LTYuODFsMCwwYzItMiwzLjg4LTUsNi44NC03LjE0YTQuNTcsNC41NywwLDAsMSw1LjMxLDBjMywyLjE3LDQuOCw1LjE0LDYuODMsNy4xNGwwLDBjMiwyLDUuMDgsMy44NCw3LjI4LDYuNzlhNC41Myw0LjUzLDAsMCwxLC4wOCw1QzU5LDUyLjMyLDU1LjkxLDU0LjE2LDUzLjg0LDU2LjJaIiBzdHlsZT0iZmlsbDojNTRjM2VhIi8+PC9zdmc+" width="280px" alt="VSDX Export for yFiles for HTML">
-    </a>
-  </div>
-</aside>
 
-<!-- Export popup -->
-<div id="popup" class="demo-exportDialog hidden">
-  <div id="outerClientExport" class="outer">
-    <h2>SVG Export</h2>
-    <div id="svgContainer" class="exportImageContainer">
-      <div id="svgContainerInner"></div>
+    <!--
+  Export Properties
+  -->
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Export</h2>
+
+        <div class="demo-properties">
+          <div id="formContainer">
+            <fieldset>
+              <legend>Export Properties</legend>
+              <div class="demo-form-block">
+                <label for="useRect">Export Rectangle Contents</label>
+                <input
+                  id="useRect"
+                  data-name="inputUseRect"
+                  type="checkbox"
+                  name="useRect"
+                  checked="checked"
+                />
+              </div>
+              <div class="demo-form-block">
+                <label for="scale" class="short">Scale</label>
+                <input
+                  id="scale"
+                  data-name="inputScale"
+                  type="number"
+                  min="0.1"
+                  max="200.0"
+                  step="0.1"
+                  name="scale"
+                  value="1.0"
+                />
+              </div>
+            </fieldset>
+            <button data-name="ExportButton" data-command="Export" value="Export">Export</button>
+          </div>
+        </div>
+        <a
+          href="https://www.yworks.com/products/yfiles-for-html/vsdx-export"
+          target="_blank"
+          class="vsdx-export-banner"
+        >
+          <p>
+            Looking for an option to export to Microsoft Visio<span class="registered-icon">®</span
+            >?
+          </p>
+          <img
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNjQuMiA5My43NiI+PHRpdGxlPnZzZHgtZXhwb3J0LWxvZ29fbm9mb250PC90aXRsZT48cGF0aCBkPSJNMCwzNy40MS4wOSw1Ni43N0EyNy41MSwyNy41MSwwLDAsMCwxNCw4MC41NGwxNi44MSw5LjZBMjcuNTIsMjcuNTIsMCwwLDAsNTguMyw5MEw3NSw4MC4yNUEyNy40OSwyNy40OSwwLDAsMCw4OC42Niw1Ni4zNkw4OC41NywzN0EyNy40OSwyNy40OSwwLDAsMCw3NC43LDEzLjIzTDU3Ljg5LDMuNjJhMjcuNTUsMjcuNTUsMCwwLDAtMjcuNTIuMTNMMTMuNjUsMTMuNTFBMjcuNSwyNy41LDAsMCwwLDAsMzcuNDEiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTE5LjY2LDM5LjU4di4wOUwxMTIuODcsNTRoLTEuNWwtNi43NS0xNC4zMXYtLjA5aDMuODRsMi43OCw2LjRhMTUuNzUsMTUuNzUsMCwwLDEsLjksMi42OEExOSwxOSwwLDAsMSwxMTMsNDZsMi43OS02LjRaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTEyMC44NCw1Mi42bDEuMzgtMi40NmE3LjM3LDcuMzcsMCwwLDAsMy45LDEuMThjMS4yOCwwLDIuMTEtLjU4LDIuMTEtMS40NywwLTEuMDYtMS4zNC0xLjU3LTIuNzUtMi4xMS0yLjI3LS44Ny00LTIuMDUtNC00LjM5LDAtMi42MiwyLjM0LTQsNS4wNi00YTksOSwwLDAsMSw0LjY3LDEuMjhMMTMwLDQzYTcuMjQsNy4yNCwwLDAsMC0zLjE3LS44M2MtMS4wOCwwLTIsLjMyLTIsMS4yMXMxLDEuNDcsMi41OSwyYzIuNS45Myw0LjI5LDIuMTEsNC4yOSw0LjQ4LDAsMi42NS0yLjE1LDQuMzItNS4yOCw0LjMyQTkuOTEsOS45MSwwLDAsMSwxMjAuODQsNTIuNloiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTQ4Ljg3LDMwLjgxdjIzaC0yLjRsLS42LTIuMTVhNi4xNiw2LjE2LDAsMCwxLTUuMTYsMi41Yy00LjA5LDAtNi44OC0zLjA3LTYuODgtNy41OCwwLTQuMjksMi44OC03LjM5LDYuODgtNy4zOWE2LjI5LDYuMjksMCwwLDEsNC43NywyYy0uMDYtMS4zMS0uMDktMi41Mi0uMDktNC4wOVYzMC44MVptLTMuMzYsMTUuOWMwLTIuNjItMS42My00LjQxLTQuMDktNC40MXMtNC4wNywxLjc5LTQuMDcsNC40MSwxLjY0LDQuNDUsNC4wNyw0LjQ1UzE0NS41MSw0OS4zNywxNDUuNTEsNDYuNzFaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE1MS40Nyw1My43OGw0LjgtNy4zNi00LjM5LTYuNzV2LS4wOWgzLjkxbDEuNzksMi45NGExNS41MywxNS41MywwLDAsMSwuODksMS43bDEtMS43MywxLjgzLTIuOTFoMy44MXYuMDlsLTQuMzYsNi43NSw0LjgsNy4zNnYuMDdoLTMuOTNsLTIuMDgtMy4zM2MtLjM1LS41OC0uNjQtMS4xNS0xLTEuOTJhMTcuNjMsMTcuNjMsMCwwLDEtMSwxLjkybC0yLjExLDMuMzNoLTMuODdaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE4OC4yNiw0Ni4yYTE2LjYzLDE2LjYzLDAsMCwxLS4xMiwxLjY2SDE3Ny45YTQuMjcsNC4yNywwLDAsMCw0LjU0LDMuNTJBNS40Myw1LjQzLDAsMCwwLDE4Ni4yMiw1MGwxLjQ3LDIuMjRhOC40Miw4LjQyLDAsMCwxLTUuNTcsMmMtNC41OCwwLTcuNzEtMy4xLTcuNzEtNy41OGE3LjI0LDcuMjQsMCwwLDEsNy4zNi03LjQ5QzE4NS44LDM5LjE5LDE4OC4yNiw0MS45MSwxODguMjYsNDYuMlptLTEwLjMzLS43aDdjLS4xLTIuMjctMS40NC0zLjQ2LTMuMjctMy40NkEzLjc5LDMuNzksMCwwLDAsMTc3LjkzLDQ1LjVaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE4OS44Nyw1My43OGw0Ljc5LTcuMzYtNC4zOC02Ljc1di0uMDloMy45MUwxOTYsNDIuNTJhMTUuNTMsMTUuNTMsMCwwLDEsLjg5LDEuN2wxLTEuNzMsMS44My0yLjkxaDMuOHYuMDlsLTQuMzUsNi43NSw0LjgsNy4zNnYuMDdIMjAwbC0yLjA4LTMuMzNjLS4zNi0uNTgtLjY0LTEuMTUtMS0xLjkyYTE3LjYzLDE3LjYzLDAsMCwxLTEsMS45MmwtMi4xMSwzLjMzaC0zLjg3WiIgc3R5bGU9ImZpbGw6IzJhMmE2MSIvPjxwYXRoIGQ9Ik0yMjEuNTQsNDYuNjVjMCw0LjQ1LTIuODQsNy41NS02LjgxLDcuNTVhNi41LDYuNSwwLDAsMS00LjgtMmMuMDYsMSwuMDYsMi4xNC4wNiwzLjM5djUuMjhIMjA2LjVWMzkuNThoMi4zN2wuNjcsMi4xN2E2LjMyLDYuMzIsMCwwLDEsNS4xOS0yLjUyQzIxOC42NiwzOS4yMywyMjEuNTQsNDIuMzYsMjIxLjU0LDQ2LjY1Wm0tMy41NS4wOWMwLTIuNjUtMS42LTQuNDQtNC00LjQ0YTQsNCwwLDAsMC00LjEyLDQuMzhjMCwyLjY5LDEuNjksNC40OCw0LjEyLDQuNDhTMjE4LDQ5LjM0LDIxOCw0Ni43NFoiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMjIzLjkxLDQ2LjcxYTcuNjcsNy42NywwLDAsMSwxNS4zMywwLDcuNjcsNy42NywwLDAsMS0xNS4zMywwWm0xMS43OCwwYzAtMi42Mi0xLjY3LTQuNDQtNC4xMy00LjQ0YTQuMTEsNC4xMSwwLDAsMC00LjEzLDQuNDQsNC4xMSw0LjExLDAsMCwwLDQuMTMsNC40NUMyMzQsNTEuMTYsMjM1LjY5LDQ5LjM0LDIzNS42OSw0Ni43MVoiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMjUyLjA3LDM5Ljg2bC0uODksM2E1LjQzLDUuNDMsMCwwLDAtMS44Ni0uMzIsMy4yNCwzLjI0LDAsMCwwLTMuMzksMy41OHY3Ljc4aC0zLjQ5VjM5LjU4aDIuMzdsLjY3LDIuMTFhNC4zOCw0LjM4LDAsMCwxLDQuMTMtMi40M0E0Ljg3LDQuODcsMCwwLDEsMjUyLjA3LDM5Ljg2WiIgc3R5bGU9ImZpbGw6IzJhMmE2MSIvPjxwYXRoIGQ9Ik0yNTUuMzcsNDkuNXYtN2wtMi41My0uMTlWMzkuNThoMi41M2wuMDktNC41OGgzLjR2NC41OGg0LjQxdjNoLTQuNDF2Ni41OWMwLDEuNDEuNjQsMS44MywxLjU2LDEuODNhNC4zLDQuMywwLDAsMCwyLjQtLjc0bDEuMTIsMi42M2E3LjgsNy44LDAsMCwxLTQuMzIsMS4zMUMyNTcuMDYsNTQuMTcsMjU1LjM3LDUyLjcsMjU1LjM3LDQ5LjVaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTEwNi44OSw3MC44aC0xLjI1di0uNzNoMS4yNVY2OC4zNGExLjkzLDEuOTMsMCwwLDEsMS45NC0yLjE4LDIuNDIsMi40MiwwLDAsMSwxLjU1LjUzbC0uMzguNmExLjc2LDEuNzYsMCwwLDAtMS4wNy0uMzVjLS43NCwwLTEuMjEuNDctMS4yMSwxLjR2MS43M2gydi43M2gtMnY1LjI4aC0uODNaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTExMC4yMyw3My4wN2EzLjEyLDMuMTIsMCwxLDEsMy4xLDMuMTVBMywzLDAsMCwxLDExMC4yMyw3My4wN1ptNS4zOCwwYTIuMjcsMi4yNywwLDEsMC0yLjI4LDIuMzhBMi4yMywyLjIzLDAsMCwwLDExNS42MSw3My4wN1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTIxLjY2LDcwLjE1bC0uMjUuNzNhMi4yNCwyLjI0LDAsMCwwLS44LS4xNUExLjY0LDEuNjQsMCwwLDAsMTE5LDcyLjU5djMuNDloLS44M3YtNmguNjJsLjE3Ljg4YTEuODYsMS44NiwwLDAsMSwxLjc1LTFBMi40LDIuNCwwLDAsMSwxMjEuNjYsNzAuMTVaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTEzMC44LDcwLjA3djBsLTMuNjksOWgtLjg3djBsMS4zMy0zLjExTDEyNSw3MC4wOXYwaC44N2wxLjcyLDMuODRjLjE1LjM2LjMuNy40NCwxLjEyLjEzLS40Mi4yNy0uNzguNC0xLjEyTDEzMCw3MC4wN1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTMyLjI0LDY2LjgzaDUuNTZ2LjgyaC00LjY2djMuNTJoNC4xOVY3MmgtNC4xOXY0LjFoLS45WiIgc3R5bGU9ImZpbGw6IzJhMmE2MSIvPjxwYXRoIGQ9Ik0xMzksNjcuODlhLjU5LjU5LDAsMCwxLC42Mi0uNjIuNjEuNjEsMCwxLDEsMCwxLjIyQS41OS41OSwwLDAsMSwxMzksNjcuODlabS4yLDIuMThoLjgzdjZoLS44M1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTQyLjA4LDY2LjMzaC44M3Y5Ljc1aC0uODNaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE1MC4xOSw3Mi44M2EzLjg2LDMuODYsMCwwLDEsMCwuNThoLTQuODFhMi4yLDIuMiwwLDAsMCwyLjI0LDIsMi4zNSwyLjM1LDAsMCwwLDEuODQtLjczbC40OC41OWEzLjE3LDMuMTcsMCwwLDEtMi4zLjkxLDMuMTUsMy4xNSwwLDAsMS0uMDctNi4zQTIuNTksMi41OSwwLDAsMSwxNTAuMTksNzIuODNabS00LjgyLS4xNWg0YTEuOCwxLjgsMCwwLDAtMS44Ni0yQTIuMTUsMi4xNSwwLDAsMCwxNDUuMzcsNzIuNjhaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE1MS4yMSw3NS41MmwuNDItLjY1YTIuOSwyLjksMCwwLDAsMS43Ny41NGMuNzMsMCwxLjIxLS4zNywxLjIxLS45MXMtLjY3LS44OS0xLjM5LTEuMTdjLTEtLjM4LTEuNzktLjg0LTEuNzktMS44MXMuOTItMS41MiwxLjk0LTEuNTJhMy4zMiwzLjMyLDAsMCwxLDEuODIuNTRsLS4zNi42YTMsMywwLDAsMC0xLjQyLS4zOGMtLjYxLDAtMS4xNS4yLTEuMTUuNzZzLjU2LjgyLDEuMjYsMS4wOWMxLjA5LjQxLDEuOTIuODgsMS45MiwxLjg5cy0uODYsMS42OC0yLDEuNjhBMy44LDMuOCwwLDAsMSwxNTEuMjEsNzUuNTJaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE2MC4zOCw3MC44aC0xLjI1di0uNzNoMS4yNVY2OC4zNGExLjkzLDEuOTMsMCwwLDEsMi0yLjE4LDIuNDQsMi40NCwwLDAsMSwxLjU1LjUzbC0uMzguNmExLjc3LDEuNzcsMCwwLDAtMS4wOC0uMzVjLS43MywwLTEuMjEuNDctMS4yMSwxLjR2MS43M2gydi43M2gtMnY1LjI4aC0uODNaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE2My44Niw3My4wN2EzLjEyLDMuMTIsMCwxLDEsMy4xLDMuMTVBMywzLDAsMCwxLDE2My44Niw3My4wN1ptNS4zOCwwQTIuMjcsMi4yNywwLDEsMCwxNjcsNzUuNDUsMi4yMywyLjIzLDAsMCwwLDE2OS4yNCw3My4wN1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTc1LjE4LDcwLjE1bC0uMjQuNzNhMi4yNCwyLjI0LDAsMCwwLS44LS4xNSwxLjY1LDEuNjUsMCwwLDAtMS42NSwxLjg2djMuNDloLS44M3YtNmguNjNsLjE2Ljg4YTEuODYsMS44NiwwLDAsMSwxLjc1LTFBMi40LDIuNCwwLDAsMSwxNzUuMTgsNzAuMTVaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE4NC4zNiw3Mi40djMuNjhoLS44M3YtMy43YzAtMS0uNDEtMS42Ni0xLjQyLTEuNjYtMS4yOCwwLTIsMS4wOS0yLDIuMzl2M2gtLjgzVjY2LjMzaC44M3YzLjg5YzAsLjI5LDAsLjU4LDAsLjkzYTIuMjQsMi4yNCwwLDAsMSwyLjA4LTEuMjFDMTgzLjY2LDY5Ljk0LDE4NC4zNiw3MC44NywxODQuMzYsNzIuNFoiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMTg2LjcsNzQuMzhWNzAuOGwtMS4xNywwdi0uNjhoMS4xN3YtMmguODN2MmgyLjE1di43M2gtMi4xNXYzLjU4YzAsLjc2LjMyLDEsLjg1LDFhMiwyLDAsMCwwLDEuMTgtLjQxbC4zNy42MmEyLjcxLDIuNzEsMCwwLDEtMS42NC41N0MxODcuMzIsNzYuMTgsMTg2LjcsNzUuNjEsMTg2LjcsNzQuMzhaIiBzdHlsZT0iZmlsbDojMmEyYTYxIi8+PHBhdGggZD0iTTE5OS44OSw3Mi4zMXYzLjc3aC0uODNWNzIuMjdjMC0xLS40OS0xLjU1LTEuMzMtMS41NUEyLDIsMCwwLDAsMTk1Ljg5LDczdjMuMTNoLS44M1Y3Mi4yNWExLjM1LDEuMzUsMCwwLDAtMS4zMy0xLjUzQTIsMiwwLDAsMCwxOTEuODgsNzN2My4xM2gtLjgzdi02aC42M2wuMTksMWEyLjEzLDIuMTMsMCwwLDEsMS45NS0xLjE2LDEuODcsMS44NywwLDAsMSwxLjg3LDEuMjEsMi4yMywyLjIzLDAsMCwxLDIuMDktMS4yMUMxOTkuMTUsNjkuOTQsMTk5Ljg5LDcwLjg1LDE5OS44OSw3Mi4zMVoiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNMjAxLjgxLDY2LjMzaC44M2wwLDkuNzVoLS44M1oiIHN0eWxlPSJmaWxsOiMyYTJhNjEiLz48cGF0aCBkPSJNNzQuNzMsNDYuODJjMC0zLjU2LTMuMjMtNS41OC02LjQ3LTYtMS42Ni0uMTktMy4zMi0uMjItNS0uNTdBMTYuNzMsMTYuNzMsMCwwLDEsNTUuMzksMzZ2MGExNi4yNCwxNi4yNCwwLDAsMS00LjMxLTcuNzljLS4zNi0xLjYyLS4zOC0zLjI2LS41OC00Ljg5LS4zOC0zLjItMi40NC02LjM5LTYuMDUtNi4zOWgtLjE5Yy0zLjYxLDAtNS42NiwzLjE5LTYsNi4zOUMzOCwyNSwzOCwyNi42MSwzNy42MywyOC4yM0ExNi4yNCwxNi4yNCwwLDAsMSwzMy4zMiwzNmwwLDBhMTYuNzEsMTYuNzEsMCwwLDEtNy45LDQuMjVjLTEuNjQuMzUtMy4zLjM4LTUsLjU3LTMuMjQuMzgtNi40OCwyLjQtNi40Nyw2di4xMWMwLDMuNTYsMy4yMyw1LjU5LDYuNDcsNiwxLjY2LjE5LDMuMzIuMjEsNSwuNTZhMTYuNzUsMTYuNzUsMCwwLDEsNy45LDQuMjZoMGExNi4yNiwxNi4yNiwwLDAsMSw0LjMxLDcuOGMuMzYsMS42MS4zOCwzLjI2LjU4LDQuODkuMzgsMy4yLDIuNDMsNi4zOSw2LDYuMzhoLjE5YzMuNjEsMCw1LjY3LTMuMTgsNi4wNS02LjM4LjItMS42My4yMi0zLjI4LjU4LTQuODlhMTYuMjYsMTYuMjYsMCwwLDEsNC4zMS03LjhoMGExNi43NywxNi43NywwLDAsMSw3LjkxLTQuMjZjMS42NC0uMzUsMy4zLS4zNyw1LS41NiwzLjI0LS4zOCw2LjQ4LTIuNDEsNi40Ny02LDAsMCwwLDAsMCwwUzc0LjczLDQ2Ljg0LDc0LjczLDQ2LjgyWk01My44NCw1Ni4yaDBjLTIuMDgsMi4wNS00LDUuMTItNyw3LjI5YTQuNjksNC42OSwwLDAsMS0yLjQ2LjcyLDQuNjMsNC42MywwLDAsMS0yLjQ1LS43MmMtMy4wOC0yLjE3LTUtNS4yNC03LTcuMjlsMCwwYy0yLjA3LTItNS4xNi0zLjg5LTcuMzYtNi45MWE0LjUxLDQuNTEsMCwwLDEsLjA4LTQuOTJjMi4xOS0zLDUuMjMtNC43OSw3LjI4LTYuODFsMCwwYzItMiwzLjg4LTUsNi44NC03LjE0YTQuNTcsNC41NywwLDAsMSw1LjMxLDBjMywyLjE3LDQuOCw1LjE0LDYuODMsNy4xNGwwLDBjMiwyLDUuMDgsMy44NCw3LjI4LDYuNzlhNC41Myw0LjUzLDAsMCwxLC4wOCw1QzU5LDUyLjMyLDU1LjkxLDU0LjE2LDUzLjg0LDU2LjJaIiBzdHlsZT0iZmlsbDojNTRjM2VhIi8+PC9zdmc+"
+            width="280px"
+            alt="VSDX Export for yFiles for HTML"
+          />
+        </a>
+      </div>
+    </aside>
+
+    <!-- Export popup -->
+    <div id="popup" class="demo-exportDialog hidden">
+      <div id="outerClientExport" class="outer">
+        <h2>SVG Export</h2>
+        <div id="svgContainer" class="exportImageContainer">
+          <div id="svgContainerInner"></div>
+        </div>
+        <button id="svgSaveButton">Save</button>
+        <button id="closeButton">Close</button>
+      </div>
     </div>
-    <button id="svgSaveButton">Save</button>
-    <button id="closeButton">Close</button>
-  </div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="SvgExportDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="SvgExportDemo.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/hierarchicgrouping/index.html).
 
+# Hierarchic Grouping Demo
+
 The Hierarchic Grouping demo shows how to nicely expand and collapse sub-graphs organized in groups. Folding ('collapsed groups') can help to keep complex hierarchically organized diagrams clear and straightforward by showing only parts of the entire structure.
 
 Additionally, each user action triggers a run of the _incremental mode_ of the _hierarchic layout algorithm_ to ensure that the currently visible part of the graph is always well-organized but remains still similar to the previous arrangement.

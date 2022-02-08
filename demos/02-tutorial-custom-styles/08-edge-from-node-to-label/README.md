@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/08-edge-from-node-to-label/index.html).
 
+Custom Styles Tutorial
+
+# Edge from Node to Label
+
 This step shows how to visually connect a label to its owner node with a line.
 
 ## Things to Try

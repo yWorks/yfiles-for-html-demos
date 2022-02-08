@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,91 +34,98 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>CSS Styling Demo [yFiles for HTML]</title>
+    <title>CSS Styling Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <!-- include stylesheet with styles for templates -->
-  <link rel="stylesheet" href="template-styles.css">
+    <!-- include stylesheet with styles for templates -->
+    <link rel="stylesheet" href="template-styles.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <!-- style adjustments for the demo framework -->
-  <style>
-    .demo-sidebar,
-    .demo-sidebar .demo-sidebar-header,
-    .demo-sidebar .demo-sidebar-content h2 {
-      color: #f7f7f7;
-      background-color: #282e40;
-    }
-    .demo-left-sidebar-toggle-button {
-      background-image: url(../../resources/icons/sidebar-left_white.svg);
-    }
-    .demo-overview-container .demo-overview-header:hover {
-      background-color: #8fc0d1;
-    }
+    <!-- style adjustments for the demo framework -->
+    <style>
+      .demo-left-sidebar-toggle-button {
+        background-image: url(../../resources/icons/sidebar-left_white.svg);
+      }
+      .demo-overview-container .demo-overview-header:hover {
+        background-color: #8fc0d1;
+      }
 
-    /* Demo Styles */
-    .demo-node-style {
-      fill: white;
-      stroke: #3c4253;
-    }
-    .demo-edge-style {
-      stroke: white;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    This demo shows how to style the built-in templates and UI elements of the
-    <em>yFiles for HTML</em> library with CSS to match
-    your color theme.
-    <p>
-      There is a separate CSS-stylesheet which contains the more information about this demo.
-    </p>
+      /* Demo Styles */
+      .demo-node-style {
+        fill: white;
+        stroke: #3c4253;
+      }
+      .demo-edge-style {
+        stroke: white;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>CSS Styling Demo</h1>
 
-    <h2>CSS-Styling for the following Elements</h2>
-    <ul>
-      <li>Viewport rectangle in the Overview</li>
-      <li>Highlight when hovering a graph element</li>
-      <li>Selection indicator for the graph elements</li>
-      <li>Focus indicator for the graph elements</li>
-      <li>Marquee selection rectangle</li>
-      <li>Resize handles</li>
-      <li>Label candidates when dragging a label</li>
-      <li>Port candidates</li>
-      <li>Tooltips</li>
-      <li>Snap-lines</li>
-      <li>Scroll-bars</li>
-      <li>Label Editor</li>
-    </ul>
+        This demo shows how to style the built-in templates and UI elements of the
+        <em>yFiles for HTML</em> library with CSS to match your color theme.
+        <p>
+          There is a separate CSS-stylesheet which contains the more information about this demo.
+        </p>
 
-    <h2>CSS-Transitions for the following Elements</h2>
-    <ul>
-      <li>Tooltips</li>
-      <li>Label editor</li>
-    </ul>
-  </div>
-</aside>
+        <h2>CSS-Styling for the following Elements</h2>
+        <ul>
+          <li>Viewport rectangle in the Overview</li>
+          <li>Highlight when hovering a graph element</li>
+          <li>Selection indicator for the graph elements</li>
+          <li>Focus indicator for the graph elements</li>
+          <li>Marquee selection rectangle</li>
+          <li>Resize handles</li>
+          <li>Label candidates when dragging a label</li>
+          <li>Port candidates</li>
+          <li>Tooltips</li>
+          <li>Snap-lines</li>
+          <li>Scroll-bars</li>
+          <li>Label Editor</li>
+        </ul>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+        <h2>CSS-Transitions for the following Elements</h2>
+        <ul>
+          <li>Tooltips</li>
+          <li>Label editor</li>
+        </ul>
+      </div>
+    </aside>
 
-  <div id="graphOverviewComponent" class="demo-overview-container">
-    <div class="demo-overview-header">Overview</div>
-    <div id="overviewComponent"></div>
-  </div>
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="CSSStylingDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphOverviewComponent" class="demo-overview-container">
+          <div class="demo-overview-header">Overview</div>
+          <div id="overviewComponent"></div>
+        </div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="CSSStylingDemo.js"></script>
+  </body>
 </html>

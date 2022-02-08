@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/labelediting/index.html).
 
+# Label Editing Demo
+
 This demo shows customizations of the interactive label editing. In particular, it shows:
 
 - The related properties of [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode).

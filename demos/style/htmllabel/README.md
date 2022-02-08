@@ -4,9 +4,11 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/htmllabel/index.html).
 
+# HTML Label Demo
+
 This demo shows how HTML can be used for rendering label texts using a custom label style implementation.
 
-Note that the visualizations in this demo do not work in Internet Explorer due to missing SVG `foreign object` support. HTML labels work in MS Edge but repainting has noticeable delays when zooming the viewport.
+Note that the visualizations in this demo do not work in Internet Explorer due to missing SVG `foreign object` support.
 
 ## HTML Label Editor
 

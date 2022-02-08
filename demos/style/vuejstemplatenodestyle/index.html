@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,213 +34,263 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Vue.js Template Node Style Demo [yFiles for HTML]</title>
+    <title>Vue.js Template Node Style Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/lint.css"/>
-  <!-- load Vue.js, a helper package and the demo -->
-  <script src="https://unpkg.com/vue@2.6.12"></script>
-  <script src="https://unpkg.com/jsonlint@1.6.3"></script>
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/lint.css"
+    />
+    <!-- load Vue.js, a helper package and the demo -->
+    <script src="https://unpkg.com/vue@2.6.12"></script>
+    <script src="https://unpkg.com/jsonlint@1.6.3"></script>
 
-  <!-- load Codemirror resources -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/search.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/searchcursor.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/json-lint.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/lint.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/xml/xml.min.js"></script>
+    <!-- load Codemirror resources -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/search.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/searchcursor.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/json-lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/xml/xml.min.js"></script>
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #graphComponent {
-      background-color: #EEEEEE;
-    }
-
-    .editorText {
-      font-family: "Consolas", "Courier New", Courier, mono, serif;
-      font-size: 13px;
-    }
-
-    .right h2 {
-      margin: 1ex 1em 1ex 1ex;
-      display: inline-block;
-    }
-
-    .left {
-      width: 50%;
-      top: 60px;
-      position: absolute;
-      bottom: 0;
-      border-right: 4px solid #f7f7f7;
-    }
-
-    .right {
-      width: 49.8%;
-      position: absolute;
-      top: 100px;
-      bottom: 0;
-      right: 0;
-      background-color: #f7f7f7;
-      padding-right: 10px;
-      box-sizing: border-box;
-    }
-
-    @media screen and (max-height: 500px) {
-      .right {
-        top: 60px;
+    <style>
+      #graphComponent {
+        background-color: #eeeeee;
       }
-    }
 
-    #templateEditorContainer {
-      height: 70%;
-    }
+      .editorText {
+        font-family: 'Consolas', 'Courier New', Courier, mono, serif;
+        font-size: 13px;
+      }
 
-    #tagEditorContainer {
-      height: 20%;
-    }
+      .right h2 {
+        margin: 1ex 1em 1ex 1ex;
+        display: inline-block;
+      }
 
-    .CodeMirror {
-      height: 100%;
-    }
+      .left {
+        width: 50%;
+        top: 60px;
+        position: absolute;
+        bottom: 0;
+        border-right: 4px solid #f7f7f7;
+      }
 
-    .error {
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: bold;
-      vertical-align: baseline;
-      text-align: center;
-      height: 0;
-      box-sizing: border-box;
-      transition: all .2s ease-in-out;
-      margin-left: 1ex;
-    }
+      .right {
+        width: 49.8%;
+        position: absolute;
+        top: 100px;
+        bottom: 0;
+        right: 0;
+        background-color: #f7f7f7;
+        padding-right: 10px;
+        box-sizing: border-box;
+      }
 
-    #template-text-area-error {
-      bottom: 250px;
-    }
+      @media screen and (max-height: 500px) {
+        .right {
+          top: 60px;
+        }
+      }
 
-    #tag-text-area-error {
-      bottom: 15px;
-    }
+      #templateEditorContainer {
+        height: 70%;
+      }
 
-    .apply-button {
-      float: right;
-      margin: 1ex 0 1ex 0;
-      padding: 5px 9px 5px 9px;
-      background-color: #1871BD;
-      color: #f7f7f7;
-      border: none;
-      cursor: pointer;
-    }
+      #tagEditorContainer {
+        height: 20%;
+      }
 
-    .apply-button:hover {
-      background-color: #328AD5;
-    }
+      .CodeMirror {
+        height: 100%;
+      }
 
-    .apply-button:disabled {
-      background-color: #A0A0A0;
-    }
+      .error {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: bold;
+        vertical-align: baseline;
+        text-align: center;
+        height: 0;
+        box-sizing: border-box;
+        transition: all 0.2s ease-in-out;
+        margin-left: 1ex;
+      }
 
-    .open-error {
-      height: 1.5em;
-      background-color: #F44336;
-      padding: 2px 4px;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
+      #template-text-area-error {
+        bottom: 250px;
+      }
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo presents the Vue.js template node style that leverages the powerful data binding and condition rendering
-      features of the <a href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue.js framework</a>.
-    </p>
-    <p>
-      With this style, node visualizations are defined by SVG templates, similar to the template styles that are
-      included in the library. However, since the templates of this style can use the powerful data binding of Vue.js,
-      complex requirements are more easy to realize.
-    </p>
-    <p>
-      The section <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles" target="_blank">Using Vue.js Templates in Node Styles</a>
-      in the Developer's Guide elaborates on how to create template strings and which properties are available
-      for data binding.
-    </p>
+      #tag-text-area-error {
+        bottom: 15px;
+      }
 
-    <h2>Things to Try</h2>
+      .apply-button {
+        float: right;
+        margin: 1ex 0 1ex 0;
+        padding: 5px 9px 5px 9px;
+        background-color: #1871bd;
+        color: #f7f7f7;
+        border: none;
+        cursor: pointer;
+      }
 
-    <p>
-      Change the template of one or more nodes. Bind colors or text to properties in the tag. Then, apply the new
-      template by pressing the button. Or modify the tag and see how the style changes.
-    </p>
+      .apply-button:hover {
+        background-color: #328ad5;
+      }
 
-    <h2>Related Documentation</h2>
-    <ul>
-      <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles" target="_blank">Using Vue.js Templates in Node Styles</a></li>
-      <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles" target="_blank">Using SVG Templates in Styles</a></li>
-    </ul>
+      .apply-button:disabled {
+        background-color: #a0a0a0;
+      }
 
-    <h2>Related Demos</h2>
-    <ul>
-      <li><a href="../../style/templatestyles/index.html">Template Styles Demo</a></li>
-      <li><a href="../../style/vuejstemplatenodestyle/index.html">Vue.js Template Node Style Demo</a></li>
-    </ul>
+      .open-error {
+        height: 1.5em;
+        background-color: #f44336;
+        padding: 2px 4px;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Vue.js Template Node Style Demo</h1>
 
-    <h2>Additional Tools</h2>
-    <p>
-      Graphs containing template node style are compatible with <a href="https://www.yworks.com/yed-live/"
-      target="_blank">yEd Live</a>.
-    </p>
-  </div>
-</aside>
+        <p>
+          This demo presents the Vue.js template node style that leverages the powerful data binding
+          and condition rendering features of the
+          <a href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue.js framework</a>.
+        </p>
+        <p>
+          With this style, node visualizations are defined by SVG templates, similar to the template
+          styles that are included in the library. However, since the templates of this style can
+          use the powerful data binding of Vue.js, complex requirements are more easy to realize.
+        </p>
+        <p>
+          The section
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles"
+            >Using Vue.js Templates in Node Styles</dguide
+          >
+          in the Developer's Guide elaborates on how to create template strings and which properties
+          are available for data binding.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="Open" title="Open from GraphML File" class="demo-icon-yIconOpen"></button>
-    <button data-command="Save" title="Save to GraphML File" class="demo-icon-yIconSave"></button>
-    <div class="demo-separator"></div>
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Reload" title="Reload" class="demo-icon-yIconReload"></button>
-  </div>
+        <h2>Things to Try</h2>
 
-  <div id="graphComponent" class="left"></div>
+        <p>
+          Change the template of one or more nodes. Bind colors or text to properties in the tag.
+          Then, apply the new template by pressing the button. Or modify the tag and see how the
+          style changes.
+        </p>
 
-  <div class="right">
-    <h2>Template String</h2>
-    <button data-command="ApplyTemplate" id="apply-template-button" class="apply-button"
-      title="Applies the current Template to all selected nodes">Apply Template
-    </button>
-    <div id="template-text-area-error" class="error">
-      Could not compile template string!
+        <h2>Related Documentation</h2>
+        <ul>
+          <li>
+            <dguide section="custom-styles_vuejs-template-styles"
+              >Using Vue.js Templates in Node Styles</dguide
+            >
+          </li>
+          <li>
+            <dguide section="custom-styles_template-styles" target="_blank">Using SVG Templates in Styles</a>
+          </li>
+        </ul>
+
+        <h2>Related Demos</h2>
+        <ul>
+          <li><a href="../../style/templatestyles/index.html">Template Styles Demo</a></li>
+          <li>
+            <a href="../../style/vuejstemplatenodestyle/index.html"
+              >Vue.js Template Node Style Demo</a
+            >
+          </li>
+        </ul>
+
+        <h2>Additional Tools</h2>
+        <p>
+          Graphs containing template node style are compatible with
+          <a href="https://www.yworks.com/yed-live/" target="_blank">yEd Live</a>.
+        </p>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          data-command="Open"
+          title="Open from GraphML File"
+          class="demo-icon-yIconOpen"
+        ></button>
+        <button
+          data-command="Save"
+          title="Save to GraphML File"
+          class="demo-icon-yIconSave"
+        ></button>
+        <div class="demo-separator"></div>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Reload" title="Reload" class="demo-icon-yIconReload"></button>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent" class="left"></div>
+        <div class="right">
+          <h2>Template String</h2>
+          <button
+            data-command="ApplyTemplate"
+            id="apply-template-button"
+            class="apply-button"
+            title="Applies the current Template to all selected nodes"
+          >
+            Apply Template
+          </button>
+          <div id="template-text-area-error" class="error">Could not compile template string!</div>
+          <div id="templateEditorContainer" class="editorText">
+            <textarea id="template-text-area" style="width: 100%; height: 100%"></textarea>
+          </div>
+
+          <h2>Tag Object</h2>
+          <button
+            data-command="ApplyTag"
+            id="apply-tag-button"
+            class="apply-button"
+            title="Applies the current Tag to all selected nodes"
+          >
+            Apply Tag
+          </button>
+          <div id="tag-text-area-error" class="error">Could not parse tag object!</div>
+          <div id="tagEditorContainer" class="editorText">
+            <textarea id="tag-text-area"></textarea>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="templateEditorContainer" class="editorText">
-      <textarea id="template-text-area" style="width:100%;height:100%"></textarea>
-    </div>
 
-    <h2>Tag Object</h2>
-    <button data-command="ApplyTag" id="apply-tag-button" class="apply-button"
-      title="Applies the current Tag to all selected nodes">Apply Tag
-    </button>
-    <div id="tag-text-area-error" class="error">
-      Could not parse tag object!
-    </div>
-    <div id="tagEditorContainer" class="editorText">
-      <textarea id="tag-text-area"></textarea>
-    </div>
-  </div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="VuejsTemplateNodeStyleDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="VuejsTemplateNodeStyleDemo.js"></script>
+  </body>
 </html>

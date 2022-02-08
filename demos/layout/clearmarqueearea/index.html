@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,137 +34,143 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Clear Marquee Area Demo [yFiles for HTML]</title>
+    <title>Clear Marquee Area Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Clear Marquee Area Demo</h1>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      A demo that shows how to interactively move graph elements within a marquee rectangle in a given graph layout so that the modifications in the graph are minimal.
-    </p>
-    <p>
-      Every time the marquee rectangle is dragged interactively,
-      <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a>
-      will push away the other elements so there is a free area for the rectangle.
-    </p>
-    <p>
-      The <strong>Clear Rectangle Area</strong> demo offers more options for playing around with the
-      <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a>.
-    </p>
+        <p>
+          A demo that shows how to interactively move graph elements within a marquee rectangle in a
+          given graph layout so that the modifications in the graph are minimal.
+        </p>
+        <p>
+          Every time the marquee rectangle is dragged interactively,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a>
+          will push away the other elements so there is a free area for the rectangle.
+        </p>
+        <p>
+          The <strong>Clear Rectangle Area</strong> demo offers more options for playing around with
+          the <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a>.
+        </p>
 
-    <p>
-      You can choose between different strategies for clearing the area:
-    </p>
-    <ul>
-      <li>
-        <strong>Local:</strong> Tries to change the layout rather locally.
-      </li>
-      <li>
-        <strong>LocalUniform:</strong> Tries to change the layout rather locally but moving all necessary nodes by a
-        uniform offset.
-      </li>
-      <li>
-        <strong>PreserveShapes:</strong> Tries to preserve the shape of the existing edge paths.
-      </li>
-      <li>
-        <strong>PreserveShapesUniform:</strong> Globally partitions the graph into two parts and moves them apart.
-      </li>
-      <li>
-        <strong>Global:</strong> Divides the graph into two partitions somewhere along the area and moves them
-        horizontally or vertically.
-      </li>
-    </ul>
+        <p>You can choose between different strategies for clearing the area:</p>
+        <ul>
+          <li><strong>Local:</strong> Tries to change the layout rather locally.</li>
+          <li>
+            <strong>LocalUniform:</strong> Tries to change the layout rather locally but moving all
+            necessary nodes by a uniform offset.
+          </li>
+          <li>
+            <strong>PreserveShapes:</strong> Tries to preserve the shape of the existing edge paths.
+          </li>
+          <li>
+            <strong>PreserveShapesUniform:</strong> Globally partitions the graph into two parts and
+            moves them apart.
+          </li>
+          <li>
+            <strong>Global:</strong> Divides the graph into two partitions somewhere along the area
+            and moves them horizontally or vertically.
+          </li>
+        </ul>
 
-    <p>
-      You can choose between different strategies for assigning nodes to components whose elements should preferably not
-      be separated:
-    </p>
+        <p>
+          You can choose between different strategies for assigning nodes to components whose
+          elements should preferably not be separated:
+        </p>
 
-    <ul>
-      <li>
-        <strong>Single:</strong> Each node is a separate component.
-      </li>
-      <li>
-        <strong>Connected:</strong> Components are defined by the connected components.
-      </li>
-      <li>
-        <strong>Clustering:</strong> Components are defined by edge betweenness clustering.
-      </li>
-    </ul>
+        <ul>
+          <li><strong>Single:</strong> Each node is a separate component.</li>
+          <li><strong>Connected:</strong> Components are defined by the connected components.</li>
+          <li>
+            <strong>Clustering:</strong> Components are defined by edge betweenness clustering.
+          </li>
+        </ul>
 
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Drag the mouse with the <strong>right button pressed</strong> to create a marquee
+            rectangle and watch the graph give way to it.
+          </li>
+          <li>
+            Start dragging the marquee rectangle within a group node to create more space in the
+            group.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-          Drag the mouse with the <strong>right button pressed</strong> to create a marquee rectangle and watch the graph give way to it.
-      </li>
-      <li>
-          Start dragging the marquee rectangle within a group node to create more space in the group.
-      </li>
-    </ul>
-  </div>
-</aside>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
 
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <span>Sample Graph</span>
+        <select id="sample-graphs" data-command="SelectSampleGraph">
+          <option value="hierarchic">Hierarchic</option>
+          <option value="grouping">Grouping</option>
+          <option value="organic">Organic</option>
+          <option value="orthogonal">Orthogonal</option>
+          <option value="circular">Circular</option>
+          <option value="tree">Tree</option>
+          <option value="balloon">Balloon</option>
+          <option value="seriesparallel">Series-Parallel</option>
+          <option value="components">Components</option>
+        </select>
 
-    <span>Sample Graph</span>
-    <select id="sample-graphs" data-command="SelectSampleGraph">
-      <option value="hierarchic">Hierarchic</option>
-      <option value="grouping">Grouping</option>
-      <option value="organic">Organic</option>
-      <option value="orthogonal">Orthogonal</option>
-      <option value="circular">Circular</option>
-      <option value="tree">Tree</option>
-      <option value="balloon">Balloon</option>
-      <option value="seriesparallel">Series-Parallel</option>
-      <option value="components">Components</option>
-    </select>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <span>Clear Area Strategy</span>
+        <select id="clear-area-strategies" data-command="SelectClearAreaStrategy">
+          <option value="global">Global</option>
+          <option value="local">Local</option>
+          <option value="local-uniform">Local Uniform</option>
+          <option selected="" value="preserve-shapes">Preserve Shapes</option>
+          <option value="preserve-shapes-uniform">Preserve Shapes Uniform</option>
+        </select>
 
-    <span>Clear Area Strategy</span>
-    <select id="clear-area-strategies" data-command="SelectClearAreaStrategy">
-      <option value="global">Global</option>
-      <option value="local">Local</option>
-      <option value="local-uniform">Local Uniform</option>
-      <option selected value="preserve-shapes">Preserve Shapes</option>
-      <option value="preserve-shapes-uniform">Preserve Shapes Uniform</option>
-    </select>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <span>Component Assignment Strategy</span>
+        <select id="component-assignment-strategies" data-command="SelectAssignmentStrategy">
+          <option value="single">Single</option>
+          <option value="connected">Connected</option>
+          <option value="clustering">Clustering</option>
+        </select>
+      </div>
 
-    <span>Component Assignment Strategy</span>
-    <select id="component-assignment-strategies" data-command="SelectAssignmentStrategy">
-      <option value="single">Single</option>
-      <option value="connected">Connected</option>
-      <option value="clustering">Clustering</option>
-    </select>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-
-<script type="module" crossorigin="anonymous" src="ClearMarqueeAreaDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="ClearMarqueeAreaDemo.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/drag-from-component/index.html).
 
+# Drag From Component
+
 This demo shows how to use the HTML5 Drag and Drop support to drag graph items from the component to other HTML elements.
 
 ## Things to Try
@@ -18,6 +20,6 @@ This demo shows how to use the HTML5 Drag and Drop support to drag graph items f
 ## Related Demos
 
 - [Drag and Drop](../draganddrop)
-- [Graph Drag and Drop](../graph-drag-and-drop-from-component)
+- [Graph Drag and Drop](../graph-drag-and-drop)
 - [Custom Drag and Drop](../custom-drag-and-drop)
 - [Tutorial: Drag and Drop](../../03-tutorial-application-features/drag-and-drop/index.html)

@@ -4,7 +4,7 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/analysis/clustering/index.html).
 
-## Demo Description
+# Clustering Demo
 
 This demo showcases a selection of clustering algorithms. The algorithms presented are the following:
 

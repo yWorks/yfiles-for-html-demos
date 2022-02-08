@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,78 +33,110 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Hierarchic Layout with Constraints - Layout Features Tutorial [yFiles for HTML]</title>
+    <title>Hierarchic Layout with Constraints - Layout Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Layout Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Hierarchic Layout with Constraints</h2>
+        <h1>Hierarchic Layout with Constraints</h1>
 
-    <p>
-      This demo shows how to customize the assignment of the nodes to the layers (layering) and the order of the nodes
-      in a layer (sequencing) when using the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a>.
-    </p>
-    <h3>Layer constraints</h3>
-    <p>
-      The layout is configured such that <span style="color: #17BEBB; font-weight: bold">node 5</span> follows node 4 on
-      the same layer. When using the default <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a>,
-      <span style="color: #17BEBB; font-weight: bold">node 5</span> is placed on the next layer.
-    </p>
-    <h3>Sequence constraints</h3>
-    <p>
-      The only configured sequence constraint is that <span style="color: #17BEBB; font-weight: bold">node 5</span> follows after node 4.
-    </p>
-    <p>
-      Click the button in the toolbar to toggle between <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a>
-      with and without configured constraints.
-    </p>
+        <p>
+          This demo shows how to customize the assignment of the nodes to the layers (layering) and
+          the order of the nodes in a layer (sequencing) when using the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a>.
+        </p>
+        <h3>Layer constraints</h3>
+        <p>
+          The layout is configured such that
+          <span style="color: #17bebb; font-weight: bold">node 5</span> follows node 4 on the same
+          layer. When using the default <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a>,
+          <span style="color: #17bebb; font-weight: bold">node 5</span> is placed on the next layer.
+        </p>
+        <h3>Sequence constraints</h3>
+        <p>
+          The only configured sequence constraint is that
+          <span style="color: #17bebb; font-weight: bold">node 5</span> follows after node 4.
+        </p>
+        <p>
+          Click the button in the toolbar to toggle between
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">Hierarchic Layout</a>
+          with and without configured constraints.
+        </p>
 
-    <h3>Code Snippet</h3>
-    <p>You can copy the code snippet to configure the layout from
-      <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/hierarchic-constraints/HierarchicConstraints.ts"
-         target="_blank">GitHub</a>.</p>
+        <h3>Code Snippet</h3>
+        <p>
+          You can copy the code snippet to configure the layout from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/hierarchic-constraints/HierarchicConstraints.ts"
+            target="_blank"
+            >GitHub</a
+          >.
+        </p>
 
-    <h3>Demos</h3>
-    <p>
-      See the <a href="../../layout/layerconstraints/index.html">Layer Constraints</a> and
-      <a href="../../layout/sequenceconstraints/index.html">Sequence Constraints</a> demos
-      for more elaborate examples of the constraints functionality.
-    </p>
+        <h3>Demos</h3>
+        <p>
+          See the <a href="../../layout/layerconstraints/index.html">Layer Constraints</a> and
+          <a href="../../layout/sequenceconstraints/index.html">Sequence Constraints</a> demos for
+          more elaborate examples of the constraints functionality.
+        </p>
 
-    <h3>Documentation</h3>
-    <p>
-      See the <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_layer_assignment" target="_blank">Constrained Layer Assignment</a>
-      and <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing" target="_blank">Constrained Node Sequencing</a>
-      sections in the Developer's Guide for an in-depth discussion of the relevant concepts.
-    </p>
+        <h3>Documentation</h3>
+        <p>
+          See the
+          <dguide section="hierarchical_layout-constrained_layer_assignment"
+            >Constrained Layer Assignment</dguide
+          >
+          and
+          <dguide section="hierarchical_layout-constrained_node_sequencing"
+            >Constrained Node Sequencing</dguide
+          >
+          sections in the Developer's Guide for an in-depth discussion of the relevant concepts.
+        </p>
+      </div>
+    </aside>
 
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  </div>
-</aside>
+        <span class="demo-separator"></span>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
+        <input
+          type="checkbox"
+          id="toggleFeature"
+          class="demo-toggle-button labeled"
+          title="Use Constraints"
+          checked=""
+          data-command="ToggleFeature"
+        /><label for="toggleFeature">Use Constraints</label>
+      </div>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-    <span class="demo-separator"></span>
-
-    <input type="checkbox" id="toggleFeature" class="demo-toggle-button labeled" title="Use Constraints" checked
-           data-command="ToggleFeature"/><label for="toggleFeature">Use Constraints</label>
-
-  </div>
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/hierarchic-given-layering/index.html).
 
+# Hierarchic Layout with Given Layering
+
 ## Hierarchic Layout with Given Layering
 
 This demo shows how to configure the [Hierarchic Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) so that the nodes are placed in a layer which is defined by the user.

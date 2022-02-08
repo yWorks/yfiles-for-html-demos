@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,93 +34,114 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Edge To Edge Demo [yFiles for HTML]</title>
+    <title>Edge To Edge Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left demo-description">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows edge-to-edge connections. The input mode of this demo is configured to allow edges to connect
-      not only to nodes but also to edges.
-    </p>
-    <p>
-      This application also demonstrates how to provide port candidates at edges to allow interactive creation of
-      edge-to-edge connections. Please take a look at the code behind to observe some of the customization possibilities.
-    </p>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left demo-description">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Edge To Edge Demo</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Create a connection between a node and an edge by pressing the left mouse button on an unselected node and
-        dragging the edge onto another edge.
-      </li>
-      <li>
-        Create a connection between two edges by dragging the mouse from an edge onto another edge.
-      </li>
-      <li>
-        Hold down the shift modifier when moving the endpoints of an edge across another edge to create dynamic port
-        candidates that best match the mouse location.
-      </li>
-      <li>
-        Start dragging the mouse from various positions on an edge to observe that the best available port location
-        is chosen for the source port.
-      </li>
-      <li>
-        Re-connect an existing edge by selecting it and dragging the source or target onto another node or edge.
-      </li>
-      <li>
-        Try to re-connect an edge's source or target to itself or another edge that connects to the edge that is being
-        re-connected. There will be no port candidates since connecting an edge to itself or creating a mutual
-        dependency is forbidden in this demo.
-      </li>
-    </ul>
-    <p>
-      Please note that the bend creation gesture has been customized in this demo. Press the Shift button and drag the
-      mouse on an unselected edge to create a bend.
-    </p>
-  </div>
-</aside>
+        <p>
+          This demo shows edge-to-edge connections. The input mode of this demo is configured to
+          allow edges to connect not only to nodes but also to edges.
+        </p>
+        <p>
+          This application also demonstrates how to provide port candidates at edges to allow
+          interactive creation of edge-to-edge connections. Please take a look at the code behind to
+          observe some of the customization possibilities.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Create a connection between a node and an edge by pressing the left mouse button on an
+            unselected node and dragging the edge onto another edge.
+          </li>
+          <li>
+            Create a connection between two edges by dragging the mouse from an edge onto another
+            edge.
+          </li>
+          <li>
+            Hold down the shift modifier when moving the endpoints of an edge across another edge to
+            create dynamic port candidates that best match the mouse location.
+          </li>
+          <li>
+            Start dragging the mouse from various positions on an edge to observe that the best
+            available port location is chosen for the source port.
+          </li>
+          <li>
+            Re-connect an existing edge by selecting it and dragging the source or target onto
+            another node or edge.
+          </li>
+          <li>
+            Try to re-connect an edge's source or target to itself or another edge that connects to
+            the edge that is being re-connected. There will be no port candidates since connecting
+            an edge to itself or creating a mutual dependency is forbidden in this demo.
+          </li>
+        </ul>
+        <p>
+          Please note that the bend creation gesture has been customized in this demo. Press the
+          Shift button and drag the mouse on an unselected edge to create a bend.
+        </p>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
 
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
 
-    <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button">
-    <label for="demo-snapping-button"class="demo-icon-yIconSnapping" title="Snapping"></label>
-    <input type="checkbox" id="demo-orthogonal-editing-button"class="demo-toggle-button">
-    <label for="demo-orthogonal-editing-button"class="demo-icon-yIconOrthogonal" title="Enable Orthogonal Edges"></label>
-  </div>
+        <span class="demo-separator"></span>
 
-  <div id="graphComponent"></div>
-</div>
+        <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" />
+        <label for="demo-snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
+        <input type="checkbox" id="demo-orthogonal-editing-button" class="demo-toggle-button" />
+        <label
+          for="demo-orthogonal-editing-button"
+          class="demo-icon-yIconOrthogonal"
+          title="Enable Orthogonal Edges"
+        ></label>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="EdgeToEdgeDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="EdgeToEdgeDemo.js"></script>
+  </body>
 </html>

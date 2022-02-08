@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/graph-search/index.html).
 
-## Graph Search
+Application Features Tutorial
+
+# Graph Search
 
 This demo shows an implementation of the search functionality on the nodes of a graph.
 

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,134 +34,146 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Grid Snapping - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Grid Snapping - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .selectedColor {
-      stroke: #6c6c6c;
-      stroke-width: 2px;
-      width: 24px;
-      height: 24px;
-    }
+    <style>
+      .selectedColor {
+        stroke: #6c6c6c;
+        stroke-width: 2px;
+        width: 24px;
+        height: 24px;
+      }
 
-    #gridColorPicker {
-      padding: 5px;
-      width: 250px;
-      height: 30px;
-    }
+      #gridColorPicker {
+        padding: 5px;
+        width: 250px;
+        height: 30px;
+      }
 
-    .demo-right fieldset {
-      width: 260px;
-    }
-  </style>
+      .demo-right fieldset {
+        width: 260px;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-</head>
-<body class="demo-has-left">
+        <h1>Grid Snapping</h1>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Grid Snapping</h2>
-    <p>
-      This demo shows the <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping" target="_blank">grid snapping</a> feature which enables
-      snapping graph items to grid points. Grid snapping not only works for moving or resizing nodes, but also for
-      creating edges and adding and moving bends.
-    </p>
+        <p>
+          This demo shows the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping" target="_blank">grid snapping</a> feature which enables
+          snapping graph items to grid points. Grid snapping not only works for moving or resizing
+          nodes, but also for creating edges and adding and moving bends.
+        </p>
 
-    <h3>Things to Try</h3>
+        <h3>Things to Try</h3>
 
-    <ul>
-      <li>
-        Toggle the grid's visibility with the 'Show Grid' icon in the toolbar. The snapping feature itself is unaffected
-        by the visibility.
-      </li>
-      <li>
-        Specify how items snap to the grid with the 'Grid Snapping' options on the right. The
-        grid visualization is not affected by this snap type.
-      </li>
-      <li>
-        Select and move a node or bend to make it snap to the grid.
-      </li>
-      <li>
-        Select and resize a node to make it snap to the grid.
-      </li>
-      <li>
-        Change the grid visualization.
-      </li>
-      <li>
-        Choose a different color for the grid.
-      </li>
-      <li>
-        Change the thickness of the grid.
-      </li>
-      <li>
-        Test the different render modes for the grid.
-      </li>
-    </ul>
+        <ul>
+          <li>
+            Toggle the grid's visibility with the 'Show Grid' icon in the toolbar. The snapping
+            feature itself is unaffected by the visibility.
+          </li>
+          <li>
+            Specify how items snap to the grid with the 'Grid Snapping' options on the right. The
+            grid visualization is not affected by this snap type.
+          </li>
+          <li>Select and move a node or bend to make it snap to the grid.</li>
+          <li>Select and resize a node to make it snap to the grid.</li>
+          <li>Change the grid visualization.</li>
+          <li>Choose a different color for the grid.</li>
+          <li>Change the thickness of the grid.</li>
+          <li>Test the different render modes for the grid.</li>
+        </ul>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Grid Snapping Options</h1>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h1>Grid Snapping Options</h1>
+        <fieldset>
+          <legend>Grid Snapping</legend>
+          <form id="gridSnapTypeRadioGroup"></form>
+        </fieldset>
+        <fieldset>
+          <legend>Grid Appearance</legend>
+          <form id="gridStyleRadioGroup"></form>
+          <p>
+            <span>Color</span><br />
+            <svg xmlns="http://www.w3.org/2000/svg" id="gridColorPicker"></svg>
+          </p>
+          <label>
+            Thickness<br />
+            <input type="range" min="1" max="5" value="1" id="thickness" />
+            <span id="thickness-label">1</span>
+          </label>
+        </fieldset>
 
-  <div class="demo-sidebar-content">
+        <fieldset>
+          <legend>Grid Render Mode</legend>
+          <form id="gridRenderModeRadioGroup"></form>
+        </fieldset>
+      </div>
+    </aside>
 
-    <fieldset>
-      <legend>Grid Snapping</legend>
-      <form id="gridSnapTypeRadioGroup"></form>
-    </fieldset>
-    <fieldset>
-      <legend>Grid Appearance</legend>
-      <form id="gridStyleRadioGroup"></form>
-      <p>
-        <span>Color</span><br>
-        <svg xmlns="http://www.w3.org/2000/svg" id="gridColorPicker"></svg>
-      </p>
-      <label>
-        Thickness<br>
-        <input type="range" min="1" max="5" value="1" id="thickness" />
-        <span id="thickness-label">1</span>
-      </label>
-    </fieldset>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group selected element"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup selected element"
+          class="demo-icon-yIconUngroup"
+        ></button>
 
-    <fieldset>
-      <legend>Grid Render Mode</legend>
-      <form id="gridRenderModeRadioGroup"></form>
-    </fieldset>
-  </div>
-</aside>
+        <span class="demo-separator"></span>
+        <input type="checkbox" id="grid-button" class="demo-toggle-button" checked="" /><label
+          for="grid-button"
+          class="demo-icon-yIconGrid"
+          title="Show Grid"
+        ></label>
+      </div>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-    <span class="demo-separator"></span> <input type="checkbox" id="grid-button" class="demo-toggle-button"
-    checked><label for="grid-button" class="demo-icon-yIconGrid" title="Show Grid"></label>
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

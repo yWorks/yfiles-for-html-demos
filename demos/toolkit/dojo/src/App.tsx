@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,7 +37,7 @@ export default class App extends WidgetBase {
   protected render(): DNode {
     return (
       <div id="app">
-        <aside class="demo-sidebar demo-description">
+        <aside class="demo-sidebar left">
           <DemoSidebar />
         </aside>
 
@@ -47,11 +47,15 @@ export default class App extends WidgetBase {
               {' '}
               <img src={require('./assets/ylogo.svg')} class="demo-y-logo" />{' '}
             </a>{' '}
-            <a href="../../../README.html" target="_blank">
+            <a href="https://www.yworks.com" target="_blank">
               {' '}
               yFiles for HTML{' '}
             </a>{' '}
-            <span class="demo-title">Dojo Demo [yFiles for HTML]</span>
+            <a href="../../../README.html" target="_blank" class="demo-title">
+              {' '}
+              Demos{' '}
+            </a>{' '}
+            <span class="demo-title">Dojo Demo</span>
           </div>
 
           <GraphWidget />

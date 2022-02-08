@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/drag-and-drop/index.html).
 
-## Drag and Drop
+Application Features Tutorial
+
+# Drag and Drop
 
 This demo shows how to use [NodeDropInputMode](https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode) for dragging nodes from a separate panel to drop them into the graph component.
 

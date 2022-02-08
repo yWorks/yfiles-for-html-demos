@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -220,18 +220,6 @@ async function run(licenseData) {
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
-  // enable serialization of the BPMN types - without namespace mappings, serialization will fail
-
-  // support older BPMN style versions (mainly for demo usage)
-  graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/xml/yfiles-bpmn/1.0',
-    BpmnView
-  )
-  graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
-    LegacyBpmnExtensions
-  )
-
   // register the current BPMN styles with the GraphMLIOHandler
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(YFILES_BPMN_NS, BpmnView)
   graphmlSupport.graphMLIOHandler.addNamespace(YFILES_BPMN_NS, YFILES_BPMN_PREFIX)
@@ -239,7 +227,7 @@ async function run(licenseData) {
 
   // load initial graph
   await DemoApp.readGraph(
-    graphmlSupport.graphMLIOHandler,
+    createGraphMLIOHandler(),
     graphComponent.graph,
     'resources/business.graphml'
   )
@@ -429,16 +417,24 @@ function enableFolding() {
 }
 
 /**
- * Create a GraphMLIOHandler that supports reading and writing the BPMN demo styles.
+ * Create a GraphMLIOHandler that supports reading the BPMN demo styles.
  */
 function createGraphMLIOHandler() {
   const graphmlHandler = new GraphMLIOHandler()
-  // enable serialization of the bpmn styles - without a namespace mapping, serialization will fail
+  // enable serialization of the BPMN types - without namespace mappings, serialization will fail
+
+  // support older BPMN style versions (mainly for demo usage)
+  graphmlHandler.addXamlNamespaceMapping('http://www.yworks.com/xml/yfiles-bpmn/1.0', BpmnView)
+  graphmlHandler.addXamlNamespaceMapping(
+    'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
+    LegacyBpmnExtensions
+  )
   graphmlHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
     BpmnView
   )
-  graphmlHandler.addNamespace('http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0', 'bpmn')
+  graphmlHandler.addXamlNamespaceMapping(YFILES_BPMN_NS, BpmnView)
+  graphmlHandler.addNamespace(YFILES_BPMN_NS, YFILES_BPMN_PREFIX)
   return graphmlHandler
 }
 
@@ -581,9 +577,8 @@ function registerCommands() {
 /**
  * Opens a BPMN or GraphML file that was selected via file chooser.
  * @param {!Event} e A file changed event containing the selected file to open.
- * @returns {!Promise}
  */
-async function onFileSelected(e) {
+function onFileSelected(e) {
   const files = e.target.files
   if (files && files.length === 1) {
     const file = files[0]

@@ -1,9 +1,8 @@
-**/node_modules/
+**/build/
 **/dist/
-**/*.html
-**/*.md
-/starter-kits/**
+**/node_modules/
 /03-tutorial-application-features/webgl-rendering/resources/*.json
 /internal/webgl-performance-tests/resources/*.json
+/starter-kits/**
 /view/large-graphs/resources/*.json
 /view/rendering-optimizations/resources/*.json

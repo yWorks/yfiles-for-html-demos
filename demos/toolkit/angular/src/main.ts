@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,6 @@ import { AppModule } from './app/app.module'
 import { environment } from './environments/environment'
 import { License } from 'yfiles'
 import licenseData from '../../../../lib/license.json'
-// @ts-ignore
 import { enableWorkarounds } from './utils/Workarounds'
 
 License.value = licenseData

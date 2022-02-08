@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/criticalpaths/index.html).
 
+# Critical Paths Demo
+
 This demo shows how the hierarchic and tree layout styles emphasise important, or 'critical', paths.
 
 To make these critical paths more striking, the nodes and edges in each path are aligned if possible.

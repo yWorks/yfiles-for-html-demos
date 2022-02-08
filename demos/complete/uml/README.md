@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/uml/index.html).
 
+# UML Editor Demo
+
 The UML Editor demo showcases a custom UML node style that renders an UML data set. Additional control elements are provided to conveniently add/remove entries and to create different type of UML edges as well as toggling the node's 'interface' or 'abstract' state.
 
 The node style uses an [InteriorStretchLabelModel](https://docs.yworks.com/yfileshtml/#/api/InteriorStretchLabelModel) to stack the UML entries on top of each other. A custom [IEditLabelHelper](https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper) is provided by the UML node style to enable editing of the different UML entries.

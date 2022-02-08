@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/fileoperations/index.html).
 
+# File Operations Demo
+
 This demo shows various ways to open and save a graph as GraphML.
 
 ## Things to Try

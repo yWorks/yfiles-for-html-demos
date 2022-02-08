@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/edge-router-buses/index.html).
 
-## EdgeRouter with Bus-style Routing
+Layout Features Tutorial
+
+# EdgeRouter with Bus-style Routing
 
 This demo shows how to configure the EdgeRouter to generate orthogonal bus-style routes. A bus is a segment shared by multiple edges. The actual nodes are attached to the bus with shorter segments.
 

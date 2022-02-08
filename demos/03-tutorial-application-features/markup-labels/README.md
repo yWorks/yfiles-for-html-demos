@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/markup-labels/index.html).
 
-## Markup Labels
+Application Features Tutorial
+
+# Markup Labels
 
 This demo shows how to create labels with rich text features using [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle).
 

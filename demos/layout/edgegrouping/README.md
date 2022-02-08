@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/edgegrouping/index.html).
 
+# Edge Grouping Demo
+
 This demo shows the possibilities of edge and port grouping using the example of [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout). Edge groups lead to edges sharing some segments while port groups will combine the edges only in their first segment.
 
 ## Things to Try

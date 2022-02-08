@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,10 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global moment */
+/* global luxon */
+import type { DateTime as DateTimeType } from 'luxon'
+// import luxon typings
+import luxon from 'luxon'
 
-// import moment typings
-import moment, { Moment, MomentInput } from 'moment'
+const { DateTime } = luxon
 
 /**
  * A helper class that handles the data model and maps graph coordinates to the corresponding dates.
@@ -37,34 +39,51 @@ import moment, { Moment, MomentInput } from 'moment'
  * The first task is placed at the origin of the y axis. Subsequent tasks are placed below.
  * @yjs:keep=duration
  */
-export default class GanttMapper {
-  private readonly _originDate: Moment
+export class GanttMapper {
+  private readonly _originDate: DateTimeType
   tasks: Task[]
   private _subRowMap: Map<Activity, number> = new Map()
   private _subRowCountMap: Map<number, number> = new Map()
 
-  constructor(dataModel: any) {
-    this._originDate = moment(dataModel.originDate)
+  constructor(dataModel: Record<string, any>) {
+    this._originDate = DateTime.fromISO(dataModel.originDate)
     this.tasks = dataModel.tasks.slice()
   }
 
   /**
    * Calculates the x coordinate for a given date.
    */
-  getX(date: MomentInput): number {
-    const momentDate = moment(date)
-    const duration = moment.duration(momentDate.diff(this._originDate))
-    const days = duration.asHours() / 24.0
-    return days * GanttMapper.dayWidth
+  getX(day: DateTimeType): number {
+    const duration = day.diff(this._originDate, 'minutes').minutes
+    // 1440 = 24 * 60 = minutes of 1 day
+    return GanttMapper.dayWidth * (duration / 1440)
   }
 
   /**
    * Calculates the date for a given x coordinate.
    */
-  getDate(x: number): Moment {
-    const duration = x / GanttMapper.dayWidth
-    const durationMin = (duration * 24 * 60) | 0
-    return moment(this._originDate).add(moment.duration(durationMin, 'minutes'))
+  getDate(x: number): DateTimeType {
+    // 1440 = 24 * 60 = minutes of 1 day
+    const minutes = ((x / GanttMapper.dayWidth) * 1440) | 0
+    return this._originDate.plus({ minutes })
+  }
+
+  getVisualRange(start: number, end: number) {
+    const startDate = this.getDate(start).startOf('month')
+    const endDate = this.getDate(end).endOf('month')
+
+    const dayDiff = startDate.diff(this.originDate, 'days').as('days')
+    const oddStartDay = dayDiff % 2 !== 0
+    const oddStartMonth = startDate.month % 2 !== 0
+
+    return {
+      startDate: startDate.toJSDate(),
+      endDate: endDate.toJSDate(),
+      startX: this.getX(startDate),
+      endX: this.getX(endDate),
+      oddStartDay,
+      oddStartMonth
+    }
   }
 
   /**
@@ -155,8 +174,10 @@ export default class GanttMapper {
    * Calculates the total activity duration in hours
    */
   getTotalActivityDuration(activity: Activity): number {
-    const duration = moment.duration(moment(activity.endDate).diff(moment(activity.startDate)))
-    return (duration.asHours() + (activity.leadTime || 0) + (activity.followUpTime || 0)) | 0
+    const hours = DateTime.fromISO(activity.endDate)
+      .diff(DateTime.fromISO(activity.startDate), 'hours')
+      .as('hours')
+    return (hours + (activity.leadTime || 0) + (activity.followUpTime || 0)) | 0
   }
 
   /**
@@ -176,12 +197,8 @@ export default class GanttMapper {
   /**
    * Gets the date corresponding to x=0.
    */
-  get originDate(): Moment {
-    return moment(this._originDate)
-  }
-
-  static format(date: MomentInput, formatString: string): string {
-    return moment(date).format(formatString)
+  get originDate(): DateTimeType {
+    return this._originDate
   }
 
   /**
@@ -189,6 +206,10 @@ export default class GanttMapper {
    */
   static get dayWidth(): number {
     return 80
+  }
+
+  static daysInMonth(date: Date): number {
+    return DateTime.fromJSDate(date).daysInMonth
   }
 
   static get taskSpacing(): number {

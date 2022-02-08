@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,39 +32,48 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>PDF Export Demo Node Server</title>
-  <link rel="stylesheet" type="text/css" href="../../../../doc/readme-style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-</head>
-<body>
-<!-- populated by readme-style.js -->
-<div id="header" class="simple-header">
-  PDF Export Demo Node Server
-</div>
-<main>
-  <div class="content-centered">
-    <div class="content">
-      <div class="breadcrumbs">
-        <a href="../../../README.html">yFiles for HTML</a>
-        <span class="angle-right"></span>
-        PDF Export Demo Node Server
-      </div>
-
-      <h2>The PDF Export Demo Node Server</h2>
-      <p>This server accepts POST requests containing SVG data from the PDF Export Demo. The SVG is rendered and <a
-        href="https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions">exported to PDF</a> in a
-        <a href="https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md">headless Chrome</a> instance.
-        Chrome is controlled using <a href="https://github.com/GoogleChrome/puppeteer">Puppeteer</a>.</p>
-      <h2>Starting the Server</h2>
-      <p>To run the server:</p>
-      <pre>
-npm install
-npm start</pre>
-    </div>
+    <title>PDF Export Demo Node Server</title>
+    <link rel="stylesheet" type="text/css" href="../../../../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
     <!-- populated by readme-style.js -->
-    <div id="footer-detailed"></div>
-  </div>
-</main>
-<script src="../../../../doc/readme-style.js"></script>
-</body>
+    <div id="header" class="simple-header">PDF Export Demo Node Server</div>
+    <main>
+      <div class="content-centered">
+        <div class="content">
+          <div class="breadcrumbs">
+            <a href="../../../README.html">yFiles for HTML</a>
+            <span class="angle-right"></span>
+            PDF Export Demo Node Server
+          </div>
+
+          <h2>The PDF Export Demo Node Server</h2>
+          <p>
+            This server accepts POST requests containing SVG data from the PDF Export Demo. The SVG
+            is rendered and
+            <a
+              href="https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions"
+              >exported to PDF</a
+            >
+            in a
+            <a href="https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md"
+              >headless Chrome</a
+            >
+            instance. Chrome is controlled using
+            <a href="https://github.com/GoogleChrome/puppeteer">Puppeteer</a>.
+          </p>
+          <h2>Starting the Server</h2>
+          <p>To run the server:</p>
+          <pre>
+npm install
+npm start</pre
+          >
+        </div>
+        <!-- populated by readme-style.js -->
+        <div id="footer-detailed"></div>
+      </div>
+    </main>
+    <script src="../../../../doc/readme-style.js"></script>
+  </body>
 </html>

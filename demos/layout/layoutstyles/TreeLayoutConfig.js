@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,13 +38,14 @@ import {
   DelegatingNodePlacer,
   DendrogramNodePlacer,
   DoubleLineNodePlacer,
-  Enum,
   EdgeBundleDescriptor,
   EdgeRouter,
   EdgeRouterScope,
+  Enum,
   GenericLabeling,
   GraphComponent,
   GridNodePlacer,
+  IGraph,
   ILayoutAlgorithm,
   LayeredNodePlacer,
   LayoutData,
@@ -52,7 +53,6 @@ import {
   LeftRightNodePlacer,
   Mapper,
   OrganicEdgeRouter,
-  PortStyle,
   RootAlignment,
   RootNodeAlignment,
   RotatableNodePlacerMatrix,
@@ -79,8 +79,8 @@ import {
 import LayoutConfiguration, {
   EdgeLabeling,
   LabelPlacementAlongEdge,
-  LabelPlacementSideOfEdge,
-  LabelPlacementOrientation
+  LabelPlacementOrientation,
+  LabelPlacementSideOfEdge
 } from './LayoutConfiguration.js'
 import HandleEdgesBetweenGroupsStage from './HandleEdgesBetweenGroupsStage.js'
 
@@ -105,8 +105,6 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     this.actOnSelectionOnlyItem = false
 
     this.defaultLayoutOrientationItem = LayoutOrientation.TOP_TO_BOTTOM
-
-    this.portStyleItem = PortStyle.NODE_CENTER
 
     this.considerNodeLabelsItem = false
 
@@ -176,15 +174,27 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   },
 
   createConfiguredLayoutData: function (graphComponent, layout) {
-    if (this.nodePlacerItem === TreeNodePlacer.HV) {
-      return this.createLayoutDataHorizontalVertical(graphComponent)
-    }
-    if (this.nodePlacerItem === TreeNodePlacer.DELEGATING_LAYERED) {
-      return this.createLayoutDataDelegatingPlacer(graphComponent)
-    }
+    const layoutData =
+      this.nodePlacerItem === TreeNodePlacer.HV
+        ? this.createLayoutDataHorizontalVertical(graphComponent)
+        : this.nodePlacerItem === TreeNodePlacer.DELEGATING_LAYERED
+        ? this.createLayoutDataDelegatingPlacer(graphComponent)
+        : this.createLayoutDataTree(graphComponent, layout)
 
+    return layoutData.combineWith(
+      this.createLabelingLayoutData(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+    )
+  },
+
+  createLayoutDataTree: function (graphComponent, layout) {
     const graph = graphComponent.graph
-    const layoutData = new TreeLayoutData({
+    return new TreeLayoutData({
       gridNodePlacerRowIndices: node => {
         const predecessors = graph.predecessors(node)
         const parent = predecessors.firstOrDefault()
@@ -208,16 +218,6 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         return node.tag ? node.tag.assistant : null
       }
     })
-
-    return layoutData.combineWith(
-      this.createLabelingLayoutData(
-        graphComponent.graph,
-        this.labelPlacementAlongEdgeItem,
-        this.labelPlacementSideOfEdgeItem,
-        this.labelPlacementOrientationItem,
-        this.labelPlacementDistanceItem
-      )
-    )
   },
 
   createLayoutDataHorizontalVertical: function (graphComponent) {

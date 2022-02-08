@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,84 +34,96 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Custom Group Bounds - Custom Styles Tutorial [yFiles for HTML]</title>
+    <title>Custom Group Bounds - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Description</h2>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Custom Styles Tutorial</div>
 
-    <p>
-      This step shows how to customize the way that the group insets are calculated by implementing an <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutGroupBoundsCalculator" target="_blank">ILayoutGroupBoundsCalculator</a>.
-      This implementation takes the labels of the child nodes into account and also considers the insets as specified by
-      the <a href="https://docs.yworks.com/yfileshtml/#/api/INodeInsetsProvider" target="_blank">INodeInsetsProvider</a> of the group node. </p>
-    <p>
-      Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutGroupBoundsCalculator" target="_blank">ILayoutGroupBoundsCalculator</a> replaces
-      <a href="https://docs.yworks.com/yfileshtml/#/api/INodeInsetsProvider" target="_blank">INodeInsetsProvider</a>. If the <a href="https://docs.yworks.com/yfileshtml/#/api/INodeInsetsProvider" target="_blank">INodeInsetsProvider</a> should also be
-      respected, this has to be done explicitly by the <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutGroupBoundsCalculator" target="_blank">ILayoutGroupBoundsCalculator</a> like demonstrated
-      in this sample. </p>
-    <p>
-      If a label is moved to another position of a node, the group bounds are not adjusted automatically. This sample
-      contains code that adjusts the group size when a label is moved. </p>
-    <p>
-      This sample also shows how to draw the group differently in the collapsed state and how to customize the position
-      of the collapse and expand buttons using an <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" target="_blank">ILabelModelParameter</a>. </p>
+        <h1>Custom Group Bounds</h1>
 
-    <h2>Things to Try</h2>
+        <p>
+          This step shows how to customize the way that the group insets are calculated by
+          implementing an <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutGroupBoundsCalculator" target="_blank">ILayoutGroupBoundsCalculator</a>. This implementation takes the
+          labels of the child nodes into account and also considers the insets as specified by the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/INodeInsetsProvider" target="_blank">INodeInsetsProvider</a> of the group node.
+        </p>
+        <p>
+          Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutGroupBoundsCalculator" target="_blank">ILayoutGroupBoundsCalculator</a> replaces
+          <a href="https://docs.yworks.com/yfileshtml/#/api/INodeInsetsProvider" target="_blank">INodeInsetsProvider</a>. If the <a href="https://docs.yworks.com/yfileshtml/#/api/INodeInsetsProvider" target="_blank">INodeInsetsProvider</a> should also be
+          respected, this has to be done explicitly by the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutGroupBoundsCalculator" target="_blank">ILayoutGroupBoundsCalculator</a> like demonstrated in this sample.
+        </p>
+        <p>
+          If a label is moved to another position of a node, the group bounds are not adjusted
+          automatically. This sample contains code that adjusts the group size when a label is
+          moved.
+        </p>
+        <p>
+          This sample also shows how to draw the group differently in the collapsed state and how to
+          customize the position of the collapse and expand buttons using an
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" target="_blank">ILabelModelParameter</a>.
+        </p>
 
-    <ul>
-      <li>
-        Move the node with the label and see how the group size is adjusted.
-      </li>
-      <li>
-        Move the node label to another position on the node. Select it using "Shift-Click" and drag it with the mouse.
-      </li>
-      <li>
-        Take a look at <code>MyGroupNodeStyle.lookup()</code>.
-      </li>
-      <li>
-        Take a look at <code>SampleApplication.createEditorMode()</code>.
-      </li>
-    </ul>
+        <h2>Things to Try</h2>
 
-    <h2>Left to Do</h2>
+        <ul>
+          <li>Move the node with the label and see how the group size is adjusted.</li>
+          <li>
+            Move the node label to another position on the node. Select it using "Shift-Click" and
+            drag it with the mouse.
+          </li>
+          <li>Take a look at <code>MyGroupNodeStyle.lookup()</code>.</li>
+          <li>Take a look at <code>SampleApplication.createEditorMode()</code>.</li>
+        </ul>
 
-    <ul>
-      <li>
-        Render nodes with HTML5 canvas instead of SVG for improved performance, especially for large graphs.
-      </li>
-      <li>
-        Add <a href="https://docs.yworks.com/yfileshtml/#/dguide/bridges-customizations" target="_blank">bridge support</a> to the edge style.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Left to Do</h2>
 
-<div class="demo-content">
+        <ul>
+          <li>
+            Render nodes with HTML5 canvas instead of SVG for improved performance, especially for
+            large graphs.
+          </li>
+          <li>
+            Add <a href="https://docs.yworks.com/yfileshtml/#/dguide/bridges-customizations" target="_blank">bridge support</a> to the edge style.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,74 +34,89 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Graph Decorator - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Graph Decorator - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Graph Decorator</h2>
-    <p>
-      This demo shows how to use the graph decorator concept to customize the behavior and the
-      visualization of graph items.
-    </p>
-    <p>
-      As example, this demo decorates the nodes with a port candidate provider that is a combination of the following
-      existing port candidate providers:
-    </p>
-    <dl>
-      <dt>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider#fromExistingPorts" target="_blank">IPortCandidateProvider#fromExistingPorts</a>
-      </dt>
-      <dd>
-        Provides port candidates at the locations of already existing ports.
-      </dd>
-      <dt>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider#fromNodeCenter" target="_blank">IPortCandidateProvider#fromNodeCenter</a>
-      </dt>
-      <dd>
-        Provides a single port candidate at the center of the node.
-      </dd>
-      <dt>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider#fromShapeGeometry" target="_blank">IPortCandidateProvider#fromShapeGeometry</a>
-      </dt>
-      <dd>
-        Provides several port candidates based on the shape of the node's style.
-      </dd>
-    </dl>
+        <h1>Graph Decorator</h1>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>
+          This demo shows how to use the graph decorator concept to customize the behavior and the
+          visualization of graph items.
+        </p>
+        <p>
+          As example, this demo decorates the nodes with a port candidate provider that is a
+          combination of the following existing port candidate providers:
+        </p>
+        <dl>
+          <dt>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider#fromExistingPorts" target="_blank">IPortCandidateProvider#fromExistingPorts</a>
+          </dt>
+          <dd>Provides port candidates at the locations of already existing ports.</dd>
+          <dt>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider#fromNodeCenter" target="_blank">IPortCandidateProvider#fromNodeCenter</a>
+          </dt>
+          <dd>Provides a single port candidate at the center of the node.</dd>
+          <dt>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider#fromShapeGeometry" target="_blank">IPortCandidateProvider#fromShapeGeometry</a>
+          </dt>
+          <dd>Provides several port candidates based on the shape of the node's style.</dd>
+        </dl>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
-  </div>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group selected element"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup selected element"
+          class="demo-icon-yIconUngroup"
+        ></button>
+      </div>
 
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

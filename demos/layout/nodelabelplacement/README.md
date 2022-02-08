@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/nodelabelplacement/index.html).
 
+# Node Label Placement Demo
+
 This demo shows how to configure node labels and the corresponding node label models as well as how to apply the automatic node labeling algorithm.
 
 ## Things to Try

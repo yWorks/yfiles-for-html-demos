@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,27 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-.demo-sidebar-content {
-  height: calc(50% - 60px) !important;
+.demo-sidebar.demo-left .demo-sidebar-content {
+  height: 50% !important;
+}
+
+.demo-sidebar.demo-right .demo-sidebar-content {
+  height: 28ex;
+}
+
+#log {
+  height: calc(100% - 220px);
+  padding: 0 5px;
+  overflow: auto;
+  -webkit-overflow-scrolling: auto !important;
+  font-family: 'Consolas', 'Courier New', Courier, mono, serif;
+}
+
+.event-types-headline {
+  font-size: 140%;
+  line-height: 130%;
+  padding-left: 20px;
+  font-weight: bold;
 }
 
 .event-options-heading {
@@ -91,18 +110,6 @@
   position: relative;
   vertical-align: middle;
   bottom: 1px;
-}
-
-#log {
-  position: absolute;
-  top: 195px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: auto;
-  -webkit-overflow-scrolling: auto !important;
-  padding: 5px;
-  font-family: 'Consolas', 'Courier New', Courier, mono, serif;
 }
 
 .logMessage {
@@ -219,10 +226,10 @@
 }
 
 .demo-sidebar.demo-right {
-  width: 30%;
+  width: 420px;
 }
 .demo-right-hidden .demo-sidebar.demo-right {
-  right: -30%;
+  right: -420px;
 }
 @media screen and (max-width: 960px) {
   .demo-sidebar {
@@ -238,11 +245,8 @@
     right: 0;
   }
 }
-.demo-has-right .demo-content {
-  right: 30%;
-}
-.demo-right-hidden .demo-content {
-  right: 0;
+body.demo-has-right:not(.demo-right-hidden) .demo-content-dynamic {
+  right: 420px;
 }
 
 #drag-and-drop-panel {

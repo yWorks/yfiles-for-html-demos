@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,175 +34,228 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Table Editor Demo [yFiles for HTML]</title>
+    <title>Table Editor Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .table-background {
-      fill: transparent;
-      stroke: #0b7189;
-      stroke-width: 4px;
-    }
+    <style>
+      .table-background {
+        fill: transparent;
+        stroke: #0b7189;
+        stroke-width: 4px;
+      }
 
-    .table-line {
-      fill: rgb(240, 240, 240);
-      stroke: none;
-    }
+      .table-line {
+        fill: rgb(240, 240, 240);
+        stroke: none;
+      }
 
-    .stripe-background{
-      fill: #f0f0f0;
-      stroke: none;
-    }
+      .stripe-background {
+        fill: #f0f0f0;
+        stroke: none;
+      }
 
-    .stripe-inset {
-      fill: #0b7189;
-      stroke:none;
-    }
+      .stripe-inset {
+        fill: #0b7189;
+        stroke: none;
+      }
 
-    #dndPanelContainer {
-      position: absolute;
-      top: 60px;
-      bottom: 0;
-      width: 200px;
-      border-right: 5px solid #ebeef0;
-      overflow: auto;
-      box-sizing: border-box;
-      z-index: 12;
-    }
+      #dndPanelContainer {
+        position: absolute;
+        top: 60px;
+        bottom: 0;
+        width: 200px;
+        border-right: 5px solid #ebeef0;
+        overflow: auto;
+        box-sizing: border-box;
+        z-index: 12;
+      }
 
-    #dndPanel {
-      width: 100%;
-    }
+      #dndPanel {
+        width: 100%;
+      }
 
-    .demo-dndPanelItem {
-      width: 160px;
-      margin: 10px auto;
-    }
+      .demo-dndPanelItem {
+        width: 160px;
+        margin: 10px auto;
+      }
 
-    .yfiles-cursor-dragdrop-copy { cursor: copy; }
-    .yfiles-cursor-dragdrop-move { cursor: move; }
-    .yfiles-cursor-dragdrop-link { cursor: alias; }
-    .yfiles-cursor-dragdrop-scroll { cursor: move; }
-    .yfiles-cursor-dragdrop-all { cursor: copy; }
-    .yfiles-cursor-dragdrop-no-drop { cursor: no-drop; }
+      .yfiles-cursor-dragdrop-copy {
+        cursor: copy;
+      }
+      .yfiles-cursor-dragdrop-move {
+        cursor: move;
+      }
+      .yfiles-cursor-dragdrop-link {
+        cursor: alias;
+      }
+      .yfiles-cursor-dragdrop-scroll {
+        cursor: move;
+      }
+      .yfiles-cursor-dragdrop-all {
+        cursor: copy;
+      }
+      .yfiles-cursor-dragdrop-no-drop {
+        cursor: no-drop;
+      }
 
-    .demo-toolbar, #graphComponent,
-    .demo-left-hidden .demo-toolbar,
-    .demo-left-hidden #graphComponent {
-      left: 200px !important;
-    }
+      .demo-toolbar,
+      #graphComponent,
+      .demo-left-hidden .demo-toolbar,
+      .demo-left-hidden #graphComponent {
+        left: 200px !important;
+      }
 
-    .yfiles-drag {
-      z-index: 15;
-      opacity: 0.35;
-      transition: opacity .2s ease-in-out;
-    }
+      .yfiles-drag {
+        z-index: 15;
+        opacity: 0.35;
+        transition: opacity 0.2s ease-in-out;
+      }
 
-    .yfiles-drag.hidden {
-      opacity: 0;
-    }
-  </style>
-
-</head>
-<body class="demo-has-left">
-<!--
+      .yfiles-drag.hidden {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description
 -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>The Table Editor demo shows the support for diagrams that are organized in a tabular way, for example in a
-      grid or a swimlane layout. Besides model items and styles for <a href="https://docs.yworks.com/yfileshtml/#/api/Table" target="_blank">Table</a>, yFiles provides dedicated
-      editing features to add, remove, resize, and reparent rows, columns, and the table contents.</p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Table Editor Demo</h1>
 
-    <h2>Basic Gestures</h2>
-    <ul>
-      <li>
-        Select a row or column by clicking on its header. Multiple rows or columns can be selected by keeping <code>Ctrl</code> pressed. Note that selecting a graph element will clear the table selection and vice versa.
-      </li>
-      <li>
-        Press <code>F2</code> to edit the label of a selected stripe. Enter an empty text to remove the label.
-      </li>
-      <li>
-        Press the right mouse button on a stripe header to activate a context menu.
-      </li>
-      <li>
-        A node is assigned to the row and column its center coordinates lie in. Therefore it can be assigned to another row or column simply by dragging it to a new position.
-      </li>
-    </ul>
-    <h2>Modifying the Table</h2>
-    <ul>
-      <li>
-        Add a new row or column by dragging the corresponding item from the list and dropping it onto a table.
-      </li>
-      <li>
-        Delete selected items using the <code>Delete</code> key. Children will be reparented to the deleted stripe's parent. The parent and/or the siblings are resized to disturb the overall table layout as little as possible.
-      </li>
-      <li>
-        Move a stripe by dragging its header to a different position in the table. The highlight indicates whether the stripe is added as a new child or as a sibling of the drop target. Moving a stripe will move all its children as well as its contents.
-      </li>
-    </ul>
-    <h2>Resizing Stripes</h2>
-    <ul>
-      <li>
-        Drag a stripe border to resize the stripe. By default, the neighbor stripes and their contents are moved.
-      </li>
-      <li>
-        Except for the topmost/leftmost borders, resizing always extends the stripe to the bottom/to the right.
-      </li>
-      <li>
-        Press <code>Shift</code> at the beginning of the gesture to redistribute the sizes of the two attached stripes.
-      </li>
-      <li>
-        By default, stripe borders cannot be dragged over content nodes. Press <code>Ctrl</code> at the beginning of the resize gesture to resize the stripes freely.
-      </li>
-      <li>
-        Resizing the table node will resize the outermost stripe(s) accordingly.
-      </li>
-    </ul>
-    <h2>Automatic Layout</h2>
+        <p>
+          The Table Editor demo shows the support for diagrams that are organized in a tabular way,
+          for example in a grid or a swimlane layout. Besides model items and styles for
+          <a href="https://docs.yworks.com/yfileshtml/#/api/Table" target="_blank">Table</a>, yFiles provides dedicated editing features to add, remove, resize, and
+          reparent rows, columns, and the table contents.
+        </p>
 
-    <ul>
-      <li>
-        Calculate a new hierarchic layout for the tables and their contents by pressing the layout button.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Basic Gestures</h2>
+        <ul>
+          <li>
+            Select a row or column by clicking on its header. Multiple rows or columns can be
+            selected by keeping <code>Ctrl</code> pressed. Note that selecting a graph element will
+            clear the table selection and vice versa.
+          </li>
+          <li>
+            Press <code>F2</code> to edit the label of a selected stripe. Enter an empty text to
+            remove the label.
+          </li>
+          <li>Press the right mouse button on a stripe header to activate a context menu.</li>
+          <li>
+            A node is assigned to the row and column its center coordinates lie in. Therefore it can
+            be assigned to another row or column simply by dragging it to a new position.
+          </li>
+        </ul>
+        <h2>Modifying the Table</h2>
+        <ul>
+          <li>
+            Add a new row or column by dragging the corresponding item from the list and dropping it
+            onto a table.
+          </li>
+          <li>
+            Delete selected items using the <code>Delete</code> key. Children will be reparented to
+            the deleted stripe's parent. The parent and/or the siblings are resized to disturb the
+            overall table layout as little as possible.
+          </li>
+          <li>
+            Move a stripe by dragging its header to a different position in the table. The highlight
+            indicates whether the stripe is added as a new child or as a sibling of the drop target.
+            Moving a stripe will move all its children as well as its contents.
+          </li>
+        </ul>
+        <h2>Resizing Stripes</h2>
+        <ul>
+          <li>
+            Drag a stripe border to resize the stripe. By default, the neighbor stripes and their
+            contents are moved.
+          </li>
+          <li>
+            Except for the topmost/leftmost borders, resizing always extends the stripe to the
+            bottom/to the right.
+          </li>
+          <li>
+            Press <code>Shift</code> at the beginning of the gesture to redistribute the sizes of
+            the two attached stripes.
+          </li>
+          <li>
+            By default, stripe borders cannot be dragged over content nodes. Press
+            <code>Ctrl</code> at the beginning of the resize gesture to resize the stripes freely.
+          </li>
+          <li>Resizing the table node will resize the outermost stripe(s) accordingly.</li>
+        </ul>
+        <h2>Automatic Layout</h2>
 
-<div class="demo-content">
+        <ul>
+          <li>
+            Calculate a new hierarchic layout for the tables and their contents by pressing the
+            layout button.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
-    <button id="newButton" data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
-    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button id="newButton" data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <button
+          data-command="Open"
+          title="Open a GraphML file"
+          class="demo-icon-yIconOpen"
+        ></button>
+        <button
+          data-command="Save"
+          title="Save a GraphML file"
+          class="demo-icon-yIconSave"
+        ></button>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
 
-    <button id="layoutButton" data-command="LayoutCommand" title="Apply Layout" class="demo-icon-yIconLayout labeled">Layout</button>
-  </div>
+        <button
+          id="layoutButton"
+          data-command="LayoutCommand"
+          title="Apply Layout"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Layout
+        </button>
+      </div>
 
-  <div id="dndPanelContainer">
-    <div id="dndPanel"></div>
-  </div>
-
-  <!--
+      <!--
   The GraphComponent
   -->
-  <div id="graphComponent"></div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="TableEditorDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="dndPanelContainer">
+          <div id="dndPanel"></div>
+        </div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="TableEditorDemo.js"></script>
+  </body>
 </html>

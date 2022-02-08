@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,210 +34,243 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Graph Builder Demo [yFiles for HTML]</title>
+    <title>Graph Builder Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.css"
+    />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/xml/xml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
 
-  <style>
-    #editSourceDialogModal {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 100000;
-      background: rgba(0,0,0,0.3);
-      overflow: auto;
-    }
-
-    #editSourceDialog {
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-      position: absolute;
-      top: 50px;
-      left: 25%;
-      right: 25%;
-      z-index: 100001;
-      background: #F9F9F9;
-      border: 1px solid #ccc;
-      box-shadow: 0 0 12px rgba(0, 0, 0, .3);
-    }
-
-    @media (max-width: 700px) {
-      #editSourceDialog {
-        left: 5px;
-        right: 5px;
+    <style>
+      #editSourceDialogModal {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100000;
+        background: rgba(0, 0, 0, 0.3);
+        overflow: auto;
       }
-    }
 
-    #editSourceDialog>* {
-      margin: 10px 0;
-    }
+      #editSourceDialog {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        position: absolute;
+        top: 50px;
+        left: 25%;
+        right: 25%;
+        z-index: 100001;
+        background: #f9f9f9;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+      }
 
-    #editSourceDialog h2 {
-      margin: 10px auto;
-    }
+      @media (max-width: 700px) {
+        #editSourceDialog {
+          left: 5px;
+          right: 5px;
+        }
+      }
 
-    #editSourceDialog textarea {
-      width: 100%;
-      height: 150px;
-    }
+      #editSourceDialog > * {
+        margin: 10px 0;
+      }
 
-    #editSourceDialog .CodeMirror {
-      height: 200px;
-    }
+      #editSourceDialog h2 {
+        margin: 10px auto;
+      }
 
-    #editSourceDialog input[type="text"] {
-      max-width: 100%;
-      width: 300px;
-    }
+      #editSourceDialog textarea {
+        width: 100%;
+        height: 150px;
+      }
 
-    .sourcesList {
-      display: flex;
-      flex-direction: column;
-    }
+      #editSourceDialog .CodeMirror {
+        height: 200px;
+      }
 
-    .sourceCard {
-      background: lightgray;
-      padding: 10px;
-      margin: 0 0 5px;
-      position: relative;
-    }
+      #editSourceDialog input[type='text'] {
+        max-width: 100%;
+        width: 300px;
+      }
 
-    .sourceCard button {
-      position: absolute;
-      width: 70px;
-      top: 8px;
-    }
+      .sourcesList {
+        display: flex;
+        flex-direction: column;
+      }
 
-    .sourceCard .editButton {
-      right: 75px;
-    }
-    .sourceCard .removeButton {
-      right: -3px;
-    }
+      .sourceCard {
+        background: lightgray;
+        padding: 10px;
+        margin: 0 0 5px;
+        position: relative;
+      }
 
-    .buttonsContainer {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      width: 100%;
-    }
+      .sourceCard button {
+        position: absolute;
+        width: 70px;
+        top: 8px;
+      }
 
-    button.acceptButton {
-      margin-right: 0;
-    }
+      .sourceCard .editButton {
+        right: 75px;
+      }
+      .sourceCard .removeButton {
+        right: -3px;
+      }
 
-  </style>
+      .buttonsContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        width: 100%;
+      }
 
-</head>
-<body class="demo-has-left demo-has-right">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo interactively builds and modifies a graph from <b>JSON</b>
-      business data using class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>.
-    </p>
+      button.acceptButton {
+        margin-right: 0;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Graph Builder Demo</h1>
 
-    <p>
-      See the the Developer's Guide section on the <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-GraphBuilder" target="_blank">GraphBuilder</a>
-      for an in-depth explanation of the relevant concepts.
-    </p>
+        <p>
+          This demo interactively builds and modifies a graph from <b>JSON</b> business data using
+          class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>.
+        </p>
 
-    <p>
-      The demo allows to define multiple nodes and edges sources from different
-      data and with different data bindings and styles.
-    </p>
+        <p>
+          See the the Developer's Guide section on the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-GraphBuilder" target="_blank">GraphBuilder</a>
+          for an in-depth explanation of the relevant concepts.
+        </p>
 
-    <p>
-      Per default, <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>
-      stores the business data object of each node in the node's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>
-      property. Thus, the properties of a node's <a href="https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle" target="_blank">TemplateNodeStyle</a>
-      can be bound to this object.
-    </p>
+        <p>
+          The demo allows to define multiple nodes and edges sources from different data and with
+          different data bindings and styles.
+        </p>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Select a sample in the combo box and inspect its data and sources on the right.</li>
-      <li>Click the "Add Source" buttons to add another nodes or edges source.</li>
-      <li>Click the "Edit" buttons to modify a source's data, bindings and style.</li>
-      <li>Build a graph from your own data and bindings.</li>
-    </ul>
+        <p>
+          Per default, <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> stores the business data object of each node in the
+          node's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> property. Thus, the properties of a node's
+          <a href="https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle" target="_blank">TemplateNodeStyle</a>
+          can be bound to this object.
+        </p>
 
-    <h2>Graph Builder Settings</h2>
-    <ul>
-      <li>
-        While <em>New Graph</em> creates a new graph from the given data, <em>Update Graph</em> adjusts the graph to changed
-        data and keeps nodes and edges whose source objects are still present.
-      </li>
-      <li><em>Nodes Sources</em> contains the data that specifies the graph's nodes sources. You can edit and remove
-        existing nodes sources as well as add new ones. <br/> The nodes source can either be an array or another object containing
-        the nodes business data.<br/>The nodes visual appearance is configured in the template field.
-        See <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles" target="_blank">Using SVG Templates in Styles</a> for
-        further information.
-      </li>
-      <li><em>Edges Sources</em> contains the data that specifies the graph's edges sources. You can edit and remove
-        existing edges sources as well as add new ones.
-      </li>
-    </ul>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Select a sample in the combo box and inspect its data and sources on the right.</li>
+          <li>Click the "Add Source" buttons to add another nodes or edges source.</li>
+          <li>Click the "Edit" buttons to modify a source's data, bindings and style.</li>
+          <li>Build a graph from your own data and bindings.</li>
+        </ul>
 
-    <p>
-      Since this demo evaluates the complete data source texts every time a source is edited, <em>Update Graph</em>
-      works as expected only for node data items of primitive type or if the node id binding resolves to primitive ids.
-      Note that this restriction applies only to the demo, not the class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>.
-    </p>
-  </div>
-</aside>
+        <h2>Graph Builder Settings</h2>
+        <ul>
+          <li>
+            While <em>New Graph</em> creates a new graph from the given data,
+            <em>Update Graph</em> adjusts the graph to changed data and keeps nodes and edges whose
+            source objects are still present.
+          </li>
+          <li>
+            <em>Nodes Sources</em> contains the data that specifies the graph's nodes sources. You
+            can edit and remove existing nodes sources as well as add new ones. <br />
+            The nodes source can either be an array or another object containing the nodes business
+            data.<br />The nodes visual appearance is configured in the template field. See
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles" target="_blank">Using SVG Templates in Styles</a>
+            for further information.
+          </li>
+          <li>
+            <em>Edges Sources</em> contains the data that specifies the graph's edges sources. You
+            can edit and remove existing edges sources as well as add new ones.
+          </li>
+        </ul>
 
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Graph Builder Settings</h1>
-  <div class="demo-properties" style="margin:1ex">
-    <div class="demo-form-block">
-      <button data-command="BuildGraph" title="Build a new graph" id="buildGraphButton">New Graph</button>
-      <button data-command="UpdateGraph" title="Update the current graph" id="updateGraphButton">Update Graph
-      </button>
+        <p>
+          Since this demo evaluates the complete data source texts every time a source is edited,
+          <em>Update Graph</em> works as expected only for node data items of primitive type or if
+          the node id binding resolves to primitive ids. Note that this restriction applies only to
+          the demo, not the class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>.
+        </p>
+      </div>
+    </aside>
+
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-properties" style="margin: 1ex">
+        <h2>Graph Builder Settings</h2>
+
+        <div class="demo-form-block">
+          <button data-command="BuildGraph" title="Build a new graph" id="buildGraphButton">
+            New Graph
+          </button>
+          <button
+            data-command="UpdateGraph"
+            title="Update the current graph"
+            id="updateGraphButton"
+          >
+            Update Graph
+          </button>
+        </div>
+        <h2>Nodes Sources</h2>
+        <div id="nodesSourcesList" class="sourcesList"></div>
+        <h2>Edges Sources</h2>
+        <div id="edgesSourcesList" class="sourcesList"></div>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+
+        <!-- combo-box for sample data -->
+        <select id="samplesComboBox" data-command="SetSampleData"></select>
+      </div>
+      <!-- The toolbar -->
+
+      <!-- The graph component -->
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
     </div>
-    <h2>Nodes Sources</h2>
-    <div id="nodesSourcesList" class="sourcesList"></div>
-    <h2>Edges Sources</h2>
-    <div id="edgesSourcesList" class="sourcesList"></div>
-  </div>
-</aside>
 
-<div class="demo-content">
+    <div id="editSourceDialogModal" style="display: none">
+      <div id="editSourceDialog" class="demo-properties"></div>
+    </div>
 
-  <!-- The toolbar -->
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-
-    <!-- combo-box for sample data -->
-    <select id="samplesComboBox" data-command="SetSampleData"></select>
-  </div>
-
-  <!-- The graph component -->
-  <div id="graphComponent"></div>
-</div>
-
-<div id="editSourceDialogModal" style="display: none">
-  <div id="editSourceDialog" class="demo-properties"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="GraphBuilderDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="GraphBuilderDemo.js"></script>
+  </body>
 </html>

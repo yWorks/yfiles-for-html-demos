@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/native-listeners/index.html).
 
-## Native Listeners
+Application Features Tutorial
+
+# Native Listeners
 
 This demo illustrates an approach on how to register native event listeners to SVG-elements on a style.
 

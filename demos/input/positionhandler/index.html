@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,70 +34,76 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Position Handler Demo [yFiles for HTML]</title>
+    <title>Position Handler Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <style type="text/css">
-    .firebrick {
-      fill: #B02222;
-    }
+    <style>
+      .firebrick {
+        fill: #b02222;
+      }
 
-    .orange {
-      fill: #FF8C00;
-    }
+      .orange {
+        fill: #ff8c00;
+      }
 
-    .green {
-      fill: #008000;
-    }
+      .green {
+        fill: #008000;
+      }
 
-    .royalblue {
-      fill: #007FFF;
-    }
-  </style>
+      .royalblue {
+        fill: #007fff;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Position Handler Demo</h1>
 
-    <p>This demo shows how to customize and restrict the movement behavior of nodes.</p>
+        <p>This demo shows how to customize and restrict the movement behavior of nodes.</p>
 
-    <p>This is done with custom implementations of the interface <a href="https://docs.yworks.com/yfileshtml/#/api/IPositionHandler" target="_blank">IPositionHandler</a> that are added to
-      the lookup of the nodes. </p>
+        <p>
+          This is done with custom implementations of the interface <a href="https://docs.yworks.com/yfileshtml/#/api/IPositionHandler" target="_blank">IPositionHandler</a> that
+          are added to the lookup of the nodes.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <p>Select and move the nodes.</p>
+        <p>Select and move the nodes.</p>
 
-    <h2>Node Types</h2>
-    <ul>
-      <li>
-        <em class="demo-red demo-bold">Red nodes</em> are unmovable.
-      </li>
-      <li>
-        <em class="demo-green demo-bold">Green nodes</em> move only vertically or horizontally from the current
-        start point.
-      </li>
-      <li>
-        <em class="demo-orange demo-bold">Orange nodes</em> move freely within the displayed rectangle but cannot
-        leave it.
-      </li>
-      <li>
-        <em class="demo-blue demo-bold">Blue nodes</em> combine the green and orange restrictions: they move only
-        vertically or horizontally and cannot leave the rectangle.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Node Types</h2>
+        <ul>
+          <li><em class="demo-red demo-bold">Red nodes</em> are unmovable.</li>
+          <li>
+            <em class="demo-green demo-bold">Green nodes</em> move only vertically or horizontally
+            from the current start point.
+          </li>
+          <li>
+            <em class="demo-orange demo-bold">Orange nodes</em> move freely within the displayed
+            rectangle but cannot leave it.
+          </li>
+          <li>
+            <em class="demo-blue demo-bold">Blue nodes</em> combine the green and orange
+            restrictions: they move only vertically or horizontally and cannot leave the rectangle.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-<script type="module" crossorigin="anonymous" src="PositionHandlerDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="PositionHandlerDemo.js"></script>
+  </body>
 </html>

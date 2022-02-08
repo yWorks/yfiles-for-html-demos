@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/webgl-icon-node/index.html).
 
+# WebGL2 Icon Node Demo
+
 This demo shows how to display icons in nodes rendered with [WebGL2](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) using [WebGL2IconNodeStyle](https://docs.yworks.com/yfileshtml/#/api/WebGL2IconNodeStyle).
 
 The icons are pre-rendered and passed to the node style as [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) objects. This enables the developer to load icons from arbitrary sources.

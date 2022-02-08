@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/graph-decorator/index.html).
 
-## Graph Decorator
+Application Features Tutorial
+
+# Graph Decorator
 
 This demo shows how to use the graph decorator concept to customize the behavior and the visualization of graph items.
 

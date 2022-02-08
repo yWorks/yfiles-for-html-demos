@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,99 +34,133 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Webpack ES Modules Demo [yFiles for HTML]</title>
+    <title>Webpack ES Modules Demo [yFiles for HTML]</title>
 
-  <style type="text/css">
-    #graphComponent {
-      top: 60px;
-    }
-  </style>
+    <style>
+      #graphComponent {
+        top: 60px;
+      }
+    </style>
+  </head>
 
-</head>
-
-<body class="demo-hide-left-when-small demo-has-left loaded">
-<!--
+  <body class="demo-hide-left-when-small demo-has-left loaded">
+    <!--
   The sidebar for description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to integrate the yFiles library in a <a href="https://webpack.js.org/" target="_blank">webpack</a> project.
-      Also note our <a href="https://github.com/yWorks/generator-yfiles-app" target="_blank">yeoman generator</a> that scaffolds yFiles
-      projects with webpack 3 and webpack 4.
-    </p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Webpack ES Modules Demo</h1>
+        <p>
+          This demo shows how to integrate the yFiles library in a
+          <a href="https://webpack.js.org/" target="_blank">webpack</a> project. Also note our
+          <a href="https://github.com/yWorks/generator-yfiles-app" target="_blank"
+            >yeoman generator</a
+          >
+          that scaffolds yFiles projects with webpack 3 and webpack 4.
+        </p>
 
-    <p>
-      Two fundamental concepts for webpack projects are demonstrated:
-    </p>
-    <ul>
-      <li><a href="https://webpack.js.org/guides/code-splitting/" target="_blank">Code Splitting</a></li>
-      <li>Separate webpack configurations for development and <a href="https://webpack.js.org/guides/production-build/" target="_blank">production</a></li>
-    </ul>
+        <p>Two fundamental concepts for webpack projects are demonstrated:</p>
+        <ul>
+          <li>
+            <a href="https://webpack.js.org/guides/code-splitting/" target="_blank"
+              >Code Splitting</a
+            >
+          </li>
+          <li>
+            Separate webpack configurations for development and
+            <a href="https://webpack.js.org/guides/production-build/" target="_blank">production</a>
+          </li>
+        </ul>
 
-    <h2>Running the demo</h2>
+        <h2>Running the demo</h2>
 
-    <p>First, install the required npm modules in the demo directory:</p>
+        <p>First, install the required npm modules in the demo directory:</p>
 
-    <code>
-      > npm install
-    </code>
+        <code> > npm install </code>
 
-    <h3>Development</h3>
+        <h3>Development</h3>
 
-    <p>
-      For development, the <a href="https://github.com/webpack/docs/wiki/webpack-dev-server" target="_blank">webpack dev server</a>
-      offers convenient live reloading support to minimize turnaround times.
-    </p><p>
-      The dev server will serve the webpack bundles from memory (no bundles will be created on disc),
-      update the app bundle and refresh the page when changes are made to the source files.
-    </p>
-    <p>To run the dev server:</p>
+        <p>
+          For development, the
+          <a href="https://github.com/webpack/docs/wiki/webpack-dev-server" target="_blank"
+            >webpack dev server</a
+          >
+          offers convenient live reloading support to minimize turnaround times.
+        </p>
+        <p>
+          The dev server will serve the webpack bundles from memory (no bundles will be created on
+          disc), update the app bundle and refresh the page when changes are made to the source
+          files.
+        </p>
+        <p>To run the dev server:</p>
 
-    <code>
-      > npm start
-    </code>
+        <code> > npm start </code>
 
-    <p>This will create the bundles in memory and launch the <a href="http://localhost:9003/" target="_blank">generated index file</a> in a browser</p>
+        <p>
+          This will create the bundles in memory and launch the
+          <a href="http://localhost:9003/" target="_blank">generated index file</a> in a browser
+        </p>
 
-    <p>When the server runs, try making changes to <code>src/webpack-demo.js</code> and see how the app will be updated
-    in the browser immediately.</p>
+        <p>
+          When the server runs, try making changes to <code>src/webpack-demo.js</code> and see how
+          the app will be updated in the browser immediately.
+        </p>
 
-    <p>Debugging of application files in the browser's developer tools should work fine, as source maps are generated by webpack. See
-      webpack's <a href="https://webpack.js.org/configuration/devtool/" target="_blank">Devtool</a> option for more fine grained configurations.</p>
+        <p>
+          Debugging of application files in the browser's developer tools should work fine, as
+          source maps are generated by webpack. See webpack's
+          <a href="https://webpack.js.org/configuration/devtool/" target="_blank">Devtool</a> option
+          for more fine grained configurations.
+        </p>
 
-    <h3>Production</h3>
+        <h3>Production</h3>
 
-    <p>The following build steps are specific to the production configuration:</p>
-    <ul>
-      <li>Append a content-based hash to the bundle filename to enable long-term caching.</li>
-      <li><a href="https://webpack.js.org/guides/production-build/#minification" target="_blank">Minify</a> the bundles using webpack's minification plugin.</li>
-    </ul>
+        <p>The following build steps are specific to the production configuration:</p>
+        <ul>
+          <li>Append a content-based hash to the bundle filename to enable long-term caching.</li>
+          <li>
+            <a href="https://webpack.js.org/guides/production-build/#minification" target="_blank"
+              >Minify</a
+            >
+            the bundles using webpack's minification plugin.
+          </li>
+        </ul>
 
-    <p>To run the production build:</p>
+        <p>To run the production build:</p>
 
-    <code>
-      > npm run production
-    </code>
+        <code> > npm run production </code>
 
-    <p>Note that the final minification step of the production build may take some time.</p>
+        <p>Note that the final minification step of the production build may take some time.</p>
 
-    <h3>Important Note</h3>
-    <p>
-      yFiles provides <a href="https://docs.yworks.com/yfileshtml/index.html#/kb/article/704/Browser_issues_and_included_workarounds" target="_blank">workarounds</a>
-      which address several bugs in current browsers. Find <code>demos-js/resources/demo-util.js</code> as a reference on
-      how several of them are enabled for most of the demos and how to enable them for this demo, too.
-    </p>
-  </div>
-</aside>
-<div class="demo-content">
-  <header class="demo-header">
-    <a href="https://www.yworks.com/" target="_blank"><img src="<%=require('../../../demos-js/resources/icons/ylogo.svg')%>" class="demo-y-logo"></a><a href="../../README.html" target="_blank">yFiles for HTML</a>
-    <span class="demo-title demo-breadcrumb">Webpack ES Modules Demo</span>
-  </header>
-  <div id="graphComponent"></div>
-</div>
-
-</body>
+        <h3>Important Note</h3>
+        <p>
+          yFiles provides
+          <a
+            href="https://docs.yworks.com/yfileshtml/index.html#/kb/article/704/Browser_issues_and_included_workarounds"
+            target="_blank"
+            >workarounds</a
+          >
+          which address several bugs in current browsers. Find
+          <code>demos-js/utils/Workarounds.js</code> as a reference on how several of them are
+          enabled for most of the demos and how to enable them for this demo, too.
+        </p>
+      </div>
+    </aside>
+    <div class="demo-content">
+      <header class="demo-header">
+        <a href="https://www.yworks.com/" target="_blank"
+          ><img
+            src="<%=require('../../resources/icons/ylogo.svg')%>"
+            class="demo-y-logo" /></a
+        >
+        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+        <a href="../../README.html" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+        <span class="demo-title demo-breadcrumb">Webpack ES Modules Demo</span>
+      </header>
+      <div id="graphComponent"></div>
+    </div>
+  </body>
 </html>

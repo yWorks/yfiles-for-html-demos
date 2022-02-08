@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,76 +34,95 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Gantt Chart Demo [yFiles for HTML]</title>
+    <title>Gantt Chart Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <link rel="stylesheet" href="resources/gantt-styles.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="resources/gantt-styles.css" />
 
-  <!-- load moment.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <!-- load luxon for date calculations -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.1.1/build/global/luxon.min.js"></script>
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Gantt Chart Demo</h1>
 
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+        <p>The Gantt Chart demo shows how to create a Gantt component from JSON data.</p>
+        <p>
+          The data consists of tasks which define the horizontal lanes and activities, each of which
+          is assigned to a task.
+        </p>
+        <p>
+          An activity has a start and end date, and optionally a lead time and follow-up time. Also
+          an activity can optionally depend on other activities.
+        </p>
+        <p>
+          The activity duration is rendered as a solid area. The lead and follow-up times are
+          rendered with a hatch pattern.
+        </p>
+        <p>The activity dependencies are modeled as edges between the activity nodes.</p>
+        <p>
+          This demo uses <a href="https://moment.github.io/luxon/#/" target="_blank">Moment.js</a> to parse,
+          manipulate and calculate dates.
+        </p>
 
-    <p>The Gantt Chart demo shows how to create a Gantt component from JSON data.</p>
-    <p>The data consists of tasks which define the horizontal lanes and activities, each of which is assigned to a
-      task.</p>
-    <p>An activity has a start and end date, and optionally a lead time and follow-up time. Also an activity can
-      optionally depend on other activities.</p>
-    <p>The activity duration is rendered as a solid area. The lead and follow-up times are rendered with a hatch
-      pattern.</p>
-    <p>The activity dependencies are modeled as edges between the activity nodes.</p>
-    <p>This demo uses <a href="https://momentjs.com/" target="_blank">Moment.js</a> to parse, manipulate and calculate dates.</p>
+        <h2>Things to Try</h2>
 
-    <h2>Things to Try</h2>
+        <ul>
+          <li>Scroll the tasks using the mouse wheel.</li>
+          <li>Scroll the timeline horizontally using shift + mouse wheel.</li>
+          <li>Hover over an activity to highlight its dependencies.</li>
+          <li>Hover over a dependency edge to highlight the source and target.</li>
+          <li>Select an activity to display the activity information.</li>
+          <li>
+            Grab and drag an activity to change the start and end time, or to assign an activity to
+            a different task
+          </li>
+          <li>
+            Grab the left or right side of the solid area of an activity and drag to change the
+            duration.
+          </li>
+          <li>
+            Select an activity and drag one of the round handles on the left or right to change the
+            lead or follow-up time.
+          </li>
+          <li>Select an activity and press 'F2' to change its name.</li>
+          <li>
+            Drag an activity so it overlaps with other activities in the same task lane. The
+            activities are placed below each other so they don't overlap.
+          </li>
+          <li>Drag the mouse on an empty part of a task lane to create a new activity.</li>
+          <li>Shift-drag from a node to create a new dependency edge.</li>
+        </ul>
+      </div>
+    </aside>
 
-    <ul>
-      <li>Scroll the tasks using the mouse wheel.</li>
-      <li>Scroll the timeline horizontally using shift + mouse wheel.</li>
-      <li>Hover over an activity to highlight its dependencies.</li>
-      <li>Hover over a dependency edge to highlight the source and target.</li>
-      <li>Select an activity to display the activity information.</li>
-      <li>Grab and drag an activity to change the start and end time, or to assign an activity to a different task</li>
-      <li>Grab the left or right side of the solid area of an activity and drag to change the duration.</li>
-      <li>Select an activity and drag one of the round handles on the left or right to change the lead or follow-up
-        time.
-      </li>
-      <li>Select an activity and press 'F2' to change its name.</li>
-      <li>Drag an activity so it overlaps with other activities in the same task lane. The activities are placed below
-        each other so they don't overlap.
-      </li>
-      <li>Drag the mouse on an empty part of a task lane to create a new activity.</li>
-      <li>Shift-drag from a node to create a new dependency edge.</li>
-    </ul>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-  </div>
-</aside>
+      <div id="graphComponentContainer">
+        <div id="mainComponent"></div>
+        <div id="timelineComponent"></div>
+        <div id="taskComponent"></div>
+      </div>
+    </div>
 
-<div class="demo-content">
-  <div id="graphComponentContainer">
-    <div id="mainComponent"></div>
-    <div id="timelineComponent"></div>
-    <div id="taskComponent"></div>
-  </div>
-</div>
+    <div id="info" style="display: none"></div>
+    <div id="nodeInfo" style="display: none">
+      <div><span data-name="name"></span></div>
+      <div>Start Time: <span data-name="start"></span></div>
+      <div>End Time: <span data-name="end"></span></div>
+      <div>Lead Time: <span data-name="lead"></span> h</div>
+      <div>Follow-up Time: <span data-name="followUp"></span> h</div>
+      <div>Total Duration: <span data-name="duration"></span> h</div>
+      <div>Task: <span data-name="task"></span></div>
+    </div>
 
-<div id="info" style="display: none"></div>
-<div id="nodeInfo" style="display: none">
-  <div><span data-name="name"></span></div>
-  <div>Start Time: <span data-name="start"></span></div>
-  <div>End Time: <span data-name="end"></span></div>
-  <div>Lead Time: <span data-name="lead"></span> h</div>
-  <div>Follow-up Time: <span data-name="followUp"></span> h</div>
-  <div>Total Duration: <span data-name="duration"></span> h</div>
-  <div>Task: <span data-name="task"></span></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="GanttChartDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="GanttChartDemo.js"></script>
+  </body>
 </html>

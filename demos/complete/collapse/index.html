@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,117 +34,129 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Collapsible Tree Demo [yFiles for HTML]</title>
+    <title>Collapsible Tree Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <!-- Please note: The following script is used to store templates to be used in the node style.     -->
-  <!-- These templates are copied into the graph component's svg for each node that uses this style.    -->
-  <!-- The script containing the templates has to have the type "text/yfiles-template".               -->
-  <!-- Also, please note that there are bindings in some elements' attributes. The bindings are       -->
-  <!-- dynamically replaced with the bound values by the binding engine at runtime.                   -->
-  <!-- Normal bindings are resolved on the node's tag. That means if there is an object stored in the -->
-  <!-- node's tag that has the property "foo", you can bind to the value of this                      -->
-  <!-- property with the string {Binding foo}.                                                        -->
-  <!-- Template bindings are resolved on the NodeTemplateContext. This can be used to modify an       -->
-  <!-- element based on the selection state of the node etc. Also, custom data can be stored in       -->
-  <!-- the NodeTemplateContext's styleTag which you can also bind to using a TemplateBinding.         -->
-  <!-- Bindings can specify converters and converter parameters. A converter first has to be          -->
-  <!-- registered under it's name as shown in the source code of this demo.                           -->
-  <!-- If a binding is specified in a standard attribute, the attribute value is replaced with the    -->
-  <!-- resolved binding value at runtime. If the binding is contained in the custom attribute         -->
-  <!-- "data-content", the content of the node is replaced with the binding value. In this case,      -->
-  <!-- the converter can also return an SVG element that is set as the child of the element that      -->
-  <!-- specifies the binding. If no converter is specified, or the converter returns a string,        -->
-  <!-- a new text node is added.                                                                      -->
-  <script type="text/yfiles-template">
-    <!-- Elements stored in the 'global' defs section are copied to the main SVG's defs section       -->
-    <!-- and can be referenced in the templates. In this case, this happens via converters.           -->
-    <defs>
-      <g id="expand_icon" transform="translate(21 6)">
-        <g>
-          <polygon stroke="#FFFFFF" stroke-width="3" fill="none"
-                   points="6,17 6,12 1,12 1,6 6,6 6,1 12,1 12,6 17,6 17,12 12,12 12,17"/>
-          <polygon stroke="none" fill="#999999" points="6,17 6,12 1,12 1,6 6,6 6,1 12,1 12,6 17,6 17,12 12,12 12,17"/>
+    <!-- Please note: The following script is used to store templates to be used in the node style.     -->
+    <!-- These templates are copied into the graph component's svg for each node that uses this style.    -->
+    <!-- The script containing the templates has to have the type "text/yfiles-template".               -->
+    <!-- Also, please note that there are bindings in some elements' attributes. The bindings are       -->
+    <!-- dynamically replaced with the bound values by the binding engine at runtime.                   -->
+    <!-- Normal bindings are resolved on the node's tag. That means if there is an object stored in the -->
+    <!-- node's tag that has the property "foo", you can bind to the value of this                      -->
+    <!-- property with the string {Binding foo}.                                                        -->
+    <!-- Template bindings are resolved on the NodeTemplateContext. This can be used to modify an       -->
+    <!-- element based on the selection state of the node etc. Also, custom data can be stored in       -->
+    <!-- the NodeTemplateContext's styleTag which you can also bind to using a TemplateBinding.         -->
+    <!-- Bindings can specify converters and converter parameters. A converter first has to be          -->
+    <!-- registered under it's name as shown in the source code of this demo.                           -->
+    <!-- If a binding is specified in a standard attribute, the attribute value is replaced with the    -->
+    <!-- resolved binding value at runtime. If the binding is contained in the custom attribute         -->
+    <!-- "data-content", the content of the node is replaced with the binding value. In this case,      -->
+    <!-- the converter can also return an SVG element that is set as the child of the element that      -->
+    <!-- specifies the binding. If no converter is specified, or the converter returns a string,        -->
+    <!-- a new text node is added.                                                                      -->
+    <script type="text/yfiles-template">
+      <!-- Elements stored in the 'global' defs section are copied to the main SVG's defs section       -->
+      <!-- and can be referenced in the templates. In this case, this happens via converters.           -->
+      <defs>
+        <g id="expand_icon" transform="translate(21 6)">
+          <g>
+            <polygon stroke="#FFFFFF" stroke-width="3" fill="none"
+                     points="6,17 6,12 1,12 1,6 6,6 6,1 12,1 12,6 17,6 17,12 12,12 12,17"/>
+            <polygon stroke="none" fill="#999999" points="6,17 6,12 1,12 1,6 6,6 6,1 12,1 12,6 17,6 17,12 12,12 12,17"/>
+          </g>
         </g>
-      </g>
-      <g id="collapse_icon" transform="translate(21 6)">
-        <g>
-          <rect x="1" y="6" fill="none" stroke="#FFFFFF" stroke-width="3" width="16" height="6"/>
-          <rect x="1" y="6" fill="#999999" stroke="none" width="16" height="6"/>
+        <g id="collapse_icon" transform="translate(21 6)">
+          <g>
+            <rect x="1" y="6" fill="none" stroke="#FFFFFF" stroke-width="3" width="16" height="6"/>
+            <rect x="1" y="6" fill="#999999" stroke="none" width="16" height="6"/>
+          </g>
         </g>
+      </defs>
+      <g id="InnerNodeStyleTemplate">
+        <rect stroke="none" fill="{TemplateBinding styleTag, Converter=collapseDemo.backgroundConverter}" rx="4" ry="4"
+              width="60" height="30"></rect>
+        <use xlink:href="{TemplateBinding styleTag, Converter=collapseDemo.iconConverter}" style="pointer-events:none"></use>
       </g>
-    </defs>
-    <g id="InnerNodeStyleTemplate">
-      <rect stroke="none" fill="{TemplateBinding styleTag, Converter=collapseDemo.backgroundConverter}" rx="4" ry="4"
-            width="60" height="30"></rect>
-      <use xlink:href="{TemplateBinding styleTag, Converter=collapseDemo.iconConverter}" style="pointer-events:none"></use>
-    </g>
-    <g id="LeafNodeStyleTemplate">
-      <rect stroke="none" fill="#76b041" rx="4" ry="4" width="58" height="28"
-            transform="translate(1 1)"></rect>
-    </g>
-  </script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+      <g id="LeafNodeStyleTemplate">
+        <rect stroke="none" fill="#76b041" rx="4" ry="4" width="58" height="28"
+              transform="translate(1 1)"></rect>
+      </g>
+    </script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Collapsible Tree Demo</h1>
 
-    <p>The Collapsible Tree demo shows interactive collapsing and expanding of subtrees of a graph. Using the
-      dedicated helper classes for filtering-out parts of a graph and the tree layout algorithm, implementing such
-      an interactive application is easy.</p>
+        <p>
+          The Collapsible Tree demo shows interactive collapsing and expanding of subtrees of a
+          graph. Using the dedicated helper classes for filtering-out parts of a graph and the tree
+          layout algorithm, implementing such an interactive application is easy.
+        </p>
 
-    <p>
-      The main classes used in this demo are <a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" target="_blank">FilteredGraphWrapper</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a>.
-    </p>
+        <p>
+          The main classes used in this demo are <a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" target="_blank">FilteredGraphWrapper</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a>.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Click a node with a +/- button to expand or collapse its subtree. Note that there are also leaf nodes
-        which
-        cannot be expanded further.
-      </li>
-      <li>
-        Select an automatic layout style from the drop down in the toolbar. Choosing a new
-        style, or expanding and collapsing nodes, triggers a refresh of the layout.
-      </li>
-      <li>
-        Use the zoom and "Fit Content" buttons in the toolbar to focus on local areas or to view the
-        complete graph.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <ul>
+          <li>
+            Click a node with a +/- button to expand or collapse its subtree. Note that there are
+            also leaf nodes which cannot be expanded further.
+          </li>
+          <li>
+            Select an automatic layout style from the drop down in the toolbar. Choosing a new
+            style, or expanding and collapsing nodes, triggers a refresh of the layout.
+          </li>
+          <li>
+            Use the zoom and "Fit Content" buttons in the toolbar to focus on local areas or to view
+            the complete graph.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  <div class="demo-toolbar">
+        <span class="demo-separator"></span>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <select data-command="SelectLayout" title="Choose a Layout" id="layoutComboBox">
+          <option value="tree">Tree</option>
+          <option value="balloon">Balloon</option>
+          <option value="organic">Organic</option>
+          <option value="hierarchic">Hierarchic</option>
+        </select>
+      </div>
 
-    <span class="demo-separator"></span>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-    <select data-command="SelectLayout" title="Choose a Layout" id="layoutComboBox">
-      <option value="tree">Tree</option>
-      <option value="balloon">Balloon</option>
-      <option value="organic">Organic</option>
-      <option value="hierarchic">Hierarchic</option>
-    </select>
-
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="CollapseDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="CollapseDemo.js"></script>
+  </body>
 </html>

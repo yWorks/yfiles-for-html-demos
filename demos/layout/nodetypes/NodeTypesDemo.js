@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -56,7 +56,6 @@ import {
 import {
   addNavigationButtons,
   bindAction,
-  bindChangeListener,
   bindCommand,
   checkLicense,
   showApp
@@ -92,8 +91,6 @@ const samples = [
   createCircularSample(),
   createComponentSample()
 ]
-
-const sampleComboBox = document.querySelector('#sample-combo-box')
 
 /**
  * The graph component holding the graph and shown in this demo.
@@ -253,6 +250,7 @@ function createComponentSample() {
  */
 async function applyCurrentLayout(animate) {
   setUIDisabled(true)
+  const sampleComboBox = document.querySelector('#sample-combo-box')
 
   const { layout, layoutData } = samples[sampleComboBox.selectedIndex]
   const considerTypes = document.getElementById('consider-types').checked
@@ -272,6 +270,7 @@ async function applyCurrentLayout(animate) {
  * @returns {!Promise}
  */
 async function loadSample() {
+  const sampleComboBox = document.querySelector('#sample-combo-box')
   const sample = samples[sampleComboBox.selectedIndex]
   graphComponent.graph.clear()
 
@@ -370,6 +369,7 @@ function initializeTypePanel() {
  * Initializes the sample combo box.
  */
 function prepareSampleList() {
+  const sampleComboBox = document.querySelector('#sample-combo-box')
   for (const sample of samples) {
     const optionElement = document.createElement('option')
     optionElement.text = sample.name
@@ -391,9 +391,11 @@ function registerCommands() {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
   bindAction("button[data-command='Layout']", () => applyCurrentLayout(true))
   bindAction("button[data-command='Reset']", loadSample)
-  bindChangeListener('#sample-combo-box', loadSample)
-  addNavigationButtons(sampleComboBox)
   bindAction('#consider-types', () => applyCurrentLayout(true))
+
+  const sampleComboBox = document.querySelector('#sample-combo-box')
+  sampleComboBox.addEventListener('change', loadSample)
+  addNavigationButtons(sampleComboBox)
 }
 
 /**
@@ -403,7 +405,8 @@ function registerCommands() {
 function setUIDisabled(disabled) {
   document.querySelector("button[data-command='Reset']").disabled = disabled
   document.querySelector("button[data-command='Layout']").disabled = disabled
-  sampleComboBox.disabled = disabled
+  document.querySelector('#consider-types').disabled = disabled
+  document.querySelector('#sample-combo-box').disabled = disabled
   graphComponent.inputMode.enabled = !disabled
 }
 

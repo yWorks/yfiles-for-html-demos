@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/orthogonal/index.html).
 
-## Orthogonal Layout
+Layout Features Tutorial
+
+# Orthogonal Layout
 
 This demo shows basic configuration options for the [Orthogonal Layout](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout).
 

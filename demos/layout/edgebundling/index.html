@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,108 +34,143 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Edge Bundling Demo [yFiles for HTML]</title>
+    <title>Edge Bundling Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style type="text/css">
-    .gc-busy {
-      /*mark important to override cursors of input modes*/
-      cursor: wait !important;
-    }
+    <style>
+      .gc-busy {
+        /*mark important to override cursors of input modes*/
+        cursor: wait !important;
+      }
 
-    .demo-toolbar label {
-      width: 110px;
-      vertical-align: baseline;
-      text-align: right;
-    }
+      .demo-toolbar label {
+        width: 110px;
+        vertical-align: baseline;
+        text-align: right;
+      }
 
-    .demo-toolbar label:hover {
-      background-color: transparent;
-      cursor: default;
-    }
+      .demo-toolbar label:hover {
+        background-color: transparent;
+        cursor: default;
+      }
 
-    input[type="checkbox"]:disabled,
-    input[type="range"]:disabled {
-      opacity: 0.5;
-      cursor: default;
-      background-color: transparent;
-    }
+      input[type='checkbox']:disabled,
+      input[type='range']:disabled {
+        opacity: 0.5;
+        cursor: default;
+        background-color: transparent;
+      }
 
-    #bundling-strength-label {
-      width: 30px;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how edge bundling can be applied for reducing visual cluttering in dense graphs.</p>
-    <p>
-      The edge curves are drawn using piecewise cubic bezier curves with gradient colors from dark-blue (that starts from the
-      source node) to light-blue (that leads to the target node of the edge). For the approximation of the edge curves, a
-      <a href="https://docs.yworks.com/yfileshtml/#/api/CurveFittingLayoutStage" target="_blank">CurveFittingLayoutStage</a> is applied.</p>
-    <p>
-      For circular layouts, a circular-sector style is used for the visualization of the nodes. </p>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Select one of the layout algorithms that support edge bundling using the combo-box in the toolbar.</li>
-      <li>Modify the strength of the bundles using the slider in the toolbar and notice how this change influences the
-        shape of the curves of the bundled edges. Values close to <code>1</code> lead to tight bundles, while values
-        close to <code>0</code> lead to straight-line non-bundled edges. Values larger than <code>0.85</code> are
-        recommended.
-      </li>
-      <li>
-        Hover over an edge to highlight its path and its source and target nodes. The edges are highlighted also with
-        gradient colors from red (source node) to gold (target node).
-      </li>
-      <li>
-        Hover over a node to highlight its adjacent edges.
-      </li>
-      <li>
-        Right-click on a node to open a popup-menu and determine whether the edges adjacent to the particular node or to
-        all other currently selected nodes should be bundled or not.
-      </li>
-      <li>
-        Right-click on an edge to open a popup-menu and determine whether the particular edge or all other currently
-        edges should be bundled or not.
-      </li>
-    </ul>
-  </div>
-</aside>
+      #bundling-strength-label {
+        width: 30px;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Edge Bundling Demo</h1>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <p>
+          This demo shows how edge bundling can be applied for reducing visual cluttering in dense
+          graphs.
+        </p>
+        <p>
+          The edge curves are drawn using piecewise cubic bezier curves with gradient colors from
+          dark-blue (that starts from the source node) to light-blue (that leads to the target node
+          of the edge). For the approximation of the edge curves, a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/CurveFittingLayoutStage" target="_blank">CurveFittingLayoutStage</a> is applied.
+        </p>
+        <p>
+          For circular layouts, a circular-sector style is used for the visualization of the nodes.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Select one of the layout algorithms that support edge bundling using the combo-box in
+            the toolbar.
+          </li>
+          <li>
+            Modify the strength of the bundles using the slider in the toolbar and notice how this
+            change influences the shape of the curves of the bundled edges. Values close to
+            <code>1</code> lead to tight bundles, while values close to <code>0</code> lead to
+            straight-line non-bundled edges. Values larger than <code>0.85</code> are recommended.
+          </li>
+          <li>
+            Hover over an edge to highlight its path and its source and target nodes. The edges are
+            highlighted also with gradient colors from red (source node) to gold (target node).
+          </li>
+          <li>Hover over a node to highlight its adjacent edges.</li>
+          <li>
+            Right-click on a node to open a popup-menu and determine whether the edges adjacent to
+            the particular node or to all other currently selected nodes should be bundled or not.
+          </li>
+          <li>
+            Right-click on an edge to open a popup-menu and determine whether the particular edge or
+            all other currently edges should be bundled or not.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <span>Sample</span>
-    <select data-command="SampleSelectionChanged" title="Select a sample graph" id="sample-combo-box">
-      <option>Single Cycle Layout</option>
-      <option>Circular Layout</option>
-      <option>Radial Layout</option>
-      <option>Balloon Layout</option>
-      <option>Tree Layout</option>
-      <option>Bundled Routing</option>
-    </select>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <span>Sample</span>
+        <select
+          data-command="SampleSelectionChanged"
+          title="Select a sample graph"
+          id="sample-combo-box"
+        >
+          <option>Single Cycle Layout</option>
+          <option>Circular Layout</option>
+          <option>Radial Layout</option>
+          <option>Balloon Layout</option>
+          <option>Tree Layout</option>
+          <option>Bundled Routing</option>
+        </select>
 
-    <span>Bundling Strength: </span><input type="range" min="0" max="1" value="0.98" step="0.01"
-      id="bundling-strength-slider" style="padding: 0px"><span id="bundling-strength-label">0.98</span>
-  </div>
-  <div id="graphComponent"></div>
-  <div id="loadingIndicator">Calculating the layout. This may take a while.</div>
-</div>
+        <span class="demo-separator"></span>
 
-<script type="module" crossorigin="anonymous" src="EdgeBundlingDemo.js"></script>
-</body>
+        <span>Bundling Strength: </span
+        ><input
+          type="range"
+          min="0"
+          max="1"
+          value="0.98"
+          step="0.01"
+          id="bundling-strength-slider"
+          style="padding: 0px"
+        /><span id="bundling-strength-label">0.98</span>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="loadingIndicator">Calculating the layout. This may take a while.</div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="EdgeBundlingDemo.js"></script>
+  </body>
 </html>

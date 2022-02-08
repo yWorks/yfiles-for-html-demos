@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,67 +33,88 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Hierarchic Layout - Layout Features Tutorial [yFiles for HTML]</title>
+    <title>Hierarchic Layout - Layout Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Layout Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Hierarchic Layout </h2>
-    <p>
-      This demo shows common configuration options for <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>.
-    </p>
-    <p>
-      For example, the demo code sets <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout#layoutOrientation" target="_blank">layout orientation</a>,
-      <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout#edgeLayoutDescriptor" target="_blank">default (orthogonal)</a> and
-      <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#edgeLayoutDescriptors" target="_blank">individual (octilinear) edge routing styles</a>,
-      <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#sourcePortConstraints" target="_blank">source</a> and
-      <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#targetPortConstraints" target="_blank">target port constraints</a>
-      (<span style="color: #E011A4; font-weight: bold">pink edges</span>),
-      <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#criticalEdgePriorities" target="_blank">critical paths</a>
-      (<span style="color: #F26419; font-weight: bold">orange edges</span>),
-      <a href="https://docs.yworks.com/yfileshtml/#/api/SimplexNodePlacer#straightenEdges" target="_blank">straightened edges
-      (<span style="color: #01BAFF; font-weight: bold">blue edges</span>)</a> and
-      various distances between graph items.
-    </p>
+        <h1>Hierarchic Layout</h1>
 
-    <h3>Code Snippet</h3>
-    <p>
-      You can copy the code snippet to configure the layout from
-      <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/hierarchic/Hierarchic.ts"
-         target="_blank">GitHub</a>.
-    </p>
+        <p>This demo shows common configuration options for <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>.</p>
+        <p>
+          For example, the demo code sets
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout#layoutOrientation" target="_blank">layout orientation</a>,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout#edgeLayoutDescriptor" target="_blank">default (orthogonal)</a> and
+          <api src="HierarchicLayoutData#edgeLayoutDescriptors"
+            >individual (octilinear) edge routing styles</api
+          >, <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#sourcePortConstraints" target="_blank">source</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#targetPortConstraints" target="_blank">target port constraints</a>
+          (<span style="color: #e011a4; font-weight: bold">pink edges</span>),
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#criticalEdgePriorities" target="_blank">critical paths</a>
+          (<span style="color: #f26419; font-weight: bold">orange edges</span>),
+          <api src="SimplexNodePlacer#straightenEdges"
+            >straightened edges (<span style="color: #01baff; font-weight: bold">blue edges</span
+            >)</api
+          >
+          and various distances between graph items.
+        </p>
 
-    <h3>Demos</h3>
-    <p>
-      The <a href="../../layout/layoutstyles/index.html">Layout Styles</a> demo showcases more configuration
-      options for the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">hierarchic layout algorithm</a>.
-    </p>
+        <h3>Code Snippet</h3>
+        <p>
+          You can copy the code snippet to configure the layout from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/hierarchic/Hierarchic.ts"
+            target="_blank"
+            >GitHub</a
+          >.
+        </p>
 
-    <h3>Documentation</h3>
-    <p>
-      The Developer's Guide provides in-depth information about
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" target="_blank">Hierarchic Layout</a> and its features.
-    </p>
-  </div>
-</aside>
+        <h3>Demos</h3>
+        <p>
+          The <a href="../../layout/layoutstyles/index.html">Layout Styles</a> demo showcases more
+          configuration options for the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">hierarchic layout algorithm</a>.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
+        <h3>Documentation</h3>
+        <p>
+          The Developer's Guide provides in-depth information about
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" target="_blank">Hierarchic Layout</a> and its features.
+        </p>
+      </div>
+    </aside>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

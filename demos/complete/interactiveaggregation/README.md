@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/interactiveaggregation/index.html).
 
+# Interactive Aggregation Demo
+
 This demo shows how to analyze a graph by aggregating groups of nodes.
 
 Via the context menu, groups of nodes of the same color or shape can be aggregated giving different insights about the graph.

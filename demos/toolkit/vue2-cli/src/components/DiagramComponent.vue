@@ -444,4 +444,10 @@ export default {
   border: initial;
   padding: initial;
 }
+
+@media screen and (max-height: 500px) {
+  .graph-component-container {
+    top: 60px;
+  }
+}
 </style>

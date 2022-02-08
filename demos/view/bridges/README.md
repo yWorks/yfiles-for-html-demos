@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/bridges/index.html).
 
+# Bridges Demo
+
 The Bridges demo showcases the capabilities of the [BridgeManager](https://docs.yworks.com/yfileshtml/#/api/BridgeManager) class for inserting bridges into edge paths.
 
 In addition to bridges for edge-edge intersections, this demo shows bridges for other obstacles like group node boundaries as well.

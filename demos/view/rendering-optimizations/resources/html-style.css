@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-.demo-properties {
-  top: auto !important;
-  position: relative !important;
-  height: auto !important;
-  min-width: 365px;
-}
 #detailLevelPopup {
   position: absolute;
   bottom: 10%;
@@ -365,12 +359,10 @@ legend {
     right: 0;
   }
 }
-.demo-has-right .demo-content {
+.demo-has-right:not(.demo-right-hidden) .demo-content-dynamic {
   right: 368px;
 }
-.demo-right-hidden .demo-content {
-  right: 0px;
-}
+
 #fpsContainer {
   position: relative;
   height: 75px;
@@ -425,10 +417,6 @@ legend {
 .selection-button {
   margin-right: 6px !important;
   line-height: 1.5em;
-}
-
-div.fieldset-indent {
-  padding: 0 13px 0 13px;
 }
 
 div.show-icon {

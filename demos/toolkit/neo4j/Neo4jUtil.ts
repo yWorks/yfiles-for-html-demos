@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -46,13 +46,14 @@ export const Neo4jEdge = neo4j.types.Relationship
  */
 export async function connectToDB(
   url: string,
+  database: string,
   user: string,
   pass: string
 ): Promise<(query: string, params?: {}) => Promise<Result>> {
   // create a new Neo4j driver instance
   const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass))
 
-  const runCypherQuery = createCypherQueryRunner(neo4jDriver)
+  const runCypherQuery = createCypherQueryRunner(neo4jDriver, database)
 
   try {
     // check connection
@@ -64,7 +65,7 @@ export async function connectToDB(
   return runCypherQuery
 }
 
-function createCypherQueryRunner(neo4jDriver: any) {
+function createCypherQueryRunner(neo4jDriver: any, databaseName: string) {
   /**
    * Runs the Cypher query.
    * @param {string} query
@@ -73,7 +74,10 @@ function createCypherQueryRunner(neo4jDriver: any) {
    * @yjs:keep=run
    */
   return async (query: string, params: {} = {}): Promise<Result> => {
-    const session = neo4jDriver.session('READ')
+    const session = neo4jDriver.session({
+      database: databaseName,
+      defaultAccessMode: neo4j.session.READ
+    })
     let result: Promise<Result>
     try {
       result = await session.run(query, params)

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,142 +34,190 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Hierarchic Bus Structures Demo [yFiles for HTML]</title>
+    <title>Hierarchic Bus Structures Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .node-color {
-      fill: #CCCCCC;
-    }
-    input {
-      vertical-align: middle;
-    }
-    .inline-icon {
-      display: inline-block;
-      width: 1.5em;
-      height: 1.5em;
-      background-repeat: no-repeat;
-      background-size: cover;
-      vertical-align: middle;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how bus structures in the hierarchic layout can result in much more compact arrangements.
-    </p>
-    <p>
-      So-called bus structures are related to edge grouping. A bus structure consists of a root node and bus nodes that
-      are directly connected to the root node. All edges connecting bus nodes of the same structure have the same edge
-      direction.
-    </p>
+    <style>
+      .node-color {
+        fill: #cccccc;
+      }
+      input {
+        vertical-align: middle;
+      }
+      .inline-icon {
+        display: inline-block;
+        width: 1.5em;
+        height: 1.5em;
+        background-repeat: no-repeat;
+        background-size: cover;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Hierarchic Bus Structures Demo</h1>
 
-    <h2>Demo Presets</h2>
-    <p>The demo offers different configuration presets alongside an option to customize it arbitrarily.</p>
-    <dl>
-      <dt>Balanced</dt>
-      <dd>
-        Each bus is assigned a default <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> with no further configuration.
-      </dd>
-      <dt>Leaves</dt>
-      <dd>
-        Each bus uses a <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> where only one node is allowed before and after the bus
-        by setting <code>maximumNodesAfterBus</code> and <code>maximumNodesBeforeBus</code> to one.
-      </dd>
-      <dt>Squares</dt>
-      <dd>
-        The <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> for each bus is configured separately such that its elements will
-        be arranged in a square.
-      </dd>
-      <dt>Left Aligned</dt>
-      <dd>
-        Setting the <code>maximumNodesBeforeBus</code> to zero and allowing arbitrarily many nodes after the bus,
-        results in a left alignment.
-      </dd>
-      <dt>Right Aligned</dt>
-      <dd>
-        Setting the <code>maximumNodesAfterBus</code> to zero and allowing arbitrarily many nodes before the bus,
-        results in a right alignment.
-      </dd>
-      <dt>Custom</dt>
-      <dd>
-        In this mode, you can play around with the sliders that control the <code>maximumNodesAfterBus</code> and <code>maximumNodesBeforeBus</code>
-        setting to see its effect.
-      </dd>
-    </dl>
+        <p>
+          This demo shows how bus structures in the hierarchic layout can result in much more
+          compact arrangements.
+        </p>
+        <p>
+          So-called bus structures are related to edge grouping. A bus structure consists of a root
+          node and bus nodes that are directly connected to the root node. All edges connecting bus
+          nodes of the same structure have the same edge direction.
+        </p>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Click <em>Toggle Bus Structures</em> to see the difference between the layout without bus structures and the
-        current bus structure preset.
-      </li>
-      <li>
-        Try the different bus structure presets in the dropdown menu.
-      </li>
-      <li>
-        Choose the <em>Custom</em> preset of the dropdown and try different settings for
-        <code>maximumNodesAfterBus</code> and <code>maximumNodesBeforeBus</code> with the sliders.
-      </li>
-      <li>
-        Edit the graph and click the <span class="inline-icon demo-icon-yIconLayout"></span> button to re-run the layout with the
-        current settings.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Demo Presets</h2>
+        <p>
+          The demo offers different configuration presets alongside an option to customize it
+          arbitrarily.
+        </p>
+        <dl>
+          <dt>Balanced</dt>
+          <dd>
+            Each bus is assigned a default <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> with no further
+            configuration.
+          </dd>
+          <dt>Leaves</dt>
+          <dd>
+            Each bus uses a <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> where only one node is allowed
+            before and after the bus by setting <code>maximumNodesAfterBus</code> and
+            <code>maximumNodesBeforeBus</code> to one.
+          </dd>
+          <dt>Squares</dt>
+          <dd>
+            The <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> for each bus is configured separately such
+            that its elements will be arranged in a square.
+          </dd>
+          <dt>Left Aligned</dt>
+          <dd>
+            Setting the <code>maximumNodesBeforeBus</code> to zero and allowing arbitrarily many
+            nodes after the bus, results in a left alignment.
+          </dd>
+          <dt>Right Aligned</dt>
+          <dd>
+            Setting the <code>maximumNodesAfterBus</code> to zero and allowing arbitrarily many
+            nodes before the bus, results in a right alignment.
+          </dd>
+          <dt>Custom</dt>
+          <dd>
+            In this mode, you can play around with the sliders that control the
+            <code>maximumNodesAfterBus</code> and <code>maximumNodesBeforeBus</code>
+            setting to see its effect.
+          </dd>
+        </dl>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Click <em>Toggle Bus Structures</em> to see the difference between the layout without
+            bus structures and the current bus structure preset.
+          </li>
+          <li>Try the different bus structure presets in the dropdown menu.</li>
+          <li>
+            Choose the <em>Custom</em> preset of the dropdown and try different settings for
+            <code>maximumNodesAfterBus</code> and <code>maximumNodesBeforeBus</code> with the
+            sliders.
+          </li>
+          <li>
+            Edit the graph and click the
+            <span class="inline-icon demo-icon-yIconLayout"></span> button to re-run the layout with
+            the current settings.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
-
-    <button id="layoutButton" data-command="Layout" title="Run layout with current settings"
-      class="demo-icon-yIconLayout"></button>
-
-    <input type="checkbox" id="bus-structures-toggle" class="demo-toggle-button labeled" data-command="ToggleBusStructures" checked/>
-    <label for="bus-structures-toggle" title="Toggles bus structures for HierarchicLayout">Toggle Bus Structures</label>
-
-    <span class="demo-separator"></span>
-
-    <select id="bus-preset-select" data-command="SelectBusPreset" title="Select a bus structure preset">
-      <option value="balanced">Balanced</option>
-      <option value="leaves">Leaves</option>
-      <option value="squares">Squares</option>
-      <option value="left-aligned">Left Aligned</option>
-      <option value="right-aligned">Right Aligned</option>
-      <option value="custom">Custom</option>
-    </select>
-
-    <span id="bus-sliders" style="opacity: 0.5">
-        <span class="demo-separator"></span>
-
-        <span style="margin:0 10px 0 10px" for="before-bus-slider">Max. before Bus:</span>
-        <input id="before-bus-slider" type="range" min="0" max="20" value="0" style="padding: 0px" disabled>
-        <span id="before-bus-label">0</span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
         <span class="demo-separator"></span>
 
-        <span style="margin:0 10px 0 10px" for="after-bus-slider">Max. after Bus:</span>
-        <input id="after-bus-slider" type="range" min="0" max="20" value="0" style="padding: 0px" disabled>
-        <span id="after-bus-label">0</span>
+        <button
+          id="layoutButton"
+          data-command="Layout"
+          title="Run layout with current settings"
+          class="demo-icon-yIconLayout"
+        ></button>
 
-      </span>
-  </div>
+        <input
+          type="checkbox"
+          id="bus-structures-toggle"
+          class="demo-toggle-button labeled"
+          data-command="ToggleBusStructures"
+          checked=""
+        />
+        <label for="bus-structures-toggle" title="Toggles bus structures for HierarchicLayout"
+          >Toggle Bus Structures</label
+        >
 
-  <div id="graphComponent"></div>
-</div>
+        <span class="demo-separator"></span>
 
-<script type="module" crossorigin="anonymous" src="BusStructuresDemo.js"></script>
+        <select
+          id="bus-preset-select"
+          data-command="SelectBusPreset"
+          title="Select a bus structure preset"
+        >
+          <option value="balanced">Balanced</option>
+          <option value="leaves">Leaves</option>
+          <option value="squares">Squares</option>
+          <option value="left-aligned">Left Aligned</option>
+          <option value="right-aligned">Right Aligned</option>
+          <option value="custom">Custom</option>
+        </select>
 
-</body>
+        <span id="bus-sliders" style="opacity: 0.5">
+          <span class="demo-separator"></span>
+
+          <span style="margin: 0 10px 0 10px" for="before-bus-slider">Max. before Bus:</span>
+          <input
+            id="before-bus-slider"
+            type="range"
+            min="0"
+            max="20"
+            value="0"
+            style="padding: 0px"
+            disabled=""
+          />
+          <span id="before-bus-label">0</span>
+
+          <span class="demo-separator"></span>
+
+          <span style="margin: 0 10px 0 10px" for="after-bus-slider">Max. after Bus:</span>
+          <input
+            id="after-bus-slider"
+            type="range"
+            min="0"
+            max="20"
+            value="0"
+            style="padding: 0px"
+            disabled=""
+          />
+          <span id="after-bus-label">0</span>
+        </span>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="BusStructuresDemo.js"></script>
+  </body>
 </html>

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,102 +34,112 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>IsInside - Custom Styles Tutorial [yFiles for HTML]</title>
+    <title>IsInside - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description
 -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This step shows how to override <code>isInside()</code> and <code>getOutline()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" target="_blank">NodeStyleBase</a>.
-    </p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Custom Styles Tutorial</div>
 
-    <h2>Things to Try</h2>
+        <h1>IsInside</h1>
 
-    <ul>
-      <li>
-        Take a look at <code>MySimpleNodeStyle.isInside()</code> and <code>MySimpleNodeStyle.getOutline()</code>.
-      </li>
-      <li>
-        Move an edge around a node. It follows the outline of the node.
-      </li>
-      <li>
-        Now, comment in the first line in <code>MySimpleNodeStyle.getOutline()</code> so that the implementation of the
-        base class is called and do the same thing again. Now, the edge will follow a rectangle enclosing the node.
-      </li>
-      <li>
-        Select an incoming edge and drag it's port outside the node. See how the behaviour of the edge changes when the
-        port enters the node. That is an effect of the implementation of <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a>.
-      </li>
-      <li>
-        Now, comment in the first line in <code>MySimpleNodeStyle.isInside</code> so that the implementation of the base
-        class is called and do the same thing again. Now, the enclosing rectangle is used for port behaviour
-        calculation.
-      </li>
-      <li>
-        Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a> as well as <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getIntersection" target="_blank">NodeStyleBase#getIntersection</a>,
-        which isn't demonstrated here, are just used to improve performance. If not implemented, <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a>
-        will be used to calculate exactly the same thing, with the difference that <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a>
-        needs first to build a <a href="https://docs.yworks.com/yfileshtml/#/api/GeneralPath" target="_blank">GeneralPath</a>, which is more expensive than an effective
-        implementation as shown in <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a>.
-      </li>
-    </ul>
+        <p>
+          This step shows how to override <code>isInside()</code> and <code>getOutline()</code> of
+          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" target="_blank">NodeStyleBase</a>.
+        </p>
 
-    <h2>Left to Do</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a>, so that a node won't get selected when clicking on the
-        bounding box but not on the node itself (this works already in this step, but can be implemented explicitly for
-        performance reasons).
-      </li>
-      <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getBounds" target="_blank">NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the
-        bounds of the node.
-      </li>
-      <li>
-        Find a way to draw a well-performing drop shadow.
-      </li>
-      <li>
-        Draw edges from nodes to their labels.
-      </li>
-      <li>
-        Create a custom label style.
-      </li>
-      <li>
-        Create a custom edge style.
-      </li>
-      <li>
-        Create a custom port style for nodes.
-      </li>
-      <li>
-        Create a custom group node style.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <ul>
+          <li>
+            Take a look at <code>MySimpleNodeStyle.isInside()</code> and
+            <code>MySimpleNodeStyle.getOutline()</code>.
+          </li>
+          <li>Move an edge around a node. It follows the outline of the node.</li>
+          <li>
+            Now, comment in the first line in <code>MySimpleNodeStyle.getOutline()</code> so that
+            the implementation of the base class is called and do the same thing again. Now, the
+            edge will follow a rectangle enclosing the node.
+          </li>
+          <li>
+            Select an incoming edge and drag it's port outside the node. See how the behaviour of
+            the edge changes when the port enters the node. That is an effect of the implementation
+            of <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a>.
+          </li>
+          <li>
+            Now, comment in the first line in <code>MySimpleNodeStyle.isInside</code> so that the
+            implementation of the base class is called and do the same thing again. Now, the
+            enclosing rectangle is used for port behaviour calculation.
+          </li>
+          <li>
+            Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a> as well as
+            <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getIntersection" target="_blank">NodeStyleBase#getIntersection</a>, which isn't demonstrated here, are just used
+            to improve performance. If not implemented, <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a> will be
+            used to calculate exactly the same thing, with the difference that
+            <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a> needs first to build a <a href="https://docs.yworks.com/yfileshtml/#/api/GeneralPath" target="_blank">GeneralPath</a>, which
+            is more expensive than an effective implementation as shown in
+            <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a>.
+          </li>
+        </ul>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+        <h2>Left to Do</h2>
 
-  <!--
+        <ul>
+          <li>
+            Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a>, so that a node won't get selected when
+            clicking on the bounding box but not on the node itself (this works already in this
+            step, but can be implemented explicitly for performance reasons).
+          </li>
+          <li>
+            Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getBounds" target="_blank">NodeStyleBase#getBounds</a>, so that the drop shadow will be included
+            in the bounds of the node.
+          </li>
+          <li>Find a way to draw a well-performing drop shadow.</li>
+          <li>Draw edges from nodes to their labels.</li>
+          <li>Create a custom label style.</li>
+          <li>Create a custom edge style.</li>
+          <li>Create a custom port style for nodes.</li>
+          <li>Create a custom group node style.</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
+
+      <!--
   The GraphComponent
   -->
-  <div id="graphComponent"></div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

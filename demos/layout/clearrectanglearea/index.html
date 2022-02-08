@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,147 +34,153 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Clear Rectangle Area Demo [yFiles for HTML]</title>
+    <title>Clear Rectangle Area Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      A demo that shows how to interactively move graph elements around a rectangle in a given graph so
-      that the modifications in the graph are minimal. The rectangle can be freely moved or resized.
-    </p>
-    <p>
-      Every time the rectangular area is moved or resized interactively, <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a> will push away the
-      other elements so there is a free area for the rectangle.
-    </p>
-    <p>
-      You can choose between different strategies for clearing the area:
-    </p>
-    <ul>
-      <li>
-        <strong>Local:</strong> Tries to change the layout rather locally.
-      </li>
-      <li>
-        <strong>LocalUniform:</strong> Tries to change the layout rather locally but moving all necessary nodes by a
-        uniform offset.
-      </li>
-      <li>
-        <strong>PreserveShapes:</strong> Tries to preserve the shape of the existing edge paths.
-      </li>
-      <li>
-        <strong>PreserveShapesUniform:</strong> Globally partitions the graph into two parts and moves them apart.
-      </li>
-      <li>
-        <strong>Global:</strong> Divides the graph into two partitions somewhere along the area and moves them
-        horizontally or vertically.
-      </li>
-    </ul>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Clear Rectangle Area Demo</h1>
 
-    <p>
-      You can choose between different strategies for assigning nodes to components whose elements should preferably not
-      be separated:
-    </p>
+        <p>
+          A demo that shows how to interactively move graph elements around a rectangle in a given
+          graph so that the modifications in the graph are minimal. The rectangle can be freely
+          moved or resized.
+        </p>
+        <p>
+          Every time the rectangular area is moved or resized interactively,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a> will push away the other elements so there is a free area for
+          the rectangle.
+        </p>
+        <p>You can choose between different strategies for clearing the area:</p>
+        <ul>
+          <li><strong>Local:</strong> Tries to change the layout rather locally.</li>
+          <li>
+            <strong>LocalUniform:</strong> Tries to change the layout rather locally but moving all
+            necessary nodes by a uniform offset.
+          </li>
+          <li>
+            <strong>PreserveShapes:</strong> Tries to preserve the shape of the existing edge paths.
+          </li>
+          <li>
+            <strong>PreserveShapesUniform:</strong> Globally partitions the graph into two parts and
+            moves them apart.
+          </li>
+          <li>
+            <strong>Global:</strong> Divides the graph into two partitions somewhere along the area
+            and moves them horizontally or vertically.
+          </li>
+        </ul>
 
-    <ul>
-      <li>
-        <strong>Single:</strong> Each node is a separate component.
-      </li>
-      <li>
-        <strong>Connected:</strong> Components are defined by the connected components.
-      </li>
-      <li>
-        <strong>Clustering:</strong> Components are defined by edge betweenness clustering.
-      </li>
-    </ul>
+        <p>
+          You can choose between different strategies for assigning nodes to components whose
+          elements should preferably not be separated:
+        </p>
 
-    <h2>Things to Try</h2>
+        <ul>
+          <li><strong>Single:</strong> Each node is a separate component.</li>
+          <li><strong>Connected:</strong> Components are defined by the connected components.</li>
+          <li>
+            <strong>Clustering:</strong> Components are defined by edge betweenness clustering.
+          </li>
+        </ul>
 
-    <ul>
-      <li>
-        Drag the rectangle over the canvas and watch the graph give way to it.
-      </li>
-      <li>
-        Change the size of the rectangle and observe how the graph adapts to the new situation.
-      </li>
-      <li>
-        Select another strategy for clearing the rectangular area.
-      </li>
-      <li>
-        Select another strategy for assigning nodes to components.
-      </li>
-      <li>
-        Change the setting whether orthogonal edges should be considered or not.
-      </li>
-      <li>
-        Hold down the Shift key while dragging to freeze the current graph layout. If you new release
-        the Shift key when the mouse is hovering a group node, the rectangular area within the group node is kept free.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Things to Try</h2>
 
-<div class="demo-content">
+        <ul>
+          <li>Drag the rectangle over the canvas and watch the graph give way to it.</li>
+          <li>
+            Change the size of the rectangle and observe how the graph adapts to the new situation.
+          </li>
+          <li>Select another strategy for clearing the rectangular area.</li>
+          <li>Select another strategy for assigning nodes to components.</li>
+          <li>Change the setting whether orthogonal edges should be considered or not.</li>
+          <li>
+            Hold down the Shift key while dragging to freeze the current graph layout. If you new
+            release the Shift key when the mouse is hovering a group node, the rectangular area
+            within the group node is kept free.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
 
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span>Sample Graph</span>
 
-    <span class="demo-separator"></span>
+        <!-- combo-box for sample graphs -->
+        <select title="Sample graph" id="sample-graph-combobox" data-command="SetSampleGraph">
+          <option value="hierarchic">Hierarchic</option>
+          <option value="grouping">Grouping</option>
+          <option value="organic">Organic</option>
+          <option value="circular">Circular</option>
+          <option value="tree">Tree</option>
+          <option value="balloon">Balloon</option>
+          <option value="seriesparallel">Series-Parallel</option>
+          <option value="components">Components</option>
+        </select>
 
-    <span>Sample Graph</span>
+        <span class="demo-separator"></span>
 
-    <!-- combo-box for sample graphs -->
-    <select title="Sample graph" id="sample-graph-combobox" data-command="SetSampleGraph">
-      <option value="hierarchic">Hierarchic</option>
-      <option value="grouping">Grouping</option>
-      <option value="organic">Organic</option>
-      <option value="circular">Circular</option>
-      <option value="tree">Tree</option>
-      <option value="balloon">Balloon</option>
-      <option value="seriesparallel">Series-Parallel</option>
-      <option value="components">Components</option>
-    </select>
+        <span>Clear Area Strategy</span>
+        <select
+          title="Clearing strategy"
+          id="clearing-strategy-combobox"
+          data-command="SetClearingStrategy"
+        >
+          <option value="LOCAL">Local</option>
+          <option value="LOCAL_UNIFORM">Local Uniform</option>
+          <option value="PRESERVE_SHAPES">Preserve Shapes</option>
+          <option value="PRESERVE_SHAPES_UNIFORM">Preserve Shapes Uniform</option>
+          <option value="GLOBAL">Global</option>
+        </select>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
 
-    <span>Clear Area Strategy</span>
-    <select title="Clearing strategy" id="clearing-strategy-combobox" data-command="SetClearingStrategy">
-      <option value="LOCAL">Local</option>
-      <option value="LOCAL_UNIFORM">Local Uniform</option>
-      <option value="PRESERVE_SHAPES">Preserve Shapes</option>
-      <option value="PRESERVE_SHAPES_UNIFORM">Preserve Shapes Uniform</option>
-      <option value="GLOBAL">Global</option>
-    </select>
+        <span>Component Assignment Strategy</span>
+        <select
+          title="Component assignment strategy"
+          id="component-assignment-strategy-combobox"
+          data-command="SetComponentAssignmentStrategy"
+        >
+          <option value="SINGLE">Single</option>
+          <option value="CONNECTED">Connected</option>
+          <option value="CLUSTERING">Clustering</option>
+        </select>
+      </div>
 
-    <span class="demo-separator"></span>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-    <span>Component Assignment Strategy</span>
-    <select title="Component assignment strategy" id="component-assignment-strategy-combobox" data-command="SetComponentAssignmentStrategy">
-      <option value="SINGLE">Single</option>
-      <option value="CONNECTED">Connected</option>
-      <option value="CLUSTERING">Clustering</option>
-    </select>
-
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="ClearRectangleAreaDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="ClearRectangleAreaDemo.js"></script>
+  </body>
 </html>

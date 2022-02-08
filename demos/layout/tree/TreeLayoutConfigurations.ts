@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -60,7 +60,7 @@ export function createGenericConfiguration(
   // create layout algorithm
   const treeLayout = new TreeLayout()
   const sample = (document.getElementById('select-sample') as HTMLSelectElement).value
-  if (sample === 'General Graph') {
+  if (sample === 'general') {
     // add the tree reduction stage for the case where the graph is not a tree but a general graph
     const treeReductionStage = new TreeReductionStage({
       nonTreeEdgeRouter: new OrganicEdgeRouter(),

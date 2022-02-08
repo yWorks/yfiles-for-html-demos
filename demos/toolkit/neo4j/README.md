@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/toolkit/neo4j/index.html).
 
+# Neo4j Integration Demo
+
 This demo shows how to load data from a Neo4j database and display it with yFiles for HTML.
 
 First, connect to a Neo4j database by entering an URL, a username, and a password into the corresponding form fields, then click the _Connect_ button.

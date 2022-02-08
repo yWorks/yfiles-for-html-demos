@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,107 +34,121 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Hit Test - Custom Styles Tutorial [yFiles for HTML]</title>
+    <title>Hit Test - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description
 -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This step shows how to override <code>isHit()</code> and <code>isInBox()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" target="_blank">NodeStyleBase</a>.
-    </p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Custom Styles Tutorial</div>
 
-    <div>
-      <p>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> is used for mouse click detection. It should return true if the
-        tested point is inside the node. <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> should take into account the
-        imprecision radius specified by the <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius" target="_blank">ICanvasContext#hitTestRadius</a> property. </p>
-      <p>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInBox" target="_blank">NodeStyleBase#isInBox</a> is used for marquee detection. It should return true if the node
-        intersects with the "tested" box or lies completely inside. Also, it should be true if the "tested box" lies
-        completely inside the node.</p>
-    </div>
+        <h1>Hit Test</h1>
 
-    <h2>Things to Try</h2>
+        <p>
+          This step shows how to override <code>isHit()</code> and <code>isInBox()</code> of
+          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" target="_blank">NodeStyleBase</a>.
+        </p>
 
-    <ul>
-      <li>
-        Take a look at <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInBox" target="_blank">NodeStyleBase#isInBox</a>.
-      </li>
-      <li>
-        Click inside/outside a node to see when it gets selected. Click near the node to watch the effects of the <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius" target="_blank">ICanvasContext#hitTestRadius</a>.
-        Zooming out makes the <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius" target="_blank">ICanvasContext#hitTestRadius</a> bigger.
-      </li>
-      <li>
-        Drag a marquee box to select a node. If you drag it inside the surrounding box of a node, you will see that the
-        node doesn't get selected. Drag it near the node to watch the effects of the <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius" target="_blank">ICanvasContext#hitTestRadius</a>.
-      </li>
-      <li>
-        Comment in the first line in <code>MySimpleNodeStyle#isHit</code> and <code>MySimpleNodeStyle#isInBox</code> so
-        the implementations in the base class are called and do the same thing again. The elliptical shape of the node
-        won't be respected but the node will be treated as if it was rectangular.
-      </li>
-      <li>
-        Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> is just implemented for the sake of completeness
-        and performance here. The base class implementation takes the result of <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a>
-        for hit testing which calculates exactly the same thing, with the difference that <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a>
-        needs first to build a <a href="https://docs.yworks.com/yfileshtml/#/api/GeneralPath" target="_blank">GeneralPath</a>, which is more expensive than an effective
-        implementation as shown in <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a>. If <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a>
-        is implemented correctly, <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> will automatically return the correct
-        result.
-      </li>
-    </ul>
+        <div>
+          <p>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> is used for mouse click detection. It should return true
+            if the tested point is inside the node. <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> should take into
+            account the imprecision radius specified by the
+            <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius" target="_blank">ICanvasContext#hitTestRadius</a> property.
+          </p>
+          <p>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInBox" target="_blank">NodeStyleBase#isInBox</a> is used for marquee detection. It should return true if
+            the node intersects with the "tested" box or lies completely inside. Also, it should be
+            true if the "tested box" lies completely inside the node.
+          </p>
+        </div>
 
-    <h2>Left to Do</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getBounds" target="_blank">NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the
-        bounds of the node.
-      </li>
-      <li>
-        Find a way to draw a well-performing drop shadow.
-      </li>
-      <li>
-        Draw edges from nodes to their labels.
-      </li>
-      <li>
-        Create a custom label style.
-      </li>
-      <li>
-        Create a custom edge style.
-      </li>
-      <li>
-        Create a custom port style for nodes.
-      </li>
-      <li>
-        Create a custom group node style.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <ul>
+          <li>
+            Take a look at <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInBox" target="_blank">NodeStyleBase#isInBox</a>.
+          </li>
+          <li>
+            Click inside/outside a node to see when it gets selected. Click near the node to watch
+            the effects of the <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius" target="_blank">ICanvasContext#hitTestRadius</a>. Zooming out makes the
+            <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius" target="_blank">ICanvasContext#hitTestRadius</a> bigger.
+          </li>
+          <li>
+            Drag a marquee box to select a node. If you drag it inside the surrounding box of a
+            node, you will see that the node doesn't get selected. Drag it near the node to watch
+            the effects of the <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius" target="_blank">ICanvasContext#hitTestRadius</a>.
+          </li>
+          <li>
+            Comment in the first line in <code>MySimpleNodeStyle#isHit</code> and
+            <code>MySimpleNodeStyle#isInBox</code> so the implementations in the base class are
+            called and do the same thing again. The elliptical shape of the node won't be respected
+            but the node will be treated as if it was rectangular.
+          </li>
+          <li>
+            Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> is just implemented for the sake of
+            completeness and performance here. The base class implementation takes the result of
+            <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a> for hit testing which calculates exactly the same
+            thing, with the difference that <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a> needs first to build
+            a <a href="https://docs.yworks.com/yfileshtml/#/api/GeneralPath" target="_blank">GeneralPath</a>, which is more expensive than an effective implementation as
+            shown in <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a>. If <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a> is
+            implemented correctly, <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> will automatically return the
+            correct result.
+          </li>
+        </ul>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+        <h2>Left to Do</h2>
 
-  <!--
+        <ul>
+          <li>
+            Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getBounds" target="_blank">NodeStyleBase#getBounds</a>, so that the drop shadow will be included
+            in the bounds of the node.
+          </li>
+          <li>Find a way to draw a well-performing drop shadow.</li>
+          <li>Draw edges from nodes to their labels.</li>
+          <li>Create a custom label style.</li>
+          <li>Create a custom edge style.</li>
+          <li>Create a custom port style for nodes.</li>
+          <li>Create a custom group node style.</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
+
+      <!--
   The GraphComponent
   -->
-  <div id="graphComponent"></div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

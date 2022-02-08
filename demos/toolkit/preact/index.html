@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,67 +34,72 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Preact Demo [yFiles for HTML]</title>
+    <title>Preact Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <link rel="stylesheet" href="style/index.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="style/index.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Preact Demo</h1>
 
-    <p>
-      This demo shows how to integrate yFiles in a
-      <a href="https://preactjs.com/" target="_blank" rel="noopener noreferrer">
-        Preact
-      </a>
-      application. It uses the
-      <a href='https://preactjs.com/guide/v10/getting-started#no-build-tools-route' target="_blank" rel="noopener noreferrer">"No build tools route"</a>
-      of the preact setup for simplicity. Note that //@ts-ignore comments have to be used when importing from unpkg URLs,
-      as TypeScript has no way of knowing the types of these packages.
-      The interoperability between the yFiles graph view
-      and the preact components that is demonstrated in this demo would not change with a
-      different configuration setup, though (e.g. Preact CLI, custom bundling pipeline).
-    </p>
-    <p>
-      The sample application shows how a collection of data items and connections can be
-      automatically synced with both a Preact view and a yFiles view.
-    </p>
-    <p>
-      To keep the yFiles view in sync with the application data, the yFiles <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> API is used.
-    </p>
-    <p>
-      The nodes are rendered via the <code>NodeTemplate</code> preact component.
-    </p>
+        <p>
+          This demo shows how to integrate yFiles in a
+          <a href="https://preactjs.com/" target="_blank" rel="noopener noreferrer"> Preact </a>
+          application. It uses the
+          <a
+            href="https://preactjs.com/guide/v10/getting-started#no-build-tools-route"
+            target="_blank"
+            rel="noopener noreferrer"
+            >"No build tools route"</a
+          >
+          of the preact setup for simplicity. Note that //@ts-ignore comments have to be used when
+          importing from unpkg URLs, as TypeScript has no way of knowing the types of these
+          packages. The interoperability between the yFiles graph view and the preact components
+          that is demonstrated in this demo would not change with a different configuration setup,
+          though (e.g. Preact CLI, custom bundling pipeline).
+        </p>
+        <p>
+          The sample application shows how a collection of data items and connections can be
+          automatically synced with both a Preact view and a yFiles view.
+        </p>
+        <p>
+          To keep the yFiles view in sync with the application data, the yFiles
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> API is used.
+        </p>
+        <p>The nodes are rendered via the <code>NodeTemplate</code> preact component.</p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        The item collection can be changed with the panel on the right-hand side.
         <ul>
-          <li>'Add Item' creates a new data item and a random connection.</li>
-          <li>The item view contains a checkbox that toggles the item's "enabled" state.</li>
-          <li>Finally, items can also be removed in the Preact view.</li>
+          <li>
+            The item collection can be changed with the panel on the right-hand side.
+            <ul>
+              <li>'Add Item' creates a new data item and a random connection.</li>
+              <li>The item view contains a checkbox that toggles the item's "enabled" state.</li>
+              <li>Finally, items can also be removed in the Preact view.</li>
+            </ul>
+            Note how all of these operations are synced with the yFiles view.
+          </li>
         </ul>
-        Note how all of these operations are synced with the yFiles view.
-      </li>
-    </ul>
-  </div>
-</aside>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class='preact-app'></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-<script type="module" src="PreactDemo.js"></script>
+      <div class="preact-app"></div>
+    </div>
 
-</body>
+    <script type="module" src="PreactDemo.js"></script>
+  </body>
 </html>

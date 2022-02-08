@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/overview/index.html).
 
-## Overview
+Application Features Tutorial
+
+# Overview
 
 This demo shows how to add an overview component to the application.
 

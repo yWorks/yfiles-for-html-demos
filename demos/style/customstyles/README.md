@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/customstyles/index.html).
 
+Custom Styles Tutorial
+
+# Custom Styles Demo
+
 This demo shows how to create custom styles for nodes, edges, labels, ports, and edge arrows. Styles can use all the powerful visualisation features of Scalable Vector Graphics (SVG).
 
 ## Things to Try

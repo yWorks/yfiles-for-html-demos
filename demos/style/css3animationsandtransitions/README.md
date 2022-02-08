@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/css3animationsandtransitions/index.html).
 
+# CSS3 Animations And Transitions Demo
+
 This demo shows how CSS3 transformations and animations can be applied to graph items.
 
 ## Things to Try

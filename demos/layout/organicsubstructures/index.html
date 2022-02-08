@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,261 +34,283 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Organic Substructures Demo [yFiles for HTML]</title>
+    <title>Organic Substructures Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <link rel="stylesheet" href="../../layout/layoutstyles/resources/styles.css">
-  <link rel="stylesheet" href="resources/node-styles.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../layout/layoutstyles/resources/styles.css" />
+    <link rel="stylesheet" href="resources/node-styles.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #node-type-panel {
-      border: solid lightgray;
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 6px;
-      position: relative;
-      display: inline-block;
-      user-select: none;
-      cursor: default;
-    }
+    <style>
+      #node-type-panel {
+        border: solid lightgray;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 6px;
+        position: relative;
+        display: inline-block;
+        user-select: none;
+        cursor: default;
+      }
 
-    #node-type-panel-heading {
-      font-size: 28px;
-      margin-bottom: 1ex;
-    }
+      #node-type-panel-heading {
+        font-size: 28px;
+        margin-bottom: 1ex;
+      }
 
-    .node-type-button {
-      cursor: pointer;
-      display: inline-block;
-      font-size: 24px;
-      height: 30px;
-      text-align: center;
-      vertical-align: middle;
-      width: 30px;
-    }
+      .node-type-button {
+        cursor: pointer;
+        display: inline-block;
+        font-size: 24px;
+        height: 30px;
+        text-align: center;
+        vertical-align: middle;
+        width: 30px;
+      }
 
-    .current-type {
-      border: thick solid black;
-    }
+      .current-type {
+        border: thick solid black;
+      }
 
-    .settings-headline {
-      background: #a0a0a0;
-      padding: 8px;
-    }
+      .settings-headline {
+        background: #a0a0a0;
+        padding: 8px;
+      }
 
-    .settings-content {
-      background: #ffffff;
-      padding: 8px;
-    }
+      .settings-content {
+        background: #ffffff;
+        padding: 8px;
+      }
 
-    .demo-sidebar-content .settings-grid {
-      background-color: white;
-      padding: 8px;
-      font-size: 14px;
-    }
+      .settings-content select {
+        width: 100%;
+      }
 
-    .settings-content select {
-      width: 100%;
-    }
+      .settings-grid {
+        display: grid;
+        align-items: center;
+      }
+      .settings-label {
+        grid-column: 1;
+      }
+      .settings-editor {
+        grid-column: 2;
+      }
+      input.settings-editor {
+        justify-self: end;
+      }
+      select.settings-editor {
+        width: 100%;
+      }
 
-    .settings-grid {
-      display: grid;
-      align-items: center;
-    }
-    .settings-label {
-      grid-column: 1;
-    }
-    .settings-editor {
-      grid-column: 2;
-    }
-    input.settings-editor {
-      justify-self: end;
-    }
-    select.settings-editor {
-      width: 100%;
-    }
+      .settings-row1 {
+        grid-row: 1;
+      }
+      .settings-row2 {
+        grid-row: 2;
+      }
+      .settings-row3 {
+        grid-row: 3;
+      }
+      .settings-row4 {
+        grid-row: 4;
+      }
+      .settings-row5 {
+        grid-row: 5;
+      }
 
-    .settings-row1 {
-      grid-row: 1;
-    }
-    .settings-row2 {
-      grid-row: 2;
-    }
-    .settings-row3 {
-      grid-row: 3;
-    }
-    .settings-row4 {
-      grid-row: 4;
-    }
-    .settings-row5 {
-      grid-row: 5;
-    }
+      .settings-row2,
+      .settings-row3,
+      .settings-row4,
+      .settings-row5 {
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Organic Substructures Demo</h1>
 
-    .settings-row2, .settings-row3, .settings-row4, .settings-row5 {
-      margin-top: 8px;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
+        <p>
+          This demo showcases how the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a> algorithm handles substructures and
+          node types, see
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures" target="_blank">Layout of Regular Substructures</a>
+          for more information.
+        </p>
+        <p>
+          The organic layout algorithm is able to identify regular substructures in a graph, like,
+          e.g., chains, stars, cycles, and parallel structures and arrange them in an optimized
+          manner depending on the kind of substructure and user preference. This makes them easily
+          recognizable in the resulting layout. Furthermore, specified node types may influence both
+          substructure detection and placement of elements within the structure.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Load an example graph with the combobox 'Sample'.</li>
+          <li>
+            In the 'Layout Settings' panel on the right, use the combobox of the specific
+            substructures to try out the different styles supported by each of them. Selecting value
+            'Ignore' means that the respective structure is ignored and not handle differently.
+          </li>
+          <li>
+            Use the checkbox 'Use Edge Grouping' to see how edge grouping changes the flavor of
+            parallel and separated radial star substructures.
+          </li>
+          <li>
+            Use the checkbox 'Consider Node Types' to see how considering node types changes
+            substructure detection and layout.
+          </li>
+          <li>
+            The simple example graphs also offer to change the node types (i.e. color) by clicking
+            on the nodes. In addition, the structure of these graphs can be modified (use the
+            "Layout" button to calculate a new layout after modifying the graph structure).
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo showcases how the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a> algorithm handles substructures and node types,
-      see <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures" target="_blank">Layout of Regular Substructures</a> for more information.
-    </p>
-    <p>
-      The organic layout algorithm is able to identify regular substructures in a graph, like, e.g., chains, stars,
-      cycles, and parallel structures and arrange them in an optimized manner depending on the kind of substructure
-      and user preference. This makes them easily recognizable in the resulting layout. Furthermore, specified node
-      types may influence both substructure detection and placement of elements within the structure.
-    </p>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Load an example graph with the combobox 'Sample'.
-      </li>
-      <li>
-        In the 'Layout Settings' panel on the right, use the combobox of the specific substructures to try out
-        the different styles supported by each of them. Selecting value 'Ignore' means that the respective
-        structure is ignored and not handle differently.
-      </li>
-      <li>
-        Use the checkbox 'Use Edge Grouping' to see how edge grouping changes the flavor of parallel and separated radial
-        star substructures.
-      </li>
-      <li>
-        Use the checkbox 'Consider Node Types' to see how considering node types changes substructure detection and layout.
-      </li>
-      <li>
-        The simple example graphs also offer to change the node types (i.e. color) by clicking on the nodes.
-        In addition, the structure of these graphs can be modified (use the "Layout" button to calculate
-        a new layout after modifying the graph structure).
-      </li>
-    </ul>
-  </div>
-</aside>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+      </div>
 
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-  </div>
-
-  <div id="graphComponent">
-    <div id="node-type-panel" class="popupContent" tabindex="0">
-      <div id="node-type-panel-heading">Type</div>
-      <div class="node-type-button type-0"></div>
-      <div class="node-type-button type-1"></div>
-      <div class="node-type-button type-2"></div>
-      <div class="node-type-button type-3"></div>
-      <div class="node-type-button type-4"></div>
-      <div class="node-type-button type-5"></div>
-      <div class="node-type-button type-6"></div>
-      <div class="node-type-button type-7"></div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent">
+          <div id="node-type-panel" class="popupContent" tabindex="0">
+            <div id="node-type-panel-heading">Type</div>
+            <div class="node-type-button type-0"></div>
+            <div class="node-type-button type-1"></div>
+            <div class="node-type-button type-2"></div>
+            <div class="node-type-button type-3"></div>
+            <div class="node-type-button type-4"></div>
+            <div class="node-type-button type-5"></div>
+            <div class="node-type-button type-6"></div>
+            <div class="node-type-button type-7"></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<!--
+    <!--
 The sidebar for the properties and settings
 -->
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Configuration</h1>
-  <div class="demo-sidebar-content">
-    <div class="data-editor-header">
-      <h2 style="margin-top: 0;">Sample Graph</h2>
-      <div class="content ">
-        <select id="sample-combo-box" class="sidebar-select-box" title="Select a sample for the layout algorithm"></select>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <div class="data-editor-header">
+          <h2 style="margin-top: 0">Sample Graph</h2>
+          <div class="content">
+            <select
+              id="sample-combo-box"
+              class="sidebar-select-box"
+              title="Select a sample for the layout algorithm"
+            ></select>
+          </div>
+        </div>
+
+        <div class="data-editor-header">
+          <h2 style="margin-top: 0">Substructure Layout</h2>
+          <div class="settings-grid">
+            <label for="cycleStyle" class="settings-label settings-row1">Cycles</label>
+            <select
+              class="settings-editor settings-row1"
+              title="Select a style for cycle substructures"
+              id="cycleStyle"
+            >
+              <option value="NONE">Ignore</option>
+              <option value="CIRCULAR">Circular</option>
+            </select>
+            <label for="chainStyle" class="settings-label settings-row2">Chains</label>
+            <select
+              class="settings-editor settings-row2"
+              title="Select a style for chain substructures"
+              id="chainStyle"
+            >
+              <option value="NONE">Ignore</option>
+              <option value="RECTANGULAR">Rectangular</option>
+              <option value="STRAIGHT_LINE">Straight-Line</option>
+            </select>
+            <label for="starStyle" class="settings-label settings-row3">Star</label>
+            <select
+              class="settings-editor settings-row3"
+              title="Select a style for star substructures"
+              id="starStyle"
+            >
+              <option value="NONE">Ignore</option>
+              <option value="CIRCULAR">Circular</option>
+              <option value="RADIAL">Radial</option>
+              <option value="SEPARATED_RADIAL">Separated Radial</option>
+            </select>
+            <label for="parallelStyle" class="settings-label settings-row4">Parallel</label>
+            <select
+              class="settings-editor settings-row4"
+              title="Select a style for parallel substructures"
+              id="parallelStyle"
+            >
+              <option value="NONE">Ignore</option>
+              <option value="RADIAL">Radial</option>
+              <option value="RECTANGULAR">Rectangular</option>
+              <option value="STRAIGHT_LINE">Straight-Line</option>
+            </select>
+            <label for="use-edge-grouping" class="settings-label settings-row5"
+              >Use Edge Grouping</label
+            >
+            <input class="settings-editor settings-row5" id="use-edge-grouping" type="checkbox" />
+          </div>
+        </div>
+
+        <div class="data-editor-header">
+          <h2 style="margin-top: 0">Node Types</h2>
+          <div class="settings-grid">
+            <label for="consider-node-types" class="settings-label settings-row1"
+              >Consider Node Types</label
+            >
+            <input
+              class="settings-editor settings-row1"
+              id="consider-node-types"
+              type="checkbox"
+              checked=""
+            />
+            <label for="separate-parallel" class="settings-label settings-row2"
+              >Separate Parallel Structures by Type</label
+            >
+            <input class="settings-editor settings-row2" id="separate-parallel" type="checkbox" />
+            <label for="separate-star" class="settings-label settings-row3"
+              >Separate Star Structures by Type</label
+            >
+            <input class="settings-editor settings-row3" id="separate-star" type="checkbox" />
+          </div>
+        </div>
+
+        <div id="data-editor-button-container" class="demo-form-block">
+          <button
+            id="apply-layout-button"
+            class="flat-button primary"
+            data-command="LayoutCommand"
+            title="Apply the Layout
+(CTRL + Enter)"
+          >
+            <span>Apply Layout</span>
+          </button>
+        </div>
       </div>
-    </div>
+    </aside>
 
-    <div class="data-editor-header">
-      <h2 style="margin-top: 0;">Substructure Layout</h2>
-      <div class="settings-grid">
-        <label for="cycleStyle" class="settings-label settings-row1">Cycles</label>
-        <select
-          class="settings-editor settings-row1"
-          title="Select a style for cycle substructures"
-          id="cycleStyle">
-          <option value="NONE">Ignore</option>
-          <option value="CIRCULAR">Circular</option>
-        </select>
-        <label for="chainStyle" class="settings-label settings-row2">Chains</label>
-        <select
-          class="settings-editor settings-row2"
-          title="Select a style for chain substructures"
-          id="chainStyle">
-          <option value="NONE">Ignore</option>
-          <option value="RECTANGULAR">Rectangular</option>
-          <option value="STRAIGHT_LINE">Straight-Line</option>
-        </select>
-        <label for="starStyle" class="settings-label settings-row3">Star</label>
-        <select
-          class="settings-editor settings-row3"
-          title="Select a style for star substructures"
-          id="starStyle">
-          <option value="NONE">Ignore</option>
-          <option value="CIRCULAR">Circular</option>
-          <option value="RADIAL">Radial</option>
-          <option value="SEPARATED_RADIAL">Separated Radial</option>
-        </select>
-        <label for="parallelStyle" class="settings-label settings-row4">Parallel</label>
-        <select
-          class="settings-editor settings-row4"
-          title="Select a style for parallel substructures"
-          id="parallelStyle">
-          <option value="NONE">Ignore</option>
-          <option value="RADIAL">Radial</option>
-          <option value="RECTANGULAR">Rectangular</option>
-          <option value="STRAIGHT_LINE">Straight-Line</option>
-        </select>
-        <label for="use-edge-grouping" class="settings-label settings-row5">Use Edge Grouping</label>
-        <input
-          class="settings-editor settings-row5"
-          id="use-edge-grouping"
-          type="checkbox"/>
-      </div>
-    </div>
-
-    <div class="data-editor-header">
-      <h2 style="margin-top: 0;">Node Types</h2>
-      <div class="settings-grid">
-        <label for="consider-node-types" class="settings-label settings-row1">Consider Node Types</label>
-        <input
-          class="settings-editor settings-row1"
-          id="consider-node-types"
-          type="checkbox"
-          checked/>
-        <label for="separate-parallel" class="settings-label settings-row2">Separate Parallel Structures by Type</label>
-        <input
-          class="settings-editor settings-row2"
-          id="separate-parallel"
-          type="checkbox"/>
-        <label for="separate-star" class="settings-label settings-row3">Separate Star Structures by Type</label>
-        <input
-          class="settings-editor settings-row3"
-          id="separate-star"
-          type="checkbox"/>
-      </div>
-    </div>
-
-    <div id="data-editor-button-container" class="demo-form-block">
-      <button id="apply-layout-button" class="flat-button primary" data-command="LayoutCommand" title="Apply the Layout&#013;(CTRL + Enter)">
-        <span>Apply Layout</span>
-      </button>
-    </div>
-  </div>
-</aside>
-
-<script type="module" crossorigin="anonymous" src="OrganicSubstructuresDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="OrganicSubstructuresDemo.js"></script>
+  </body>
 </html>

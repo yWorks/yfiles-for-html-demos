@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/external-links/index.html).
 
-## External Links
+Application Features Tutorial
+
+# External Links
 
 This demo shows how to add labels that act like external links and open in a new window.
 

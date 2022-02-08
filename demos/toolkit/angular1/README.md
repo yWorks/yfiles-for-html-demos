@@ -4,7 +4,7 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/toolkit/angular1/index.html).
 
-# Description
+# AngularJS 1 Integration Demo
 
 This demo shows how to use yFiles for HTML in an AngularJS 1 app.
 

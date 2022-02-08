@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <!--
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!--
     This document is used by the PrintingSupport as target for the generated SVG elements.
     Using a real document instead of 'about:blank' has the advantage that relative URLs in
     the styles of the graph items still work. -->
 
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100" rel="stylesheet" type="text/css">
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,300,100"
+      rel="stylesheet"
+      type="text/css"
+    />
 
-  <style type="text/css">
-    .pagebreak { display: block; page-break-after: always; }
-    /* this rule is needed to prevent that the hover effect is always visible */
-    .hoverable { fill-opacity: 0; }
-  </style>
-</head>
-<body>
-
-<script>
-  // wait until the web page has finished loading
-  setTimeout(function() {
-    try {
-      window.opener.addPrintDom(window);
-    } catch (e) {
-      // check if the browser complains about cross-origin page access
-      // this is the case for Chrome if the demo is run from the local filesystem.
-      if (e.message.indexOf('cross', 0) >= 0) {
-        alert(
-          'Cannot modify the printing window due to cross-origin policies in effect. Try running the demo from a server!');
-      } else {
-        alert('There was an error during printing! ' + e.message);
+    <style>
+      .pagebreak {
+        display: block;
+        page-break-after: always;
       }
-    }
-  }, 400);
-</script>
-</body>
+      /* this rule is needed to prevent that the hover effect is always visible */
+      .hoverable {
+        fill-opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // wait until the web page has finished loading
+      setTimeout(function () {
+        try {
+          window.opener.addPrintDom(window)
+        } catch (e) {
+          // check if the browser complains about cross-origin page access
+          // this is the case for Chrome if the demo is run from the local filesystem.
+          if (e.message.indexOf('cross', 0) >= 0) {
+            alert(
+              'Cannot modify the printing window due to cross-origin policies in effect. Try running the demo from a server!'
+            )
+          } else {
+            alert('There was an error during printing! ' + e.message)
+          }
+        }
+      }, 400)
+    </script>
+  </body>
 </html>

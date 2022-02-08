@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/orthogonaledges/index.html).
 
+# Orthogonal Edge Editing Demo
+
 This demo shows the customization of orthogonal edge editing.
 
 Using the [GraphDecorator](https://docs.yworks.com/yfileshtml/#/api/GraphDecorator), the edge is decorated with custom implementations of the [IOrthogonalEdgeHelper](https://docs.yworks.com/yfileshtml/#/api/IOrthogonalEdgeHelper) interface.

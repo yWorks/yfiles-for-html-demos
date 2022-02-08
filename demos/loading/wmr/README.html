@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,90 +32,85 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>WMR Loading Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-</head>
-<body>
-<!-- populated by readme-style.js -->
-<div id="header" class="simple-header">
-  WMR Loading Demo
-</div>
-<main>
-  <div class="content-centered">
-    <div class="content">
-      <div class="breadcrumbs">
-        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> WMR Loading Demo
-      </div>
-
-      <div  style="padding-bottom: 20px">
-        <h1>WMR Loading Demo</h1>
-
-        <p>
-          This demo shows how to load yFiles for HTML with <a href="https://wmr.dev/" rel="noopener" target="_blank">WMR</a>
-          as a loader for efficient web development and easy builds.
-        </p>
-        <p>Also, a layout algorithm in a Web Worker thread without blocking the UI or main thread is
-          loaded using <a href="https://wmr.dev/docs/web-workers" rel="noopener" target="_blank">WMR's
-          built-in support
-          for Web Workers</a>.
-        </p>
-      </div>
-
-      <div style="padding: 20px 0 20px 0">
-        <div>
-          <h2>Running the demo</h2>
-
-          <p>First, install the required npm modules in the demo directory:</p>
-
-          <code>
-        > npm install
-      </code>
-
-          <h3>Development</h3>
-
-          <p>
-            For development, WMR offers convenient live reloading support to minimize turnaround times.
-          </p>
-          <p>To run the development server:</p>
-
-          <code>
-        > npm start
-      </code>
-
-          <p>
-            When the server runs, try making changes to the source code and see how the app will be
-            updated in the browser immediately.
-          </p>
-
-          <p>
-            Debugging of application files in the browser's developer tools should work fine,
-            since the source files are only minimally preprocessed.
-          </p>
-
-          <h3>Production</h3>
-
-          <p>
-            WMR is capable of creating a highly optimized production build. No extra configuration
-            is required.
-          </p>
-
-          <p>
-            Note that WMR's prerendering feature does not work with yFiles for HTML.
-          </p>
-
-          <p>To run the production build:</p>
-
-          <code>
-        > npm run build
-      </code>
-        </div>
-      </div>
-    </div>
+    <title>WMR Loading Demo [yFiles for HTML]</title>
+    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
     <!-- populated by readme-style.js -->
-    <div id="footer-detailed"></div>
-  </div>
-</main>
-<script src="../../../doc/readme-style.js"></script>
-</body>
+    <div id="header" class="simple-header">WMR Loading Demo</div>
+    <main>
+      <div class="content-centered">
+        <div class="content">
+          <div class="breadcrumbs">
+            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> WMR Loading
+            Demo
+          </div>
+
+          <div style="padding-bottom: 20px">
+            <h1>WMR Loading Demo</h1>
+
+            <p>
+              This demo shows how to load yFiles for HTML with
+              <a href="https://wmr.dev/" rel="noopener" target="_blank">WMR</a>
+              as a loader for efficient web development and easy builds.
+            </p>
+            <p>
+              Also, a layout algorithm in a Web Worker thread without blocking the UI or main thread
+              is loaded using
+              <a href="https://wmr.dev/docs/web-workers" rel="noopener" target="_blank"
+                >WMR's built-in support for Web Workers</a
+              >.
+            </p>
+          </div>
+
+          <div style="padding: 20px 0 20px 0">
+            <div>
+              <h2>Running the demo</h2>
+
+              <p>First, install the required npm modules in the demo directory:</p>
+
+              <code> > npm install </code>
+
+              <h3>Development</h3>
+
+              <p>
+                For development, WMR offers convenient live reloading support to minimize turnaround
+                times.
+              </p>
+              <p>To run the development server:</p>
+
+              <code> > npm start </code>
+
+              <p>
+                When the server runs, try making changes to the source code and see how the app will
+                be updated in the browser immediately.
+              </p>
+
+              <p>
+                Debugging of application files in the browser's developer tools should work fine,
+                since the source files are only minimally preprocessed.
+              </p>
+
+              <h3>Production</h3>
+
+              <p>
+                WMR is capable of creating a highly optimized production build. No extra
+                configuration is required.
+              </p>
+
+              <p>Note that WMR's prerendering feature does not work with yFiles for HTML.</p>
+
+              <p>To run the production build:</p>
+
+              <code> > npm run build </code>
+            </div>
+          </div>
+        </div>
+        <!-- populated by readme-style.js -->
+        <div id="footer-detailed"></div>
+      </div>
+    </main>
+    <script src="../../../doc/readme-style.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/interactiveorgchart/index.html).
 
+# Interactive Organization Chart Demo
+
 This demo shows how to create an interactive organization chart from JSON data.
 
 The source data is easily converted to a yFiles graph using class [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).

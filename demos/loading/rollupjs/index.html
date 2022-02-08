@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,63 +34,82 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Rollup.js Demo [yFiles for HTML]</title>
+    <title>Rollup.js Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <!-- Polyfill the fetch API if necessary -->
-  <script src="https://unpkg.com/unfetch/polyfill"></script>
-</head>
-<body class="demo-has-left demo-hide-left-when-small loaded">
+    <!-- Polyfill the fetch API if necessary -->
+    <script src="https://unpkg.com/unfetch/polyfill"></script>
+  </head>
+  <body class="demo-has-left demo-hide-left-when-small loaded">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Rollup.js Demo</h1>
+        <p>
+          This demo shows how to bundle the yFiles library in a
+          <a href="https://rollupjs.org" target="_blank">rollup</a> project.
+        </p>
+        <p>
+          The yFiles modules are <code>import</code>ed in the demo sources, so rollup will add the
+          yFiles modules to <code>bundle.js</code>.
+        </p>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to bundle the yFiles library in a <a href="https://rollupjs.org" target="_blank">rollup</a> project.
-    </p>
-    <p>
-      The yFiles modules are <code>import</code>ed in the demo sources, so rollup will add the yFiles modules to <code>bundle.js</code>.
-    </p>
+        <p>
+          The HTML file just references the single <code>bundle.js</code> file containing the demo
+          code as well as all library code.
+        </p>
 
-    <p>
-      The HTML file just references the single <code>bundle.js</code> file containing the demo code as well as all
-      library code.</p>
+        <p>
+          In addition to resolving the module imports and creating a browser-ready bundle, the Grunt
+          build
+        </p>
+        <ul>
+          <li>
+            runs the yFiles optimizer before bundling to achieve a smaller, production ready bundle
+          </li>
+          <li>
+            runs babel on the sources, so the resulting application can be run in older browsers
+            like IE 11.
+          </li>
+        </ul>
 
-    <p>In addition to resolving the module imports and creating a browser-ready bundle, the Grunt build</p>
-    <ul>
-      <li>runs the yFiles optimizer before bundling to achieve a smaller, production ready bundle</li>
-      <li>runs babel on the sources, so the resulting application can be run in older browsers like IE 11.</li>
-    </ul>
-
-    <h2>Building the demo</h2>
-    <p>
-      Install the required npm packages and run the build script:
-    </p>
-    <p>Install the required npm packages and run the build script</p>
-    <pre>
+        <h2>Building the demo</h2>
+        <p>Install the required npm packages and run the build script:</p>
+        <p>Install the required npm packages and run the build script</p>
+        <pre>
 > npm install
 > npm run build
-</pre>
-    <h2>Run</h2>
+</pre
+        >
+        <h2>Run</h2>
 
-    <p>
-      The grunt build will place the output files in the <code>dist/</code> directory inside this demo's directory. To
-      run the demo, open <code>./index.html</code> in a browser.</p>
-  </div>
-</aside>
+        <p>
+          The grunt build will place the output files in the <code>dist/</code> directory inside
+          this demo's directory. To run the demo, open <code>./index.html</code> in a browser.
+        </p>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <header class="demo-header">
-    <a href="https://www.yworks.com/" target="_blank"><img src="../../resources/icons/ylogo.svg" class="demo-y-logo"></a><a href="../../README.html" target="_blank">yFiles for HTML</a>
-    <span class="demo-title demo-breadcrumb">Rollup.js Demo</span>
-  </header>
-  <div class="demo-toolbar">
-    <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
-  </div>
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header">
+        <a href="https://www.yworks.com/" target="_blank"
+          ><img src="../../resources/icons/ylogo.svg" class="demo-y-logo" /></a
+        >
+        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+        <a href="../../README.html" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+        <span class="demo-title demo-breadcrumb">Rollup.js Demo</span>
+      </header>
+      <div class="demo-toolbar">
+        <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">
+          Layout
+        </button>
+      </div>
+      <div id="graphComponent"></div>
+    </div>
 
-<script src="dist/bundle.js"></script>
-</body>
+    <script src="dist/bundle.js"></script>
+  </body>
 </html>

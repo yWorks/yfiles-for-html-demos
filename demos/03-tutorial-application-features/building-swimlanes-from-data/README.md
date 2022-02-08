@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/building-swimlanes-from-data/index.html).
 
-## Build Swimlanes from Data
+Application Features Tutorial
+
+# Build Swimlanes from Data
 
 This demo shows how to build a graph with swimlanes using the data stored in JSON-format.
 

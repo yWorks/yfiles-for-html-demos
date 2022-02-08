@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/custom-layout-stage/index.html).
 
+# Custom Layout Stage Demo
+
 ## Custom Layout Stage Demo
 
 [Layout Stages](https://docs.yworks.com/yfileshtml/#/dguide/layout-layout_stages) provide a way of separating a complete layout into different parts. This often involves changing the graph in certain ways before another stage acts on it, post-processing the graph after another stage, or even both. Layout stages are designed to be chained, in that they each have a so-called “core” layout that performs the actual work after pre- or before post-processing.

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,99 +34,128 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Isometric Drawing Demo [yFiles for HTML]</title>
+    <title>Isometric Drawing Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <style>
-    #no-webgl-support {
-      text-align: center;
-      font-size: 24px;
-      position: absolute;
-      top: 100px;
-      padding: 2em;
-      left: 0;
-      right: 0;
-      line-height: 2;
-    }
-  </style>
+    <style>
+      #no-webgl-support {
+        text-align: center;
+        font-size: 24px;
+        position: absolute;
+        top: 100px;
+        padding: 2em;
+        left: 0;
+        right: 0;
+        line-height: 2;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo displays graphs isometrically, adding an additional dimension to the visualization. This can be used to
-      represent characteristics of the business data as height, or just because of the beautiful looks.
-    </p>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Isometric Drawing Demo</h1>
 
-    <p>
-      In this demo, WebGL is used for the rendering but the <a href="https://docs.yworks.com/yfileshtml/#/dguide/projections-main" target="_blank">projection</a>
-      feature of yFiles for HTML supports SVG and HTML Canvas rendering, too.
-    </p>
+        <p>
+          This demo displays graphs isometrically, adding an additional dimension to the
+          visualization. This can be used to represent characteristics of the business data as
+          height, or just because of the beautiful looks.
+        </p>
 
-    <h2>Interaction</h2>
+        <p>
+          In this demo, WebGL is used for the rendering but the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/projections-main" target="_blank">projection</a>
+          feature of yFiles for HTML supports SVG and HTML Canvas rendering, too.
+        </p>
 
-    <p>
-      This demo features the full range of interactions <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support" target="_blank">supported by
-      yFiles</a>. In addition, each node has an special handle at its top to change the height of the node.
-    </p>
+        <h2>Interaction</h2>
 
-    <h2>Things to Try</h2>
+        <p>
+          This demo features the full range of interactions
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support" target="_blank">supported by yFiles</a>. In addition, each node
+          has an special handle at its top to change the height of the node.
+        </p>
 
-    <ul>
-      <li>Change the height of a node by selecting it and dragging the handle at its top.</li>
-      <li>Change the rotation of the scene with the "Rotation" slider in the toolbar.</li>
-      <li>Turn the grid on or off with the "Toggle Grid" button in the toolbar.</li>
-      <li>Create a new node with a random color and height by clicking on empty space in the canvas.</li>
-    </ul>
+        <h2>Things to Try</h2>
 
-    <h2>Layout</h2>
-    <p>
-      There are two suitable layout algorithms to apply to the graph.
-    </p>
-    <ul>
-      <li>Hierarchic layout</li>
-      <li>Orthogonal layout</li>
-    </ul>
+        <ul>
+          <li>Change the height of a node by selecting it and dragging the handle at its top.</li>
+          <li>Change the rotation of the scene with the "Rotation" slider in the toolbar.</li>
+          <li>Turn the grid on or off with the "Toggle Grid" button in the toolbar.</li>
+          <li>
+            Create a new node with a random color and height by clicking on empty space in the
+            canvas.
+          </li>
+        </ul>
 
-    <h2>Loading Graphs</h2>
-    <p>
-      Load your own graph and display it isometrically.
-    </p>
-  </div>
-</aside>
+        <h2>Layout</h2>
+        <p>There are two suitable layout algorithms to apply to the graph.</p>
+        <ul>
+          <li>Hierarchic layout</li>
+          <li>Orthogonal layout</li>
+        </ul>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button id="open-file" data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+        <h2>Loading Graphs</h2>
+        <p>Load your own graph and display it isometrically.</p>
+      </div>
+    </aside>
 
-    <button id="fit-content" data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          id="open-file"
+          data-command="Open"
+          title="Open a GraphML file"
+          class="demo-icon-yIconOpen"
+        ></button>
 
-    <span class="demo-separator"></span>
+        <button
+          id="fit-content"
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button id="hierarchic-layout" data-command="HierarchicLayout" title="Calculates a hierarchic layout"
-      class="demo-icon-yIconLayout labeled">Hierarchic
-    </button>
-    <button id="orthogonal-layout" data-command="OrthogonalLayout" title="Calculates an orthogonal layout"
-      class="demo-icon-yIconLayout labeled">Orthogonal
-    </button>
-    <span class="demo-separator"></span>
-    Rotation:
-    <input style="width: 200px;" type="range" min="-3.14" max="3.14" step="0.01" id="rotation">
-    <span class="demo-separator"></span>
-    <button id="grid-toggle" class="demo-icon-yIconGrid labeled">Toggle Grid</button>
-  </div>
+        <span class="demo-separator"></span>
 
-  <div id="graphComponent"></div>
-  <div id="no-webgl-support" style="display:none;">
-    Your browser or device does not support WebGL.<br>
-    This demo only works if WebGL is available.
-  </div>
-</div>
+        <button
+          id="hierarchic-layout"
+          data-command="HierarchicLayout"
+          title="Calculates a hierarchic layout"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Hierarchic
+        </button>
+        <button
+          id="orthogonal-layout"
+          data-command="OrthogonalLayout"
+          title="Calculates an orthogonal layout"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Orthogonal
+        </button>
+        <span class="demo-separator"></span>
+        Rotation:
+        <input style="width: 200px" type="range" min="-3.14" max="3.14" step="0.01" id="rotation" />
+        <span class="demo-separator"></span>
+        <button id="grid-toggle" class="demo-icon-yIconGrid labeled">Toggle Grid</button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="IsometricDrawingDemo.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="no-webgl-support" style="display: none">
+          Your browser or device does not support WebGL.<br />
+          This demo only works if WebGL is available.
+        </div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="IsometricDrawingDemo.js"></script>
+  </body>
 </html>

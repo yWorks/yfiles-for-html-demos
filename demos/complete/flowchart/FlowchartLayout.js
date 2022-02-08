@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1548,7 +1548,7 @@ function restoreOriginalGraph(graph) {
       new EdgeList(node.getOutEdgeCursor()).forEach(edge => {
         const outEdgeFromOriginal = groupingDummiesDP.getInt(edge.target) === 0
         outPath = graph.getPathList(edge)
-        outPath.pop()
+        outPath.shift()
         graph.changeEdge(edge, inEdge.source, edge.target)
         const combinedPath = FlowchartTransformerStage.createCombinedList(inPath, outPath)
         if (inEdgeFromOriginal && outEdgeFromOriginal) {

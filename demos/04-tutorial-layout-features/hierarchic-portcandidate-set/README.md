@@ -1,10 +1,14 @@
-# Hierarchic Layout with PortCandidateSet - Layout Features Tutorial
+#
+
+      Hierarchic Layout with PortCandidateSet - Layout Features Tutorial
 
 <img src="../../resources/image/tutorial4hierarchicportcandidateset.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/hierarchic-portcandidate-set/index.html).
 
-## Hierarchic Layout with PortCandidateSet
+Layout Features Tutorial
+
+# Hierarchic Layout with PortCandidateSet
 
 This demo shows how to use a [PortCandidateSet](https://docs.yworks.com/yfileshtml/#/api/PortCandidateSet) for the [Hierarchic Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) to define the port locations for a node as well as control how many edges can be connected to each port.
 

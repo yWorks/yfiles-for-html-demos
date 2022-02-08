@@ -4,11 +4,13 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/hierarchic/index.html).
 
-## Hierarchic Layout
+Layout Features Tutorial
+
+# Hierarchic Layout
 
 This demo shows common configuration options for [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
 
-For example, the demo code sets [layout orientation](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout#layoutOrientation), [default (orthogonal)](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout#edgeLayoutDescriptor) and [individual (octilinear) edge routing styles](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#edgeLayoutDescriptors), [source](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#sourcePortConstraints) and [target port constraints](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#targetPortConstraints) (pink edges), [critical paths](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#criticalEdgePriorities) (orange edges), [straightened edges (blue edges)](https://docs.yworks.com/yfileshtml/#/api/SimplexNodePlacer#straightenEdges) and various distances between graph items.
+For example, the demo code sets [layout orientation](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout#layoutOrientation), [default (orthogonal)](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout#edgeLayoutDescriptor) and individual (octilinear) edge routing styles, [source](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#sourcePortConstraints) and [target port constraints](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#targetPortConstraints) (pink edges), [critical paths](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#criticalEdgePriorities) (orange edges), straightened edges (blue edges) and various distances between graph items.
 
 ### Code Snippet
 

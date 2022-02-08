@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="demo.css">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="demo.css" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,53 +34,60 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Web Dev Server Loading Demo [yFiles for HTML]</title>
-</head>
-<body class="demo-has-left demo-hide-left-when-small loaded">
+    <title>Web Dev Server Loading Demo [yFiles for HTML]</title>
+  </head>
+  <body class="demo-has-left demo-hide-left-when-small loaded">
+  <aside class="demo-sidebar demo-left">
+    <div class='demo-sidebar-header'>
+      <a href='https://www.yworks.com/products/yfiles' class='demo-left-logo'></a>
+    </div>
+    <div class='demo-sidebar-content'>
+      <h1>Web Dev Server Loading Demo</h1>
+        <p>
+          This demo shows how to load yFiles for HTML with
+          <a href="https://modern-web.dev/docs/dev-server/overview/" rel="noopener" target="_blank"
+            >Web Dev Server</a
+          >
+          as a loader for efficient web development and easy builds.
+        </p>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This demo shows how to load yFiles for HTML with <a href="https://modern-web.dev/docs/dev-server/overview/" rel="noopener" target="_blank">Web Dev Server</a> as a loader for efficient web development and easy builds.</p>
+        <p>See the sources for details.</p>
 
-    <p>See the sources for details.</p>
+        <h2>Running the demo</h2>
+        <p>First, install the required npm modules in the demo directory:</p>
 
-    <h2>Running the demo</h2>
-    <p>First, install the required npm modules in the demo directory:</p>
+        <code> > npm install </code>
 
-    <code>
-        > npm install
-    </code>
+        <h3>Development</h3>
+        <p>To run the development server:</p>
 
-    <h3>Development</h3>
-    <p>To run the development server:</p>
+        <code> > npm start </code>
 
-    <code>
-        > npm start
-    </code>
+        <p>
+          When the server runs, try making changes to the source code and see how the app will be
+          updated in the browser immediately.
+        </p>
 
-    <p>
-      When the server runs, try making changes to the source code and see how the app will be
-      updated in the browser immediately.
-    </p>
+        <p>
+          Debugging of application files in the browser's developer tools should work fine, since
+          the source files are only minimally preprocessed.
+        </p>
+      </div>
+    </aside>
 
-    <p>
-      Debugging of application files in the browser's developer tools should work fine,
-      since the source files are only minimally preprocessed.
-    </p>
-  </div>
-</aside>
+    <div class="demo-content">
+      <div class="demo-header">
+        <a href="https://www.yworks.com" target="_blank"
+          ><img src="ylogo.svg" class="demo-y-logo" />
+        </a>
+        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+        <a href="../../../README.html" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+        <span class="demo-title">Web Dev Server Loading Demo</span>
+      </div>
+      <div id="graphComponent"></div>
+    </div>
 
-<div class="demo-content">
-  <div class="demo-header">
-    <a href="https://www.yworks.com" target="_blank"><img src="ylogo.svg" class="demo-y-logo"> </a> <a
-    href="../../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">Web Dev Server Loading Demo [yFiles for HTML]</span>
-  </div>
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" src="index.js"></script>
-<script nomodule>
-</script>
-</body>
+    <script type="module" src="index.js"></script>
+    <script nomodule></script>
+  </body>
 </html>

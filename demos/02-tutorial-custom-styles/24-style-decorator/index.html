@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,75 +34,87 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Style Decorator - Custom Styles Tutorial [yFiles for HTML]</title>
+    <title>Style Decorator - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This step shows how to enhance an existing node style by adding visual decorators. In this case the decorating
-      node style adds the "label edges" that were formerly part of <code>MySimpleNodeStyle</code> to the wrapped style's
-      visualization. </p>
-    <p>
-      For the purpose of this tutorial step, the "label edges" rendering code has been removed from <code>MySimpleNodeStyle</code>.
-    </p>
-    <p>
-      Other graph item styles can be wrapped in the same fashion by subclassing <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase" target="_blank">EdgeStyleBase</a>,
-      <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" target="_blank">LabelStyleBase</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase" target="_blank">PortStyleBase</a>. </p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Custom Styles Tutorial</div>
 
-    <h2>Things to Try</h2>
+        <h1>Style Decorator</h1>
 
-    <ul>
-      <li>
-        Take a look at the source code of <code>MyNodeStyleDecorator</code> class.
-      </li>
-      <li>
-        Uncomment the line in <code>SammpleApplication.initializeGraph()</code> that creates an instance of <a href="https://docs.yworks.com/yfileshtml/#/api/ShinyPlateNodeStyle" target="_blank">ShinyPlateNodeStyle</a>
-        instead of <code>MySimpleNodeStyle</code> and observe the outcome.
-      </li>
-    </ul>
+        <p>
+          This step shows how to enhance an existing node style by adding visual decorators. In this
+          case the decorating node style adds the "label edges" that were formerly part of
+          <code>MySimpleNodeStyle</code> to the wrapped style's visualization.
+        </p>
+        <p>
+          For the purpose of this tutorial step, the "label edges" rendering code has been removed
+          from <code>MySimpleNodeStyle</code>.
+        </p>
+        <p>
+          Other graph item styles can be wrapped in the same fashion by subclassing
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase" target="_blank">EdgeStyleBase</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" target="_blank">LabelStyleBase</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase" target="_blank">PortStyleBase</a>.
+        </p>
 
-    <h2>Left to Do</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Create a custom group node style.
-      </li>
-      <li>
-        Render nodes with HTML5 canvas instead of SVG for improved performance, especially for large graphs.
-      </li>
-      <li>
-        Add <a href="https://docs.yworks.com/yfileshtml/#/dguide/bridges-customizations" target="_blank">bridge support</a> to the edge style.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <ul>
+          <li>Take a look at the source code of <code>MyNodeStyleDecorator</code> class.</li>
+          <li>
+            Uncomment the line in <code>SammpleApplication.initializeGraph()</code> that creates an
+            instance of <a href="https://docs.yworks.com/yfileshtml/#/api/ShinyPlateNodeStyle" target="_blank">ShinyPlateNodeStyle</a> instead of <code>MySimpleNodeStyle</code> and
+            observe the outcome.
+          </li>
+        </ul>
 
-<div class="demo-content">
+        <h2>Left to Do</h2>
 
-  <div class="demo-toolbar">
+        <ul>
+          <li>Create a custom group node style.</li>
+          <li>
+            Render nodes with HTML5 canvas instead of SVG for improved performance, especially for
+            large graphs.
+          </li>
+          <li>
+            Add <a href="https://docs.yworks.com/yfileshtml/#/dguide/bridges-customizations" target="_blank">bridge support</a> to the edge style.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-  </div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

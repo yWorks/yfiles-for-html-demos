@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/sequenceconstraints/index.html).
 
+# Sequence Constraints Demo
+
 Shows how to use sequence constraints to restrict the node sequencing in [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
 
 The sequence is determined by the model data.

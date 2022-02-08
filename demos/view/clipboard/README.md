@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/clipboard/index.html).
 
+# Clipboard Demo
+
 The Clipboard demo shows different ways of using [GraphClipboard](https://docs.yworks.com/yfileshtml/#/api/GraphClipboard) for Copy & Paste operations.
 
 The main goal of this demo is to show custom clipboard functionality. Regular clipboard operations like copying nodes, edges and labels are available out-of-the-box.

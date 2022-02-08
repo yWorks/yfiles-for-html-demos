@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/10-custom-label-style/index.html).
 
+Custom Styles Tutorial
+
+# Custom Label Style
+
 This step shows how a custom label style.
 
 ## Things to Try

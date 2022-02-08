@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -174,7 +174,7 @@ function getDemoData() {
     "keywords": [
       "layout styles samples",
       "routing algorithm",
-      "edge router",
+      "router",
       "layout",
       "routing",
       "route",
@@ -505,7 +505,8 @@ function getDemoData() {
       "palette",
       "ports",
       "overview",
-      "dnd"
+      "dnd",
+      "notable style"
     ],
     "ts": true
   },
@@ -534,7 +535,8 @@ function getDemoData() {
       "data panel",
       "structures",
       "hide",
-      "detail"
+      "detail",
+      "notable style"
     ],
     "ts": true
   },
@@ -553,7 +555,8 @@ function getDemoData() {
       "heatmap"
     ],
     "keywords": [
-      "v2.3.0.2"
+      "v2.3.0.2",
+      "notable style"
     ],
     "ts": true
   },
@@ -651,7 +654,8 @@ function getDemoData() {
       "chart",
       "structures",
       "d3js",
-      "d3.js"
+      "d3.js",
+      "notable style"
     ],
     "ts": true
   },
@@ -809,7 +813,8 @@ function getDemoData() {
       "context menu",
       "tree",
       "structures",
-      "labels"
+      "labels",
+      "notable style"
     ],
     "ts": true
   },
@@ -1204,6 +1209,27 @@ function getDemoData() {
     "ts": true
   },
   {
+    "id": "magnifying-glass",
+    "name": "Magnifying Glass",
+    "demoPath": "input/magnifying-glass/index.html",
+    "summary": "Shows a floating lens that magnifies the cursor's surroundings.",
+    "category": "input",
+    "type": "features",
+    "thumbnailPath": "resources/image/magnifying-glass.png",
+    "sourcePath": "input/magnifying-glass/MagnifyingGlassDemo.js",
+    "tags": [
+      "interaction",
+      "input"
+    ],
+    "keywords": [
+      "magnifier ",
+      "lens",
+      "zoom",
+      "input mode"
+    ],
+    "ts": true
+  },
+  {
     "id": "css3-animations-and-transitions",
     "name": "CSS3 Animations and Transitions",
     "demoPath": "style/css3animationsandtransitions/index.html",
@@ -1582,7 +1608,8 @@ function getDemoData() {
       "v2.1.0.2",
       "svg",
       "data panel",
-      "templates"
+      "templates",
+      "notable style"
     ],
     "ts": true
   },
@@ -1643,7 +1670,8 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.4.0.0",
-      "styles"
+      "styles",
+      "notable style"
     ],
     "ts": true
   },
@@ -1664,7 +1692,8 @@ function getDemoData() {
     "keywords": [
       "stylesheets",
       "v2.2.0.0",
-      "labels"
+      "labels",
+      "notable style"
     ],
     "ts": true
   },
@@ -1688,7 +1717,8 @@ function getDemoData() {
       "labels",
       "3D",
       "isometric",
-      "bars"
+      "bars",
+      "notable style"
     ],
     "ts": true
   },
@@ -1750,7 +1780,8 @@ function getDemoData() {
       "webgl2"
     ],
     "keywords": [
-      "v2.4.0.0"
+      "v2.4.0.0",
+      "notable style"
     ],
     "ts": true
   },
@@ -1968,7 +1999,8 @@ function getDemoData() {
     ],
     "keywords": [
       "selection styling",
-      "labels"
+      "labels",
+      "notable style"
     ],
     "ts": true
   },
@@ -2035,7 +2067,8 @@ function getDemoData() {
       "chords",
       "arcs",
       "bezier",
-      "curves"
+      "curves",
+      "notable style"
     ],
     "ts": true
   },
@@ -2211,7 +2244,8 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.4.0.0",
-      "interaction"
+      "interaction",
+      "edge router"
     ],
     "ts": true
   },
@@ -2304,6 +2338,7 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.4.0.0",
+      "edge router",
       "edge groups",
       "bus structures"
     ],
@@ -3273,7 +3308,7 @@ function getDemoData() {
     "type": "integration",
     "packageType": "no-viewer",
     "thumbnailPath": "resources/image/graphql.png",
-    "sourcePath": "toolkit/graphql/GraphQlDemo.js",
+    "sourcePath": "toolkit/graphql/GraphQLDemo.js",
     "tags": [
       "graphql",
       "database"
@@ -3317,7 +3352,7 @@ function getDemoData() {
     "category": "loading",
     "type": "integration",
     "thumbnailPath": "resources/image/nodejs.png",
-    "sourcePath": "loading/nodejs/NodeJsDemo.js",
+    "sourcePath": "loading/nodejs/NodeJSDemo.js",
     "tags": [
       "nodejs",
       "layout"
@@ -6049,6 +6084,7 @@ function getDemoData() {
       "v2.4.0.4",
       "tutorial",
       "layout",
+      "edge router",
       "edgegroups",
       "bus",
       "bus structures",

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/busstructures/index.html).
 
+# Hierarchic Bus Structures Demo
+
 This demo shows how bus structures in the hierarchic layout can result in much more compact arrangements.
 
 So-called bus structures are related to edge grouping. A bus structure consists of a root node and bus nodes that are directly connected to the root node. All edges connecting bus nodes of the same structure have the same edge direction.

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/01-tutorial-getting-started/12-graph-analysis/index.html).
 
-## Tutorial Demo 12
+Getting Started Tutorial - Step 12
+
+# Running Graph Analysis Algorithms
 
 This step shows how to use the [graph algorithms](https://docs.yworks.com/yfileshtml/#/dguide/analysis) in yFiles for HTML.
 

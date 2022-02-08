@@ -4,4 +4,4 @@ export default {
   appIndex: 'index.html',
   watch: true,
   rootDir: './src'
-};
+}

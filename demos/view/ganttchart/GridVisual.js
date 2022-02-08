@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global moment */
 import {
   BaseClass,
   CanvasComponent,
@@ -35,7 +34,7 @@ import {
   IVisualCreator,
   Visual
 } from 'yfiles'
-import GanttMapper from './GanttMapper.js'
+import { GanttMapper } from './GanttMapper.js'
 
 /**
  * Manages and renders the background of the main component.
@@ -43,7 +42,7 @@ import GanttMapper from './GanttMapper.js'
 export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
   /**
    * Creates a new instance.
-   * @param {!GanttMapper} mapper The mapper.
+   * @param {!GanttMapper} mapper The mapper to help with converting from coordinate to date.
    * @param {*} dataModel The model data to create the grid for.
    */
   constructor(mapper, dataModel) {
@@ -55,110 +54,108 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
   /**
    * Paints the grid visualization.
    * @param {!IRenderContext} renderContext The render context of the {@link CanvasComponent}
-   * @param {!CanvasRenderingContext2D} canvasContext The HTML5 Canvas context to use for rendering.
+   * @param {!CanvasRenderingContext2D} renderingContext2D The HTML5 Canvas context to use for rendering.
    */
-  paint(renderContext, canvasContext) {
-    const mapper = this.mapper
+  paint(renderContext, renderingContext2D) {
+    const { x, width } = renderContext.canvasComponent.viewport
+    const { startDate, endDate, startX, endX } = this.mapper.getVisualRange(
+      x - 100,
+      x + width + 100
+    )
 
+    this.paintDays(renderContext, renderingContext2D, startX, endX)
+    this.paintMonths(renderContext, renderingContext2D, startX, endX, startDate)
+    this.paintTaskSeparators(renderContext, renderingContext2D, startX, endX)
+  }
+
+  /**
+   * Paints the day separators.
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} renderingContext2D
+   * @param {number} startX
+   * @param {number} endX
+   */
+  paintDays(renderContext, renderingContext2D, startX, endX) {
     const component = renderContext.canvasComponent
-    const { x, width } = component.viewport
+    const y1 = component.viewport.y
+    const y2 = component.viewport.bottomLeft.y
+    const width = GanttMapper.dayWidth
 
-    // get start date
-    const beginDate = mapper.getDate(x - 100).startOf('month')
-    const beginX = mapper.getX(beginDate)
+    renderingContext2D.strokeStyle = '#ccc'
+    renderingContext2D.lineWidth = 1
 
-    const endDate = mapper.getDate(x + width + 100).endOf('month')
-    const endX = mapper.getX(endDate)
-
-    this.drawDays(component, canvasContext, beginX, endX, beginDate)
-    this.drawMonths(component, canvasContext, beginX, endX, beginDate)
-    this.drawTaskSeparators(component, canvasContext, beginX, endX)
-  }
-
-  /**
-   * Draws the day separators.
-   * @param {!CanvasComponent} canvasComponent
-   * @param {!CanvasRenderingContext2D} canvasContext
-   * @param {number} beginX
-   * @param {number} endX
-   * @param {!MomentInput} beginDate
-   */
-  drawDays(canvasComponent, canvasContext, beginX, endX, beginDate) {
-    const date = moment(beginDate)
-
-    let x = beginX
-    canvasContext.strokeStyle = '#ccc'
-    canvasContext.lineWidth = 1
-    const y1 = canvasComponent.viewport.y
-    const y2 = canvasComponent.viewport.bottomLeft.y
-    canvasContext.beginPath()
-    while (x < endX) {
-      canvasContext.moveTo(x, y1)
-      canvasContext.lineTo(x, y2)
-      x += GanttMapper.dayWidth
-      date.add(1, 'days')
+    renderingContext2D.beginPath()
+    for (let x = startX; x < endX; x += width) {
+      renderingContext2D.moveTo(x, y1)
+      renderingContext2D.lineTo(x, y2)
     }
-    canvasContext.stroke()
+    renderingContext2D.stroke()
   }
 
   /**
-   * Draws the day separators.
-   * @param {!CanvasComponent} canvasComponent
-   * @param {!CanvasRenderingContext2D} canvasContext
-   * @param {number} beginX
+   * Paints the month separators.
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} renderingContext2D
+   * @param {number} startX
    * @param {number} endX
-   * @param {!MomentInput} beginDate
+   * @param {!Date} startDate
    */
-  drawMonths(canvasComponent, canvasContext, beginX, endX, beginDate) {
-    const date = moment(beginDate)
+  paintMonths(renderContext, renderingContext2D, startX, endX, startDate) {
+    const component = renderContext.canvasComponent
+    const y1 = component.viewport.y
+    const y2 = component.viewport.bottomLeft.y
+    const width = GanttMapper.dayWidth
 
-    let x = beginX
-    canvasContext.strokeStyle = '#ccc'
-    canvasContext.lineWidth = 3
-    const y1 = canvasComponent.viewport.y
-    const y2 = canvasComponent.viewport.bottomLeft.y
-    canvasContext.beginPath()
-    while (x < endX) {
-      canvasContext.moveTo(x, y1)
-      canvasContext.lineTo(x, y2)
-      const monthDays = date.daysInMonth()
-      x += GanttMapper.dayWidth * monthDays
-      date.add(1, 'months')
+    renderingContext2D.strokeStyle = '#ccc'
+    renderingContext2D.lineWidth = 3
+
+    renderingContext2D.beginPath()
+    for (
+      let x = startX,
+        // set date to "1" to make sure we don't get a problem with short months
+        month = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+      x < endX;
+      x += GanttMapper.dayWidth * GanttMapper.daysInMonth(month),
+        // works because date is set to "1"
+        month.setMonth(month.getMonth() + 1)
+    ) {
+      renderingContext2D.moveTo(x, y1)
+      renderingContext2D.lineTo(x, y2)
     }
-    canvasContext.stroke()
+    renderingContext2D.stroke()
   }
 
   /**
-   * Draws the horizontal task lane separators.
-   * @param {!CanvasComponent} canvasComponent
-   * @param {!CanvasRenderingContext2D} canvasContext
+   * Paints the horizontal task lane separators.
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} renderingContext2D
    * @param {number} beginX
    * @param {number} endX
    */
-  drawTaskSeparators(canvasComponent, canvasContext, beginX, endX) {
+  paintTaskSeparators(renderContext, renderingContext2D, beginX, endX) {
     const x1 = beginX
     const x2 = endX
 
-    canvasContext.save()
-    canvasContext.strokeStyle = '#ccc'
-    canvasContext.lineWidth = 1
+    renderingContext2D.save()
+    renderingContext2D.strokeStyle = '#ccc'
+    renderingContext2D.lineWidth = 1
     try {
-      canvasContext.setLineDash([5, 5])
+      renderingContext2D.setLineDash([5, 5])
     } catch (e) {
       // Unsupported in IE9 and IE10. Just use solid line then
     }
 
-    canvasContext.beginPath()
+    renderingContext2D.beginPath()
     this.dataModel.tasks.forEach(task => {
       const y =
         this.mapper.getTaskY(task) +
         this.mapper.getCompleteTaskHeight(task) +
         GanttMapper.taskSpacing * 0.5
-      canvasContext.moveTo(x1, y)
-      canvasContext.lineTo(x2, y)
+      renderingContext2D.moveTo(x1, y)
+      renderingContext2D.lineTo(x2, y)
     })
-    canvasContext.stroke()
-    canvasContext.restore()
+    renderingContext2D.stroke()
+    renderingContext2D.restore()
   }
 
   /**

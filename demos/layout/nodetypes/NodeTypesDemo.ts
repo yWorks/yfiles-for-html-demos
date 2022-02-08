@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -56,7 +56,6 @@ import {
 import {
   addNavigationButtons,
   bindAction,
-  bindChangeListener,
   bindCommand,
   checkLicense,
   showApp
@@ -93,8 +92,6 @@ const samples: Sample[] = [
   createCircularSample(),
   createComponentSample()
 ]
-
-const sampleComboBox = document.querySelector('#sample-combo-box') as HTMLSelectElement
 
 /**
  * The graph component holding the graph and shown in this demo.
@@ -243,6 +240,7 @@ function createComponentSample(): Sample {
  */
 async function applyCurrentLayout(animate: boolean): Promise<void> {
   setUIDisabled(true)
+  const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
 
   const { layout, layoutData } = samples[sampleComboBox.selectedIndex]
   const considerTypes = (document.getElementById('consider-types') as HTMLInputElement).checked
@@ -261,6 +259,7 @@ async function applyCurrentLayout(animate: boolean): Promise<void> {
  * the respective layout algorithm.
  */
 async function loadSample(): Promise<void> {
+  const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
   const sample = samples[sampleComboBox.selectedIndex]
   graphComponent.graph.clear()
 
@@ -357,6 +356,7 @@ function initializeTypePanel(): void {
  * Initializes the sample combo box.
  */
 function prepareSampleList(): void {
+  const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
   for (const sample of samples) {
     const optionElement = document.createElement('option')
     optionElement.text = sample.name
@@ -378,9 +378,11 @@ function registerCommands(): void {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
   bindAction("button[data-command='Layout']", () => applyCurrentLayout(true))
   bindAction("button[data-command='Reset']", loadSample)
-  bindChangeListener('#sample-combo-box', loadSample)
-  addNavigationButtons(sampleComboBox)
   bindAction('#consider-types', () => applyCurrentLayout(true))
+
+  const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
+  sampleComboBox.addEventListener('change', loadSample)
+  addNavigationButtons(sampleComboBox)
 }
 
 /**
@@ -388,10 +390,10 @@ function registerCommands(): void {
  * @param disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled: boolean): void {
-  ;(document.querySelector("button[data-command='Reset']") as HTMLButtonElement).disabled = disabled
-  ;(document.querySelector("button[data-command='Layout']") as HTMLButtonElement).disabled =
-    disabled
-  sampleComboBox.disabled = disabled
+  document.querySelector<HTMLButtonElement>("button[data-command='Reset']")!.disabled = disabled
+  document.querySelector<HTMLButtonElement>("button[data-command='Layout']")!.disabled = disabled
+  document.querySelector<HTMLInputElement>('#consider-types')!.disabled = disabled
+  document.querySelector<HTMLSelectElement>('#sample-combo-box')!.disabled = disabled
   ;(graphComponent.inputMode as GraphEditorInputMode).enabled = !disabled
 }
 

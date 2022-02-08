@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/bpmn/index.html).
 
+# BPMN Graph Editor
+
 An editor for Business Process Diagrams (BPMN).
 
 You can interactively modify the diagram and automatically arrange it with the specialized BPMN layout algorithm.

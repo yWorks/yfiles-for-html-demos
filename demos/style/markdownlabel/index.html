@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,82 +34,99 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Markdown Label Demo [yFiles for HTML]</title>
+    <title>Markdown Label Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <!--Add stylesheet for rich text labels-->
-  <link rel="stylesheet" href="markdown-label.css">
+    <!--Add stylesheet for rich text labels-->
+    <link rel="stylesheet" href="markdown-label.css" />
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.3/markdown-it.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.3/markdown-it.min.js"></script>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Markdown Label Demo</h1>
 
-    <p>
-      This demo shows how to create labels using markdown syntax.
-    </p>
-    <p>
-      The label style implementation <code>MarkdownLabelStyle</code> uses
-      <a href="https://github.com/markdown-it/markdown-it">markdown-it</a> to transpile markdown text
-      into HTML. The actual rendering of the HTML text is done by <code>MarkupLabelStyle</code>.
-    </p>
+        <p>This demo shows how to create labels using markdown syntax.</p>
+        <p>
+          The label style implementation <code>MarkdownLabelStyle</code> uses
+          <a href="https://github.com/markdown-it/markdown-it">markdown-it</a> to transpile markdown
+          text into HTML. The actual rendering of the HTML text is done by
+          <code>MarkupLabelStyle</code>.
+        </p>
 
-    <h2>Label Editor</h2>
+        <h2>Label Editor</h2>
 
-    <h4>Creating and Editing Labels</h4>
+        <h4>Creating and Editing Labels</h4>
 
-    <ul>
-      <li>Press the F2 key while an element or connection is selected.</li>
-      <li>Insert markdown text into the editor, i.e. <code>**Hello World**</code>
-      <li>Press <code>Ctrl-Return</code> to enter a newline</li>
-    </ul>
+        <ul>
+          <li>Press the F2 key while an element or connection is selected.</li>
+          <li>Insert markdown text into the editor, i.e. <code>**Hello World**</code></li>
+          <li>Press <code>Ctrl-Return</code> to enter a newline</li>
+        </ul>
 
-    <h4>Supported Markdown</h4>
+        <h4>Supported Markdown</h4>
 
-    The markdown elements supported by this style labels are
+        The markdown elements supported by this style labels are
 
-    <ul>
-      <li># Headings</li>
-      <li>*emphasis* and **strong** text</li>
-      <li>~~strikethrough~~ text</li>
-      <li>`code` and <br/>```<br/>code blocks<br/>```</li>
-      <li>Newlines, with trailing backslash\</li>
-      <li>Paragraphs, using two subsequent newlines</li>
-    </ul>
+        <ul>
+          <li># Headings</li>
+          <li>*emphasis* and **strong** text</li>
+          <li>~~strikethrough~~ text</li>
+          <li>`code` and <br />```<br />code blocks<br />```</li>
+          <li>Newlines, with trailing backslash\</li>
+          <li>Paragraphs, using two subsequent newlines</li>
+        </ul>
 
-    <h4>Styling Labels with CSS</h4>
+        <h4>Styling Labels with CSS</h4>
 
-    <p>Since the markdown label style delegates to <code>MarkupLabelStyle</code> for rendering, elements can be
-      styled with CSS classes.</p>
-    <p>The stylesheet for labels <em>markdown-label.css</em> shows how the label texts are styled with external CSS.</p>
+        <p>
+          Since the markdown label style delegates to <code>MarkupLabelStyle</code> for rendering,
+          elements can be styled with CSS classes.
+        </p>
+        <p>
+          The stylesheet for labels <em>markdown-label.css</em> shows how the label texts are styled
+          with external CSS.
+        </p>
 
-    <h4>Text Wrapping</h4>
+        <h4>Text Wrapping</h4>
 
-    <p>
-      Markdown labels can use line wrapping. In this demo application, the labels use word wrapping with ellipsis.
-      Select and resize a node to observe the interactive text wrapping. Markdown labels can also be wrapped at
-      character boundaries.
-    </p>
-  </div>
-</aside>
+        <p>
+          Markdown labels can use line wrapping. In this demo application, the labels use word
+          wrapping with ellipsis. Select and resize a node to observe the interactive text wrapping.
+          Markdown labels can also be wrapped at character boundaries.
+        </p>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="MarkdownLabelDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="MarkdownLabelDemo.js"></script>
+  </body>
 </html>

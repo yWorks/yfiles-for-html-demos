@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,287 +34,362 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Clustering Demo [yFiles for HTML]</title>
+    <title>Clustering Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .demo-toolbar label {
-      vertical-align: baseline;
-      width: 4em;
-    }
+    <style>
+      .demo-toolbar label {
+        vertical-align: baseline;
+        width: 4em;
+      }
 
-    .demo-toolbar label:hover {
-      background-color: transparent;
-      cursor: default;
-    }
+      .demo-toolbar label:hover {
+        background-color: transparent;
+        cursor: default;
+      }
 
-    #graphComponent {
-      height: auto;
-      border-bottom: 4px solid #f7f7f7;
-    }
+      #graphComponent {
+        height: auto;
+        border-bottom: 4px solid #f7f7f7;
+      }
 
-    #dendrogramGraphComponent {
-      width: 100%;
-      height: calc(55% - 100px);
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: none;
-      position: absolute;
-    }
+      #dendrogramGraphComponent {
+        width: 100%;
+        height: calc(55% - 100px);
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: none;
+        position: absolute;
+      }
 
-    .option-input {
-      width: 100%;
-      padding-left: 2px;
-      margin-top: 3px;
-    }
+      .option-input {
+        width: 100%;
+        padding-left: 2px;
+        margin-top: 3px;
+      }
 
-    .option {
-      padding-bottom: 1em;
-    }
+      .option {
+        padding-bottom: 1em;
+      }
 
-    .description {
-      margin-bottom: 10px;
-    }
+      .description {
+        margin-bottom: 10px;
+      }
 
-    .separator {
-      height: 1px;
-      width: 100%;
-      background: #999;
-      display: inline-block;
-      vertical-align: middle;
-    }
-  </style>
-</head>
-<body class="demo-has-left demo-has-right">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Demo Description</h2>
-    <p>This demo showcases a selection of clustering algorithms. The algorithms presented are the following:
-    <ul>
-      <li>Edge Betweenness Clustering</li>
-      <li>k-Means Clustering</li>
-      <li>Hierarchical Clustering</li>
-      <li>Biconnected Components Clustering</li>
-      <li>Louvain Modularity Clustering</li>
-      <li>Label Propagation Clustering</li>
-    </ul>
-
-    <h3>Things to Try</h3>
-    <ul>
-      <li>
-        Browse the <em>Clustering Algorithms</em>.
-      </li>
-      <li>
-        Explore the <em>options</em> of the algorithms (if any).
-      </li>
-      <li>
-        Modify the graphs by adding/removing nodes and edges or by moving graph elements.
-      </li>
-    </ul>
-  </div>
-</aside>
-
-<div class="demo-content">
-
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom In" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-
-    <span class="demo-separator"></span>
-
-    <span>Clustering Algorithms:</span>
-
-    <select data-command="AlgorithmSelectionChanged"
-      title="Select a clustering algorithm graph" id="algorithmsComboBox">
-    <option value="EdgeBetweenness">Edge Betweenness</option>
-    <option value="kMeans">k-Means</option>
-    <option value="Hierarchical">Hierarchical</option>
-    <option value="BiconnectedComponents">Biconnected Components</option>
-    <option value="LouvainModularity">Louvain Modularity</option>
-    <option value="LabelPropagation">Label Propagation</option>
-  </select>
-  </div>
-
-  <div id="graphComponent"></div>
-  <div id="dendrogramGraphComponent"></div>
-</div>
-
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Algorithm</h1>
-  <div class="demo-sidebar-content">
-    <div id="edge-betweenness">
-      <h2>Edge Betweenness Clustering</h2>
-      <div class="description">
-        <p>Partitions the graph into groups using edge betweenness centrality. The groups are detected by progressively
-          removing the edge with the highest betweenness centrality from the graph.</p>
-
-        <h3>Things to Try</h3>
-        <ul>
-          <li>Determine the desired minimum or maximum number of clusters. The algorithm will try to respect these values
-            (if possible), unless the graph is disconnected.
-          </li>
-          <li>Determine whether or not edge direction or edge costs should be taken under consideration. Edge costs can be
-            determined through edge labels. If edge costs are enabled, for those edges that do not have a label, their
-            edge length will be considered.
-          </li>
-          <li>Create/Remove nodes and edges to see how the result of the algorithm is influenced.</li>
-        </ul>
+      .separator {
+        height: 1px;
+        width: 100%;
+        background: #999;
+        display: inline-block;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
       </div>
+      <div class="demo-sidebar-content">
+        <h1>Clustering Demo</h1>
 
-      <div class="separator"></div>
-
-      <h3>Settings</h3>
-      <div class="option">
-        <label for="ebMinClusterNumber">Minimum Number of Clusters:</label> <input type="number" id="ebMinClusterNumber"
-          min="1" max="200" class="option-input" value="1">
-      </div>
-      <div class="option">
-        <label for="ebMaxClusterNumber">Maximum Number of Clusters:</label> <input type="number" id="ebMaxClusterNumber"
-          min="1" max="200" class="option-input" value="7">
-      </div>
-      <div class="option">
-        <input type="checkbox" id="directed" class="demo-checkbox"> <label for="directed" class="demo-checkbox">Consider
-        Edge Direction</label>
-      </div>
-      <div class="option">
-        <input type="checkbox" id="edgeCosts" class="demo-checkbox"> <label for="edgeCosts" class="demo-checkbox">Consider
-        Edge Costs</label>
-      </div>
-    </div>
-    <div id="k-means">
-      <h2>k-Means Clustering</h2>
-
-      <div id="k-means-description">
-        <p>Partitions the graph into <code>k</code> clusters based on the node positions such that their distance from
-          the cluster's mean (centroid) is minimized (refer to the crosses). The result is presented by means of a
-          Voronoi diagram.</p>
-
-        <h3>Things to Try</h3>
-        <ul>
-          <li>Determine the distance metric to be used.</li>
-          <li>Determine the desired maximum number of clusters or the maximum number of iterations. The maximum number
-            of iterations corresponds to the number of iterations that are allowed to be performed even if the
-            convergence has not been achieved.
-          </li>
-          <li>Create new nodes or move/remove the existing ones to see how the result of the algorithm is influenced.</li>
-        </ul>
-      </div>
-
-      <div class="separator"></div>
-
-      <h3>Settings</h3>
-      <div class="option">
-        <label for="distanceMetricComboBox">Distance Metric:</label> <select id="distanceMetricComboBox"
-          data-command="distanceMetricComboBox" class="option-input">
-        <option selected>Euclidean</option>
-        <option>Manhattan</option>
-        <option>Chebychev</option>
-      </select>
-      </div>
-      <div class="option">
-        <label for="kMeansMaxClusterNumber">Maximum Number of Clusters:</label> <input type="number" id="kMeansMaxClusterNumber"
-          min="1" max="200" class="option-input" value="5">
-      </div>
-      <div class="option">
-        <label for="iterations">Maximum Number of Iterations:</label> <input type="number" id="iterations" min="0"
-          max="5000" class="option-input" value="100">
-      </div>
-    </div>
-
-    <div id="hierarchical">
-      <h2>Hierarchical Clustering</h2>
-      <div class="description">
-        <p>Partitions the graph into clusters based on hierarchical clustering. For the clustering an agglomerative
-          strategy is applied, i.e., a bottom-up approach according to which at the beginning each node belongs to its
-          own cluster. At each step pairs of clusters are merged while moving up to the hierarchy. The dissimilarity
-          between clusters is determined based on the given linkage criterion and the given node distances. The
-          algorithm continues until all nodes belong to the same cluster. The result is a dendrogram which can be cut
-          based on a given cut-off value.</p>
-
-        <h3>Things to Try</h3>
-        <ul>
-          <li>Determine the linkage criterion that defines how the distance between sets of nodes will be measured.</li>
-          <li>Move the red line of the dendrogram to determine a new cut-off value and examine the resulting clusters.
-          </li>
-          <li>Hover a dendrogram to see which nodes of the original graph belong to this cluster and vice-versa.</li>
-          <li>Create new nodes or move/remove the existing ones to see how the result of the algorithm is influenced.</li>
-        </ul>
-      </div>
-
-      <div class="separator"></div>
-
-      <h3>Settings</h3>
-      <div class="option">
-        <label for="linkageComboBox">Linkage:</label> <select id="linkageComboBox" data-command="linkageComboBox"
-          class="option-input">
-        <option>Single</option>
-        <option selected>Average</option>
-        <option>Complete</option>
-      </select>
-      </div>
-    </div>
-
-    <div id="biconnected-components">
-      <h2>Biconnected Components</h2>
-      <div class="description">
-        <p>Partitions the graph by analyzing its biconnected components such that nodes that belong to the same group are
-          biconnected. Nodes that belong to multiple biconnected components will be assigned to exactly one of these
-          components.</p>
-
-        <h3>Things to Try</h3>
-        <ul>
-          <li>Create/Remove nodes or edges to see how the result of the algorithm is influenced.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div id="louvain-modularity">
-      <h2>Louvain Modularity</h2>
-      <div class="description">
-        <p>Partitions the graph by using the <em>Louvain Modularity</em> algorithm.</p>
         <p>
-          The algorithm starts by assigning each node to its own community. Then, iteratively tries
-          to construct communities by moving nodes from their current community to another until
-          the modularity is locally optimized. At the next step, the small communities found are
-          merged to a single node and the algorithm starts from the beginning until the modularity
-          of the graph cannot be further improved.
+          This demo showcases a selection of clustering algorithms. The algorithms presented are the
+          following:
         </p>
+        <ul>
+          <li>Edge Betweenness Clustering</li>
+          <li>k-Means Clustering</li>
+          <li>Hierarchical Clustering</li>
+          <li>Biconnected Components Clustering</li>
+          <li>Louvain Modularity Clustering</li>
+          <li>Label Propagation Clustering</li>
+        </ul>
 
         <h3>Things to Try</h3>
         <ul>
-          <li>Create/Remove nodes or edges to see how the result of the algorithm is influenced.</li>
+          <li>Browse the <em>Clustering Algorithms</em>.</li>
+          <li>Explore the <em>options</em> of the algorithms (if any).</li>
+          <li>Modify the graphs by adding/removing nodes and edges or by moving graph elements.</li>
         </ul>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom In"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+
+        <span class="demo-separator"></span>
+
+        <span>Clustering Algorithms:</span>
+
+        <select
+          data-command="AlgorithmSelectionChanged"
+          title="Select a clustering algorithm graph"
+          id="algorithmsComboBox"
+        >
+          <option value="EdgeBetweenness">Edge Betweenness</option>
+          <option value="kMeans">k-Means</option>
+          <option value="Hierarchical">Hierarchical</option>
+          <option value="BiconnectedComponents">Biconnected Components</option>
+          <option value="LouvainModularity">Louvain Modularity</option>
+          <option value="LabelPropagation">Label Propagation</option>
+        </select>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="dendrogramGraphComponent"></div>
       </div>
     </div>
 
-    <div id="label-propagation">
-      <h2>Label Propagation</h2>
-      <div class="description">
-        <p>Partitions the graph by using the <em>Label Propagation</em> algorithm.</p>
-        <p>
-          Label Propagation iteratively assigns a label to each node. The label of a node
-          is set to the most frequent label among its neighbors. If there are multiple
-          candidates the algorithm randomly chooses one of them. After applying the algorithm,
-          all nodes with the same label belong to the same community.
-        </p>
-        <h3>Things to Try</h3>
-        <ul>
-          <li>Create/Remove nodes or edges to see how the result of the algorithm is influenced.</li>
-        </ul>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <div id="edge-betweenness">
+          <h2>Edge Betweenness Clustering</h2>
+          <p>
+            Partitions the graph into groups using edge betweenness centrality. The groups are
+            detected by progressively removing the edge with the highest betweenness centrality from
+            the graph.
+          </p>
+
+          <h3>Things to Try</h3>
+          <ul style="border-bottom: 1px solid #d5d7d8; padding-bottom: 1ex">
+            <li>
+              Determine the desired minimum or maximum number of clusters. The algorithm will try to
+              respect these values (if possible), unless the graph is disconnected.
+            </li>
+            <li>
+              Determine whether or not edge direction or edge costs should be taken under
+              consideration. Edge costs can be determined through edge labels. If edge costs are
+              enabled, for those edges that do not have a label, their edge length will be
+              considered.
+            </li>
+            <li>
+              Create/Remove nodes and edges to see how the result of the algorithm is influenced.
+            </li>
+          </ul>
+
+          <h2>Settings</h2>
+
+          <div class="option">
+            <label for="ebMinClusterNumber">Minimum Number of Clusters:</label>
+            <input
+              type="number"
+              id="ebMinClusterNumber"
+              min="1"
+              max="200"
+              class="option-input"
+              value="1"
+            />
+          </div>
+          <div class="option">
+            <label for="ebMaxClusterNumber">Maximum Number of Clusters:</label>
+            <input
+              type="number"
+              id="ebMaxClusterNumber"
+              min="1"
+              max="200"
+              class="option-input"
+              value="7"
+            />
+          </div>
+          <div class="option">
+            <input type="checkbox" id="directed" class="demo-checkbox" />
+            <label for="directed" class="demo-checkbox">Consider Edge Direction</label>
+          </div>
+          <div class="option">
+            <input type="checkbox" id="edgeCosts" class="demo-checkbox" />
+            <label for="edgeCosts" class="demo-checkbox">Consider Edge Costs</label>
+          </div>
+        </div>
+        <div id="k-means">
+          <h2>k-Means Clustering</h2>
+
+          <div id="k-means-description">
+            <p>
+              Partitions the graph into <code>k</code> clusters based on the node positions such
+              that their distance from the cluster's mean (centroid) is minimized (refer to the
+              crosses). The result is presented by means of a Voronoi diagram.
+            </p>
+
+            <h3>Things to Try</h3>
+            <ul>
+              <li>Determine the distance metric to be used.</li>
+              <li>
+                Determine the desired maximum number of clusters or the maximum number of
+                iterations. The maximum number of iterations corresponds to the number of iterations
+                that are allowed to be performed even if the convergence has not been achieved.
+              </li>
+              <li>
+                Create new nodes or move/remove the existing ones to see how the result of the
+                algorithm is influenced.
+              </li>
+            </ul>
+          </div>
+
+          <div class="separator"></div>
+
+          <h3>Settings</h3>
+          <div class="option">
+            <label for="distanceMetricComboBox">Distance Metric:</label>
+            <select
+              id="distanceMetricComboBox"
+              data-command="distanceMetricComboBox"
+              class="option-input"
+            >
+              <option selected="">Euclidean</option>
+              <option>Manhattan</option>
+              <option>Chebychev</option>
+            </select>
+          </div>
+          <div class="option">
+            <label for="kMeansMaxClusterNumber">Maximum Number of Clusters:</label>
+            <input
+              type="number"
+              id="kMeansMaxClusterNumber"
+              min="1"
+              max="200"
+              class="option-input"
+              value="5"
+            />
+          </div>
+          <div class="option">
+            <label for="iterations">Maximum Number of Iterations:</label>
+            <input
+              type="number"
+              id="iterations"
+              min="0"
+              max="5000"
+              class="option-input"
+              value="100"
+            />
+          </div>
+        </div>
+
+        <div id="hierarchical">
+          <h2>Hierarchical Clustering</h2>
+          <div class="description">
+            <p>
+              Partitions the graph into clusters based on hierarchical clustering. For the
+              clustering an agglomerative strategy is applied, i.e., a bottom-up approach according
+              to which at the beginning each node belongs to its own cluster. At each step pairs of
+              clusters are merged while moving up to the hierarchy. The dissimilarity between
+              clusters is determined based on the given linkage criterion and the given node
+              distances. The algorithm continues until all nodes belong to the same cluster. The
+              result is a dendrogram which can be cut based on a given cut-off value.
+            </p>
+
+            <h3>Things to Try</h3>
+            <ul>
+              <li>
+                Determine the linkage criterion that defines how the distance between sets of nodes
+                will be measured.
+              </li>
+              <li>
+                Move the red line of the dendrogram to determine a new cut-off value and examine the
+                resulting clusters.
+              </li>
+              <li>
+                Hover a dendrogram to see which nodes of the original graph belong to this cluster
+                and vice-versa.
+              </li>
+              <li>
+                Create new nodes or move/remove the existing ones to see how the result of the
+                algorithm is influenced.
+              </li>
+            </ul>
+          </div>
+
+          <div class="separator"></div>
+
+          <h3>Settings</h3>
+          <div class="option">
+            <label for="linkageComboBox">Linkage:</label>
+            <select id="linkageComboBox" data-command="linkageComboBox" class="option-input">
+              <option>Single</option>
+              <option selected="">Average</option>
+              <option>Complete</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="biconnected-components">
+          <h2>Biconnected Components</h2>
+          <div class="description">
+            <p>
+              Partitions the graph by analyzing its biconnected components such that nodes that
+              belong to the same group are biconnected. Nodes that belong to multiple biconnected
+              components will be assigned to exactly one of these components.
+            </p>
+
+            <h3>Things to Try</h3>
+            <ul>
+              <li>
+                Create/Remove nodes or edges to see how the result of the algorithm is influenced.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="louvain-modularity">
+          <h2>Louvain Modularity</h2>
+          <div class="description">
+            <p>Partitions the graph by using the <em>Louvain Modularity</em> algorithm.</p>
+            <p>
+              The algorithm starts by assigning each node to its own community. Then, iteratively
+              tries to construct communities by moving nodes from their current community to another
+              until the modularity is locally optimized. At the next step, the small communities
+              found are merged to a single node and the algorithm starts from the beginning until
+              the modularity of the graph cannot be further improved.
+            </p>
+
+            <h3>Things to Try</h3>
+            <ul>
+              <li>
+                Create/Remove nodes or edges to see how the result of the algorithm is influenced.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="label-propagation">
+          <h2>Label Propagation</h2>
+          <div class="description">
+            <p>Partitions the graph by using the <em>Label Propagation</em> algorithm.</p>
+            <p>
+              Label Propagation iteratively assigns a label to each node. The label of a node is set
+              to the most frequent label among its neighbors. If there are multiple candidates the
+              algorithm randomly chooses one of them. After applying the algorithm, all nodes with
+              the same label belong to the same community.
+            </p>
+            <h3>Things to Try</h3>
+            <ul>
+              <li>
+                Create/Remove nodes or edges to see how the result of the algorithm is influenced.
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
-    </div>
+    </aside>
 
-  </div>
-</aside>
-
-<script type="module" crossorigin="anonymous" src="ClusteringDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="ClusteringDemo.js"></script>
+  </body>
 </html>

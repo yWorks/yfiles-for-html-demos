@@ -14,13 +14,13 @@
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.5-dev.tgz"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-typescript": "^4.5.13",
     "@vue/cli-service": "^4.5.13",
-    "@yworks/optimizer": "^1.6.0",
+    "@yworks/optimizer": "^1.7.1",
     "fs-extra": "^10.0.0",
     "typescript": "~4.1.5",
     "vue-template-compiler": "^2.6.11",

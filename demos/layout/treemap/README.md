@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/treemap/index.html).
 
+# Tree Map Demo
+
 Tree maps allow to visualize hierarchical data using nested rectangles, which in this case are represented by graph nodes. The size of leaf nodes in a tree map is proportional to a certain data value (i.e. weight).
 
 The [TreeMapLayout](https://docs.yworks.com/yfileshtml/#/api/TreeMapLayout) algorithm arranges the nodes according to their weights and relations inside groups.

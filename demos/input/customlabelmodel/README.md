@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/customlabelmodel/index.html).
 
+# Custom Label Model Demo
+
 This demo shows how to create and use a custom label model.
 
 ## Thing to Try

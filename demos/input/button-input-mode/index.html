@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,89 +34,112 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Button Input Mode Demo [yFiles for HTML]</title>
+    <title>Button Input Mode Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    path.button {
-      transition: fill, opacity 0.3s;
-      fill: #7EA3CC;
-      opacity: 0.7
-    }
-    path.hovered {
-      fill: #B3001B;
-      opacity: 1;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
+    <style>
+      path.button {
+        transition: fill, opacity 0.3s;
+        fill: #7ea3cc;
+        opacity: 0.7;
+      }
+      path.hovered {
+        fill: #b3001b;
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Button Input Mode Demo</h1>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This demo shows how to use a custom input mode to add temporary buttons to model items.<br/>
-      The buttons can be individually styled and placed and trigger an action on click or drag.
-    </p>
+        <p>
+          This demo shows how to use a custom input mode to add temporary buttons to model items.<br />
+          The buttons can be individually styled and placed and trigger an action on click or drag.
+        </p>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Hover over nodes, edges, bends or labels to see which buttons are added for them.
-      </li>
-      <li>
-        Hover over these buttons to see different hover effects and cursors.
-      </li>
-      <li>
-        Click or drag from a button to trigger the action associated with the button.
-      </li>
-      <li>
-        Switch the <em>button trigger</em> in the toolbar to change the trigger when buttons should be added to an item.
+        <h2>Things to Try</h2>
         <ul>
-          <li><em>Hover</em> is the default behavior that displays the buttons for an item when hovering over it.</li>
-          <li><em>Current item</em> displays the buttons for the
-            <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-property-currentItem" target="_blank">current item</a>
-            of the <em>GraphComponent</em>.</li>
-          <li><em>RightClick</em> displays the buttons on right-clicking a model item.</li>
+          <li>Hover over nodes, edges, bends or labels to see which buttons are added for them.</li>
+          <li>Hover over these buttons to see different hover effects and cursors.</li>
+          <li>Click or drag from a button to trigger the action associated with the button.</li>
+          <li>
+            Switch the <em>button trigger</em> in the toolbar to change the trigger when buttons
+            should be added to an item.
+            <ul>
+              <li>
+                <em>Hover</em> is the default behavior that displays the buttons for an item when
+                hovering over it.
+              </li>
+              <li>
+                <em>Current item</em> displays the buttons for the
+                <a
+                  href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-property-currentItem"
+                  target="_blank"
+                  >current item</a
+                >
+                of the <em>GraphComponent</em>.
+              </li>
+              <li><em>RightClick</em> displays the buttons on right-clicking a model item.</li>
+            </ul>
+          </li>
+          <li>
+            Press the <em>TAB</em> key while the <em>GraphComponent</em> is focused to set a focus
+            to the first button and cycle through all buttons.<br />
+            A focused button can be triggered using the <em>ENTER</em> or <em>SPACE</em> key.
+          </li>
         </ul>
-      </li>
-      <li>
-        Press the <em>TAB</em> key while the <em>GraphComponent</em> is focused to set a focus to the first button and
-        cycle through all buttons.<br/>
-        A focused button can be triggered using the <em>ENTER</em> or <em>SPACE</em> key.
-      </li>
-    </ul>
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <span>Button Trigger</span>
-    <select data-command="ButtonTriggerChanged" id="buttonTriggerComboBox" title="Button Trigger">
-      <option>Hover</option>
-      <option>Current Item</option>
-      <option>RightClick</option>
-    </select>
-  </div>
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <span>Button Trigger</span>
+        <select
+          data-command="ButtonTriggerChanged"
+          id="buttonTriggerComboBox"
+          title="Button Trigger"
+        >
+          <option>Hover</option>
+          <option>Current Item</option>
+          <option>RightClick</option>
+        </select>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="ButtonInputModeDemo.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="ButtonInputModeDemo.js"></script>
+  </body>
 </html>

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,86 +34,114 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Edge Router - Layout Features Tutorial [yFiles for HTML]</title>
+    <title>Edge Router - Layout Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script></head>
-<body class="demo-has-left">
-
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Edge Router - Basic Features</h2>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Layout Features Tutorial</div>
 
-    <p>
-      This demo shows common configuration options for the (polyline) <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>.
-    </p>
+        <h1>Edge Router</h1>
 
-    <ul>
-      <li>
-        Basic distance settings like the
-        <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#inimumNodeToEdgeDistance" target="_blank">minimum node-edge distance</a> and the
-        <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#minimumEdgeToEdgeDistance" target="_blank">minimum edge-edge distance</a>.
-      </li>
-      <li>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope" target="_blank">Scope</a>: the <span style="color: #F26419; font-weight: bold">orange edges</span>
-        are <em>not</em> routed by the algorithm, they are so-called <em>fixed</em> edges.
-        All other edges are routed, thus, called <em>affected</em> edges.
-      </li>
-      <li>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#routingStyle" target="_blank">Routing Style</a>: the default style in this example is
-        orthogonal, but the <span style="color: #01BAFF; font-weight: bold">blue edges</span> are routed using the octilinear style.
-      </li>
-      <li>
-        Grouping of edges: the <span style="color: #E011A4; font-weight: bold">pink edges</span> are grouped at their target side.
-      </li>
-      <li>
-        Restricting ports via <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">Port Candidates</a>: at node '5' and node '7', ports
-        are restricted to be on the left or right side (west/east). For other nodes the port sides are not restricted.
-      </li>
-      <li>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#grid" target="_blank">Grid routing</a>. Edges are routed on a 10x10 grid.
-      </li>
-    </ul>
+        <p>
+          This demo shows common configuration options for the (polyline) <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>.
+        </p>
 
-    <h3>Code Snippet</h3>
+        <ul>
+          <li>
+            Basic distance settings like the
+            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#inimumNodeToEdgeDistance" target="_blank">minimum node-edge distance</a> and the
+            <api src="EdgeRouterEdgeLayoutDescriptor#minimumEdgeToEdgeDistance"
+              >minimum edge-edge distance</api
+            >.
+          </li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope" target="_blank">Scope</a>: the
+            <span style="color: #f26419; font-weight: bold">orange edges</span> are
+            <em>not</em> routed by the algorithm, they are so-called <em>fixed</em> edges. All other
+            edges are routed, thus, called <em>affected</em> edges.
+          </li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#routingStyle" target="_blank">Routing Style</a>: the default
+            style in this example is orthogonal, but the
+            <span style="color: #01baff; font-weight: bold">blue edges</span> are routed using the
+            octilinear style.
+          </li>
+          <li>
+            Grouping of edges: the
+            <span style="color: #e011a4; font-weight: bold">pink edges</span> are grouped at their
+            target side.
+          </li>
+          <li>
+            Restricting ports via <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">Port Candidates</a>: at node '5' and
+            node '7', ports are restricted to be on the left or right side (west/east). For other
+            nodes the port sides are not restricted.
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#grid" target="_blank">Grid routing</a>. Edges are routed on a 10x10 grid.</li>
+        </ul>
 
-    <p>To experiment with the settings, you can copy the code snippet to configure the router from
-      <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/edge-router/EdgeRouter.ts"
-         target="_blank">GitHub</a>
-    </p>
+        <h3>Code Snippet</h3>
 
-    <h3>Demos</h3>
+        <p>
+          To experiment with the settings, you can copy the code snippet to configure the router
+          from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/edge-router/EdgeRouter.ts"
+            target="_blank"
+            >GitHub</a
+          >
+        </p>
 
-    <p>
-      More features offered by the EdgeRouter algorithm are shown by the
-      <a href="../../layout/layoutstyles/index.html?layout=edge-router&sample=edge-router">Layout Styles Demo</a>.
-    </p>
+        <h3>Demos</h3>
 
-    <h3>Documentation</h3>
+        <p>
+          More features offered by the EdgeRouter algorithm are shown by the
+          <a href="../../layout/layoutstyles/index.html?layout=edge-router&amp;sample=edge-router"
+            >Layout Styles Demo</a
+          >.
+        </p>
 
-    <p>
-      The Developer's Guide provides more in-depth information about the available
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing" target="_blank">Polyline Edge Routing</a> features.
-    </p>
-  </div>
-</aside>
+        <h3>Documentation</h3>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+        <p>
+          The Developer's Guide provides more in-depth information about the available
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing" target="_blank">Polyline Edge Routing</a> features.
+        </p>
+      </div>
+    </aside>
 
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

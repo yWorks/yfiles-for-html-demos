@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/portcandidateprovider/index.html).
 
+# Port Candidate Provider Demo
+
 This demo shows how edge creation can be customized by implementing the [IPortCandidateProvider](https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider) interface.
 
 Add the custom implementation as decoration to the edge decorator of the graph to use it.

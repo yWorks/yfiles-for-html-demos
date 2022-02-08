@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,7 +43,7 @@
 
 .data-editor-header .content {
   display: grid;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   grid-template-columns: [start] 25px [mid] auto [end] 25px;
   justify-items: center;
 }
@@ -136,12 +136,13 @@
 }
 
 .demo-sidebar.demo-right .demo-sidebar-content {
-  height: calc(100% - 125px);
+  height: calc(100% - 65px);
   padding: 0;
 }
 
 .demo-sidebar.demo-right h2 {
   font-weight: normal;
+  margin: 0 0 12px;
 }
 
 .option-presets-button-grid {
@@ -256,6 +257,7 @@
 }
 
 .demo-left .demo-sidebar-content p,
+.demo-left .demo-sidebar-content h1,
 .demo-left .demo-sidebar-content h2 {
   padding: 0 25px;
 }
@@ -269,7 +271,7 @@
 }
 
 .demo-left #layout-description-container {
-  background-color: #e0e0e0;
+  background-color: #c8dce1;
   border-radius: 8px;
   padding: 2px 0;
   margin: 0 8px;
@@ -294,13 +296,13 @@
 
 @keyframes highlight-animation {
   0% {
-    background-color: #e0e0e0;
+    background-color: #c8dce1;
   }
   20% {
     background-color: #ff9800;
   }
   100% {
-    background-color: #e0e0e0;
+    background-color: #c8dce1;
   }
 }
 

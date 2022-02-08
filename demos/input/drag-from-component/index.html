@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,108 +34,139 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Drag From Component [yFiles for HTML]</title>
+    <title>Drag From Component [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <!-- styling for the drop panel -->
-  <style>
-    #drop-panel {
-      position: absolute;
-      top: 100px;
-      bottom: 0;
-      right: 0;
-      width: 150px;
-      border-left: 5px solid #eee;
-      overflow: auto;
-      box-sizing: border-box;
-      z-index: 12;
-    }
-    .drop-item {
-      margin: 10px auto;
-      width: fit-content
-    }
-
-    @media screen and (max-height: 500px) {
+    <!-- styling for the drop panel -->
+    <style>
       #drop-panel {
-        top: 60px;
+        position: absolute;
+        top: 100px;
+        bottom: 0;
+        right: 0;
+        width: 150px;
+        border-left: 5px solid #eee;
+        overflow: auto;
+        box-sizing: border-box;
+        z-index: 12;
       }
-    }
+      .drop-item {
+        margin: 10px auto;
+        width: fit-content;
+      }
 
-    #graphComponent,
-    .demo-left-hidden #graphComponent {
-      right: 150px !important;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
+      @media screen and (max-height: 500px) {
+        #drop-panel {
+          top: 60px;
+        }
+      }
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to use the HTML5 Drag and Drop support to drag graph items from the component
-      to other HTML elements.
-    </p>
+      #graphComponent,
+      .demo-left-hidden #graphComponent {
+        right: 150px !important;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Drag From Component</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Drag a node from the component to the element at the top right ("Drop Here").</li>
-      <li>Drag a node from the component to the trashcan symbol to remove it from the graph.</li>
-      <li>Edit the graph as usual. Note:
+        <p>
+          This demo shows how to use the HTML5 Drag and Drop support to drag graph items from the
+          component to other HTML elements.
+        </p>
+
+        <h2>Things to Try</h2>
         <ul>
-          <li>Dragging a node will let you drag it from the component.</li>
-          <li>Dragging a selected node while pressing the SHIFT key will move the node on the component.</li>
-          <li>Dragging an unselected node with SHIFT held down will start edge creation.</li>
+          <li>Drag a node from the component to the element at the top right ("Drop Here").</li>
+          <li>
+            Drag a node from the component to the trashcan symbol to remove it from the graph.
+          </li>
+          <li>
+            Edit the graph as usual. Note:
+            <ul>
+              <li>Dragging a node will let you drag it from the component.</li>
+              <li>
+                Dragging a selected node while pressing the SHIFT key will move the node on the
+                component.
+              </li>
+              <li>Dragging an unselected node with SHIFT held down will start edge creation.</li>
+            </ul>
+          </li>
         </ul>
-      </li>
-    </ul>
 
-    <h2>Related Demos</h2>
-    <ul>
-      <li>
-        <a href='../draganddrop'>Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../graph-drag-and-drop-from-component'>Graph Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../custom-drag-and-drop'>Custom Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../../03-tutorial-application-features/drag-and-drop/index.html'>Tutorial: Drag and Drop</a>
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Related Demos</h2>
+        <ul>
+          <li>
+            <a href="../draganddrop">Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../graph-drag-and-drop">Graph Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../custom-drag-and-drop">Custom Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../../03-tutorial-application-features/drag-and-drop/index.html"
+              >Tutorial: Drag and Drop</a
+            >
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="Open" title="Open File" class="demo-icon-yIconOpen"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-            class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-  </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="Open" title="Open File" class="demo-icon-yIconOpen"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+      </div>
 
-  <!-- the panel which contains a list to drop nodes to and trashcan to remove them from the graph -->
-  <div id="drop-panel">
-    <div id="drop-list" style="width: auto;min-height: 60px; border-bottom: 5px solid #eee" draggable="false">
-      <div id="drop-here" style="margin: 30px auto;width: fit-content">Drop Here!</div>
+      <!-- the panel which contains a list to drop nodes to and trashcan to remove them from the graph -->
+
+      <div class="demo-content-dynamic">
+        <div id="drop-panel">
+          <div
+            id="drop-list"
+            style="width: auto; min-height: 60px; border-bottom: 5px solid #eee"
+            draggable="false"
+          >
+            <div id="drop-here" style="margin: 30px auto; width: fit-content">Drop Here!</div>
+          </div>
+          <div
+            id="drop-trashcan"
+            style="width: auto; height: 100px; background-size: contain; align-items: center"
+          >
+            <div
+              class="demo-icon-yIconTrashcan"
+              style="width: 32px; height: 32px; background-size: contain; margin: 50px auto"
+            ></div>
+          </div>
+        </div>
+        <div id="graphComponent" draggable="true"></div>
+      </div>
     </div>
-    <div id="drop-trashcan"  style="width:auto;height:100px;background-size: contain; align-items: center">
-      <div class="demo-icon-yIconTrashcan" style="width:32px;height:32px;background-size: contain;margin: 50px auto;"></div>
-    </div>
-  </div>
 
-  <div id="graphComponent" draggable="true"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="DragFromComponentDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="DragFromComponentDemo.js"></script>
+  </body>
 </html>

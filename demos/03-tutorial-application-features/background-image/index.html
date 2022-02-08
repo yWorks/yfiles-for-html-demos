@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,58 +34,96 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Background - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Background - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Background</h2>
-    <p>
-      This demo shows how to add a background to a graph. The background can be an image or a colored rectangle.
-    </p>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Press the <strong>Image</strong> button to add an image to the background of the graph.</li>
-      <li>Press the <strong>Rectangle</strong> button to add a colored rectangle to the background of the graph. Add new
-        nodes to see how the size of the rectangle change.
-      </li>
-    </ul>
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <h1>Background</h1>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Image" title="add an image in the background" class="labeled" disabled>Image</button>
-    <button data-command="Rectangle" title="add a colored rectangle in the background" class="labeled">Rectangle
-    </button>
-  </div>
+        <p>
+          This demo shows how to add a background to a graph. The background can be an image or a
+          colored rectangle.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Press the <strong>Image</strong> button to add an image to the background of the graph.
+          </li>
+          <li>
+            Press the <strong>Rectangle</strong> button to add a colored rectangle to the background
+            of the graph. Add new nodes to see how the size of the rectangle change.
+          </li>
+        </ul>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group selected element"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup selected element"
+          class="demo-icon-yIconUngroup"
+        ></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="Image"
+          title="add an image in the background"
+          class="labeled"
+          disabled=""
+        >
+          Image
+        </button>
+        <button
+          data-command="Rectangle"
+          title="add a colored rectangle in the background"
+          class="labeled"
+        >
+          Rectangle
+        </button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

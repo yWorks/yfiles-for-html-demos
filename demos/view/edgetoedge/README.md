@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/edgetoedge/index.html).
 
+# Edge To Edge Demo
+
 This demo shows edge-to-edge connections. The input mode of this demo is configured to allow edges to connect not only to nodes but also to edges.
 
 This application also demonstrates how to provide port candidates at edges to allow interactive creation of edge-to-edge connections. Please take a look at the code behind to observe some of the customization possibilities.

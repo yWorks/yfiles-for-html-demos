@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,103 +34,129 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Zoom-invariant Label Style [yFiles for HTML]</title>
+    <title>Zoom-invariant Label Style [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">"
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+  </head>
+  <body class="demo-has-left">
+    "
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <script src="../../resources/filesystem-warning.js"></script>
 
-    <p>
-      This demo shows label styles that render the labels independent of the zoom level.
-    </p>
-    <h2>
-      Zoom Modes
-    </h2>
-    <dl>
-      <dt>
-        Fit into label owner
-      </dt>
-      <dd>
-        Node labels are scaled to fit into their owner if they are bigger than their owner.
-      </dd>
-      <dt>
-        Fixed below zoom threshold
-      </dt>
-      <dd>
-        Labels stop getting smaller in view coordinates if the zoom level is less than the zoom threshold.
-      </dd>
-      <dt>
-        Fixed above zoom threshold
-      </dt>
-      <dd>
-        Labels stop getting larger in view coordinates if the zoom level is greater than the zoom threshold.
-      </dd>
-      <dt>
-        Zoom-invariant (Fixed when outside specified range)
-      </dt>
-      <dd>
-        Labels don't scale when the zoom level is below the zoom threshold or above the maximum scale threshold.
-      </dd>
-      <dt>
-        Default behaviour
-      </dt>
-      <dd>
-        This is the standard behaviour of a label. See how it compares to
-        this custom label style implementation.
-      </dd>
-    </dl>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Zoom-invariant Label Style</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Zoom in and out with the different policies to see how the labels change or keep their sizes.</li>
-      <li>Change the <em>Zoom Threshold</em> and see how it affects the <em>Fixed below zoom threshold</em> option.</li>
-      <li>Select labels and see how their hit-testing and selection changes with the zoom dependent rendering.</li>
-    </ul>
-  </div>
-</aside>
+        <p>This demo shows label styles that render the labels independent of the zoom level.</p>
+        <h2>Zoom Modes</h2>
+        <dl>
+          <dt>Fit into label owner</dt>
+          <dd>
+            Node labels are scaled to fit into their owner if they are bigger than their owner.
+          </dd>
+          <dt>Fixed below zoom threshold</dt>
+          <dd>
+            Labels stop getting smaller in view coordinates if the zoom level is less than the zoom
+            threshold.
+          </dd>
+          <dt>Fixed above zoom threshold</dt>
+          <dd>
+            Labels stop getting larger in view coordinates if the zoom level is greater than the
+            zoom threshold.
+          </dd>
+          <dt>Zoom-invariant (Fixed when outside specified range)</dt>
+          <dd>
+            Labels don't scale when the zoom level is below the zoom threshold or above the maximum
+            scale threshold.
+          </dd>
+          <dt>Default behaviour</dt>
+          <dd>
+            This is the standard behaviour of a label. See how it compares to this custom label
+            style implementation.
+          </dd>
+        </dl>
 
-<div class="demo-content">
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Zoom in and out with the different policies to see how the labels change or keep their
+            sizes.
+          </li>
+          <li>
+            Change the <em>Zoom Threshold</em> and see how it affects the
+            <em>Fixed below zoom threshold</em> option.
+          </li>
+          <li>
+            Select labels and see how their hit-testing and selection changes with the zoom
+            dependent rendering.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <span>Zoom Mode:</span>
+        <select id="modeChooserBox" title="Select a Style For The Labels"></select>
 
-    <span>Zoom Mode:</span>
-    <select id="modeChooserBox" title="Select a Style For The Labels"></select>
+        <span style="margin: 0 10px">Current Zoom Level:</span>
+        <span id="zoomLevel">1</span>
 
-    <span style="margin:0 10px">Current Zoom Level:</span>
-    <span id="zoomLevel">1</span>
+        <span id="zoomThresholdControls">
+          <span style="margin: 0 10px">Zoom Threshold:</span>
+          <input
+            id="zoomThreshold"
+            type="range"
+            min="1"
+            max="4"
+            value="1"
+            step="0.1"
+            data-name="zoomThreshold"
+            style="vertical-align: middle"
+          />
+          <span id="zoomThresholdLabel">1</span>
+        </span>
 
-    <span id="zoomThresholdControls">
-      <span style="margin:0 10px">Zoom Threshold:</span>
-      <input id="zoomThreshold" type="range" min="1" max="4" value="1" step="0.1" data-name="zoomThreshold"
-        style="vertical-align: middle;">
-      <span id="zoomThresholdLabel">1</span>
-    </span>
+        <span id="maxScaleControls" hidden="">
+          <span style="margin: 0 10px">Max Scale:</span>
+          <input
+            id="maxScale"
+            type="range"
+            min="1"
+            max="4"
+            value="3"
+            step="0.1"
+            data-name="maxScale"
+            style="vertical-align: middle"
+          />
+          <span id="maxScaleLabel">3</span>
+        </span>
+      </div>
 
-    <span id="maxScaleControls" hidden>
-      <span style="margin:0 10px">Max Scale:</span>
-      <input id="maxScale" type="range" min="1" max="4" value="3" step="0.1" data-name="maxScale"
-        style="vertical-align: middle;">
-      <span id="maxScaleLabel">3</span>
-    </span>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="ZoomInvariantLabelStyleDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="ZoomInvariantLabelStyleDemo.js"></script>
+  </body>
 </html>

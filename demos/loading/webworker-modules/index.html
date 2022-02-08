@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,117 +34,150 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Web Worker Demo (Modules) [yFiles for HTML]</title>
+    <title>Web Worker Demo (Modules) [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <style type="text/css">
-    #notSupportedHint {
-      position: relative;
-      top: 200px;
-      border: 1px solid;
-      border-color: #18468c;
-      text-align: center;
-      margin: 0 20%;
-      padding: 20px;
-    }
+    <style>
+      #notSupportedHint {
+        position: relative;
+        top: 200px;
+        border: 1px solid;
+        border-color: #18468c;
+        text-align: center;
+        margin: 0 20%;
+        padding: 20px;
+      }
 
-    #graphComponentStatus {
-      position: relative;
-      top: 50%;
-      width: 50%;
-      height: 370px;
-      left: 50%;
-      border: 1px solid #999999;
-      line-height: 40px;
-      text-align: center;
-      font-size: 20px;
-      margin-left:-25%;
-      padding-right: 20px;
-      background-color: rgba(255,255,255,0.75);
-      visibility: hidden;
-    }
+      #graphComponentStatus {
+        position: relative;
+        top: 50%;
+        width: 50%;
+        height: 370px;
+        left: 50%;
+        border: 1px solid #999999;
+        line-height: 40px;
+        text-align: center;
+        font-size: 20px;
+        margin-left: -25%;
+        padding-right: 20px;
+        background-color: rgba(255, 255, 255, 0.75);
+        visibility: hidden;
+      }
 
-    #layout-animation {
-      display: block;
-      width: 100%;
-      height: 275px;
-      background: transparent url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMy42NCAyNS4wMiIgaWQ9InN2ZzUxMDUiPg0KICA8ZyBpZD0ibGF5ZXIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTMuODEgLTExMS4xMykiPg0KICAgIDxnIGlkPSJnNTczNiIgdHJhbnNmb3JtPSJtYXRyaXgoLjI2NDU4IDAgMCAuMjY0NTggOTAuNjMgMTA4LjY1KSI+DQogICAgICA8cGF0aCBpZD0icGF0aDU2NTIiIGQ9Ik0xMi4zOSA0Ny4yOWwuMSAxOS4zYTI3Ljc0IDI3Ljc0IDAgMCAwIDEzLjkgMjMuOGwxNi44IDkuNmEyNy4zMiAyNy4zMiAwIDAgMCAyNy41LS4yTDg3LjM5IDkwQTI3LjQ0IDI3LjQ0IDAgMCAwIDEwMSA2Ni4wOWwtLjEtMTkuNEEyNy44NiAyNy44NiAwIDAgMCA4NyAyMi44OWwtMTYuNy05LjVhMjcuMzIgMjcuMzIgMCAwIDAtMjcuNS4ybC0xNi43IDkuOGEyNy41IDI3LjUgMCAwIDAtMTMuNyAyMy45IiBmaWxsPSIjMjQyMjY1Ii8+DQogICAgICA8ZyBpZD0iZzU2NzYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1IDkpIj4NCiAgICAgICAgPGcgaWQ9Imc1Njc0IiB0cmFuc2Zvcm09InJvdGF0ZSg1NCkiPg0KICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY1NCIgZD0iTTY2Ljg5LTIwLjA0bC4xIDQuOGMuMiAyLjQuOCA0LjUgMi4zIDYuNSAxLjMgMS44IDMgMyA1IDRsMi41IDEuNWMyIDEuNSAxLjMgMy4yLTIuMyAxLjJsLTMtMS42YTExLjYgMTEuNiAwIDAgMC0xMC40LS4zbC0zLjkgMi4xYy00IDEtMi41LTEgMS0zLjEgMy0xLjUgNS4xLTQuMSA2LTcuMy40LTEuNS42LTMgLjUtNC42di0zLjdjLS41LTQgMi44LTQgMi4yLjV6IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgPGcgaWQ9Imc1NjYwIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY1OCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46NjdweCAwcHg7YW5pbWF0aW9uLWRlbGF5Oi4xMjVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjU2IiBkPSJNNjUuNjEtMzguMzRjLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2NjYiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA0NS45IDQ4LjcpIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY2NCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46LTE0LjVweCA0OHB4O2FuaW1hdGlvbi1kZWxheTouNDVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjYyIiBkPSJNLTEzLjk4IDMwLjMyYy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjcyIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTIwIDQ1LjkgNDguNykiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjcwIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjo4NnB4IDg5cHg7YW5pbWF0aW9uLWRlbGF5Oi43OXMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2NjgiIGQ9Ik04NC44NSA2NC43NWMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgICA8ZyBpZD0iZzU3MDAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkgNikiPg0KICAgICAgICA8ZyBpZD0iZzU2OTgiIHRyYW5zZm9ybT0icm90YXRlKDEwKSI+DQogICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njc4IiBkPSJNNTQuMjMgMjguMzVsLjEgNC44Yy4yIDIuNC44IDQuNSAyLjMgNi41IDEuMyAxLjggMyAzIDUgNGwyLjUgMS41YzIgMS41IDEuMyAzLjItMi4zIDEuMmwtMy0xLjZhMTEuNiAxMS42IDAgMCAwLTEwLjQtLjNsLTMuOSAyLjFjLTQgMS0yLjUtMSAxLTMuMSAzLTEuNSA1LjEtNC4xIDYtNy4zLjQtMS41LjYtMyAuNS00LjZ2LTMuN2MtLjUtNCAyLjgtNCAyLjIuNXoiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICA8ZyBpZD0iZzU2ODQiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjgyIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjogNTNweCAzM3B4OyI+DQogICAgICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY4MCIgZD0iTTUyLjcxIDEwLjA5Yy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjkwIiB0cmFuc2Zvcm09InJvdGF0ZSgxMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2ODgiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjM3cHggNTBweDthbmltYXRpb24tZGVsYXk6LjMzMzNzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njg2IiBkPSJNMzQuMzQgMTYuMzljLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2OTYiIHRyYW5zZm9ybT0icm90YXRlKC0xMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2OTQiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjQ5cHggNTNweDthbmltYXRpb24tZGVsYXk6LjY2NnMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2OTIiIGQ9Ik00OS4wMSAyOC45MmMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgPC9nPg0KICA8L2c+DQogIDxzdHlsZSBpZD0ic3R5bGU1NjUwIj4NCiAgICBAa2V5ZnJhbWVzIHdvYmJsZSB7DQogICAgMCUsDQogICAgMzMlLA0KICAgIHRvIHsNCiAgICB0cmFuc2Zvcm06IHNjYWxlKDEpOw0KICAgIH0NCiAgICA1MCUgew0KICAgIHRyYW5zZm9ybTogc2NhbGUoMC45NSk7DQogICAgfQ0KICAgIDY2JSB7DQogICAgdHJhbnNmb3JtOiBzY2FsZSgxLjE1KTsNCiAgICB9DQogICAgfQ0KICAgIC53b2JibGUgew0KICAgIGFuaW1hdGlvbjogd29iYmxlIDFzIGVhc2UtaW4tb3V0IGluZmluaXRlOw0KICAgIHRyYW5zZm9ybS1vcmlnaW46IDUyLjNweCAzNC40NXB4Ow0KICAgIH0NCiAgPC9zdHlsZT4NCjwvc3ZnPg==) no-repeat center;
-      background-size: 200px;
-    }
+      #layout-animation {
+        display: block;
+        width: 100%;
+        height: 275px;
+        background: transparent
+          url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMy42NCAyNS4wMiIgaWQ9InN2ZzUxMDUiPg0KICA8ZyBpZD0ibGF5ZXIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTMuODEgLTExMS4xMykiPg0KICAgIDxnIGlkPSJnNTczNiIgdHJhbnNmb3JtPSJtYXRyaXgoLjI2NDU4IDAgMCAuMjY0NTggOTAuNjMgMTA4LjY1KSI+DQogICAgICA8cGF0aCBpZD0icGF0aDU2NTIiIGQ9Ik0xMi4zOSA0Ny4yOWwuMSAxOS4zYTI3Ljc0IDI3Ljc0IDAgMCAwIDEzLjkgMjMuOGwxNi44IDkuNmEyNy4zMiAyNy4zMiAwIDAgMCAyNy41LS4yTDg3LjM5IDkwQTI3LjQ0IDI3LjQ0IDAgMCAwIDEwMSA2Ni4wOWwtLjEtMTkuNEEyNy44NiAyNy44NiAwIDAgMCA4NyAyMi44OWwtMTYuNy05LjVhMjcuMzIgMjcuMzIgMCAwIDAtMjcuNS4ybC0xNi43IDkuOGEyNy41IDI3LjUgMCAwIDAtMTMuNyAyMy45IiBmaWxsPSIjMjQyMjY1Ii8+DQogICAgICA8ZyBpZD0iZzU2NzYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1IDkpIj4NCiAgICAgICAgPGcgaWQ9Imc1Njc0IiB0cmFuc2Zvcm09InJvdGF0ZSg1NCkiPg0KICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY1NCIgZD0iTTY2Ljg5LTIwLjA0bC4xIDQuOGMuMiAyLjQuOCA0LjUgMi4zIDYuNSAxLjMgMS44IDMgMyA1IDRsMi41IDEuNWMyIDEuNSAxLjMgMy4yLTIuMyAxLjJsLTMtMS42YTExLjYgMTEuNiAwIDAgMC0xMC40LS4zbC0zLjkgMi4xYy00IDEtMi41LTEgMS0zLjEgMy0xLjUgNS4xLTQuMSA2LTcuMy40LTEuNS42LTMgLjUtNC42di0zLjdjLS41LTQgMi44LTQgMi4yLjV6IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgPGcgaWQ9Imc1NjYwIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY1OCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46NjdweCAwcHg7YW5pbWF0aW9uLWRlbGF5Oi4xMjVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjU2IiBkPSJNNjUuNjEtMzguMzRjLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2NjYiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA0NS45IDQ4LjcpIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY2NCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46LTE0LjVweCA0OHB4O2FuaW1hdGlvbi1kZWxheTouNDVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjYyIiBkPSJNLTEzLjk4IDMwLjMyYy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjcyIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTIwIDQ1LjkgNDguNykiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjcwIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjo4NnB4IDg5cHg7YW5pbWF0aW9uLWRlbGF5Oi43OXMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2NjgiIGQ9Ik04NC44NSA2NC43NWMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgICA8ZyBpZD0iZzU3MDAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkgNikiPg0KICAgICAgICA8ZyBpZD0iZzU2OTgiIHRyYW5zZm9ybT0icm90YXRlKDEwKSI+DQogICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njc4IiBkPSJNNTQuMjMgMjguMzVsLjEgNC44Yy4yIDIuNC44IDQuNSAyLjMgNi41IDEuMyAxLjggMyAzIDUgNGwyLjUgMS41YzIgMS41IDEuMyAzLjItMi4zIDEuMmwtMy0xLjZhMTEuNiAxMS42IDAgMCAwLTEwLjQtLjNsLTMuOSAyLjFjLTQgMS0yLjUtMSAxLTMuMSAzLTEuNSA1LjEtNC4xIDYtNy4zLjQtMS41LjYtMyAuNS00LjZ2LTMuN2MtLjUtNCAyLjgtNCAyLjIuNXoiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICA8ZyBpZD0iZzU2ODQiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjgyIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjogNTNweCAzM3B4OyI+DQogICAgICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY4MCIgZD0iTTUyLjcxIDEwLjA5Yy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjkwIiB0cmFuc2Zvcm09InJvdGF0ZSgxMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2ODgiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjM3cHggNTBweDthbmltYXRpb24tZGVsYXk6LjMzMzNzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njg2IiBkPSJNMzQuMzQgMTYuMzljLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2OTYiIHRyYW5zZm9ybT0icm90YXRlKC0xMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2OTQiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjQ5cHggNTNweDthbmltYXRpb24tZGVsYXk6LjY2NnMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2OTIiIGQ9Ik00OS4wMSAyOC45MmMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgPC9nPg0KICA8L2c+DQogIDxzdHlsZSBpZD0ic3R5bGU1NjUwIj4NCiAgICBAa2V5ZnJhbWVzIHdvYmJsZSB7DQogICAgMCUsDQogICAgMzMlLA0KICAgIHRvIHsNCiAgICB0cmFuc2Zvcm06IHNjYWxlKDEpOw0KICAgIH0NCiAgICA1MCUgew0KICAgIHRyYW5zZm9ybTogc2NhbGUoMC45NSk7DQogICAgfQ0KICAgIDY2JSB7DQogICAgdHJhbnNmb3JtOiBzY2FsZSgxLjE1KTsNCiAgICB9DQogICAgfQ0KICAgIC53b2JibGUgew0KICAgIGFuaW1hdGlvbjogd29iYmxlIDFzIGVhc2UtaW4tb3V0IGluZmluaXRlOw0KICAgIHRyYW5zZm9ybS1vcmlnaW46IDUyLjNweCAzNC40NXB4Ow0KICAgIH0NCiAgPC9zdHlsZT4NCjwvc3ZnPg==)
+          no-repeat center;
+        background-size: 200px;
+      }
 
-    #cancel-layout {
-      color: white;
-      width: 200px;
-      border-radius: 5px;
-      background-color: #38434f;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  </style>
+      #cancel-layout {
+        color: white;
+        width: 200px;
+        border-radius: 5px;
+        background-color: #38434f;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script></head>
-<body class="demo-has-left">
-
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This demo shows how to run a layout algorithm in a Web Worker thread without blocking the UI or main thread.</p>
-    <p>The demo code uses <a href="https://web.dev/module-workers/">module workers</a>, which are not supported in every
-      browser, yet. If your browser does not support module workers, please refer to the
-      <a href="../../loading/webpack/README.html">Webpack Demo</a> for an approach using Web Worker together with
-      webpack, or the <a href="../../loading/webworker-umd/index.html">Web Worker UMD Demo</a> that uses AMD modules
-      to load resources in the Web Worker thread. </p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Web Worker Demo (Modules)</h1>
 
-    <p>Calculating the layout in a Web Worker keeps the UI responsive. Hence, the loading animation is able to
-      continue while the layout algorithm is working.</p>
+        <p>
+          This demo shows how to run a layout algorithm in a Web Worker thread without blocking the
+          UI or main thread.
+        </p>
+        <p>
+          The demo code uses <a href="https://web.dev/module-workers/">module workers</a>, which are
+          not supported in every browser, yet. If your browser does not support module workers,
+          please refer to the <a href="../../loading/webpack/README.html">Webpack Demo</a> for an
+          approach using Web Worker together with webpack, or the
+          <a href="../../loading/webworker-umd/index.html">Web Worker UMD Demo</a> that uses AMD
+          modules to load resources in the Web Worker thread.
+        </p>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>
+          Calculating the layout in a Web Worker keeps the UI responsive. Hence, the loading
+          animation is able to continue while the layout algorithm is working.
+        </p>
 
-<div class="demo-content">
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button id="layoutBtn" data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled" disabled>Layout</button>
-  </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          id="layoutBtn"
+          data-command="Layout"
+          title="Layout"
+          class="demo-icon-yIconLayout labeled"
+          disabled=""
+        >
+          Layout
+        </button>
+      </div>
 
-  <div id="graphComponent"></div>
-  <div id="graphComponentStatus">
-    <div id="layout-animation"></div>
-    Running Web Worker
-    <div id="cancel-layout" data-command="cancelLayout">Cancel Layout</div>
-  </div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="graphComponentStatus">
+          <div id="layout-animation"></div>
+          Running Web Worker
+          <div id="cancel-layout" data-command="cancelLayout">Cancel Layout</div>
+        </div>
+        <div style="display: none" id="notSupportedHint">
+          <p>
+            Your browser does not support module web workers. Please refer to the
+            <a href="../../loading/webpack/README.html">Webpack Demo</a> or the
+            <a href="../../loading/webworker-umd/index.html">Webworker UMD Demo</a>
+            instead.
+          </p>
+          <p>Module Workers are currently only supported in Chrome 80+ and Edge</p>
+        </div>
+      </div>
+    </div>
 
-  <div style="display: none" id="notSupportedHint">
-    <p>Your browser does not support module web workers. Please refer to the
-    <a href="../../loading/webpack/README.html">Webpack Demo</a> or the
-    <a href="../../loading/webworker-umd/index.html">Webworker UMD Demo</a>
-      instead.</p>
-    <p>Module Workers are currently only supported in Chrome 80+ and Edge</p>
-  </div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="WebWorkerModulesDemo.js"></script>
-<script nomodule>
-  // noinspection ES6ConvertVarToLetConst
-  document.body.className = document.body.className + ' loaded';
-  document.querySelector('.demo-toolbar').setAttribute('style', 'display: none;')
-  var gcElement = document.getElementById('graphComponent');
-  gcElement.innerHTML =
-    '<h2>Your browser doesn\'t support ES modules</h2>' +
-    '<p>Please visit <a href="https://caniuse.com/#search=modules" target="_blank">caniuse.com</a> for details on browser support for ES modules.</p>'
-</script>
-</body>
+    <script type="module" crossorigin="anonymous" src="WebWorkerModulesDemo.js"></script>
+    <script nomodule="">
+      // noinspection ES6ConvertVarToLetConst
+      document.body.className = document.body.className + ' loaded'
+      document.querySelector('.demo-toolbar').setAttribute('style', 'display: none;')
+      var gcElement = document.getElementById('graphComponent')
+      gcElement.innerHTML =
+        "<h2>Your browser doesn't support ES modules</h2>" +
+        '<p>Please visit <a href="https://caniuse.com/#search=modules" target="_blank">caniuse.com</a> for details on browser support for ES modules.</p>'
+    </script>
+  </body>
 </html>

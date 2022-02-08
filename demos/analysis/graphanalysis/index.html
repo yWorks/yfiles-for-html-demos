@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,206 +34,235 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Graph Analysis Demo [yFiles for HTML]</title>
+    <title>Graph Analysis Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-
-    .flat-button {
-      width: 7.5em;
-      margin: 11px 0 11px 11px;
-      padding: 14px 9px 14px 9px;
-      background-color: #A0A0A0;
-      color: #fff;
-      border: none;
-    }
-
-    #algorithm-button {
-      background-color: #1871BD;
-      color: #fff;
-    }
-
-    #algorithm-button:hover:not(.demo-disabled) {
-      background-color: #328AD5;
-    }
-
-    #layout-select-box {
-      font-size: 14.4px;
-      margin-top: 10px;
-    }
-
-    #reset-button:hover {
-      background-color: #B0B0B0;
-    }
-
-    .multi-color-button {
-      transform-origin: 15px 15px;
-      transition: transform 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-    }
-
-    .multi-color-button:hover {
-      transform-origin: 15px 15px;
-      transform: scale(2);
-      transition: transform 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-    }
-
-    .single-colored-edge {
-      stroke-width: 5;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .single-colored-edge-hovered {
-      stroke-width: 7;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .path-highlight {
-      transform-origin: 15px 15px; /*15 is the radius of all normal nodes*/
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .path-highlight-hovered {
-      transform-origin: 15px 15px;
-      transform: scale(1.3);
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    a:link {
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    @media screen and (max-width: 1024px) {
-      .demo-splitter {
-        width: 10px;
-        -webkit-user-select: none;
+    <style>
+      .flat-button {
+        width: 7.5em;
+        margin: 11px 0 11px 11px;
+        padding: 14px 9px 14px 9px;
+        background-color: #a0a0a0;
+        color: #fff;
+        border: none;
       }
-    }
 
-    .table {
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
+      #algorithm-button {
+        background-color: #1871bd;
+        color: #fff;
+      }
 
-    .td, .tr {
-      padding-bottom: 5px;
-      padding-left: 10px;
-      padding-right: 10px;
-    }
+      #algorithm-button:hover:not(.demo-disabled) {
+        background-color: #328ad5;
+      }
 
-    .color-transition {
-      -webkit-transition: fill 1s ease-in-out;
-      -moz-transition: fill 1s ease-in-out;
-      -ms-transition: fill 1s ease-in-out;
-      -o-transition: fill 1s ease-in-out;
-      transition: fill 1s ease-in-out;
-    }
+      #layout-select-box {
+        font-size: 14.4px;
+        margin-top: 10px;
+      }
 
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Demo Description</h2>
-    <p>
-      This demo showcases a selection of algorithms to analyse the structure of a graph.</p>
+      #reset-button:hover {
+        background-color: #b0b0b0;
+      }
 
-    <p>
-      The toolbar provides access to the most important settings of the algorithms.
-    </p>
+      .multi-color-button {
+        transform-origin: 15px 15px;
+        transition: transform 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+      }
 
-    <p>
-      Since not every algorithm presents well for every type of graph, we provide several suitable sample
-      graphs. </p>
-    <p>
+      .multi-color-button:hover {
+        transform-origin: 15px 15px;
+        transform: scale(2);
+        transition: transform 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+      }
 
-      The interactive editing capabilities of the graph component of this demo are explained in the <a
-            href="../../view/grapheditor/">Graph Editor demo</a>. </p>
+      .single-colored-edge {
+        stroke-width: 5;
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
 
-    <h3>Things to Try</h3>
+      .single-colored-edge-hovered {
+        stroke-width: 7;
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
 
-    <ul>
-      <li>
-        Browse the <em>Sample Graphs</em> and <em>Graph Algorithms</em>.
-      </li>
-      <li>
-        Explore the <em>options</em> of the algorithms.
-      </li>
-      <li>
-        Modify the graph by adding or removing nodes and edges.
-      </li>
-      <li>
-        Run a graph algorithm with the selected settings by pressing the <em>Layout</em> button.
-      </li>
-    </ul>
+      .path-highlight {
+        transform-origin: 15px 15px; /*15 is the radius of all normal nodes*/
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
 
-    <h2>Algorithm Description</h2>
-    <div class="description-content" id="algorithm-description"></div>
+      .path-highlight-hovered {
+        transform-origin: 15px 15px;
+        transform: scale(1.3);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
 
-    <h2>Graph Information</h2>
+      a:link {
+        text-decoration: none;
+      }
 
-    <div class="description-content">
-      <div data-type="Table" class="table" id="graph-information"></div>
+      a:hover {
+        text-decoration: underline;
+      }
+
+      @media screen and (max-width: 1024px) {
+        .demo-splitter {
+          width: 10px;
+          -webkit-user-select: none;
+        }
+      }
+
+      .table {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .td,
+      .tr {
+        padding-bottom: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .color-transition {
+        -webkit-transition: fill 1s ease-in-out;
+        -moz-transition: fill 1s ease-in-out;
+        -ms-transition: fill 1s ease-in-out;
+        -o-transition: fill 1s ease-in-out;
+        transition: fill 1s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Graph Analysis Demo</h1>
+
+        <p>This demo showcases a selection of algorithms to analyse the structure of a graph.</p>
+
+        <p>The toolbar provides access to the most important settings of the algorithms.</p>
+
+        <p>
+          Since not every algorithm presents well for every type of graph, we provide several
+          suitable sample graphs.
+        </p>
+        <p>
+          The interactive editing capabilities of the graph component of this demo are explained in
+          the <a href="../../view/grapheditor/">Graph Editor demo</a>.
+        </p>
+
+        <h3>Things to Try</h3>
+
+        <ul>
+          <li>Browse the <em>Sample Graphs</em> and <em>Graph Algorithms</em>.</li>
+          <li>Explore the <em>options</em> of the algorithms.</li>
+          <li>Modify the graph by adding or removing nodes and edges.</li>
+          <li>
+            Run a graph algorithm with the selected settings by pressing the <em>Layout</em> button.
+          </li>
+        </ul>
+
+        <h2>Algorithm Description</h2>
+        <div class="description-content" id="algorithm-description"></div>
+
+        <h2>Graph Information</h2>
+
+        <div class="description-content">
+          <div data-type="Table" class="table" id="graph-information"></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" id="new" title="New" class="demo-icon-yIconNew"></button>
+
+        <span class="demo-separator"></span>
+
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+
+        <span class="demo-separator"></span>
+
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+        <span class="demo-separator"></span>
+
+        <select
+          data-type="ComboBox"
+          data-command="SampleSelectionChanged"
+          title="Select a sample graph"
+          id="sampleComboBox"
+        ></select>
+
+        <span class="demo-separator"></span>
+
+        <select
+          id="algorithm-select-box"
+          data-type="ComboBox"
+          data-command="AlgorithmSelectionChanged"
+          title="Select a graph analysis algorithm"
+        ></select>
+
+        <span class="demo-separator"></span>
+
+        <button
+          id="generateEdgeLabels"
+          data-name="generateEdgeLabels"
+          data-command="GenerateEdgeLabels"
+          title="Generate Edge Labels"
+          class="demo-icon-yIconEdgeLabel"
+        ></button>
+        <button
+          data-name="removeEdgeLabels"
+          id="removeEdgeLabels"
+          data-command="RemoveEdgeLabels"
+          title="Delete All Edge Labels"
+          class="demo-icon-yIconDelete"
+        ></button>
+
+        <span class="demo-separator"></span>
+
+        <!-- combobox for directed -->
+        <select
+          data-type="ComboBox"
+          id="uniformEdgeWeightsComboBox"
+          data-command="SetUniformEdgeWeights"
+        ></select>
+        <select data-type="ComboBox" id="directionComboBox" data-command="SetDirection"></select>
+
+        <span class="demo-separator"></span>
+
+        <button
+          data-command="Layout"
+          title="Layout"
+          id="layoutButton"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Layout
+        </button>
+      </div>
+
+      <!-- The GraphComponent -->
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
     </div>
-  </div>
-</aside>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-
-    <button data-command="New" id="new" title="New" class="demo-icon-yIconNew"></button>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-    <span class="demo-separator"></span>
-
-    <select data-type="ComboBox" data-command="SampleSelectionChanged"
-            title="Select a sample graph" id="sampleComboBox"></select>
-
-    <span class="demo-separator"></span>
-
-    <select id="algorithm-select-box" data-type="ComboBox" data-command="AlgorithmSelectionChanged"
-            title="Select a graph analysis algorithm"></select>
-
-    <span class="demo-separator"></span>
-
-    <button id="generateEdgeLabels" data-name="generateEdgeLabels" data-command="GenerateEdgeLabels"
-            title="Generate Edge Labels" class="demo-icon-yIconEdgeLabel"></button>
-    <button data-name="removeEdgeLabels" id="removeEdgeLabels" data-command="RemoveEdgeLabels"
-            title="Delete All Edge Labels" class="demo-icon-yIconDelete"></button>
-
-    <span class="demo-separator"></span>
-
-    <!-- combobox for directed -->
-    <select data-type="ComboBox" id="uniformEdgeWeightsComboBox" data-command="SetUniformEdgeWeights"></select>
-    <select data-type="ComboBox" id="directionComboBox" data-command="SetDirection"></select>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="Layout" title="Layout" id="layoutButton" class="demo-icon-yIconLayout labeled">Layout</button>
-
-  </div>
-
-  <!-- The GraphComponent -->
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="GraphAnalysisDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="GraphAnalysisDemo.js"></script>
+  </body>
 </html>

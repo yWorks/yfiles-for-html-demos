@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/loading/scriptloading/index.html).
 
+# Script Loading Demo
+
 This demo loads the yFiles modules using _<script>_ tags.
 
 With script-tags, dependencies between the yFiles modules are not resolved automatically. Therefore, all modules that are used by an application have to be loaded separately and in the correct order, as shown in this [yFiles modules dependency diagram](https://docs.yworks.com/yfileshtml/#/dguide/introduction-modules).

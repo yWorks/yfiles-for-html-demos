@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,139 +33,152 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Custom Drag and Drop Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <script src="../../resources/filesystem-warning.js"></script>
+    <title>Custom Drag and Drop Demo [yFiles for HTML]</title>
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <!-- styling for the drag and drop palette -->
-  <style>
-    #palette {
-      position: absolute;
-      top: 100px;
-      bottom: 0;
-      left: 0;
-      width: 100px;
-      border-right: 5px solid #ebeef0;
-      overflow: auto;
-      box-sizing: border-box;
-      z-index: 8;
-    }
-
-    .palette-entry {
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 3px solid #ebeef0;
-      cursor: grab;
-    }
-
-    .palette-image {
-      width: 30px;
-      height: 30px;
-      border-radius: 16px;
-      border: 2px solid white;
-    }
-
-    @media screen and (max-height: 500px) {
+    <!-- styling for the drag and drop palette -->
+    <style>
       #palette {
-        top: 60px;
+        position: absolute;
+        top: 100px;
+        bottom: 0;
+        left: 0;
+        width: 100px;
+        border-right: 5px solid #ebeef0;
+        overflow: auto;
+        box-sizing: border-box;
+        z-index: 8;
       }
-    }
 
-    #graphComponent,
-    .demo-left-hidden #graphComponent {
-      left: 100px !important;
-    }
+      .palette-entry {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 3px solid #ebeef0;
+        cursor: grab;
+      }
 
-    .yfiles-cursor-dragdrop-copy {
-      cursor: copy;
-    }
+      .palette-image {
+        width: 30px;
+        height: 30px;
+        border-radius: 16px;
+        border: 2px solid white;
+      }
 
-    .yfiles-cursor-dragdrop-no-drop {
-      cursor: no-drop;
-    }
-  </style>
+      @media screen and (max-height: 500px) {
+        #palette {
+          top: 60px;
+        }
+      }
 
-</head>
-<body class="demo-has-left">
+      #graphComponent,
+      .demo-left-hidden #graphComponent {
+        left: 100px !important;
+      }
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to change the color of nodes and edges using drag and drop operations.
-    </p>
-    <p>
-      yFiles for HTML comes with predefined drag and drop support to create <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">nodes</a>,
-      <a href="https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode" target="_blank">labels</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode" target="_blank">ports</a>.
-      Instead of creating new elements, this demo shows how you can modify existing elements using a drag and drop
-      operation.
-    </p>
-    <p>
-      As an example, the demo uses an implementation of the <a href="https://docs.yworks.com/yfileshtml/#/api/DropInputMode" target="_blank">DropInputMode</a>,
-      which changes the color of nodes and edges when dropping on them.
-    </p>
+      .yfiles-cursor-dragdrop-copy {
+        cursor: copy;
+      }
 
-    <h2>
-      Things to Try
-    </h2>
-    <ul>
-      <li>
-        Drag a color from the palette onto the canvas. A preview is displayed under the mouse pointer.
-      </li>
-      <li>
-        Drag the color around and see how the cursor changes, depending on whether or not a drop operation can be
-        performed at the current mouse position.
-      </li>
-      <li>
-        Drag the color over an item that has not the same color. The element is highlighted to show that the element
-        can be recolored by the drop operation.
-      </li>
-      <li>Drop a the color on an valid element and observe how the element is recolored accordingly.</li>
-      <li>
-        Use the undo and redo buttons to revert the effect of a drag and drop recoloring operation.
-      </li>
-    </ul>
+      .yfiles-cursor-dragdrop-no-drop {
+        cursor: no-drop;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Custom Drag and Drop Demo</h1>
 
-    <h2>
-      Related Demos
-    </h2>
-    <ul>
-      <li>
-        <a href='../draganddrop'>Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../graph-drag-and-drop'>Graph Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../drag-from-component'>Drag From Component</a>
-      </li>
-      <li>
-        <a href='../../03-tutorial-application-features/drag-and-drop'>Tutorial: Drag and Drop</a>
-      </li>
-    </ul>
-  </div>
-</aside>
+        <p>
+          This demo shows how to change the color of nodes and edges using drag and drop operations.
+        </p>
+        <p>
+          yFiles for HTML comes with predefined drag and drop support to create
+          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">nodes</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode" target="_blank">labels</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode" target="_blank">ports</a>. Instead of creating new elements, this demo
+          shows how you can modify existing elements using a drag and drop operation.
+        </p>
+        <p>
+          As an example, the demo uses an implementation of the <a href="https://docs.yworks.com/yfileshtml/#/api/DropInputMode" target="_blank">DropInputMode</a>, which
+          changes the color of nodes and edges when dropping on them.
+        </p>
 
-<div class="demo-content">
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Drag a color from the palette onto the canvas. A preview is displayed under the mouse
+            pointer.
+          </li>
+          <li>
+            Drag the color around and see how the cursor changes, depending on whether or not a drop
+            operation can be performed at the current mouse position.
+          </li>
+          <li>
+            Drag the color over an item that has not the same color. The element is highlighted to
+            show that the element can be recolored by the drop operation.
+          </li>
+          <li>
+            Drop a the color on an valid element and observe how the element is recolored
+            accordingly.
+          </li>
+          <li>
+            Use the undo and redo buttons to revert the effect of a drag and drop recoloring
+            operation.
+          </li>
+        </ul>
 
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-  </div>
+        <h2>Related Demos</h2>
+        <ul>
+          <li>
+            <a href="../draganddrop">Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../graph-drag-and-drop">Graph Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../drag-from-component">Drag From Component</a>
+          </li>
+          <li>
+            <a href="../../03-tutorial-application-features/drag-and-drop"
+              >Tutorial: Drag and Drop</a
+            >
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-  <div id="palette"></div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+      </div>
 
-  <div id="graphComponent"></div>
-</div>
+      <div class="demo-content-dynamic">
+        <div id="palette"></div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-<script type="module" crossorigin="anonymous" src="CustomDragAndDropDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="CustomDragAndDropDemo.js"></script>
+  </body>
 </html>

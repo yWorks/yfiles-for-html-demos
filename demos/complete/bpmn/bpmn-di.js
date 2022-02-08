@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1930,18 +1930,26 @@ export class BpmnDiParser {
       return null
     }
 
-    // Get bends & ports from waypoints
-    const count = waypoints.size
-    // First waypoint is source Port
-    const source = waypoints.get(0)
-    // Last is target port
-    const target = waypoints.get(count - 1)
-    waypoints.remove(source)
-    waypoints.remove(target)
-
     // Get source & target node
     let sourceNode = sourceVar.node
     let targetNode = targetVar.node
+
+    if (!sourceNode || !targetNode) {
+      return null
+    }
+
+    // Get bends & ports from waypoints
+    const count = waypoints.size
+    let source = sourceNode.layout.center
+    let target = targetNode.layout.center
+    if (count > 0) {
+      // First waypoint is source Port
+      source = waypoints.get(0)
+      // Last is target port
+      target = waypoints.get(count - 1)
+      waypoints.remove(source)
+      waypoints.remove(target)
+    }
 
     let sourcePort = null
     let targetPort = null
@@ -2040,12 +2048,16 @@ export class BpmnDiParser {
 
     // Get bends & ports from waypoints
     const count = waypoints.size
-    // First waypoint is source Port
-    const source = waypoints.get(0)
-    // Last is target port
-    const target = waypoints.get(count - 1)
-    waypoints.remove(source)
-    waypoints.remove(target)
+    let source = sourceNode.layout.center
+    let target = targetNode.layout.center
+    if (count > 0) {
+      // First waypoint is source Port
+      source = waypoints.get(0)
+      // Last is target port
+      target = waypoints.get(count - 1)
+      waypoints.remove(source)
+      waypoints.remove(target)
+    }
 
     // Get source & target port
     const sourcePort =

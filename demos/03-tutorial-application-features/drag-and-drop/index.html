@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,111 +34,130 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Drag and Drop - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Drag and Drop - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <!-- styling for the drag and drop palette -->
-  <style>
-    #drag-and-drop-panel {
-      position: absolute;
-      top: 100px;
-      bottom: 0;
-      right: 0;
-      width: 150px;
-      border-left: 5px solid #eee;
-      overflow: auto;
-      box-sizing: border-box;
-      z-index: 12;
-    }
-
-    @media screen and (max-height: 500px) {
+    <!-- styling for the drag and drop palette -->
+    <style>
       #drag-and-drop-panel {
-        top: 60px;
+        position: absolute;
+        top: 100px;
+        bottom: 0;
+        right: 0;
+        width: 150px;
+        border-left: 5px solid #eee;
+        overflow: auto;
+        box-sizing: border-box;
+        z-index: 12;
       }
-    }
 
-    #graphComponent,
-    .demo-left-hidden #graphComponent {
-      right: 150px !important;
-    }
+      @media screen and (max-height: 500px) {
+        #drag-and-drop-panel {
+          top: 60px;
+        }
+      }
 
-    .yfiles-drag {
-      z-index: 15;
-      opacity: 0.35;
-      transition: opacity .2s ease-in-out;
-    }
+      #graphComponent,
+      .demo-left-hidden #graphComponent {
+        right: 150px !important;
+      }
 
-    .yfiles-drag.hidden {
-      opacity: 0;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
+      .yfiles-drag {
+        z-index: 15;
+        opacity: 0.35;
+        transition: opacity 0.2s ease-in-out;
+      }
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Drag and Drop</h2>
+      .yfiles-drag.hidden {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-    <p>
-      This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">NodeDropInputMode</a> for dragging nodes from a separate panel to
-      drop them into the graph component.
-    </p>
-    <ul>
-      <li>Drag nodes and group nodes into the graph.</li>
-      <li>Drop nodes and group nodes on other group nodes to add them as their children.</li>
-    </ul>
+        <h1>Drag and Drop</h1>
 
-    <p>See the sources for details.</p>
+        <p>
+          This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">NodeDropInputMode</a> for dragging nodes from a separate
+          panel to drop them into the graph component.
+        </p>
+        <ul>
+          <li>Drag nodes and group nodes into the graph.</li>
+          <li>Drop nodes and group nodes on other group nodes to add them as their children.</li>
+        </ul>
 
-    <h2>
-      Related Demos
-    </h2>
-    <ul>
-      <li>
-        <a href='../../input/draganddrop'>Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../../input/graph-drag-and-drop'>Graph Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../../input/custom-drag-and-drop'>Custom Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../../input/drag-from-component'>Drag From Component</a>
-      </li>
-    </ul>
-  </div>
-</aside>
+        <p>See the sources for details.</p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
-  </div>
+        <h2>Related Demos</h2>
+        <ul>
+          <li>
+            <a href="../../input/draganddrop">Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../../input/graph-drag-and-drop">Graph Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../../input/custom-drag-and-drop">Custom Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../../input/drag-from-component">Drag From Component</a>
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-  <!-- the panel which contains a palette of nodes to drop into the graph -->
-  <div id="drag-and-drop-panel"></div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group selected element"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup selected element"
+          class="demo-icon-yIconUngroup"
+        ></button>
+      </div>
 
-  <div id="graphComponent"></div>
-</div>
+      <!-- the panel which contains a palette of nodes to drop into the graph -->
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="drag-and-drop-panel"></div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

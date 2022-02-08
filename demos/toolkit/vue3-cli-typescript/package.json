@@ -12,14 +12,14 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "vue": "^3.0.0",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.5-dev.tgz"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
-    "@yworks/optimizer": "^1.6.0",
+    "@yworks/optimizer": "^1.7.1",
     "typescript": "~4.1.5",
     "worker-loader": "^3.0.8"
   }

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/tooltips/index.html).
 
-## Tooltips
+Application Features Tutorial
+
+# Tooltips
 
 This demo shows how to enable tooltips for graph items.
 

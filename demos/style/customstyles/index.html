@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,65 +34,85 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Custom Styles Demo [yFiles for HTML]</title>
+    <title>Custom Styles Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Custom Styles Tutorial</div>
 
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This demo shows how to create custom styles for nodes, edges, labels, ports, and edge arrows. Styles can
-      use all the powerful visualisation features of Scalable Vector Graphics (SVG).</p>
+        <h1>Custom Styles Demo</h1>
 
-    <h2>Things to Try</h2>
+        <p>
+          This demo shows how to create custom styles for nodes, edges, labels, ports, and edge
+          arrows. Styles can use all the powerful visualisation features of Scalable Vector Graphics
+          (SVG).
+        </p>
 
-    <ul>
-      <li>
-          Create new nodes in the canvas and inspect their styles in code.
-      </li>
-      <li>
-          Create edges between nodes and inspect the custom style of the edge and the arrows in code.
-      </li>
-      <li>
-          Click "Modify Colors" to change the color of the nodes and indirectly the color of the outgoing edges.
-      </li>
-      <li>
-          Note that the labels look like nodes connected via an edge, however they are ordinary labels that reuse the edge style for drawing a node to label connection. Select and drag a label to move them to different locations.
-      </li>
-      <li>
-          Also note that the label style depends on the current zoom. Zooming closer to the label reveals an edit label button that, when clicked, starts label text editing.
-      </li>
-      <li>
-          Selecting an edge changes its color - the traditional selection indicator is not rendered.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Things to Try</h2>
 
-<div class="demo-content">
+        <ul>
+          <li>Create new nodes in the canvas and inspect their styles in code.</li>
+          <li>
+            Create edges between nodes and inspect the custom style of the edge and the arrows in
+            code.
+          </li>
+          <li>
+            Click "Modify Colors" to change the color of the nodes and indirectly the color of the
+            outgoing edges.
+          </li>
+          <li>
+            Note that the labels look like nodes connected via an edge, however they are ordinary
+            labels that reuse the edge style for drawing a node to label connection. Select and drag
+            a label to move them to different locations.
+          </li>
+          <li>
+            Also note that the label style depends on the current zoom. Zooming closer to the label
+            reveals an edit label button that, when clicked, starts label text editing.
+          </li>
+          <li>
+            Selecting an edge changes its color - the traditional selection indicator is not
+            rendered.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="ModifyColors" title="Modify Colors" class="labeled">
+          Modify Colors
+        </button>
+      </div>
 
-    <button data-command="ModifyColors" title="Modify Colors" class="labeled">
-      Modify Colors
-    </button>
-  </div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="CustomStyleDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="CustomStyleDemo.js"></script>
+  </body>
 </html>

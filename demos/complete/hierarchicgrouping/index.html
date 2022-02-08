@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,55 +34,72 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Hierarchic Grouping Demo [yFiles for HTML]</title>
+    <title>Hierarchic Grouping Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Hierarchic Grouping Demo</h1>
 
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      The Hierarchic Grouping demo shows how to nicely expand and collapse sub-graphs organized in groups. Folding
-      ('collapsed groups') can help to keep complex hierarchically organized diagrams clear and straightforward by
-      showing only parts of the entire structure. </p>
-    <p>
-      Additionally, each user action triggers a run of the <em>incremental mode</em> of the <em>hierarchic layout
-      algorithm</em> to ensure that the currently visible part of the graph is always well-organized but remains still
-      similar to the previous arrangement. </p>
-    <p>
-      Recursive edges are edges whose source is inside a group node while its target is outside this group node, and
-      vice versa. When those edges leave a group node at the side to reach a node left or right of the group node,
-      information to keep the layout stable after expanding/collapsing the group node may be lost.<br/>
-      Therefore, a new routing style is introduced which will preserve this information. This routing style
-      forces all edges to enter groups at the top and leave them at the bottom. </p>
+        <p>
+          The Hierarchic Grouping demo shows how to nicely expand and collapse sub-graphs organized
+          in groups. Folding ('collapsed groups') can help to keep complex hierarchically organized
+          diagrams clear and straightforward by showing only parts of the entire structure.
+        </p>
+        <p>
+          Additionally, each user action triggers a run of the <em>incremental mode</em> of the
+          <em>hierarchic layout algorithm</em> to ensure that the currently visible part of the
+          graph is always well-organized but remains still similar to the previous arrangement.
+        </p>
+        <p>
+          Recursive edges are edges whose source is inside a group node while its target is outside
+          this group node, and vice versa. When those edges leave a group node at the side to reach
+          a node left or right of the group node, information to keep the layout stable after
+          expanding/collapsing the group node may be lost.<br />
+          Therefore, a new routing style is introduced which will preserve this information. This
+          routing style forces all edges to enter groups at the top and leave them at the bottom.
+        </p>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Expand or collapse a group node with the <code>+</code> or <code>-</code> button.</li>
-    </ul>
-  </div>
-</aside>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Expand or collapse a group node with the <code>+</code> or <code>-</code> button.</li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div id="graphOverviewComponent" class="demo-overview-container">
-    <div class="demo-overview-header">Overview</div>
-    <div id="overviewComponent"></div>
-  </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+      <div class="demo-content-dynamic">
+        <div id="graphOverviewComponent" class="demo-overview-container">
+          <div class="demo-overview-header">Overview</div>
+          <div id="overviewComponent"></div>
+        </div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="HierarchicGroupingDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="HierarchicGroupingDemo.js"></script>
+  </body>
 </html>

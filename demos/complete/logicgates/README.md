@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/logicgates/index.html).
 
+# Logic Gates Demo
+
 This demo shows how yfiles for HTML can be used for the visualization of a digital system consisted of logic gates.
 
 Each node in this system has specific ports such that incoming edges are connected only to the left side of the target node, while outgoing edges connect to the right side of the source node. To achieve this, the notions of [PortConstraint](https://docs.yworks.com/yfileshtml/#/api/PortConstraint) and [PortCandidate](https://docs.yworks.com/yfileshtml/#/api/PortCandidate) have been used.

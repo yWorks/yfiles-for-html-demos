@@ -2,7 +2,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,13 +28,4 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 27.7 21.6" xml:space="preserve">
-  <g fill="#666">
-    <rect x="18.4" y="4.4" width="3" height="3"></rect>
-    <rect x="18.4" y="9.4" width="3" height="3"></rect>
-    <rect x="18.4" y="14.4" width="3" height="3"></rect>
-    <rect x="6.4" y="4.4" width="10" height="3"></rect>
-    <rect x="6.4" y="9.4" width="10" height="3"></rect>
-    <rect x="6.4" y="14.4" width="10" height="3"></rect>
-  </g>
-</svg>
+<svg id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 111 110"><defs><style>.cls-1{fill:#666;}</style></defs><path class="cls-1" d="M48,26.92H15.23a3.46,3.46,0,1,1,0-6.92H48a3.46,3.46,0,0,1,0,6.92Z"/><path class="cls-1" d="M73.69,26.92h-12a3.46,3.46,0,1,1,0-6.92h12a3.46,3.46,0,1,1,0,6.92Z"/><path class="cls-1" d="M30.17,47.77H15.23a3.46,3.46,0,1,1,0-6.91H30.17a3.46,3.46,0,1,1,0,6.91Z"/><path class="cls-1" d="M59.65,34.87a3.45,3.45,0,0,1-3.46-3.45V16.11a3.46,3.46,0,1,1,6.91,0V31.42A3.44,3.44,0,0,1,59.65,34.87Z"/><path class="cls-1" d="M32.34,55.49A3.46,3.46,0,0,1,28.89,52V36.72a3.46,3.46,0,0,1,6.91,0V52A3.46,3.46,0,0,1,32.34,55.49Z"/><path class="cls-1" d="M45.6,75.86a3.46,3.46,0,0,1-3.45-3.46V57.09a3.46,3.46,0,0,1,6.91,0V72.4A3.46,3.46,0,0,1,45.6,75.86Z"/><path class="cls-1" d="M32.34,68.75H15.23a3.46,3.46,0,1,1,0-6.91H32.34a3.46,3.46,0,1,1,0,6.91Z"/><path class="cls-1" d="M73.69,47.65H45.6a3.46,3.46,0,0,1,0-6.91H73.69a3.46,3.46,0,1,1,0,6.91Z"/><path class="cls-1" d="M73.69,68.75H45.6a3.46,3.46,0,0,1,0-6.91H73.69a3.46,3.46,0,1,1,0,6.91Z"/></svg>

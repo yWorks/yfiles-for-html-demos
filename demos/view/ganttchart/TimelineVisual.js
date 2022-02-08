@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global moment */
 import { CanvasComponent, HtmlCanvasVisual, IRenderContext } from 'yfiles'
-import GanttMapper from './GanttMapper.js'
+import { GanttMapper } from './GanttMapper.js'
 
 const colors = ['#6991ff', '#9bc3ff']
 
@@ -37,8 +36,8 @@ const colors = ['#6991ff', '#9bc3ff']
  */
 export default class TimelineVisual extends HtmlCanvasVisual {
   /**
-   * Creates a new instance of TimelineVisual.
-   * @param {!GanttMapper} mapper The mapper to help with converting from coordinates to dates.
+   * Creates a new instance.
+   * @param {!GanttMapper} mapper The mapper to help with converting from coordinate to date.
    */
   constructor(mapper) {
     super()
@@ -48,94 +47,95 @@ export default class TimelineVisual extends HtmlCanvasVisual {
   /**
    * Paints a timeline of months and days.
    * @param {!IRenderContext} renderContext The render context of the {@link CanvasComponent}
-   * @param {!CanvasRenderingContext2D} canvasContext The HTML5 Canvas context to use for rendering.
+   * @param {!CanvasRenderingContext2D} renderingContext2D The HTML5 Canvas context to use for rendering.
    */
-  paint(renderContext, canvasContext) {
-    const mapper = this.mapper
+  paint(renderContext, renderingContext2D) {
+    const { x, width } = renderContext.canvasComponent.viewport
 
-    const component = renderContext.canvasComponent
-    const { x, width } = component.viewport
+    const { startDate, endDate, startX, endX, oddStartDay, oddStartMonth } =
+      this.mapper.getVisualRange(x - 100, x + width + 100)
 
-    // get start date
-    const beginDate = mapper.getDate(x - 100).startOf('month')
-    const beginX = mapper.getX(beginDate)
-
-    const endDate = mapper.getDate(x + width + 100).endOf('month')
-    const endX = mapper.getX(endDate)
-
-    this.drawDays(renderContext, canvasContext, beginX, endX, beginDate)
-    this.drawMonths(renderContext, canvasContext, beginX, endX, beginDate)
+    this.paintDays(renderContext, renderingContext2D, startX, endX, startDate, oddStartDay)
+    this.paintMonths(renderContext, renderingContext2D, startX, endX, startDate, oddStartMonth)
   }
 
   /**
-   * Draws the day separators.
+   * Paints the day cells.
    * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} canvasContext
-   * @param {number} beginX
+   * @param {!CanvasRenderingContext2D} renderingContext2D
+   * @param {number} startX
    * @param {number} endX
-   * @param {!MomentInput} beginDate
+   * @param {!Date} startDate
+   * @param {boolean} startIsOdd
    */
-  drawDays(renderContext, canvasContext, beginX, endX, beginDate) {
-    const date = moment(beginDate)
-
-    let odd = date.diff(this.mapper.originDate, 'days') % 2 === 0
-
-    let x = beginX
-    canvasContext.strokeStyle = 'white'
-    canvasContext.lineWidth = 3
+  paintDays(renderContext, renderingContext2D, startX, endX, startDate, startIsOdd) {
     const y = 35
-    const width = GanttMapper.dayWidth
-    const halfWidth = width * 0.5
     const height = 30
-    const halfHeight = height * 0.5
-    canvasContext.textAlign = 'center'
-    canvasContext.textBaseline = 'middle'
-    canvasContext.font = '14px sans-serif'
-    while (x < endX) {
-      canvasContext.fillStyle = odd ? colors[0] : colors[1]
-      canvasContext.fillRect(x, y, width, height)
-      canvasContext.strokeRect(x, y, width, height)
-      canvasContext.fillStyle = 'white'
-      canvasContext.fillText(date.format('DD'), x + halfWidth, y + halfHeight)
-      x += GanttMapper.dayWidth
-      date.add(1, 'days')
-      odd = !odd
+    const width = GanttMapper.dayWidth
+
+    renderingContext2D.strokeStyle = 'white'
+    renderingContext2D.lineWidth = 3
+    renderingContext2D.textAlign = 'center'
+    renderingContext2D.textBaseline = 'middle'
+    renderingContext2D.font = '14px sans-serif'
+
+    for (
+      let x = startX, odd = startIsOdd, day = new Date(startDate);
+      x < endX;
+      x += GanttMapper.dayWidth, day.setDate(day.getDate() + 1), odd = !odd
+    ) {
+      renderingContext2D.fillStyle = odd ? colors[0] : colors[1]
+      renderingContext2D.fillRect(x, y, width, height)
+      renderingContext2D.strokeRect(x, y, width, height)
+      renderingContext2D.fillStyle = 'white'
+      renderingContext2D.fillText(
+        Intl.DateTimeFormat(navigator.language, { day: 'numeric' }).format(day),
+        x + width * 0.5,
+        y + height * 0.5
+      )
     }
   }
 
   /**
+   * Paints the month cells.
    * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} canvasContext
-   * @param {number} beginX
+   * @param {!CanvasRenderingContext2D} renderingContext2D
+   * @param {number} startX
    * @param {number} endX
-   * @param {!MomentInput} beginDate
+   * @param {!Date} startDate
+   * @param {boolean} startIsOdd
    */
-  drawMonths(renderContext, canvasContext, beginX, endX, beginDate) {
-    const date = moment(beginDate)
-
-    let odd = date.diff(this.mapper.originDate.startOf('month'), 'months') % 2 === 0
-
-    let x = beginX
-    canvasContext.strokeStyle = 'white'
-    canvasContext.lineWidth = 3
+  paintMonths(renderContext, renderingContext2D, startX, endX, startDate, startIsOdd) {
     const y = 5
     const height = 30
-    const halfHeight = height * 0.5
-    canvasContext.textAlign = 'center'
-    canvasContext.textBaseline = 'middle'
-    canvasContext.font = '14px sans-serif'
-    while (x < endX) {
-      const monthDays = date.daysInMonth()
-      const width = GanttMapper.dayWidth * monthDays
-      const halfWidth = width * 0.5
-      canvasContext.fillStyle = odd ? colors[0] : colors[1]
-      canvasContext.fillRect(x, y, width, height)
-      canvasContext.strokeRect(x, y, width, height)
-      canvasContext.fillStyle = 'white'
-      canvasContext.fillText(date.format('MMMM YYYY'), x + halfWidth, y + halfHeight)
-      x += GanttMapper.dayWidth * monthDays
-      date.add(1, 'months')
-      odd = !odd
+
+    renderingContext2D.strokeStyle = 'white'
+    renderingContext2D.lineWidth = 3
+    renderingContext2D.textAlign = 'center'
+    renderingContext2D.textBaseline = 'middle'
+    renderingContext2D.font = '14px sans-serif'
+
+    for (
+      let x = startX,
+        odd = startIsOdd,
+        // set date to "1" to make sure we don't get a problem with short months
+        month = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+      x < endX;
+      x += GanttMapper.dayWidth * GanttMapper.daysInMonth(month),
+        // works because date is set to "1"
+        month.setMonth(month.getMonth() + 1),
+        odd = !odd
+    ) {
+      const width = GanttMapper.dayWidth * GanttMapper.daysInMonth(month)
+      renderingContext2D.fillStyle = odd ? colors[0] : colors[1]
+      renderingContext2D.fillRect(x, y, width, height)
+      renderingContext2D.strokeRect(x, y, width, height)
+      renderingContext2D.fillStyle = 'white'
+      renderingContext2D.fillText(
+        Intl.DateTimeFormat(navigator.language, { month: 'long', year: 'numeric' }).format(month),
+        x + width * 0.5,
+        y + height * 0.5
+      )
     }
   }
 }

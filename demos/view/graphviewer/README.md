@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/graphviewer/index.html).
 
+# Graph Viewer Demo
+
 The Graph Viewer demo displays several sample graphs from various domains. It allows navigating the diagram but prohibits editing.
 
 ## Things to Try

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/invariant-label/index.html).
 
+# Zoom-invariant Label Style
+
 This demo shows label styles that render the labels independent of the zoom level.
 
 ## Zoom Modes

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/processmining/index.html).
 
+# Process Mining Visualization Demo
+
 This Process Mining Visualization demo shows how to create an animated visualization of a process flow. The diagram shows the various steps in a processing pipeline and how entities move through the pipeline.
 
 A heat map shows which elements in the graph are nearing their capacity limit. A custom node style for each process step shows the name of the process and the current load.

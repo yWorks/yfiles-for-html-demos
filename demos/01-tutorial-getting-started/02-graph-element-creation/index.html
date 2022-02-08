@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,32 +34,46 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Creating Graph Elements - Getting Started Tutorial [yFiles for HTML]</title>
+    <title>Creating Graph Elements - Getting Started Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script></head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Tutorial Demo 2</h2>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Getting Started Tutorial - Step&nbsp;2</div>
 
-    <h3>How to create a graph programmatically.</h3>
+        <h1>Creating Graph Elements</h1>
 
-    <p>This step shows how to <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-creating_graph_elements" target="_blank">create the basic graph elements</a>.</p>
+        <p class="tutorial-about">How to create a graph programmatically.</p>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>
+          This step shows how to
+          <dguide section="getting_started-creating_graph_elements"
+            >create the basic graph elements</dguide
+          >.
+        </p>
 
-<div class="demo-content">
-  <div id="graphComponent"></div>
-</div>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

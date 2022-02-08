@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,80 +36,115 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Amd Loading Demo [yFiles for HTML]</title>
+    <title>Amd Loading Demo [yFiles for HTML]</title>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left demo-hide-left-when-small loaded">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left demo-hide-left-when-small loaded">
+    <aside data-type="BorderLayout" class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Amd Loading Demo</h1>
 
-<aside data-type="BorderLayout" class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo loads the yFiles module resources using the <em>require</em> function that is defined in the AMD loading
-      standard. </p>
-    <p>
-      In order to run this demo, please run <code>npm install</code> in the demo folder. This will download the require.js AMD loader.
-    </p>
-    <p>
-      The default AMD Loader in use by this demo is the <a href="https://requirejs.org/" target="_blank">RequireJS</a> loader.</p>
-    <p>
-      Different AMD Loader implementations should work, too. E.g. in the sources of this page below you can find the
-      configuration code for the loader included in the <a href="https://dojotoolkit.org/" target="_blank">dojo
-      Toolkit</a>. This can easily be tested by commenting out the current loader and uncommenting the other loader.
-    </p>
-    <p>
-      Resources that have a <em>.js</em> ending are loaded as JavaScript files. Loading a
-      resource without the <em>.js</em> postfix loads the resource as a module. Only the required top-level modules in
-      the reference-tree have to be required explicitly. Dependent modules are resolved and loaded automatically without
-      having to specify them. </p>
-    <p>
-      Please take a look at the HTML sources of this document to see how to load modules using <em>require</em>. </p>
-    <p>
-      Modules can be loaded dynamically at runtime when certain resources are needed. This improves the app's loading
-      speed at startup. In order to observe dynamic loading at runtime, hit the <em>layout</em> button. The modules <em>layout-hierarchic</em>
-      and <em>graph-layout-bridge</em> needed for layout calculation are loaded when the button is hit for the first
-      time. Please take a look at the demo's source code to see how dynamic loading works. </p>
-    <p>
-      In order to improve code completion, install the UMD variant of yFiles locally as npm module.
-    </p>
-  </div>
-</aside>
+        <p>
+          This demo loads the yFiles module resources using the <em>require</em> function that is
+          defined in the AMD loading standard.
+        </p>
+        <p>
+          In order to run this demo, please run <code>npm install</code> in the demo folder. This
+          will download the require.js AMD loader.
+        </p>
+        <p>
+          The default AMD Loader in use by this demo is the
+          <a href="https://requirejs.org/" target="_blank">RequireJS</a> loader.
+        </p>
+        <p>
+          Different AMD Loader implementations should work, too. E.g. in the sources of this page
+          below you can find the configuration code for the loader included in the
+          <a href="https://dojotoolkit.org/" target="_blank">dojo Toolkit</a>. This can easily be
+          tested by commenting out the current loader and uncommenting the other loader.
+        </p>
+        <p>
+          Resources that have a <em>.js</em> ending are loaded as JavaScript files. Loading a
+          resource without the <em>.js</em> postfix loads the resource as a module. Only the
+          required top-level modules in the reference-tree have to be required explicitly. Dependent
+          modules are resolved and loaded automatically without having to specify them.
+        </p>
+        <p>
+          Please take a look at the HTML sources of this document to see how to load modules using
+          <em>require</em>.
+        </p>
+        <p>
+          Modules can be loaded dynamically at runtime when certain resources are needed. This
+          improves the app's loading speed at startup. In order to observe dynamic loading at
+          runtime, hit the <em>layout</em> button. The modules <em>layout-hierarchic</em> and
+          <em>graph-layout-bridge</em> needed for layout calculation are loaded when the button is
+          hit for the first time. Please take a look at the demo's source code to see how dynamic
+          loading works.
+        </p>
+        <p>
+          In order to improve code completion, install the UMD variant of yFiles locally as npm
+          module.
+        </p>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class="demo-header">
-    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/icons/ylogo.svg" class="demo-y-logo"> </a> <a
-    href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">AMD Loading Demo [yFiles for HTML]</span>
-  </div>
-  <div class="demo-toolbar">
+    <div class="demo-content">
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
 
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
 
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button
+          id="layoutButton"
+          data-command="Layout"
+          title="Layout"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Layout
+        </button>
+      </div>
 
-    <button id="layoutButton" data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
-  </div>
+      <div class="demo-content-dynamic">
+        <div class="demo-header">
+          <a href="https://www.yworks.com/products/yfiles" target="_blank">
+            <img src="../../resources/icons/ylogo.svg" class="demo-y-logo" />
+          </a>
+          <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+          <a href="../../README.html" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+          <span class="demo-title">AMD Loading Demo</span>
+        </div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-<!-- USING the DOJO AMD Loader implementation -->
-<!--<script
+    <!-- USING the DOJO AMD Loader implementation -->
+    <!--<script
     data-dojo-config="async:true, parseOnLoad:true,
      baseUrl: location.pathname.replace(/\/[^/]+$/, '/'),
      packages: [
@@ -117,10 +152,10 @@
      ]"
     src="https://cdnjs.cloudflare.com/ajax/libs/dojo/1.10.4/dojo.js"></script>-->
 
-<!-- USING RequireJS as the AMD Loader implementation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
+    <!-- USING RequireJS as the AMD Loader implementation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
 
-<!-- Load demo -->
-<script src="AmdLoadingDemo.js"></script>
-</body>
+    <!-- Load demo -->
+    <script src="AmdLoadingDemo.js"></script>
+  </body>
 </html>

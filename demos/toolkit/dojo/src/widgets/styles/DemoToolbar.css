@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -93,4 +93,11 @@
 }
 .demo-icon-yIconReload {
   background-image: url('../../assets/reload-16.svg');
+}
+@media screen and (max-height: 500px) {
+  .demo-toolbar {
+    top: 30px;
+    height: 30px;
+    line-height: 30px;
+  }
 }

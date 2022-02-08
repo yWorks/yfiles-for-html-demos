@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/grid-snapping/index.html).
 
-## Grid Snapping
+Application Features Tutorial
+
+# Grid Snapping
 
 This demo shows the [grid snapping](https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping) feature which enables snapping graph items to grid points. Grid snapping not only works for moving or resizing nodes, but also for creating edges and adding and moving bends.
 

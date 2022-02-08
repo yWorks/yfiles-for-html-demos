@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/styledecorators/index.html).
 
+# Style Decorators Demo
+
 This demo shows how to create styles for nodes, edges, and labels that wrap existing styles and add visual decorations.
 
 ## Things to Try

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,89 +34,117 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Process Mining Visualization Demo [yFiles for HTML]</title>
+    <title>Process Mining Visualization Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100" />
 
-  <style>
-    #no-webgl-support {
-      text-align: center;
-      font-size: 24px;
-      position: absolute;
-      top: 100px;
-      padding: 2em;
-      left: 0;
-      right: 0;
-      line-height: 2;
-    }
-  </style>
+    <style>
+      #no-webgl-support {
+        text-align: center;
+        font-size: 24px;
+        position: absolute;
+        top: 100px;
+        padding: 2em;
+        left: 0;
+        right: 0;
+        line-height: 2;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-
-</head>
-<body class="demo-has-left">
-
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
 The sidebar for the description text
 -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This Process Mining Visualization demo shows how to create an animated visualization of a process flow. The diagram
-      shows the various steps in a processing pipeline and how entities move through the pipeline.
-    </p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Process Mining Visualization Demo</h1>
 
-    <p>
-      A heat map shows which elements in the graph are nearing their capacity limit. A custom node style for each
-      process step shows the name of the process and the current load.
-    </p>
-    <p>
-      The visualization is able to render several thousand process entities at the same time in a smooth animation.
-      It leverages WebGL for that purpose.
-    </p>
-    <p>
-      Note that due to missing platform support, the present implementation of the heat map visualization will not
-      render in Safari and older versions of Internet Explorer and Edge.
-    </p>
+        <p>
+          This Process Mining Visualization demo shows how to create an animated visualization of a
+          process flow. The diagram shows the various steps in a processing pipeline and how
+          entities move through the pipeline.
+        </p>
 
-    <h2>Things to Try</h2>
+        <p>
+          A heat map shows which elements in the graph are nearing their capacity limit. A custom
+          node style for each process step shows the name of the process and the current load.
+        </p>
+        <p>
+          The visualization is able to render several thousand process entities at the same time in
+          a smooth animation. It leverages WebGL for that purpose.
+        </p>
+        <p>
+          Note that due to missing platform support, the present implementation of the heat map
+          visualization will not render in Safari and older versions of Internet Explorer and Edge.
+        </p>
 
-    <ul>
-      <li>Watch the animation</li>
-      <li>Zoom into and out of the graph</li>
-      <li>When the animation is finished, you can use the slider to rewind and inspect certain time snapshots</li>
-      <li>Press the play button to restart the animation</li>
-    </ul>
-  </div>
-</aside>
+        <h2>Things to Try</h2>
 
-<div class="demo-content">
+        <ul>
+          <li>Watch the animation</li>
+          <li>Zoom into and out of the graph</li>
+          <li>
+            When the animation is finished, you can use the slider to rewind and inspect certain
+            time snapshots
+          </li>
+          <li>Press the play button to restart the animation</li>
+        </ul>
+      </div>
+    </aside>
 
-  <div id="left">
-    <div class="demo-toolbar">
-      <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-      <span class="demo-separator"></span>
+      <div id="left">
+        <div class="demo-toolbar">
+          <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+          <button
+            data-command="ZoomOriginal"
+            title="Zoom to original size"
+            class="demo-icon-yIconZoomOriginal"
+          ></button>
+          <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+          <button
+            data-command="FitContent"
+            title="Fit Content"
+            class="demo-icon-yIconZoomFit"
+          ></button>
 
-      <input
-        id="maximum-duration-range" data-command="MaximumDuration" type="range" min="0" max="100" value="0" readonly title="Progress"/>
-      <button id="restart-animation" data-command="start-animation" class="demo-icon-yIconPlay"
-        aria-label="Play" title="Play"></button>
+          <span class="demo-separator"></span>
+
+          <input
+            id="maximum-duration-range"
+            data-command="MaximumDuration"
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+            readonly=""
+            title="Progress"
+          />
+          <button
+            id="restart-animation"
+            data-command="start-animation"
+            class="demo-icon-yIconPlay"
+            aria-label="Play"
+            title="Play"
+          ></button>
+        </div>
+        <!-- The GraphComponent -->
+        <div id="graphComponent" style="background: #b3b3b3"></div>
+        <div id="no-webgl-support" style="display: none">
+          Your browser or device does not support WebGL.<br />
+          This demo only works if WebGL is available.
+        </div>
+      </div>
     </div>
-    <!-- The GraphComponent -->
-    <div id="graphComponent" style="background: #b3b3b3"></div>
-    <div id="no-webgl-support" style="display:none;">
-      Your browser or device does not support WebGL.<br> This demo only works if WebGL is available.
-    </div>
-  </div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="ProcessMiningDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="ProcessMiningDemo.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/zorder/index.html).
 
+# Z-Order Demo
+
 This demo customizes editing gestures to keep the z-order of nodes consistent.
 
 ## Usage

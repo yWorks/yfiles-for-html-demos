@@ -4,7 +4,7 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/without-view/index.html).
 
-### Description
+# Layout without View Demo
 
 This demo shows how to create a graph, run a graph analysis algorithm and calculate a layout without using a view or the [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) API.
 

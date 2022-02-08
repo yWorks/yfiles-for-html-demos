@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-html,
 body {
   position: fixed;
   margin: 0;
@@ -38,6 +37,6 @@ body {
   overscroll-behavior-y: contain;
   overflow: hidden;
   font-family: Tahoma, Verdana, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   color: #333333;
 }

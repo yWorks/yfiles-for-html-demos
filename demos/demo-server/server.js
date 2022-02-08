@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,18 +37,28 @@ const favicon = require('serve-favicon')
 const resolveYFiles = require('./resolve-yfiles')
 const topLevelPackageJson = require('../../package.json')
 
-let defaultPage = '/demos-ts/README.html'
-if (process.argv.length > 2) {
-  defaultPage = process.argv[2]
-}
+const defaultPage = process.argv.length > 2 ? process.argv[2] : '/demos-ts/README.html'
+const staticRoot =
+  process.env.DEMO_SERVER_ROOT == null
+    ? path.join(__dirname, '../..')
+    : path.resolve(process.env.DEMO_SERVER_ROOT)
+const favIconPath = path.join(staticRoot, 'demos-js/resources/icons/favicon.ico')
+const port =
+  process.env.DEMO_SERVER_PORT != null ? parseInt(process.env.DEMO_SERVER_PORT, 10) : 4242
+
+/**
+ * Contains a list of paths pointing to a yFiles library directory.
+ * This list is used by the demo server to resolve the imports in the demos.
+ * The paths are relative to the output folder in the yFiles repository.
+ * In case of an empty array, the default library location is used.
+ *
+ * Available library locations can be queried with a GET request to the
+ * demo server: "http://localhost:$PORT/getLibraryLocations"
+ */
+const resolveDirs = process.env.DEMO_YFILES_DIR != null ? [process.env.DEMO_YFILES_DIR] : []
 
 const app = express()
 const server = http.createServer(app)
-
-let staticRoot = path.join(__dirname, '../..')
-if (typeof process.env.DEMO_SERVER_ROOT !== 'undefined') {
-  staticRoot = path.resolve(process.env.DEMO_SERVER_ROOT)
-}
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
@@ -72,7 +82,6 @@ app.post('/shutdown', (req, res) => {
   server.close()
 })
 
-const favIconPath = path.join(staticRoot, 'demos-js/resources/image', 'favicon.ico')
 if (fs.existsSync(favIconPath)) {
   app.use(favicon(favIconPath))
 }
@@ -81,7 +90,7 @@ const serveStatic = express.static(staticRoot, {
   index: ['README.html', 'index.html', 'index.htm']
 })
 
-app.use(resolveYFiles.resolve({ staticRoot }))
+app.use(resolveYFiles.resolve({ staticRoot, resolveDirs }))
 
 app.use('/', serveStatic)
 
@@ -167,16 +176,12 @@ app.get('/npm-request', (request, outerResponse) => {
 
 const inputFormName = 'demo-open-input'
 app.post('/file/load', upload.single(inputFormName), (req, res) => {
-  let message = ''
+  const message = !req.file
+    ? '!ERROR! The specified file part of name ' + inputFormName + ' was not found in the request.'
+    : encodeURIComponent(req.file.buffer)
 
-  if (!req.file) {
-    message =
-      '!ERROR! The specified file part of name ' + inputFormName + ' was not found in the request.'
-  } else {
-    message = encodeURIComponent(req.file.buffer)
-  }
-
-  // To keep the demo page open, the response is sent to an iframe, where a message containing the GraphML content
+  // To keep the demo page open, the response is sent to an iframe, where a message containing the
+  // GraphML content
   // is posted to the parent window
   res
     .set({
@@ -191,24 +196,7 @@ app.post('/file/load', upload.single(inputFormName), (req, res) => {
 
 app.use(express.json())
 
-app.post('/config/setConfig', (req, res) => {
-  try {
-    resolveYFiles.setResolveConfig(
-      JSON.stringify({ logRequests: req.body.logRequests, resolveDirs: [...req.body.resolveDirs] })
-    )
-    res.set({ 'Content-Type': 'application/json' })
-    res.status(200).send(JSON.stringify(resolveYFiles.getResolveConfig()))
-  } catch (e) {
-    res.status(500).send(e.toString())
-  }
-})
-
-app.get('/config/getConfig', (req, res) => {
-  res.set({ 'Content-Type': 'application/json' })
-  res.status(200).send(JSON.stringify(resolveYFiles.getResolveConfig()))
-})
-
-app.get('/config/getLibraryLocations', (req, res) => {
+app.get('/getLibraryLocations', (req, res) => {
   try {
     const libraryLocations = resolveYFiles.findLibraryLocations(staticRoot)
     res.set({ 'Content-Type': 'application/json' })
@@ -217,11 +205,6 @@ app.get('/config/getLibraryLocations', (req, res) => {
     res.status(500).send(e.toString())
   }
 })
-
-let port = 4242
-if (typeof process.env.DEMO_SERVER_PORT !== 'undefined') {
-  port = parseInt(process.env.DEMO_SERVER_PORT, 10)
-}
 
 server.on('error', e => {
   if (e.code === 'EADDRINUSE') {
@@ -239,7 +222,7 @@ server.on('listening', () => {
   console.log(`Demo server listening at http://localhost:${port}`)
 
   // open the documentation page (hopefully in a browser)
-  if (typeof process.env.NO_OPEN === 'undefined') {
+  if (process.env.NO_OPEN == null) {
     open(`http://localhost:${port}${defaultPage}`)
   }
 })

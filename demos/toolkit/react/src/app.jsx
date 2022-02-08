@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -160,13 +160,29 @@ export default class App extends Component {
 
         <div className="demo-content">
           <div className="demo-header">
-            <a href="https://www.yworks.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.yworks.com/products/yfiles"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <img src={yLogo} className="demo-y-logo" alt="yWorks Logo" />
             </a>
-            <a href="../../../README.html" target="_blank">
+            <a
+              href="https://www.yworks.com/products/yfiles"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               yFiles for HTML
             </a>
-            <span className="demo-title">React Demo [yFiles for HTML]</span>
+            <a
+              href="../../../README.html"
+              target="_blank"
+              className={'demo-title'}
+              rel="noopener noreferrer"
+            >
+              Demos
+            </a>
+            <span className="demo-title">React Demo</span>
           </div>
 
           <ReactGraphComponent

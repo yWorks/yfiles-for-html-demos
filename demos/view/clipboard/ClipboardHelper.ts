@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,7 +37,6 @@ export class TagCopyItem {
    * Creates a new instance of <code>TagCopyItem</code>.
    * @param tag The tag of the copied item
    */
-  // eslint-disable-next-line no-useless-constructor
   constructor(public tag: ClipboardBusinessObject) {}
 
   /** The number of items that have been pasted. */
@@ -143,7 +142,6 @@ class CopyItem {
   /**
    * Creates a new instance of <code>CopyItem</code>.
    */
-  // eslint-disable-next-line no-useless-constructor
   constructor(public text: string) {}
 
   public pasteCount = 0

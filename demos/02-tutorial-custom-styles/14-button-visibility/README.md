@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/14-button-visibility/index.html).
 
+Custom Styles Tutorial
+
+# Button Visibility
+
 This step shows how to hide the 'Label Edit' button based on the zoom level. If the zoom level gets too small, the button won't get drawn.
 
 ## Things to Try

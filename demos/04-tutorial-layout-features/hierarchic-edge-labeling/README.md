@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/hierarchic-edge-labeling/index.html).
 
-## Hierarchic Layout with Edge Labeling
+Layout Features Tutorial
+
+# Hierarchic Layout with Edge Labeling
 
 This demo shows how to configure the [Hierarchic Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) for automatic edge label placement.
 

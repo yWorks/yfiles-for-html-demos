@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -122,9 +122,9 @@ export default class CollapseDecorator extends NodeStyleBase {
       },
       passiveSupported
         ? {
-          passive: false,
-          capture: true
-        }
+            passive: false,
+            capture: true
+          }
         : true
     )
 
@@ -149,7 +149,7 @@ export default class CollapseDecorator extends NodeStyleBase {
       return this.createVisual(context, node)
     }
 
-    const container = (oldVisual as SvgVisual).svgElement
+    const container = oldVisual.svgElement as SVGElement
     // retrieve the wrappedStyle visual from the container
     const wrappedStyleVisual = (container as any)['wrappedStyle-visual'] as SvgVisual
     // update the wrappedStyle visual
@@ -186,7 +186,7 @@ export default class CollapseDecorator extends NodeStyleBase {
 
     // create a label that acts as a dummy item to render the icon
     const label = createDummyLabel(node)
-      // store the label with the visual for updating
+    // store the label with the visual for updating
     ;(g as any)['data-renderCache'] = label
 
     if (visible) {

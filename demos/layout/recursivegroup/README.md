@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/recursivegroup/index.html).
 
+# Recursive Group Layout Demo
+
 Shows how to use the [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout) to apply different layouts to the contents of group nodes and the overall graph.
 
 ## Sample: Table

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/building-graph-from-data/index.html).
 
-## Build Graph from Data
+Application Features Tutorial
+
+# Build Graph from Data
 
 This demo shows how to build a graph using the data stored in JSON-format.
 

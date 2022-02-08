@@ -4,10 +4,12 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/01-tutorial-getting-started/02-graph-element-creation/index.html).
 
-## Tutorial Demo 2
+Getting Started Tutorial - Step 2
 
-### How to create a graph programmatically.
+# Creating Graph Elements
 
-This step shows how to [create the basic graph elements](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-creating_graph_elements).
+How to create a graph programmatically.
+
+This step shows how to create the basic graph elements.
 
 See the sources for details.

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/edge-router-incremental/index.html).
 
-## Incremental Edge Router
+Layout Features Tutorial
+
+# Incremental Edge Router
 
 This demo shows how to run the edge router algorithm on a predefined subset of edges in a graph.
 
@@ -28,4 +30,4 @@ You can also take a look at the [Maze Routing Demo](../../layout/mazerouting/ind
 
 ### Documentation
 
-The Developer's Guide has detailed information about the [edge router algorithm](https://docs.yworks.com/yfileshtml/#/dguide/polyline_router) in general and about [how to run the algorithm on a subset of edges](https://docs.yworks.com/yfileshtml/#/dguide/polyline_router#polyline_router_incremental) specifically.
+The Developer's Guide has detailed information about the [edge router algorithm](https://docs.yworks.com/yfileshtml/#/dguide/polyline_router) in general and about how to run the algorithm on a subset of edges specifically.

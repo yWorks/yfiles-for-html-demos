@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -424,9 +424,10 @@ function runFlowAlgorithm() {
     return
   }
 
-  // remove tags for the nodes that belong to the cut
-  // needed only for max-flow min-cut
-  graphComponent.graph.nodes.forEach(node => (node.tag.cut = false))
+  // update the node tags
+  graphComponent.graph.nodes.forEach(node => {
+    node.tag = { ...node.tag, cut: false, source: false, sink: false }
+  })
 
   // determine the algorithm to run
   let flowValue
@@ -716,6 +717,7 @@ function getSourceNodes() {
   if (sourceNodes.length === 0) {
     sourceNodes.push(graph.nodes.first())
   }
+  sourceNodes.forEach(node => (node.tag.source = true))
   return sourceNodes
 }
 
@@ -731,10 +733,14 @@ function getSinkNodes() {
       sinkNodes.push(node)
     }
   })
-  // Special case: No node with out-degree 0 was found, take the last node of the graph
+  // Special case: No node with out-degree 0 was found, take the first node of the graph that is not already marked as source
   if (sinkNodes.length === 0) {
-    sinkNodes.push(graph.nodes.last())
+    const randomSink = graph.nodes.find(node => !node.tag.source)
+    if (randomSink) {
+      sinkNodes.push(randomSink)
+    }
   }
+  sinkNodes.forEach(node => (node.tag.sink = true))
   return sinkNodes
 }
 

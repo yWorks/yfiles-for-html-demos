@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/overviewstyles/index.html).
 
+# Overview Styling Demo
+
 This demo shows different ways to render and style the overview:
 
 - With HTML Canvas using a [GraphOverviewCanvasVisualCreator](https://docs.yworks.com/yfileshtml/#/api/GraphOverviewCanvasVisualCreator)

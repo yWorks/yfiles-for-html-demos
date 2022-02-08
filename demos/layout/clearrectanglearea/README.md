@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/clearrectanglearea/index.html).
 
+# Clear Rectangle Area Demo
+
 A demo that shows how to interactively move graph elements around a rectangle in a given graph so that the modifications in the graph are minimal. The rectangle can be freely moved or resized.
 
 Every time the rectangular area is moved or resized interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout) will push away the other elements so there is a free area for the rectangle.

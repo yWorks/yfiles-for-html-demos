@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,95 +34,125 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Graph Wizard for Flowchart [yFiles for HTML]</title>
+    <title>Graph Wizard for Flowchart [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <link rel="stylesheet" href="./resources/graph-creation-wizard.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./resources/graph-creation-wizard.css" />
 
-  <!-- enable debugging -->
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Graph Wizard</h2>
-    <p>
-      The Graph Wizard for Flowchart demo shows how graph defaults and input gestures can be customized to support
-      fast creation of flowchart diagrams.</p>
-    <p>
-      Context-sensitive and complex input gestures are defined and managed by a <em>GraphWizardInputMode</em>, that
-      filters all possible actions for a graph item by some pre-conditions. All active actions are then listed in
-      the <b>Legend</b> that also contains their keyboard shortcuts. While an action is executed, the <b>Legend</b> is
-      hidden.
-    </p>
-    <p>
-      Many actions can be triggered by a button that is displayed close to the current model item when the action is
-      active. Those buttons can also be accessed via keyboard by pressing the <em>Tab</em> key and confirming the
-      action using <em>Enter</em>.
-    </p>
-    <h2>Flowchart Diagrams</h2>
-    <p>
-      Flowchart Diagrams consist of several flowchart nodes connected by directed edges that represent the flow
-      between the nodes.
-    </p>
-    <p>
-      Each flowchart node has a specific type that is visualized by the according node shape. The type also influences
-      which actions are available for the node.
-    </p>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Press <em>Space</em> to create a new flowchart node in a free direction.
-        Note that after the new node and an edge to it are created, the node type can be selected and the labels for
-        the edge and node can be edited.
-      </li>
-      <li>Use the <b>Arrow</b> keys to switch to another node in this direction.</li>
-      <li>Press the <em>F</em> key to trigger the shortcut for switching the node color.</li>
-      <li>Click on the node type button and choose the diamond-shaped <b>Decision</b> type. For this you can either
-        click the corresponding button or focus it using the <em>Arrow</em> keys and select is using <em>Enter</em>.
-        <p>Note that the new <b>Create two child nodes...</b> action is now available for the decision node.</p>
-      </li>
-      <li>
-        Click the <b>Add two child nodes</b> button of a decision node to create two nodes with edges from the decision
-        node and edit their labels.
+    <!-- enable debugging -->
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Graph Wizard for Flowchart</h1>
+
+        <h2>Graph Wizard</h2>
         <p>
-          During this multi-step action, pressing the <em>Esc</em> key brings you back to the last step.
+          The Graph Wizard for Flowchart demo shows how graph defaults and input gestures can be
+          customized to support fast creation of flowchart diagrams.
         </p>
-      </li>
-      <li>Press the <em>L</em> key or click the layout button in the main toolbar to calculate a fresh layout from
-        scratch.</li>
-    </ul>
-  </div>
-</aside>
+        <p>
+          Context-sensitive and complex input gestures are defined and managed by a
+          <em>GraphWizardInputMode</em>, that filters all possible actions for a graph item by some
+          pre-conditions. All active actions are then listed in the <b>Legend</b> that also contains
+          their keyboard shortcuts. While an action is executed, the <b>Legend</b> is hidden.
+        </p>
+        <p>
+          Many actions can be triggered by a button that is displayed close to the current model
+          item when the action is active. Those buttons can also be accessed via keyboard by
+          pressing the <em>Tab</em> key and confirming the action using <em>Enter</em>.
+        </p>
+        <h2>Flowchart Diagrams</h2>
+        <p>
+          Flowchart Diagrams consist of several flowchart nodes connected by directed edges that
+          represent the flow between the nodes.
+        </p>
+        <p>
+          Each flowchart node has a specific type that is visualized by the according node shape.
+          The type also influences which actions are available for the node.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Press <em>Space</em> to create a new flowchart node in a free direction. Note that after
+            the new node and an edge to it are created, the node type can be selected and the labels
+            for the edge and node can be edited.
+          </li>
+          <li>Use the <b>Arrow</b> keys to switch to another node in this direction.</li>
+          <li>Press the <em>F</em> key to trigger the shortcut for switching the node color.</li>
+          <li>
+            Click on the node type button and choose the diamond-shaped <b>Decision</b> type. For
+            this you can either click the corresponding button or focus it using the
+            <em>Arrow</em> keys and select is using <em>Enter</em>.
+            <p>
+              Note that the new <b>Create two child nodes...</b> action is now available for the
+              decision node.
+            </p>
+          </li>
+          <li>
+            Click the <b>Add two child nodes</b> button of a decision node to create two nodes with
+            edges from the decision node and edit their labels.
+            <p>
+              During this multi-step action, pressing the <em>Esc</em> key brings you back to the
+              last step.
+            </p>
+          </li>
+          <li>
+            Press the <em>L</em> key or click the layout button in the main toolbar to calculate a
+            fresh layout from scratch.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <button
+          data-command="Save"
+          title="Save a GraphML file"
+          class="demo-icon-yIconSave"
+        ></button>
 
-  <div id="graphOverviewComponent" class="demo-overview-container" style="opacity: 1">
-    <div class="demo-overview-header">Legend</div>
-    <div id="overviewComponent"><div id="legend" class="wizard-legend"></div></div>
-  </div>
+        <span class="demo-separator"></span>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  <div class="demo-toolbar">
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
 
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="NewLayout"
+          title="Calculate full layout"
+          style="background-image: url('resources/icons/layout.svg')"
+        ></button>
+      </div>
 
-    <span class="demo-separator"></span>
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-    <span class="demo-separator"></span>
-    <button data-command="NewLayout" title="Calculate full layout" style="background-image: url('resources/icons/layout.svg')"></button>
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-<script type="module" crossorigin="anonymous" src="GraphWizardForFlowchartDemo.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphOverviewComponent" class="demo-overview-container" style="opacity: 1">
+          <div class="demo-overview-header">Legend</div>
+          <div id="overviewComponent"><div id="legend" class="wizard-legend"></div></div>
+        </div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="GraphWizardForFlowchartDemo.js"></script>
+  </body>
 </html>

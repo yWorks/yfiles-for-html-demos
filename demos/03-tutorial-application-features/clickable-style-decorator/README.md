@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/clickable-style-decorator/index.html).
 
-## Clickable Style Decorator
+Application Features Tutorial
+
+# Clickable Style Decorator
 
 This demo illustrates an approach on how to handle clicks on specific areas of the style.
 

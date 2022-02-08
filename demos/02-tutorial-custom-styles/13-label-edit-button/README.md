@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/13-label-edit-button/index.html).
 
+Custom Styles Tutorial
+
+# Label Edit Button
+
 This step shows how to display a button on a label that starts the label editor. The button is defined in class `MySimpleLabelStyle` so that it is available in all labels.
 
 ## Things to Try

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,83 +34,126 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Selection Styling Demo [yFiles for HTML]</title>
+    <title>Selection Styling Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Selection Styling Demo</h1>
 
-    <p>
-      The Selection Styling demo shows customized selection painting of nodes, edges and labels by decorating these
-      items with a corresponding style. </p>
+        <p>
+          The Selection Styling demo shows customized selection painting of nodes, edges and labels
+          by decorating these items with a corresponding style.
+        </p>
 
-    <p>
-      Customizing the painting of the focus indicator and the highlighting is possible as well but not shown in this
-      demo. </p>
+        <p>
+          Customizing the painting of the focus indicator and the highlighting is possible as well
+          but not shown in this demo.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Switch between the default visualization and the <em>Custom Selection Decoration</em> of nodes, edges and labels with the
-        toolbar buttons.
-      </li>
-      <li>
-        Test the different <em>Zoom Modes</em> for the custom selection rendering.
-      </li>
-    </ul>
+        <ul>
+          <li>
+            Switch between the default visualization and the <em>Custom Selection Decoration</em> of
+            nodes, edges and labels with the toolbar buttons.
+          </li>
+          <li>Test the different <em>Zoom Modes</em> for the custom selection rendering.</li>
+        </ul>
 
-    <h2>Zoom Mode</h2>
+        <h2>Zoom Mode</h2>
 
-    <p>Specifies how the zoom level affects the custom selecting painting.</p>
-    <dl>
-      <dt>Zoom with graph</dt>
-      <dd>The visual is rendered in the world coordinate space and scales with the zoom level like a regular graph
-        item visualization, for example a node style.
-      </dd>
-      <dt>Always the same size</dt>
-      <dd>The visual is rendered in the view coordinate space and doesn't scale with the zoom level, similar to the
-        default node resize handles, for example.
-      </dd>
-      <dt>Mixed</dt>
-      <dd>Uses world coordinates for zoom level &#8805; 1 and view coordinates for zoom level &lt;
-        1.
-      </dd>
-    </dl>
-  </div>
-</aside>
+        <p>Specifies how the zoom level affects the custom selecting painting.</p>
+        <dl>
+          <dt>Zoom with graph</dt>
+          <dd>
+            The visual is rendered in the world coordinate space and scales with the zoom level like
+            a regular graph item visualization, for example a node style.
+          </dd>
+          <dt>Always the same size</dt>
+          <dd>
+            The visual is rendered in the view coordinate space and doesn't scale with the zoom
+            level, similar to the default node resize handles, for example.
+          </dd>
+          <dt>Mixed</dt>
+          <dd>
+            Uses world coordinates for zoom level ≥ 1 and view coordinates for zoom level &lt; 1.
+          </dd>
+        </dl>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          data-command="ZoomIn"
+          title="Zoom In"
+          class="demo-icon demo-icon-yIconZoomIn"
+        ></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  <div class="demo-toolbar">
+        <span class="demo-separator"></span>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span>Custom Selection Decoration:</span>
+        <input
+          type="checkbox"
+          id="nodeButton"
+          class="demo-toggle-button labeled"
+          title="Nodes"
+          data-command="UpdateNodeDecorationCommand"
+          checked=""
+        /><label for="nodeButton">Nodes</label>
+        <input
+          type="checkbox"
+          id="edgeButton"
+          class="demo-toggle-button labeled"
+          title="Edges"
+          data-command="UpdateEdgeDecorationCommand"
+          checked=""
+        /><label for="edgeButton">Edges</label>
+        <input
+          type="checkbox"
+          id="labelButton"
+          class="demo-toggle-button labeled"
+          title="Labels"
+          data-command="UpdateLabelDecorationCommand"
+          checked=""
+        /><label for="labelButton">Labels</label>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
 
-    <span>Custom Selection Decoration:</span>
-    <input type="checkbox" id="nodeButton" class="demo-toggle-button labeled" title="Nodes" data-command="UpdateNodeDecorationCommand" checked/><label for="nodeButton">Nodes</label>
-    <input type="checkbox" id="edgeButton" class="demo-toggle-button labeled" title="Edges" data-command="UpdateEdgeDecorationCommand" checked/><label for="edgeButton">Edges</label>
-    <input type="checkbox" id="labelButton" class="demo-toggle-button labeled" title="Labels" data-command="UpdateLabelDecorationCommand" checked/><label for="labelButton">Labels</label>
+        <span>Zoom Mode:</span>
+        <select
+          data-type="ComboBox"
+          id="zoomModeComboBox"
+          data-command="ZoomMode"
+          title="Zoom Mode"
+        ></select>
+      </div>
 
-    <span class="demo-separator"></span>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-    <span>Zoom Mode:</span> <select data-type="ComboBox" id="zoomModeComboBox" data-command="ZoomMode"
-      title="Zoom Mode"></select>
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="SelectionStylingDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="SelectionStylingDemo.js"></script>
+  </body>
 </html>

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,65 +34,93 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Input / Output - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Input / Output - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Input / Output</h2>
-    <p>
-      This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/dguide/io-loading_saving" target="_blank">GraphML input and output</a>.
-    </p>
-    <p>
-      GraphML is the standard file format for yFiles for HTML. It is an XML format that provides great flexibility when
-      storing custom data. However, note that these attributes (such as styles or even node locations) are not
-      standardized, so you probably won't be able to exchange all of them between different graph libraries, for
-      example.
-    </p>
-    <p>
-      Built-in types, in particular styles, can be de-/serialized out of the box which is illustrated in this
-      application. Custom types can be de-/serialized automatically if they meet specific rules that are described in
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_automatic-serialization" target="_blank">Automatically Serialized Types.</a>
-    </p>
-    <p>
-      How to de-/serialize complex types is described in <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_serialization_complex-types" target="_blank">Serializing
-      Complex Types.</a>
-    </p>
+        <h1>Input / Output</h1>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>
+          This demo shows how to use
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/io-loading_saving" target="_blank">GraphML input and output</a>.
+        </p>
+        <p>
+          GraphML is the standard file format for yFiles for HTML. It is an XML format that provides
+          great flexibility when storing custom data. However, note that these attributes (such as
+          styles or even node locations) are not standardized, so you probably won't be able to
+          exchange all of them between different graph libraries, for example.
+        </p>
+        <p>
+          Built-in types, in particular styles, can be de-/serialized out of the box which is
+          illustrated in this application. Custom types can be de-/serialized automatically if they
+          meet specific rules that are described in
+          <dguide section="customizing_io_automatic-serialization"
+            >Automatically Serialized Types.</dguide
+          >
+        </p>
+        <p>
+          How to de-/serialize complex types is described in
+          <dguide section="customizing_io_serialization_complex-types"
+            >Serializing Complex Types.</dguide
+          >
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <button data-command="Open" title="Open" class="demo-icon-yIconOpen"></button>
-    <button data-command="Save" title="Save" class="demo-icon-yIconSave"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
-  </div>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <button data-command="Open" title="Open" class="demo-icon-yIconOpen"></button>
+        <button data-command="Save" title="Save" class="demo-icon-yIconSave"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group selected element"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup selected element"
+          class="demo-icon-yIconUngroup"
+        ></button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

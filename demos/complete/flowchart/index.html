@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,153 +34,217 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Flowchart Demo [yFiles for HTML]</title>
+    <title>Flowchart Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #dndPanelContainer {
-      position: absolute;
-      top: 60px;
-      right: 0px;
-      bottom: 0;
-      width: 225px;
-      border-left: 5px solid #ebeef0;
-      overflow: auto;
-      box-sizing: border-box;
-      z-index: 12;
-    }
+    <style>
+      #dndPanelContainer {
+        position: absolute;
+        top: 60px;
+        right: 0px;
+        bottom: 0;
+        width: 225px;
+        border-left: 5px solid #ebeef0;
+        overflow: auto;
+        box-sizing: border-box;
+        z-index: 12;
+      }
 
-    #dndPanel {
-      width: 100%;
-    }
+      #dndPanel {
+        width: 100%;
+      }
 
-    .demo-dndPanelItem {
-      margin: 10px auto;
-      float: left;
-    }
+      .demo-dndPanelItem {
+        margin: 10px auto;
+        float: left;
+      }
 
-    .yfiles-cursor-dragdrop-copy {
-      cursor: copy;
-    }
+      .yfiles-cursor-dragdrop-copy {
+        cursor: copy;
+      }
 
-    .yfiles-cursor-dragdrop-move {
-      cursor: move;
-    }
+      .yfiles-cursor-dragdrop-move {
+        cursor: move;
+      }
 
-    .yfiles-cursor-dragdrop-link {
-      cursor: alias;
-    }
+      .yfiles-cursor-dragdrop-link {
+        cursor: alias;
+      }
 
-    .yfiles-cursor-dragdrop-scroll {
-      cursor: move;
-    }
+      .yfiles-cursor-dragdrop-scroll {
+        cursor: move;
+      }
 
-    .yfiles-cursor-dragdrop-all {
-      cursor: copy;
-    }
+      .yfiles-cursor-dragdrop-all {
+        cursor: copy;
+      }
 
-    .yfiles-cursor-dragdrop-no-drop {
-      cursor: no-drop;
-    }
+      .yfiles-cursor-dragdrop-no-drop {
+        cursor: no-drop;
+      }
 
-    .demo-toolbar, #graphComponent,
-    .demo-left-hidden .demo-toolbar,
-    .demo-left-hidden #graphComponent {
-      right: 225px !important;
-    }
+      .demo-toolbar,
+      #graphComponent,
+      .demo-left-hidden .demo-toolbar,
+      .demo-left-hidden #graphComponent {
+        right: 225px !important;
+      }
 
-    .yfiles-drag {
-      z-index: 15;
-      opacity: 0.35;
-      transition: opacity .2s ease-in-out;
-    }
+      .yfiles-drag {
+        z-index: 15;
+        opacity: 0.35;
+        transition: opacity 0.2s ease-in-out;
+      }
 
-    .yfiles-drag.hidden {
-      opacity: 0;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    This demo provides a number of <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>s which are shaped as common flowchart symbols.
-    To use those different styles, drag them from the palette to the main graph component.
+      .yfiles-drag.hidden {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Flowchart Demo</h1>
 
-    <h2>Flowchart Layout</h2>
-    There is an adjusted <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> which considers some flowchart specialities.
-    <ul>
-      <li>Incoming-edges are grouped if they are many and there are also some outgoing-edges.</li>
-      <li>
-        The direction of edges that represent positive ('yes') or negative ('branches') can be selected in the toolbar.
-      </li>
-      <li>Flatwise edges can be drawn entirely to one side or just attach at the side of a node.</li>
-      <li>Long paths in the graph are aligned.</li>
-    </ul>
-    Try out the different styles on the set of sample graphs by selecting the directions and press the layout-button.
-  </div>
-</aside>
+        This demo provides a number of <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>s which are shaped as common flowchart
+        symbols. To use those different styles, drag them from the palette to the main graph
+        component.
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
-    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+        <h2>Flowchart Layout</h2>
+        There is an adjusted <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> which considers some flowchart
+        specialities.
+        <ul>
+          <li>
+            Incoming-edges are grouped if they are many and there are also some outgoing-edges.
+          </li>
+          <li>
+            The direction of edges that represent positive ('yes') or negative ('branches') can be
+            selected in the toolbar.
+          </li>
+          <li>
+            Flatwise edges can be drawn entirely to one side or just attach at the side of a node.
+          </li>
+          <li>Long paths in the graph are aligned.</li>
+        </ul>
+        Try out the different styles on the set of sample graphs by selecting the directions and
+        press the layout-button.
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          data-command="Open"
+          title="Open a GraphML file"
+          class="demo-icon-yIconOpen"
+        ></button>
+        <button
+          data-command="Save"
+          title="Save a GraphML file"
+          class="demo-icon-yIconSave"
+        ></button>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <select id="select-sample" data-type="ComboBox" data-command="SelectSample" title="Choose a Sample Graph">
-      <option value="ProblemSolving">Sample: Problem Solving</option>
-      <option value="StudentRegistration">Sample: Student Registration</option>
-      <option value="eCommerce">Sample: eCommerce</option>
-      <option value="ComputingFactorial">Sample: Computing Factorial</option>
-      <option value="LargestNumber">Sample: Largest Number</option>
-    </select>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <select
+          id="select-sample"
+          data-type="ComboBox"
+          data-command="SelectSample"
+          title="Choose a Sample Graph"
+        >
+          <option value="ProblemSolving">Sample: Problem Solving</option>
+          <option value="StudentRegistration">Sample: Student Registration</option>
+          <option value="eCommerce">Sample: eCommerce</option>
+          <option value="ComputingFactorial">Sample: Computing Factorial</option>
+          <option value="LargestNumber">Sample: Largest Number</option>
+        </select>
 
-    <span>'Yes'-Branch</span> <select id="select-positive-branch-direction" data-command="SelectPositiveBranchDirection"
-      title="Choose a preferred direction for edges with 'Yes'-Labels">
-    <option value='same-as-flow'>Same As Flow</option>
-    <option value='flatwise'>Flatwise</option>
-    <option value='left-in-flow'>Left In Flow</option>
-    <option value='right-in-flow'>Right In Flow</option>
-    <option selected value="undefined">Undefined</option>
-  </select> <span>'No'-Branch</span> <select id="select-negative-branch-direction"
-      data-command="SelectNegativeBranchDirection" title="Choose a preferred direction for edges with 'No'-Labels">
-    <option value='same-as-flow'>Same As Flow</option>
-    <option value='flatwise'>Flatwise</option>
-    <option value='left-in-flow'>Left In Flow</option>
-    <option value='right-in-flow'>Right In Flow</option>
-    <option selected value="undefined">Undefined</option>
-  </select> <span>In-Edge Grouping</span> <select id="select-in-edge-grouping"
-      data-command="SelectInEdgeGrouping" title="Choose in which way edges are grouped">
-    <option value='none'>None</option>
-    <option value='all'>All</option>
-    <option selected value="optimized">Optimized</option>
-  </select> <input type="checkbox" id="allow-flatwise-edges" class="demo-toggle-button labeled" checked/> <label
-      for="allow-flatwise-edges">Allow Flatwise Edges</label>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <span>'Yes'-Branch</span>
+        <select
+          id="select-positive-branch-direction"
+          data-command="SelectPositiveBranchDirection"
+          title="Choose a preferred direction for edges with 'Yes'-Labels"
+        >
+          <option value="same-as-flow">Same As Flow</option>
+          <option value="flatwise">Flatwise</option>
+          <option value="left-in-flow">Left In Flow</option>
+          <option value="right-in-flow">Right In Flow</option>
+          <option selected="" value="undefined">Undefined</option>
+        </select>
+        <span>'No'-Branch</span>
+        <select
+          id="select-negative-branch-direction"
+          data-command="SelectNegativeBranchDirection"
+          title="Choose a preferred direction for edges with 'No'-Labels"
+        >
+          <option value="same-as-flow">Same As Flow</option>
+          <option value="flatwise">Flatwise</option>
+          <option value="left-in-flow">Left In Flow</option>
+          <option value="right-in-flow">Right In Flow</option>
+          <option selected="" value="undefined">Undefined</option>
+        </select>
+        <span>In-Edge Grouping</span>
+        <select
+          id="select-in-edge-grouping"
+          data-command="SelectInEdgeGrouping"
+          title="Choose in which way edges are grouped"
+        >
+          <option value="none">None</option>
+          <option value="all">All</option>
+          <option selected="" value="optimized">Optimized</option>
+        </select>
+        <input
+          type="checkbox"
+          id="allow-flatwise-edges"
+          class="demo-toggle-button labeled"
+          checked=""
+        />
+        <label for="allow-flatwise-edges">Allow Flatwise Edges</label>
 
-    <button id="layout" data-command="Layout" title="Run a Layout Algorithm" class="demo-icon-yIconLayout labeled">Layout</button>
-  </div>
+        <span class="demo-separator"></span>
 
-  <div id="dndPanelContainer">
-    <div id="dndPanel"></div>
-  </div>
-  <div id="graphComponent"></div>
-</div>
+        <button
+          id="layout"
+          data-command="Layout"
+          title="Run a Layout Algorithm"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Layout
+        </button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="FlowchartDemo.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="dndPanelContainer">
+          <div id="dndPanel"></div>
+        </div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="FlowchartDemo.js"></script>
+  </body>
 </html>

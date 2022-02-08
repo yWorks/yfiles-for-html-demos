@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/label-text-wrapping/index.html).
 
-## Label Text Wrapping
+Application Features Tutorial
+
+# Label Text Wrapping
 
 This demo shows how to enable the label text wrapping and trimming feature provided by [DefaultLabelStyle#wrapping](https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle#wrapping). The options include wrapping at character or at word bounds, both with or without ellipsis.
 

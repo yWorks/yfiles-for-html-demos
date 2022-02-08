@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,90 +34,103 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Map Integration Demo [yFiles for HTML]</title>
+    <title>Interactive Map Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <!-- include leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" crossorigin=""></script>
+    <!-- include leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" crossorigin=""></script>
 
-  <style>
-    .toggle-graph-mode {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      background: white url("../../resources/icons/layout-circular-16.svg") no-repeat center;
-      background-clip: padding-box;
-      padding: 2px;
-      border: 2px solid rgba(0,0,0,0.2);
-      border-radius: 2px;
-    }
-    .toggle-graph-mode:hover {
-      background-color: #f4f4f4;
-      cursor: pointer;
-    }
-    .toggle-graph-mode:disabled {
-      opacity: 3%;
-    }
-    #toggle-graph-mode-button:checked + label {
-      background-image: url("../../resources/icons/grid-16.svg");
-    }
-    @media screen and (max-width: 960px) {
-      .demo-sidebar {
-        z-index: 500;
+    <style>
+      .toggle-graph-mode {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background: white url('../../resources/icons/layout-circular-16.svg') no-repeat center;
+        background-clip: padding-box;
+        padding: 2px;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
       }
-      body:not(.demo-left-hidden) .leaflet-control-container {
-        display: none;
+      .toggle-graph-mode:hover {
+        background-color: #f4f4f4;
+        cursor: pointer;
       }
-    }
-    #component-background {
-      transition: background-color .3s ease-in-out;
-    }
+      .toggle-graph-mode:disabled {
+        opacity: 3%;
+      }
+      #toggle-graph-mode-button:checked + label {
+        background-image: url('../../resources/icons/grid-16.svg');
+      }
+      @media screen and (max-width: 960px) {
+        .demo-sidebar {
+          z-index: 500;
+        }
+        body:not(.demo-left-hidden) .leaflet-control-container {
+          display: none;
+        }
+      }
+      #component-background {
+        transition: background-color 0.3s ease-in-out;
+      }
 
-    .circle {
-      stroke: lightgrey;
-      stroke-width: 3px;
-      fill: none;
-    }
+      .circle {
+        stroke: lightgrey;
+        stroke-width: 3px;
+        fill: none;
+      }
 
-    .yfiles-tooltip {
-      z-index: 500; /* leaflet adds a z-index of 400 to its pane, set the tooltip's z-index to a larger value to show it in front */
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    This demo shows how to integrate a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> with <a href="https://leafletjs.com/" target="_blank">Leaflet</a>.
-    The <code>GraphComponent</code> is included in a custom Leaflet-Layer. The placement of the nodes uses
-    geo-coordinates to get the correct locations on the map.
+      .yfiles-tooltip {
+        z-index: 500; /* leaflet adds a z-index of 400 to its pane, set the tooltip's z-index to a larger value to show it in front */
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Interactive Map Demo</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Drag the map and see how the graph moves along.</li>
-      <li>
-        Zoom into the map using the mouse-wheel or the controls in the upper-left corner of the map. The nodes mark the
-        location of the airports and will keep their geo-location. Some of them are only visible on larger zoom levels.
-      </li>
-      <li>Click on two nodes and see the shortest path between those nodes.</li>
-      <li>
-        Toggle the graph mode using the <img src="../../resources/icons/layout-circular-16.svg"
-          style="vertical-align: bottom"/>-control in the upper-right corner of the map to free the nodes from their
-        geo-locations and apply a radial layout that visualizes how many hops are needed to reach another airport.
-        Change the center node with a double-click on another node.
-      </li>
-    </ul>
-  </div>
-</aside>
+        This demo shows how to integrate a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> with
+        <a href="https://leafletjs.com/" target="_blank">Leaflet</a>. The
+        <code>GraphComponent</code> is included in a custom Leaflet Layer. The placement of the
+        nodes uses geo-coordinates to get the correct locations on the map.
 
-<div class="demo-content">
-  <div id="graphComponent"></div>
-</div>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Drag the map and see how the graph moves along.</li>
+          <li>
+            Zoom into the map using the mouse-wheel or the controls in the upper-left corner of the
+            map. The nodes mark the location of the airports and will keep their geo-location. Some
+            of them are only visible on larger zoom levels.
+          </li>
+          <li>Click on two nodes and see the shortest path between those nodes.</li>
+          <li>
+            Toggle the graph mode using the
+            <img
+              src="../../resources/icons/layout-circular-16.svg"
+              style="vertical-align: bottom"
+            />-control in the upper-right corner of the map to free the nodes from their
+            geo-locations and apply a radial layout that visualizes how many hops are needed to
+            reach another airport. Change the center node with a double-click on another node.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<script type="module" crossorigin="anonymous" src="MapIntegrationDemo.js"></script>
-</body>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="InteractiveMapDemo.js"></script>
+  </body>
 </html>

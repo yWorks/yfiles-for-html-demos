@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/01-tutorial-getting-started/11-layout-data/index.html).
 
-## Tutorial Demo 11
+Getting Started Tutorial - Step 11
+
+# Layout Data
 
 This step shows how to configure a layout algorithm using the information stored in the tag of the nodes.
 

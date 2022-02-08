@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/svgexport/index.html).
 
+# SVG Export Demo
+
 This demo shows how to export the whole diagram or a part of it to an SVG file.
 
 ## Things to Try

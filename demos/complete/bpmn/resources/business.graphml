@@ -2,7 +2,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -130,7 +130,7 @@
 									<y:Row MinimumSize="50" Size="217.62539682539682" Insets="50,0,0,0" Style="{y:GraphMLReference 2}">
 										<y:Row.Labels>
 											<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}">
-												<y:Label.Text><![CDATA[Tap Systems Coordinator 
+												<y:Label.Text><![CDATA[Tap Systems Coordinator
 (Project Manager)]]></y:Label.Text>
 											</y:Label>
 										</y:Row.Labels>
@@ -326,7 +326,7 @@ Coordinator]]></y:Label.Text>
 						<x:List>
 							<y:Label>
 								<y:Label.Text><![CDATA[Receive 1st-
-Gate 
+Gate
 Information]]></y:Label.Text>
 								<y:Label.LayoutParameter>
 									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
@@ -363,7 +363,7 @@ Information]]></y:Label.Text>
 					<data key="d1">
 						<x:List>
 							<y:Label>
-								<y:Label.Text><![CDATA[Interstate 
+								<y:Label.Text><![CDATA[Interstate
 Pipeline?]]></y:Label.Text>
 								<y:Label.LayoutParameter>
 									<y:ExteriorLabelModelParameter Position="South">
@@ -1428,7 +1428,7 @@ Referral]]></y:Label.Text>
 					<data key="d1">
 						<x:List>
 							<y:Label>
-								<y:Label.Text><![CDATA[Receive and 
+								<y:Label.Text><![CDATA[Receive and
 Acknowledge]]></y:Label.Text>
 								<y:Label.LayoutParameter>
 									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>

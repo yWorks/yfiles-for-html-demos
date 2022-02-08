@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/templatestyles/index.html).
 
+# Template Styles Demo
+
 This demo shows how to create SVG templates for nodes, labels and ports. It also shows how to customize various aspects of template styles.
 
 ### Template Styles

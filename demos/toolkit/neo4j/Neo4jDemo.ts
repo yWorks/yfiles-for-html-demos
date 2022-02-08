@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -425,6 +425,7 @@ function registerCommands(): void {
   const userEl = document.querySelector('#userInput') as HTMLInputElement
   const hostEl = document.querySelector('#hostInput') as HTMLInputElement
   const passwordEl = document.querySelector('#passwordInput') as HTMLInputElement
+  const databaseEl = document.querySelector('#databaseNameInput') as HTMLInputElement
 
   document.getElementById('login-form')!.addEventListener('submit', async e => {
     e.preventDefault()
@@ -434,8 +435,9 @@ function registerCommands(): void {
     }
     const user = userEl.value
     const pass = passwordEl.value
+    const database = databaseEl.value
     try {
-      runCypherQuery = await connectToDB(url, user, pass)
+      runCypherQuery = await connectToDB(url, database, user, pass)
 
       // hide the login form and show the graph component
       document.querySelector('#loginPane')!.setAttribute('style', 'display: none;')

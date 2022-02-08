@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/ganttchart/index.html).
 
+# Gantt Chart Demo
+
 The Gantt Chart demo shows how to create a Gantt component from JSON data.
 
 The data consists of tasks which define the horizontal lanes and activities, each of which is assigned to a task.
@@ -14,7 +16,7 @@ The activity duration is rendered as a solid area. The lead and follow-up times 
 
 The activity dependencies are modeled as edges between the activity nodes.
 
-This demo uses [Moment.js](https://momentjs.com/) to parse, manipulate and calculate dates.
+This demo uses [Moment.js](https://moment.github.io/luxon/#/) to parse, manipulate and calculate dates.
 
 ## Things to Try
 

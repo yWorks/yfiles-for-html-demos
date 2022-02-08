@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/mindmap/index.html).
 
+# Mindmap Demo
+
 This demo shows an interactive Mindmap application.
 
 The layout is calculated by the tree layout algorithm, and makes use of port constraints and special node placers.

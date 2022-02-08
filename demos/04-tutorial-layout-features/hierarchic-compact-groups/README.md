@@ -1,10 +1,14 @@
-# Compact Group Nodes with HierarchicLayout - Layout Features Tutorial
+#
+
+      Compact Group Nodes with HierarchicLayout - Layout Features Tutorial
 
 <img src="../../resources/image/tutorial4hierarchiccompactgroups.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/hierarchic-compact-groups/index.html).
 
-## Compact Group Nodes in HierarchicLayout
+Layout Features Tutorial
+
+# Compact Group Nodes with HierarchicLayout
 
 This demo shows how to configure the [Hierarchic Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) and the related [SimplexNodePlacer](https://docs.yworks.com/yfileshtml/#/api/SimplexNodePlacer) such that group nodes are drawn in a more compact way compared to the algorithm's default settings.
 

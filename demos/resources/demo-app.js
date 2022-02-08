@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,14 +45,33 @@ import { DefaultGraph, GraphComponent, GraphMLIOHandler, License } from 'yfiles'
 const SIDEBAR_WIDTH = 320
 const SMALL_WIDTH = SIDEBAR_WIDTH * 3
 
-// Polyfill requestAnimationFrame and cancelAnimationFrame if necessary.
-window.requestAnimationFrame = window.requestAnimationFrame || (f => window.setTimeout(f, 16))
-window.cancelAnimationFrame = window.cancelAnimationFrame || (id => window.clearTimeout(id))
+/**
+ * Initializes polyfills that are used by some demos.
+ *
+ * Note that these polyfills are not required for the yFiles for HTML library itself. See the
+ * following section in the developer's guide for more advice on using yFiles in older browsers:
+ * https://docs.yworks.com/yfileshtml/#/dguide/deployment_es5
+ *
+ * Called in an IIFE when this file is loaded.
+ */
+function initializePolyfills() {
+  // Polyfill requestAnimationFrame and cancelAnimationFrame if necessary.
+  window.requestAnimationFrame =
+    window.requestAnimationFrame ||
+    (f =>
+      window.setTimeout(() => {
+        f(Date.now())
+      }, 16))
+
+  window.cancelAnimationFrame = window.cancelAnimationFrame || (id => window.clearTimeout(id))
+}
 
 /**
- * Called in an IIFE when the file is loaded
+ * Creates some HTML elements of the demo UI.
+ *
+ * Called in an IIFE when this file is loaded.
  */
-function initializeDemo() {
+function initializeDemoUI() {
   const body = document.body
 
   const demoContentElement = document.querySelector('.demo-content')
@@ -66,11 +85,10 @@ function initializeDemo() {
 
   // Add header
 
-  const header = document.createElement('header')
-  header.setAttribute('class', 'demo-header')
+  const header = document.querySelector('.demo-header') || createHeaderElement()
 
   const logoLink = document.createElement('a')
-  logoLink.setAttribute('href', 'https://www.yworks.com/')
+  logoLink.setAttribute('href', 'https://www.yworks.com/products/yfiles')
 
   const logoImage = document.createElement('img')
   logoImage.setAttribute('src', '../../resources/icons/ylogo.svg')
@@ -80,9 +98,23 @@ function initializeDemo() {
   header.appendChild(logoLink)
 
   const yFilesHTMLLink = document.createElement('a')
-  yFilesHTMLLink.setAttribute('href', '../../README.html')
+  yFilesHTMLLink.setAttribute('href', 'https://www.yworks.com/products/yfiles')
   yFilesHTMLLink.textContent = 'yFiles for HTML'
   header.appendChild(yFilesHTMLLink)
+
+  const demoOverviewLink = document.createElement('a')
+  demoOverviewLink.setAttribute('class', 'demo-title')
+  demoOverviewLink.setAttribute('style', 'cursor: pointer;')
+  demoOverviewLink.setAttribute('href', '../../README.html')
+  demoOverviewLink.textContent = 'Demos'
+  header.appendChild(demoOverviewLink)
+
+  const mobileLink = document.createElement('a')
+  mobileLink.setAttribute('class', 'demo-back-button')
+  mobileLink.setAttribute('style', 'cursor: pointer;')
+  mobileLink.setAttribute('href', '../../README.html')
+  mobileLink.textContent = 'yFiles Demos'
+  header.appendChild(mobileLink)
 
   const isTutorial = window.location.pathname.indexOf('-tutorial-') >= 0
   // For tutorials, place tutorial overview link and tutorial step name in a common element.
@@ -91,7 +123,7 @@ function initializeDemo() {
     // Create a link to the tutorial overview page
     const tutorialOverviewLink = document.createElement('a')
     const tutorialCategory = window.location.pathname.replace(/.*?\/0\d-(tutorial[^/]+).*/i, '$1')
-    tutorialOverviewLink.setAttribute('class', 'demo-title demo-breadcrumb')
+    tutorialOverviewLink.setAttribute('class', 'demo-title')
     tutorialOverviewLink.setAttribute('style', 'cursor: pointer;')
     tutorialOverviewLink.setAttribute('href', `../../README.html#${tutorialCategory}`)
     tutorialOverviewLink.textContent = getTutorialName()
@@ -99,13 +131,20 @@ function initializeDemo() {
   }
 
   const demoNameElement = document.createElement('span')
-  demoNameElement.setAttribute('class', 'demo-title demo-breadcrumb')
+  demoNameElement.setAttribute('class', 'demo-title')
   demoNameElement.textContent = getDemoName(isTutorial)
   header.appendChild(demoNameElement)
 
+  let headerRight = document.querySelector('.demo-header-right')
+  if (!headerRight) {
+    headerRight = document.createElement('div')
+    headerRight.className = 'demo-header-right'
+  }
+  header.appendChild(headerRight)
+
   const showSourceButton = document.createElement('div')
   showSourceButton.setAttribute('class', 'demo-show-source-button')
-  header.appendChild(showSourceButton)
+  headerRight.appendChild(showSourceButton)
 
   const showSourceContent = document.createElement('div')
   showSourceContent.setAttribute('class', 'demo-show-source-content hidden')
@@ -115,10 +154,12 @@ function initializeDemo() {
 
   showSourceButton.addEventListener('click', () => toggleClass(showSourceContent, 'hidden'))
 
-  if (demoContentElement) {
-    demoContentElement.insertBefore(header, demoContentElement.firstChild)
-  } else {
-    body.insertBefore(header, body.firstChild)
+  if (header.parentElement == null) {
+    if (demoContentElement == null) {
+      body.insertBefore(header, body.firstChild)
+    } else {
+      demoContentElement.insertBefore(header, demoContentElement.firstChild)
+    }
   }
 
   // Add sidebar toggle buttons
@@ -129,7 +170,8 @@ function initializeDemo() {
     ;(() => {
       const isLeft = hasClass(sidebar, 'demo-left')
       button.setAttribute('class', `demo-${isLeft ? 'left' : 'right'}-sidebar-toggle-button`)
-      button.setAttribute('title', `Toggle ${isLeft ? 'left' : 'right'} sidebar`)
+      if (isLeft) button.setAttribute('title', `Toggle description`)
+      else button.setAttribute('title', `Toggle right sidebar`)
       button.addEventListener('click', () => {
         toggleClass(body, isLeft ? 'demo-left-hidden' : 'demo-right-hidden')
       })
@@ -138,9 +180,11 @@ function initializeDemo() {
   }
 
   const sidebar = document.querySelector('.demo-left')
+
   const playButton = document.createElement('a')
   playButton.className = 'action-run'
-  playButton.innerHTML = getDemoName(window.location.pathname.indexOf('-tutorial-') >= 0)
+  playButton.innerHTML = 'start here' // getDemoName(window.location.pathname.indexOf('-tutorial-') >= 0)
+
   const playBadge = document.createElement('div')
   playBadge.appendChild(playButton)
   playBadge.className = 'demo-play'
@@ -168,7 +212,7 @@ function initializeDemo() {
     }
   }
 
-  // add fullscreen button
+  // add fullscreen button but omit iOS since pinch zoom will always exit fullscreen mode.
   if (detectiOSVersion() === -1 && detectSafariVersion() === -1) {
     const fullscreenButton = document.createElement('button')
     fullscreenButton.setAttribute('class', 'demo-fullscreen-button')
@@ -220,10 +264,16 @@ function initializeDemo() {
         }
       }
     })
-    demoContentElement.appendChild(fullscreenButton)
+    headerRight.appendChild(fullscreenButton)
   }
 
   enableWorkarounds()
+}
+
+function createHeaderElement() {
+  const header = document.createElement('header')
+  header.setAttribute('class', 'demo-header')
+  return header
 }
 
 /**
@@ -251,10 +301,11 @@ function initResponsiveToolbar(toolbar) {
       e.preventDefault()
     }
   }
-  overflowButton.addEventListener('click', () => {
+  overflowButton.addEventListener('click', e => {
     toggleClass(overflowContainerWrapper, 'open')
     if (hasClass(overflowContainerWrapper, 'open')) {
       document.addEventListener('click', closeContainerHandler)
+      if (e.currentTarget) overflowContainerWrapper.style.right = overflowButton.style.right
     }
   })
   toolbar.insertBefore(overflowButton, toolbar.firstChild)
@@ -262,8 +313,11 @@ function initResponsiveToolbar(toolbar) {
   let toolbarWidth = 0
   const resizeHandler = () => {
     // only update if clientWidth is > 0 - this allows to temporarily hide the toolbar with "display:'none'"
-    if (toolbarWidth !== toolbar.clientWidth && toolbar.clientWidth > 0) {
-      toolbarWidth = toolbar.clientWidth
+    const toolbarPadding = parseInt(
+      window.getComputedStyle(toolbar, null).getPropertyValue('padding-right').match(/(\d+)/)[0]
+    )
+    if (toolbarWidth !== toolbar.clientWidth - toolbarPadding && toolbar.clientWidth > 0) {
+      toolbarWidth = toolbar.clientWidth - toolbarPadding
       const toolbarBox = toolbar.getBoundingClientRect()
       let toolbarItem = toolbar.lastElementChild
       let toolbarItemBox = toolbarItem.getBoundingClientRect()
@@ -272,7 +326,7 @@ function initResponsiveToolbar(toolbar) {
         toolbarItem &&
         toolbar.children.length > 3 &&
         (toolbarItemBox.top >= toolbarBox.bottom ||
-          toolbarItemBox.right >= toolbarBox.right - 45 ||
+          toolbarItemBox.right >= toolbarBox.right - 45 - toolbarPadding ||
           toolbarItemBox.width === 0)
       ) {
         overflowContainer.insertBefore(toolbarItem, overflowContainer.firstChild)
@@ -295,14 +349,22 @@ function initResponsiveToolbar(toolbar) {
         overflowItem = overflowItem.nextElementSibling
       }
 
-      let space = toolbarBox.right - toolbar.lastElementChild.getBoundingClientRect().right - 45
+      let space =
+        toolbarBox.right -
+        toolbarPadding -
+        toolbar.lastElementChild.getBoundingClientRect().right -
+        45
       // eslint-disable-next-line no-cond-assign
       while (overflowItem && overflowItem.clientWidth < space) {
         while (overflowItem.previousElementSibling) {
           toolbar.appendChild(overflowItem.previousElementSibling)
         }
         toolbar.appendChild(overflowItem)
-        space = toolbarBox.right - toolbar.lastElementChild.getBoundingClientRect().right - 45
+        space =
+          toolbarBox.right -
+          toolbarPadding -
+          toolbar.lastElementChild.getBoundingClientRect().right -
+          45
         overflowItem = overflowContainer.firstElementChild
         while (
           overflowItem &&
@@ -316,6 +378,7 @@ function initResponsiveToolbar(toolbar) {
         removeClass(overflowContainerWrapper, 'open')
       } else {
         removeClass(overflowButton, 'hidden')
+        overflowButton.style.right = `${toolbarPadding}px`
       }
     }
     setTimeout(resizeHandler, 1000)
@@ -574,7 +637,7 @@ export function addOptions(selectElement, ...values) {
     }
     selectElement.add(option)
   }
-  selectElement.dispatchEvent(new Event('change'))
+  selectElement.dispatchEvent(createEvent('change'))
 }
 /**
  * Adds navigation buttons to an HTMLSelectElement
@@ -596,7 +659,7 @@ export function addNavigationButtons(selectElement, wrapAround = true, classList
     const newIndex = lastIndexOfEnabled(selectElement, oldIndex - 1, wrapAround)
     if (oldIndex != newIndex && newIndex > -1) {
       selectElement.selectedIndex = newIndex
-      selectElement.dispatchEvent(new Event('change'))
+      selectElement.dispatchEvent(createEvent('change'))
     }
   })
 
@@ -608,7 +671,7 @@ export function addNavigationButtons(selectElement, wrapAround = true, classList
     const newIndex = indexOfEnabled(selectElement, oldIndex + 1, wrapAround)
     if (oldIndex != newIndex && newIndex > -1) {
       selectElement.selectedIndex = newIndex
-      selectElement.dispatchEvent(new Event('change'))
+      selectElement.dispatchEvent(createEvent('change'))
     }
   })
 
@@ -754,5 +817,21 @@ export async function showLoadingIndicator(visible, message) {
   return new Promise(resolve => setTimeout(resolve, 0))
 }
 
-// initialize the application
-initializeDemo()
+/**
+ * Creates a new event with the given type.
+ *
+ * On Internet Explorer, this method avoids calling the Event constructor.
+ * @param {!string} eventType The type of the event
+ */
+function createEvent(eventType) {
+  if (typeof window.Event === 'function') {
+    // Event has type 'function' except in IE
+    return new Event(eventType)
+  }
+  const ev = document.createEvent('Event')
+  ev.initEvent(eventType, false, true)
+  return ev
+}
+
+initializePolyfills()
+initializeDemoUI()

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global moment */
+const { DateTime } = luxon
 
 /**
  * A helper class that handles the data model and maps graph coordinates to the corresponding dates.
@@ -34,38 +34,59 @@
  * The first task is placed at the origin of the y axis. Subsequent tasks are placed below.
  * @yjs:keep=duration
  */
-export default class GanttMapper {
+export class GanttMapper {
   /**
-   * @param {*} dataModel
+   * @param {!Record.<string,*>} dataModel
    */
   constructor(dataModel) {
     this._subRowMap = new Map()
     this._subRowCountMap = new Map()
-    this._originDate = moment(dataModel.originDate)
+    this._originDate = DateTime.fromISO(dataModel.originDate)
     this.tasks = dataModel.tasks.slice()
   }
 
   /**
    * Calculates the x coordinate for a given date.
-   * @param {!MomentInput} date
+   * @param {!DateTimeType} day
    * @returns {number}
    */
-  getX(date) {
-    const momentDate = moment(date)
-    const duration = moment.duration(momentDate.diff(this._originDate))
-    const days = duration.asHours() / 24.0
-    return days * GanttMapper.dayWidth
+  getX(day) {
+    const duration = day.diff(this._originDate, 'minutes').minutes
+    // 1440 = 24 * 60 = minutes of 1 day
+    return GanttMapper.dayWidth * (duration / 1440)
   }
 
   /**
    * Calculates the date for a given x coordinate.
    * @param {number} x
-   * @returns {!Moment}
+   * @returns {!DateTimeType}
    */
   getDate(x) {
-    const duration = x / GanttMapper.dayWidth
-    const durationMin = (duration * 24 * 60) | 0
-    return moment(this._originDate).add(moment.duration(durationMin, 'minutes'))
+    // 1440 = 24 * 60 = minutes of 1 day
+    const minutes = ((x / GanttMapper.dayWidth) * 1440) | 0
+    return this._originDate.plus({ minutes })
+  }
+
+  /**
+   * @param {number} start
+   * @param {number} end
+   */
+  getVisualRange(start, end) {
+    const startDate = this.getDate(start).startOf('month')
+    const endDate = this.getDate(end).endOf('month')
+
+    const dayDiff = startDate.diff(this.originDate, 'days').as('days')
+    const oddStartDay = dayDiff % 2 !== 0
+    const oddStartMonth = startDate.month % 2 !== 0
+
+    return {
+      startDate: startDate.toJSDate(),
+      endDate: endDate.toJSDate(),
+      startX: this.getX(startDate),
+      endX: this.getX(endDate),
+      oddStartDay,
+      oddStartMonth
+    }
   }
 
   /**
@@ -178,8 +199,10 @@ export default class GanttMapper {
    * @returns {number}
    */
   getTotalActivityDuration(activity) {
-    const duration = moment.duration(moment(activity.endDate).diff(moment(activity.startDate)))
-    return (duration.asHours() + (activity.leadTime || 0) + (activity.followUpTime || 0)) | 0
+    const hours = DateTime.fromISO(activity.endDate)
+      .diff(DateTime.fromISO(activity.startDate), 'hours')
+      .as('hours')
+    return (hours + (activity.leadTime || 0) + (activity.followUpTime || 0)) | 0
   }
 
   /**
@@ -202,19 +225,10 @@ export default class GanttMapper {
 
   /**
    * Gets the date corresponding to x=0.
-   * @type {!Moment}
+   * @type {!DateTimeType}
    */
   get originDate() {
-    return moment(this._originDate)
-  }
-
-  /**
-   * @param {!MomentInput} date
-   * @param {!string} formatString
-   * @returns {!string}
-   */
-  static format(date, formatString) {
-    return moment(date).format(formatString)
+    return this._originDate
   }
 
   /**
@@ -223,6 +237,14 @@ export default class GanttMapper {
    */
   static get dayWidth() {
     return 80
+  }
+
+  /**
+   * @param {!Date} date
+   * @returns {number}
+   */
+  static daysInMonth(date) {
+    return DateTime.fromJSDate(date).daysInMonth
   }
 
   /**

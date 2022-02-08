@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/background-image/index.html).
 
-## Background
+Application Features Tutorial
+
+# Background
 
 This demo shows how to add a background to a graph. The background can be an image or a colored rectangle.
 

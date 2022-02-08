@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,55 +34,69 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>ES Modules Loading Demo [yFiles for HTML]</title>
+    <title>ES Modules Loading Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left demo-hide-left-when-small loaded">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>ES Modules Loading Demo</h1>
 
-</head>
-<body class="demo-has-left demo-hide-left-when-small loaded">
+        <p>This demo loads the yFiles module resources using ES module imports.</p>
+        <p>
+          Using the ES library modules, you can load the yFiles types through
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import"
+            target="_blank"
+            rel="noopener"
+            >import statements</a
+          >
+          , e.g.:
+        </p>
+        <p>
+          <code>
+            import { GraphComponent, GraphEditorInputMode, Rect, ICommand, TimeSpan } from
+            './node_modules/yfiles/yfiles.js';
+          </code>
+        </p>
+      </div>
+    </aside>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo loads the yFiles module resources using ES module imports.
-    </p>
-    <p>
-      Using the ES library modules, you can load the yFiles types through <a
-        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import" target="_blank"
-        rel="noopener">import statements</a> , e.g.:
-    </p>
-    <p>
-      <code>
-        import { GraphComponent, GraphEditorInputMode, Rect, ICommand, TimeSpan } from './node_modules/yfiles/yfiles.js';
-      </code>
-    </p>
-  </div>
-</aside>
+    <div class="demo-content">
+      <div class="demo-toolbar">
+        <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">
+          Layout
+        </button>
+      </div>
 
-<div class="demo-content">
-  <div class="demo-header">
-    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/icons/ylogo.svg" class="demo-y-logo"> </a> <a
-    href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">ES Modules Loading Demo [yFiles for HTML</span>
-  </div>
-  <div class="demo-toolbar">
-    <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
-  </div>
+      <div class="demo-content-dynamic">
+        <div class="demo-header">
+          <a href="https://www.yworks.com/products/yfiles" target="_blank">
+            <img src="../../resources/icons/ylogo.svg" class="demo-y-logo" />
+          </a>
+          <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+          <a href="../../README.html" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+          <span class="demo-title">ES Modules Loading Demo</span>
+        </div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-<script src="ESModulesDemo.js" type="module" crossorigin="anonymous"></script>
-<script nomodule>
-  // noinspection ES6ConvertVarToLetConst
-  if (window.location.pathname.indexOf('es5/demos') < 0) {
-    var gcElement = document.getElementById('graphComponent');
-    gcElement.innerHTML =
-      '<h2>Your browser doesn\'t support ES modules</h2>' +
-      '<p>Please visit <a href="https://caniuse.com/#search=modules" target="_blank">caniuse.com</a> for details on browser support for ES modules.</p>'
-  }
-</script>
-</body>
+    <script src="ESModulesDemo.js" type="module" crossorigin="anonymous"></script>
+    <script nomodule="">
+      // noinspection ES6ConvertVarToLetConst
+      if (window.location.pathname.indexOf('es5/demos') < 0) {
+        var gcElement = document.getElementById('graphComponent')
+        gcElement.innerHTML =
+          "<h2>Your browser doesn't support ES modules</h2>" +
+          '<p>Please visit <a href="https://caniuse.com/#search=modules" target="_blank">caniuse.com</a> for details on browser support for ES modules.</p>'
+      }
+    </script>
+  </body>
 </html>

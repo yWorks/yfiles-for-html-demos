@@ -4,9 +4,11 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/graph-drag-and-drop/index.html).
 
+# Graph Drag and Drop Demo
+
 This demo shows how to add drag and drop of graphs to an app.
 
-yFiles for HTML supports [drag and drop of single items](https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-drag_drop) out of the box.
+yFiles for HTML supports drag and drop of single items out of the box.
 
 This demo contains a custom implementation of a [DropInputMode](https://docs.yworks.com/yfileshtml/#/api/DropInputMode) that enables drag and drop of multiple graph items and entire graphs.
 

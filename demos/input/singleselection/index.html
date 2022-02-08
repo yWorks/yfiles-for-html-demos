@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,65 +34,77 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Single Selection Demo [yFiles for HTML]</title>
+    <title>Single Selection Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Single Selection Demo</h1>
 
-    <p>This demo shows how to configure <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> for single selection mode. In this mode, only one
-      graph item can be selected at a time.</p>
+        <p>
+          This demo shows how to configure <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> for single selection
+          mode. In this mode, only one graph item can be selected at a time.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Toggle single selection mode and examine the differences.
-      </li>
-      <li>
-        Select a single node and toggle its selection state by pressing <code>Ctrl-Space</code>. This works in
-        both single selection and regular mode due to a custom command binding.
-      </li>
-      <li>
-        Move the node focus (indicated by a thin dashed line) by holding down <code>Ctrl</code> and pressing an
-        arrow key. Toggle the selection state of the focused item by pressing <code>Ctrl-Space</code>.
-      </li>
-      <li>
-        Take a look at the source code, especially method <em>enableSingleSelection</em>.
-      </li>
-    </ul>
+        <ul>
+          <li>Toggle single selection mode and examine the differences.</li>
+          <li>
+            Select a single node and toggle its selection state by pressing <code>Ctrl-Space</code>.
+            This works in both single selection and regular mode due to a custom command binding.
+          </li>
+          <li>
+            Move the node focus (indicated by a thin dashed line) by holding down
+            <code>Ctrl</code> and pressing an arrow key. Toggle the selection state of the focused
+            item by pressing <code>Ctrl-Space</code>.
+          </li>
+          <li>Take a look at the source code, especially method <em>enableSingleSelection</em>.</li>
+        </ul>
 
-    <h2>Features of Single Selection Mode</h2>
+        <h2>Features of Single Selection Mode</h2>
 
-    <ul>
-      <li>
-        Marquee selection is disabled. Try to drag the mouse over a set of nodes to select them.
-      </li>
-      <li>
-        Click-selecting multiple nodes is disabled. Try to extend the selection by holding the <code>Ctrl</code>
-        key while clicking another node.
-      </li>
-      <li>
-        <em>Select All</em> is disabled. Try to select all nodes by pressing <code>Ctrl-A</code>.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <ul>
+          <li>
+            Marquee selection is disabled. Try to drag the mouse over a set of nodes to select them.
+          </li>
+          <li>
+            Click-selecting multiple nodes is disabled. Try to extend the selection by holding the
+            <code>Ctrl</code>
+            key while clicking another node.
+          </li>
+          <li>
+            <em>Select All</em> is disabled. Try to select all nodes by pressing
+            <code>Ctrl-A</code>.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <input
+          type="checkbox"
+          id="toggleSingleSelection"
+          class="demo-toggle-button labeled"
+          title="Single Selection"
+          data-command="ToggleSingleSelection"
+          checked=""
+        /><label for="toggleSingleSelection">Single Selection</label>
+      </div>
 
-    <input type="checkbox" id="toggleSingleSelection" class="demo-toggle-button labeled" title="Single Selection" data-command="ToggleSingleSelection" checked/><label for="toggleSingleSelection">Single Selection</label>
-  </div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="SingleSelectionDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="SingleSelectionDemo.js"></script>
+  </body>
 </html>

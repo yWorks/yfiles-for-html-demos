@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/analysis/networkflows/index.html).
 
+# Network Flows Demo
+
 _Network flow_ algorithms apply to directed networks in which edges have certain capacities and a flow moves from source nodes (i.e., nodes with in-degree 0) to sink nodes (i.e., nodes with out-degree 0).
 
 In our everyday life, flow algorithms can be applied to all problem domains that involve networks (e.g., water supply, electricity/power, internet, shipment) in which the goal is to move some flow (e.g., water, electricity/power, products, internet traffic, message) from one position to another within the network as efficient as possible.

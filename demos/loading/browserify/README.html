@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,53 +32,58 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Browserify Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-</head>
-<body>
-<!-- populated by readme-style.js -->
-<div id="header" class="simple-header">
-  Browserify Demo
-</div>
-<main>
-  <div class="content-centered">
-    <div class="content">
-      <div class="breadcrumbs">
-        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Browserify Demo
-      </div>
-      <h1>Browserify Demo</h1>
+    <title>Browserify Demo [yFiles for HTML]</title>
+    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
+    <!-- populated by readme-style.js -->
+    <div id="header" class="simple-header">Browserify Demo</div>
+    <main>
+      <div class="content-centered">
+        <div class="content">
+          <div class="breadcrumbs">
+            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Browserify
+            Demo
+          </div>
+          <h1>Browserify Demo</h1>
 
-      <p>
-        This demo shows how to bundle the yFiles library in a <a href="http://browserify.org/">browserify</a> project.
-      </p>
+          <p>
+            This demo shows how to bundle the yFiles library in a
+            <a href="http://browserify.org/">browserify</a> project.
+          </p>
 
-      <p>
-        The yFiles modules are <code>require</code>d in the demo sources in addition to an <code>npm</code> library (<a
-        href="https://www.npmjs.com/package/color">color</a>), so browserify will add the yfiles modules and the npm
-        library to the generated <code>bundle.js</code>. </p>
+          <p>
+            The yFiles modules are <code>require</code>d in the demo sources in addition to an
+            <code>npm</code> library (<a href="https://www.npmjs.com/package/color">color</a>), so
+            browserify will add the yfiles modules and the npm library to the generated
+            <code>bundle.js</code>.
+          </p>
 
-      <p>
-        The HTML file just references the single <code>bundle.js</code> file containing the demo code as well as all
-        library code.</p>
+          <p>
+            The HTML file just references the single <code>bundle.js</code> file containing the demo
+            code as well as all library code.
+          </p>
 
-      <h2>Build</h2>
+          <h2>Build</h2>
 
-      <p>Install the required npm packages and run the build script</p>
-      <pre>
+          <p>Install the required npm packages and run the build script</p>
+          <pre>
 > npm install
 > npm run build
-</pre>
-      <h2>Run</h2>
+</pre
+          >
+          <h2>Run</h2>
 
-      <p>
-        Browserify will place the output files in the <code>dist/</code> directory inside this demo's directory. To run
-        the demo, open <code>./index.html</code> in a browser.</p>
-    </div>
-    <!-- populated by readme-style.js -->
-    <div id="footer-detailed"></div>
-  </div>
-</main>
-<script src="../../../doc/readme-style.js"></script>
-</body>
+          <p>
+            Browserify will place the output files in the <code>dist/</code> directory inside this
+            demo's directory. To run the demo, open <code>./index.html</code> in a browser.
+          </p>
+        </div>
+        <!-- populated by readme-style.js -->
+        <div id="footer-detailed"></div>
+      </div>
+    </main>
+    <script src="../../../doc/readme-style.js"></script>
+  </body>
 </html>

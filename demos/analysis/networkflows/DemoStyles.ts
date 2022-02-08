@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -703,14 +703,16 @@ function createAnimatedGradient(linearGradient: LinearGradient): SVGElement {
   let offset = 0
   let animationFrameId = 0
   const ANIMATION_SPEED = 0.05
-  // get current timestamp
-  let t: number = new Date().getTime()
-  // create the animation callback
+
+  let previousTime: number = null!
+
   const frameRequestCallback = (timestamp: any): void => {
-    // calculate the milliseconds since the last animation frame
-    const currentTime = new Date().getTime()
-    const dt = currentTime - t
-    t = currentTime
+    // calculate the time since the last animation frame
+    if (previousTime == null) {
+      previousTime = timestamp
+    }
+    const dt = timestamp - previousTime
+    previousTime = timestamp
     // check if the gradient is still alive
     if (svgGradient.ownerDocument !== null && svgGradient.parentNode !== null) {
       // calculate the new offset

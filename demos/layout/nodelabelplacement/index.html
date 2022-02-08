@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,75 +34,89 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Node Label Placement Demo [yFiles for HTML]</title>
+    <title>Node Label Placement Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-  <style type="text/css">
-    .demo-toolbar label {
-      width: 68px;
-      vertical-align: baseline;
-      text-align: right;
-    }
-    .demo-toolbar label:hover {
-      background-color: transparent;
-      cursor: default;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This demo shows how to configure node labels and the corresponding node label models as well as how to apply the
-      automatic node labeling algorithm.</p>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Node Label Placement Demo</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Add a new city by clicking on the canvas.</li>
-      <li>Edit a label by selecting it and pressing F2.</li>
-      <li>Drag labels into different valid positions.</li>
-      <li>Run the label placement algorithm by clicking the button 'Place Labels'.</li>
-      <li>Change the label model using the select box in the toolbar. The label placement algorithm runs
-        automatically.
-      </li>
-      <li>Change the font size of the labels using the select box in the toolbar. The label placement
-        algorithm runs automatically.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <p>
+          This demo shows how to configure node labels and the corresponding node label models as
+          well as how to apply the automatic node labeling algorithm.
+        </p>
 
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Add a new city by clicking on the canvas.</li>
+          <li>Edit a label by selecting it and pressing F2.</li>
+          <li>Drag labels into different valid positions.</li>
+          <li>Run the label placement algorithm by clicking the button 'Place Labels'.</li>
+          <li>
+            Change the label model using the select box in the toolbar. The label placement
+            algorithm runs automatically.
+          </li>
+          <li>
+            Change the font size of the labels using the select box in the toolbar. The label
+            placement algorithm runs automatically.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+        <span class="demo-separator"></span>
 
-    <label for="labelModelComboBox">Label Model:</label> <select id="labelModelComboBox"
-      data-command="labelModelChanged">
-    <option>Interior</option>
-    <option>Exterior</option>
-    <option selected="selected" value="-1">Free Node</option>
-    <option>Sandwich</option>
-    <option>Three Distances</option>
-  </select> <label for="labelFontSizeField">Label Size:</label> <input type="number" id="labelFontSizeField" min="1"
-      max="50" value="10">
+        <span>Label Model:</span>
+        <select id="labelModelComboBox" data-command="labelModelChanged">
+          <option>Interior</option>
+          <option>Exterior</option>
+          <option selected="selected" value="-1">Free Node</option>
+          <option>Sandwich</option>
+          <option>Three Distances</option>
+        </select>
+        <span>Label Size:</span>
+        <input type="number" id="labelFontSizeField" min="1" max="50" value="10" />
 
-    <span class="demo-separator"></span>
-    <button data-command="PlaceLabels" id='placeLabels' title="Place Labels" class="demo-icon-yIconReload labeled">Place
-      Labels
-    </button>
-  </div>
-  <div id="graphComponent"></div>
-</div>
+        <span class="demo-separator"></span>
+        <button
+          data-command="PlaceLabels"
+          id="placeLabels"
+          title="Place Labels"
+          class="demo-icon-yIconReload labeled"
+        >
+          Place Labels
+        </button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="NodeLabelPlacementDemo.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="NodeLabelPlacementDemo.js"></script>
+  </body>
 </html>

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/filtering/index.html).
 
-## Filtering
+Application Features Tutorial
+
+# Filtering
 
 This sample shows how to configure graph [filtering](https://docs.yworks.com/yfileshtml/#/dguide/filtering).
 

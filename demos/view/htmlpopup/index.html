@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,141 +34,155 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>HTML Popup Demo [yFiles for HTML]</title>
+    <title>HTML Popup Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style type="text/css">
-    .popupContainer {
-      /*
+    <style>
+      .popupContainer {
+        /*
        Make the outer popup container large enough so the popup content has enough space even
        if the graphComponent is very small.
       */
-      position: relative;
-      width: 300%;
-      min-width: 600px;
-    }
-    .popupContent {
-      position: absolute;
-      display: none; /* during runtime, the display value is overridden by class HTMLPopupSupport */
-      border: 2px solid lightgray;
-      border-radius: 15px;
-      padding: 5px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, .85);
-      opacity: 0; /* will be faded in */
-      transition: opacity 0.2s ease-in;
-    }
+        position: relative;
+        width: 300%;
+        min-width: 600px;
+      }
+      .popupContent {
+        position: absolute;
+        display: none; /* during runtime, the display value is overridden by class HTMLPopupSupport */
+        border: 2px solid lightgray;
+        border-radius: 15px;
+        padding: 5px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.85);
+        opacity: 0; /* will be faded in */
+        transition: opacity 0.2s ease-in;
+      }
 
-    .popupContent.popupContentClone {
-      transition: opacity 0.2s ease-out;
-    }
+      .popupContent.popupContentClone {
+        transition: opacity 0.2s ease-out;
+      }
 
-    .popupContentLeft {
-      position: relative;
-      float: left;
-      top: 0;
-      width: 60px;
-      height: 100%;
-      display: inline-block;
-      margin-right: 10px;
-    }
+      .popupContentLeft {
+        position: relative;
+        float: left;
+        top: 0;
+        width: 60px;
+        height: 100%;
+        display: inline-block;
+        margin-right: 10px;
+      }
 
-    .popupContentRight {
-      position: relative;
-      float: left;
-      top: 0;
-      width: 180px;
-      height: 100%;
-      display: inline-block;
-    }
-  </style>
-
-</head>
-<body class="demo-has-left">
-<!--
+      .popupContentRight {
+        position: relative;
+        float: left;
+        top: 0;
+        width: 180px;
+        height: 100%;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows HTML pop-up panels that display additional information about a clicked node or edge.</p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>HTML Popup Demo</h1>
 
-    <p>
-      The pop-up is displayed in the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> above the graph items but below the
-      scrollbars, and rendered zoom-invariant with a fixed size.
-    </p>
-    <p>
-      In this demo, a <em>pop-up</em> is shown when clicking a node or an edge. The data are retrieved from a graph item's
-      <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> property. The template for these pop-ups is defined in the GraphComponent's
-      div and is automatically added to the <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#overlayPanel" target="_blank">CanvasComponent#overlayPanel</a> element by the
-      GraphComponent's constructor.
-    </p>
-    <p>
-      In general, a pop-up can contain arbitrary HTML content, it can be created through JavaScript code or copied over
-      from another part of the DOM, and it can be manually added to the
-      <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#overlayPanel" target="_blank">CanvasComponent#overlayPanel</a> of the GraphComponent at any time.</p>
+        <p>
+          This demo shows HTML pop-up panels that display additional information about a clicked
+          node or edge.
+        </p>
 
-    <h2>Things to Try</h2>
+        <p>
+          The pop-up is displayed in the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> above the graph items but below
+          the scrollbars, and rendered zoom-invariant with a fixed size.
+        </p>
+        <p>
+          In this demo, a <em>pop-up</em> is shown when clicking a node or an edge. The data are
+          retrieved from a graph item's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> property. The template for these
+          pop-ups is defined in the GraphComponent's div and is automatically added to the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#overlayPanel" target="_blank">CanvasComponent#overlayPanel</a> element by the GraphComponent's constructor.
+        </p>
+        <p>
+          In general, a pop-up can contain arbitrary HTML content, it can be created through
+          JavaScript code or copied over from another part of the DOM, and it can be manually added
+          to the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#overlayPanel" target="_blank">CanvasComponent#overlayPanel</a> of the GraphComponent at any time.
+        </p>
 
-    <ul>
-      <li>
-        Click a node to show information about the person.
-      </li>
-      <li>
-        Click an edge to display information about the connection.
-      </li>
-      <li>
-        Take a look at the code, especially <code>HTMLPopupSupport</code>.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Things to Try</h2>
 
-<div class="demo-content">
+        <ul>
+          <li>Click a node to show information about the person.</li>
+          <li>Click an edge to display information about the connection.</li>
+          <li>Take a look at the code, especially <code>HTMLPopupSupport</code>.</li>
+        </ul>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
-
-  <!--
-  The GraphComponent
-  -->
-  <div id="graphComponent">
-    <div class="popupContainer">
-      <div id="nodePopupContent" class="popupContent" tabindex="0">
-        <!-- The content template for the node popup panel -->
-        <div class="popupContentLeft">
-          <img id="icon" style="position:relative;top:6px;">
-        </div>
-        <div class="popupContentRight">
-          <div data-id="name" style="font-size:14px;font-weight:bold;margin-bottom:4px;"></div>
-          <div data-id="position" style="margin-bottom:4px;"></div>
-          <div data-id="email"></div>
-          <div data-id="phone"></div>
-          <div data-id="fax"></div>
-        </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
       </div>
 
-      <div id="edgePopupContent" class="popupContent" style="text-align: center" tabindex="0">
-        <!-- The content template for the edge popup panel -->
-        <div style="display: inline-block;">
-          <div data-id="sourceName" style="font-weight:bold;float:left"></div>
-          <div style="float:left; margin-left:5px; margin-right: 5px">-></div>
-          <div data-id="targetName" style="font-weight:bold;float:left"></div>
+      <!--
+  The GraphComponent
+  -->
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent">
+          <div class="popupContainer">
+            <div id="nodePopupContent" class="popupContent" tabindex="0">
+              <!-- The content template for the node popup panel -->
+              <div class="popupContentLeft">
+                <img id="icon" style="position: relative; top: 6px" />
+              </div>
+              <div class="popupContentRight">
+                <div
+                  data-id="name"
+                  style="font-size: 14px; font-weight: bold; margin-bottom: 4px"
+                ></div>
+                <div data-id="position" style="margin-bottom: 4px"></div>
+                <div data-id="email"></div>
+                <div data-id="phone"></div>
+                <div data-id="fax"></div>
+              </div>
+            </div>
+
+            <div id="edgePopupContent" class="popupContent" style="text-align: center" tabindex="0">
+              <!-- The content template for the edge popup panel -->
+              <div style="display: inline-block">
+                <div data-id="sourceName" style="font-weight: bold; float: left"></div>
+                <div style="float: left; margin-left: 5px; margin-right: 5px">-&gt;</div>
+                <div data-id="targetName" style="font-weight: bold; float: left"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="HTMLPopupDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="HTMLPopupDemo.js"></script>
+  </body>
 </html>

@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/06-get-bounds/index.html).
 
+Custom Styles Tutorial
+
+# GetBounds
+
 This step shows how to override `getBounds()` of [NodeStyleBase](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase).
 
 Also, [NodeStyleBase#getOutline](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline) is implemented, so that implementations of [NodeStyleBase#getIntersection](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getIntersection), [NodeStyleBase#isInside](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside) and [NodeStyleBase#isHit](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit) won't be necessary any more.

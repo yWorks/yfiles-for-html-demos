@@ -46,7 +46,6 @@ export default {
   justify-content: center;
   font-size: 1.25rem;
   font-weight: 500;
-  line-height: 2rem;
   letter-spacing: 0.0125em;
   font-family: 'Roboto', sans-serif;
   color: #fff;

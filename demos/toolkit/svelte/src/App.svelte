@@ -17,8 +17,11 @@
 
 <div class="app">
   <aside class="demo-sidebar demo-left">
-    <h1 class="demo-sidebar-header">Description</h1>
-    <div class="demo-sidebar-content">
+      <h1 class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </h1>
+      <div class="demo-sidebar-content">
+        <h1>Svelte Integration Demo</h1>
       <p>
         This demo shows how to integrate yFiles for HTML with the <a
           href="https://svelte.dev/"
@@ -66,9 +69,10 @@
     <div class="demo-header">
       <a href="https://www.yworks.com" target="_blank">
         <img src="ylogo.svg" alt="yFiles Logo" class="demo-y-logo" />
-      </a> <a href="https://live.yworks.com" target="_blank">yFiles for HTML</a><span
-        class="demo-title">Svelte Integration Demo [yFiles for HTML]</span
-      >
+      </a>
+      <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+      <a href="https://live.yworks.com" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+      <span class="demo-title">Svelte Integration Demo [yFiles for HTML]</span>
     </div>
     <div class="demo-toolbar">
       <button
@@ -113,7 +117,11 @@
 <style>
   :global(body) {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Tahoma, Verdana, sans-serif;
+  }
+
+  :global(.demo-sidebar.demo-right) {
+    top: 0;
   }
 
   .main-panel {
@@ -135,7 +143,7 @@
   .search {
     line-height: 20px;
     padding: 4px 8px;
-    font-size: 16px;
+    font-size: 14px;
     letter-spacing: normal;
     width: 300px;
   }

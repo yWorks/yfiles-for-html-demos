@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,77 +34,90 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Restricted Editing Demo [yFiles for HTML]</title>
+    <title>Restricted Editing Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demos shows how to restrict interactive editing while still using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> for its
-      non-editing features like, e.g., click-selecting items.
-    </p>
-    <p>
-      More precisely, this demo shows how to
-    </p>
-    <ul>
-      <li>disable all interactive editing operations,</li>
-      <li>disable interactive editing operations except for moving items,</li>
-      <li>enable all interactive editing operations.</li>
-    </ul>
-    <p>
-      While the above editing schemes are fairly coarse-grained, GraphEditorInputMode actually provides properties
-      to enable or disable individual editing operations. Please see the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> API
-      documentation for a complete list of configuration options.
-    </p>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Restricted Editing Demo</h1>
 
-    <h2>Editing Operations</h2>
-    <p>
-      Choose one of the available editing schemes <code>None</code>, <code>Moving Items</code>, and <code>All</code>.
-    </p>
-    <dl>
-      <dt>None</dt>
-      <dd>
-        All interactive editing operations are disabled, i.e.,
-        it is not possible to interactively modify the graph in any way: no node movement, no edge creation, no
-        label editing, etc. However, clicking on an item will still select the clicked item.
-      </dd>
-      <dt>Moving Items</dt>
-      <dd>
-        Interactive editing is disabled except for moving items, i.e.m it is possible to move selected nodes, edges, or
-        bends to new positions.
-      </dd>
-      <dt>All</dt>
-      <dd>
-        All interactive editing operations are enabled.
-      </dd>
-    </dl>
-  </div>
-</aside>
+        <p>
+          This demos shows how to restrict interactive editing while still using
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> for its non-editing features like, e.g., click-selecting
+          items.
+        </p>
+        <p>More precisely, this demo shows how to</p>
+        <ul>
+          <li>disable all interactive editing operations,</li>
+          <li>disable interactive editing operations except for moving items,</li>
+          <li>enable all interactive editing operations.</li>
+        </ul>
+        <p>
+          While the above editing schemes are fairly coarse-grained, GraphEditorInputMode actually
+          provides properties to enable or disable individual editing operations. Please see the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> API documentation for a complete list of configuration
+          options.
+        </p>
 
-<div class="demo-content">
+        <h2>Editing Operations</h2>
+        <p>
+          Choose one of the available editing schemes <code>None</code>, <code>Moving Items</code>,
+          and <code>All</code>.
+        </p>
+        <dl>
+          <dt>None</dt>
+          <dd>
+            All interactive editing operations are disabled, i.e., it is not possible to
+            interactively modify the graph in any way: no node movement, no edge creation, no label
+            editing, etc. However, clicking on an item will still select the clicked item.
+          </dd>
+          <dt>Moving Items</dt>
+          <dd>
+            Interactive editing is disabled except for moving items, i.e.m it is possible to move
+            selected nodes, edges, or bends to new positions.
+          </dd>
+          <dt>All</dt>
+          <dd>All interactive editing operations are enabled.</dd>
+        </dl>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <span>Editing Operations</span>
-    <select id="allowedEditingOperations">
-      <option value="none">None</option>
-      <option value="moving">Moving Items</option>
-      <option value="all">All</option>
-    </select>
-  </div>
-  <div id="graphComponent" class="component"></div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <span>Editing Operations</span>
+        <select id="allowedEditingOperations">
+          <option value="none">None</option>
+          <option value="moving">Moving Items</option>
+          <option value="all">All</option>
+        </select>
+      </div>
 
-</div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent" class="component"></div>
+      </div>
+    </div>
 
-<script type="module" crossorigin="anonymous" src="RestrictedEditingDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="RestrictedEditingDemo.js"></script>
+  </body>
 </html>

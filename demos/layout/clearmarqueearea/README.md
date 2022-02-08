@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/clearmarqueearea/index.html).
 
+# Clear Marquee Area Demo
+
 A demo that shows how to interactively move graph elements within a marquee rectangle in a given graph layout so that the modifications in the graph are minimal.
 
 Every time the marquee rectangle is dragged interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout) will push away the other elements so there is a free area for the rectangle.

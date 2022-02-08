@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/27-canvas-painting/index.html).
 
+Custom Styles Tutorial
+
+# Canvas Painting
+
 This step shows how to implement a zoom-dependent high-performance rendering using HTML5 Canvas painting for nodes. With the _High Performance_ button, you can switch between the normal SVG-based rendering and the Canvas painting.
 
 ## Description

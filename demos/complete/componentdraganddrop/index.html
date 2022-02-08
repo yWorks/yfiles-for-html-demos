@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,127 +34,139 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Component Drag and Drop Demo [yFiles for HTML]</title>
+    <title>Component Drag and Drop Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <!-- styling for the drag and drop palette -->
-  <style>
-    #palette {
-      position: absolute;
-      top: 100px;
-      bottom: 0;
-      right: 0;
-      width: 170px;
-      border-left: 5px solid #ebeef0;
-      overflow: auto;
-      box-sizing: border-box;
-      z-index: 8;
-    }
-
-    @media screen and (max-height: 500px) {
+    <!-- styling for the drag and drop palette -->
+    <style>
       #palette {
-        top: 60px;
+        position: absolute;
+        top: 100px;
+        bottom: 0;
+        right: 0;
+        width: 170px;
+        border-left: 5px solid #ebeef0;
+        overflow: auto;
+        box-sizing: border-box;
+        z-index: 8;
       }
-    }
 
-    #graphComponent,
-    .demo-left-hidden #graphComponent {
-      right: 170px !important;
-    }
+      @media screen and (max-height: 500px) {
+        #palette {
+          top: 60px;
+        }
+      }
 
-    .yfiles-drag {
-      z-index: 15;
-      opacity: 0.35;
-      transition: opacity .2s ease-in-out;
-    }
+      #graphComponent,
+      .demo-left-hidden #graphComponent {
+        right: 170px !important;
+      }
 
-    .yfiles-drag.hidden {
-      opacity: 0;
-    }
-  </style>
+      .yfiles-drag {
+        z-index: 15;
+        opacity: 0.35;
+        transition: opacity 0.2s ease-in-out;
+      }
 
-</head>
-<body class="demo-has-left">
+      .yfiles-drag.hidden {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Component Drag and Drop Demo</h1>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      A demo that shows how to make space for components that you can drag from a palette onto the canvas.
-    </p>
-    <p>
-      If a component is dragged from the palette onto the canvas, the <em>ClearAreaLayout</em> algorithm will push away
-      the other elements so there is a free area for the component. This is also the case when dragging a component that
-      is already part of the graph.
-    </p>
-    <h2>
-      Things to Try
-    </h2>
-    <ul>
-      <li>
-        Drag a component from the palette onto the canvas and watch the graph give way to it.
-      </li>
-      <li>
-        Drop the dragged component at the desired location.
-      </li>
-      <li>
-        Press the ESC key while dragging to cancel the drag and drop operation.
-      </li>
-      <li>
-        Select the button <em>Keep Components</em> to prevent the components from being changed during the drag and
-        drop operation.
-      </li>
-      <li>
-        Select a component by clicking on a node, drag the component through the remaining graph, and watch how the
-        graph changes to provide space for it.
-      </li>
-    </ul>
+        <p>
+          A demo that shows how to make space for components that you can drag from a palette onto
+          the canvas.
+        </p>
+        <p>
+          If a component is dragged from the palette onto the canvas, the
+          <em>ClearAreaLayout</em> algorithm will push away the other elements so there is a free
+          area for the component. This is also the case when dragging a component that is already
+          part of the graph.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Drag a component from the palette onto the canvas and watch the graph give way to it.
+          </li>
+          <li>Drop the dragged component at the desired location.</li>
+          <li>Press the ESC key while dragging to cancel the drag and drop operation.</li>
+          <li>
+            Select the button <em>Keep Components</em> to prevent the components from being changed
+            during the drag and drop operation.
+          </li>
+          <li>
+            Select a component by clicking on a node, drag the component through the remaining
+            graph, and watch how the graph changes to provide space for it.
+          </li>
+        </ul>
 
-    <h2>
-      Related Demos
-    </h2>
-    <ul>
-      <li>
-        <a href='../../input/draganddrop'>Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../../input/graph-drag-and-drop'>Graph Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../../input/custom-drag-and-drop'>Custom Drag and Drop</a>
-      </li>
-      <li>
-        <a href='../../03-tutorial-application-features/drag-and-drop/index.html'>Tutorial: Drag and Drop</a>
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Related Demos</h2>
+        <ul>
+          <li>
+            <a href="../../input/draganddrop">Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../../input/graph-drag-and-drop">Graph Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../../input/custom-drag-and-drop">Custom Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../../03-tutorial-application-features/drag-and-drop/index.html"
+              >Tutorial: Drag and Drop</a
+            >
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <input
+          type="checkbox"
+          id="keep-components"
+          data-command="KeepComponents"
+          title="Components should not be separated while dragging"
+          class="demo-toggle-button labeled"
+        />
+        <label for="keep-components">Keep Components</label>
+      </div>
 
-    <input type="checkbox" id="keep-components" data-command="KeepComponents"
-      title="Components should not be separated while dragging" class="demo-toggle-button labeled"/>
-    <label for="keep-components">Keep Components</label>
-  </div>
+      <!-- the panel which contains a palette of components to drop into the graph -->
 
-  <!-- the panel which contains a palette of components to drop into the graph -->
-  <div id="palette"></div>
+      <div class="demo-content-dynamic">
+        <div id="palette"></div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="ComponentDragAndDropDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="ComponentDragAndDropDemo.js"></script>
+  </body>
 </html>

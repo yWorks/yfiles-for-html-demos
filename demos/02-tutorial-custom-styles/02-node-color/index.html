@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,88 +34,96 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Node Color - Custom Styles Tutorial [yFiles for HTML]</title>
+    <title>Node Color - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description
 -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Custom Styles Tutorial</div>
 
-    <p>This step shows how to change the style of the nodes based on their <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>.</p>
-    <p>In this case, the background color of the nodes can be set via the <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> property
-      of the nodes.</p>
+        <h1>Node Color</h1>
 
-    <h2>Things to Try</h2>
+        <p>
+          This step shows how to change the style of the nodes based on their
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>.
+        </p>
+        <p>
+          In this case, the background color of the nodes can be set via the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> property of the nodes.
+        </p>
 
-    <ul>
-      <li>
-        Take a look at the methods <code>MySimpleNodeStyle.render()</code> and <code>SampleApplication.createSampleGraph()</code>.
-      </li>
-    </ul>
+        <h2>Things to Try</h2>
 
-    <h2>Left to Do</h2>
+        <ul>
+          <li>
+            Take a look at the methods <code>MySimpleNodeStyle.render()</code> and
+            <code>SampleApplication.createSampleGraph()</code>.
+          </li>
+        </ul>
 
-    <ul>
-      <li>
-        Implement high-performance rendering of nodes.
-      </li>
-      <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a>,
-        so that the edges end at the node instead of the node's bounding box.
-      </li>
-      <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a>, so that a node won't get selected when clicking on its
-        bounding box but, not on the node itself.
-      </li>
-      <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getBounds" target="_blank">NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the
-        bounds of the node.
-      </li>
-      <li>
-        Find a way to draw a well-performing drop shadow.
-      </li>
-      <li>
-        Draw edges from nodes to their labels.
-      </li>
-      <li>
-        Create a custom label style.
-      </li>
-      <li>
-        Create a custom edge style.
-      </li>
-      <li>
-        Create a custom port style for nodes.
-      </li>
-      <li>
-        Create a custom group node style.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Left to Do</h2>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span data-type="Separator"></span>
-  </div>
+        <ul>
+          <li>Implement high-performance rendering of nodes.</li>
+          <li>
+            Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a>, so
+            that the edges end at the node instead of the node's bounding box.
+          </li>
+          <li>
+            Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a>, so that a node won't get selected when
+            clicking on its bounding box but, not on the node itself.
+          </li>
+          <li>
+            Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getBounds" target="_blank">NodeStyleBase#getBounds</a>, so that the drop shadow will be included
+            in the bounds of the node.
+          </li>
+          <li>Find a way to draw a well-performing drop shadow.</li>
+          <li>Draw edges from nodes to their labels.</li>
+          <li>Create a custom label style.</li>
+          <li>Create a custom edge style.</li>
+          <li>Create a custom port style for nodes.</li>
+          <li>Create a custom group node style.</li>
+        </ul>
+      </div>
+    </aside>
 
-  <!--
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span data-type="Separator"></span>
+      </div>
+
+      <!--
   The GraphComponent
   -->
-  <div id="graphComponent"></div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

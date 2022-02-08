@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/draganddrop/index.html).
 
+# Drag and Drop Demo
+
 This demo shows how to enable drag and drop functionality for nodes using class [NodeDropInputMode](https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode), [LabelDropInputMode](https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode) and [PortDropInputMode](https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode)
 
 Note that, these specialized input modes offer more features than the generic [DropInputMode](https://docs.yworks.com/yfileshtml/#/api/DropInputMode), namely a preview of the item and a support for snapping while dragging.

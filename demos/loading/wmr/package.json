@@ -9,7 +9,7 @@
     "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'public/license.json'); require('fs-extra').copySync('../../resources/style/demo.css', 'public/demo.css'); require('fs-extra').copySync('../../resources/icons', 'public/icons');\""
   },
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.5-dev.tgz"
   },
   "devDependencies": {
     "wmr": "^3.7.2",

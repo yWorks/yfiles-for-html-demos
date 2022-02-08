@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,7 +43,7 @@ dd {
 }
 
 #propertiesView {
-  padding: 10px;
+  overflow-x: hidden;
 }
 
 #propertiesView td {
@@ -52,9 +52,11 @@ dd {
 
 #propertiesView td:first-of-type {
   text-transform: uppercase;
-  color: #ffaf00;
+  color: #336699;
   font-weight: bold;
-  padding-right: 20px;
+  padding-right: 1ex;
+  vertical-align: top;
+  font-size: smaller;
 }
 
 #propertiesView td a {
@@ -63,29 +65,28 @@ dd {
 }
 
 #propertiesView td a:hover {
-  color: #ffaf00;
+  color: #336699;
 }
 
-.user-detail {
+#propertiesView .user-detail {
   position: relative;
-  height: 50px;
   margin: 10px 0;
 }
 
-.user-detail svg {
+#propertiesView .user-detail svg {
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.user-detail h2 {
+#propertiesView .user-detail h2 {
   font-size: 20px;
   font-weight: normal;
   margin: 0 0 5px 60px;
   color: #336699;
 }
 
-.user-detail div {
+#propertiesView .user-detail div {
   margin-left: 60px;
   font-weight: 400;
   text-transform: uppercase;

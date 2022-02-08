@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,174 +34,231 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Decision Tree Demo [yFiles for HTML]</title>
+    <title>Decision Tree Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .action-button {
-      position: fixed;
-      right: 40px;
-      bottom: 40px;
-      width: 100px;
-      height: 100px;
-      border: 5px solid #666666;
-      border-radius: 100px;
-      background-size: 70px 70px;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-color: #c1c1c1;
-      cursor: pointer;
-    }
-
-    #decisionTree {
-      position: absolute;
-      left: 0;
-      top: 100px;
-      right: 0;
-      bottom: 0;
-      background-color: #FFFFFF;
-    }
-
-    @media screen and (max-height: 500px) {
-      #decisionTree {
-        top: 60px;
+    <style>
+      .action-button {
+        position: fixed;
+        right: 40px;
+        bottom: 40px;
+        width: 100px;
+        height: 100px;
+        border: 5px solid #666666;
+        border-radius: 100px;
+        background-size: 70px 70px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: #c1c1c1;
+        cursor: pointer;
       }
-    }
 
-    #showDecisionTreeButton {
-      background-image: url('../../resources/icons/play2-16.svg');
-    }
-    #showDecisionTreeButton.disabled {
-      background-color: #aaaaaa;
-    }
+      #decisionTree {
+        position: absolute;
+        left: 0;
+        top: 100px;
+        right: 0;
+        bottom: 0;
+        background-color: #ffffff;
+      }
 
-    #editDecisionTreeButton {
-      background-image: url('../../resources/icons/settings-16.svg');
-    }
+      @media screen and (max-height: 500px) {
+        #decisionTree {
+          top: 60px;
+        }
+      }
 
-    .inline-image {
-      width: 10px;
-      height: 10px;
-      margin-left: 5px;
-    }
-  </style>
+      #showDecisionTreeButton {
+        background-image: url('../../resources/icons/play2-16.svg');
+      }
+      #showDecisionTreeButton.disabled {
+        background-color: #aaaaaa;
+      }
 
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+      #editDecisionTreeButton {
+        background-image: url('../../resources/icons/settings-16.svg');
+      }
 
-    <p>This demo shows how to create an interactive decision tree from a graph.</p>
+      .inline-image {
+        width: 10px;
+        height: 10px;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Decision Tree Demo</h1>
 
-    <p>The decision tree contains different types of nodes.</p>
-    <ul>
-      <li>Orange nodes are the current options that can be clicked in order to expand the next tree level.</li>
-      <li>Blue nodes are nodes that have been previously chosen.</li>
-      <li>Grey nodes represent options along the path that have not been chosen.</li>
-      <li>Green nodes are end nodes.</li>
-    </ul>
+        <p>This demo shows how to create an interactive decision tree from a graph.</p>
 
-    <h2>Things to Try</h2>
+        <p>The decision tree contains different types of nodes.</p>
+        <ul>
+          <li>
+            Orange nodes are the current options that can be clicked in order to expand the next
+            tree level.
+          </li>
+          <li>Blue nodes are nodes that have been previously chosen.</li>
+          <li>Grey nodes represent options along the path that have not been chosen.</li>
+          <li>Green nodes are end nodes.</li>
+        </ul>
 
-    <h3>Decision Tree</h3>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>
-        Browse the <em>Sample Graphs</em>.
-      </li>
-      <li>
-        Click the <em>orange nodes</em> to make a decision and expand the next level of the tree.
-      </li>
-      <li>
-        Click the <em>blue</em> or <em>grey nodes</em> to reset the decision tree back to this level and select the clicked option.
-      </li>
-      <li>
-        Click <em>Restart</em> to reset the current decision tree.
-      </li>
-      <li>
-        Click the <em>edit button</em><img class="inline-image" src="../../resources/icons/settings-16.svg"> to edit the current sample and view the complete graph.
-      </li>
-    </ul>
+        <h3>Decision Tree</h3>
 
-    <h3>Edit View</h3>
+        <ul>
+          <li>Browse the <em>Sample Graphs</em>.</li>
+          <li>
+            Click the <em>orange nodes</em> to make a decision and expand the next level of the
+            tree.
+          </li>
+          <li>
+            Click the <em>blue</em> or <em>grey nodes</em> to reset the decision tree back to this
+            level and select the clicked option.
+          </li>
+          <li>Click <em>Restart</em> to reset the current decision tree.</li>
+          <li>
+            Click the <em>edit button</em
+            ><img class="inline-image" src="../../resources/icons/settings-16.svg" /> to edit the
+            current sample and view the complete graph.
+          </li>
+        </ul>
 
-    <ul>
-      <li>
-        Modify the current sample graph or load other graphs from your computer.
-      </li>
-      <li>
-        Right click a node and select "Set as root node" to start the decision tree at this node. Right click the empty canvas to clear the root node.
-      </li>
-      <li>
-        Click the <em>start button</em><img class="inline-image" src="../../resources/icons/play2-16.svg"> to start the decision tree with the current graph.
-      </li>
-    </ul>
+        <h3>Edit View</h3>
 
-    <h2>Source Graph Structure</h2>
+        <ul>
+          <li>Modify the current sample graph or load other graphs from your computer.</li>
+          <li>
+            Right click a node and select "Set as root node" to start the decision tree at this
+            node. Right click the empty canvas to clear the root node.
+          </li>
+          <li>
+            Click the <em>start button</em
+            ><img class="inline-image" src="../../resources/icons/play2-16.svg" /> to start the
+            decision tree with the current graph.
+          </li>
+        </ul>
 
-    <p>The <em>DecisionTree</em> component supports different formats of graphs.</p>
-    <ul>
-      <li>The source graph doesn't have to be a tree. It can be an arbitrary graph structure.</li>
-      <li>Loops in the graph are supported (see <em>quiz</em> sample).</li>
-      <li>The graph can contain group nodes, but the clickable nodes have to be normal nodes.</li>
-      <li>Only group nodes that are direct parents of clickable nodes appear in the decision graph.</li>
-      <li>Edges connecting nodes in groups can either end directly at the child nodes (as in the <em>quiz</em> sample), or at the containing group node (as in the <em>what-to-do</em> sample).</li>
-    </ul>
-    <p>The first node that's found that has no incoming edges serves as the start node. The <em>DecisionTree</em> component
-      also supports explicitly specifying a start node.</p>
+        <h2>Source Graph Structure</h2>
 
-  </div>
-</aside>
+        <p>The <em>DecisionTree</em> component supports different formats of graphs.</p>
+        <ul>
+          <li>
+            The source graph doesn't have to be a tree. It can be an arbitrary graph structure.
+          </li>
+          <li>Loops in the graph are supported (see <em>quiz</em> sample).</li>
+          <li>
+            The graph can contain group nodes, but the clickable nodes have to be normal nodes.
+          </li>
+          <li>
+            Only group nodes that are direct parents of clickable nodes appear in the decision
+            graph.
+          </li>
+          <li>
+            Edges connecting nodes in groups can either end directly at the child nodes (as in the
+            <em>quiz</em> sample), or at the containing group node (as in the
+            <em>what-to-do</em> sample).
+          </li>
+        </ul>
+        <p>
+          The first node that's found that has no incoming edges serves as the start node. The
+          <em>DecisionTree</em> component also supports explicitly specifying a start node.
+        </p>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar" id="toolbar-decisiontree">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  <div class="demo-toolbar" id="toolbar-decisiontree">
+        <span class="demo-separator"></span>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span>Sample</span>
+        <select data-command="SelectedFileChanged" title="Select a sample graph"></select>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
+        <button
+          data-command="Restart"
+          title="Restart Decision Tree"
+          class="demo-icon-yIconReload labeled"
+        >
+          Restart
+        </button>
+      </div>
+      <div class="demo-toolbar" id="toolbar-editor">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <button
+          data-command="Open"
+          title="Open a GraphML file"
+          class="demo-icon-yIconOpen"
+        ></button>
+        <button
+          data-command="Save"
+          title="Save a GraphML file"
+          class="demo-icon-yIconSave"
+        ></button>
 
-    <span>Sample</span>
-    <select data-command="SelectedFileChanged" title="Select a sample graph"></select>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
-    <button data-command="Restart" title="Restart Decision Tree" class="demo-icon-yIconReload labeled">Restart</button>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  </div>
+        <span class="demo-separator"></span>
 
-  <div class="demo-toolbar" id="toolbar-editor">
+        <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">
+          Layout
+        </button>
+      </div>
 
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
-    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="decisionTree" style="visibility: hidden"></div>
+        <div
+          id="showDecisionTreeButton"
+          class="action-button"
+          title="Show Decision Tree"
+          data-command="ShowDecisionTree"
+        ></div>
+        <div
+          id="editDecisionTreeButton"
+          class="action-button"
+          style="display: none"
+          title="Edit Decision Tree Graph"
+          data-command="EditDecisionTree"
+        ></div>
+      </div>
+    </div>
 
-    <span class="demo-separator"></span>
-
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
-
-  </div>
-
-  <div id="graphComponent"></div>
-  <div id="decisionTree" style="visibility: hidden"></div>
-  <div id="showDecisionTreeButton" class="action-button" title="Show Decision Tree" data-command="ShowDecisionTree"></div>
-  <div id="editDecisionTreeButton" class="action-button" style="display: none" title="Edit Decision Tree Graph" data-command="EditDecisionTree"></div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="DecisionTreeDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="DecisionTreeDemo.js"></script>
+  </body>
 </html>

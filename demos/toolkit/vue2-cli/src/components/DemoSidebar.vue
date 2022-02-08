@@ -1,7 +1,10 @@
 <template>
   <div>
-    <h1 class="demo-sidebar-header">Description</h1>
+    <div class="demo-sidebar-header">
+      <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo" />
+    </div>
     <div class="demo-sidebar-content">
+      <h1>Vue CLI Demo</h1>
       <p>
         This demo shows how to integrate yFiles in a basic
         <a href="https://cli.vuejs.org/" target="_blank">Vue CLI</a>
@@ -57,24 +60,40 @@ export default {
 
 <style scoped>
 .demo-sidebar-header {
-  color: #666666;
-  font-size: 1.8em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  background-color: #bdd8e0;
+  font-size: 1.1rem;
+}
+
+.demo-left-logo {
+  display: block;
   height: 60px;
-  line-height: 60px;
-  margin: 0;
-  box-sizing: border-box;
-  padding-left: 65px;
+  width: calc(2 * 60px);
+  margin-left: 20px;
+  background: left center / 90% url('../assets/ylogo-text.svg') no-repeat;
 }
 
 .demo-sidebar-content {
   overflow-y: auto;
   height: calc(100% - 70px);
   padding: 0 25px;
+  position: absolute;
 }
 
-.demo-sidebar-content h1,
-.demo-sidebar-content h2 {
-  color: #666666;
+.demo-sidebar .demo-sidebar-content h1 {
+  font-size: 1.7em;
+  line-height: 1.5;
+  color: #343f4a;
+}
+.demo-sidebar .demo-sidebar-content h2 {
+  font-size: 140%;
+  line-height: 130%;
+  margin: 1.5ex 0 1ex;
+  color: #343f4a;
 }
 
 .demo-sidebar-content a,
@@ -94,5 +113,21 @@ export default {
 
 .demo-sidebar-content li {
   margin: 0.5em 0;
+}
+
+.demo-sidebar-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.demo-sidebar-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.demo-sidebar-content::-webkit-scrollbar {
+  width: 8px;
+}
+.demo-sidebar-content::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 </style>

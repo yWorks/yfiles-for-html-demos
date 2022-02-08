@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/edgereconnection/index.html).
 
+# Edge Reconnection Port Candidate Provider Demo
+
 This demo shows how the reconnection of edge ports can be customized and restricted.
 
 This is done with custom implementations of [IEdgeReconnectionPortCandidateProvider](https://docs.yworks.com/yfileshtml/#/api/IEdgeReconnectionPortCandidateProvider) that are added to the lookup of the edges.

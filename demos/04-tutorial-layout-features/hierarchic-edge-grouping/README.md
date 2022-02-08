@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/hierarchic-edge-grouping/index.html).
 
-## Hierarchic Layout with Edge Grouping
+Layout Features Tutorial
+
+# Hierarchic Layout with Edge Grouping
 
 This demo shows how to configure edge grouping for the [Hierarchic Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
 

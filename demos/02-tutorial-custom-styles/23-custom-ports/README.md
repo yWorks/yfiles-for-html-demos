@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/23-custom-ports/index.html).
 
+Custom Styles Tutorial
+
+# Custom Ports
+
 This step shows a custom port style. In this case, the port is a transparent white circle.
 
 ## Things to Try

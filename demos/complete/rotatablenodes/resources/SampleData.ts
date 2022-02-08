@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -92,7 +92,7 @@ export const SineSample = {
       id: 10,
       angle: 180,
       cx: 700,
-      cy: 5.684341886080802e-14
+      cy: 5.6843418860808e-14
     },
     {
       id: 11,

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -392,17 +392,13 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
    * @param e The arguments of the event.
    * @private
    */
-  private async handleEvent(source: object, e: EventArgs): Promise<void> {
+  private handleEvent(source: object, e: EventArgs): Promise<void> {
     const controller = this.controller
-    if (!controller) {
-      return
+    if (!controller || (!controller.hasMutex() && !controller.canRequestMutex())) {
+      return Promise.resolve()
     }
 
-    if (!controller.hasMutex() && !controller.canRequestMutex()) {
-      return
-    }
-
-    this.handleEventImpl(source, e)
+    return this.handleEventImpl(source, e)
   }
 
   private async handleEventImpl(source: object, e: EventArgs): Promise<void> {
@@ -616,7 +612,7 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
     if (this.activePickersAction) {
       // calculate layout of the main button to place picker buttons relative to it
       const options = this.activePickersAction.buttonOptions!
-      const wrappedParameter = this.activePickersAction.button?.label.layoutParameter!
+      const wrappedParameter = this.activePickersAction.button!.label.layoutParameter
       // picker buttons and their background are placed north of the parent button with an offset
       const backgroundLayout = new OffsetLabelModelWrapper().createOffsetParameter(
         wrappedParameter,
@@ -655,7 +651,7 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
         this,
         button.owner,
         button.tag,
-        this.inputModeContext?.canvasComponent?.lastInputEvent!
+        this.inputModeContext!.canvasComponent!.lastInputEvent
       )
       this.resolvePickerSelection(actionSuccessful == undefined || actionSuccessful)
     }
@@ -737,7 +733,7 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
         action,
         button.owner,
         button.tag,
-        this.inputModeContext?.canvasComponent?.lastInputEvent!
+        this.inputModeContext!.canvasComponent!.lastInputEvent
       )
     }
   }

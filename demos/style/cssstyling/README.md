@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/cssstyling/index.html).
 
+# CSS Styling Demo
+
 This demo shows how to style the built-in templates and UI elements of the _yFiles for HTML_ library with CSS to match your color theme.
 
 There is a separate CSS-stylesheet which contains the more information about this demo.

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/recursive-group-layout/index.html).
 
-## Recursive Group Layout
+Layout Features Tutorial
+
+# Recursive Group Layout
 
 This demo shows how to use the [Recursive Group Layout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout).
 

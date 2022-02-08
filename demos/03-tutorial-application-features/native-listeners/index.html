@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,84 +34,112 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Native Listeners - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Native Listeners - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #toast {
-      position: absolute;
-      bottom: -50px;
-      left: 20px;
-      height: 48px;
-      line-height: 48px;
-      color: white;
-      background-color: #323232;
-      font-family: 'Roboto', sans-serif;
-      font-size: 14px;
-      padding-left: 24px;
-      border-radius: 2px;
-      width: 290px;
-      transition: bottom .2s ease-in-out;
-    }
+    <style>
+      #toast {
+        position: absolute;
+        bottom: -50px;
+        left: 20px;
+        height: 48px;
+        line-height: 48px;
+        color: white;
+        background-color: #323232;
+        font-family: 'Roboto', sans-serif;
+        font-size: 14px;
+        padding-left: 24px;
+        border-radius: 2px;
+        width: 290px;
+        transition: bottom 0.2s ease-in-out;
+      }
 
-    .button {
-      fill: #0B7189;
-      cursor: pointer;
-    }
+      .button {
+        fill: #0b7189;
+        cursor: pointer;
+      }
 
-    .button:hover {
-      fill: #2C4B52;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
+      .button:hover {
+        fill: #2c4b52;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Native Listeners</h2>
-    <p>
-      This demo illustrates an approach on how to register native event listeners to SVG-elements on a style.</p>
-    <p>
-      In this case a style decorator adds a circle with a click listener to the style. Please note that the yFiles input
-      modes don't know anything about the native events you registered. Therefore, the input modes also handle the
-      input. This can cause unwanted behavior, like selecting the node despite the native click listener being
-      triggered.</p>
-    <p>To prevent input modes from being triggered as well, a <code>mousedown</code> listener that calls <code>preventDefault()</code>
-      on the event may be registered at the element as well.</p>
+        <h1>Native Listeners</h1>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>
+          This demo illustrates an approach on how to register native event listeners to
+          SVG-elements on a style.
+        </p>
+        <p>
+          In this case a style decorator adds a circle with a click listener to the style. Please
+          note that the yFiles input modes don't know anything about the native events you
+          registered. Therefore, the input modes also handle the input. This can cause unwanted
+          behavior, like selecting the node despite the native click listener being triggered.
+        </p>
+        <p>
+          To prevent input modes from being triggered as well, a <code>mousedown</code> listener
+          that calls <code>preventDefault()</code> on the event may be registered at the element as
+          well.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
-  </div>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-  <div id="graphComponent">
-    <!-- show a toast when the decorator was clicked -->
-    <div id="toast">Decorator Clicked</div>
-  </div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group selected element"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup selected element"
+          class="demo-icon-yIconUngroup"
+        ></button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent">
+          <!-- show a toast when the decorator was clicked -->
+          <div id="toast">Decorator Clicked</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

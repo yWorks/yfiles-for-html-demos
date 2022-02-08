@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/databinding/simplegraphbuilder/index.html).
 
+# Simple Graph Builder Demo
+
 This demo automatically builds a graph from business data using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder), [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) or [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder).  
 The business data is stored in arrays or in **JSON** format.
 

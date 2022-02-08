@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,85 +34,79 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Touch Interaction [yFiles for HTML]</title>
+    <title>Touch Interaction [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <link rel="stylesheet" href="TouchEditor.css">
-</head>
-<body>
-<!--
+    <link rel="stylesheet" href="TouchEditor.css" />
+  </head>
+  <body>
+    <!--
   The sidebar for the description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This demo shows how a graph editor application can be optimized for touch devices.</p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Touch Interaction</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Create nodes by dragging them from the palette into the canvas.
-      </li>
-      <li>
-        Navigate the graph by dragging with one finger. Zoom with two fingers.
-      </li>
-      <li>
-        Select a node by tapping it. Drag the node handles to change the node's size. Drag the node itself to move it around.
-      </li>
-      <li>
-        Double Tap quickly on the empty canvas area to start the lasso selection tool. Release the finger to complete the selection gesture.
-      </li>
-      <li>
-        Long Press a node or any other graph item to open the item's context menu.
-      </li>
-      <li>
-        Long Press on the empty canvas area to open the background context menu.
-      </li>
-      <li>
-        Create nodes using the background context menu.
-      </li>
-      <li>
-        Create an edge by selecting "Create Edge" from a node's context menu.
-      </li>
-      <li>
-        Change the "Snap Touch Panning" behavior using the selection box above the palette and see how it affects graph panning. "Horizontal" locks near-horizontal panning to the x-axis. "Vertical" does the same for the y-axis. "Both" snaps near-horizontal and near-vertical panning.
-      </li>
-    </ul>
+        <p>This demo shows how a graph editor application can be optimized for touch devices.</p>
 
-  </div>
-</aside>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Create nodes by dragging them from the palette into the canvas.</li>
+          <li>Navigate the graph by dragging with one finger. Zoom with two fingers.</li>
+          <li>
+            Select a node by tapping it. Drag the node handles to change the node's size. Drag the
+            node itself to move it around.
+          </li>
+          <li>
+            Double Tap quickly on the empty canvas area to start the lasso selection tool. Release
+            the finger to complete the selection gesture.
+          </li>
+          <li>Long Press a node or any other graph item to open the item's context menu.</li>
+          <li>Long Press on the empty canvas area to open the background context menu.</li>
+          <li>Create nodes using the background context menu.</li>
+          <li>Create an edge by selecting "Create Edge" from a node's context menu.</li>
+          <li>
+            Change the "Snap Touch Panning" behavior using the selection box above the palette and
+            see how it affects graph panning. "Horizontal" locks near-horizontal panning to the
+            x-axis. "Vertical" does the same for the y-axis. "Both" snaps near-horizontal and
+            near-vertical panning.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-<div class="demo-content">
-  <div id="dndPanelContainer">
+      <div id="dndPanelContainer">
+        <div id="snapPanningDiv">
+          <p id="snapPanningLabel">Snap Touch Panning</p>
 
-    <div id="snapPanningDiv">
-      <p id="snapPanningLabel">Snap Touch Panning</p>
+          <div id="snapPanningBox">
+            <select>
+              <option value="none">None</option>
+              <option value="horizontal">Horizontal</option>
+              <option value="vertical">Vertical</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+        </div>
 
-      <div id="snapPanningBox">
-        <select>
-          <option value="none">None</option>
-          <option value="horizontal">Horizontal</option>
-          <option value="vertical">Vertical</option>
-          <option value="both">Both</option>
-        </select>
+        <div id="dndPanel"></div>
+      </div>
+
+      <!--The GraphComponent-->
+      <div id="graphComponent">
+        <button id="cancelButton" class="demo-button-invisible"></button>
       </div>
     </div>
 
-    <div id="dndPanel"></div>
-  </div>
-
-  <!--The GraphComponent-->
-  <div id="graphComponent">
-    <button id="cancelButton" class="demo-button-invisible"></button>
-  </div>
-
-</div>
-
-<script type="module" crossorigin="anonymous" src="TouchEditorDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="TouchEditorDemo.js"></script>
+  </body>
 </html>

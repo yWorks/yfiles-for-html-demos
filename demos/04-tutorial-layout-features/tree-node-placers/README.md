@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/tree-node-placers/index.html).
 
-## Tree Layout with Node Placers
+Layout Features Tutorial
+
+# Tree Layout with Node Placers
 
 This demo shows how to use [node placers](https://docs.yworks.com/yfileshtml/#/api/ITreeLayoutNodePlacer) with the [Tree Layout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout). A node placer is responsible for the arrangement of a local root node and all of its subtrees.
 

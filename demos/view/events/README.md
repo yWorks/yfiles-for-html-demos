@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/events/index.html).
 
+# Events Demo
+
 This demo shows the multitude of events provided by the classes [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) and [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) and the _Input Modes_.
 
 The events are logged to the _Event Log_ panel. Logging can be switched on and off for each _kind of events_ in the respective panel.

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/moveunselectednodes/index.html).
 
+# Move Unselected Nodes Demo
+
 This demo shows a special input mode that allows you to move nodes without selecting them first.
 
 This is done by enabling the [GraphEditorInputMode#moveUnselectedInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedInputMode).

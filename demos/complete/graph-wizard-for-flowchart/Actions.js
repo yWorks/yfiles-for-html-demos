@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -261,18 +261,20 @@ export function createSmartNavigateEdge(direction) {
         let node = null
         let index = -1
         switch (direction) {
-          case 'NextOutgoing':
+          case 'NextOutgoing': {
             node = item.sourceNode
             const outEdges = mode.graph.outEdgesAt(node)
             index = outEdges.toList().indexOf(item)
             target = outEdges.get((index + 1) % outEdges.size)
             break
-          case 'NextIncoming':
+          }
+          case 'NextIncoming': {
             node = item.targetNode
             const inEdges = mode.graph.inEdgesAt(node)
             index = inEdges.toList().indexOf(item)
             target = inEdges.get((index + 1) % inEdges.size)
             break
+          }
         }
       } else if (item instanceof INode) {
         switch (direction) {
@@ -350,7 +352,7 @@ export function createChangeNodeColorSet(preCondition, colorTheme, getItemFill, 
   const pickerButtons = []
   for (let i = 0; i < colorTheme.length; i++) {
     pickerButtons.push({
-      type: '' + i,
+      type: String(i),
       style: { type: 'rect', fill: colorTheme[i].fill, outline: colorTheme[i].outline }
     })
   }
@@ -392,7 +394,7 @@ export function createChangeNodeColorSet(preCondition, colorTheme, getItemFill, 
     [{ key: Key.C }],
     'Change the node color',
     {
-      typeFactory: item => '' + itemToColorSetIndex(item),
+      typeFactory: item => String(itemToColorSetIndex(item)),
       styleFactory: item => {
         const colorSet = colorTheme[itemToColorSetIndex(item)]
         return { type: 'rect', fill: colorSet.fill, outline: colorSet.outline }

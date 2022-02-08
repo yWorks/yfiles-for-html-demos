@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,96 +34,125 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Accessibility with Aria Attributes - Application Features Tutorial [yFiles for HTML]</title>
+    <title>
+      Accessibility with Aria Attributes - Application Features Tutorial [yFiles for HTML]
+    </title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .tooltip * {
-      margin: 5px;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
+    <style>
+      .tooltip * {
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Accessibility</h2>
-    <p>
-      This demo shows how to improve accessibility with ARIA attributes and a
-      <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions" target="_blank">live region</a>
-      for the graph component.
-      Switching an element in this demo, updates the live region of the graph component with the currently selected label.
-    </p>
+        <h1>Accessibility with Aria Attributes</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Focus the GraphComponent with <code>TAB</code> key and cycle through the nodes with the arrow keys. The label
-        of the currently selected node is read by the screen reader.
-      </li>
-      <li>Select an item to trigger the screen reader to read the label.</li>
-      <li>Hover a node to trigger its tooltip which is also read by the screen reader.</li>
-      <li>Toggle Aria-Atomic: This toggles <code>aria-atomic</code> on the live region. When enabled, the entire content of
-        the live region is read by the screen reader. When disabled, only the changed part (i.e. the item's label) is
-        read by the screen reader.
-      </li>
-    </ul>
+        <p>
+          This demo shows how to improve accessibility with ARIA attributes and a
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions"
+            target="_blank"
+            >live region</a
+          >
+          for the graph component. Switching an element in this demo, updates the live region of the
+          graph component with the currently selected label.
+        </p>
 
-    <h2>About Screen Readers</h2>
-    <p>
-      Screen reader support varies vastly and you might experience different behaviors across different screen readers
-      and browsers. Some examples of popular screen readers:
-    </p>
-    <ul>
-      <li><a href="https://www.freedomscientific.com/products/software/jaws/">JAWS screen reader</a>: A popular windows screen reader.
-      <li><a href="https://www.nvaccess.org/download/">NVDA screen reader</a>: An open-source screen reader for windows.
-      </li>
-      <li>Windows Narrator: Built-in windows screen reader.</li>
-      <li>VoiceOver: A macOS built-in screen reader.</li>
-    </ul>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Focus the GraphComponent with <code>TAB</code> key and cycle through the nodes with the
+            arrow keys. The label of the currently selected node is read by the screen reader.
+          </li>
+          <li>Select an item to trigger the screen reader to read the label.</li>
+          <li>Hover a node to trigger its tooltip which is also read by the screen reader.</li>
+          <li>
+            Toggle Aria-Atomic: This toggles <code>aria-atomic</code> on the live region. When
+            enabled, the entire content of the live region is read by the screen reader. When
+            disabled, only the changed part (i.e. the item's label) is read by the screen reader.
+          </li>
+        </ul>
 
-    <h3>Known Issues</h3>
-    <p>
-      <code>aria-atomic</code> has no effect in Chrome.
-    </p>
-    <p>
-      Windows Narrator behaves differently depending on the browser and does not consider the aria-atomic attribute. For
-      example, the <code>application</code> role is not honored on some systems with Chrome and Windows Narrator such
-      that keyboard inputs are not delivered to the graph component and therefore the item selection cannot be changed with
-      the arrow keys.
-    </p>
-    <p>
-      VoiceOver on macOS does not pick up the aria-describedby label that is used on the graph component container for
-      the item's tooltip.
-    </p>
-  </div>
-</aside>
+        <h2>About Screen Readers</h2>
+        <p>
+          Screen reader support varies vastly and you might experience different behaviors across
+          different screen readers and browsers. Some examples of popular screen readers:
+        </p>
+        <ul>
+          <li>
+            <a href="https://www.freedomscientific.com/products/software/jaws/"
+              >JAWS screen reader</a
+            >: A popular windows screen reader.
+          </li>
+          <li>
+            <a href="https://www.nvaccess.org/download/">NVDA screen reader</a>: An open-source
+            screen reader for windows.
+          </li>
+          <li>Windows Narrator: Built-in windows screen reader.</li>
+          <li>VoiceOver: A macOS built-in screen reader.</li>
+        </ul>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <input type="checkbox" id="atomic-toggle" class="demo-toggle-button labeled">
-    <label for="atomic-toggle" title="Toggles aria-atomic on the live region">Toggle Aria-Atomic</label>
-  </div>
+        <h3>Known Issues</h3>
+        <p><code>aria-atomic</code> has no effect in Chrome.</p>
+        <p>
+          Windows Narrator behaves differently depending on the browser and does not consider the
+          aria-atomic attribute. For example, the <code>application</code> role is not honored on
+          some systems with Chrome and Windows Narrator such that keyboard inputs are not delivered
+          to the graph component and therefore the item selection cannot be changed with the arrow
+          keys.
+        </p>
+        <p>
+          VoiceOver on macOS does not pick up the aria-describedby label that is used on the graph
+          component container for the item's tooltip.
+        </p>
+      </div>
+    </aside>
 
-  <div role="application" id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <input type="checkbox" id="atomic-toggle" class="demo-toggle-button labeled" />
+        <label for="atomic-toggle" title="Toggles aria-atomic on the live region"
+          >Toggle Aria-Atomic</label
+        >
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div role="application" id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

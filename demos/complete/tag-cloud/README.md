@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/tag-cloud/index.html).
 
+# Tag Cloud Demo
+
 This demo shows how to create a _Tag Cloud_ visualization.
 
 Tag clouds are a standard tool for visualizing text documents. The number of occurrences of a word in the text document is the word's _frequency_. The higher the frequency of a word, the more significant the word is. To convey a word's significance, its frequency determines the font size and text color of the word in the tag cloud. More frequent words are shown with increasingly larger font sizes.

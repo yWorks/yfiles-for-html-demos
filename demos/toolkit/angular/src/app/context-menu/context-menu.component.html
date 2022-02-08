@@ -1,6 +1,5 @@
 <div *ngIf="showMenu" class="context-menu" [style.top.px]="positionY" [style.left.px]="positionX">
   <button *ngFor="let action of actions" (click)="runAction(action.action)">
-    {{action.title}}
+    {{ action.title }}
   </button>
 </div>
-

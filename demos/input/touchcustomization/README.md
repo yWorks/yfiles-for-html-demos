@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/touchcustomization/index.html).
 
+# Touch Interaction
+
 This demo shows how a graph editor application can be optimized for touch devices.
 
 ## Things to Try

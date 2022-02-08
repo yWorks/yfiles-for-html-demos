@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,64 +34,100 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Folding - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Folding - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Folding</h2>
-    <p>
-      This step shows how to enable <a href="https://docs.yworks.com/yfileshtml/#/dguide/folding" target="_blank"> collapsing and expanding of group nodes</a>. This is
-      provided through class <a href="https://docs.yworks.com/yfileshtml/#/api/FoldingManager" target="_blank">FoldingManager</a> and its support classes.
-    </p>
+        <h1>Folding</h1>
 
-    <p>
-      <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> provides the following default gestures for collapse/expand:
-    </p>
-    <ul>
-      <li>Press CTRL+Numpad + or click the expand-button on the node's top left corner to open (expand) a closed group
-        node.
-      </li>
-      <li>Press CTRL+Numpad - or click the collapse-button on the node's top left corner to close (collapse) an open
-        group node.
-      <li>Press CTRL+Return to enter (navigate into) a group node.</li>
-      <li>Press CTRL+Backspace to exit (navigate out of) a group node.</li>
-    </ul>
+        <p>
+          This step shows how to enable
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/folding" target="_blank"> collapsing and expanding of group nodes</a>. This is
+          provided through class <a href="https://docs.yworks.com/yfileshtml/#/api/FoldingManager" target="_blank">FoldingManager</a> and its support classes.
+        </p>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> provides the following default gestures for
+          collapse/expand:
+        </p>
+        <ul>
+          <li>
+            Press CTRL+Numpad + or click the expand-button on the node's top left corner to open
+            (expand) a closed group node.
+          </li>
+          <li>
+            Press CTRL+Numpad - or click the collapse-button on the node's top left corner to close
+            (collapse) an open group node.
+          </li>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
-    <button data-command="EnterGroup" title="Enter group" class="demo-icon-yIconEnterGroup"></button>
-    <button data-command="ExitGroup" title="Leave group" class="demo-icon-yIconExitGroup"></button>
-  </div>
+          <li>Press CTRL+Return to enter (navigate into) a group node.</li>
+          <li>Press CTRL+Backspace to exit (navigate out of) a group node.</li>
+        </ul>
 
-  <div id="graphComponent"></div>
-</div>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group selected element"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup selected element"
+          class="demo-icon-yIconUngroup"
+        ></button>
+        <button
+          data-command="EnterGroup"
+          title="Enter group"
+          class="demo-icon-yIconEnterGroup"
+        ></button>
+        <button
+          data-command="ExitGroup"
+          title="Leave group"
+          class="demo-icon-yIconExitGroup"
+        ></button>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

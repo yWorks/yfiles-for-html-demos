@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/20-custom-arrow/index.html).
 
+Custom Styles Tutorial
+
+# Custom Arrow
+
 This step shows a custom arrow.
 
 ## Things to Try

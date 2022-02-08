@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/snapping/index.html).
 
-## Snapping
+Application Features Tutorial
+
+# Snapping
 
 This demo shows how to enable [snapping](https://docs.yworks.com/yfileshtml/#/dguide/interaction-snapping) (guide lines) for graph elements. This is provided through class [GraphSnapContext](https://docs.yworks.com/yfileshtml/#/api/GraphSnapContext).
 

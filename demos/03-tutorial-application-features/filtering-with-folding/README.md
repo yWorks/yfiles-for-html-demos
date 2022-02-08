@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/filtering-with-folding/index.html).
 
-## Filtering with Folding
+Application Features Tutorial
+
+# Filtering with Folding
 
 This sample shows how to configure [filtering](https://docs.yworks.com/yfileshtml/#/dguide/filtering) and [folding](https://docs.yworks.com/yfileshtml/#/dguide/folding) in the same application. While both features can be used in the same graph, the order of initialization is important.
 

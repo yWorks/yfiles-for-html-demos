@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/09-is-visible/index.html).
 
+Custom Styles Tutorial
+
+# IsVisible
+
 This step shows how to override the method `isVisible()` of [NodeStyleBase](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase).
 
 ## Things to Try

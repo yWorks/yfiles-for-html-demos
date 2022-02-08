@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/11-label-preferred-size/index.html).
 
+Custom Styles Tutorial
+
+# Label Preferred Size
+
 This step shows how to set the size of the label based on the size of its text by overriding the [LabelStyleBase#getPreferredSize](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#getPreferredSize) method.
 
 ## Things to Try

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,110 +34,138 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Large Collapsible Tree Demo [yFiles for HTML]</title>
+    <title>Large Collapsible Tree Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #no-webgl-support {
-      text-align: center;
-      font-size: 24px;
-      position: absolute;
-      top: 100px;
-      padding: 2em;
-      left: 0;
-      right: 0;
-      line-height: 2;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-
-<!--
+    <style>
+      #no-webgl-support {
+        text-align: center;
+        font-size: 24px;
+        position: absolute;
+        top: 100px;
+        padding: 2em;
+        left: 0;
+        right: 0;
+        line-height: 2;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Large Collapsible Tree Demo</h1>
 
-    <div id="largeTree">
-      <p>
-        The Large Tree Demo uses <a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL2</a> as the
-        rendering technique to display a large tree graph in order to optimize
-        performance.
-      </p>
-      <p>
-        The graph can be manipulated by adding or removing layers. The child count
-        of new layers can be changed with the slider control.
-      </p>
-      <p>
-        Adding and removing nodes is animated with layout and WebGL2 fade
-        animations running in parallel.
-      </p>
-      <p>
-        The maximum graph size is limited to 250000 nodes.
-      </p>
+        <div id="largeTree">
+          <p>
+            The Large Tree Demo uses <a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL2</a> as the rendering
+            technique to display a large tree graph in order to optimize performance.
+          </p>
+          <p>
+            The graph can be manipulated by adding or removing layers. The child count of new layers
+            can be changed with the slider control.
+          </p>
+          <p>
+            Adding and removing nodes is animated with layout and WebGL2 fade animations running in
+            parallel.
+          </p>
+          <p>The maximum graph size is limited to 250000 nodes.</p>
 
-      <h3>Things to Try</h3>
-      <p>Use the controls to manipulate the graph:</p>
-      <ul>
-        <li>
-          The layers determine the depth of the tree.
-          Click the "+" and "-" buttons to add and remove layers.
-          <br>
-          The "+" button is disabled, if adding a layer with the current child
-          count would exceed the maximum graph size of this demo.
-          (In this case, try reducing the child count for less nodes in new
-          layers.)
-        </li>
-        <li>
-          The child count determines the number of children to be added to each
-          leaf when a new layer is added.
-        </li>
-      </ul>
+          <h3>Things to Try</h3>
+          <p>Use the controls to manipulate the graph:</p>
+          <ul>
+            <li>
+              The layers determine the depth of the tree. Click the "+" and "-" buttons to add and
+              remove layers.
+              <br />
+              The "+" button is disabled, if adding a layer with the current child count would
+              exceed the maximum graph size of this demo. (In this case, try reducing the child
+              count for less nodes in new layers.)
+            </li>
+            <li>
+              The child count determines the number of children to be added to each leaf when a new
+              layer is added.
+            </li>
+          </ul>
+        </div>
+
+        <h3>Graph information</h3>
+        <p>
+          <span
+            >Number of nodes: <b><span id="numberNodes"></span></b></span
+          ><br />
+          <span
+            >Number of edges: <b><span id="numberEdges"></span></b></span
+          ><br />
+        </p>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <span>Layers: </span>
+        <button
+          id="removeLayer"
+          data-command="RemoveLayer"
+          title="Remove Layer"
+          class="demo-icon-yIconHideChildren"
+        ></button>
+        <span id="layerCount"></span>
+        <button
+          id="addLayer"
+          data-command="AddLayer"
+          title="Add Layer"
+          class="demo-icon-yIconShowChildren"
+        ></button>
+        <span class="demo-separator"></span>
+        <span>Child count:</span>
+        <input
+          style="width: 100px"
+          type="range"
+          min="1"
+          max="5"
+          step="1"
+          value="3"
+          id="childCountInput"
+          title="Child count"
+        />
+        <span id="childCount"></span>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="loadingIndicator"></div>
+        <div id="no-webgl-support" style="display: none">
+          Your browser or device does not support WebGL2.<br />
+          This demo only works if WebGL2 is available.<br />
+          Please use a modern browser like Chrome, Edge, Firefox, or Opera.<br />
+          In Safari, WebGL2 is an experimental feature that needs to be activated explicitly.
+        </div>
+      </div>
     </div>
 
-    <h3>Graph information</h3>
-    <p>
-      <span>Number of nodes: <b><span id="numberNodes"></span></b></span><br>
-      <span>Number of edges: <b><span id="numberEdges"></span></b></span><br>
-    </p>
-  </div>
-
-</aside>
-
-<div class="demo-content">
-
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <span>Layers: </span>
-    <button id='removeLayer' data-command="RemoveLayer" title="Remove Layer" class="demo-icon-yIconHideChildren"></button>
-    <span id="layerCount"></span>
-    <button id='addLayer' data-command="AddLayer" title="Add Layer" class="demo-icon-yIconShowChildren"></button>
-    <span class="demo-separator"></span>
-    <span>Child count:</span>
-    <input style="width: 100px;" type="range" min="1" max="5" step="1" value="3" id="childCountInput" title="Child count">
-    <span id="childCount"></span>
-  </div>
-
-  <div id="graphComponent"></div>
-
-  <div id="loadingIndicator"></div>
-
-  <div id="no-webgl-support" style="display:none;">
-    Your browser or device does not support WebGL2.<br>
-    This demo only works if WebGL2 is available.<br>
-    Please use a modern browser like Chrome, Edge, Firefox, or Opera.<br>
-    In Safari, WebGL2 is an experimental feature that needs to be activated explicitly.
-  </div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="LargeTreeDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="LargeTreeDemo.js"></script>
+  </body>
 </html>

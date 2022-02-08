@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,134 +34,167 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Critical Paths Demo [yFiles for HTML]</title>
+    <title>Critical Paths Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #priority-panel {
-      border: solid lightgray;
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 6px;
-      position: relative;
-      display: inline-block;
-      user-select: none;
-    }
+    <style>
+      #priority-panel {
+        border: solid lightgray;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 6px;
+        position: relative;
+        display: inline-block;
+        user-select: none;
+      }
 
-    #heading {
-      font-size: 28px;
-    }
+      #heading {
+        font-size: 28px;
+      }
 
-    .priority-button {
-      width: 30px;
-      height: 30px;
-      text-align: center;
-      vertical-align: middle;
-      font-size: 24px;
-      display: inline-block;
-      line-height: initial;
-    }
+      .priority-button {
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 24px;
+        display: inline-block;
+        line-height: initial;
+      }
 
-    .current-priority {
-      border: solid darkseagreen;
-      color: white;
-    }
+      .current-priority {
+        border: solid darkseagreen;
+        color: white;
+      }
 
-    #priority-button-0 {
-      background-color: #C7C7A6;
-      text-align: center;
-      color: white;
-    }
+      #priority-button-0 {
+        background-color: #c7c7a6;
+        text-align: center;
+        color: white;
+      }
 
-    #priority-button-1 {
-      background-color: #336699;
-      color: white;
-    }
+      #priority-button-1 {
+        background-color: #336699;
+        color: white;
+      }
 
-    #priority-button-2 {
-      background-color: #56926E;
-      color: white;
-    }
+      #priority-button-2 {
+        background-color: #56926e;
+        color: white;
+      }
 
-    #priority-button-3 {
-      background-color: #F0C808;
-      color: white;
-    }
+      #priority-button-3 {
+        background-color: #f0c808;
+        color: white;
+      }
 
-    #priority-button-4 {
-      background-color: #FF6C00;
-      color: white;
-    }
+      #priority-button-4 {
+        background-color: #ff6c00;
+        color: white;
+      }
 
-    #priority-button-5 {
-      background-color: #DB3A34;
-      color: white;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how the hierarchic and tree layout styles emphasise important, or 'critical', paths.
-    </p>
-    <p>
-      To make these critical paths more striking, the nodes and edges in each path are aligned if possible.
-    </p>
-    <p>
-      If there is more than one critical path, priorities can be assigned to define which path should be aligned in case
-      a node or edge is part of more than one critical path.
-    </p>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Use the toolbar button to mark random paths in the graph and see how the layout changes.</li>
-      <li>Add custom priorities by clicking on an edge and choosing a priority from the pop-up.</li>
-      <li>Mark an upstream path by clicking a node and choosing a priority from the pop-up.</li>
-      <li>Switch between samples for hierarchic and tree layout.</li>
-    </ul>
-  </div>
-</aside>
+      #priority-button-5 {
+        background-color: #db3a34;
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Critical Paths Demo</h1>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <p>
+          This demo shows how the hierarchic and tree layout styles emphasise important, or
+          'critical', paths.
+        </p>
+        <p>
+          To make these critical paths more striking, the nodes and edges in each path are aligned
+          if possible.
+        </p>
+        <p>
+          If there is more than one critical path, priorities can be assigned to define which path
+          should be aligned in case a node or edge is part of more than one critical path.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Use the toolbar button to mark random paths in the graph and see how the layout changes.
+          </li>
+          <li>
+            Add custom priorities by clicking on an edge and choosing a priority from the pop-up.
+          </li>
+          <li>Mark an upstream path by clicking a node and choosing a priority from the pop-up.</li>
+          <li>Switch between samples for hierarchic and tree layout.</li>
+        </ul>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="RandomPredecessorsPaths" title="Mark random upstream paths" class="demo-icon-yIconEdgeThickness labeled">Random Paths</button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button
+          data-command="RandomPredecessorsPaths"
+          title="Mark random upstream paths"
+          class="demo-icon-yIconEdgeThickness labeled"
+        >
+          Random Paths
+        </button>
 
-    <button data-command="ClearPriorities" id="clear-priorities" title="Remove all priorities from the edges"
-        class="demo-icon-yIconTrashcan labeled">Clear Priorities
-    </button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button
+          data-command="ClearPriorities"
+          id="clear-priorities"
+          title="Remove all priorities from the edges"
+          class="demo-icon-yIconTrashcan labeled"
+        >
+          Clear Priorities
+        </button>
 
-    <select data-command="ChangeSample" id="change-sample" title="Choose Layout Style">
-      <option>Hierarchic Layout</option>
-      <option>Tree Layout</option>
-    </select>
-  </div>
-  <div id="graphComponent">
-    <div id="priority-panel" class="popupContent" tabindex="0">
-      <div id="heading">Priority</div>
-      <div id="priority-button-0" class="priority-button current-priority">0</div>
-      <div id="priority-button-1" class="priority-button">1</div>
-      <div id="priority-button-2" class="priority-button">2</div>
-      <div id="priority-button-3" class="priority-button">3</div>
-      <div id="priority-button-4" class="priority-button">4</div>
-      <div id="priority-button-5" class="priority-button">5</div>
+        <span class="demo-separator"></span>
+
+        <select data-command="ChangeSample" id="change-sample" title="Choose Layout Style">
+          <option>Hierarchic Layout</option>
+          <option>Tree Layout</option>
+        </select>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent">
+          <div id="priority-panel" class="popupContent" tabindex="0">
+            <div id="heading">Priority</div>
+            <div id="priority-button-0" class="priority-button current-priority">0</div>
+            <div id="priority-button-1" class="priority-button">1</div>
+            <div id="priority-button-2" class="priority-button">2</div>
+            <div id="priority-button-3" class="priority-button">3</div>
+            <div id="priority-button-4" class="priority-button">4</div>
+            <div id="priority-button-5" class="priority-button">5</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="CriticalPathsDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="CriticalPathsDemo.js"></script>
+  </body>
 </html>

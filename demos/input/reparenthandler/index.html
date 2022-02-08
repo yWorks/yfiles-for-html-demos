@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,64 +34,76 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Reparent Handler Demo [yFiles for HTML]</title>
+    <title>Reparent Handler Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <style type="text/css">
-    .firebrick {
-      fill: #B02222;
-    }
+    <style>
+      .firebrick {
+        fill: #b02222;
+      }
 
-    .green, .green-expanded .group-border {
-      fill: #008000;
-    }
+      .green,
+      .green-expanded .group-border {
+        fill: #008000;
+      }
 
-    .royalblue, .royalblue-expanded .group-border {
-      fill: #007FFF;
-    }
-  </style>
+      .royalblue,
+      .royalblue-expanded .group-border {
+        fill: #007fff;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Reparent Handler Demo</h1>
 
-    <p>This demo shows how reparenting of nodes can be customized.</p>
+        <p>This demo shows how reparenting of nodes can be customized.</p>
 
-    <p>This is done with a custom implementation of the interface <a href="https://docs.yworks.com/yfileshtml/#/api/IReparentNodeHandler" target="_blank">IReparentNodeHandler</a>
-      that is set as
-      default reparent handler of the input mode of the graph component. </p>
+        <p>
+          This is done with a custom implementation of the interface
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IReparentNodeHandler" target="_blank">IReparentNodeHandler</a> that is set as default reparent handler of the input mode
+          of the graph component.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <p>Select and move a node. While dragging, press the <code>Shift</code> key to add or remove a node from a
-      group. Angled indicators are shown at the group's corners if adding or removing is possible.</p>
+        <p>
+          Select and move a node. While dragging, press the <code>Shift</code> key to add or remove
+          a node from a group. Angled indicators are shown at the group's corners if adding or
+          removing is possible.
+        </p>
 
-    <h2>Node Types</h2>
-    <ul>
-      <li>
-        <em class="demo-red demo-bold">Red nodes</em> cannot be added to any group.
-      </li>
-      <li>
-        <em class="demo-green demo-bold">Green nodes</em> and <em class="demo-blue demo-bold">blue nodes</em> can
-        be added only to groups of the same color.
-      </li>
-      <li>
-        <em class="demo-green demo-bold">Green nodes</em> can be reparented without pressing the
-        <code>Shift</code> key.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Node Types</h2>
+        <ul>
+          <li><em class="demo-red demo-bold">Red nodes</em> cannot be added to any group.</li>
+          <li>
+            <em class="demo-green demo-bold">Green nodes</em> and
+            <em class="demo-blue demo-bold">blue nodes</em> can be added only to groups of the same
+            color.
+          </li>
+          <li>
+            <em class="demo-green demo-bold">Green nodes</em> can be reparented without pressing the
+            <code>Shift</code> key.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-<script type="module" crossorigin="anonymous" type="module" crossorigin="anonymous" src="ReparentHandlerDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="ReparentHandlerDemo.js"></script>
+  </body>
 </html>

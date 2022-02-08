@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,82 +33,106 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Tree Layout - Layout Features Tutorial [yFiles for HTML]</title>
+    <title>Tree Layout - Layout Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Layout Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Tree Layout </h2>
-    <p>
-      This demo shows basic configuration options for the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">Tree Layout</a>.
-    </p>
-    <ul>
-      <li>
-        The global <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#layoutOrientation" target="_blank">layout orientation</a> is changed to left-to-right
-        to get a horizontal tree layout.
-      </li>
-      <li>
-        A <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a> is specified as placer for the tree nodes,
-        its distance settings are configured to get a rather wide spacing between elements.
-      </li>
-      <li>
-        The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssignment" target="_blank">port assignment</a> is configured such that the
-        edges are distributed at the node border and the segments are forced to keep some distance in this example
-        (via <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer#minimumChannelSegmentDistance" target="_blank">minimumChannelSegmentDistance</a>).
-        By default, the tree layout groups the edge segments and places the ports in the node center.
-      </li>
-      <li>
-        Edges from the parent to the child nodes are ordered with respect to the label text of the child nodes
-        by defining an appropriate <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#outEdgeComparers" target="_blank">edge comparer</a> function.
-      </li>
-    </ul>
+        <h1>Tree Layout</h1>
 
-    <h3>Code Snippet</h3>
-    <p>
-      You can copy the code snippet to configure the layout from
-      <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/tree/Tree.ts"
-         target="_blank">GitHub</a>.
-    </p>
+        <p>
+          This demo shows basic configuration options for the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">Tree Layout</a>.
+        </p>
+        <ul>
+          <li>
+            The global <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#layoutOrientation" target="_blank">layout orientation</a> is changed
+            to left-to-right to get a horizontal tree layout.
+          </li>
+          <li>
+            A <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a> is specified as placer for the tree nodes, its distance
+            settings are configured to get a rather wide spacing between elements.
+          </li>
+          <li>
+            The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssignment" target="_blank">port assignment</a> is configured such
+            that the edges are distributed at the node border and the segments are forced to keep
+            some distance in this example (via
+            <api src="DefaultNodePlacer#minimumChannelSegmentDistance"
+              >minimumChannelSegmentDistance</api
+            >). By default, the tree layout groups the edge segments and places the ports in the
+            node center.
+          </li>
+          <li>
+            Edges from the parent to the child nodes are ordered with respect to the label text of
+            the child nodes by defining an appropriate
+            <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#outEdgeComparers" target="_blank">edge comparer</a> function.
+          </li>
+        </ul>
 
-    <h3>Demos</h3>
+        <h3>Code Snippet</h3>
+        <p>
+          You can copy the code snippet to configure the layout from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/tree/Tree.ts"
+            target="_blank"
+            >GitHub</a
+          >.
+        </p>
 
-    <ul>
-      <li>
-        The <a href="../../layout/tree/index.html">Tree Layout Demo</a> shows complex configurations
-        of <a href="https://docs.yworks.com/yfileshtml/#/api/NodePlacer" target="_blank">NodePlacer</a> instances to further customize the node placement.
-      </li>
-      <li>
-        More features of the tree layout and supported use cases are shown in the
-        <a href="../../layout/layoutstyles/index.html?layout=tree">Layout Styles Demo</a>.
-      </li>
-    </ul>
+        <h3>Demos</h3>
 
-    <h3>Documentation</h3>
+        <ul>
+          <li>
+            The <a href="../../layout/tree/index.html">Tree Layout Demo</a> shows complex
+            configurations of <a href="https://docs.yworks.com/yfileshtml/#/api/NodePlacer" target="_blank">NodePlacer</a> instances to further customize the node
+            placement.
+          </li>
+          <li>
+            More features of the tree layout and supported use cases are shown in the
+            <a href="../../layout/layoutstyles/index.html?layout=tree">Layout Styles Demo</a>.
+          </li>
+        </ul>
 
-    <p>
-      The Developer's Guide provides more in-depth information about the
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/tree_layout" target="_blank">Tree Layout</a> provided by yFiles.
-    </p>
-  </div>
-</aside>
+        <h3>Documentation</h3>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
+        <p>
+          The Developer's Guide provides more in-depth information about the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/tree_layout" target="_blank">Tree Layout</a> provided by yFiles.
+        </p>
+      </div>
+    </aside>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/24-style-decorator/index.html).
 
+Custom Styles Tutorial
+
+# Style Decorator
+
 This step shows how to enhance an existing node style by adding visual decorators. In this case the decorating node style adds the "label edges" that were formerly part of `MySimpleNodeStyle` to the wrapped style's visualization.
 
 For the purpose of this tutorial step, the "label edges" rendering code has been removed from `MySimpleNodeStyle`.

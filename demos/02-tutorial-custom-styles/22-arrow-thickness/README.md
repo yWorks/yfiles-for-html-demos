@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/22-arrow-thickness/index.html).
 
+Custom Styles Tutorial
+
+# Arrow Thickness
+
 This step shows how to render the arrow based on a property of its edge. In this case, the thickness of the edge is considered when creating the path that defines the outline of the arrow.
 
 ## Things to Try

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,53 +32,58 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Web Worker Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-</head>
-<body>
-<div id="header" class="simple-header">
-  Web Worker Demo
-</div>
-<main>
-  <div class="content-centered">
-    <div class="content">
-      <div class="breadcrumbs">
-        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Web Worker Demo
-      </div>
-      <h1>Web Worker Demo</h1>
+    <title>Web Worker Demo [yFiles for HTML]</title>
+    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
+    <div id="header" class="simple-header">Web Worker Demo</div>
+    <main>
+      <div class="content-centered">
+        <div class="content">
+          <div class="breadcrumbs">
+            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Web Worker
+            Demo
+          </div>
+          <h1>Web Worker Demo</h1>
 
-      <p>
-        This demo shows how to run a yFiles layout algorithm in a <a
-        href="https://html.spec.whatwg.org/multipage/workers.html" target="_blank">Web Worker</a> task in order to
-        prevent the layout calculation from blocking the UI.
-      </p>
-      <p>
-        The graph, layout, and layout data are configured in the main thread and transferred to the web worker using
-        class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>. The actual layout calculation is performed in <em>WorkerLayout.ts</em>
-        with class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> on the web worker thread.
-      </p>
+          <p>
+            This demo shows how to run a yFiles layout algorithm in a
+            <a href="https://html.spec.whatwg.org/multipage/workers.html" target="_blank"
+              >Web Worker</a
+            >
+            task in order to prevent the layout calculation from blocking the UI.
+          </p>
+          <p>
+            The graph, layout, and layout data are configured in the main thread and transferred to
+            the web worker using class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>. The actual layout calculation
+            is performed in <em>WorkerLayout.ts</em> with class
+            <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> on the web worker thread.
+          </p>
 
-      <h2>Build</h2>
+          <h2>Build</h2>
 
-      <p>Install the required npm packages and run the build script</p>
-      <pre>
+          <p>Install the required npm packages and run the build script</p>
+          <pre>
 > npm install
 > npm run build
-</pre>
-      <h2>Run</h2>
+</pre
+          >
+          <h2>Run</h2>
 
-      <p>
-        The output files will be placed in the <code>dist/</code> directory inside this demo's directory. To run the
-        demo, open <code>dist/index.html</code> in a browser with</p>
-      <pre>
+          <p>
+            The output files will be placed in the <code>dist/</code> directory inside this demo's
+            directory. To run the demo, open <code>dist/index.html</code> in a browser with
+          </p>
+          <pre>
 > npm run serve
-</pre>
-    </div>
-    <!-- populated by readme-style.js -->
-    <div id="footer-detailed"></div>
-  </div>
-</main>
-<script src="../../../doc/readme-style.js"></script>
-</body>
+</pre
+          >
+        </div>
+        <!-- populated by readme-style.js -->
+        <div id="footer-detailed"></div>
+      </div>
+    </main>
+    <script src="../../../doc/readme-style.js"></script>
+  </body>
 </html>

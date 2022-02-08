@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/datatable/index.html).
 
+# Data Table Demo
+
 This demo shows a node style and a label style that display data in a tabular fashion.
 
 ## Things to Try

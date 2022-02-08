@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,147 +34,173 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Graph Viewer Demo [yFiles for HTML]</title>
+    <title>Graph Viewer Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100"/>
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100" />
 
-  <style type="text/css">
-    .nodeInfo :first-child {
-      margin-top: 0 !important;
-    }
+    <style>
+      .nodeInfo :first-child {
+        margin-top: 0 !important;
+      }
 
-    .hoverable {
-      fill: white;
-      fill-opacity: 0;
-    }
+      .hoverable {
+        fill: white;
+        fill-opacity: 0;
+      }
 
-    .hoverable:hover {
-      fill-opacity: 0.4;
-    }
+      .hoverable:hover {
+        fill-opacity: 0.4;
+      }
 
-    .male {
-      fill: #68B0E3;
-    }
+      .male {
+        fill: #68b0e3;
+      }
 
-    .uml-class {
-      fill: #B9CCD6;
-    }
+      .uml-class {
+        fill: #b9ccd6;
+      }
 
-    .uml-interface {
-      fill: #FFAB26;
-    }
+      .uml-interface {
+        fill: #ffab26;
+      }
 
-    .tooltip * {
-      margin: 3px;
-      max-width: 200px;
-      max-height: 200px;
-    }
-  </style>
+      .tooltip * {
+        margin: 3px;
+        max-width: 200px;
+        max-height: 200px;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left demo-has-right">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <!--
   The sidebar for the description
 -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>The Graph Viewer demo displays several sample graphs from various domains. It allows navigating the diagram but
-      prohibits editing.</p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Graph Viewer Demo</h1>
 
-    <h2>Things to Try</h2>
+        <p>
+          The Graph Viewer demo displays several sample graphs from various domains. It allows
+          navigating the diagram but prohibits editing.
+        </p>
 
-    <ul>
-      <li>
-        Move the mouse over the graph and watch the hover effects. Hovering over edges will highlight the adjacent
-        nodes, whereas hovering over nodes will highlight adjacent edges.
-      </li>
-      <li>
-        Use the combo box or the navigation buttons to switch between several sample graphs.
-      </li>
-      <li>
-        Write a term in the search box and see how nodes that contain the specific term are highlighted. Press Enter to
-        focus on these specific nodes.
-      </li>
-      <li>
-        Change the focused node either by clicking on it or navigating with the keyboard arrow keys.
-      </li>
-      <li>
-        Various properties of the graph and the currently focused node are shown in the right pane.
-      </li>
-      <li>
-        Change the zoom level by using the mouse wheel.
-      </li>
-      <li>
-        Change the viewport by dragging the canvas with the mouse.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Things to Try</h2>
 
-<div class="demo-content">
+        <ul>
+          <li>
+            Move the mouse over the graph and watch the hover effects. Hovering over edges will
+            highlight the adjacent nodes, whereas hovering over nodes will highlight adjacent edges.
+          </li>
+          <li>
+            Use the combo box or the navigation buttons to switch between several sample graphs.
+          </li>
+          <li>
+            Write a term in the search box and see how nodes that contain the specific term are
+            highlighted. Press Enter to focus on these specific nodes.
+          </li>
+          <li>
+            Change the focused node either by clicking on it or navigating with the keyboard arrow
+            keys.
+          </li>
+          <li>
+            Various properties of the graph and the currently focused node are shown in the right
+            pane.
+          </li>
+          <li>Change the zoom level by using the mouse wheel.</li>
+          <li>Change the viewport by dragging the canvas with the mouse.</li>
+        </ul>
+      </div>
+    </aside>
 
-  <div id="graphOverviewComponent" class="demo-overview-container">
-    <div class="demo-overview-header">Overview</div>
-    <div id="overviewComponent"></div>
-  </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          data-command="Open"
+          title="Open a GraphML file"
+          class="demo-icon-yIconOpen"
+        ></button>
 
-  <div class="demo-toolbar">
+        <span class="demo-separator"></span>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <select
+          data-command="SelectedFileChanged"
+          title="Select a sample graph"
+          id="graphChooserBox"
+        ></select>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
 
-    <select data-command="SelectedFileChanged" title="Select a sample graph" id="graphChooserBox"></select>
+        <span style="white-space: nowrap"
+          >Search:
+          <input
+            type="search"
+            data-command="SearchChanged"
+            id="searchBox"
+            style="vertical-align: initial"
+        /></span>
+      </div>
 
-    <span class="demo-separator"></span>
-
-    <span style="white-space: nowrap">Search: <input type="search" data-command="SearchChanged" id="searchBox"
-      style="vertical-align: initial;"></span>
-
-  </div>
-
-  <!--
+      <!--
   The GraphComponent
   -->
-  <div id="graphComponent"></div>
 
-</div>
+      <div class="demo-content-dynamic">
+        <div id="graphOverviewComponent" class="demo-overview-container">
+          <div class="demo-overview-header">Overview</div>
+          <div id="overviewComponent"></div>
+        </div>
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-<!--
+    <!--
 The sidebar for the properties and settings
 -->
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Graph Description</h1>
-  <div class="demo-sidebar-content">
-    <p id="graphInfoContent" class="graphInfo"></p>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Graph Description</h2>
 
-    <h1>Node Info</h1>
-    <div id="nodeInfoContent" class="nodeInfo">
-      <h4>Label</h4>
+        <p id="graphInfoContent" class="graphInfo"></p>
 
-      <p id="nodeInfoLabel"></p>
+        <h3>Node Data</h3>
 
-      <h4>Description</h4>
+        <div id="nodeInfoContent" class="nodeInfo">
+          <h4>Label</h4>
 
-      <p id="nodeInfoDescription"></p>
+          <p id="nodeInfoLabel"></p>
 
-      <h4>Link</h4>
+          <h4>Description</h4>
 
-      <p id="nodeInfoUrl"></p>
-    </div>
-  </div>
+          <p id="nodeInfoDescription"></p>
 
-</aside>
+          <h4>Link</h4>
 
-<script type="module" crossorigin="anonymous" src="GraphViewerDemo.js"></script>
-</body>
+          <p id="nodeInfoUrl"></p>
+        </div>
+      </div>
+    </aside>
+
+    <script type="module" crossorigin="anonymous" src="GraphViewerDemo.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/incrementalhierarchic/index.html).
 
+# Incremental Hierarchic Layout Demo
+
 This demo shows the _incremental mode_ of the hierarchic layout. Each user action triggers a run of this layout style to ensure that the current state of the graph is always well-organized but remains still similar to the previous arrangement.
 
 The layers of the layout are visualized in the background of the graph.

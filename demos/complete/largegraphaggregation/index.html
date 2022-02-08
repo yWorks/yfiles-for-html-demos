@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,196 +34,238 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Large Graph Aggregation Demo [yFiles for HTML]</title>
+    <title>Large Graph Aggregation Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .option-element {
-      width: 47%;
-    }
+    <style>
+      .option-element {
+        width: 47%;
+      }
 
-    input[type='range'] {
-      margin: 0;
-      padding: 0;
-      vertical-align: middle;
-    }
+      input[type='range'] {
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+      }
 
-    .demo-properties label.option-label {
-      width: 50%;
-    }
+      .demo-properties label.option-label {
+        width: 50%;
+      }
 
-    .demo-properties .demo-form-block input[type='range'] {
-      width: 38%;
-    }
+      .demo-properties .demo-form-block input[type='range'] {
+        width: 38%;
+      }
 
-    .flat-button {
-      width: 100%;
-      margin: 11px 0;
-      padding: 9px;
-      background-color: #252367;
-      color: #f7f7f7;
-      border: none;
-    }
+      .flat-button {
+        width: 100%;
+        margin: 11px 0;
+        padding: 9px;
+        background-color: #252367;
+        color: #f7f7f7;
+        border: none;
+      }
 
-    .flat-button:hover {
-      cursor: pointer;
-      background-color: #3F3D81;
-    }
+      .flat-button:hover {
+        cursor: pointer;
+        background-color: #3f3d81;
+      }
 
-    .flat-button:disabled {
-      cursor: not-allowed;
-      background-color: #949aac;
-    }
+      .flat-button:disabled {
+        cursor: not-allowed;
+        background-color: #949aac;
+      }
 
-    .busyIndicator {
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      height: 200px;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-      margin-top: -100px;
-      background-color: rgba(0, 0, 0, 0.6);
-      color: #ffffff;
-      padding-top: 80px;
-      text-align: center;
-      font-size: 2em;
-    }
-  </style>
-</head>
-<body class="demo-has-left demo-has-right">
+      .busyIndicator {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        height: 200px;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        margin-top: -100px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: #ffffff;
+        padding-top: 80px;
+        text-align: center;
+        font-size: 2em;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Large Graph Aggregation Demo</h1>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to use the smart <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" target="_blank">NodeAggregation</a> algorithm for drill down exploration of a large
-      graph.
-    </p>
-    <p>
-      The <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" target="_blank">NodeAggregation</a> algorithms consolidates nodes of a graph and thus creates cluster of nodes based on
-      user-specified constraints.
-    </p>
-    <p>
-      The demo shows aggregated nodes in a gray style, while original nodes of the data are represented as colored nodes.
-    </p>
-    <p>
-      The configuration panel provides access to the most important settings of the aggregation algorithm.
-    </p>
-    <p>
-      The <em>Aggregation Mode</em> determines if nodes are combined in clusters based on the structure of the graph or
-      based on their geometric locations.
-    </p>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Click on an aggregated node to <b>show</b> its children in the aggregation hierarchy.
-      </li>
-      <li>
-        Click on an separated node to <b>hide</b> its children in the aggregation hierarchy.
-      </li>
-      <li>
-        Explore the <b>configuration options</b> of the aggregation algorithm.
-      </li>
-      <li>
-        Run the aggregation algorithm with the selected settings by pressing the <b>Run</b> button.
-      </li>
-      <li>
-        Click <b>Switch To Filtered View</b> to hide the aggregation nodes and only show the actual nodes of the graph
-        that are currently explored.
-      </li>
-      <li>
-        Navigate to a node outside the viewport by clicking an edge whose source or target node is not visible at the
-        moment.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <p>
+          This demo shows how to use the smart <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" target="_blank">NodeAggregation</a> algorithm for drill down
+          exploration of a large graph.
+        </p>
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" target="_blank">NodeAggregation</a> algorithms consolidates nodes of a graph and thus creates
+          cluster of nodes based on user-specified constraints.
+        </p>
+        <p>
+          The demo shows aggregated nodes in a gray style, while original nodes of the data are
+          represented as colored nodes.
+        </p>
+        <p>
+          The configuration panel provides access to the most important settings of the aggregation
+          algorithm.
+        </p>
+        <p>
+          The <em>Aggregation Mode</em> determines if nodes are combined in clusters based on the
+          structure of the graph or based on their geometric locations.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Click on an aggregated node to <b>show</b> its children in the aggregation hierarchy.
+          </li>
+          <li>
+            Click on an separated node to <b>hide</b> its children in the aggregation hierarchy.
+          </li>
+          <li>Explore the <b>configuration options</b> of the aggregation algorithm.</li>
+          <li>
+            Run the aggregation algorithm with the selected settings by pressing the
+            <b>Run</b> button.
+          </li>
+          <li>
+            Click <b>Switch To Filtered View</b> to hide the aggregation nodes and only show the
+            actual nodes of the graph that are currently explored.
+          </li>
+          <li>
+            Navigate to a node outside the viewport by clicking an edge whose source or target node
+            is not visible at the moment.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Aggregation Properties</h1>
-  <div class="demo-sidebar-content">
-    <h2>Settings</h2>
-    <div class="demo-properties">
-      <div class="demo-form-block">
-        <label for="aggregation-mode-select" class="option-label">Aggregation Mode</label> <select
-        id="aggregation-mode-select" class="option-element">
-        <option value="structural">Structural</option>
-        <option value="geometric">Geometric</option>
-      </select>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Aggregation Properties</h2>
+        <div class="demo-properties">
+          <div class="demo-form-block">
+            <label for="aggregation-mode-select" class="option-label">Aggregation Mode</label>
+            <select id="aggregation-mode-select" class="option-element">
+              <option value="structural">Structural</option>
+              <option value="geometric">Geometric</option>
+            </select>
+          </div>
+
+          <div class="demo-form-block">
+            <label for="maximum-duration-range" class="option-label">Maximum Duration</label>
+            <input
+              id="maximum-duration-range"
+              data-command="MaximumDuration"
+              type="range"
+              min="0"
+              max="120"
+              value="0"
+            />
+            <label id="maximum-duration-label">0</label>
+          </div>
+
+          <div class="demo-form-block">
+            <label for="minimum-cluster-size-range" class="option-label"
+              >Minimum Cluster Size</label
+            >
+            <input
+              id="minimum-cluster-size-range"
+              data-command="MinimumClusterSize"
+              type="range"
+              min="1"
+              max="50"
+              value="5"
+            />
+            <label id="minimum-cluster-size-label">5</label>
+          </div>
+
+          <div class="demo-form-block">
+            <label for="maximum-cluster-size-range" class="option-label"
+              >Maximum Cluster Size</label
+            >
+            <input
+              id="maximum-cluster-size-range"
+              data-command="MaximumClusterSize"
+              type="range"
+              min="2"
+              max="100"
+              value="10"
+            />
+            <label id="maximum-cluster-size-label">10</label>
+          </div>
+        </div>
+        <button id="run-aggregation" data-command="RunAggregation" class="flat-button">Run</button>
+
+        <h2>Graph Info</h2>
+        <div class="demo-properties">
+          <div class="demo-form-block">
+            <label class="option-label">Original Nodes:</label>
+            <label class="option-element" id="original-nodes">0 / 0</label>
+          </div>
+          <div class="demo-form-block">
+            <label class="option-label">Original Edges:</label>
+            <label class="option-element" id="original-edges">0 / 0</label>
+          </div>
+        </div>
+
+        <h2>Current Node</h2>
+        <div class="demo-properties">
+          <div class="demo-form-block">
+            <label id="current-item" class="option-label" style="display: none"></label>
+          </div>
+          <div class="demo-form-block">
+            <label class="option-label">Descendant Count:</label>
+            <label class="option-element" id="descendant-count">0</label>
+          </div>
+          <div class="demo-form-block">
+            <label class="option-label">Descendant Weight Sum:</label>
+            <label class="option-element" id="descendant-weight-sum">0</label>
+          </div>
+        </div>
+
+        <button id="switch-view" data-command="SwitchView" class="flat-button">
+          Switch to Filtered View
+        </button>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom in" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
       </div>
 
-      <div class="demo-form-block">
-        <label for="maximum-duration-range" class="option-label">Maximum Duration</label> <input
-        id="maximum-duration-range" data-command="MaximumDuration" type="range" min="0" max="120" value="0"/> <label
-        id="maximum-duration-label">0</label>
-      </div>
-
-      <div class="demo-form-block">
-        <label for="minimum-cluster-size-range" class="option-label">Minimum Cluster Size</label> <input
-        id="minimum-cluster-size-range" data-command="MinimumClusterSize" type="range" min="1" max="50" value="5"/> <label
-        id="minimum-cluster-size-label">5</label>
-      </div>
-
-      <div class="demo-form-block">
-        <label for="maximum-cluster-size-range" class="option-label">Maximum Cluster Size</label> <input
-        id="maximum-cluster-size-range" data-command="MaximumClusterSize" type="range" min="2" max="100" value="10"/> <label
-        id="maximum-cluster-size-label">10</label>
+      <div class="demo-content-dynamic">
+        <div id="graphOverviewComponent" class="demo-overview-container">
+          <div class="demo-overview-header">Overview</div>
+          <div id="overviewComponent"></div>
+        </div>
+        <div id="graphComponent"></div>
+        <div id="calculating-indicator" class="busyIndicator" style="display: none">
+          Calculating... This may take a while.
+        </div>
       </div>
     </div>
-    <button id="run-aggregation" data-command="RunAggregation" class="flat-button">Run</button>
 
-    <h2>Graph Info</h2>
-    <div class="demo-properties">
-      <div class="demo-form-block">
-        <label class="option-label">Original Nodes:</label>
-        <label class="option-element" id="original-nodes">0 / 0</label>
-      </div>
-      <div class="demo-form-block">
-        <label class="option-label">Original Edges:</label>
-        <label class="option-element" id="original-edges">0 / 0</label>
-      </div>
-    </div>
-
-    <h2>Current Node</h2>
-    <div class="demo-properties">
-      <div class="demo-form-block"><label id="current-item" class="option-label" style="display: none"></label></div>
-      <div class="demo-form-block">
-        <label class="option-label">Descendant Count:</label>
-        <label class="option-element" id="descendant-count">0</label>
-      </div>
-      <div class="demo-form-block">
-        <label class="option-label">Descendant Weight Sum:</label>
-        <label class="option-element" id="descendant-weight-sum">0</label>
-      </div>
-    </div>
-
-    <button id="switch-view" data-command="SwitchView" class="flat-button">Switch to Filtered View</button>
-  </div>
-</aside>
-
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom in" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
-
-  <div id="graphOverviewComponent" class="demo-overview-container">
-    <div class="demo-overview-header">Overview</div>
-    <div id="overviewComponent"></div>
-  </div>
-
-  <div id="graphComponent"></div>
-
-  <div id="calculating-indicator" class="busyIndicator" style="display: none">Calculating... This may take a while.</div>
-</div>
-
-
-<script type="module" crossorigin="anonymous" src="LargeGraphAggregationDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="LargeGraphAggregationDemo.js"></script>
+  </body>
 </html>

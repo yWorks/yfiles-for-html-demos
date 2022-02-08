@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/25-custom-group-style/index.html).
 
-## Description
+Custom Styles Tutorial
+
+# Custom Group Style
 
 This step shows how to implement a special node style for group nodes. The style provides custom [INodeSizeConstraintProvider](https://docs.yworks.com/yfileshtml/#/api/INodeSizeConstraintProvider) and [INodeInsetsProvider](https://docs.yworks.com/yfileshtml/#/api/INodeInsetsProvider) implementations to customize the minimum size as well as the insets that are used to calculate the group node bounds.
 

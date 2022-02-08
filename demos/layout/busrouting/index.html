@@ -1,13 +1,13 @@
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,72 +33,90 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Bus Routing Demo [yFiles for HTML]</title>
+    <title>Bus Routing Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .node-color {
-      fill: #CCCCCC;
-    }
-    input {
-      vertical-align: middle;
-    }
-    .inline-icon {
-      display: inline-block;
-      width: 1.5em;
-      height: 1.5em;
-      background-repeat: no-repeat;
-      background-size: cover;
-      vertical-align: middle;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to create bus structures using <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>.
-    </p>
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Create new nodes by left clicking on the graph.
-      </li>
-      <li>
-        Click the "Connect Nodes" button to connect the selected nodes with edges.
-        The algorithm creates a complete subgraph between all selected nodes and routes the subgraph edges only.
-      </li>
-      <li>
-        The "Route" button routes all edges in the graph. Edges will be assigned to busses depending on their color.
-      </li>
-    </ul>
-  </div>
-</aside>
+    <style>
+      .node-color {
+        fill: #cccccc;
+      }
+      input {
+        vertical-align: middle;
+      }
+      .inline-icon {
+        display: inline-block;
+        width: 1.5em;
+        height: 1.5em;
+        background-repeat: no-repeat;
+        background-size: cover;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Bus Routing Demo</h1>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <p>This demo shows how to create bus structures using <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>.</p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Create new nodes by left clicking on the graph.</li>
+          <li>
+            Click the "Connect Nodes" button to connect the selected nodes with edges. The algorithm
+            creates a complete subgraph between all selected nodes and routes the subgraph edges
+            only.
+          </li>
+          <li>
+            The "Route" button routes all edges in the graph. Edges will be assigned to busses
+            depending on their color.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <button id="connect" data-command="Connect" title="Connect all selected nodes" class="demo-icon-yIconLayoutTree labeled">
-      Connect nodes
-    </button>
-    <button id="route" data-command="Route" title="Route all edges" class="demo-icon-yIconLayout labeled">
-      Route edges
-    </button>
-  </div>
+        <span class="demo-separator"></span>
 
-  <div id="graphComponent"></div>
-</div>
+        <button
+          id="connect"
+          data-command="Connect"
+          title="Connect all selected nodes"
+          class="demo-icon-yIconLayoutTree labeled"
+        >
+          Connect nodes
+        </button>
+        <button
+          id="route"
+          data-command="Route"
+          title="Route all edges"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Route edges
+        </button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="BusRoutingDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="BusRoutingDemo.js"></script>
+  </body>
 </html>

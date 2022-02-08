@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/03-update-visual-and-render-data-cache/index.html).
 
+Custom Styles Tutorial
+
+# UpdateVisual and RenderDataCache
+
 This step shows how to implement high-performance rendering of nodes.
 
 To achieve this, you need to implement [NodeStyleBase#updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual) which is called when the container decides to update the visual representation of a node. In contrast to [NodeStyleBase#createVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#createVisual), we try to re-use the old visual instead of creating a new one.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -356,7 +356,7 @@ export class ButtonInputMode extends InputModeBase {
           // get the bounding rectangle around all the buttons in this set
           const wholeBounds = this.buttons.reduce((previousValue, currentValue) => {
             const boundsProvider =
-              this.buttonLabelManager?.descriptor?.getBoundsProvider(currentValue)!
+              this.buttonLabelManager!.descriptor!.getBoundsProvider(currentValue)
             return Rect.add(previousValue, boundsProvider.getBounds(canvasContext))
           }, Rect.EMPTY)
           // get the bounds for the owner of the buttons
@@ -568,14 +568,14 @@ export class ButtonInputMode extends InputModeBase {
     const tooltipWorldSize = this.calculateTooltipWorldSize(button.tooltip)
 
     // get the bounds of the button using the ButtonDescriptor
-    const buttonBounds = this.buttonLabelManager?.descriptor
-      ?.getBoundsProvider(button)
-      .getBounds(this.inputModeContext?.canvasComponent?.canvasContext!)!
+    const buttonBounds = this.buttonLabelManager!.descriptor!.getBoundsProvider(button).getBounds(
+      this.inputModeContext!.canvasComponent!.canvasContext
+    )
 
     // horizontally the tooltip is centered with the button center
     const x = buttonBounds.centerX - tooltipWorldSize.width / 2
     // vertically the tooltip is on top of the button with an offset of 10 in view coordinates
-    const y = buttonBounds.y - tooltipWorldSize.height - 10 / this.inputModeContext?.zoom!
+    const y = buttonBounds.y - tooltipWorldSize.height - 10 / this.inputModeContext!.zoom
     return new Point(x, y)
   }
 
@@ -589,7 +589,7 @@ export class ButtonInputMode extends InputModeBase {
     const viewSize = ButtonInputMode.measureTooltipSize(tooltip)
 
     // convert the view coordinates into world coordinates
-    const canvas = this.inputModeContext?.canvasComponent!
+    const canvas = this.inputModeContext!.canvasComponent!
     const topLeft = canvas.toWorldCoordinates(Point.ORIGIN)!
     const bottomRight = canvas.toWorldCoordinates(new Point(viewSize.width, viewSize.height))!
     return new Size(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)

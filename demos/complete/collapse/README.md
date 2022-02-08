@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/collapse/index.html).
 
+# Collapsible Tree Demo
+
 The Collapsible Tree demo shows interactive collapsing and expanding of subtrees of a graph. Using the dedicated helper classes for filtering-out parts of a graph and the tree layout algorithm, implementing such an interactive application is easy.
 
 The main classes used in this demo are [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper) and [TreeLayout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout).

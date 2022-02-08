@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,103 +34,128 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Webpack Lazy Load Layout Modules [yFiles for HTML]</title>
+    <title>Webpack Lazy Load Layout Modules [yFiles for HTML]</title>
 
-  <style type="text/css">
-    #graphComponent {
-      top: 100px;
-    }
-  </style>
+    <style>
+      #graphComponent {
+        top: 100px;
+      }
+    </style>
+  </head>
 
-</head>
+  <body class="demo-hide-left-when-small demo-has-left loaded">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Webpack Dynamic yFiles Import Demo</h1>
+        <p>
+          This demo shows how to lazy load specific yFiles modules with
+          <a href="https://webpack.js.org/" target="_blank">webpack</a>'s
+          <a href="https://webpack.js.org/guides/code-splitting/" target="_blank">dynamic import</a>
+          feature.
+        </p>
+        <p>
+          By default, webpack automatically tree-shakes yFiles and only includes the necessary
+          modules in the bundle.
+        </p>
+        <p>
+          Additionally, this demo loads yFiles layout functionality lazily and on-demand when a user
+          clicks the layout button in the toolbar.
+        </p>
+        <p>
+          This technique allows applications to only load the necessary modules for bootstrapping
+          the main application and lazily load functionality on demand during runtime.
+        </p>
 
-<body class="demo-hide-left-when-small demo-has-left loaded">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to lazy load specific yFiles modules with <a href="https://webpack.js.org/" target="_blank">webpack</a>'s
-      <a href="https://webpack.js.org/guides/code-splitting/" target="_blank">dynamic import</a>
-      feature.
-    </p>
-    <p>
-      By default, webpack automatically tree-shakes yFiles and only includes the necessary modules in the bundle.
-    </p>
-    <p>
-      Additionally, this demo loads yFiles layout functionality lazily and on-demand when a user clicks the layout
-      button in the toolbar.
-    </p>
-    <p>
-      This technique allows applications to only load the necessary modules for bootstrapping the main application and
-      lazily load functionality on demand during runtime.
-    </p>
+        <p>Two fundamental concepts for webpack projects are demonstrated:</p>
+        <ul>
+          <li>
+            <a href="https://webpack.js.org/guides/code-splitting/" target="_blank"
+              >Dynamic import of modules</a
+            >
+          </li>
+          <li>
+            Separate webpack configurations for development and
+            <a href="https://webpack.js.org/guides/production-build/" target="_blank">production</a>
+          </li>
+        </ul>
 
-    <p>
-      Two fundamental concepts for webpack projects are demonstrated:
-    </p>
-    <ul>
-      <li><a href="https://webpack.js.org/guides/code-splitting/" target="_blank">Dynamic import of modules</a></li>
-      <li>Separate webpack configurations for development and <a href="https://webpack.js.org/guides/production-build/" target="_blank">production</a></li>
-    </ul>
+        <h2>Dynamic Imports with yFiles</h2>
+        <p>There are two possible approaches:</p>
+        <ul>
+          <li>
+            Import yFiles functionality directly from the respective
+            <a
+              href="https://docs.yworks.com/yfileshtml/#/dguide/yfiles-modules#es-modules"
+              target="_blank"
+              >yFiles ES modules</a
+            >
+            which allows webpack to split yFiles in different chunks.<br />This approach is shown in
+            this demo application for the layout functionality when clicking the layout button in
+            the toolbar.
+          </li>
+          <li>
+            Create a separate diagram component that imports from the <code>yfiles</code> meta
+            module. In this case, webpack cannot separate yFiles anymore, however, tree-shaking is
+            still applied such that only the necessary modules are bundled.<br />This separate
+            diagram component with yFiles can then be loaded dynamically on demand.
+          </li>
+        </ul>
 
-    <h2>Dynamic Imports with yFiles</h2>
-    <p>
-      There are two possible approaches:
-    </p>
-    <ul>
-      <li>
-        Import yFiles functionality directly from the respective <a
-        href="https://docs.yworks.com/yfileshtml/#/dguide/yfiles-modules#es-modules" target="_blank">yFiles ES
-        modules</a> which allows webpack to split yFiles in different chunks.<br>This approach is shown in this demo
-        application for the layout functionality when clicking the layout button in the toolbar.
-      </li>
-      <li>
-        Create a separate diagram component that imports from the <code>yfiles</code> meta module. In this case, webpack
-        cannot separate yFiles anymore, however, tree-shaking is still applied such that only the necessary modules are
-        bundled.<br>This separate diagram component with yFiles can then be loaded dynamically on demand.
-      </li>
-    </ul>
+        <h2>Running the demo</h2>
 
-    <h2>Running the demo</h2>
+        <p>First, install the required npm modules in the demo directory:</p>
 
-    <p>First, install the required npm modules in the demo directory:</p>
+        <code> > npm install </code>
 
-    <code>
-      > npm install
-    </code>
+        <h3>Development</h3>
 
-    <h3>Development</h3>
+        <p>
+          The development build uses the
+          <a href="https://webpack.js.org/configuration/dev-server/" target="_blank"
+            >webpack dev server</a
+          >:
+        </p>
 
-    <p>The development build uses the <a href="https://webpack.js.org/configuration/dev-server/" target="_blank">webpack dev server</a>:</p>
+        <code> > npm start </code>
 
-    <code>
-      > npm start
-    </code>
+        <h3>Production</h3>
 
-    <h3>Production</h3>
+        <p>
+          The production build uses the
+          <a href="https://www.npmjs.com/package/@yworks/optimizer" target="_blank"
+            >yWorks Optimizer</a
+          >
+          webpack plugin:
+        </p>
 
-    <p>The production build uses the <a href="https://www.npmjs.com/package/@yworks/optimizer" target="_blank">yWorks Optimizer</a> webpack plugin:</p>
-
-    <code>
-      > npm run production
-    </code>
-  </div>
-</aside>
-<div class="demo-content">
-  <header class="demo-header">
-    <a href="https://www.yworks.com/" target="_blank"><img src="<%=require('../../../demos-js/resources/icons/ylogo.svg')%>" class="demo-y-logo"></a><a href="../../README.html" target="_blank">yFiles for HTML</a>
-    <span class="demo-title demo-breadcrumb">Webpack Dynamic yFiles Import Demo</span>
-  </header>
-  <div class="demo-toolbar">
-    <button class="demo-icon-yIconZoomIn" title="Zoom In" id="zoom-in-btn"></button>
-    <button class="demo-icon-yIconZoomOriginal" title="Reset Zoom" id="reset-zoom-btn"></button>
-    <button class="demo-icon-yIconZoomOut" title="Zoom Out" id="zoom-out-btn"></button>
-    <button class="demo-icon-yIconZoomFit" title="Fit Diagram" id="fit-zoom-btn"></button>
-    <span class="demo-separator"></span>
-    <button class="demo-icon-yIconLayout labeled" title="Apply Layout" id="apply-layout-btn">Load Layout Modules and Apply</button>
-  </div>
-  <div id="graphComponent"></div>
-</div>
-
-</body>
+        <code> > npm run production </code>
+      </div>
+    </aside>
+    <div class="demo-content">
+      <header class="demo-header">
+        <a href="https://www.yworks.com/" target="_blank"
+          ><img
+            src="<%=require('../../resources/icons/ylogo.svg')%>"
+            class="demo-y-logo" /></a
+        >
+        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+        <a href="../../README.html" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+        <span class="demo-title demo-breadcrumb">Webpack Dynamic yFiles Import Demo</span>
+      </header>
+      <div class="demo-toolbar">
+        <button class="demo-icon-yIconZoomIn" title="Zoom In" id="zoom-in-btn"></button>
+        <button class="demo-icon-yIconZoomOriginal" title="Reset Zoom" id="reset-zoom-btn"></button>
+        <button class="demo-icon-yIconZoomOut" title="Zoom Out" id="zoom-out-btn"></button>
+        <button class="demo-icon-yIconZoomFit" title="Fit Diagram" id="fit-zoom-btn"></button>
+        <span class="demo-separator"></span>
+        <button class="demo-icon-yIconLayout labeled" title="Apply Layout" id="apply-layout-btn">
+          Load Layout Modules and Apply
+        </button>
+      </div>
+      <div id="graphComponent"></div>
+    </div>
+  </body>
 </html>

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,198 +34,224 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>WebGL2 Animations Demo [yFiles for HTML]</title>
+    <title>WebGL2 Animations Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #no-webgl-support {
-      text-align: center;
-      font-size: 24px;
-      position: absolute;
-      top: 100px;
-      padding: 2em;
-      left: 0;
-      right: 0;
-      line-height: 2;
-    }
+    <style>
+      #no-webgl-support {
+        text-align: center;
+        font-size: 24px;
+        position: absolute;
+        top: 100px;
+        padding: 2em;
+        left: 0;
+        right: 0;
+        line-height: 2;
+      }
 
-    input[type=range] {
-      -webkit-appearance: none;
-      width: 200px;
-      height: 6px;
-    }
+      input[type='range'] {
+        -webkit-appearance: none;
+        width: 200px;
+        height: 6px;
+      }
 
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      background-color: #666;
-      opacity: 0.8;
-      width: 6px;
-      height: 16px;
-    }
+      input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        background-color: #666;
+        opacity: 0.8;
+        width: 6px;
+        height: 16px;
+      }
 
-    input:disabled {
-      cursor: not-allowed;
-    }
-    select:disabled {
-      cursor: not-allowed;
-    }
-  </style>
+      input:disabled {
+        cursor: not-allowed;
+      }
+      select:disabled {
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>WebGL2 Animations Demo</h1>
 
-</head>
-<body class="demo-has-left demo-has-right">
+        <p>
+          This demo shows how to use WebGL2 animations to highlight interesting parts of a graph.
+        </p>
+        <p>
+          The graph consists of several components, which are calculated after loading the graph.
+          These could also be calculated using the <a href="https://docs.yworks.com/yfileshtml/#/api/ConnectedComponents" target="_blank">ConnectedComponents</a> class.
+        </p>
+        <p>
+          (A graph is called connected if there exists an undirected path of edges between every
+          pair of nodes. The connected components of a graph are the maximal connected subgraphs of
+          which the graph consists.)
+        </p>
+        <p>
+          The currently hovered component (or the rest of the graph) can be highlighted with various
+          WebGL2 animation types.
+        </p>
+        <p>Note, that the animated items all share the same <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2Animation" target="_blank">WebGL2Animation</a> object.</p>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to use WebGL2 animations to highlight interesting parts
-      of a graph.
-    </p>
-    <p>
-      The graph consists of several components, which are calculated after loading the graph.
-      These could also be calculated using the <a href="https://docs.yworks.com/yfileshtml/#/api/ConnectedComponents" target="_blank">ConnectedComponents</a> class.
-    </p>
-    <p>
-      (A graph is called connected if there exists an undirected path of edges
-      between every pair of nodes. The connected components of a graph are the
-      maximal connected subgraphs of which
-      the graph consists.)
-    </p>
-    <p>
-      The currently hovered component (or the rest of the graph) can be
-      highlighted with various WebGL2 animation types.
-    </p>
-    <p>
-      Note, that the animated items all share the same <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2Animation" target="_blank">WebGL2Animation</a> object.
-    </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Hover over a component and observe the animation.</li>
+          <li>
+            Select different animations types for highlighting the currently hovered component:
+            <ul>
+              <li>For the component itself, "Pulse" or "Shake" are fitting animations.</li>
+              <li>
+                Use different "Fade" animations and hide or desaturate a component to bring this
+                component to attention.
+              </li>
+            </ul>
+          </li>
+          <li>Note that for fade animations, shorter animation durations are more noticeable.</li>
+          <li>Experiment with other animation configurations, to achieve the desired effect.</li>
+        </ul>
+      </div>
+    </aside>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>Hover over a component and observe the animation.</li>
-      <li>
-        Select different animations types for highlighting the currently hovered
-        component:
-      </li>
-      <ul>
-        <li>For the component itself, "Pulse" or "Shake" are fitting animations.</li>
-        <li>
-          Use different "Fade" animations and hide or desaturate a component to bring this component to attention.
-        </li>
-      </ul>
-      <li>
-        Note that for fade animations, shorter animation durations are more noticeable.
-      </li>
-      <li>
-        Experiment with other animation configurations, to achieve the desired effect.
-      </li>
-    </ul>
-  </div>
-</aside>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Animated Graph Parts</h2>
+        <input type="radio" id="componentMembers" name="animatedElements" checked="" />
+        <label for="componentMembers">Component Members</label>
+        <input type="radio" id="others" name="animatedElements" />
+        <label for="others">Others</label>
 
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Configuration</h1>
-  <div class="demo-sidebar-content">
+        <h2>Animation Type</h2>
+        <p>Choose one of the available basic animation types.</p>
+        <select id="baseAnimation" title="Animation to use on element hover." style="width: 130px">
+          <option selected="" value="Pulse">Pulse</option>
+          <option value="Shake">Shake</option>
+          <option value="Fade">Fade</option>
+        </select>
 
-    <h3>Animated Graph Parts</h3>
-    <input type="radio" id="componentMembers" name="animatedElements" checked>
-    <label for="componentMembers">Component Members</label>
-    <input type="radio" id="others" name="animatedElements">
-    <label for="others">Others</label>
+        <h2>Animated Elements</h2>
+        <p>Choose the graphical elements of the animated graph part. Not available for 'Shake'.</p>
+        <select
+          id="animatedElements"
+          title="Which parts of the graph to animate."
+          style="width: 130px"
+        >
+          <option selected="" value="Nodes And Edges">Nodes And Edges</option>
+          <option value="Node Effect">Node Effect</option>
+        </select>
 
-    <h3>Animation Type</h3>
-    <p>Choose one of the available basic animation types.</p>
-    <select id="baseAnimation" title="Animation to use on element hover." style="width: 130px">
-      <option selected value="Pulse">Pulse</option>
-      <option value="Shake">Shake</option>
-      <option value="Fade">Fade</option>
-    </select>
+        <h2>Fade Type</h2>
+        <p>
+          Choose the fade target. I.e. what to fade to or from. Not available for 'Pulse' and
+          'Shake'.
+        </p>
+        <select
+          id="fadeType"
+          title="For fade animations, whether to animate to the effect or away from it."
+          style="width: 130px"
+        >
+          <option selected="" value="Gray">Gray</option>
+          <option value="Color">Color</option>
+          <option value="Invisible">Invisible</option>
+        </select>
 
-    <h3>Animated Elements</h3>
-    <p>Choose the graphical elements of the animated graph part. Not available for 'Shake'.</p>
-    <select id="animatedElements" title="Which parts of the graph to animate." style="width: 130px">
-      <option selected value="Nodes And Edges">Nodes And Edges</option>
-      <option value="Node Effect">Node Effect</option>
-    </select>
+        <h2>Fade Direction</h2>
+        <p>
+          Choose, whether to fade <em>to</em> an effect or away <em>from</em> it. Only available for
+          "Fade" animations.
+        </p>
+        <input type="radio" id="fadeDirectionTo" name="fadeDirection" checked="" />
+        <label for="fadeDirectionTo">To</label>
+        <input type="radio" id="fadeDirectionFrom" name="fadeDirection" />
+        <label for="fadeDirectionFrom">From</label>
 
-    <h3>Fade Type</h3>
-    <p>Choose the fade target. I.e. what to fade to or from. Not available for 'Pulse' and 'Shake'.</p>
-    <select id="fadeType" title="For fade animations, whether to animate to the effect or away from it." style="width: 130px">
-      <option selected value="Gray">Gray</option>
-      <option value='Color'>Color</option>
-      <option value='Invisible'>Invisible</option>
-    </select>
+        <h2>Fade Colors</h2>
+        <p>
+          Choose two colors that mark the range of color values to or from which a fading animation
+          will change the original colors. That means when color 1 and color 2 are different grey
+          values, the result is a greyscale version of the original graph.
+        </p>
+        <label for="fadeColor1">Color 1 </label>
+        <input
+          type="color"
+          id="fadeColor1"
+          value="#00ff00"
+          style="width: 180px; border: none"
+          title="Color range for fade animations"
+        /><br />
+        <label for="fadeColor2">Color 2 </label>
+        <input
+          type="color"
+          id="fadeColor2"
+          value="#00ffff"
+          style="width: 180px; border: none"
+          title="Color range for fade animations"
+        />
 
-    <h3>Fade Direction</h3>
-    <p>Choose, whether to fade <em>to</em> an effect or away <em>from</em> it. Only available for "Fade" animations.</p>
-    <input type="radio" id="fadeDirectionTo" name="fadeDirection" checked>
-    <label for="fadeDirectionTo">To</label>
-    <input type="radio" id="fadeDirectionFrom" name="fadeDirection">
-    <label for="fadeDirectionFrom">From</label>
+        <h2>Animation Frequency</h2>
+        <p>Choose the animation frequency. Not available for fade animations.</p>
+        <select id="animationFrequency" title="Animation frequency" style="width: 130px">
+          <option value="1">1Hz</option>
+          <option selected="" value="2">2Hz</option>
+          <option value="5">5Hz</option>
+          <option value="7.5">7.5Hz</option>
+          <option value="10">10Hz</option>
+        </select>
 
-    <h3>Fade Colors</h3>
-    <p>
-      Choose two colors that mark the range of color values to or from which a fading animation will change the original
-      colors. That means when color 1 and color 2 are different grey values, the result is a greyscale version of the
-      original graph.
-    </p>
-    <label for="fadeColor1">Color 1 </label>
-    <input type="color" id="fadeColor1" value="#00ff00" style="width: 180px; border:none" title="Color range for fade animations"><br>
-    <label for="fadeColor2">Color 2 </label>
-    <input type="color" id="fadeColor2" value="#00ffff" style="width: 180px; border: none" title="Color range for fade animations">
+        <h2>Animation Magnitude</h2>
+        <p>Choose the animation magnitude. Not available for fade animations.</p>
+        <select id="animationMagnitude" title="Animation magnitude" style="width: 130px">
+          <option selected="">2</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
 
-    <h3>Animation Frequency</h3>
-    <p>Choose the animation frequency. Not available for fade animations.</p>
-    <select id="animationFrequency" title="Animation frequency" style="width: 130px">
-      <option value='1'>1Hz</option>
-      <option selected value="2">2Hz</option>
-      <option value='5'>5Hz</option>
-      <option value='7.5'>7.5Hz</option>
-      <option value='10'>10Hz</option>
-    </select>
+        <h2>Animation Duration</h2>
+        <p>Choose the time that the animation will take.</p>
+        <select id="animationDuration" title="Animation duration" style="width: 130px">
+          <option value="500ms">500ms</option>
+          <option value="1s">1s</option>
+          <option value="5s">5s</option>
+          <option selected="" value="10s">10s</option>
+          <option value="30s">30s</option>
+          <option value="60s">60s</option>
+        </select>
+      </div>
+    </aside>
 
-    <h3>Animation Magnitude</h3>
-    <p>Choose the animation magnitude. Not available for fade animations.</p>
-    <select id="animationMagnitude" title="Animation magnitude" style="width: 130px">
-      <option selected>2</option>
-      <option value='5'>5</option>
-      <option value='10'>10</option>
-      <option value='20'>20</option>
-    </select>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-    <h3>Animation Duration</h3>
-    <p>Choose the time that the animation will take.</p>
-    <select id="animationDuration" title="Animation duration" style="width: 130px">
-      <option value='500ms'>500ms</option>
-      <option value='1s'>1s</option>
-      <option value='5s'>5s</option>
-      <option selected value="10s">10s</option>
-      <option value='30s'>30s</option>
-      <option value='60s'>60s</option>
-    </select>
-  </div>
-</aside>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="no-webgl-support" style="display: none">
+          Your browser or device does not support WebGL2.<br />
+          This demo only works if WebGL2 is available.<br />
+          Please use a modern browser like Chrome, Edge, Firefox, or Opera.<br />
+          In Safari, WebGL2 is an experimental feature that needs to be activated explicitly.
+        </div>
+      </div>
+    </div>
 
-
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
-
-  <div id="graphComponent"></div>
-
-  <div id="no-webgl-support" style="display:none;">
-    Your browser or device does not support WebGL2.<br> This demo only works if WebGL2 is available.<br> Please use a
-    modern browser like Chrome, Edge, Firefox, or Opera.<br> In Safari, WebGL2 is an experimental feature that needs to
-    be activated explicitly.
-  </div>
-</div>
-
-
-<script type="module" crossorigin="anonymous" src="WebGLAnimationsDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="WebGLAnimationsDemo.js"></script>
+  </body>
 </html>

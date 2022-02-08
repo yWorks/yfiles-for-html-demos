@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/button-input-mode/index.html).
 
+# Button Input Mode Demo
+
 This demo shows how to use a custom input mode to add temporary buttons to model items.  
 The buttons can be individually styled and placed and trigger an action on click or drag.
 

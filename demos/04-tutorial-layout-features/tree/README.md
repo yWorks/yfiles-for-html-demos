@@ -4,13 +4,15 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/tree/index.html).
 
-## Tree Layout
+Layout Features Tutorial
+
+# Tree Layout
 
 This demo shows basic configuration options for the [Tree Layout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout).
 
 - The global [layout orientation](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#layoutOrientation) is changed to left-to-right to get a horizontal tree layout.
 - A [DefaultNodePlacer](https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer) is specified as placer for the tree nodes, its distance settings are configured to get a rather wide spacing between elements.
-- The [port assignment](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssignment) is configured such that the edges are distributed at the node border and the segments are forced to keep some distance in this example (via [minimumChannelSegmentDistance](https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer#minimumChannelSegmentDistance)). By default, the tree layout groups the edge segments and places the ports in the node center.
+- The [port assignment](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssignment) is configured such that the edges are distributed at the node border and the segments are forced to keep some distance in this example (via minimumChannelSegmentDistance). By default, the tree layout groups the edge segments and places the ports in the node center.
 - Edges from the parent to the child nodes are ordered with respect to the label text of the child nodes by defining an appropriate [edge comparer](https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#outEdgeComparers) function.
 
 ### Code Snippet

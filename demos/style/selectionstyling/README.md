@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/selectionstyling/index.html).
 
+# Selection Styling Demo
+
 The Selection Styling demo shows customized selection painting of nodes, edges and labels by decorating these items with a corresponding style.
 
 Customizing the painting of the focus indicator and the highlighting is possible as well but not shown in this demo.

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/webgl-styles/index.html).
 
+# WebGL2 Styles Demo
+
 This demo shows the available styles for nodes, edges and labels in WebGL2 rendering.
 
 For nodes there are eight shapes with three node effects available, edges can have three edge styles with four arrow types, and finally labels can have any of three label styles.

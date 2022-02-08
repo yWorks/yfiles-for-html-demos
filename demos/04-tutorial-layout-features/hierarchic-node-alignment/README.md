@@ -1,10 +1,14 @@
-# Hierarchic Layout with Node Alignment - Layout Features Tutorial
+#
+
+      Hierarchic Layout with Node Alignment - Layout Features Tutorial
 
 <img src="../../resources/image/tutorial4hierarchicverticalnodealignment.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/04-tutorial-layout-features/hierarchic-node-alignment/index.html).
 
-## Hierarchic Layout with Node Alignment
+Layout Features Tutorial
+
+# Hierarchic Layout with Node Alignment
 
 This demo shows how to configure the [Hierarchic Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) so that nodes on different layers that are connected by a critical (important) edge are aligned.
 
@@ -26,4 +30,4 @@ You can also take a look at the more involved [Critical Paths](../../layout/crit
 
 ### Documentation
 
-The Developer's Guide provides more information about the concepts of the [hierarchical layout](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and especially about [how to align a set of given nodes](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-emphasizing_critical_paths).
+The Developer's Guide provides more information about the concepts of the [hierarchical layout](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and especially about how to align a set of given nodes.

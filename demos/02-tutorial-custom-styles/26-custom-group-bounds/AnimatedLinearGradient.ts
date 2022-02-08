@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -65,17 +65,20 @@ const defsCreator = ISvgDefsCreator.create({
 })
 
 let animationFrameId = -1
-const startGradientAnimation = (): void => {
+
+const startGradientAnimation = () => {
   let offset = 0
   const ANIMATION_SPEED = 0.05
   // get current timestamp
-  let t: number = new Date().getTime()
-  // create the animation callback
-  const frameRequestCallback = (): void => {
-    // calculate the milliseconds since the last animation frame
-    const currentTime = new Date().getTime()
-    const dt = currentTime - t
-    t = currentTime
+  let previousTime: number = null!
+
+  const frameRequestCallback = (timestamp: number) => {
+    // calculate the time since the last animation frame
+    if (previousTime == null) {
+      previousTime = timestamp
+    }
+    const dt = timestamp - previousTime
+    previousTime = timestamp
     // check if the gradient is still alive
     if (gradient.ownerDocument !== null && gradient.parentNode !== null) {
       // calculate the new offset
@@ -94,7 +97,7 @@ const startGradientAnimation = (): void => {
     }
   }
   // start the animation
-  animationFrameId = requestAnimationFrame(frameRequestCallback)
+  animationFrameId = window.requestAnimationFrame(frameRequestCallback)
 }
 
 export default {

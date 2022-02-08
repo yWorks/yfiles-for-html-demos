@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,47 +34,75 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>GraphML Compatibility Demo [yFiles for HTML]</title>
+    <title>GraphML Compatibility Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script></head>
-<body class="demo-has-left">
-  <aside class="demo-sidebar demo-left">
-    <h1 class="demo-sidebar-header">Description</h1>
-    <div class="demo-sidebar-content">
-      <p>The GraphML compatibility demo shows how to enable GraphML backwards compatibility for reading files written in version prior to 2.x</p>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>GraphML Compatibility Demo</h1>
 
-      <p>GraphML is the standard file format for yFiles for HTML. It is an XML format that provides great flexibility
-        when storing custom data. The format has changed between version 2.x and earlier versions and requires conversion. The bundled <code>graphml-compat-js</code> demo
-		file provides such a conversion layer that can be enabled just by a single line.</p>
-      <ul>
-        <li>Click the 'Open' button to load an older GraphML file.</li>
-        <li>Step through the provided sample files that are created by earlier versions of yFiles for HTML.</li>
-      </ul>
+        <p>
+          The GraphML compatibility demo shows how to enable GraphML backwards compatibility for
+          reading files written in version prior to 2.x
+        </p>
 
-      <p>See the sources for details.</p>
+        <p>
+          GraphML is the standard file format for yFiles for HTML. It is an XML format that provides
+          great flexibility when storing custom data. The format has changed between version 2.x and
+          earlier versions and requires conversion. The bundled <code>graphml-compat-js</code> demo
+          file provides such a conversion layer that can be enabled just by a single line.
+        </p>
+        <ul>
+          <li>Click the 'Open' button to load an older GraphML file.</li>
+          <li>
+            Step through the provided sample files that are created by earlier versions of yFiles
+            for HTML.
+          </li>
+        </ul>
+
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="Open" title="Open" class="demo-icon-yIconOpen"></button>
+        <button data-command="Save" title="Save" class="demo-icon-yIconSave"></button>
+        <span class="demo-separator"></span>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+
+        <select
+          data-command="SelectedFileChanged"
+          title="Select a sample graph"
+          id="graphChooserBox"
+        ></select>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
     </div>
-  </aside>
 
-  <div class="demo-content">
-
-    <div class="demo-toolbar">
-      <button data-command="Open" title="Open" class="demo-icon-yIconOpen"></button>
-      <button data-command="Save" title="Save" class="demo-icon-yIconSave"></button>
-      <span class="demo-separator"></span>
-      <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-      <span class="demo-separator"></span>
-
-      <select data-command="SelectedFileChanged" title="Select a sample graph" id="graphChooserBox"></select>
-    </div>
-
-    <div id="graphComponent"></div>
-  </div>
-
-<script type="module" crossorigin="anonymous" src="GraphMLCompatibilityDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="GraphMLCompatibilityDemo.js"></script>
+  </body>
 </html>

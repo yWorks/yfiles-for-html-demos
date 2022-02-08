@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License } from 'yfiles'
+import { ExteriorLabelModel, GraphComponent, License } from 'yfiles'
 
 import loadJson from '../../resources/load-json.js'
+
+import { enableWorkarounds } from '../../utils/Workarounds.js'
 
 /**
  * @param {!object} licenseData
@@ -40,9 +42,10 @@ function run(licenseData) {
   // create one simple node as an example
   const node = graphComponent.graph.createNode()
   // and add a label to it
-  graphComponent.graph.addLabel(node, '1')
+  graphComponent.graph.addLabel(node, 'Node 1', ExteriorLabelModel.SOUTH)
   // then center the graph in the component
   graphComponent.fitGraphBounds()
 }
 
+enableWorkarounds()
 loadJson().then(run)

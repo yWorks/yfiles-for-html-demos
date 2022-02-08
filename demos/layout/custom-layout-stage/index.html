@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,94 +34,124 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Custom Layout Stage Demo [yFiles for HTML]</title>
+    <title>Custom Layout Stage Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <style>
-    span.icon {
-      background: url('../../resources/icons/play2-16.svg') no-repeat center;
-      height: 16px;
-      width: 16px;
-      border-radius: 50%;
-      margin-right: 5px;
-    }
-    button.run-stage {
-      cursor: pointer;
-      display: flex;
-      margin-top: 20px;
-      font-size: 1.2em;
-    }
-    .button-description {
-      margin-top: 5px;
-      margin-left: 10px;
-    }
-  </style>
+    <style>
+      span.icon {
+        background: url('../../resources/icons/play2-16.svg') no-repeat center;
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        margin-right: 5px;
+      }
+      button.run-stage {
+        cursor: pointer;
+        display: flex;
+        margin-top: 20px;
+        font-size: 1.2em;
+      }
+      .button-description {
+        margin-top: 5px;
+        margin-left: 10px;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Custom Layout Stage Demo</h1>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Custom Layout Stage Demo</h2>
-    <p>
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-layout_stages" target="_blank">Layout Stages</a> provide a way of separating a complete layout into
-      different parts. This often involves changing the graph in certain ways before another stage acts on it,
-      post-processing the graph after another stage, or even both. Layout stages are designed to be chained, in that
-      they each have a so-called “core” layout that performs the actual work after pre- or before post-processing.
-    </p>
-    <p>
-      yFiles for HTML ships with a large variety of layout stages, all sharing the interface <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutStage" target="_blank">ILayoutStage</a>.
-      If a specific use case is not covered by existing stages, it is easy to write own custom stages by extending
-      class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutStageBase" target="_blank">LayoutStageBase</a>. When writing custom stages it is necessary to work with the
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout_graph_model" target="_blank">Layout Graph Model</a>.
-    </p>
-    <p>
-      This demo application shows three simple custom layout stages, which demonstrate different problems and
-      possible solutions with a custom layout stage.
-    </p>
-    <button data-command="RunStage1" class="run-stage"><span class="icon"></span><code>MoveNodesAsideStage</code></button>
-    <p class="button-description">
-    Temporarily removes the blue nodes, runs its core layout, and re-inserts the blues nodes as a vertical stack
-    on the right side.
-    </p>
-    <button data-command="RunStage2" class="run-stage"><span class="icon"></span><code>AlignmentStage</code></button>
-    <p class="button-description">
-    Inserts temporary edges, along with certain constraints to help the core <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> align
-    the green nodes. The nodes are selected via a <a href="https://docs.yworks.com/yfileshtml/#/api/IDataProvider" target="_blank">IDataProvider</a> registered with the graph under a certain key.
-    </p>
-    <button data-command="RunStage3" class="run-stage"><span class="icon"></span><code>ZigZagEdgesStage</code></button>
-    <p class="button-description">
-    A pure post-processing stage that changes the edge paths produced by the core layout to a zig-zag shape.
-    </p>
+        <h2>Custom Layout Stage Demo</h2>
+        <p>
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-layout_stages" target="_blank">Layout Stages</a> provide a way of separating
+          a complete layout into different parts. This often involves changing the graph in certain
+          ways before another stage acts on it, post-processing the graph after another stage, or
+          even both. Layout stages are designed to be chained, in that they each have a so-called
+          “core” layout that performs the actual work after pre- or before post-processing.
+        </p>
+        <p>
+          yFiles for HTML ships with a large variety of layout stages, all sharing the interface
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutStage" target="_blank">ILayoutStage</a>. If a specific use case is not covered by existing stages, it is
+          easy to write own custom stages by extending class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutStageBase" target="_blank">LayoutStageBase</a>. When
+          writing custom stages it is necessary to work with the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout_graph_model" target="_blank">Layout Graph Model</a>.
+        </p>
+        <p>
+          This demo application shows three simple custom layout stages, which demonstrate different
+          problems and possible solutions with a custom layout stage.
+        </p>
+        <button data-command="RunStage1" class="run-stage">
+          <span class="icon"></span><code>MoveNodesAsideStage</code>
+        </button>
+        <p class="button-description">
+          Temporarily removes the blue nodes, runs its core layout, and re-inserts the blues nodes
+          as a vertical stack on the right side.
+        </p>
+        <button data-command="RunStage2" class="run-stage">
+          <span class="icon"></span><code>AlignmentStage</code>
+        </button>
+        <p class="button-description">
+          Inserts temporary edges, along with certain constraints to help the core
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> align the green nodes. The nodes are selected via a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IDataProvider" target="_blank">IDataProvider</a> registered with the graph under a certain key.
+        </p>
+        <button data-command="RunStage3" class="run-stage">
+          <span class="icon"></span><code>ZigZagEdgesStage</code>
+        </button>
+        <p class="button-description">
+          A pure post-processing stage that changes the edge paths produced by the core layout to a
+          zig-zag shape.
+        </p>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button data-command="RunStage1" id="runLayout1" class="demo-icon-yIconLayout labeled">
+          Move nodes aside
+        </button>
+        <button data-command="RunStage2" class="demo-icon-yIconLayout labeled">
+          Align green nodes
+        </button>
+        <button data-command="RunStage3" class="demo-icon-yIconLayout labeled">
+          Make zig-zag edges
+        </button>
+        <button data-command="RunAllStages" class="demo-icon-yIconLayout labeled">
+          Everything at once
+        </button>
+      </div>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="RunStage1" id="runLayout1" class="demo-icon-yIconLayout labeled">Move nodes aside</button>
-    <button data-command="RunStage2" class="demo-icon-yIconLayout labeled">Align green nodes</button>
-    <button data-command="RunStage3" class="demo-icon-yIconLayout labeled">Make zig-zag edges</button>
-    <button data-command="RunAllStages" class="demo-icon-yIconLayout labeled">Everything at once</button>
-  </div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-</div>
-
-
-<script type="module" crossorigin="anonymous" src="CustomLayoutStageDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="CustomLayoutStageDemo.js"></script>
+  </body>
 </html>

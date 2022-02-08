@@ -4,8 +4,8 @@
   export let person: Person | null
 </script>
 
-<h2 class="demo-sidebar-header">Properties</h2>
 <div class="demo-sidebar-content">
+  <h2 class="demo-sidebar-header">Properties</h2>
   {#if person}
     <div>
       <label>Name <input type="text" bind:value={person.name} /></label>

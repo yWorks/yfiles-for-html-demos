@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/graph-wizard-for-flowchart/index.html).
 
+# Graph Wizard for Flowchart
+
 ## Graph Wizard
 
 The Graph Wizard for Flowchart demo shows how graph defaults and input gestures can be customized to support fast creation of flowchart diagrams.

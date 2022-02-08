@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,115 +32,130 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>React TypeScript Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-</head>
-<body>
-<div id="header" class="simple-header">
-  React TypeScript Demo
-</div>
-<main>
-  <div class="content-centered">
-    <div class="content">
-      <div class="breadcrumbs">
-        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> React TypeScript Demo
-      </div>
+    <title>React TypeScript Demo [yFiles for HTML]</title>
+    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
+    <div id="header" class="simple-header">React TypeScript Demo</div>
+    <main>
+      <div class="content-centered">
+        <div class="content">
+          <div class="breadcrumbs">
+            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> React
+            TypeScript Demo
+          </div>
 
-      <h1>React TypeScript Demo</h1>
+          <h1>React TypeScript Demo</h1>
 
-      <p>
-        The React TypeScript demo shows how to integrate yFiles in a basic <a href="https://reactjs.org/"
-        target="_blank">React</a> application with <a href="https://www.typescriptlang.org/"
-        target="_blank">TypeScript</a> based on <a
-        href="https://facebook.github.io/create-react-app/" target="_blank">Create React App</a>.
-      </p>
+          <p>
+            The React TypeScript demo shows how to integrate yFiles in a basic
+            <a href="https://reactjs.org/" target="_blank">React</a> application with
+            <a href="https://www.typescriptlang.org/" target="_blank">TypeScript</a> based on
+            <a href="https://facebook.github.io/create-react-app/" target="_blank"
+              >Create React App</a
+            >.
+          </p>
 
-      <p>
-        To start the demo
-      </p>
-      <ol>
-        <li>
-          Go to the demo's directory <code>demos-js/toolkit/react-typescript</code>.
-        </li>
-        <li>
-          Run <code>npm install</code>.
-        </li>
-        <li>
-          Run <code>npm run start</code>.
-        </li>
-      </ol>
-      <p>This will start the development server of the toolkit.</p>
+          <p>To start the demo</p>
+          <ol>
+            <li>Go to the demo's directory <code>demos-js/toolkit/react-typescript</code>.</li>
+            <li>Run <code>npm install</code>.</li>
+            <li>Run <code>npm run start</code>.</li>
+          </ol>
+          <p>This will start the development server of the toolkit.</p>
 
-      <p>The integrated development server of the project will automatically update the application upon code
-        changes.</p>
+          <p>
+            The integrated development server of the project will automatically update the
+            application upon code changes.
+          </p>
 
-      <div class="info-box">
-        Note: The <code>/.env/</code> file with <code>SKIP_PREFLIGHT_CHECK=true</code> is only necessary due to the
-        version mismatch of eslint for the react-scripts and the yFiles demo package. If you use the source code of this
-        application outside of the yFiles demo package tree, this file won't be necessary.
-      </div>
+          <div class="info-box">
+            Note: The <code>/.env/</code> file with <code>SKIP_PREFLIGHT_CHECK=true</code> is only
+            necessary due to the version mismatch of eslint for the react-scripts and the yFiles
+            demo package. If you use the source code of this application outside of the yFiles demo
+            package tree, this file won't be necessary.
+          </div>
 
-      <h1>Deploying React with yFiles</h1>
+          <h1>Deploying React with yFiles</h1>
 
-      <p>
-        There are no special caveats that you need to look out for when you load yFiles as NPM dependency as in this
-        demo application. However, we recommend to include the <a href="https://www.npmjs.com/package/@yworks/optimizer"
-        target="_blank">@yworks/optimizer</a> when you deploy your app for production.
-      </p>
-      <p>
-        The optimizer will obfuscate the public API of the yFiles module files, as well as yFiles API usages in
-        application sources.
-      </p>
-      <p>
-        We highly recommend obfuscating the yFiles for HTML library prior to deploying your application to a public web
-        server to reduce the download size of the library for the end user. Note that, at the time of writing, you are
-        not required to use obfuscation.
-      </p>
+          <p>
+            There are no special caveats that you need to look out for when you load yFiles as NPM
+            dependency as in this demo application. However, we recommend to include the
+            <a href="https://www.npmjs.com/package/@yworks/optimizer" target="_blank"
+              >@yworks/optimizer</a
+            >
+            when you deploy your app for production.
+          </p>
+          <p>
+            The optimizer will obfuscate the public API of the yFiles module files, as well as
+            yFiles API usages in application sources.
+          </p>
+          <p>
+            We highly recommend obfuscating the yFiles for HTML library prior to deploying your
+            application to a public web server to reduce the download size of the library for the
+            end user. Note that, at the time of writing, you are not required to use obfuscation.
+          </p>
 
-      <p>
-        Here is how you can include the <code>@yworks/optimizer</code> in this application that was built with the <a
-        href="https://facebook.github.io/create-react-app/" target="_blank">Create React App</a> toolkit.
-      </p>
+          <p>
+            Here is how you can include the <code>@yworks/optimizer</code> in this application that
+            was built with the
+            <a href="https://facebook.github.io/create-react-app/" target="_blank"
+              >Create React App</a
+            >
+            toolkit.
+          </p>
 
-      <ol>
-        <li>
-          Run <code>npm run eject</code> to gain the full control over the deployment of this application. See also <a
-          href="https://facebook.github.io/create-react-app/docs/available-scripts#npm-run-eject" target="_blank">npm
-          run eject</a>.
-        </li>
-        <li>
-          Then install the dependencies that are necessary to build project, i.e.<br/> <code>npm install --save @babel/plugin-transform-react-jsx @babel/plugin-transform-react-jsx-source @babel/plugin-transform-react-jsx-self</code><br/>
-          Now, the application can be started and built with either <code>npm run start</code> or
-          <code>npm run build</code>.
-        </li>
-        <li>
-          Then we need the <code>@yworks/optimizer</code> dependency, which you can install with:<br/> <code>npm install --save-dev @yworks/optimizer</code>
-        </li>
-        <li>
-          To include the <code>@yworks/optimizer</code> in the build process for production builds, prepend the
-          following plugin in <code>/config/webpack.config.js</code>:
-          <pre>
+          <ol>
+            <li>
+              Run <code>npm run eject</code> to gain the full control over the deployment of this
+              application. See also
+              <a
+                href="https://facebook.github.io/create-react-app/docs/available-scripts#npm-run-eject"
+                target="_blank"
+                >npm run eject</a
+              >.
+            </li>
+            <li>
+              Then install the dependencies that are necessary to build project, i.e.<br />
+              <code
+                >npm install --save @babel/plugin-transform-react-jsx
+                @babel/plugin-transform-react-jsx-source
+                @babel/plugin-transform-react-jsx-self</code
+              ><br />
+              Now, the application can be started and built with either
+              <code>npm run start</code> or <code>npm run build</code>.
+            </li>
+            <li>
+              Then we need the <code>@yworks/optimizer</code> dependency, which you can install
+              with:<br />
+              <code>npm install --save-dev @yworks/optimizer</code>
+            </li>
+            <li>
+              To include the <code>@yworks/optimizer</code> in the build process for production
+              builds, prepend the following plugin in <code>/config/webpack.config.js</code>:
+              <pre>
 plugins: [
   isEnvProduction && new yWorksOptimizer({
     blacklist: ['render', 'Component', 'nodesSource', 'edgesSource']
   }),
   ...
 ]
-        </pre>
-          Don't forget to require it first:<br/> <code>const yWorksOptimizer = require('@yworks/optimizer/webpack-plugin')</code>
-        </li>
-        <li>
-          That's it. When you now build for production with <code>npm run build</code>, the optimizer will do its job
-          and the bundle will be obfuscated.
-        </li>
-      </ol>
-
-    </div>
-    <!-- populated by readme-style.js -->
-    <div id="footer-detailed"></div>
-  </div>
-</main>
-<script src="../../../doc/readme-style.js"></script>
-</body>
+        </pre
+              >
+              Don't forget to require it first:<br />
+              <code>const yWorksOptimizer = require('@yworks/optimizer/webpack-plugin')</code>
+            </li>
+            <li>
+              That's it. When you now build for production with <code>npm run build</code>, the
+              optimizer will do its job and the bundle will be obfuscated.
+            </li>
+          </ol>
+        </div>
+        <!-- populated by readme-style.js -->
+        <div id="footer-detailed"></div>
+      </div>
+    </main>
+    <script src="../../../doc/readme-style.js"></script>
+  </body>
 </html>

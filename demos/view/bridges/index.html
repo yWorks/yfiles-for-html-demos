@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,74 +34,115 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Bridges Demo [yFiles for HTML]</title>
+    <title>Bridges Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style type="text/css">
-    .customSlider {
-      padding: 0px;
-      width: 100px;
-    }
+    <style>
+      .customSlider {
+        padding: 0px;
+        width: 100px;
+      }
 
-    #bridgeWidthLabel {
-      max-width: 15px;
-      width: 15px;
-      margin-right: 2px;
-      display: inline-block;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<!--
+      #bridgeWidthLabel {
+        max-width: 15px;
+        width: 15px;
+        margin-right: 2px;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description
 -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      The Bridges demo showcases the capabilities of the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" target="_blank">BridgeManager</a> class
-      for inserting bridges into edge paths. </p>
-    <p>
-      In addition to bridges for edge-edge intersections, this demo shows bridges for other obstacles like group node
-      boundaries as well. </p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Bridges Demo</h1>
 
-    <h2>Things to Try</h2>
+        <p>
+          The Bridges demo showcases the capabilities of the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" target="_blank">BridgeManager</a> class for
+          inserting bridges into edge paths.
+        </p>
+        <p>
+          In addition to bridges for edge-edge intersections, this demo shows bridges for other
+          obstacles like group node boundaries as well.
+        </p>
 
-    <ul>
-      <li>
-        Create new edges and move existing nodes and bends to create new bridges.
-      </li>
-      <li>
-        Explore the settings of the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" target="_blank">BridgeManager</a> using the toolbar's combo boxes.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Things to Try</h2>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <ul>
+          <li>Create new edges and move existing nodes and bends to create new bridges.</li>
+          <li>
+            Explore the settings of the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" target="_blank">BridgeManager</a> using the toolbar's combo boxes.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-    <select title="Crossing Style" data-command="CrossingStyleChanged" id="crossingStyleComboBox"></select>
-    <select title="Crossing Policy" data-command="CrossingPolicyChanged" id="crossingPolicyComboBox"></select>
-    <select title="Bridge Orientation" data-command="BridgeOrientationChanged" id="bridgeOrientationComboBox"></select>
+        <span class="demo-separator"></span>
 
-    <span>Width: </span><input type="range" min="1" max="30" value="10" id="bridgeWidthSlider" class="customSlider"><span
-      id="bridgeWidthLabel">10</span> <span>Height: </span><input type="range" min="1" max="30" value="10"
-      id="bridgeHeightSlider" class="customSlider"><span id="bridgeHeightLabel">10</span>
-  </div>
+        <select
+          title="Crossing Style"
+          data-command="CrossingStyleChanged"
+          id="crossingStyleComboBox"
+        ></select>
+        <select
+          title="Crossing Policy"
+          data-command="CrossingPolicyChanged"
+          id="crossingPolicyComboBox"
+        ></select>
+        <select
+          title="Bridge Orientation"
+          data-command="BridgeOrientationChanged"
+          id="bridgeOrientationComboBox"
+        ></select>
 
-  <div id="graphComponent"></div>
-</div>
+        <span>Width: </span
+        ><input
+          type="range"
+          min="1"
+          max="30"
+          value="10"
+          id="bridgeWidthSlider"
+          class="customSlider"
+        /><span id="bridgeWidthLabel">10</span> <span>Height: </span
+        ><input
+          type="range"
+          min="1"
+          max="30"
+          value="10"
+          id="bridgeHeightSlider"
+          class="customSlider"
+        /><span id="bridgeHeightLabel">10</span>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="BridgesDemo.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="BridgesDemo.js"></script>
+  </body>
 </html>

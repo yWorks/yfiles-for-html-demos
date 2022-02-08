@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -72,7 +72,7 @@ async function run(licenseData: object): Promise<void> {
   graphComponent.clipboard = clipboard
 
   // set up the input mode
-  let mode = new GraphEditorInputMode()
+  const mode = new GraphEditorInputMode()
   mode.marqueeSelectableItems = GraphItemTypes.NODE | GraphItemTypes.BEND
   graphComponent.inputMode = mode
   graphComponent.graph.undoEngineEnabled = true
@@ -116,21 +116,21 @@ function createSampleGraph(graph: IGraph): void {
   graph.addLabel(node3, 'Node 3')
   graph.addLabel(edgeAtPorts, 'Edge')
 
-  var n4 = graph.createNodeAt(new Point(50, -50))
+  const n4 = graph.createNodeAt(new Point(50, -50))
   graph.addLabel(n4, 'Node 4')
-  var n5 = graph.createNodeAt(new Point(50, -150))
+  const n5 = graph.createNodeAt(new Point(50, -150))
   graph.addLabel(n5, 'Node 5')
-  var n6 = graph.createNodeAt(new Point(-50, -50))
+  const n6 = graph.createNodeAt(new Point(-50, -50))
   graph.addLabel(n6, 'Node 6')
-  var n7 = graph.createNodeAt(new Point(-50, -150))
+  const n7 = graph.createNodeAt(new Point(-50, -150))
   graph.addLabel(n7, 'Node 7')
-  var n8 = graph.createNodeAt(new Point(150, -50))
+  const n8 = graph.createNodeAt(new Point(150, -50))
   graph.addLabel(n8, 'Node 8')
 
   graph.createEdge(n4, node1)
   graph.createEdge(n5, n4)
   graph.createEdge(n7, n6)
-  var e6_1 = graph.createEdge(n6, node1)
+  const e6_1 = graph.createEdge(n6, node1)
   graph.addBend(e6_1, new Point(-50, 50), 0)
 }
 

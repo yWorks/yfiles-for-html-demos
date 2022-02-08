@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/isometricdrawing/index.html).
 
+# Isometric Drawing Demo
+
 This demo displays graphs isometrically, adding an additional dimension to the visualization. This can be used to represent characteristics of the business data as height, or just because of the beautiful looks.
 
 In this demo, WebGL is used for the rendering but the [projection](https://docs.yworks.com/yfileshtml/#/dguide/projections-main) feature of yFiles for HTML supports SVG and HTML Canvas rendering, too.

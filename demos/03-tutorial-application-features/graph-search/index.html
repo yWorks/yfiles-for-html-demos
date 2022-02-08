@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,52 +34,73 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Graph Search - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Graph Search - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Graph Search</h2>
-    <p>
-      This demo shows an implementation of the search functionality on the nodes of a graph.
-    </p>
-    <p>
-      The search is performed on the labels of the nodes and those that match the queried term are being highlighted.
-    </p>
-    <p>
-      There exists also a separate graph search implementation in <code>demos-js/utils</code> package currently used by <a
-      href="../../README.html#search" target="_blank">these demos</a>. This implementation can be extended to support
-      custom search on graph elements.
-    </p>
+        <h1>Graph Search</h1>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>
+          This demo shows an implementation of the search functionality on the nodes of a graph.
+        </p>
+        <p>
+          The search is performed on the labels of the nodes and those that match the queried term
+          are being highlighted.
+        </p>
+        <p>
+          There exists also a separate graph search implementation in
+          <code>demos-js/utils</code> package currently used by
+          <a href="../../README.html#search" target="_blank">these demos</a>. This implementation
+          can be extended to support custom search on graph elements.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In"
-      class="demo-icon-yIconZoomIn demo-toolbar-button"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal demo-toolbar-button"></button>
-    <button data-command="ZoomOut" title="Zoom Out"
-      class="demo-icon-yIconZoomOut demo-toolbar-button"></button>
-    <button data-command="FitContent" title="Fit Content"
-      class="demo-icon-yIconZoomFit demo-toolbar-button"></button>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-    <span class="demo-separator"></span> <span><label for="searchBox">Search: </label><input type="search"
-    id="searchBox"></span>
-  </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button
+          data-command="ZoomIn"
+          title="Zoom In"
+          class="demo-icon-yIconZoomIn demo-toolbar-button"
+        ></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal demo-toolbar-button"
+        ></button>
+        <button
+          data-command="ZoomOut"
+          title="Zoom Out"
+          class="demo-icon-yIconZoomOut demo-toolbar-button"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit demo-toolbar-button"
+        ></button>
 
-  <div id="graphComponent"></div>
-</div>
+        <span class="demo-separator"></span>
+        <span><label for="searchBox">Search: </label><input type="search" id="searchBox" /></span>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

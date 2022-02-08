@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,65 +34,79 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Reshape Handle Provider Configuration Demo [yFiles for HTML]</title>
+    <title>Reshape Handle Provider Configuration Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Reshape Handle Provider Configuration Demo</h1>
 
-    <p>This demo shows how resizing of nodes can be customized.</p>
+        <p>This demo shows how resizing of nodes can be customized.</p>
 
-    <p>This is done with custom configurations of the default <a href="https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider" target="_blank">IReshapeHandleProvider</a>
-      that are
-      added to the lookup of the nodes. </p>
+        <p>
+          This is done with custom configurations of the default
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider" target="_blank">IReshapeHandleProvider</a> that are added to the lookup of the nodes.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <ul>
-      <li>Select and resize the nodes.</li>
-      <li>Hold <kbd>Shift</kbd> to keep the aspect ratio for any node.</li>
-      <li>Hold <kbd>Alt</kbd> to resize around the node's center.</li>
-    </ul>
+        <ul>
+          <li>Select and resize the nodes.</li>
+          <li>Hold <kbd>Shift</kbd> to keep the aspect ratio for any node.</li>
+          <li>Hold <kbd>Alt</kbd> to resize around the node's center.</li>
+        </ul>
 
-    <h2>Node Types</h2>
-    <ul>
-      <li>
-        <em class="demo-bold">Red nodes</em> cannot be resized. They don't display resize handles.
-      </li>
-      <li>
-        <em class="demo-bold">Green nodes</em> show only four handles at the corners. During resizing,
-        these handles always maintain the aspect ratio of the node.
-      </li>
-      <li>
-        <em class="demo-bold">Dark blue nodes</em> show only one handle in the bottom right corner. During resizing,
-        this handle always maintains the center of the node.
-      </li>
-      <li>
-        <em class="demo-bold">Purple nodes</em> show four handles at the corners and four
-        different handles at the sides. During resizing, the corner handles always maintain the aspect ratio of the node while
-        the border handles don't.
-      </li>
-      <li>
-        <em class="demo-bold">Orange nodes</em> cannot extend beyond the black rectangle. Note that
-        orange nodes can only be resized so that the new bounding box stays withing the bounding black rectangle.
-      </li>
-      <li>
-        <em class="demo-bold">Light blue nodes</em> combine the behavior of the orange and green nodes.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Node Types</h2>
+        <ul>
+          <li>
+            <em class="demo-bold">Red nodes</em> cannot be resized. They don't display resize
+            handles.
+          </li>
+          <li>
+            <em class="demo-bold">Green nodes</em> show only four handles at the corners. During
+            resizing, these handles always maintain the aspect ratio of the node.
+          </li>
+          <li>
+            <em class="demo-bold">Dark blue nodes</em> show only one handle in the bottom right
+            corner. During resizing, this handle always maintains the center of the node.
+          </li>
+          <li>
+            <em class="demo-bold">Purple nodes</em> show four handles at the corners and four
+            different handles at the sides. During resizing, the corner handles always maintain the
+            aspect ratio of the node while the border handles don't.
+          </li>
+          <li>
+            <em class="demo-bold">Orange nodes</em> cannot extend beyond the black rectangle. Note
+            that orange nodes can only be resized so that the new bounding box stays withing the
+            bounding black rectangle.
+          </li>
+          <li>
+            <em class="demo-bold">Light blue nodes</em> combine the behavior of the orange and green
+            nodes.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-<script type="module" crossorigin="anonymous" src="ReshapeHandleProviderConfigurationDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="ReshapeHandleProviderConfigurationDemo.js"
+    ></script>
+  </body>
 </html>

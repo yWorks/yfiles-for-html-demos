@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/interactivegraphrestructuring/index.html).
 
+# Interactive Graph Restructuring Demo
+
 A demo that shows how to interactively relocate subtrees from one parent to another.
 
 Every time that a node is selected, the subtree rooted at this particular node is dragged interactively, and [ClearAreaLayout](https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout) will try to create free space by pushing away the other elements of the graph so that the dragged subtree is relocated to another parent.

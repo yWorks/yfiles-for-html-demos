@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,75 +34,95 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Incremental Organic Layout - Layout Features Tutorial [yFiles for HTML]</title>
+    <title>Incremental Organic Layout - Layout Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script></head>
-<body class="demo-has-left">
-
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Incremental Organic Layout</h2>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Layout Features Tutorial</div>
 
-    <p>
-      This demo shows how to run the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> algorithm
-      on a predefined subset of nodes in a graph.
-    </p>
+        <h1>Incremental Organic Layout</h1>
 
-    <p>
-      To achieve this, two setup steps are necessary:
-    </p>
-    <p>
-      First, the algorithm has to be told to work on a subset only. To do so, <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a>'s
-      <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#scope" target="_blank">scope</a> property has to be set to one of the subset scopes
-      <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#MAINLY_SUBSET" target="_blank">MAINLY_SUBSET</a>,
-      <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#MAINLY_SUBSET_GEOMETRIC" target="_blank">MAINLY_SUBSET_GEOMETRIC</a>, or
-      <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#SUBSET" target="_blank">SUBSET</a>.
-    </p>
-    <p>
-      And second, the algorithm has to be told which set of nodes to rearrange.
-      Class <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData" target="_blank">OrganicLayoutData</a> offers the property
-      <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#affectedNodes" target="_blank">affectedNodes</a> for this purpose.
-    </p>
+        <p>
+          This demo shows how to run the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> algorithm on
+          a predefined subset of nodes in a graph.
+        </p>
 
-    <p>
-      In this demo, the algorithm works on the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#SUBSET" target="_blank">SUBSET</a> of
-      <span style="color: #17BEBB; font-weight: bold">turquoise nodes</span> only.
-    </p>
+        <p>To achieve this, two setup steps are necessary:</p>
+        <p>
+          First, the algorithm has to be told to work on a subset only. To do so,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a>'s <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#scope" target="_blank">scope</a> property has to be
+          set to one of the subset scopes
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#MAINLY_SUBSET" target="_blank">MAINLY_SUBSET</a>,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#MAINLY_SUBSET_GEOMETRIC" target="_blank">MAINLY_SUBSET_GEOMETRIC</a>, or
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#SUBSET" target="_blank">SUBSET</a>.
+        </p>
+        <p>
+          And second, the algorithm has to be told which set of nodes to rearrange. Class
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData" target="_blank">OrganicLayoutData</a> offers the property
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#affectedNodes" target="_blank">affectedNodes</a> for this purpose.
+        </p>
 
-    <h3>Code Snippet</h3>
-    <p>
-      You can copy the code snippet to configure the layout from
-      <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/organic-incremental/OrganicIncremental.ts"
-         target="_blank">GitHub</a>.
-    </p>
+        <p>
+          In this demo, the algorithm works on the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#SUBSET" target="_blank">SUBSET</a> of
+          <span style="color: #17bebb; font-weight: bold">turquoise nodes</span> only.
+        </p>
 
-    <h3>Documentation</h3>
-    <p>
-      The Developer's Guide has detailed information about the
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout" target="_blank">organic layout algorithm</a> in general and about
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#organic_layout-incremental" target="_blank">how to run the algorithm on a subset of nodes</a>
-      specifically.
-    </p>
-  </div>
-</aside>
+        <h3>Code Snippet</h3>
+        <p>
+          You can copy the code snippet to configure the layout from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/organic-incremental/OrganicIncremental.ts"
+            target="_blank"
+            >GitHub</a
+          >.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+        <h3>Documentation</h3>
+        <p>
+          The Developer's Guide has detailed information about the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout" target="_blank">organic layout algorithm</a> in general and about
+          <dguide section="organic_layout#organic_layout-incremental"
+            >how to run the algorithm on a subset of nodes</dguide
+          >
+          specifically.
+        </p>
+      </div>
+    </aside>
 
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

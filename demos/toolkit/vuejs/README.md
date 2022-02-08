@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/toolkit/vuejs/index.html).
 
+# Vue.js Integration Demo
+
 Shows how to use yFiles for HTML with Vue.js.
 
 The following Vue.js features are shown:

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,57 +31,57 @@
 
 /* CSS MODULES */
 declare module '*.module.css' {
-  const classes: { [key: string]: string };
-  export default classes;
+  const classes: { [key: string]: string }
+  export default classes
 }
 declare module '*.module.scss' {
-  const classes: { [key: string]: string };
-  export default classes;
+  const classes: { [key: string]: string }
+  export default classes
 }
 declare module '*.module.sass' {
-  const classes: { [key: string]: string };
-  export default classes;
+  const classes: { [key: string]: string }
+  export default classes
 }
 declare module '*.module.less' {
-  const classes: { [key: string]: string };
-  export default classes;
+  const classes: { [key: string]: string }
+  export default classes
 }
 declare module '*.module.styl' {
-  const classes: { [key: string]: string };
-  export default classes;
+  const classes: { [key: string]: string }
+  export default classes
 }
 
 /* CSS */
-declare module '*.css';
-declare module '*.scss';
-declare module '*.sass';
-declare module '*.less';
-declare module '*.styl';
+declare module '*.css'
+declare module '*.scss'
+declare module '*.sass'
+declare module '*.less'
+declare module '*.styl'
 
 /* IMAGES */
 declare module '*.svg' {
-  const ref: string;
-  export default ref;
+  const ref: string
+  export default ref
 }
 declare module '*.bmp' {
-  const ref: string;
-  export default ref;
+  const ref: string
+  export default ref
 }
 declare module '*.gif' {
-  const ref: string;
-  export default ref;
+  const ref: string
+  export default ref
 }
 declare module '*.jpg' {
-  const ref: string;
-  export default ref;
+  const ref: string
+  export default ref
 }
 declare module '*.jpeg' {
-  const ref: string;
-  export default ref;
+  const ref: string
+  export default ref
 }
 declare module '*.png' {
-  const ref: string;
-  export default ref;
+  const ref: string
+  export default ref
 }
 
 /* CUSTOM: ADD YOUR OWN HERE */

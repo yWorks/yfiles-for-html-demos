@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/layerconstraints/index.html).
 
+# Layer Constraints Demo
+
 Shows how to use layer constraints to restrict the node layering in [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
 
 The layer is determined by the model data.

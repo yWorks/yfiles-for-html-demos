@@ -4,9 +4,11 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/01-tutorial-getting-started/06-basic-interaction/index.html).
 
-## Tutorial Demo 6
+Getting Started Tutorial - Step 6
 
-### How to add basic interaction.
+# Basic Interaction
+
+How to add basic interaction.
 
 This step shows the [default interaction gestures](https://docs.yworks.com/yfileshtml/#/dguide/interaction) that are provided by class GraphEditorInputMode.
 

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/graph-copy/index.html).
 
-## Graph Copy
+Application Features Tutorial
+
+# Graph Copy
 
 This demo shows how to use the [GraphCopier](https://docs.yworks.com/yfileshtml/#/api/GraphCopier) to copy a graph or part of it to another graph.
 

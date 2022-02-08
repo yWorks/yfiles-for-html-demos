@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,23 +31,23 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>SVG Rendering</title>
-  <style>
-    html, body {
-      margin: 0
-    }
-  </style>
-</head>
-<body>
-
-<script>
-  window.drawSvg = (svg, width, height) => {
-    const div = document.createElement('div')
-    document.body.style.width = width
-    document.body.style.height = height
-    div.innerHTML = svg
-    document.body.appendChild(div)
-  }
-</script>
-</body>
+    <title>SVG Rendering</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      window.drawSvg = (svg, width, height) => {
+        const div = document.createElement('div')
+        document.body.style.width = width
+        document.body.style.height = height
+        div.innerHTML = svg
+        document.body.appendChild(div)
+      }
+    </script>
+  </body>
 </html>

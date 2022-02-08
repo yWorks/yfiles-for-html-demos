@@ -4,9 +4,11 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/01-tutorial-getting-started/09-data-binding/index.html).
 
-## Tutorial Demo 9
+Getting Started Tutorial - Step 9
 
-### How to bind arbitrary data to elements.
+# Binding Data to Graph Elements
+
+How to bind arbitrary data to elements.
 
 This step shows how to [bind data to graph elements](https://docs.yworks.com/yfileshtml/#/dguide/customizing_graph-binding_data).
 

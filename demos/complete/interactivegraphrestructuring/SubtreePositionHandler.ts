@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -112,7 +112,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     this.layoutHelper.cancelLayout()
     this.subtree.nodes.forEach(node => {
       const style = node.style as DemoNodeStyle
-      style.cssClass = style.cssClass!.replace(' moving', '')
+      style.cssClass = style.cssClass.replace(' moving', '')
     })
   }
 
@@ -127,7 +127,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     this.layoutHelper.stopLayout()
     this.subtree.nodes.forEach(node => {
       const style = node.style as DemoNodeStyle
-      style.cssClass = style.cssClass!.replace(' moving', '')
+      style.cssClass = style.cssClass.replace(' moving', '')
     })
   }
 

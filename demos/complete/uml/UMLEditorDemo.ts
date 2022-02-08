@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -115,8 +115,8 @@ function executeLayout() {
     // combine all inheritance edges (generalization, realization) in edge groups according to
     // their line type
     // do not group the other edges
-    sourceGroupIds: (edge: IEdge) => getGroupId(edge, 'src'),
-    targetGroupIds: (edge: IEdge) => getGroupId(edge, 'tgt')
+    sourceGroupIds: (edge: IEdge) => getGroupId(edge, `src-${edge.sourceNode}`),
+    targetGroupIds: (edge: IEdge) => getGroupId(edge, `tgt-${edge.targetNode}`)
   })
 
   return graphComponent.morphLayout(layout, '500ms', layoutData)

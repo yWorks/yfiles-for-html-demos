@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -604,8 +604,12 @@ export default class FlowchartConfiguration {
   createDelete(): WizardAction {
     return new WizardAction(
       'deleteNode',
-      checkAnd([checkNotCreatingEdge, checkOr([checkForNode, checkForEdge]), this.checkNodesLeft]),
-      async (mode, item, type, args) => {
+      checkAnd([
+        checkNotCreatingEdge,
+        checkOr([checkForNode, checkForEdge]),
+        (mode: GraphWizardInputMode) => mode.graph.nodes.size > 1
+      ]),
+      (mode, item, type, args) => {
         const graph = mode.graph
         let newCurrentItem: INode | null = null
         if (mode.currentItem instanceof INode) {
@@ -627,10 +631,6 @@ export default class FlowchartConfiguration {
         tooltip: 'Remove this item'
       }
     )
-  }
-
-  private checkNodesLeft(mode: GraphWizardInputMode): boolean {
-    return mode.graph.nodes.size > 1
   }
 
   /**

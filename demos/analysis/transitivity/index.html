@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,225 +34,274 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Transitivity Demo [yFiles for HTML]</title>
+    <title>Transitivity Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style type="text/css">
-    .disabled {
-      border-color: darkgray;
-      background-color: lightgray;
-    }
+    <style>
+      .disabled {
+        border-color: darkgray;
+        background-color: lightgray;
+      }
 
-    .error {
-      border-color: orangered;
-      background-color: white;
-    }
+      .error {
+        border-color: orangered;
+        background-color: white;
+      }
 
-    table {
-      border-collapse: separate;
-      border-spacing: 0;
-      width: 90%;
-      padding: 0;
-    }
+      table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 90%;
+        padding: 0;
+      }
 
-    tr.bottom td {
-      border-bottom: thin solid black;
-    }
+      tr.bottom td {
+        border-bottom: thin solid black;
+      }
 
-    .table td.header {
-      color: darkred;
-      font-weight: bold;
-    }
+      .table td.header {
+        color: darkred;
+        font-weight: bold;
+      }
 
-    td {
-      text-align: left;
-      padding-bottom: 5px;
-      padding-top: 5px;
-    }
+      td {
+        text-align: left;
+        padding-bottom: 5px;
+        padding-top: 5px;
+      }
 
-    .table td:last-child {
-      text-align: center;
-    }
+      .table td:last-child {
+        text-align: center;
+      }
 
-    .row-invisible {
-      display: none;
-    }
+      .row-invisible {
+        display: none;
+      }
 
-    #npm-toolbar {
-      display: none;
-      vertical-align: baseline;
-    }
+      #npm-toolbar {
+        display: none;
+        vertical-align: baseline;
+      }
 
-    .demo-toolbar label {
-      vertical-align: baseline;
-      width: 4em;
-    }
+      .demo-toolbar label {
+        vertical-align: baseline;
+        width: 4em;
+      }
 
-    .demo-toolbar label:hover {
-      background-color: transparent;
-      cursor: default;
-    }
+      .demo-toolbar label:hover {
+        background-color: transparent;
+        cursor: default;
+      }
 
-    #loadDependenciesButton {
-      vertical-align: middle;
-    }
+      #loadDependenciesButton {
+        vertical-align: middle;
+      }
 
-    #algorithms-label {
-      width: 5em;
-    }
+      #algorithms-label {
+        width: 5em;
+      }
 
-    #showTransitiveEdgesLabel {
-      display: none;
-      cursor: pointer;
-      vertical-align: middle;
-      width: 24px;
-    }
-  </style>
-</head>
-<body class="demo-has-left demo-has-right">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <div>
-      <p>
-        Transitivity algorithms are heavily applied to graphs in order to answer reachability questions such as <em>"Is
-        it possible to reach node x from y?"</em>. Common application fields are social networks, dependency graphs,
-        bioinformatics, citation graphs or criminal networks in which possible relations between two entities have to be
-        quickly identified and investigated.
-      </p>
+      #showTransitiveEdgesLabel {
+        display: none;
+        cursor: pointer;
+        vertical-align: middle;
+        width: 24px;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Transitivity Demo</h1>
+
+        <div>
+          <p>
+            Transitivity algorithms are heavily applied to graphs in order to answer reachability
+            questions such as <em>"Is it possible to reach node x from y?"</em>. Common application
+            fields are social networks, dependency graphs, bioinformatics, citation graphs or
+            criminal networks in which possible relations between two entities have to be quickly
+            identified and investigated.
+          </p>
+        </div>
+
+        <h2>Algorithms</h2>
+        <p>
+          The user can select one of the available algorithms from the algorithms' combo box.
+          Selecting the
+          <em>Original Graph</em> will bring the graph to its original state without the transitive
+          edges.
+        </p>
+
+        <h3>Transitive Closure</h3>
+        <p>
+          Transitivity Closure is applied in order to answer the question whether there exists a
+          directed path between two nodes. The algorithm adds an edge to the graph for each pair of
+          nodes, that are not direct neighbors, but connected by a path in the graph. The transitive
+          edges are visualized in blue color.
+        </p>
+        <h3>Transitive Reduction</h3>
+        <p>
+          Transitivity Reduction is the reverse operation to transitive closure which removes edges
+          between any two nodes if there exists another path that connects them. This means that in
+          the end, the graph remains with as few edges as possible but has the same reachability
+          relation as before. The user can choose to show or hide transitive edges using the
+          <img src="../../resources/icons/star-16.svg" style="vertical-align: text-top" />-Button of
+          the toolbar.
+        </p>
+
+        <h2>Graph Information</h2>
+        <table id="graph-information" class="table">
+          <tbody>
+            <tr class="bottom">
+              <td><b>Package Name:</b></td>
+              <td class="header"></td>
+            </tr>
+            <tr>
+              <td><b>Number of Dependents:</b></td>
+              <td></td>
+            </tr>
+            <tr class="bottom">
+              <td><b>Number of Dependencies:</b></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Current Number of Nodes:</b></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><b>Current Number of Edges:</b></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+
+        <span class="demo-separator"></span>
+
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+        <span class="demo-separator"></span>
+
+        <label id="sample-label">Samples</label>
+        <select
+          data-command="SampleSelectionChanged"
+          title="Select a sample graph"
+          id="samplesComboBox"
+        >
+          <option>yFiles Modules</option>
+          <option>NPM Graph</option>
+        </select>
+
+        <div id="npm-toolbar">
+          <span class="demo-separator"></span>
+
+          <label id="package-label" for="packageTextBox">Package</label>
+          <input class="default" id="packageTextBox" value="express" />
+          <button
+            data-command="LoadDependencies"
+            title="Load Dependencies"
+            id="loadDependenciesButton"
+            class="demo-icon-yIconLayout"
+          ></button>
+        </div>
+
+        <span class="demo-separator"></span>
+
+        <label id="algorithms-label">Algorithms</label>
+        <select
+          data-command="AlgorithmSelectionChanged"
+          title="Select an algorithm"
+          id="algorithmComboBox"
+        >
+          <option>Original Graph</option>
+          <option>Transitive Closure</option>
+          <option>Transitive Reduction</option>
+        </select>
+
+        <input
+          type="checkbox"
+          data-command="ShowTransitiveEdges"
+          id="showTransitiveEdgesButton"
+          class="demo-toggle-button"
+          checked=""
+        />
+        <label
+          id="showTransitiveEdgesLabel"
+          for="showTransitiveEdgesButton"
+          class="demo-icon-yIconShowAll"
+          title="Show/Hide Transitive Edges on Reduction"
+        ></label>
+
+        <span class="demo-separator"></span>
+
+        <button
+          data-command="RunLayout"
+          title="Run Complete Layout"
+          id="runLayoutButton"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Layout
+        </button>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="loadingIndicator">Loading npm-packages. This may take a while.</div>
+      </div>
     </div>
 
-    <h2>Algorithms</h2>
-    <p>
-      The user can select one of the available algorithms from the algorithms' combo box. Selecting the
-      <em>Original Graph</em> will bring the graph to its original state without the transitive edges.
-    </p>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Sample Graphs</h2>
+        <p>
+          This demo shows how transitive closure and reduction algorithms of yFiles can be applied
+          to a given graph. The user can select a graph from the sample graphs' combo box. The first
+          sample graph represents the <em>yfiles for HTML modules</em> dependencies graph, while the
+          second one shows the dependencies of <em>npm packages</em>.
+        </p>
+        <h3>yFiles Modules Graph</h3>
+        <p>
+          This graph presents an overview of the dependencies between the different yFiles for HTML
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/yfiles-modules#es-modules" target="_blank">modules</a>. The user can
+          select a node and investigate its dependents and dependencies.
+        </p>
+        <h3>npm Package Graph</h3>
+        <p>
+          This graph presents the dependencies of an
+          <a target="_blank" href="https://www.npmjs.com/">npm package</a>. The user can specify the
+          package name using the text area in the toolbar. Due to a possible large number of
+          dependencies, only a small number of them is visualized at once. If a node has more
+          dependencies, the user can query more of them by pressing the <em>plus symbol</em> on the
+          right part of the node.
+        </p>
+        <p>
+          Browsing the npm-packages needs a proxy server which is provided by the Demo Server. In
+          order to run the Demo Server, execute:
+        </p>
+        <pre>&gt; npm install <br>&gt; npm start</pre>
+        <p>in the root folder of the extracted yFiles for HTML package.</p>
+      </div>
+    </aside>
 
-    <h3>Transitive Closure</h3>
-    <p>
-      Transitivity Closure is applied in order to answer the question whether there exists a directed path
-      between two nodes. The algorithm adds an edge to the graph for each pair of nodes, that are not direct
-      neighbors, but connected by a path in the graph. The transitive edges are visualized in blue color.
-    </p>
-    <h3>Transitive Reduction</h3>
-    <p>
-      Transitivity Reduction is the reverse operation to transitive closure which removes edges between any
-      two nodes if there exists another path that connects them. This means that in the end, the graph remains with as
-      few edges as possible but has the same reachability relation as before. The user can choose to show or hide
-      transitive edges using the <img src="../../resources/icons/star-16.svg" style="vertical-align: text-top">-Button of the toolbar.
-    </p>
-
-    <h2>Graph Information</h2>
-    <table id="graph-information" class="table">
-      <tr class="bottom">
-        <td><b>Package Name:</b></td>
-        <td class="header"></td>
-      </tr>
-      <tr>
-        <td><b>Number of Dependents:</b></td>
-        <td></td>
-      </tr>
-      <tr class="bottom">
-        <td><b>Number of Dependencies:</b></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><b>Current Number of Nodes:</b></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><b>Current Number of Edges:</b></td>
-        <td></td>
-      </tr>
-    </table>
-  </div>
-</aside>
-
-<div class="demo-content">
-
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-    <span class="demo-separator"></span>
-
-    <label id="sample-label">Samples</label>
-    <select data-command="SampleSelectionChanged" title="Select a sample graph" id="samplesComboBox">
-      <option>yFiles Modules</option>
-      <option>NPM Graph</option>
-    </select>
-
-    <div id="npm-toolbar">
-      <span class="demo-separator"></span>
-
-      <label id="package-label" for="packageTextBox">Package</label>
-      <input class="default" id="packageTextBox" value="express">
-      <button data-command="LoadDependencies" title="Load Dependencies" id="loadDependenciesButton"
-          class="demo-icon-yIconLayout"></button>
-    </div>
-
-    <span class="demo-separator"></span>
-
-    <label id="algorithms-label">Algorithms</label>
-    <select data-command="AlgorithmSelectionChanged" title="Select an algorithm" id="algorithmComboBox">
-      <option>Original Graph</option>
-      <option>Transitive Closure</option>
-      <option>Transitive Reduction</option>
-    </select>
-
-    <input type="checkbox" data-command="ShowTransitiveEdges" id="showTransitiveEdgesButton" class="demo-toggle-button"
-        checked>
-    <label id="showTransitiveEdgesLabel" for="showTransitiveEdgesButton" class="demo-icon-yIconShowAll"
-        title="Show/Hide Transitive Edges on Reduction"></label>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="RunLayout" title="Run Complete Layout" id="runLayoutButton"
-        class="demo-icon-yIconLayout labeled">Layout</button>
-  </div>
-  <div id="graphComponent"></div>
-  <div id="loadingIndicator">Loading npm-packages. This may take a while.</div>
-</div>
-
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Sample Graphs</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how transitive closure and reduction algorithms of yFiles can be applied to a given graph. The
-      user can select a graph from the sample graphs' combo box. The first sample graph represents the <em>yfiles for
-      HTML modules</em> dependencies graph, while the second one shows the dependencies of <em>npm packages</em>.
-    </p>
-    <h2>yFiles Modules Graph</h2>
-    <p>This graph presents an overview of the dependencies between the different yFiles for HTML
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/introduction-modules#introduction-modules" target="_blank">modules</a>.
-      The user can select a node and investigate its dependents and dependencies.
-    </p>
-    <h2>npm Package Graph</h2>
-    <p>
-      This graph presents the dependencies of an <a target="_blank" href="https://www.npmjs.com/">npm package</a>. The
-      user can specify the package name using the text area in the toolbar. Due to a possible large number of
-      dependencies, only a small number of them is visualized at once. If a node has more dependencies, the user can
-      query more of them by pressing the <em>plus symbol</em> on the right part of the node.
-    </p>
-    <p>
-      Browsing the npm-packages needs a proxy server which is provided by the Demo Server. In order to run the Demo
-      Server, execute:
-    </p>
-    <pre>> npm install <br>> npm start</pre>
-    <p>in the root folder of the extracted yFiles for HTML package.</p>
-  </div>
-</aside>
-
-<script type="module" crossorigin="anonymous" src="TransitivityDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="TransitivityDemo.js"></script>
+  </body>
 </html>

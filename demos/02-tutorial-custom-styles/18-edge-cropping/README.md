@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/18-edge-cropping/index.html).
 
+Custom Styles Tutorial
+
+# Edge Cropping
+
 This step shows how to crop an edge at the node's bounds.
 
 ## Things to Try

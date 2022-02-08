@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/printing/index.html).
 
+# Printing Demo
+
 The Printing demo shows how to export a graph or a part of it to vector graphics (SVG) on the client and how to print this graphic.
 
 ## Things to Try

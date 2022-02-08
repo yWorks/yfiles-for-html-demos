@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -67,45 +67,50 @@ import {
   TimeSpan
 } from 'yfiles'
 
-import FlightData from './resources/FlightData'
-import CenterGraphStage from './CenterGraphStage'
-import ZoomAnimation from './ZoomAnimation'
-import { addClass, checkLicense, showApp } from '../../resources/demo-app'
+import FlightData from './resources/FlightData.js'
+import CenterGraphStage from './CenterGraphStage.js'
+import ZoomAnimation from './ZoomAnimation.js'
+import { addClass, checkLicense, showApp } from '../../resources/demo-app.js'
 import {
   applyLayoutStyles,
   applyMapStyles,
   getArcHeight,
   initializeDefaultMapStyles,
   updateEdgeArcs
-} from './StylesSupport'
-import ShortestPathSupport from './ShortestPathSupport'
-import CircleVisual from './CircleVisual'
-import loadJson from '../../resources/load-json'
-// import leaflet typings
-import L, { Map } from 'leaflet'
+} from './StylesSupport.js'
+import ShortestPathSupport from './ShortestPathSupport.js'
+import CircleVisual from './CircleVisual.js'
+import loadJson from '../../resources/load-json.js'
 
-let graphComponent: GraphComponent
+/** @type {GraphComponent} */
+let graphComponent
 
+/** @type {boolean} */
 let graphMode = true
 
-let bfsEdges: IEdge[]
+/** @type {Array.<IEdge>} */
+let bfsEdges
 
-let shortestPathSupport: ShortestPathSupport
+/** @type {ShortestPathSupport} */
+let shortestPathSupport
 
-let worldMap: Map
+/** @type {Map} */
+let worldMap
 
-let graphLayer: InstanceType<typeof GraphLayer>
+let graphLayer
 
+/** @type {boolean} */
 let layoutRunning = false
 
-let circleVisual: CircleVisual | null
+/** @type {CircleVisual} */
+let circleVisual
 
 // define the GraphLayer yFiles for HTML extension
 const GraphLayer = L.Layer.extend({
   /**
    * @yjs:keep=animate
    */
-  onAdd(map: Map): any {
+  onAdd(map) {
     // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
     this.graphComponent = new GraphComponent()
     this.graphComponent.zoom = 1
@@ -133,28 +138,24 @@ const GraphLayer = L.Layer.extend({
     })
     this.graphComponent.inputMode = inputMode
 
-    inputMode.addItemDoubleClickedListener(
-      (sender: object, args: ItemClickedEventArgs<IModelItem>) => {
-        if (!graphMode) {
-          const node = args.item
-          if (node) {
-            runLayout(node as INode)
-          }
+    inputMode.addItemDoubleClickedListener((sender, args) => {
+      if (!graphMode) {
+        const node = args.item
+        if (node) {
+          runLayout(node)
         }
       }
-    )
+    })
 
     inputMode.mouseHoverInputMode.delay = TimeSpan.from('200ms')
     inputMode.mouseHoverInputMode.duration = TimeSpan.from('1000ms')
     inputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
-    inputMode.addQueryItemToolTipListener(
-      (src: object, args: QueryItemToolTipEventArgs<IModelItem>) => {
-        if (INode.isInstance(args.item) && !args.handled) {
-          args.toolTip = args.item.labels.first().text
-          args.handled = true
-        }
+    inputMode.addQueryItemToolTipListener((src, args) => {
+      if (INode.isInstance(args.item) && !args.handled) {
+        args.toolTip = args.item.labels.first().text
+        args.handled = true
       }
-    )
+    })
 
     // the should not change, because the GraphComponent is tied to the gestures of Leaflet
     inputMode.moveViewportInputMode.enabled = false
@@ -162,8 +163,8 @@ const GraphLayer = L.Layer.extend({
     // add a filter to determine which nodes are visible depending on the zoom level of the map
     this.graphComponent.graph = new FilteredGraphWrapper(
       this.graphComponent.graph,
-      (node: INode): boolean => (graphMode ? node.tag.zoom <= map.getZoom() : true),
-      (edge: IEdge): boolean =>
+      node => (graphMode ? node.tag.zoom <= map.getZoom() : true),
+      edge =>
         graphMode
           ? edge.tag.zoom <= map.getZoom()
           : bfsEdges !== null && bfsEdges.indexOf(edge) >= 0
@@ -177,10 +178,10 @@ const GraphLayer = L.Layer.extend({
     backgroundDiv.id = 'component-background'
     backgroundDiv.appendChild(this.graphComponent.div)
 
-    this.pane = map.getPane(this.options.pane!)!
+    this.pane = map.getPane(this.options.pane)
     this.container = backgroundDiv
     this.pane.appendChild(this.container)
-    this.mapPane = map.getPane('mapPane')!
+    this.mapPane = map.getPane('mapPane')
 
     // Add and position children elements if needed
     this.updateGraphDiv()
@@ -204,9 +205,8 @@ const GraphLayer = L.Layer.extend({
     })
   },
 
-  onRemove(map: Map): any {
+  onRemove(map) {
     L.DomUtil.remove(this.container)
-    // @ts-ignore
     map.off('zoom viewreset resize move', this.updateGraphDiv, this)
     this.mapPane = null
   },
@@ -215,11 +215,11 @@ const GraphLayer = L.Layer.extend({
    * Synchronizes the viewport of the map and the GraphComponent
    * @yjs:keep=getSize,setPosition,getPosition
    */
-  updateGraphDiv(nodeLocationsMapper?: Mapper<INode, IRectangle>): void {
+  updateGraphDiv(nodeLocationsMapper) {
     // get the size of the map in DOM coordinates
     const mapSize = worldMap.getSize()
     // get the current position of the mapPane
-    const globalPos = L.DomUtil.getPosition(this.mapPane!)
+    const globalPos = L.DomUtil.getPosition(this.mapPane)
     // calculate the top-left location of our pane
     const topLeft = globalPos.multiplyBy(-1)
     const bottomRight = topLeft.add(mapSize)
@@ -230,14 +230,12 @@ const GraphLayer = L.Layer.extend({
     this.graphComponent.div.style.height = `${newSize.y}px`
 
     // anchor it at the top-left of the screen
-    // @ts-ignore
     L.DomUtil.setPosition(this.pane, topLeft)
 
-    const graph = this.graphComponent.graph as FilteredGraphWrapper
+    const graph = this.graphComponent.graph
     if (graphMode) {
       // transform geo-locations and update the node locations
       graph.nodes.forEach(node => {
-        // @ts-ignore
         const layerPoint = worldMap.latLngToLayerPoint(L.latLng(node.tag.lat, node.tag.lng))
         const width = node.layout.width
         const height = node.layout.height
@@ -294,19 +292,20 @@ const GraphLayer = L.Layer.extend({
   /**
    * Hide graph component during zoom.
    */
-  hideGraphComponent(): void {
+  hideGraphComponent() {
     this.graphComponent.div.style.visibility = 'hidden'
   },
 
   /**
    * Show graph component after zooming gesture.
    */
-  showGraphComponent(): void {
+  showGraphComponent() {
     this.graphComponent.div.style.visibility = 'visible'
   }
 })
 
 // register a control which toggles the graph mode between map and layout
+/** @type {Point} */
 let viewportCenter = new Point(0, 0)
 const ToggleGraphControl = L.Control.extend({
   onAdd() {
@@ -326,10 +325,10 @@ const ToggleGraphControl = L.Control.extend({
     toggleButton.addEventListener('change', async () => {
       graphMode = !graphMode
       shortestPathSupport.graphMode = graphMode
-      circleVisual!.graphMode = graphMode
+      circleVisual.graphMode = graphMode
 
-      const graph = graphComponent.graph as FilteredGraphWrapper
-      const backgroundDiv = document.getElementById('component-background')!
+      const graph = graphComponent.graph
+      const backgroundDiv = document.getElementById('component-background')
       if (graphMode) {
         worldMap.dragging.enable()
         worldMap.touchZoom.enable()
@@ -340,13 +339,13 @@ const ToggleGraphControl = L.Control.extend({
         if (worldMap.tap) {
           worldMap.tap.enable()
         }
-        document.getElementById('graphComponent')!.style.cursor = 'grab'
+        document.getElementById('graphComponent').style.cursor = 'grab'
 
         backgroundDiv.style.backgroundColor = 'rgba(0, 0, 0, 0)'
 
         // show the nodes on geo-coordinates
         // update the graph component and collect the new node locations in a mapper
-        const nodeLocations = new Mapper<INode, IRectangle>()
+        const nodeLocations = new Mapper()
         graphLayer.updateGraphDiv(nodeLocations)
 
         // move the nodes to their new locations in an animation while zooming to the old viewport
@@ -364,7 +363,7 @@ const ToggleGraphControl = L.Control.extend({
         const animation = IAnimation.createParallelAnimation([zoomAnimation, graphAnimation])
         const animator = new Animator(graphComponent)
         await animator.animate(animation)
-        applyMapStyles(graph.wrappedGraph!)
+        applyMapStyles(graph.wrappedGraph)
         toggleButton.disabled = false
       } else {
         // disable the map when the graph is shown with radial layout
@@ -377,14 +376,14 @@ const ToggleGraphControl = L.Control.extend({
         if (worldMap.tap) {
           worldMap.tap.disable()
         }
-        document.getElementById('graphComponent')!.style.cursor = 'default'
+        document.getElementById('graphComponent').style.cursor = 'default'
 
         // store viewport center to be able to restore the viewport when toggling back
         viewportCenter = graphComponent.viewport.center
 
         // run a layout with animation
         backgroundDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.7)'
-        applyLayoutStyles(graph.wrappedGraph!)
+        applyLayoutStyles(graph.wrappedGraph)
         shortestPathSupport.clearHighlights()
         toggleButton.disabled = true
         if (!layoutRunning) {
@@ -402,15 +401,15 @@ const ToggleGraphControl = L.Control.extend({
     return div
   },
 
-  onRemove(map: Map): void {}
+  onRemove(map) {}
 })
 
 /**
  * @yjs:keep=control
+ * @param {!object} licenseData
  */
-function run(licenseData: object): void {
+function run(licenseData) {
   License.value = licenseData
-  // @ts-ignore
   worldMap = L.map('graphComponent')
 
   // use openstreetmap tiles for this demo:
@@ -418,7 +417,6 @@ function run(licenseData: object): void {
   const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
   const osmAttrib = 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
 
-  // @ts-ignore
   worldMap.setView(L.latLng(15.538, 16.523), 3)
   worldMap.addLayer(
     new L.TileLayer(osmUrl, {
@@ -445,14 +443,12 @@ function run(licenseData: object): void {
   new ToggleGraphControl().addTo(worldMap)
 
   // update map size when side-bar is toggled
-  document
-    .querySelector('button.demo-left-sidebar-toggle-button')!
-    .addEventListener('click', () => {
-      setTimeout(() => {
-        worldMap.invalidateSize()
-      }, 400)
-    })
-  document.querySelector('a.action-run')!.addEventListener('click', () => {
+  document.querySelector('button.demo-left-sidebar-toggle-button').addEventListener('click', () => {
+    setTimeout(() => {
+      worldMap.invalidateSize()
+    }, 400)
+  })
+  document.querySelector('a.action-run').addEventListener('click', () => {
     setTimeout(() => {
       worldMap.invalidateSize()
     }, 400)
@@ -463,8 +459,9 @@ function run(licenseData: object): void {
 
 /**
  * Runs a radial layout.
+ * @param {!INode} [centerNode]
  */
-async function runLayout(centerNode?: INode) {
+async function runLayout(centerNode) {
   const highlightManager = graphComponent.highlightIndicatorManager
   highlightManager.clearHighlights()
   const layout = new CurveFittingLayoutStage(
@@ -472,9 +469,8 @@ async function runLayout(centerNode?: INode) {
       centerNodesPolicy: CenterNodesPolicy.CUSTOM
     })
   )
-  const graph = graphComponent.graph as FilteredGraphWrapper
-  const center =
-    centerNode || graph.wrappedGraph!.nodes.find(node => node.tag.name === 'Frankfurt')!
+  const graph = graphComponent.graph
+  const center = centerNode || graph.wrappedGraph.nodes.find(node => node.tag.name === 'Frankfurt')
   showBfsEdges(center)
   graph.nodePredicateChanged()
 
@@ -495,17 +491,18 @@ async function runLayout(centerNode?: INode) {
 /**
  * Uses BFS to find the edges between the center node and the other nodes in the graph and makes
  * them visible.
+ * @param {!INode} centerNode
  */
-function showBfsEdges(centerNode: INode): void {
-  const graph = (graphComponent.graph as FilteredGraphWrapper).wrappedGraph!
+function showBfsEdges(centerNode) {
+  const graph = graphComponent.graph.wrappedGraph
   bfsEdges = []
 
   const stack = [centerNode]
   const visited = [centerNode]
   while (stack.length > 0) {
-    const node = stack.pop()!
+    const node = stack.pop()
     graph.edgesAt(node).forEach(edge => {
-      const opposite = (edge.targetNode === node ? edge.sourceNode : edge.targetNode)!
+      const opposite = edge.targetNode === node ? edge.sourceNode : edge.targetNode
       if (visited.indexOf(opposite) < 0) {
         bfsEdges.push(edge)
         stack.unshift(opposite)
@@ -514,10 +511,10 @@ function showBfsEdges(centerNode: INode): void {
     })
   }
 
-  ;(graphComponent.graph as FilteredGraphWrapper).edgePredicateChanged()
+  graphComponent.graph.edgePredicateChanged()
 }
 
-function initializeHighlights(): void {
+function initializeHighlights() {
   const decorator = graphComponent.graph.decorator
   decorator.nodeDecorator.highlightDecorator.setFactory(() => {
     if (graphMode) {
@@ -563,13 +560,14 @@ function initializeHighlights(): void {
 /**
  * Builds the initial graph from FlightData.
  */
-function createGraph(): void {
+function createGraph() {
   // prepare the styles for the graph
-  const graph = graphComponent.graph
-  initializeDefaultMapStyles(graph)
+  initializeDefaultMapStyles(graphComponent.graph)
 
+  // build the graph on the unfiltered wrapped graph
+  const wrappedGraph = graphComponent.graph.wrappedGraph
   // read the graph from the data
-  const builder = new GraphBuilder(graph)
+  const builder = new GraphBuilder(wrappedGraph)
   builder.createNodesSource({
     data: FlightData.nodes,
     id: 'id',

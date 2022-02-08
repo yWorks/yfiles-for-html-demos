@@ -105,4 +105,10 @@ export default defineComponent({
   right: 0;
   bottom: 0;
 }
+
+@media screen and (max-height: 500px) {
+  .graph-component-container {
+    top: 60px;
+  }
+}
 </style>

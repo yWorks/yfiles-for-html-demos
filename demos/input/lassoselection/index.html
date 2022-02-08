@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,87 +34,109 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Lasso Selection Demo [yFiles for HTML]</title>
+    <title>Lasso Selection Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>This demo shows how to configure <a href="https://docs.yworks.com/yfileshtml/#/api/LassoSelectionInputMode" target="_blank">LassoSelectionInputMode</a> for lasso selection mode.
-      In this mode, graph items can be selected very flexible by dragging a lasso line around them.</p>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Lasso Selection Demo</h1>
 
-    <h2>Things to Try</h2>
+        <p>
+          This demo shows how to configure <a href="https://docs.yworks.com/yfileshtml/#/api/LassoSelectionInputMode" target="_blank">LassoSelectionInputMode</a> for lasso selection
+          mode. In this mode, graph items can be selected very flexible by dragging a lasso line
+          around them.
+        </p>
 
-    <ul>
-      <li>
-        Switch between the selection styles:
+        <h2>Things to Try</h2>
+
         <ul>
           <li>
-            Free-hand lasso selection will create a curved line while dragging and
-            select the items when releasing the mouse button
+            Switch between the selection styles:
+            <ul>
+              <li>
+                Free-hand lasso selection will create a curved line while dragging and select the
+                items when releasing the mouse button
+              </li>
+              <li>
+                Polyline lasso selection will start a segment while dragging and create a bend when
+                releasing the mouse button. The selection is finished when the mouse button is
+                released within the radius around the start point or on double-click.
+              </li>
+              <li>
+                Marquee selection is the default selection style in <em>yFiles for HTML</em>. It is
+                used as a reference here.
+              </li>
+            </ul>
           </li>
           <li>
-            Polyline lasso selection will start a segment while dragging and create a bend when releasing the mouse
-            button. The selection is finished when the mouse button is released within the radius around the start point
-            or on double-click.
+            Adjust the finish radius: When the mouse-button is released at the start point, the
+            selection is finished. The finish radius determines how close to the start point this
+            must happen.
           </li>
           <li>
-            Marquee selection is the default selection style in <em>yFiles for HTML</em>. It is used as a reference here.
+            Select different conditions to select nodes:
+            <ul>
+              <li>
+                Select Intersected Nodes: Nodes will end up in the selection if the lasso contains
+                or at least intersects with their layout.
+              </li>
+              <li>
+                Select Complete Nodes: Nodes will only be selected if the lasso completely contains
+                them.
+              </li>
+              <li>
+                Select Node's Center: The selection will only contain nodes whose center is inside
+                the lasso line.
+              </li>
+            </ul>
           </li>
         </ul>
-      </li>
-      <li>
-        Adjust the finish radius: When the mouse-button is released at the start point, the selection is finished. The
-        finish radius determines how close to the start point this must happen.
-      </li>
-      <li>
-        Select different conditions to select nodes:
-        <ul>
-          <li>
-            Select Intersected Nodes: Nodes will end up in the selection if the lasso contains or at least intersects
-            with their layout.
-          </li>
-          <li>
-            Select Complete Nodes: Nodes will only be selected if the lasso completely contains them.
-          </li>
-          <li>
-            Select Node's Center: The selection will only contain nodes whose center is inside the lasso line.
-          </li>
-        </ul>
-      </li>
-    </ul>
 
-    <p>
-      Note that on touch devices the selection gesture starts with a long press.
-    </p>
-  </div>
-</aside>
+        <p>Note that on touch devices the selection gesture starts with a long press.</p>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <select title="Choose a Selection Style" data-command="ChooseSelectionStyle">
-      <option value="free-hand-selection">Free Hand Lasso Selection</option>
-      <option value="polyline-selection">Polyline Lasso Selection</option>
-      <option value="marquee-selection">Marquee Selection</option>
-    </select>
-    <span style="margin:0 10px 0 10px">Finish Radius:</span>
-    <input type="range" id="select-finish-radius" data-command="ChooseFinishRadius" min="5" max="30" value="10"
-        title="Choose a radius around the start point to hit for closing the lasso." class="labeled"/>
-    <select title="Choose how much of the node must be inside the lasso to select it." data-command="ChooseLassoTestable">
-      <option value="nodes-intersected">Select Intersected Nodes</option>
-      <option value="nodes-complete">Select Complete Nodes</option>
-      <option value="nodes-center">Select Node's Center</option>
-    </select>
-  </div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <select title="Choose a Selection Style" data-command="ChooseSelectionStyle">
+          <option value="free-hand-selection">Free Hand Lasso Selection</option>
+          <option value="polyline-selection">Polyline Lasso Selection</option>
+          <option value="marquee-selection">Marquee Selection</option>
+        </select>
+        <span style="margin: 0 10px 0 10px">Finish Radius:</span>
+        <input
+          type="range"
+          id="select-finish-radius"
+          data-command="ChooseFinishRadius"
+          min="5"
+          max="30"
+          value="10"
+          title="Choose a radius around the start point to hit for closing the lasso."
+          class="labeled"
+        />
+        <select
+          title="Choose how much of the node must be inside the lasso to select it."
+          data-command="ChooseLassoTestable"
+        >
+          <option value="nodes-intersected">Select Intersected Nodes</option>
+          <option value="nodes-complete">Select Complete Nodes</option>
+          <option value="nodes-center">Select Node's Center</option>
+        </select>
+      </div>
 
-  <div id="graphComponent"></div>
-</div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-<script type="module" crossorigin="anonymous" src="LassoSelectionDemo.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="LassoSelectionDemo.js"></script>
+  </body>
 </html>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,32 +31,30 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>SVG Rendering</title>
-</head>
-<body>
-
-<script>
-  window.svgToPng = (svgData, w, h, margin) => {
-    w = parseInt(w)
-    h = parseInt(h)
-    margin = parseInt(margin)
-    return new Promise((resolve) => {
-      const targetCanvas = document.createElement('canvas')
-      const targetContext = targetCanvas.getContext('2d')
-      const image = new Image()
-      const onImageLoad = () => {
-        targetContext.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
-        targetCanvas.width = w + 2*margin
-        targetCanvas.height = h + 2*margin
-        targetContext.drawImage(image, margin, margin)
-        const png = targetCanvas.toDataURL('image/png')
-        resolve(png)
+    <title>SVG Rendering</title>
+  </head>
+  <body>
+    <script>
+      window.svgToPng = (svgData, w, h, margin) => {
+        w = parseInt(w)
+        h = parseInt(h)
+        margin = parseInt(margin)
+        return new Promise(resolve => {
+          const targetCanvas = document.createElement('canvas')
+          const targetContext = targetCanvas.getContext('2d')
+          const image = new Image()
+          const onImageLoad = () => {
+            targetContext.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
+            targetCanvas.width = w + 2 * margin
+            targetCanvas.height = h + 2 * margin
+            targetContext.drawImage(image, margin, margin)
+            const png = targetCanvas.toDataURL('image/png')
+            resolve(png)
+          }
+          image.addEventListener('load', onImageLoad)
+          image.src = svgData
+        })
       }
-      image.addEventListener('load', onImageLoad)
-      image.src = svgData
-    })
-  }
-
-</script>
-</body>
+    </script>
+  </body>
 </html>

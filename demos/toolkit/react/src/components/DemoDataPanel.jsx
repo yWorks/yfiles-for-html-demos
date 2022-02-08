@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,8 +42,8 @@ export default function DemoDataPanel({ graphData, onAddNode, onRemoveNode }) {
 
   return (
     <div>
-      <h1 className="demo-sidebar-header">Graph Data</h1>
       <div className="demo-sidebar-content">
+        <h2>Graph Data</h2>
         <p>
           The following buttons add/remove items in the internal <code>graphData</code> object, that
           is bound to the <code>GraphComponent</code>. Upon change, the graph will be updated and

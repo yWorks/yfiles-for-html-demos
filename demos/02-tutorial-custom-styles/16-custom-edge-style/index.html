@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,77 +34,78 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Custom Edge Style - Custom Styles Tutorial [yFiles for HTML]</title>
+    <title>Custom Edge Style - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Custom Styles Tutorial</div>
 
-    <p>This step shows how to create a custom edge style which allows to specify the edge thickness by setting a
-      property on the style. The <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#createVisual" target="_blank">EdgeStyleBase#createVisual</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#updateVisual" target="_blank">EdgeStyleBase#updateVisual</a>
-      methods are implemented like in <code>MySimpleNodeStyle</code> and <code>MySimpleLabelStyle</code>.</p>
+        <h1>Custom Edge Style</h1>
 
-    <h2>Things to Try</h2>
+        <p>
+          This step shows how to create a custom edge style which allows to specify the edge
+          thickness by setting a property on the style. The
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#createVisual" target="_blank">EdgeStyleBase#createVisual</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#updateVisual" target="_blank">EdgeStyleBase#updateVisual</a> methods
+          are implemented like in <code>MySimpleNodeStyle</code> and
+          <code>MySimpleLabelStyle</code>.
+        </p>
 
-    <ul>
-      <li>
-        Zoom in on an edge and try selecting it by clicking near its borders.
-      </li>
-    </ul>
+        <h2>Things to Try</h2>
 
-    <h2>Left to Do</h2>
+        <ul>
+          <li>Zoom in on an edge and try selecting it by clicking near its borders.</li>
+        </ul>
 
-    <ul>
-      <li>
-        Adapt the hit test which checks if an edge was clicked to take the edge's thickness into account.
-      </li>
-      <li>
-        Crop the edges so that they don't extend into the nodes.
-      </li>
-      <li>
-        Change the style of an edge when selected.
-      </li>
-      <li>
-        Create a custom arrow which fits the style of the demo.
-      </li>
-      <li>
-        Create a custom port style for nodes.
-      </li>
-      <li>
-        Use the decorator pattern to add label edges to the nodes.
-      </li>
-      <li>
-        Create a custom group node style.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Left to Do</h2>
 
-<div class="demo-content">
+        <ul>
+          <li>
+            Adapt the hit test which checks if an edge was clicked to take the edge's thickness into
+            account.
+          </li>
+          <li>Crop the edges so that they don't extend into the nodes.</li>
+          <li>Change the style of an edge when selected.</li>
+          <li>Create a custom arrow which fits the style of the demo.</li>
+          <li>Create a custom port style for nodes.</li>
+          <li>Use the decorator pattern to add label edges to the nodes.</li>
+          <li>Create a custom group node style.</li>
+        </ul>
+      </div>
+    </aside>
 
-  <div class="demo-toolbar">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
 
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

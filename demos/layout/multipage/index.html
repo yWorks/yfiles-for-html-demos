@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,178 +34,256 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Multi-Page Layout Demo [yFiles for HTML]</title>
+    <title>Multi-page Layout Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .option-input {
-      width: 100%;
-    }
-
-    .option {
-      padding-bottom: 0.5em;
-    }
-
-    #modelGraphComponent {
-      height: 50%;
-      background-color: white;
-    }
-
-    .demo-sidebar.demo-right {
-      width: 30%;
-    }
-
-    .demo-right-hidden .demo-sidebar.demo-right {
-      right: -30%;
-    }
-
-    @media screen and (max-width: 960px) {
-      .demo-sidebar {
-        width: 100% !important;
+    <style>
+      .option-input {
+        width: 100%;
       }
+
+      .option {
+        padding-bottom: 0.5em;
+      }
+
+      #modelGraphComponent {
+        height: 50%;
+        background-color: white;
+      }
+
+      .demo-sidebar.demo-right {
+        width: 30%;
+      }
+
       .demo-right-hidden .demo-sidebar.demo-right {
-        right: -100% !important;
+        right: -30%;
       }
-      .demo-hide-right-when-small:not(.demo-right-hidden) .demo-content {
-        right: 0;
-      }
-    }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left demo-description">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Multi-page Layout Demo</h1>
 
-    .demo-has-right .demo-content {
-      right: 30%;
-    }
+        <p>
+          This demo shows the multi-page layout that divides a large graph into several smaller page
+          graphs.
+        </p>
 
-    .demo-right-hidden .demo-content {
-      right: 0;
-    }
-  </style>
-</head>
-<body class="demo-has-left demo-has-right">
-<aside class="demo-sidebar demo-left demo-description">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+        <h2>About Multi-page Layout</h2>
 
-    <p>This demo shows the multi-page layout that divides a large graph into several smaller page graphs.</p>
+        <p>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/MultiPageLayout" target="_blank">MultiPageLayout</a> subdivides a large graph (called model graph) into a set of
+          smaller graphs (called page graphs) such that the layout of each page graph fits a
+          specified maximum page size. To guarantee that no information is lost when distributing
+          the elements of the model over several pages, the algorithm introduces the following three
+          kinds of auxiliary nodes.
+        </p>
 
-    <h2>About Multi-page Layout</h2>
+        <h2>Auxiliary Nodes</h2>
 
-    <p>
-      <a href="https://docs.yworks.com/yfileshtml/#/api/MultiPageLayout" target="_blank">MultiPageLayout</a> subdivides a large graph (called model graph) into a set of smaller graphs (called page
-      graphs) such that the layout of each page graph fits a specified maximum page size. To guarantee that no
-      information is lost when distributing the elements of the model over several pages, the algorithm introduces the
-      following three kinds of auxiliary nodes.</p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
+            <g>
+              <rect
+                fill="#ff6c00"
+                stroke="none"
+                rx="3.5"
+                ry="3.5"
+                x="10%"
+                width="80%"
+                height="40"
+              ></rect>
+              <rect
+                fill="#ffc398"
+                fill-opacity="1"
+                x="95"
+                y="9"
+                ry="3"
+                width="80"
+                rx="3"
+                height="20"
+              ></rect>
+              <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#662b00">Connector</text>
+            </g>
+          </svg>
+          The layout algorithm replaces edges between nodes on different pages by so-called
+          connector nodes. More precisely, for each edge between two nodes v and w that belong to
+          different page graphs, there is a connector node attached to v that has the same label as
+          node w. Similarly, there is a connector node attached to w that has the same label as node
+          v. Click on a connector node to switch to the page graph that holds the related element.
+        </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
+            <g>
+              <rect
+                fill="#76B041"
+                stroke="none"
+                rx="3.5"
+                ry="3.5"
+                x="10%"
+                width="80%"
+                height="40"
+              ></rect>
+              <rect
+                fill="#c7deb2"
+                fill-opacity="1"
+                x="110"
+                y="9"
+                ry="3"
+                width="50"
+                rx="3"
+                height="20"
+              ></rect>
+              <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#324820">Proxy</text>
+            </g>
+          </svg>
+          The layout algorithm may also replicate a node as one or more proxy nodes, if the original
+          node and its direct neighbors do not fit onto a single page. Proxy nodes have the same
+          label as the node they replicate. Click on a proxy node to switch to the page graph that
+          holds the replicated node.
+        </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
+            <g>
+              <rect
+                fill="#AB2346"
+                stroke="none"
+                rx="3.5"
+                ry="3.5"
+                x="10%"
+                width="80%"
+                height="40"
+              ></rect>
+              <rect
+                fill="#DCA6B4"
+                fill-opacity="1"
+                x="80"
+                y="9"
+                ry="3"
+                width="110"
+                rx="3"
+                height="20"
+              ></rect>
+              <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#461622">
+                Proxy Reference
+              </text>
+            </g>
+          </svg>
+          For each proxy node the layout algorithm creates a so-called proxy reference node in the
+          page graph that holds the node which is replicated by the proxy. Proxy reference nodes are
+          labeled with the number of the page graph that holds the referenced proxy node. Click on a
+          proxy reference node to switch to the page graph that holds the referenced proxy node.
+        </p>
+      </div>
+    </aside>
 
-    <h2>Auxiliary Nodes</h2>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Layout Settings</h2>
 
-    <p>
-      <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
-        <g>
-          <rect fill="#ff6c00" stroke="none" rx="3.5" ry="3.5" x="10%" width="80%" height="40"></rect>
-          <rect fill="#ffc398" fill-opacity="1" x="103" y="11" ry="3" width="62" rx="3" height="17"></rect>
-          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#662b00">Connector</text>
-        </g>
-      </svg>
-      The layout algorithm replaces edges between nodes on different pages by so-called connector nodes. More precisely,
-      for each edge between two nodes v and w that belong to different page graphs, there is a connector node attached
-      to v that has the same label as node w. Similarly, there is a connector node attached to w that has the same label
-      as node v. Click on a connector node to switch to the page graph that holds the related element.
-    </p>
-    <p>
-      <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
-        <g>
-          <rect fill="#76B041" stroke="none" rx="3.5" ry="3.5" x="10%" width="80%" height="40"></rect>
-          <rect fill="#c7deb2" fill-opacity="1" x="115" y="11" ry="3" width="40" rx="3" height="17"></rect>
-          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#324820">Proxy</text>
-        </g>
-      </svg>
-      The layout algorithm may also replicate a node as one or more proxy nodes, if the original node and its direct
-      neighbors do not fit onto a single page. Proxy nodes have the same label as the node they replicate. Click on a
-      proxy node to switch to the page graph that holds the replicated node.
-    </p>
-    <p>
-      <svg xmlns="http://www.w3.org/2000/svg" width="270" height="40">
-        <g>
-          <rect fill="#AB2346" stroke="none" rx="3.5" ry="3.5" x="10%" width="80%" height="40"></rect>
-          <rect fill="#DCA6B4" fill-opacity="1" x="88" y="11" ry="3" width="93" rx="3" height="17"></rect>
-          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#461622">Proxy Reference</text>
-        </g>
-      </svg>
-      For each proxy node the layout algorithm creates a so-called proxy reference node in the page graph that holds the
-      node which is replicated by the proxy. Proxy reference nodes are labeled with the number of the page graph that
-      holds the referenced proxy node. Click on a proxy reference node to switch to the page graph that holds the
-      referenced proxy node.
-    </p>
-  </div>
-</aside>
+        <div class="option">
+          <label for="pageWidthTextBox">Page Width</label>
+          <input id="pageWidthTextBox" type="number" value="800" class="option-input" />
+        </div>
+        <div class="option">
+          <label for="pageHeightTextBox">Page Height</label>
+          <input id="pageHeightTextBox" type="number" value="800" class="option-input" />
+        </div>
+        <div class="option">
+          <label for="coreLayoutComboBox">Core Layout Algorithm</label>
+          <select id="coreLayoutComboBox" class="option-input"></select>
+        </div>
+        <div class="option">
+          <label for="createProxyReferenceNodes">Create Proxy Reference Nodes</label>
+          <input id="createProxyReferenceNodes" type="checkbox" checked="" />
+        </div>
+        <div class="option">
+          <label for="placeMultipleComponentsOnSinglePage"
+            >Place Multiple Components on Single Page</label
+          >
+          <input id="placeMultipleComponentsOnSinglePage" type="checkbox" checked="" />
+        </div>
+        <div class="option">
+          <label for="additionalParentCount">Additional Parent Count</label>
+          <input
+            id="additionalParentCount"
+            type="number"
+            min="0"
+            value="1"
+            class="option-input"
+            disabled=""
+          />
+        </div>
+        <button data-command="DoLayout" title="Layout" data-icon="yIconLayout">Layout</button>
 
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Layout Settings</h1>
-  <div class="demo-sidebar-content">
-    <div class="option">
-      <label for="pageWidthTextBox">Page Width</label> <input id="pageWidthTextBox" type="number" value="800"
-        class="option-input"/>
+        <h2>Model Graph</h2>
+
+        <div id="modelGraphComponent"></div>
+        <div>
+          <h3>Browse the Model Graph</h3>
+          <ul>
+            <li>Use the mouse-wheel to zoom into/out of the model graph.</li>
+            <li>Drag the model graph to navigate to the parts of interest.</li>
+            <li>Double-click on the model graph to fit its bounds into the component.</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button
+          id="previousPage"
+          data-command="PreviousPage"
+          title="Previous Page"
+          class="demo-icon-yIconPrevious"
+        ></button>
+        <input
+          id="pageNumberTextBox"
+          data-command="PageNumberTextBox"
+          type="number"
+          style="width: 4em"
+        />
+        <button
+          id="nextPage"
+          data-command="NextPage"
+          title="Next Page"
+          class="demo-icon-yIconNext"
+        ></button>
+        <span class="demo-separator"></span>
+        <select id="sampleComboBox" data-command="SampleComboBox">
+          <option>Pop Artists</option>
+          <option>yFiles Layout Namespaces</option>
+        </select>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="loadingIndicator">Calculating the layout. This may take some time...</div>
+      </div>
     </div>
-    <div class="option">
-      <label for="pageHeightTextBox">Page Height</label> <input id="pageHeightTextBox" type="number" value="800"
-        class="option-input"/>
-    </div>
-    <div class="option">
-      <label for="coreLayoutComboBox">Core Layout Algorithm</label> <select id="coreLayoutComboBox"
-        class="option-input"></select>
-    </div>
-    <div class="option">
-      <label for="createProxyReferenceNodes">Create Proxy Reference Nodes</label>
-      <input id="createProxyReferenceNodes" type="checkbox" checked>
-    </div>
-    <div class="option">
-      <label for="placeMultipleComponentsOnSinglePage">Place Multiple Components on Single Page</label>
-      <input id="placeMultipleComponentsOnSinglePage" type="checkbox" checked>
-    </div>
-    <div class="option">
-      <label for="additionalParentCount">Additional Parent Count</label>
-      <input id="additionalParentCount" type="number" min="0" value="1" class="option-input" disabled/>
-    </div>
-    <button data-command="DoLayout" title="Layout" data-icon="yIconLayout">Layout</button>
-    <h1>Model Graph</h1>
-    <div id="modelGraphComponent"></div>
-    <div>
-      <h3>Browse the model graph:</h3>
-      <ul>
-        <li>Use the mouse-wheel to zoom into/out of the model graph.</li>
-        <li>Drag the model graph to navigate to the parts of interest.</li>
-        <li>Double-click on the model graph to fit its bounds into the component.</li>
-      </ul>
-    </div>
-  </div>
-</aside>
 
-<div class="demo-content">
-
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button id="previousPage" data-command="PreviousPage" title="Previous Page"
-        class="demo-icon-yIconPrevious"></button>
-    <input id="pageNumberTextBox" data-command="PageNumberTextBox" type="number" style="width:4em;">
-    <button id="nextPage" data-command="NextPage" title="Next Page" class="demo-icon-yIconNext"></button>
-    <span class="demo-separator"></span>
-    <select id="sampleComboBox" data-command="SampleComboBox">
-      <option>Pop Artists</option>
-      <option>yFiles Layout Namespaces</option>
-    </select>
-  </div>
-
-  <div id="graphComponent"></div>
-
-  <div id="loadingIndicator">Calculating the layout. This may take some time...</div>
-</div>
-
-<script type="module" crossorigin="anonymous" src="MultiPageDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="MultiPageDemo.js"></script>
+  </body>
 </html>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/imageexport/index.html).
 
+# Image Export Demo
+
 This demo shows how to export the whole diagram or a part of it to a PNG image.
 
 ## Things to Try

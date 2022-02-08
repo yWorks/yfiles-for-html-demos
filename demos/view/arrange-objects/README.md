@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/arrange-objects/index.html).
 
+# Arrange Objects Demo
+
 This demo presents simple operations for aligning and distributing nodes.
 
 ## Things to Try

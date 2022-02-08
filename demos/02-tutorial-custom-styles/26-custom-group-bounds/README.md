@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/26-custom-group-bounds/index.html).
 
-## Description
+Custom Styles Tutorial
+
+# Custom Group Bounds
 
 This step shows how to customize the way that the group insets are calculated by implementing an [ILayoutGroupBoundsCalculator](https://docs.yworks.com/yfileshtml/#/api/ILayoutGroupBoundsCalculator). This implementation takes the labels of the child nodes into account and also considers the insets as specified by the [INodeInsetsProvider](https://docs.yworks.com/yfileshtml/#/api/INodeInsetsProvider) of the group node.
 

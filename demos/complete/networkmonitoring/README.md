@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/networkmonitoring/index.html).
 
+# Network Monitoring Demo
+
 This demo shows a basic network monitoring tool.
 
 You can watch the traffic flowing through the network and even influence the network by deactivating nodes.

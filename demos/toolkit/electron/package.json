@@ -12,10 +12,10 @@
   "dependencies": {
     "ejs-loader": "^0.4.1",
     "source-map-support": "^0.5.19",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.4-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.5-dev.tgz"
   },
   "devDependencies": {
-    "@yworks/optimizer": "1.5.0",
+    "@yworks/optimizer": "1.7.1",
     "ejs": "2.7.4",
     "ejs-html-loader": "4.0.1",
     "electron": "11.1.0",

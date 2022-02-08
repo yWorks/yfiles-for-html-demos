@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/21-edge-performance/index.html).
 
+Custom Styles Tutorial
+
+# Edge Performance
+
 This step shows how to optimize rendering performance for edges and arrows. Instead of re-creating all elements if only the edge path changes, only the 'd' attribute of the path and the arrows visualizations are updated.
 
 ## Things to Try

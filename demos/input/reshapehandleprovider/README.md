@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/reshapehandleprovider/index.html).
 
+# Reshape Handle Provider Demo
+
 This demo shows how to implement a custom [IReshapeHandleProvider](https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider).
 
 This _IReshapeHandleProvider_ is provided for ports to reshape their port visualization.

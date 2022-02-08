@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/loading/amdloading/index.html).
 
+# Amd Loading Demo
+
 This demo loads the yFiles module resources using the _require_ function that is defined in the AMD loading standard.
 
 In order to run this demo, please run `npm install` in the demo folder. This will download the require.js AMD loader.

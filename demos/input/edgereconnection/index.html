@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,87 +34,100 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Edge Reconnection Port Candidate Provider Demo [yFiles for HTML]</title>
+    <title>Edge Reconnection Port Candidate Provider Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <style type="text/css">
-    path.firebrick {
-      stroke: #B02222;
-    }
+    <style>
+      path.firebrick {
+        stroke: #b02222;
+      }
 
-    rect.firebrick {
-      fill: #B02222;
-    }
+      rect.firebrick {
+        fill: #b02222;
+      }
 
-    path.orange {
-      stroke: #FF8C00;
-    }
+      path.orange {
+        stroke: #ff8c00;
+      }
 
-    rect.orange {
-      fill: #FF8C00;
-    }
+      rect.orange {
+        fill: #ff8c00;
+      }
 
-    path.green {
-      stroke: #008000;
-    }
+      path.green {
+        stroke: #008000;
+      }
 
-    rect.green {
-      fill: #008000;
-    }
+      rect.green {
+        fill: #008000;
+      }
 
-    path.royalblue {
-      stroke: #007FFF;
-    }
+      path.royalblue {
+        stroke: #007fff;
+      }
 
-    rect.royalblue {
-      fill: #007FFF;
-    }
-  </style>
+      rect.royalblue {
+        fill: #007fff;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Edge Reconnection Port Candidate Provider Demo</h1>
 
-    <p>This demo shows how the reconnection of edge ports can be customized and restricted.</p>
+        <p>This demo shows how the reconnection of edge ports can be customized and restricted.</p>
 
-    <p> This is done with custom implementations of <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgeReconnectionPortCandidateProvider" target="_blank">IEdgeReconnectionPortCandidateProvider</a>
-      that are added to the lookup of the edges. </p>
+        <p>
+          This is done with custom implementations of
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgeReconnectionPortCandidateProvider" target="_blank">IEdgeReconnectionPortCandidateProvider</a> that are added to the lookup of the
+          edges.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <p> Select an edge and drag one of its port handles to another node. When over a node, green indicators highlight
-      valid new locations for the port. </p>
+        <p>
+          Select an edge and drag one of its port handles to another node. When over a node, green
+          indicators highlight valid new locations for the port.
+        </p>
 
-    <h2>Edge Types</h2>
-    <ul>
-      <li>
-        <em class="demo-red demo-bold">Red edges</em> cannot be moved to another port.
-      </li>
-      <li>
-        <em class="demo-orange demo-bold">Orange edges</em> connect to other orange nodes, but you cannot create
-        self-loops.
-      </li>
-      <li>
-        <em class="demo-blue demo-bold">Blue edges</em> connect to all other ports (black dots). Note that the blue
-        edge will reuse existing port locations.
-      </li>
-      <li>
-        <em class="demo-green demo-bold">Green edges</em> connect to any location inside of other green nodes when the
-        <code>Shift</code> key is pressed.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Edge Types</h2>
+        <ul>
+          <li><em class="demo-red demo-bold">Red edges</em> cannot be moved to another port.</li>
+          <li>
+            <em class="demo-orange demo-bold">Orange edges</em> connect to other orange nodes, but
+            you cannot create self-loops.
+          </li>
+          <li>
+            <em class="demo-blue demo-bold">Blue edges</em> connect to all other ports (black dots).
+            Note that the blue edge will reuse existing port locations.
+          </li>
+          <li>
+            <em class="demo-green demo-bold">Green edges</em> connect to any location inside of
+            other green nodes when the <code>Shift</code> key is pressed.
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-<script type="module" crossorigin="anonymous" src="EdgeReconnectionPortCandidateProviderDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="EdgeReconnectionPortCandidateProviderDemo.js"
+    ></script>
+  </body>
 </html>

@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/rectangular-indicator/index.html).
 
-## Rectangular indicator
+Application Features Tutorial
+
+# The Rectangular Indicator
 
 This demo shows how we can apply a rectangular indicator to a graph.
 

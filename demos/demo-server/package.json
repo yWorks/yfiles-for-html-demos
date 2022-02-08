@@ -1,6 +1,6 @@
 {
   "name": "demo-server-for-yfiles-for-html",
-  "version": "23.0.0",
+  "version": "24.0.5",
   "description": "A Node.js Express server for the yFiles for HTML demos and tutorials.",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "express": "4.17.1",
-    "multer": "1.4.2",
-    "open": "7.0.3",
+    "multer": "1.4.3",
+    "open": "8.4.0",
     "serve-favicon": "2.5.0"
   }
 }

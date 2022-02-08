@@ -1,10 +1,14 @@
-# Accessibility with Aria Attributes - Application Features Tutorial
+#
+
+      Accessibility with Aria Attributes - Application Features Tutorial
 
 <img src="../../resources/image/tutorial3accessibility.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/accessibility/index.html).
 
-## Accessibility
+Application Features Tutorial
+
+# Accessibility with Aria Attributes
 
 This demo shows how to improve accessibility with ARIA attributes and a [live region](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) for the graph component. Switching an element in this demo, updates the live region of the graph component with the currently selected label.
 

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,97 +34,131 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>NodeJS Demo [yFiles for HTML]</title>
+    <title>NodeJS Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #graphComponentStatus {
-      height: 40px;
-      width: 50%;
-      border: 1px solid #999999;
-      line-height: 40px;
-      text-align: center;
-      font-size: 20px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-left:-25%;
-      padding-right: 20px;
-      background-color: rgba(255,255,255,0.75);
-      visibility: hidden;
-    }
-  </style>
+    <style>
+      #graphComponentStatus {
+        height: 40px;
+        width: 50%;
+        border: 1px solid #999999;
+        line-height: 40px;
+        text-align: center;
+        font-size: 20px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -25%;
+        padding-right: 20px;
+        background-color: rgba(255, 255, 255, 0.75);
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>NodeJS Demo</h1>
 
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how to run a yFiles layout algorithm in a
-      <em><a href="https://nodejs.org/" target="_blank">Node.js&reg;</a></em> environment.
-      This makes it possible to run the layout calculation asynchronously, preventing it from blocking the UI.
-    </p>
-    <p>
-      To transfer the graph structure and layout between the <em>Node.js</em> <em><a target="_blank"
-      href="https://expressjs.com/">Express</a></em> server and the main page, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>
-      creates a serializable data object on the client-side and sends it to the <em>Node.js</em> server.
-    </p>
-    <p>
-      On the server-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> parses this data object and provides a callback which
-      allows to apply a layout on the parsed graph. This callback is executed by calling <code>process(data)</code> on
-      the worker which resolves with a serializable result data object that is supposed to be sent back to the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>.
-    </p>
-    <p>
-      On the client-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a> waits for the response of the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a>
-      and eventually applies the result to the graph.
-    </p>
+        <p>
+          This demo shows how to run a yFiles layout algorithm in a
+          <em><a href="https://nodejs.org/" target="_blank">Node.js®</a></em> environment. This
+          makes it possible to run the layout calculation asynchronously, preventing it from
+          blocking the UI.
+        </p>
+        <p>
+          To transfer the graph structure and layout between the <em>Node.js</em>
+          <em><a target="_blank" href="https://expressjs.com/">Express</a></em> server and the main
+          page, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a> creates a serializable data object on the
+          client-side and sends it to the <em>Node.js</em> server.
+        </p>
+        <p>
+          On the server-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> parses this data object and
+          provides a callback which allows to apply a layout on the parsed graph. This callback is
+          executed by calling <code>process(data)</code> on the worker which resolves with a
+          serializable result data object that is supposed to be sent back to the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>.
+        </p>
+        <p>
+          On the client-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a> waits for the response of the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a>
+          and eventually applies the result to the graph.
+        </p>
 
-    <h2>Things to Try</h2>
+        <h2>Things to Try</h2>
 
-    <p>Modify the graph structure by adding/removing nodes and edges, and re-run the <em>Node.js</em> layout.</p>
+        <p>
+          Modify the graph structure by adding/removing nodes and edges, and re-run the
+          <em>Node.js</em> layout.
+        </p>
 
-    <h2>Running the Node.js Layout Server</h2>
-    <ol>
-      <li>Navigate to the <code>server</code> subdirectory of this demo's directory</li>
-      <li>Install the required node modules: <pre>&gt; npm install</pre></li>
-      <li>Run the layout server: <pre>&gt; npm start</pre></li>
-    </ol>
+        <h2>Running the Node.js Layout Server</h2>
+        <ol>
+          <li>Navigate to the <code>server</code> subdirectory of this demo's directory</li>
+          <li>
+            Install the required node modules:
+            <pre>&gt; npm install</pre>
+          </li>
+          <li>
+            Run the layout server:
+            <pre>&gt; npm start</pre>
+          </li>
+        </ol>
 
-    <h2>Note</h2>
+        <h2>Note</h2>
 
-    <p>
-      In Internet Explorer 9, this demo will not work unless client and server are running on the same domain due to
-      cross domain policies and lacking support for cross-origin resource sharing (CORS).
-    </p>
-  </div>
-</aside>
+        <p>
+          In Internet Explorer 9, this demo will not work unless client and server are running on
+          the same domain due to cross domain policies and lacking support for cross-origin resource
+          sharing (CORS).
+        </p>
+      </div>
+    </aside>
 
-<div class="demo-content">
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
 
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
 
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
 
-    <span class="demo-separator"></span>
+        <button
+          data-command="NodeJSLayout"
+          title="Run the NodeJS layout"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Layout
+        </button>
+      </div>
 
-    <button data-command="NodeJSLayout" title="Run the NodeJS layout" class="demo-icon-yIconLayout labeled" >Layout</button>
-  </div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="graphComponentStatus">Running NodeJS layout …</div>
+      </div>
+    </div>
 
-  <div id="graphComponent"></div>
-  <div id="graphComponentStatus">Running NodeJS layout &hellip;</div>
-</div>
-
-<script src="NodeJSDemo.js" type="module"></script>
-</body>
+    <script src="NodeJSDemo.js" type="module"></script>
+  </body>
 </html>

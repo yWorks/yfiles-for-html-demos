@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,17 +29,12 @@
 /* global canvg */
 
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
-import { detectFirefoxVersion, detectInternetExplorerVersion } from '../../utils/Workarounds.js'
+import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
 
 /**
  * The detected IE version for x-browser compatibility.
  */
 const ieVersion = detectInternetExplorerVersion()
-
-/**
- * The detected Firefox version for x-browser compatibility.
- */
-const ffVersion = detectFirefoxVersion()
 
 /**
  * A class that provides PNG image export in the client's browser. The {@link SvgExport} exports an
@@ -121,7 +116,7 @@ function renderSvgToPng(svgElement, size, margins) {
 
     // An image that gets the export SVG in the Data URL format
     const svgImage = new Image()
-    const onSvgImageLoad = () => {
+    svgImage.onload = () => {
       targetContext.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
       targetCanvas.width = size.width + (margins.left + margins.right)
       targetCanvas.height = size.height + (margins.top + margins.bottom)
@@ -144,25 +139,6 @@ function renderSvgToPng(svgElement, size, margins) {
         },
         ieVersion > -1 ? 100 : 0
       )
-    }
-
-    // Workaround for the following Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1365622
-    if (ffVersion > 52 && ffVersion < 55) {
-      svgImage.onload = () => {
-        // Draw the image to the canvas immediately to preload it
-        targetContext.drawImage(svgImage, 0, 0)
-        const waitMessage = document.createElement('p')
-        waitMessage.textContent = 'Please wait...'
-        const formContainer = document.getElementById('formContainer')
-        formContainer.appendChild(waitMessage)
-        // Wait 2 seconds to actually render the image
-        setTimeout(() => {
-          formContainer.removeChild(waitMessage)
-          onSvgImageLoad()
-        }, 2000)
-      }
-    } else {
-      svgImage.onload = onSvgImageLoad
     }
     svgImage.src = svgUrl
   })

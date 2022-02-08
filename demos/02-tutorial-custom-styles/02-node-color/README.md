@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/02-node-color/index.html).
 
+Custom Styles Tutorial
+
+# Node Color
+
 This step shows how to change the style of the nodes based on their [ITagOwner#tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag).
 
 In this case, the background color of the nodes can be set via the [ITagOwner#tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) property of the nodes.

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/lassoselection/index.html).
 
+# Lasso Selection Demo
+
 This demo shows how to configure [LassoSelectionInputMode](https://docs.yworks.com/yfileshtml/#/api/LassoSelectionInputMode) for lasso selection mode. In this mode, graph items can be selected very flexible by dragging a lasso line around them.
 
 ## Things to Try

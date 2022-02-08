@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/analysis/transitivity/index.html).
 
+# Transitivity Demo
+
 Transitivity algorithms are heavily applied to graphs in order to answer reachability questions such as _"Is it possible to reach node x from y?"_. Common application fields are social networks, dependency graphs, bioinformatics, citation graphs or criminal networks in which possible relations between two entities have to be quickly identified and investigated.
 
 ## Algorithms

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -81,7 +81,7 @@ export type Handler = (
   item: IModelItem | null,
   type: string,
   evt: EventArgs
-) => Promise<boolean> | void
+) => Promise<boolean> | boolean | void
 
 /**
  * The configuration for an icon style for a {@link Button}.

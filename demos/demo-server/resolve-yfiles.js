@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,6 +29,11 @@
 const fs = require('fs')
 const path = require('path')
 
+/**
+ * Whether to log requests to STDOUT.
+ */
+const logRequests = false
+
 const SUPPORTED_YFILES_VERSION = '2.4'
 const ignoredFiles = /(filesystem-warning|yfiles-typeinfo)\.js$/
 
@@ -41,7 +46,7 @@ const ignoredFiles = /(filesystem-warning|yfiles-typeinfo)\.js$/
  * (Only necessary for TypeScript demos in the distribution bundles. The TsToJSConverter should
  * have removed those imports for the corresponding JavaScript demos already.)
  */
-const thirdPartyLibraryNames = ['codemirror', 'd3', 'leaflet', 'moment']
+const thirdPartyLibraryNames = ['codemirror', 'd3', 'leaflet', 'luxon']
 
 const importYfilesRegex = /import\s+([^'"]*?)\s+from\s+['"]yfiles\/?([^'"]*)['"]/g
 const importYfilesSideEffectRegex = /import\s+['"]yfiles\/?([^'"]*)['"]/g
@@ -59,13 +64,6 @@ const es6NameToEsModule = {
 
 let yFilesServerPath
 let resolveToSubmodules = true
-
-let config = {
-  resolveDirs: [],
-  logRequests: false
-}
-const configFile = './resolve-config.json'
-readResolveConfig()
 
 try {
   const es6ModuleMappings = require('../../tools/common/ES6ModuleMappings.json')
@@ -95,16 +93,41 @@ function findDefaultYFilesServerPath(staticRoot, startingPath) {
     console.error(`${startingPath}: Could not find module 'yfiles'`)
     return
   }
-  const content = fs.readFileSync(path.join(yFilesBasePath, 'yfiles.js'), 'utf8')
-  const match = content.match(/This file is part of yFiles for HTML (\d\.\d)/)
-  if (!match || match[1] !== SUPPORTED_YFILES_VERSION) {
+
+  const version = getVersionFromJS(yFilesBasePath) || getVersionFromPackage(yFilesBasePath)
+  if (version !== SUPPORTED_YFILES_VERSION) {
     resolveToSubmodules = false
-    console.warn(`Unexpected yFiles major version: ${match ? match[1] : 'None detected'}.
+    console.warn(`Unexpected yFiles major version: ${version ? version : 'None detected'}.
     Imports will be resolved to 'yfiles.js'.`)
   }
 
   const relative = path.relative(staticRoot, yFilesBasePath)
   yFilesServerPath = relative.replace(/\\/g, '/')
+}
+
+function getVersionFromJS(yFilesBasePath) {
+  const content = fs.readFileSync(path.join(yFilesBasePath, 'yfiles.js'), 'utf8')
+  const match = content.match(/This file is part of yFiles for HTML (\d\.\d)/)
+  return match != null && match.length > 1 ? match[1] : null
+}
+
+function getVersionFromPackage(yFilesBasePath) {
+  const file = path.join(yFilesBasePath, 'package.json')
+  if (!fs.existsSync(file)) {
+    return null
+  }
+  const content = fs.readFileSync(file, 'utf8')
+  const match = content.match(/"version"\s*:\s*"(\d)(\d)/)
+  return match != null && match.length > 2 ? `${match[1]}.${match[2]}` : null
+}
+
+function checkResolveDirs(staticRoot, resolveDirs) {
+  for (const dir of resolveDirs) {
+    const fullDir = path.join(staticRoot, dir)
+    if (!fs.existsSync(fullDir)) {
+      console.warn(`Specified 'resolveDir' does not exist: ${fullDir}`)
+    }
+  }
 }
 
 function addJsSuffix(moduleName) {
@@ -191,50 +214,16 @@ function transformFile(data, filePath) {
 }
 
 /**
- * Reads the config file, currently containing the additional resolve
- * directories and the logging configuration (logging on/off)
- */
-function readResolveConfig() {
-  if (fs.existsSync(configFile)) {
-    try {
-      const resolveDirsJSON = fs.readFileSync(configFile).toString()
-      config = JSON.parse(resolveDirsJSON)
-      if (config.resolveDirs && config.resolveDirs.length > 0) {
-        log(`resolve dirs read from ${configFile}:\n${resolveDirsJSON}`)
-      } else {
-        log(`empty ${configFile}, continuing with defaults.`)
-      }
-    } catch (e) {
-      console.error(`error reading ${configFile}: ${e.toString()}`)
-    }
-  } else {
-    log(`no ${configFile}, continuing with defaults.`)
-  }
-}
-
-/**
- * Writes and reloads a new configuration
- */
-function setResolveConfig(config) {
-  fs.writeFileSync(configFile, config)
-  readResolveConfig()
-}
-
-function getResolveConfig() {
-  return config
-}
-
-/**
  * Resolves a given yFiles module using the configured resolve locations
  * or falling back to the default library location calculated in {@link findDefaultYFilesServerPath}
  */
-function resolveYFilesModulePath(moduleName, staticRoot) {
+function resolveYFilesModulePath(moduleName, staticRoot, resolveDirs = []) {
   let count = 0
-  for (const dir of config.resolveDirs) {
+  for (const dir of resolveDirs) {
     count++
     const modulePath = `${staticRoot}/${dir}/${moduleName}`.replace(/\\/g, '/')
     if (fs.existsSync(modulePath)) {
-      log(`-> using module path: ${modulePath}, (hit ${count} of ${config.resolveDirs.length})`)
+      log(`-> using module path: ${modulePath}, (hit ${count} of ${resolveDirs.length})`)
       return modulePath
     }
   }
@@ -334,7 +323,7 @@ function isDir(p) {
 }
 
 function log(logEntry) {
-  if (config.logRequests) {
+  if (logRequests) {
     console.log(logEntry)
   }
 }
@@ -345,14 +334,14 @@ module.exports.resolve = options => (req, res, next) => {
     next()
     return
   }
-  const staticRoot = options.staticRoot
+  const { staticRoot, resolveDirs } = options
 
   log('------------------------------------------------')
   log(`requested: ${req.path}`)
   const match = req.path.match(/.*?\/yfiles\/(.*)/)
   let filePath
   if (match) {
-    filePath = resolveYFilesModulePath(match[1], options.staticRoot)
+    filePath = resolveYFilesModulePath(match[1], staticRoot, resolveDirs)
   } else {
     filePath = path.join(staticRoot, req.path)
   }
@@ -367,6 +356,7 @@ module.exports.resolve = options => (req, res, next) => {
       if (/^\s*import /m.test(data)) {
         if (!yFilesServerPath) {
           findDefaultYFilesServerPath(staticRoot, filePath)
+          checkResolveDirs(staticRoot, resolveDirs)
         }
         if (yFilesServerPath) {
           data = transformFile(data, filePath)
@@ -378,7 +368,4 @@ module.exports.resolve = options => (req, res, next) => {
   })
 }
 
-module.exports.readResolveFile = readResolveConfig
-module.exports.setResolveConfig = setResolveConfig
-module.exports.getResolveConfig = getResolveConfig
 module.exports.findLibraryLocations = findLibraryLocations

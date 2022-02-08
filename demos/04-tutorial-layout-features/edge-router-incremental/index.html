@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,81 +34,105 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Incremental Edge Router - Layout Features Tutorial [yFiles for HTML]</title>
+    <title>Incremental Edge Router - Layout Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script></head>
-<body class="demo-has-left">
-
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the overview and description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Incremental Edge Router</h2>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Layout Features Tutorial</div>
 
-    <p>This demo shows how to run the edge router algorithm on a predefined subset of edges in a graph.</p>
+        <h1>Incremental Edge Router</h1>
 
-    <p>
-      To achieve this, two setup steps are necessary:
-    </p>
-    <p>
-      First, the algorithm has to be told to work on a subset only. To do so, <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">Edge Router</a>'s
-      <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope" target="_blank">scope</a> property has to be set to
-      <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterScope#ROUTE_AFFECTED_EDGES" target="_blank">ROUTE_AFFECTED_EDGES</a>.
-    </p>
-    <p>
-      And second, the algorithm has to be told which set of edges to route.
-      The class <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData" target="_blank">EdgeRouterData</a> offers the property
-      <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#affectedEdges" target="_blank">affectedEdges</a> for this purpose.
-    </p>
+        <p>
+          This demo shows how to run the edge router algorithm on a predefined subset of edges in a
+          graph.
+        </p>
 
-    <p>
-      In this demo, the algorithm works on the subset of <span style="color: #01BAFF; font-weight: bold">blue edges</span> only.
-    </p>
-    <p>
-      Click the button in the toolbar to run the routing algorithm.
-    </p>
+        <p>To achieve this, two setup steps are necessary:</p>
+        <p>
+          First, the algorithm has to be told to work on a subset only. To do so,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">Edge Router</a>'s <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope" target="_blank">scope</a> property
+          has to be set to
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterScope#ROUTE_AFFECTED_EDGES" target="_blank">ROUTE_AFFECTED_EDGES</a>.
+        </p>
+        <p>
+          And second, the algorithm has to be told which set of edges to route. The class
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData" target="_blank">EdgeRouterData</a> offers the property
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#affectedEdges" target="_blank">affectedEdges</a> for this purpose.
+        </p>
 
-    <h3>Code Snippet</h3>
-    <p>
-      You can copy the code snippet to configure the layout from
-      <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/edge-router-incremental/EdgeRouterIncremental.ts"
-         target="_blank">GitHub</a>.
-    </p>
+        <p>
+          In this demo, the algorithm works on the subset of
+          <span style="color: #01baff; font-weight: bold">blue edges</span> only.
+        </p>
+        <p>Click the button in the toolbar to run the routing algorithm.</p>
 
-    <h3>Demos</h3>
+        <h3>Code Snippet</h3>
+        <p>
+          You can copy the code snippet to configure the layout from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/edge-router-incremental/EdgeRouterIncremental.ts"
+            target="_blank"
+            >GitHub</a
+          >.
+        </p>
 
-    <p>
-      You can also take a look at the <a href="../../layout/mazerouting/index.html">Maze Routing Demo</a> for a more
-      elaborate application of edge routing.
-    </p>
+        <h3>Demos</h3>
 
-    <h3>Documentation</h3>
-    <p>
-      The Developer's Guide has detailed information about the
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router" target="_blank">edge router algorithm</a> in general and about
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router#polyline_router_incremental" target="_blank">how to run the algorithm on a subset of edges</a>
-      specifically.
-    </p>
-  </div>
-</aside>
+        <p>
+          You can also take a look at the
+          <a href="../../layout/mazerouting/index.html">Maze Routing Demo</a> for a more elaborate
+          application of edge routing.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button id="route-edges" title="Route Edges" class="demo-toggle-button labeled">Route Edges</button>
-  </div>
+        <h3>Documentation</h3>
+        <p>
+          The Developer's Guide has detailed information about the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router" target="_blank">edge router algorithm</a> in general and about
+          <dguide section="polyline_router#polyline_router_incremental"
+            >how to run the algorithm on a subset of edges</dguide
+          >
+          specifically.
+        </p>
+      </div>
+    </aside>
 
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button id="route-edges" title="Route Edges" class="demo-toggle-button labeled">
+          Route Edges
+        </button>
+      </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

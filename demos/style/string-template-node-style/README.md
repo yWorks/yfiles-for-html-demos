@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/string-template-node-style/index.html).
 
+# String Template Node Style Demo
+
 This demo presents the built-in [StringTemplateNodeStyle](https://docs.yworks.com/yfileshtml/#/api/StringTemplateNodeStyle) that leverages simple data binding to declaratively render SVG as node style.
 
 With this style, node visualizations are defined by a SVG templating language, similar to what is known in React, VueJS, Angular, and similar frameworks. `StringTemplateNodeStyle`'s template language is a lot simpler and less powerful than the templating support in the aforementioned frameworks, but it is more lightweight and does not depend on third party software.
@@ -17,7 +19,7 @@ Change the template of one or more nodes. Bind colors or text to properties in t
 ## Related Documentation
 
 - [Using Vue.js Templates in Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
-- [Using SVG Templates in Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles)
+  [](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)- [Using SVG Templates in Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
 
 ## Related Demos
 

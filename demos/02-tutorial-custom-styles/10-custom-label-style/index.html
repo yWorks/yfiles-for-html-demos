@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,84 +34,83 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Custom Label Style - Custom Styles Tutorial [yFiles for HTML]</title>
+    <title>Custom Label Style - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description
 -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Custom Styles Tutorial</div>
 
-    <p>This step shows how a custom label style.</p>
+        <h1>Custom Label Style</h1>
 
-    <h2>Things to Try</h2>
+        <p>This step shows how a custom label style.</p>
 
-    <ul>
-      <li>
-        Take a look at <code>MySimpleLabelStyle</code>.
-      </li>
-      <li>
-        Select a label and open the label editor using "F2" to edit the label's text. Inserts line breaks with
-        "Ctrl-Return". The size of the label doesn't adjust to the size of the text. If you move the node label from
-        North to East, for example, this results in an overlap.
-      </li>
-      <li>
-        Create a label using "Shift+F2" when a node or an edge is selected.
-      </li>
-    </ul>
+        <h2>Things to Try</h2>
 
-    <h2>Left to Do</h2>
+        <ul>
+          <li>Take a look at <code>MySimpleLabelStyle</code>.</li>
+          <li>
+            Select a label and open the label editor using "F2" to edit the label's text. Inserts
+            line breaks with "Ctrl-Return". The size of the label doesn't adjust to the size of the
+            text. If you move the node label from North to East, for example, this results in an
+            overlap.
+          </li>
+          <li>Create a label using "Shift+F2" when a node or an edge is selected.</li>
+        </ul>
 
-    <ul>
-      <li>
-        Make the label size adjust to its text.
-      </li>
-      <li>
-        Override <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" target="_blank">LabelStyleBase#updateVisual</a> to get high-performance rendering.
-      </li>
-      <li>
-        Implement a button to open the label editor.
-      </li>
-      <li>
-        Allow to change the background color of labels.
-      </li>
-      <li>
-        Create a custom edge style.
-      </li>
-      <li>
-        Create a custom port style for nodes.
-      </li>
-      <li>
-        Use the decorator pattern to add label edges to the nodes.
-      </li>
-      <li>
-        Create a custom group node style.
-      </li>
-    </ul>
-  </div>
-</aside>
+        <h2>Left to Do</h2>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-  </div>
+        <ul>
+          <li>Make the label size adjust to its text.</li>
+          <li>
+            Override <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" target="_blank">LabelStyleBase#updateVisual</a> to get high-performance rendering.
+          </li>
+          <li>Implement a button to open the label editor.</li>
+          <li>Allow to change the background color of labels.</li>
+          <li>Create a custom edge style.</li>
+          <li>Create a custom port style for nodes.</li>
+          <li>Use the decorator pattern to add label edges to the nodes.</li>
+          <li>Create a custom group node style.</li>
+        </ul>
+      </div>
+    </aside>
 
-  <!--
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
+
+      <!--
   The GraphComponent
   -->
-  <div id="graphComponent"></div>
-</div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

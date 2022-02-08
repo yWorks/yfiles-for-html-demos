@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,104 +34,128 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Edge Grouping Demo [yFiles for HTML]</title>
+    <title>Edge Grouping Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .demo-context-menu *:focus {
-      outline: none;
-    }
+    <style>
+      .demo-context-menu *:focus {
+        outline: none;
+      }
 
-    .demo-context-menu .demo-menu-item {
-      text-align: start;
-      border-left: 7px solid #BBBBBB;
-    }
-    .demo-context-menu .demo-menu-item.source-edge-group {
-      border-left-color: #4169E1;
-    }
-    .demo-context-menu .demo-menu-item.target-edge-group {
-      border-left-color: #483D8B;
-    }
-    .demo-context-menu .demo-menu-item.source-and-target-edge-group {
-      border-left-color: #6495ED;
-    }
-    .demo-context-menu .demo-menu-item.source-port-group {
-      border-left-color: #DC143C;
-    }
-    .demo-context-menu .demo-menu-item.target-port-group {
-      border-left-color: #D2691E;
-    }
-    .demo-context-menu .demo-menu-item.source-and-target-port-group {
-      border-left-color: #FFA500;
-    }
+      .demo-context-menu .demo-menu-item {
+        text-align: start;
+        border-left: 7px solid #bbbbbb;
+      }
+      .demo-context-menu .demo-menu-item.source-edge-group {
+        border-left-color: #4169e1;
+      }
+      .demo-context-menu .demo-menu-item.target-edge-group {
+        border-left-color: #483d8b;
+      }
+      .demo-context-menu .demo-menu-item.source-and-target-edge-group {
+        border-left-color: #6495ed;
+      }
+      .demo-context-menu .demo-menu-item.source-port-group {
+        border-left-color: #dc143c;
+      }
+      .demo-context-menu .demo-menu-item.target-port-group {
+        border-left-color: #d2691e;
+      }
+      .demo-context-menu .demo-menu-item.source-and-target-port-group {
+        border-left-color: #ffa500;
+      }
 
-    .node-color {
-      fill: #C7C7A6;
-      stroke: #77776E;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows the possibilities of edge and port grouping using the example of <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>.
-      Edge groups lead to edges sharing some segments while port groups will combine the edges only in their first
-      segment.
-    </p>
+      .node-color {
+        fill: #c7c7a6;
+        stroke: #77776e;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Edge Grouping Demo</h1>
 
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        Use the combo-box in the toolbar to toggle between edge grouping and port grouping.
-      </li>
-      <li>
-        Customize the grouping information in the graph using the context menu. You can either:
+        <p>
+          This demo shows the possibilities of edge and port grouping using the example of
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>. Edge groups lead to edges sharing some segments while port
+          groups will combine the edges only in their first segment.
+        </p>
+
+        <h2>Things to Try</h2>
         <ul>
-          <li>Right-Click on the canvas and group/ungroup all edges at the same time</li>
-          <li>Right-Click on an edge or selection of edges and group/ungroup the incident edges</li>
-          <li>Right-Click on a node or selection of nodes and group/ungroup the incident edges</li>
+          <li>
+            Use the combo-box in the toolbar to toggle between edge grouping and port grouping.
+          </li>
+          <li>
+            Customize the grouping information in the graph using the context menu. You can either:
+            <ul>
+              <li>Right-Click on the canvas and group/ungroup all edges at the same time</li>
+              <li>
+                Right-Click on an edge or selection of edges and group/ungroup the incident edges
+              </li>
+              <li>
+                Right-Click on a node or selection of nodes and group/ungroup the incident edges
+              </li>
+            </ul>
+          </li>
+          <li>
+            Apply a complete layout from scratch by pressing the Layout-Button in the toolbar.
+            Setting incremental edge or port groups can lead to uncommon routings, thus it may be
+            necessary to calculate a new layout.
+          </li>
+          <li>Reset the graph and start again with the initial sample.</li>
         </ul>
-      </li>
-      <li>
-        Apply a complete layout from scratch by pressing the Layout-Button in the toolbar. Setting incremental edge or
-        port groups can lead to uncommon routings, thus it may be necessary to calculate a new layout.
-      </li>
-      <li>
-        Reset the graph and start again with the initial sample.
-      </li>
-    </ul>
 
-    <h2>Grouping Types</h2>
-    <img src="resources/legend.svg">
+        <h2>Grouping Types</h2>
+        <img src="resources/legend.svg" />
+      </div>
+    </aside>
 
-  </div>
-</aside>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="Reset" title="Reset Graph" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <span>Group Mode</span>
+        <select data-command="TogglePortGroupMode" title="Switch between Edge and Port Grouping">
+          <option value="edge-grouping">Edge Grouping</option>
+          <option value="port-grouping">Port Grouping</option>
+        </select>
+        <span class="demo-separator"></span>
+        <button
+          data-command="Layout"
+          title="Run Hierarchic Layout"
+          class="demo-icon-yIconLayout labeled"
+        >
+          Layout
+        </button>
+      </div>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="Reset" title="Reset Graph" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <span>Group Mode</span>
-    <select data-command="TogglePortGroupMode" title="Switch between Edge and Port Grouping">
-      <option value="edge-grouping">Edge Grouping</option>
-      <option value="port-grouping">Port Grouping</option>
-    </select>
-    <span class="demo-separator"></span>
-    <button data-command="Layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">Layout</button>
-  </div>
-  <div id="graphComponent"></div>
-</div>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-<script type="module" crossorigin="anonymous" src="EdgeGroupingDemo.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="EdgeGroupingDemo.js"></script>
+  </body>
 </html>

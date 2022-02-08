@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/view/rendering-optimizations/index.html).
 
+# Rendering Optimizations Demo
+
 This demo illustrates ways to improve the **rendering performance for large graphs** in [yFiles for HTML](https://www.yworks.com/products/yfileshtml/). yFiles' default settings are adequate for graphs up to a few hundred elements. Scaling to several thousand elements is possible with a bit of tweaking, though, as shown in this demo.
 
 yFiles comes with a dedicated [WebGL2-based rendering pipeline](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) that is especially suited for large graphs. This is the easiest way to get good performance for large data sets, but comes with a few drawbacks. This pipeline is enabled with the **WebGL2 rendering** option in the GraphModelManager Optimizations section.

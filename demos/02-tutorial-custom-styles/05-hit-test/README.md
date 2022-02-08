@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/05-hit-test/index.html).
 
+Custom Styles Tutorial
+
+# Hit Test
+
 This step shows how to override `isHit()` and `isInBox()` of [NodeStyleBase](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase).
 
 [NodeStyleBase#isHit](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit) is used for mouse click detection. It should return true if the tested point is inside the node. [NodeStyleBase#isHit](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit) should take into account the imprecision radius specified by the [ICanvasContext#hitTestRadius](https://docs.yworks.com/yfileshtml/#/api/ICanvasContext#hitTestRadius) property.

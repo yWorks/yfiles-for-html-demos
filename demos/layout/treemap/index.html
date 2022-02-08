@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,180 +34,245 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Tree Map Demo [yFiles for HTML]</title>
+    <title>Tree Map Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    #path {
-      float: right;
-      margin-right: 5px;
-    }
+    <style>
+      #path {
+        float: right;
+        margin-right: 5px;
+      }
 
-    #apply-layout {
-      width: 100%;
-      margin-top: 30px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      font-weight: bold;
-      text-transform: UPPERCASE;
-      color: white;
-      background-color: #4caf50;
-      border-color: transparent;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+      #apply-layout {
+        width: 100%;
+        margin-top: 30px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-weight: bold;
+        text-transform: UPPERCASE;
+        color: white;
+        background-color: #4caf50;
+        border-color: transparent;
+        border-radius: 4px;
+        cursor: pointer;
+      }
 
-    #apply-layout:hover {
-      background-color: #67bb6a;
-    }
+      #apply-layout:hover {
+        background-color: #67bb6a;
+      }
 
-    #apply-layout:active {
-      background-color: #4caf50;
-    }
+      #apply-layout:active {
+        background-color: #4caf50;
+      }
 
-    input[type=range] {
-      margin: 0;
-      padding: 0;
-      vertical-align: middle;
-    }
+      input[type='range'] {
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+      }
 
-    .demo-properties label.option-label {
-      width: 40%;
-    }
+      .demo-properties label.option-label {
+        width: 40%;
+      }
 
-    .demo-properties .demo-form-block input[type="range"] {
-      width: 50%;
-    }
+      .demo-properties .demo-form-block input[type='range'] {
+        width: 50%;
+      }
 
-    .option-element {
-      width: 55%;
-    }
+      .option-element {
+        width: 55%;
+      }
 
-    /* a hidden container to measure text sizes */
-    #text-measure-container {
-      position: absolute;
-      visibility: hidden;
-      height: auto;
-      width: auto;
-      white-space: nowrap;
-      font-family: "Arial", serif;
-    }
-  </style>
-</head>
-<body class="demo-has-left demo-has-right">
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      Tree maps allow to visualize hierarchical data using nested rectangles, which in this case are represented by graph
-      nodes. The size of leaf nodes in a tree map is proportional to a certain data value (i.e. weight).
-    </p>
-    <p>
-      The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeMapLayout" target="_blank">TreeMapLayout</a> algorithm arranges the nodes according to their weights and relations
-      inside groups.
-    </p>
-
-    <h2>Application</h2>
-    <p>
-      A common application for tree maps is the visualization of the file structure on a hard disk. This example shows a
-      tree map of the source code directory of the <em>yFiles for HTML</em> library. The node sizes are defined by the
-      actual file size on disk in bytes.
-    </p>
-    <h3>Navigate the file hierarchy</h3>
-    <p>For less cluttered graphs, only the children and grandchildren of the current root are visible.</p>
-    <ul>
-      <li>
-        Move down one hierarchy level by clicking a group/folder. This node becomes the new root and its children and
-        grandchildren will become visible.
-      </li>
-      <li>
-        Move up one hierarchy level by clicking the containing group. This parent of this node becomes the new root.
-      </li>
-    </ul>
-  </div>
-</aside>
-
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span id="path"></span>
-  </div>
-
-  <div id="graphComponent"></div>
-</div>
-
-<aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Layout Settings</h1>
-  <div class="demo-sidebar-content">
-    <h2>Tree Map Layout</h2>
-    <div class="demo-properties">
-      <div class="demo-form-block">
-        <label for="select-zooming-mode" class="option-label">Zooming Mode</label>
-        <select id="select-zooming-mode" data-command="SelectZoomingMode" class="option-element">
-          <option value="constant">Constant Size</option>
-          <option value="aspect-ratio">Aspect Ratio of Root</option>
-        </select>
+      /* a hidden container to measure text sizes */
+      #text-measure-container {
+        position: absolute;
+        visibility: hidden;
+        height: auto;
+        width: auto;
+        white-space: nowrap;
+        font-family: 'Arial', serif;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
       </div>
-      <div class="demo-form-block">
-        <label for="select-tiling-algorithm" class="option-label">Tiling Algorithm</label>
-        <select id="select-tiling-algorithm" data-command="SelectTilingAlgorithm" class="option-element">
-          <option value="squarified">Squarified</option>
-          <option value="slice-and-dice">Slice-And-Dice</option>
-        </select>
+      <div class="demo-sidebar-content">
+        <h1>Tree Map Demo</h1>
+
+        <p>
+          Tree maps allow to visualize hierarchical data using nested rectangles, which in this case
+          are represented by graph nodes. The size of leaf nodes in a tree map is proportional to a
+          certain data value (i.e. weight).
+        </p>
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeMapLayout" target="_blank">TreeMapLayout</a> algorithm arranges the nodes according to their weights and
+          relations inside groups.
+        </p>
+
+        <h2>Application</h2>
+        <p>
+          A common application for tree maps is the visualization of the file structure on a hard
+          disk. This example shows a tree map of the source code directory of the
+          <em>yFiles for HTML</em> library. The node sizes are defined by the actual file size on
+          disk in bytes.
+        </p>
+        <h3>Navigate the file hierarchy</h3>
+        <p>
+          For less cluttered graphs, only the children and grandchildren of the current root are
+          visible.
+        </p>
+        <ul>
+          <li>
+            Move down one hierarchy level by clicking a group/folder. This node becomes the new root
+            and its children and grandchildren will become visible.
+          </li>
+          <li>
+            Move up one hierarchy level by clicking the containing group. This parent of this node
+            becomes the new root.
+          </li>
+        </ul>
       </div>
-      <div class="demo-form-block">
-        <label for="aspect-ratio" class="option-label">Aspect Ratio</label>
-        <input type="range" id="aspect-ratio" data-command="RangeAspectRatio" min="1" max="10" value="1"/>
-        <label id="aspect-ratio-label">1</label>
-      </div>
-      <div class="demo-form-block">
-        <label for="select-sorting-criterion" class="option-label">Sorting Criterion</label>
-        <select id="select-sorting-criterion" data-command="SelectSortingCriterion" class="option-element">
-          <option value="size-descending">Size of File/Directory (descending)</option>
-          <option value="size-ascending">Size of File/Directory (ascending)</option>
-          <option value="name-descending">Name of File/Directory (descending)</option>
-          <option value="name-ascending">Name of File/Directory (ascending)</option>
-        </select>
-      </div>
-      <div class="demo-form-block">
-        <label for="select-file-directory-order" class="option-label">File-Directory Order</label>
-        <select id="select-file-directory-order" data-command="SelectFileDirectoryOrder" class="option-element">
-          <option value="files-after-directories">Files after Directories</option>
-          <option value="files-before-directories">Files before Directories</option>
-          <option value="mix-files-and-directories">Mix Files and Directories</option>
-        </select>
-      </div>
-      <div class="demo-form-block">
-        <label for="spacing" class="option-label">Spacing</label>
-        <input type="range" id="spacing" data-command="RangeSpacing" min="0" max="20" value="2"/>
-        <label id="spacing-label">2</label>
-      </div>
-      <div class="demo-form-block">
-        <label for="minimum-node-width" class="option-label">Minimum Node Width</label>
-        <input type="range" id="minimum-node-width" data-command="RangeMinimumNodeWidth" min="5" max="50" value="5"/>
-        <label id="minimum-node-width-label">5</label>
-      </div>
-      <div class="demo-form-block">
-        <label for="minimum-node-height" class="option-label">Minimum Node Height</label>
-        <input type="range" id="minimum-node-height" data-command="RangeMinimumNodeHeight" min="5" max="50" value="5"/>
-        <label id="minimum-node-height-label">5</label>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span id="path"></span>
       </div>
 
-      <button id="apply-layout" data-command="ApplyLayout">Apply</button>
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
     </div>
-  </div>
-</aside>
 
-<!-- a hidden container to measure text sizes -->
-<div id="text-measure-container"></div>
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Tree Map Layout</h2>
+        <div class="demo-properties">
+          <div class="demo-form-block">
+            <label for="select-zooming-mode" class="option-label">Zooming Mode</label>
+            <select
+              id="select-zooming-mode"
+              data-command="SelectZoomingMode"
+              class="option-element"
+            >
+              <option value="constant">Constant Size</option>
+              <option value="aspect-ratio">Aspect Ratio of Root</option>
+            </select>
+          </div>
+          <div class="demo-form-block">
+            <label for="select-tiling-algorithm" class="option-label">Tiling Algorithm</label>
+            <select
+              id="select-tiling-algorithm"
+              data-command="SelectTilingAlgorithm"
+              class="option-element"
+            >
+              <option value="squarified">Squarified</option>
+              <option value="slice-and-dice">Slice-And-Dice</option>
+            </select>
+          </div>
+          <div class="demo-form-block">
+            <label for="aspect-ratio" class="option-label">Aspect Ratio</label>
+            <input
+              type="range"
+              id="aspect-ratio"
+              data-command="RangeAspectRatio"
+              min="1"
+              max="10"
+              value="1"
+            />
+            <label id="aspect-ratio-label">1</label>
+          </div>
+          <div class="demo-form-block">
+            <label for="select-sorting-criterion" class="option-label">Sorting Criterion</label>
+            <select
+              id="select-sorting-criterion"
+              data-command="SelectSortingCriterion"
+              class="option-element"
+            >
+              <option value="size-descending">Size of File/Directory (descending)</option>
+              <option value="size-ascending">Size of File/Directory (ascending)</option>
+              <option value="name-descending">Name of File/Directory (descending)</option>
+              <option value="name-ascending">Name of File/Directory (ascending)</option>
+            </select>
+          </div>
+          <div class="demo-form-block">
+            <label for="select-file-directory-order" class="option-label"
+              >File-Directory Order</label
+            >
+            <select
+              id="select-file-directory-order"
+              data-command="SelectFileDirectoryOrder"
+              class="option-element"
+            >
+              <option value="files-after-directories">Files after Directories</option>
+              <option value="files-before-directories">Files before Directories</option>
+              <option value="mix-files-and-directories">Mix Files and Directories</option>
+            </select>
+          </div>
+          <div class="demo-form-block">
+            <label for="spacing" class="option-label">Spacing</label>
+            <input
+              type="range"
+              id="spacing"
+              data-command="RangeSpacing"
+              min="0"
+              max="20"
+              value="2"
+            />
+            <label id="spacing-label">2</label>
+          </div>
+          <div class="demo-form-block">
+            <label for="minimum-node-width" class="option-label">Minimum Node Width</label>
+            <input
+              type="range"
+              id="minimum-node-width"
+              data-command="RangeMinimumNodeWidth"
+              min="5"
+              max="50"
+              value="5"
+            />
+            <label id="minimum-node-width-label">5</label>
+          </div>
+          <div class="demo-form-block">
+            <label for="minimum-node-height" class="option-label">Minimum Node Height</label>
+            <input
+              type="range"
+              id="minimum-node-height"
+              data-command="RangeMinimumNodeHeight"
+              min="5"
+              max="50"
+              value="5"
+            />
+            <label id="minimum-node-height-label">5</label>
+          </div>
 
-<script type="module" crossorigin="anonymous" src="TreeMapDemo.js"></script>
+          <button id="apply-layout" data-command="ApplyLayout">Apply</button>
+        </div>
+      </div>
+    </aside>
 
-</body>
+    <!-- a hidden container to measure text sizes -->
+    <div id="text-measure-container"></div>
+
+    <script type="module" crossorigin="anonymous" src="TreeMapDemo.js"></script>
+  </body>
 </html>

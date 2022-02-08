@@ -118,11 +118,18 @@ export default {
 .search {
   line-height: 20px;
   padding: 4px 8px;
-  font-size: 16px;
+  font-size: 14px;
   letter-spacing: normal;
   width: 300px;
 }
 .search:focus {
   outline: none;
+}
+@media screen and (max-height: 500px) {
+  .demo-toolbar {
+    top: 30px !important;
+    height: 30px !important;
+    line-height: 30px !important;
+  }
 }
 </style>

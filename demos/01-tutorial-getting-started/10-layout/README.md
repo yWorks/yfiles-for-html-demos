@@ -4,7 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/01-tutorial-getting-started/10-layout/index.html).
 
-## Tutorial Demo 10
+Getting Started Tutorial - Step 10
+
+# Automatic Graph Layout
 
 This step shows how to use the [layout algorithms](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-layout) in yFiles for HTML to automatically place the graph elements.
 

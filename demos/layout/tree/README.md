@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/tree/index.html).
 
+# Tree Layout Demo
+
 Demonstrates the tree layout style and the different ways in which this layout can arrange a node and its children.
 
 With tree layout, each node can have a separate [ITreeLayoutNodePlacer](https://docs.yworks.com/yfileshtml/#/api/ITreeLayoutNodePlacer) which is responsible for the arrangement of its children in a certain style.

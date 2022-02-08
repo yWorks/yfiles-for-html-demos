@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,103 +34,133 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Markup Labels - Application Features Tutorial [yFiles for HTML]</title>
+    <title>Markup Labels - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
 
-  <style>
-    .yfiles-label-h2 {
-      fill: #404040;
-      font-variant: small-caps;
-    }
-  </style>
-</head>
-<body class="demo-has-left">
+    <style>
+      .yfiles-label-h2 {
+        fill: #404040;
+        font-variant: small-caps;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <div class="tutorial-step">Application Features Tutorial</div>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <h2>Markup Labels</h2>
-    <p>
-      This demo shows how to create labels with rich text features using <a href="https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle" target="_blank">MarkupLabelStyle</a>.
-    </p>
+        <h1>Markup Labels</h1>
 
-    <p>
-      Since the <a href="https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle" target="_blank">MarkupLabelStyle</a> supports basic HTML markup, it can be easily hooked up with a WYSIWYG text
-      editor that completely hides the markup from the user, as demonstrated in the <a
-      href="../../style/richtextlabel/index.html">Rich Text Label</a> demo.
-    </p>
+        <p>
+          This demo shows how to create labels with rich text features using
+          <a href="https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle" target="_blank">MarkupLabelStyle</a>.
+        </p>
 
-    <h4>Creating and Editing Labels</h4>
+        <p>
+          Since the <a href="https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle" target="_blank">MarkupLabelStyle</a> supports basic HTML markup, it can be easily hooked
+          up with a WYSIWYG text editor that completely hides the markup from the user, as
+          demonstrated in the
+          <a href="../../style/richtextlabel/index.html">Rich Text Label</a> demo.
+        </p>
 
-    <ul>
-      <li>Press the F2 key while an element or connection is selected.</li>
-      <li>Insert HTML-style markup text into the editor, i.e. <code>&lt;strong&gt;Hello World&lt;/strong&gt;</code>
-      </li>
-    </ul>
+        <h4>Creating and Editing Labels</h4>
 
-    <h4>Supported Markup</h4>
+        <ul>
+          <li>Press the F2 key while an element or connection is selected.</li>
+          <li>
+            Insert HTML-style markup text into the editor, i.e.
+            <code>&lt;strong&gt;Hello World&lt;/strong&gt;</code>
+          </li>
+        </ul>
 
-    <p>The tags supported by rich text labels are</p>
+        <h4>Supported Markup</h4>
 
-    <ul>
-      <li><code>&lt;span&gt;</code>: A stylable element.</li>
-      <li><code>&lt;br&gt;</code>: Adds a line break</li>
-      <li><code>&lt;em&gt;</code>: Italic text</li>
-      <li><code>&lt;strong&gt;</code>: Bold text</li>
-      <li><code>&lt;del&gt;</code>: Strikethrough text</li>
-      <li><code>&lt;u&gt;</code>: Underline text</li>
-      <li><code>&lt;h1&gt;-&lt;h6&gt;</code>: Heading 1-6</li>
-      <li><code>&lt;p&gt;</code>: A paragraph element.</li>
-      <li><code>&lt;pre&gt;</code>: A preformatted element which preserves newlines.</li>
-      <li><code>&lt;code&gt;</code>: A code element.</li>
-      <li><code>&lt;small&gt;</code>: Small font-size</li>
-      <li><code>&lt;large&gt;</code>: Large font-size</li>
-      <li><code>&lt;[html color name]&gt;</code>: Colored text, e.g. &lt;blue&gt;</li>
-    </ul>
+        <p>The tags supported by rich text labels are</p>
 
-    <h4>Styling Labels with CSS</h4>
+        <ul>
+          <li><code>&lt;span&gt;</code>: A stylable element.</li>
+          <li><code>&lt;br&gt;</code>: Adds a line break</li>
+          <li><code>&lt;em&gt;</code>: Italic text</li>
+          <li><code>&lt;strong&gt;</code>: Bold text</li>
+          <li><code>&lt;del&gt;</code>: Strikethrough text</li>
+          <li><code>&lt;u&gt;</code>: Underline text</li>
+          <li><code>&lt;h1&gt;-&lt;h6&gt;</code>: Heading 1-6</li>
+          <li><code>&lt;p&gt;</code>: A paragraph element.</li>
+          <li><code>&lt;pre&gt;</code>: A preformatted element which preserves newlines.</li>
+          <li><code>&lt;code&gt;</code>: A code element.</li>
+          <li><code>&lt;small&gt;</code>: Small font-size</li>
+          <li><code>&lt;large&gt;</code>: Large font-size</li>
+          <li><code>&lt;[html color name]&gt;</code>: Colored text, e.g. &lt;blue&gt;</li>
+        </ul>
 
-    <p>Tags can be styled with inline CSS. Also tags can be given CSS classes to use external CSS.</p>
-    <p>For example, the default &lt;h2&gt; is styled as dark gray with small-caps in this demo.</p>
+        <h4>Styling Labels with CSS</h4>
 
-    <h4>Text Wrapping</h4>
+        <p>
+          Tags can be styled with inline CSS. Also tags can be given CSS classes to use external
+          CSS.
+        </p>
+        <p>
+          For example, the default &lt;h2&gt; is styled as dark gray with small-caps in this demo.
+        </p>
 
-    <p>
-      Markup labels can use line wrapping. In this demo application, the labels use word wrapping with ellipsis.
-      Select and resize a node to observe the interactive text wrapping. Rich text labels can also be wrapped at
-      character boundaries.
-    </p>
+        <h4>Text Wrapping</h4>
 
-    <p>See the sources for details.</p>
-  </div>
-</aside>
+        <p>
+          Markup labels can use line wrapping. In this demo application, the labels use word
+          wrapping with ellipsis. Select and resize a node to observe the interactive text wrapping.
+          Rich text labels can also be wrapped at character boundaries.
+        </p>
 
-<div class="demo-content">
-  <div class="demo-toolbar">
-    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-    <span class="demo-separator"></span>
-    <button data-command="ZoomOriginal" title="Zoom to original size"
-      class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <span class="demo-separator"></span>
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-    <span class="demo-separator"></span>
-    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
-  </div>
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
 
-  <div id="graphComponent"></div>
-</div>
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+        <span class="demo-separator"></span>
+        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="GroupSelection"
+          title="Group selected element"
+          class="demo-icon-yIconGroup"
+        ></button>
+        <button
+          data-command="UngroupSelection"
+          title="Ungroup selected element"
+          class="demo-icon-yIconUngroup"
+        ></button>
+      </div>
 
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
 
-<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
-</body>
+    <script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
+  </body>
 </html>

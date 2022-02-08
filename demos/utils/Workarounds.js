@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.4.
- ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -227,18 +227,6 @@ export function detectSafariVersion() {
 }
 
 /**
- * Returns true for browsers that use the Safari 11 Webkit engine.
- *
- * In detail, these are Safari 11 on either macOS or iOS, Chrome on iOS 11, and Firefox on iOS 11.
- * @returns {boolean}
- */
-export function detectSafari11Webkit() {
-  return (
-    detectSafariVersion() === 11 || !!/OS\s+11_.*(CriOS|FxiOS)/.exec(window.navigator.userAgent)
-  )
-}
-
-/**
  * Returns whether or not the browser supports active and passive event listeners. Feature Detection.
  * @returns {boolean}
  */
@@ -247,6 +235,7 @@ function detectPassiveSupported() {
   // noinspection EmptyCatchBlockJS
   try {
     const opts = Object.defineProperty({}, 'passive', {
+      // eslint-disable-next-line
       get: () => {
         supported = true
       }
@@ -299,28 +288,53 @@ export function isWebGl2Supported() {
   return !!canvas.getContext('webgl2')
 }
 
+/**
+ * Returns whether or not the browser supports modules for Web Workers.
+ *
+ * Note that this check creates an actual (but empty) Worker and thus is a bit more costly than
+ * other checks.
+ * @returns {boolean}
+ */
+export function isModuleSupportedInWorker() {
+  if (!window.Worker) {
+    return false
+  }
+  let modulesSupported = false
+  try {
+    // The idea is to create a worker with a specific options object that reports whether its
+    // properties are checked.
+    // In this case, if the browser supports modules in workers, it checks the 'type' option and the
+    // 'modulesSupported' variable becomes true.
+    // Otherwise, the browser might throw an error.
+    // The original idea for this check is from
+    //   https://stackoverflow.com/questions/62954570/javascript-feature-detect-module-support-for-web-workers
+    new Worker('data:', {
+      get type() {
+        modulesSupported = true
+        return 'module'
+      }
+    }).terminate()
+  } catch (_) {
+    modulesSupported = false
+  }
+  return modulesSupported
+}
+
 export function enableWorkarounds() {
   const internetExplorerVersion = detectInternetExplorerVersion()
-  const chromeVersion = detectChromeVersion()
   const windowsVersion = detectWindowsVersion()
-  const firefoxVersion = detectFirefoxVersion()
   const iOSVersion = detectiOSVersion()
 
   // Enable support for labels with consecutive spaces in IE
   if (internetExplorerVersion !== -1) {
     Workarounds.ie964525 = true
   }
-  // The following workaround addresses two issues
-  // 1) Firefox is very slow when SVG matrices are modified directly:
-  //    https://bugzilla.mozilla.org/show_bug.cgi?id=1419764
-  // 2) A transform caching regression in Safari 11 and all WebKit browsers on iOS 11.
-  if (firefoxVersion !== -1 || detectSafari11Webkit()) {
-    Workarounds.cr320635 = true
-  }
+
   // Fix uppercase attribute names in Edge
   if (internetExplorerVersion >= 12) {
     Workarounds.edge2057021 = true
   }
+
   // Fix broken hrefs in IE 11 on Windows 10 or on certain Windows 8 Surface devices
   if (
     internetExplorerVersion === 11 &&
@@ -328,17 +342,11 @@ export function enableWorkarounds() {
   ) {
     Workarounds.ie2337112 = true
   }
-  // Fix SVG transform issue in Chrome 57
-  if (chromeVersion === 57) {
-    Workarounds.cr701075 = true
-  }
-  // Workaround for bogus mouse events on iOS 13
+
+  // Workaround for bogus mouse events on iOS 13, seems to be fixed in iOS 15
   if (iOSVersion !== -1) {
     Workarounds.wk203237 = 100
   }
-
-  // Prevent default for context menu key - it is handled by the context menu implementation
-  Workarounds.cr433873 = true
 }
 
 /** States whether the browser supports passive event listeners */

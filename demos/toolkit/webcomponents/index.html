@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,114 +34,148 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Web Components Integration Demo [yFiles for HTML]</title>
+    <title>Web Components Integration Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <style>
-    .yfiles-canvascomponent {
-      background: #e0e0e0;
-    }
+    <style>
+      .yfiles-canvascomponent {
+        background: #e0e0e0;
+      }
 
-    .visible-style-tag {
-      display: inline-block;
-      box-sizing: border-box;
-      width: 100%;
-      border: 1px solid gray;
-      outline: none;
-      padding: 5px;
-      white-space: pre;
-    }
-  </style>
+      .visible-style-tag {
+        display: inline-block;
+        box-sizing: border-box;
+        width: 100%;
+        border: 1px solid gray;
+        outline: none;
+        padding: 5px;
+        white-space: pre;
+      }
+    </style>
 
-  <script src="../../resources/filesystem-warning.js"></script>
-</head>
-<body class="demo-has-left demo-hide-left-when-small loaded">
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left demo-hide-left-when-small loaded">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Web Components Integration Demo</h1>
 
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how yFiles for HTML can be used with Web Components v1.
-    </p>
-    <p>
-      Please note that <a href="https://github.com/w3c/webcomponents" target="_blank">Web Components</a> are currently not well supported by
-      most browsers and require polyfills which have a significant impact on the application's performance. Also
-      note that there are <a href="https://github.com/w3c/webcomponents/issues/179" target="_blank">browser issues</a> besides unsupported
-      features that should be considered before committing to the usage of Web Components.
-    </p>
-    <p>
-      This demo does not include polyfills for Web Components, which is why it might not work in your browser. Please visit <a
-        href="https://www.webcomponents.org/" target="_blank">webcomponents.org</a> and <a
-        href="https://caniuse.com/#search=web%20components" target="_blank">caniuse.com</a> for details on browser support for Web
-      Components.
-    </p>
+        <p>This demo shows how yFiles for HTML can be used with Web Components v1.</p>
+        <p>
+          Please note that
+          <a href="https://github.com/w3c/webcomponents" target="_blank">Web Components</a> are
+          currently not well supported by most browsers and require polyfills which have a
+          significant impact on the application's performance. Also note that there are
+          <a href="https://github.com/w3c/webcomponents/issues/179" target="_blank"
+            >browser issues</a
+          >
+          besides unsupported features that should be considered before committing to the usage of
+          Web Components.
+        </p>
+        <p>
+          This demo does not include polyfills for Web Components, which is why it might not work in
+          your browser. Please visit
+          <a href="https://www.webcomponents.org/" target="_blank">webcomponents.org</a> and
+          <a href="https://caniuse.com/#search=web%20components" target="_blank">caniuse.com</a> for
+          details on browser support for Web Components.
+        </p>
 
-    <h2>Things to See</h2>
+        <h2>Things to See</h2>
 
-    <h3>Custom Graph Component Element</h3>
-    <p>
-      The GraphComponent is wrapped in a custom element. It can be used by writing
-    </p>
-    <pre><code>&lt;graph-component&gt;&lt;/graph-component&gt;</code></pre>
-    in your HTML markup, or by calling
-    <pre><code>document.createElement('graph-component')</code></pre>
-    in your javascript code.
-    <p>
-      The zoom property of the GraphComponent is reflected to an attribute of the custom element. Thus, the zoom level
-      can be changed by simply setting the zoom attribute to a new value.
-    </p>
+        <h3>Custom Graph Component Element</h3>
+        <p>The GraphComponent is wrapped in a custom element. It can be used by writing</p>
+        <pre><code>&lt;graph-component&gt;&lt;/graph-component&gt;</code></pre>
+        in your HTML markup, or by calling
+        <pre><code>document.createElement('graph-component')</code></pre>
+        in your javascript code.
+        <p>
+          The zoom property of the GraphComponent is reflected to an attribute of the custom
+          element. Thus, the zoom level can be changed by simply setting the zoom attribute to a new
+          value.
+        </p>
 
-    <h3>Shadow DOM Encapsulation</h3>
-    <p>
-      The GraphComponents canvas is inside the shadow root of the graph-component custom element. This encapsulates
-      it from outside influences like user defined CSS styles.
-    </p>
-    <p>
-      Try changing this editable style element to see how it affects the svg rectangles underneath, where the right one
-      is inside a shadow root while the left one is not:
-    </p>
-    <style class="visible-style-tag" contenteditable>svg rect {
-  fill: green;
-}</style>
-    <p>
-      <svg width="120" height="60">
-        <text x="0" y="15">No Shadow Root</text>
-        <rect height="40" width="40" x="25" y="20"></rect>
-      </svg>
-      <shadow-dom>
-        <svg width="120" height="60">
-          <text x="0" y="15">With Shadow Root</text>
-          <rect height="40" width="40" x="25" y="20" fill="orange"></rect>
-        </svg>
-      </shadow-dom>
-    </p>
-    <p>
-      You can also uncheck the 'Use Shadow Root' option in the toolbar to see how the user defined CSS affects the
-      graph visualization.
-    </p>
-  </div>
-</aside>
+        <h3>Shadow DOM Encapsulation</h3>
+        <p>
+          The GraphComponents canvas is inside the shadow root of the graph-component custom
+          element. This encapsulates it from outside influences like user defined CSS styles.
+        </p>
+        <p>
+          Try changing this editable style element to see how it affects the svg rectangles
+          underneath, where the right one is inside a shadow root while the left one is not:
+        </p>
+        <style class="visible-style-tag" contenteditable="">
+          svg rect {
+            fill: green;
+          }
+        </style>
+        <p>
+          <svg width="120" height="60">
+            <text x="0" y="15">No Shadow Root</text>
+            <rect height="40" width="40" x="25" y="20"></rect>
+          </svg>
+          <shadow-dom>
+            <svg width="120" height="60">
+              <text x="0" y="15">With Shadow Root</text>
+              <rect height="40" width="40" x="25" y="20" fill="orange"></rect>
+            </svg>
+          </shadow-dom>
+        </p>
+        <p>
+          You can also uncheck the 'Use Shadow Root' option in the toolbar to see how the user
+          defined CSS affects the graph visualization.
+        </p>
+      </div>
+    </aside>
 
-<div class="demo-content">
-  <div class="demo-header">
-    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/icons/ylogo.svg" class="demo-y-logo"> </a> <a
-      href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">Web Components Integration Demo</span>
-  </div>
-  <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn demo-toolbar-button"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal demo-toolbar-button"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut demo-toolbar-button"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit demo-toolbar-button"></button>
+    <div class="demo-content">
+      <div class="demo-toolbar">
+        <button
+          data-command="ZoomIn"
+          title="Zoom In"
+          class="demo-icon-yIconZoomIn demo-toolbar-button"
+        ></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal demo-toolbar-button"
+        ></button>
+        <button
+          data-command="ZoomOut"
+          title="Zoom Out"
+          class="demo-icon-yIconZoomOut demo-toolbar-button"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit demo-toolbar-button"
+        ></button>
 
-    <span class="demo-separator"></span>
+        <span class="demo-separator"></span>
 
-    <span><label style="width: auto;"><input type="checkbox" id="useShadow" checked>Use Shadow Root</label></span>
-  </div>
-</div>
+        <span
+          ><label style="width: auto"
+            ><input type="checkbox" id="useShadow" checked="" />Use Shadow Root</label
+          ></span
+        >
+      </div>
 
-<!-- Load demo-->
-<script type="module" crossorigin="anonymous" src="WebComponentsDemo.js"></script>
+      <div class="demo-content-dynamic">
+        <div class="demo-header">
+          <a href="https://www.yworks.com/products/yfiles" target="_blank">
+            <img src="../../resources/icons/ylogo.svg" class="demo-y-logo" />
+          </a>
+          <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+          <a href="../../README.html" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+          <span class="demo-title">Web Components Integration Demo</span>
+        </div>
+      </div>
+    </div>
 
-</body>
+    <!-- Load demo-->
+    <script type="module" crossorigin="anonymous" src="WebComponentsDemo.js"></script>
+  </body>
 </html>

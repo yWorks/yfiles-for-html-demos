@@ -2,7 +2,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,4 +28,4 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-<svg id="header-angle" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100"><path fill="none" stroke="white" stroke-width="10" d="M 20 20 L 50 50 L 20 80"></path></svg>
+<svg id="header-angle" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100"><path fill="none" stroke="#00d8ff" stroke-width="10" d="M 20 20 L 50 50 L 20 80"></path></svg>

@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/complete/metaballgroups/index.html).
 
+# Metaball Groups Rendering Demo
+
 This demo shows how to render metaball-like background visualizations to show how nodes can be associated with zero or more groups. In contrast to regular group nodes, a regular node may belong to multiple metaball groups. Note that these groups don't exist in the graph structure, but only on the visualization level and cannot be interacted with in this demo.
 
 ## Things to Try

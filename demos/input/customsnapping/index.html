@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.4.
-     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,67 +34,75 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Snapping Demo [yFiles for HTML]</title>
+    <title>Snapping Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../resources/style/demo.css">
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-  <script src="../../resources/filesystem-warning.js"></script>
-
-</head>
-<body class="demo-has-left">
-<!--
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <!--
   The sidebar for the description text
   -->
-<aside class="demo-sidebar demo-left">
-  <h1 class="demo-sidebar-header">Description</h1>
-  <div class="demo-sidebar-content">
-    <p>
-      This demo shows how the snapping feature can be customized.</p>
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Snapping Demo</h1>
 
-    <p>
-      In addition to the default snapping features, it adds extra snap lines to the bounds of labels, lets the outline
-      of the star shaped nodes snap to grid points, and uses free additional snap lines nodes can snap to. </p>
-
-    <h2>Things to Try</h2>
-    <ul>
-      <li>
-        <p>
-          Move the topmost <em>orange node</em> and one of the <em>star shaped nodes</em> around and compare their
-          <em>different grid snapping behavior</em>. </p>
+        <p>This demo shows how the snapping feature can be customized.</p>
 
         <p>
-          While an orange node only snaps to grid points with its center, a star shaped node snaps with all points of
-          its outline, but then again only to the grid points, not in between. </p>
-      </li>
-      <li>
-        Move the <em>unconnected orange node</em> close to an orthogonal node or edge label to snap it to the label's
-        bounds.
-      </li>
-      <li>
-        Move an <em>edge label</em> to a non-orthogonal edge segment to disable node snapping for this label. Nodes
-        cannot snap to non-orthogonal labels.
-      </li>
-      <li>
-        Move <em>node and and edge labels</em> along their owner's border/path to snap them to other particular
-        positions relative to the owner.
-      </li>
-      <li>
-        Move a node close to the <em>red snap lines</em> to snap it to these non-graph elements.
-      </li>
-      <li>
-        <em>Position of a red snap line</em> by dragging it around.
-      </li>
-    </ul>
-  </div>
-</aside>
+          In addition to the default snapping features, it adds extra snap lines to the bounds of
+          labels, lets the outline of the star shaped nodes snap to grid points, and uses free
+          additional snap lines nodes can snap to.
+        </p>
 
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            <p>
+              Move the topmost <em>orange node</em> and one of the <em>star shaped nodes</em> around
+              and compare their <em>different grid snapping behavior</em>.
+            </p>
 
-<div class="demo-content">
-  <!--The GraphComponent-->
-  <div id="graphComponent"></div>
-</div>
+            <p>
+              While an orange node only snaps to grid points with its center, a star shaped node
+              snaps with all points of its outline, but then again only to the grid points, not in
+              between.
+            </p>
+          </li>
+          <li>
+            Move the <em>unconnected orange node</em> close to an orthogonal node or edge label to
+            snap it to the label's bounds.
+          </li>
+          <li>
+            Move an <em>edge label</em> to a non-orthogonal edge segment to disable node snapping
+            for this label. Nodes cannot snap to non-orthogonal labels.
+          </li>
+          <li>
+            Move <em>node and and edge labels</em> along their owner's border/path to snap them to
+            other particular positions relative to the owner.
+          </li>
+          <li>
+            Move a node close to the <em>red snap lines</em> to snap it to these non-graph elements.
+          </li>
+          <li><em>Position of a red snap line</em> by dragging it around.</li>
+        </ul>
+      </div>
+    </aside>
 
-<script type="module" crossorigin="anonymous" src="CustomSnappingDemo.js"></script>
+    <div class="demo-content">
+      <header class="demo-header"></header>
 
-</body>
+      <!--The GraphComponent-->
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="CustomSnappingDemo.js"></script>
+  </body>
 </html>

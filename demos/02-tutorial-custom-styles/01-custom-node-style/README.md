@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/01-custom-node-style/index.html).
 
+Custom Styles Tutorial
+
+# Custom Node Style
+
 This step shows how to create a custom node style.
 
 ## Things to Try

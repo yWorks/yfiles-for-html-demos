@@ -26,7 +26,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.json",
             "assets": ["src/assets"],
-            "styles": ["../../resources/style/demo.css"],
+            "styles": ["../../resources/style/demo.css", "src/styles.css"],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {

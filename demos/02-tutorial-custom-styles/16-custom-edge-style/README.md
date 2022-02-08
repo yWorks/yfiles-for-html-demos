@@ -4,6 +4,10 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/02-tutorial-custom-styles/16-custom-edge-style/index.html).
 
+Custom Styles Tutorial
+
+# Custom Edge Style
+
 This step shows how to create a custom edge style which allows to specify the edge thickness by setting a property on the style. The [EdgeStyleBase#createVisual](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#createVisual) and [EdgeStyleBase#updateVisual](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#updateVisual) methods are implemented like in `MySimpleNodeStyle` and `MySimpleLabelStyle`.
 
 ## Things to Try

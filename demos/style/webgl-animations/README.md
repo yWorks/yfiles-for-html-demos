@@ -4,6 +4,8 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/style/webgl-animations/index.html).
 
+# WebGL2 Animations Demo
+
 This demo shows how to use WebGL2 animations to highlight interesting parts of a graph.
 
 The graph consists of several components, which are calculated after loading the graph. These could also be calculated using the [ConnectedComponents](https://docs.yworks.com/yfileshtml/#/api/ConnectedComponents) class.
@@ -18,9 +20,7 @@ Note, that the animated items all share the same [WebGL2Animation](https://docs.
 
 - Hover over a component and observe the animation.
 - Select different animations types for highlighting the currently hovered component:
-
-- For the component itself, "Pulse" or "Shake" are fitting animations.
-- Use different "Fade" animations and hide or desaturate a component to bring this component to attention.
-
+  - For the component itself, "Pulse" or "Shake" are fitting animations.
+  - Use different "Fade" animations and hide or desaturate a component to bring this component to attention.
 - Note that for fade animations, shorter animation durations are more noticeable.
 - Experiment with other animation configurations, to achieve the desired effect.
