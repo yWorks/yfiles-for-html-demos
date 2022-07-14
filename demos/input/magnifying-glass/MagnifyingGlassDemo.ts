@@ -26,33 +26,57 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, ICommand, IGraph, License, Point } from 'yfiles'
+import {
+  DefaultEdgePathCropper,
+  GeneralPath,
+  GraphBuilder,
+  GraphComponent,
+  GraphEditorInputMode,
+  ICommand,
+  IGraph,
+  ImageNodeStyle,
+  License,
+  PolylineEdgeStyle,
+  Rect,
+  Size,
+  Stroke
+} from 'yfiles'
 
-import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { LensInputMode } from './LensInputMode'
 import { initDemoStyles } from '../../resources/demo-styles'
+import { colorSets } from '../../resources/basic-demo-styles'
+import { deviceIcons, networkData } from './resources/network-sample'
 
 let graphComponent: GraphComponent = null!
 let lensInputMode: LensInputMode = null!
 
-function run(licenseData: object): void {
+async function run(licenseData: object): Promise<void> {
   License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
 
-  const graphEditorInputMode = new GraphEditorInputMode()
-  graphComponent.inputMode = graphEditorInputMode
-  // decrease the zoom of the graphComponent to make sure the magnifying glass is visible
-  graphComponent.zoom = 0.5
+  const graphEditorInputMode = new GraphEditorInputMode({
+    // Some configurations for a better user experience in this demo.
+    // All these settings can be changed.
+    focusableItems: 'none',
+    showHandleItems: 'none',
+    allowCreateNode: false
+  })
 
   // Create the input mode that implements the magnifying glass and add it to the input mode
   // of the graph component
   lensInputMode = new LensInputMode()
   graphEditorInputMode.add(lensInputMode)
 
+  graphComponent.inputMode = graphEditorInputMode
+  // Decrease the zoom of the graphComponent to make sure the magnifying glass is visible
+  graphComponent.zoom = 0.5
+
   initDemoStyles(graphComponent.graph)
   populateGraph(graphComponent.graph)
+  await graphComponent.fitGraphBounds()
 
   initializeUI()
 
@@ -64,22 +88,47 @@ function run(licenseData: object): void {
  * @param graph The graph of the graphComponent
  */
 function populateGraph(graph: IGraph): void {
-  const node1 = graph.createNodeAt(new Point(30, 30))
-  const node2 = graph.createNodeAt(new Point(150, 30))
-  const node3 = graph.createNodeAt(new Point(260, 200))
+  // Set default graph item styling
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: new Stroke({
+      thickness: 5,
+      fill: colorSets['demo-green'].fill,
+      lineCap: 'round'
+    })
+  })
+  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
+    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 10.0 })
+  )
 
-  graph.createEdge(node1, node2)
-  const edge = graph.createEdge(node2, node3)
-  graph.addBend(edge, new Point(260, 30))
+  // Create shared image node styles
+  const deviceStyles = Object.getOwnPropertyNames(deviceIcons).reduce((obj, name) => {
+    const circle = new GeneralPath()
+    circle.appendEllipse(new Rect(0, 0, 1, 1), false)
 
-  graph.addLabel(node1, 'n1')
-  graph.addLabel(node2, 'n2')
-  graph.addLabel(node3, 'n3')
-  graph.addLabel(edge, 'Edge')
+    obj[name] = new ImageNodeStyle({ image: (deviceIcons as any)[name], normalizedOutline: circle })
+    return obj
+  }, {} as Record<string, ImageNodeStyle>)
+
+  // Build the graph
+  const graphBuilder = new GraphBuilder(graph)
+  graphBuilder.createNodesSource({
+    data: networkData.nodeList,
+    id: 'data.id',
+    tag: 'data',
+    layout: dataItem => Rect.fromCenter(dataItem.layout, graph.nodeDefaults.size),
+    style: dataItem => deviceStyles[dataItem.data.type]
+  })
+  graphBuilder.createEdgesSource({
+    data: networkData.edgeList,
+    sourceId: 'source',
+    targetId: 'target'
+  })
+  graphBuilder.buildGraph()
 }
 
 /**
- * Wires up the UI.
+ * Initializes the UI.
  */
 function initializeUI(): void {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
@@ -93,7 +142,7 @@ function initializeUI(): void {
   zoomSelectElement.addEventListener('change', evt => {
     lensInputMode.zoomFactor = parseInt(zoomSelectElement.value)
   })
-  zoomSelectElement.selectedIndex = 2
+  zoomSelectElement.selectedIndex = 1
 
   graphComponent.addZoomChangedListener(() => {
     const label = document.querySelector<HTMLElement>('#zoomLabel')!

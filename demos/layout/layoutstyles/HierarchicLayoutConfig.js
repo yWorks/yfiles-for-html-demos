@@ -50,6 +50,7 @@ import {
   IGraph,
   ILayoutAlgorithm,
   INode,
+  ITable,
   LayoutData,
   LayoutMode,
   LayoutOrientation,
@@ -261,7 +262,8 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
       layout.recursiveGroupLayering = false
     }
 
-    if (this.treatRootGroupAsSwimlanesItem) {
+    // append the stage only if the graph does not already contain table nodes
+    if (this.treatRootGroupAsSwimlanesItem && !this.containsTable(graphComponent.graph)) {
       const stage = new TopLevelGroupToSwimlaneStage()
       stage.orderSwimlanesFromSketch = this.useOrderFromSketchItem
       stage.spacing = this.swimlineSpacingItem
@@ -499,6 +501,14 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
       }
     }
     return nodeToComponent.values
+  },
+
+  /**
+   * Checks whether the graph contains a table node.
+   * @param graph The input graph
+   */
+  containsTable(graph) {
+    return graph.nodes.find(node => !!node.lookup(ITable.$class)) !== null
   },
 
   /** @type {boolean} */

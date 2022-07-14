@@ -61,7 +61,7 @@ import HTMLPopupSupport from './HTMLPopupSupport.js'
 import loadJson from '../../resources/load-json.js'
 import { passiveSupported } from '../../utils/Workarounds.js'
 import Network from './Network.js'
-import SampleData from './resources/sample.js'
+import { networkData } from './resources/network-sample.js'
 
 // This demo creates a network monitoring tool for dynamic data.
 // The mock-up model is created and updated by class Simulator.
@@ -254,7 +254,7 @@ function toggleLabels(event) {
 function loadNetwork() {
   return new Promise(resolve =>
     setTimeout(() => {
-      loadGraph(SampleData)
+      loadGraph(networkData)
       populateModel(graphComponent.graph)
       resolve()
     }, 0)

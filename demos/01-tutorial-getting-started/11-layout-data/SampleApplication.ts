@@ -28,6 +28,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  Class,
   DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
@@ -46,6 +47,7 @@ import {
   Insets,
   InteriorStretchLabelModel,
   LabelEventArgs,
+  LayoutExecutor,
   License,
   MinimumNodeSizeStage,
   Point,
@@ -61,7 +63,7 @@ import GraphBuilderData from './resources/graph'
 // @ts-ignore
 let graphComponent: GraphComponent = null
 
-function run(licenseData: object): void {
+async function run(licenseData: object): Promise<void> {
   License.value = licenseData
 
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
@@ -93,15 +95,23 @@ function run(licenseData: object): void {
 
   // Initialize the demo application's CSS and Javascript for the description
   showApp(graphComponent)
+
+  await runLayout()
 }
 
 /**
  * Applies a hierarchic layout and uses the data of the layout from the tags of the nodes.
  */
 async function runLayout(): Promise<void> {
-  const hierarchicLayout = new HierarchicLayout()
+  // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
+  // tools it from removing this dependency which is needed for 'morphLayout'.
+  Class.ensure(LayoutExecutor)
+
+  const layoutButton = document.getElementById('layout-btn') as HTMLButtonElement
+  layoutButton.disabled = true
 
   // /////////////// New in this Sample /////////////////
+  const hierarchicLayout = new HierarchicLayout()
 
   // Configures the layout data from the data that exits in the tags of the nodes
   const hierarchicLayoutData = new HierarchicLayoutData({
@@ -133,6 +143,8 @@ async function runLayout(): Promise<void> {
     } else {
       throw error
     }
+  } finally {
+    layoutButton.disabled = false
   }
 }
 
@@ -176,9 +188,6 @@ function createSampleGraph(): void {
   builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
-
-  // Runs the layout
-  runLayout()
 }
 
 /**

@@ -101,7 +101,7 @@ export function initBasicDemoStyles(graph, theme = {}) {
 
   graph.edgeDefaults.style = createBasicEdgeStyle(theme.edge)
   graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({ cropAtPort: true, extraCropLength: 1 })
+    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 1 })
   )
   graph.edgeDefaults.labels.style = createBasicEdgeLabelStyle(theme.edgeLabel)
 }

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Class,
   DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
@@ -45,6 +46,7 @@ import {
   Insets,
   InteriorStretchLabelModel,
   LabelEventArgs,
+  LayoutExecutor,
   License,
   MinimumNodeSizeStage,
   Point,
@@ -62,8 +64,9 @@ let graphComponent = null
 
 /**
  * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
 
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
@@ -95,6 +98,8 @@ function run(licenseData) {
 
   // Initialize the demo application's CSS and Javascript for the description
   showApp(graphComponent)
+
+  await runLayout()
 }
 
 /**
@@ -102,9 +107,15 @@ function run(licenseData) {
  * @returns {!Promise}
  */
 async function runLayout() {
-  const hierarchicLayout = new HierarchicLayout()
+  // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
+  // tools it from removing this dependency which is needed for 'morphLayout'.
+  Class.ensure(LayoutExecutor)
+
+  const layoutButton = document.getElementById('layout-btn')
+  layoutButton.disabled = true
 
   // /////////////// New in this Sample /////////////////
+  const hierarchicLayout = new HierarchicLayout()
 
   // Configures the layout data from the data that exits in the tags of the nodes
   const hierarchicLayoutData = new HierarchicLayoutData({
@@ -135,6 +146,8 @@ async function runLayout() {
     } else {
       throw error
     }
+  } finally {
+    layoutButton.disabled = false
   }
 }
 
@@ -179,9 +192,6 @@ function createSampleGraph() {
   builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
-
-  // Runs the layout
-  runLayout()
 }
 
 /**

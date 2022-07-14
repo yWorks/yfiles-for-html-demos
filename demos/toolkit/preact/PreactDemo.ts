@@ -86,9 +86,13 @@ const App: FunctionalComponent = () => {
   const addDataItem = () => {
     const newItems = [...items]
     const id = idCount++
-    const randomItem = items[Math.floor(Math.random() * items.length)]
     newItems.push({ id, state: Math.random() > 0.5 })
     setItems(newItems)
+    if (newItems.length <= 1) {
+      // this is the first item, don't create a connection
+      return
+    }
+    const randomItem = items[Math.floor(Math.random() * items.length)]
     const newConnections = [...connections]
     newConnections.push({ from: randomItem.id, to: id })
     setConnections(newConnections)

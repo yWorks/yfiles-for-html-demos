@@ -30,6 +30,7 @@ import {
   CanvasComponent,
   ConcurrencyController,
   delegate,
+  EventArgs,
   GraphComponent,
   IInputModeContext,
   InputModeBase,
@@ -38,6 +39,7 @@ import {
   ScrollBarVisibility
 } from 'yfiles'
 
+// noinspection CssInvalidFunction
 /**
  * A specialized input mode that shows a floating magnifying lens that magnifies the cursor's
  * surroundings.
@@ -46,43 +48,66 @@ export class LensInputMode extends InputModeBase {
   constructor() {
     super()
     this.lensGraphComponent = null
-    this.$zoomFactor = 3
+    this.$zoomFactor = 2
+    // The changeable radius of the lens
+    const radius = 120
+    // The changeable difference between the coordinates of the mouse and the border of the lens
+    const margin = 0
+
+    // Some derived values
+    const center = margin + radius
+    const diameter = 2 * radius
+    // The size with a small offset to make sure that the lens stroke is fully visible
+    const size = diameter + margin + 10
+
+    // The SVG path of the "shadow" of the lens
+    const lensShadowPath = `m ${margin} ${center} L 0 20 L 20 0 L ${center} ${margin} A ${radius} ${radius} 0 0 0 ${margin} ${center}`
+    // THe SVG path of the cross in the center of the lens
+    const crossPath = `M ${center - 10} ${center} h 7 m 6 0 h 7 M ${center} ${
+      center - 10
+    } v 7 m 0 6 v 7`
+    // The placement of the lens graph component
+    const lensComponentPlacement = `width: ${diameter}px; height: ${diameter}px; top: ${
+      margin + 5
+    }px; left: ${margin + 5}px;`
+
+    // The DOM elements of the lens
     this.lensElement = document.createElement('div')
     this.lensElement.setAttribute(
       'style',
       `pointer-events: none;
-          width: 202px;
-          height: 202px;
-          top: 10px;
-          left: 10px;
+          width: ${size}px;
+          height: ${size}px;
+          top: 0px;
+          left: 0px;
           position: absolute;
           overflow: visible;
+          opacity: 0;
           transition: opacity .3s ease-in;`
     )
     this.lensElement.innerHTML = `
       <svg xmlns='http://www.w3.org/2000/svg' class='demo-lens-border'
-        width='222px' height='222px' viewBox='-20 -20 222 222'
+        width='${size}' height='${size}px' viewBox='-5 -5 ${size} ${size}'
       >
         <defs>
           <linearGradient id='lens-gradient' x1='0' y1='0' x2='1' y2='1'>
             <stop stop-color='black' stop-opacity='0%' offset='0%' />
             <stop stop-color='black' stop-opacity='0%' offset='10%' />
-            <stop stop-color='black' stop-opacity='20%' offset='100%' />
+            <stop stop-color='black' stop-opacity='40%' offset='100%' />
           </linearGradient>
         </defs>
-        <circle r='90' cx='110' cy='110' stroke='black' stroke-width='2' fill='none' />
-        <path d='M22, 130 -20 0 0 -20 130,22 A 100 100 0 0 0 22 130' fill='url(#lens-gradient)' />
+        <path d='${lensShadowPath}' fill='url(#lens-gradient)' />
       </svg>
       <div class='demo-lens-component'
-        style='width: 180px; height: 180px; top: 40px; left: 40px; clip-path: circle(90px); background: #eeeeee; position: absolute;'></div>
+        style='${lensComponentPlacement} clip-path: circle(${radius}px); position: absolute; background: white;'></div>
       <svg xmlns='http://www.w3.org/2000/svg' class='demo-lens-cross'
-        width='222px' height='222px' viewBox='-20 -20 222 222'
+        width='${size}' height='${size}px' viewBox='-5 -5 ${size} ${size}'
         style='position: absolute; top: 0; left: 0;'
       >
-        <path d='M100,110 h8 m4,0 h8 M110, 100 v8 m0,4 v8' stroke='white' stroke-opacity='0.3'
-          stroke-width='3' stroke-linecap='round' />
-        <path d='M100,110 h8 m4,0 h8 M110, 100 v8 m0,4 v8' stroke='black' stroke-opacity='0.8'
-          stroke-width='1' stroke-linecap='round' />
+        <circle r='${radius}' cx='${center}' cy='${center}'
+          stroke='#666' stroke-width='3' fill='none' />
+        <path d='${crossPath}' stroke='white' stroke-opacity='0.3' stroke-width='5' stroke-linecap='round' />
+        <path d='${crossPath}' stroke='#333' stroke-opacity='0.8' stroke-width='2' stroke-linecap='round' />
       </svg> `
   }
 
@@ -112,6 +137,7 @@ export class LensInputMode extends InputModeBase {
       canvasComponent.zoom < 0.7 &&
       canvasComponent.size.width > 200 &&
       canvasComponent.size.height > 200 &&
+      canvasComponent.lastInputEvent !== EventArgs.EMPTY &&
       canvasComponent.viewport.contains(canvasComponent.lastEventLocation)
     ) {
       this.showLens()
@@ -167,33 +193,40 @@ export class LensInputMode extends InputModeBase {
   install(context, controller) {
     super.install(context, controller)
 
-    // gets the div for the lens graphComponent
-    // initialize the lens graphComponent
+    const graphComponent = context.canvasComponent
+
+    // Initialize the lens graph component
     this.lensGraphComponent = new GraphComponent({
+      // Get the div for the lens graphComponent
       div: this.lensElement.querySelector('.demo-lens-component'),
-      graph: context.graph,
-      // disable interaction and scrollbars
+
+      // Re-use the same graph, selection, and projection
+      graph: graphComponent.graph,
+      selection: graphComponent.selection,
+      projection: graphComponent.projection,
+
+      // Disable interaction and scrollbars
       mouseWheelBehavior: MouseWheelBehaviors.NONE,
       autoDrag: false,
       horizontalScrollBarPolicy: ScrollBarVisibility.NEVER,
       verticalScrollBarPolicy: ScrollBarVisibility.NEVER,
-      // set the zoom factor of the graph component
+
+      // Set the zoom factor of the graph component
       zoom: this.zoomFactor
     })
 
-    const canvasComponent = context.canvasComponent
-    canvasComponent.overlayPanel.appendChild(this.lensElement)
+    graphComponent.overlayPanel.appendChild(this.lensElement)
 
-    // add the listener to the initial graphComponent that will update the position and the zoom of
-    // the lens
+    // Add the listeners to the initial graph component that will update the position and the zoom
+    // of the lens
     const mouseMoveListener = delegate(this.updateLensLocation, this)
-    canvasComponent.addMouseMoveListener(mouseMoveListener)
-    canvasComponent.addMouseDragListener(mouseMoveListener)
+    graphComponent.addMouseMoveListener(mouseMoveListener)
+    graphComponent.addMouseDragListener(mouseMoveListener)
 
     const visibilityChangeListener = delegate(this.updateLensVisibility, this)
-    canvasComponent.addZoomChangedListener(visibilityChangeListener)
-    canvasComponent.addMouseLeaveListener(visibilityChangeListener)
-    canvasComponent.addMouseEnterListener(visibilityChangeListener)
+    graphComponent.addZoomChangedListener(visibilityChangeListener)
+    graphComponent.addMouseLeaveListener(visibilityChangeListener)
+    graphComponent.addMouseEnterListener(visibilityChangeListener)
 
     this.hideLens()
   }

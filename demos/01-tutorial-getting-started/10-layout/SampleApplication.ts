@@ -72,6 +72,7 @@ let dateMapper: Mapper<IModelItem, Date> = null
 
 function run(licenseData: object): void {
   License.value = licenseData
+
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -117,11 +118,14 @@ function run(licenseData: object): void {
 
 // /////////////// New in this Sample /////////////////
 
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'morphLayout'.
-Class.ensure(LayoutExecutor)
-
+/**
+ * Applies a hierarchic layout.
+ */
 async function runLayout(): Promise<void> {
+  // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
+  // tools it from removing this dependency which is needed for 'morphLayout'.
+  Class.ensure(LayoutExecutor)
+
   const layoutButton = document.getElementById('layout-btn') as HTMLButtonElement
   layoutButton.disabled = true
   // Uses the morphLayout method to perform the layout, animate it, manage undo and adjust the content rectangle in

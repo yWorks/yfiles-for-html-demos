@@ -31,12 +31,12 @@
  */
 export enum DeviceKind {
   WORKSTATION = 1,
-  LAPTOP,
-  SMARTPHONE,
-  SWITCH,
-  WLAN,
-  SERVER,
-  DATABASE
+  LAPTOP = 2,
+  SMARTPHONE = 3,
+  SWITCH = 4,
+  WLAN = 5,
+  SERVER = 6,
+  DATABASE = 7
 }
 
 /**

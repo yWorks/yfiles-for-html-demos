@@ -13,6 +13,6 @@
   "devDependencies": {
     "typescript": "^4.3.5",
     "vite": "^2.5.4",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.5-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.6-dev.tgz"
   }
 }

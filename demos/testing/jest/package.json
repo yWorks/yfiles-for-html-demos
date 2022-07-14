@@ -8,8 +8,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.5-dev.tgz",
-    "yfiles-umd": "../../../lib-dev/umd/yfiles-umd-24.0.5-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.6-dev.tgz",
+    "yfiles-umd": "../../../lib-dev/umd/yfiles-umd-24.0.6-dev.tgz"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.14.7",

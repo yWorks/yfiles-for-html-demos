@@ -35,12 +35,12 @@ export /**
  */
 const DeviceKind = {
   WORKSTATION: 1,
-  LAPTOP: 1,
-  SMARTPHONE: 2,
-  SWITCH: 3,
-  WLAN: 4,
-  SERVER: 5,
-  DATABASE: 6
+  LAPTOP: 2,
+  SMARTPHONE: 3,
+  SWITCH: 4,
+  WLAN: 5,
+  SERVER: 6,
+  DATABASE: 7
 }
 
 /**

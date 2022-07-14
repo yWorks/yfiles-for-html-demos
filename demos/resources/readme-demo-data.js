@@ -216,7 +216,8 @@ function getDemoData() {
       "directed",
       "dendrogram",
       "hierarchic",
-      "hierarchy"
+      "hierarchy",
+      "data analysis"
     ],
     "ts": true
   },
@@ -271,7 +272,8 @@ function getDemoData() {
       "substructures",
       "perpendicular",
       "system management",
-      "uml"
+      "uml",
+      "data management"
     ],
     "ts": true
   },
@@ -506,7 +508,8 @@ function getDemoData() {
       "ports",
       "overview",
       "dnd",
-      "notable style"
+      "notable style",
+      "data management"
     ],
     "ts": true
   },
@@ -536,7 +539,8 @@ function getDemoData() {
       "structures",
       "hide",
       "detail",
-      "notable style"
+      "notable style",
+      "data management"
     ],
     "ts": true
   },
@@ -556,7 +560,8 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.3.0.2",
-      "notable style"
+      "notable style",
+      "data analysis"
     ],
     "ts": true
   },
@@ -581,7 +586,8 @@ function getDemoData() {
       "calendar",
       "dates",
       "times",
-      "schedule"
+      "schedule",
+      "data management"
     ],
     "ts": true
   },
@@ -603,7 +609,9 @@ function getDemoData() {
       "filtering",
       "animations",
       "structures",
-      "detail"
+      "detail",
+      "data analysis",
+      "data management"
     ],
     "ts": true
   },
@@ -655,7 +663,9 @@ function getDemoData() {
       "structures",
       "d3js",
       "d3.js",
-      "notable style"
+      "notable style",
+      "data analysis",
+      "data management"
     ],
     "ts": true
   },
@@ -675,7 +685,8 @@ function getDemoData() {
     "keywords": [
       "v2.2.0.0",
       "overlapping",
-      "heatmap"
+      "heatmap",
+      "data analysis"
     ],
     "ts": true
   },
@@ -704,7 +715,8 @@ function getDemoData() {
       "filtering",
       "background",
       "curves",
-      "bezier"
+      "bezier",
+      "data management"
     ],
     "ts": true
   },
@@ -727,7 +739,8 @@ function getDemoData() {
       "shapes",
       "layout",
       "input",
-      "button"
+      "button",
+      "data management"
     ],
     "ts": true
   },
@@ -748,7 +761,8 @@ function getDemoData() {
     "keywords": [
       "hierarchic",
       "palette",
-      "dnd"
+      "dnd",
+      "data management"
     ],
     "ts": true
   },
@@ -772,7 +786,8 @@ function getDemoData() {
       "labels",
       "edge router",
       "hierarchic",
-      "structures"
+      "structures",
+      "data management"
     ],
     "ts": true
   },
@@ -791,7 +806,8 @@ function getDemoData() {
     ],
     "keywords": [
       "hierarchic",
-      "context menu"
+      "context menu",
+      "data management"
     ],
     "ts": true
   },
@@ -836,7 +852,8 @@ function getDemoData() {
       "context menu",
       "hierarchic",
       "generic labeling",
-      "labels"
+      "labels",
+      "data analysis"
     ],
     "ts": true
   },
@@ -857,7 +874,9 @@ function getDemoData() {
       "tree map",
       "v2.1.0.0",
       "animations",
-      "tool tips"
+      "tool tips",
+      "data analysis",
+      "data management"
     ],
     "ts": true
   },
@@ -926,7 +945,8 @@ function getDemoData() {
       "project",
       "management",
       "slack",
-      "scheduling"
+      "scheduling",
+      "data analysis"
     ],
     "ts": true
   },
@@ -953,7 +973,8 @@ function getDemoData() {
       "drag and drop",
       "palette",
       "reversed edge creation",
-      "dnd"
+      "dnd",
+      "data management"
     ],
     "ts": true
   },
@@ -978,7 +999,8 @@ function getDemoData() {
       "reachability",
       "cycles",
       "spanning tree",
-      "shortest paths"
+      "shortest paths",
+      "data analysis"
     ],
     "ts": true
   },
@@ -1047,7 +1069,8 @@ function getDemoData() {
       "large",
       "huge",
       "webgl2",
-      "svg"
+      "svg",
+      "data management"
     ],
     "ts": true
   },
@@ -1070,7 +1093,8 @@ function getDemoData() {
       "aggregation graph wrapper",
       "curves",
       "bezier",
-      "clusters"
+      "clusters",
+      "data analysis"
     ],
     "ts": true
   },
@@ -1091,7 +1115,8 @@ function getDemoData() {
       "v2.3.0.2",
       "aggregation graph wrapper",
       "context menu",
-      "clusters"
+      "clusters",
+      "data analysis"
     ],
     "ts": true
   },
@@ -1183,7 +1208,9 @@ function getDemoData() {
     "keywords": [
       "hierarchic",
       "copy",
-      "detail"
+      "detail",
+      "data analysis",
+      "data management"
     ],
     "ts": true
   },
@@ -1222,6 +1249,7 @@ function getDemoData() {
       "input"
     ],
     "keywords": [
+      "v2.4.0.5",
       "magnifier ",
       "lens",
       "zoom",
@@ -1283,7 +1311,8 @@ function getDemoData() {
       "hierarchical",
       "voronoi",
       "dendrogram",
-      "background"
+      "background",
+      "data analysis"
     ],
     "ts": true
   },
@@ -1305,7 +1334,8 @@ function getDemoData() {
       "maximum",
       "minimum",
       "cuts",
-      "labels"
+      "labels",
+      "data management"
     ],
     "ts": true
   },
@@ -1327,7 +1357,9 @@ function getDemoData() {
       "reduction",
       "filtering",
       "structures",
-      "highlights"
+      "highlights",
+      "data analysis",
+      "data management"
     ],
     "ts": true
   },
@@ -1441,7 +1473,9 @@ function getDemoData() {
       "overview",
       "structures",
       "v2.1.0.3",
-      "labels"
+      "labels",
+      "data analysis",
+      "data management"
     ],
     "ts": true
   },
@@ -1822,7 +1856,8 @@ function getDemoData() {
     ],
     "keywords": [
       "data table",
-      "structures"
+      "structures",
+      "data management"
     ],
     "ts": true
   },
@@ -2044,7 +2079,8 @@ function getDemoData() {
       "balloon",
       "bundles",
       "bezier",
-      "curves"
+      "curves",
+      "data analysis"
     ],
     "ts": true
   },
@@ -2112,7 +2148,8 @@ function getDemoData() {
       "edge router",
       "polyline router",
       "background",
-      "layout"
+      "layout",
+      "data analysis"
     ],
     "ts": true
   },
@@ -2205,7 +2242,8 @@ function getDemoData() {
       "hierarchic",
       "organic",
       "components",
-      "circular"
+      "circular",
+      "data analysis"
     ],
     "ts": true
   },
@@ -2270,7 +2308,8 @@ function getDemoData() {
       "ports",
       "context menu",
       "groups",
-      "bridges"
+      "bridges",
+      "data analysis"
     ],
     "ts": true
   },
@@ -2295,7 +2334,8 @@ function getDemoData() {
       "polyline",
       "ports",
       "context menu",
-      "bridges"
+      "bridges",
+      "data analysis"
     ],
     "ts": true
   },
@@ -2318,7 +2358,8 @@ function getDemoData() {
       "v2.4.0.0",
       "clustering",
       "grouping",
-      "similar"
+      "similar",
+      "data management"
     ],
     "ts": true
   },
@@ -2497,7 +2538,8 @@ function getDemoData() {
       "tree"
     ],
     "keywords": [
-      "context menu"
+      "context menu",
+      "data analysis"
     ],
     "ts": true
   },
@@ -2568,6 +2610,9 @@ function getDemoData() {
       "partition grid",
       "hierarchic",
       "organic"
+    ],
+    "keywords": [
+      "data management"
     ],
     "ts": true
   },
@@ -2705,7 +2750,9 @@ function getDemoData() {
       "organic",
       "large",
       "split",
-      "print"
+      "print",
+      "data analysis",
+      "data management"
     ],
     "ts": true
   },

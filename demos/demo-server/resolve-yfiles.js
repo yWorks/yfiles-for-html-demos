@@ -58,26 +58,29 @@ const thirdPartyImports = new RegExp(
 )
 const langVersionRegex = /\w\.version\s*=\s*['"]([^'"]+)['"]/
 
-const es6NameToEsModule = {
-  yfiles: 'lang'
-}
-
-let yFilesServerPath
+let es6NameToEsModule = {}
+let yFilesServerPath = null
 let resolveToSubmodules = true
 
-try {
-  const es6ModuleMappings = require('../../tools/common/ES6ModuleMappings.json')
+function updateNameToModuleMap() {
+  try {
+    const filePath = '../../tools/common/ES6ModuleMappings.json'
+    const es6ModuleMappings = JSON.parse(fs.readFileSync(filePath, { encoding: 'utf8' }))
 
-  for (const [esModuleName, implModuleMap] of Object.entries(es6ModuleMappings)) {
-    for (const nameMap of Object.values(implModuleMap)) {
-      for (const es6Name of Object.values(nameMap)) {
-        es6NameToEsModule[es6Name] = esModuleName
+    es6NameToEsModule = {
+      yfiles: 'lang'
+    }
+    for (const [esModuleName, implModuleMap] of Object.entries(es6ModuleMappings)) {
+      for (const nameMap of Object.values(implModuleMap)) {
+        for (const es6Name of Object.values(nameMap)) {
+          es6NameToEsModule[es6Name] = esModuleName
+        }
       }
     }
+  } catch (ignored) {
+    resolveToSubmodules = false
+    console.warn("Cannot load module mappings file. Importing all yFiles types from 'yfiles.js'.")
   }
-} catch (e) {
-  resolveToSubmodules = false
-  console.warn("Couldn't load ES6ModuleMappings.json. Imports will be resolved to 'yfiles.js'.")
 }
 
 /**
@@ -89,16 +92,19 @@ function findDefaultYFilesServerPath(staticRoot, startingPath) {
     yFilesBasePath = path.dirname(
       require.resolve('yfiles', { paths: [path.dirname(startingPath)] })
     )
-  } catch (e) {
-    console.error(`${startingPath}: Could not find module 'yfiles'`)
+  } catch (ignored) {
+    console.error(`${startingPath}: Cannot find module 'yfiles'`)
     return
   }
 
   const version = getVersionFromJS(yFilesBasePath) || getVersionFromPackage(yFilesBasePath)
   if (version !== SUPPORTED_YFILES_VERSION) {
     resolveToSubmodules = false
-    console.warn(`Unexpected yFiles major version: ${version ? version : 'None detected'}.
-    Imports will be resolved to 'yfiles.js'.`)
+    console.warn(
+      `Unexpected yFiles major version: ${
+        version ? version : 'None detected'
+      }. Importing all yFiles types from 'yfiles.js'.`
+    )
   }
 
   const relative = path.relative(staticRoot, yFilesBasePath)
@@ -137,66 +143,75 @@ function addJsSuffix(moduleName) {
 function transformFile(data, filePath) {
   return data
     .replace(importYfilesRegex, (match, imports, from) => {
-      const module = from || 'yfiles'
-      if (module === 'yfiles' && resolveToSubmodules) {
-        const neededModules = Object.create(null)
-        let [defaultImport] = imports.match(/^[^{,]*/) || []
-
-        let wildcardImport = null
-        if (defaultImport.includes('*')) {
-          wildcardImport = defaultImport
-          defaultImport = null
-        }
-
-        // eslint-disable-next-line prefer-const
-        let [fullMatch, namedImportsMatch] = imports.match(/{((?:.|\n|\r|\t)*)}/) || []
-        const numLines = fullMatch ? fullMatch.split('\n').length : 1
-        if (namedImportsMatch) {
-          namedImportsMatch = namedImportsMatch.replace(/\s*\/\/.*/g, '')
-
-          let namedImports = namedImportsMatch.replace(/\s/g, '').split(',')
-          namedImports = namedImports.filter(importString => !importString.includes('.'))
-          for (const namedImport of namedImports) {
-            const module = es6NameToEsModule[namedImport]
-            if (!module) {
-              console.error('Named import not found in module mappings:', namedImport)
-            } else {
-              if (!neededModules[module]) {
-                neededModules[module] = []
-              }
-              neededModules[module].push(namedImport)
-            }
-          }
-        }
-
-        if (defaultImport) {
-          if (!neededModules.lang) {
-            neededModules.lang = []
-          }
-          if (defaultImport === 'yfiles') {
-            neededModules.lang.push(defaultImport)
-          } else {
-            neededModules.lang.push('yfiles as ' + defaultImport)
-          }
-        }
-
-        const trailingComments = new Array(numLines - 1)
-          .fill('// keep line numbers consistent due to import statement replacements')
-          .join('\n')
-
-        return (
-          Object.entries(neededModules)
-            .map(
-              ([moduleName, imports]) => `import {${imports.join(',')}} from '/yfiles/${module}.js'`
-            )
-            .join(';') +
-          (wildcardImport ? `import ${wildcardImport} from '/yfiles/${module}.js'` : '') +
-          (numLines > 1 ? '\n' : '') +
-          trailingComments
-        )
-      } else {
-        return `import ${imports} from '/yfiles/${module}.js'`
+      const originalModuleName = from || 'yfiles'
+      if (!(originalModuleName === 'yfiles' && resolveToSubmodules)) {
+        return `import ${imports} from '/yfiles/${originalModuleName}.js'`
       }
+
+      const neededModules = Object.create(null)
+      let [defaultImport] = imports.match(/^[^{,]*/) || []
+
+      let wildcardImport
+      if (defaultImport.includes('*')) {
+        wildcardImport = defaultImport
+        defaultImport = null
+      } else {
+        wildcardImport = null
+      }
+
+      // eslint-disable-next-line prefer-const
+      let [fullMatch, namedImportsMatch] = imports.match(/{((?:.|\n|\r|\t)*)}/) || []
+      const numLines = fullMatch ? fullMatch.split('\n').length : 1
+      if (namedImportsMatch) {
+        namedImportsMatch = namedImportsMatch.replace(/\s*\/\/.*/g, '')
+
+        let namedImports = namedImportsMatch.replace(/\s/g, '').split(',')
+        namedImports = namedImports.filter(importString => !importString.includes('.'))
+        for (const namedImport of namedImports) {
+          let submoduleName = es6NameToEsModule[namedImport]
+          if (submoduleName == null) {
+            updateNameToModuleMap()
+            submoduleName = es6NameToEsModule[namedImport]
+          }
+          if (submoduleName == null) {
+            console.error(
+              `Export '${namedImport}' not found in module mappings. Keeping import from 'yfiles.js'.`
+            )
+            submoduleName = 'yfiles'
+          }
+          if (neededModules[submoduleName] == null) {
+            neededModules[submoduleName] = []
+          }
+          neededModules[submoduleName].push(namedImport)
+        }
+      }
+
+      if (defaultImport) {
+        if (!neededModules.lang) {
+          neededModules.lang = []
+        }
+        if (defaultImport === 'yfiles') {
+          neededModules.lang.push(defaultImport)
+        } else {
+          neededModules.lang.push('yfiles as ' + defaultImport)
+        }
+      }
+
+      const trailingComments = new Array(numLines - 1)
+        .fill('// keep line numbers consistent due to import statement replacements')
+        .join('\n')
+
+      return (
+        Object.entries(neededModules)
+          .map(
+            ([moduleName, imports]) =>
+              `import {${imports.join(',')}} from '/yfiles/${moduleName}.js'`
+          )
+          .join(';') +
+        (wildcardImport ? `import ${wildcardImport} from '/yfiles/${originalModuleName}.js'` : '') +
+        (numLines > 1 ? '\n' : '') +
+        trailingComments
+      )
     })
     .replace(
       importYfilesSideEffectRegex,
@@ -204,7 +219,7 @@ function transformFile(data, filePath) {
     )
     .replace(
       otherImportsRegex,
-      (match, imports, from) => `import ${imports} from '${addJsSuffix(from)}'`
+      (match, imports, moduleName) => `import ${imports} from '${addJsSuffix(moduleName)}'`
     )
     .replace(
       otherImportsSideEffectsRegex,
