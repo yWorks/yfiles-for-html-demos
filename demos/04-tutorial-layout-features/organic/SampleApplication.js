@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,20 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import loadJson from '../../resources/load-json.js'
-import { GraphComponent, GraphViewerInputMode, ICommand, License } from 'yfiles'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import {
+  Class,
+  GraphComponent,
+  GraphViewerInputMode,
+  ICommand,
+  LayoutExecutor,
+  License
+} from 'yfiles'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 
 import { createLayoutConfiguration } from './Organic.js'
 import { loadLayoutSampleGraph } from '../../utils/LoadTutorialLayoutSampleGraph.js'
 
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
+
+Class.ensure(LayoutExecutor)
+
 /**
- * @param {!object} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // configure the graph not be editable
   graphComponent.inputMode = new GraphViewerInputMode()
@@ -64,4 +75,5 @@ function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

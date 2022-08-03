@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -61,14 +61,14 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
 import {
-  createBasicNodeLabelStyle,
-  createBasicNodeStyle
-} from '../../resources/basic-demo-styles.js'
+  applyDemoTheme,
+  createDemoNodeLabelStyle,
+  createDemoShapeNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * The graph component.
@@ -90,12 +90,12 @@ let labelModels = []
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the node label properties
   initializeOptions()
@@ -176,15 +176,13 @@ function initializeOptions() {
 function initializeGraph() {
   const graph = graphComponent.graph
   // set the default style for nodes
-  const nodeStyle = createBasicNodeStyle()
-  nodeStyle.shape = ShapeNodeShape.ELLIPSE
-  graph.nodeDefaults.style = nodeStyle
+  graph.nodeDefaults.style = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE)
 
   // set the default size for nodes
   graph.nodeDefaults.size = new Size(10, 10)
 
   // set the default style for labels
-  graph.nodeDefaults.labels.style = new CityLabelStyle(createBasicNodeLabelStyle())
+  graph.nodeDefaults.labels.style = new CityLabelStyle(createDemoNodeLabelStyle())
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
 
   // add the background visual for the map
@@ -338,5 +336,5 @@ async function createSampleGraph() {
   await placeLabels()
 }
 
-// runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

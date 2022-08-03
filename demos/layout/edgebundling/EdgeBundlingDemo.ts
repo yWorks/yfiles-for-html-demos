@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -74,7 +74,6 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp,
   showLoadingIndicator
@@ -85,7 +84,9 @@ import CircularSampleData from './resources/circular'
 import RadialSampleData from './resources/radial'
 import TreeSampleData from './resources/tree'
 import RoutingSampleData from './resources/routing'
-import loadJson from '../../resources/load-json'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 type NodeData = {
   id: number
@@ -141,10 +142,11 @@ const bundlingStrengthSlider = document.getElementById(
 ) as HTMLInputElement
 const bundlingStrengthLabel = document.getElementById('bundling-strength-label') as HTMLInputElement
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // create the input mode
   createInputMode()
@@ -269,7 +271,7 @@ function populateContextMenu(
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
 
   // Check whether an edge or a node was hit
-  const hit = hits.firstOrDefault()
+  const hit = hits.at(0)
 
   if (IEdge.isInstance(hit) || INode.isInstance(hit)) {
     let selectedEdges: IEdge[]
@@ -375,7 +377,7 @@ function initializeGraph(): void {
   graph.decorator.edgeDecorator.selectionDecorator.hideImplementation()
 
   // initialize the edge highlight manager
-  graphComponent.highlightIndicatorManager = new HighlightManager(graphComponent)
+  graphComponent.highlightIndicatorManager = new HighlightManager()
 
   // when a node is selected, select also the adjacent edges
   graphComponent.selection.addItemSelectionChangedListener((sender, args) => {
@@ -782,5 +784,5 @@ enum LayoutAlgorithm {
   ROUTER = 5
 }
 
-// runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,7 +56,7 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
    * Creates the visual.
    * @param {!IRenderContext} context The render context.
    * @param {!IEdge} edge The edge to which this style instance is assigned.
-   * @see Overrides {@link EdgeStyleBase#createVisual}
+   * @see Overrides {@link EdgeStyleBase.createVisual}
    * @returns {!Visual}
    */
   createVisual(context, edge) {
@@ -68,7 +68,7 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
    * @param {!IRenderContext} context The render context.
    * @param {!Visual} oldVisual The old visual.
    * @param {!IEdge} edge The edge to which this style instance is assigned.
-   * @see Overrides {@link EdgeStyleBase#updateVisual}
+   * @see Overrides {@link EdgeStyleBase.updateVisual}
    * @returns {!Visual}
    */
   updateVisual(context, oldVisual, edge) {
@@ -88,7 +88,7 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
    * @param {!IInputModeContext} canvasContext The canvas context.
    * @param {!Point} p The point to test.
    * @param {!IEdge} edge The given edge.
-   * @see Overrides {@link EdgeStyleBase#isHit}
+   * @see Overrides {@link EdgeStyleBase.isHit}
    * @returns {boolean}
    */
   isHit(canvasContext, p, edge) {
@@ -128,7 +128,7 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
    * Renders the edge.
    * @param {!IRenderContext} renderContext The render context.
    * @param {!CanvasRenderingContext2D} ctx The HTML5 Canvas context.
-   * @see Overrides {@link HtmlCanvasVisual#paint}
+   * @see Overrides {@link HtmlCanvasVisual.paint}
    */
   paint(renderContext, ctx) {
     ctx.save()

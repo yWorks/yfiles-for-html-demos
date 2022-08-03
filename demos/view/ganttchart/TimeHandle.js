@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  ClickEventArgs,
   Cursor,
   HandleTypes,
   IEnumerable,
@@ -119,10 +120,10 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
    * Adjusts the lead or follow-up time for the associated activity node during node resize
    * operations.
    * @param {!IInputModeContext} context The context to retrieve information about the drag from.
-   * @param {!Point} originalLocation The value of the {@link IDragHandler#location} property at the time of
-   * {@link IDragHandler#initializeDrag}.
+   * @param {!Point} originalLocation The value of the {@link IHandle.location} property at the time of
+   * {@link IHandle.initializeDrag}.
    * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the
-   * handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * handle to be at. Depending on the implementation the {@link IHandle.location} may or may
    * not be modified to reflect the new value.
    * @returns {boolean}
    */
@@ -143,12 +144,12 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
    * Adjusts the lead or follow-up time for the associated activity node when a node resize is
    * finished.
    * @param {!IInputModeContext} context The context to retrieve information about the drag from.
-   * @param {!Point} originalLocation The value of the {@link IDragHandler#location} property at the time of
-   * {@link IDragHandler#initializeDrag}.
+   * @param {!Point} originalLocation The value of the {@link IHandle.location} property at the time of
+   * {@link IHandle.initializeDrag}.
    * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the
-   * handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * handle to be at. Depending on the implementation the {@link IHandle.location} may or may
    * not be modified to reflect the new value. This is the same value as delivered in the last
-   * invocation of {@link IDragHandler#handleMove}
+   * invocation of {@link IHandle.handleMove}
    */
   dragFinished(context, originalLocation, newLocation) {
     this.setTime(this.calculateTime(newLocation))
@@ -158,13 +159,19 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
    * Resets the lead of follow-up time for the associated activity node when a resize gesture is
    * cancelled.
    * @param {!IInputModeContext} context The context to retrieve information about the drag from.
-   * @param {!Point} originalLocation The value of the coordinate of the {@link IDragHandler#location}
-   * property at the time of {@link IDragHandler#initializeDrag}.
+   * @param {!Point} originalLocation The value of the coordinate of the {@link IHandle.location}
+   * property at the time of {@link IHandle.initializeDrag}.
    */
   cancelDrag(context, originalLocation) {
     // assign original value
     this.setTime(this._originalTime)
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 
   /**
    * @param {!Point} newLocation

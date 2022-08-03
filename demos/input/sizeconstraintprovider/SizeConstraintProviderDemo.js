@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,18 +39,22 @@ import {
   Size
 } from 'yfiles'
 
-import { checkLicense, showApp } from '../../resources/demo-app.js'
+import { showApp } from '../../resources/demo-app.js'
 import LimitedRectangleDescriptor from './LimitedRectangleDescriptor.js'
 import GreenSizeConstraintProvider from './GreenSizeConstraintProvider.js'
 import BlueSizeConstraintProvider from './BlueSizeConstraintProvider.js'
-import loadJson from '../../resources/load-json.js'
-import { createDemoNodeLabelStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
+import {
+  applyDemoTheme,
+  createDemoNodeLabelStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link INodeSizeConstraintProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>ISizeConstraintProvider</code>. In this case, the 'node' parameter will be set
+ * for its {@link ISizeConstraintProvider}. In this case, the 'node' parameter will be set
  * to that node.
  * @param {!IGraph} graph The given graph
  * @param {!MutableRectangle} boundaryRectangle The rectangle that limits the node's size.
@@ -78,12 +82,13 @@ function registerSizeConstraintProvider(graph, boundaryRectangle) {
 }
 
 /**
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // create a default editor input mode
   graphComponent.inputMode = new GraphEditorInputMode({
@@ -140,22 +145,23 @@ function createSampleGraph(graph) {
  * @param {number} y The node's y-coordinate
  * @param {number} w The node's width
  * @param {number} h The node's height
- * @param {!ColorSetName} cssClass The given css class
+ * @param {!ColorSetName} colorSet The color set to use for the new node and its label
  * @param {!string} tag The tag to identify the size constraint provider
  * @param {!string} labelText The nodes label's text
  */
-function createNode(graph, x, y, w, h, cssClass, tag, labelText) {
+function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
   const node = graph.createNode({
     layout: new Rect(x, y, w, h),
-    style: new DemoNodeStyle(cssClass),
+    style: createDemoNodeStyle(colorSet),
     tag: tag
   })
 
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: createDemoNodeLabelStyle(cssClass)
+    style: createDemoNodeLabelStyle(colorSet)
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

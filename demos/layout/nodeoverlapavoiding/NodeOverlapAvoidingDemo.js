@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -53,27 +53,27 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import SampleData from './resources/SampleData.js'
 import { NonOverlapPositionHandler } from './NonOverlapPositionHandler.js'
 import { NonOverlapReshapeHandler } from './NonOverlapReshapeHandler.js'
 import { LayoutHelper } from './LayoutHelper.js'
 import { HidingEdgeDescriptor } from './HidingEdgeDescriptor.js'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureModelManager(graphComponent.graphModelManager)
   initializeInputModes()
@@ -135,7 +135,7 @@ function initializeInputModes() {
   // but only apply it to the selected node and not to the children of groups
   graph.decorator.nodeDecorator.positionHandlerDecorator.setFactory(
     node => {
-      return node === graphComponent.selection.selectedNodes.firstOrDefault()
+      return node === graphComponent.selection.selectedNodes.at(0)
     },
     node => {
       // Lookup the node position handler that only handles the location of the node itself
@@ -192,7 +192,6 @@ function initializeInputModes() {
 
 /**
  * Makes space for a new node.
- * @param {INode} node
  * @param {!INode} node
  */
 function makeSpace(node) {
@@ -270,5 +269,5 @@ function registerCommands() {
   })
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

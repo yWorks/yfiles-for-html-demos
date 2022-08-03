@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,18 +36,18 @@ import {
 } from 'yfiles'
 
 import { bindCommand, showApp } from '../../resources/demo-app'
-import { initDemoStyles } from '../../resources/demo-styles'
-import loadJson from '../../resources/load-json'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import MyMarqueeSelectionInputMode from './MyMarqueeSelectionInputMode'
+import { fetchLicense } from '../../resources/fetch-license'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // initialize the graph component
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the graph
   initializeGraph()
@@ -95,11 +95,17 @@ function createEditorMode(): GraphEditorInputMode {
   // Initializes snapping for labels and other graph items.
   mode.snapContext = new GraphSnapContext()
 
-  // Setting the custom inputmode which handles snapping as well as a custom vizualization vor the marquee rectangle
-  mode.marqueeSelectionInputMode = new MyMarqueeSelectionInputMode()
+  // Setting the custom input mode which handles snapping as well as a custom visualization for the marquee rectangle
+  const myMarqueeSelectionInputMode = new MyMarqueeSelectionInputMode()
+  // Set to the new input mode the priority of the default marqueeSelectionInputMode
+  myMarqueeSelectionInputMode.priority = mode.marqueeSelectionInputMode.priority
+  // Add the new input mode to the GraphEditorInputMode
+  mode.add(myMarqueeSelectionInputMode)
+  // Disable the default marqueeSelectionInputMode
+  mode.marqueeSelectionInputMode.enabled = false
 
   // When a marquee selection is finished, create a new node at the position and size of the marquee rectangle
-  mode.marqueeSelectionInputMode.addDragFinishingListener((sender, evt) => {
+  myMarqueeSelectionInputMode.addDragFinishingListener((sender, evt) => {
     graphComponent.graph.createNode(evt.rectangle)
   })
 
@@ -117,5 +123,5 @@ function createSampleGraph(): void {
   graph.createNode(new Rect(284, 200, 50, 30))
 }
 
-// Start demo
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

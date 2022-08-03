@@ -16,7 +16,7 @@ The activity duration is rendered as a solid area. The lead and follow-up times 
 
 The activity dependencies are modeled as edges between the activity nodes.
 
-This demo uses [Moment.js](https://moment.github.io/luxon/#/) to parse, manipulate and calculate dates.
+This demo uses [Luxon](https://moment.github.io/luxon/#/) to parse, manipulate and calculate dates.
 
 ## Things to Try
 

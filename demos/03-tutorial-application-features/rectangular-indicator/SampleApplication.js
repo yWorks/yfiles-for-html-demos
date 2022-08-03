@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,6 +34,8 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphInputMode,
+  GroupNodeStyle,
+  GroupNodeStyleTabPosition,
   HandleInputMode,
   HandlePositions,
   ICommand,
@@ -52,9 +54,9 @@ import {
 } from 'yfiles'
 
 import PositionHandler from './PositionHandler.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Application Features - Application Features Base
@@ -64,7 +66,7 @@ import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
  * gestures.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * region that will be exported
@@ -74,11 +76,12 @@ let exportRect = null
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // create the input Mode and the rectangular indicator
   initializeInputModes()
@@ -166,7 +169,10 @@ function addExportRectInputModes(inputMode) {
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
+
+  const groupNodeStyle = graph.groupNodeDefaults.style
+  groupNodeStyle.tabPosition = GroupNodeStyleTabPosition.LEFT
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -234,5 +240,5 @@ function registerCommands() {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

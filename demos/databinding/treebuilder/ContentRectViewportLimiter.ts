@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,9 +36,9 @@ import { CanvasComponent, Rect, ViewportLimiter } from 'yfiles'
 export class ContentRectViewportLimiter extends ViewportLimiter {
   /**
    * Limits the viewport to the area which contains nodes.
-   * @param {CanvasComponent} canvas - The canvas control on which the viewport should be applied.
-   * @param {Rect} suggestedViewport - The suggested viewport.
-   * @returns {Rect} - The actual limited viewport to use
+   * @param canvas - The canvas control on which the viewport should be applied.
+   * @param suggestedViewport - The suggested viewport.
+   * @returns The actual limited viewport to use
    */
   limitViewport(canvas: CanvasComponent, suggestedViewport: Rect): Rect {
     const leftX = canvas.contentRect.x

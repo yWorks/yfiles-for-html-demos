@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,14 +36,13 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphOverviewComponent,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICommand,
   IEdge,
   IMapper,
   IModelItem,
   INode,
-  INodeInsetsProvider,
-  Insets,
-  InteriorStretchLabelModel,
   ItemEventArgs,
   LayoutExecutor,
   License,
@@ -61,9 +60,9 @@ import {
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import GraphBuilderData from './resources/graph.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // enable 'view-layout-bridge' module to prevent tree-shaking tools from stripping it
 Class.ensure(LayoutExecutor)
@@ -75,10 +74,10 @@ let graphComponent
 let dateMapper
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -110,7 +109,7 @@ function run(licenseData) {
 
   // select a node so that the user can run the algorithms immediately
   const graph = graphComponent.graph
-  const startNode = graph.nodes.firstOrDefault(n => graph.outDegree(n) > 0)
+  const startNode = graph.nodes.find(n => graph.outDegree(n) > 0)
   if (startNode) {
     graphComponent.selection.selectedNodes.setSelected(startNode, true)
     graphComponent.currentItem = startNode
@@ -139,15 +138,20 @@ function runReachabilityAlgorithm() {
   // first reset the highlighting
   graphComponent.highlightIndicatorManager.clearHighlights()
 
-  const graph = graphComponent.graph
+  // check whether there are any start nodes
+  const startNodes = graphComponent.selection.selectedNodes
+  if (!startNodes.some()) {
+    return
+  }
+
   // create, configure and run the algorithm in a single step
   const results = new Reachability({
     // we set the options in the constructor
     directed: true,
     // and we use the convenient automatic type conversion that is available for
     // most properties to directly specify the elements as "startNodes"
-    startNodes: graphComponent.selection.selectedNodes
-  }).run(graph)
+    startNodes: startNodes
+  }).run(graphComponent.graph)
 
   // iterate over the results and select the reachable nodes
   results.reachableNodes.forEach(n => {
@@ -164,53 +168,47 @@ function runShortestPathAlgorithm() {
   graphComponent.highlightIndicatorManager.clearHighlights()
 
   const graph = graphComponent.graph
-  // choose a random sink node for the path finding algorithm
-  const sinkNode = graph.nodes.lastOrDefault()
+
+  // select a sink node for the path finding algorithm, in this case, the somehow random last node
+  const sinkNode = graph.nodes.at(-1)
   // and see if the user selected a source node
-  const hasSourceNode = INode.isInstance(graphComponent.currentItem)
-  if (sinkNode && hasSourceNode) {
-    // then we create the algorithm
-    const algorithm = new ShortestPath({
-      // this time we use the properties on the instance for the configuration
-      directed: false,
-      // for the costs we setup a function to calculate the cost per edge
-      costs: edge =>
-        edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center).vectorLength,
-      // for the source we use a predicate to determine the source to use
-      // of course in this case, setting the source to graphComponent.currentItem
-      // would have been easier and more efficient. This is just to demonstrate predicates
-      source: node => node === graphComponent.currentItem,
-      // for the single sink, we just set the property
-      sink: sinkNode
-    })
+  const hasSourceNode = graphComponent.currentItem instanceof INode
 
-    // now run the configured algorithm and remember the results
-    const result = algorithm.run(graph)
-
-    // let's apply the results and show them to the user
-
-    // see if we found a path
-    if (isFinite(result.distance)) {
-      // we iterate over all nodes in the path and highlight them
-      result.path.nodes.forEach(node => {
-        graphComponent.highlightIndicatorManager.addHighlight(node)
-      })
-
-      // for the edges we use the predicate provided by the result
-      // iterating directly over the result.edges would have been easier, of course
-      graph.edges
-        .filter(edge => result.edges.contains(edge))
-        // and we select all matching edges
-        .forEach(edge => graphComponent.highlightIndicatorManager.addHighlight(edge))
-
-      // finally we use the explicit "path.end" field to show the distance as a tooltip above
-      // the sink node
-      graphComponent.inputMode.mouseHoverInputMode.show(
-        result.path.end.layout.center,
-        `Distance: ${result.distance}`
-      )
-    }
+  if (!sinkNode || !hasSourceNode) {
+    return
   }
+  const algorithm = new ShortestPath({
+    // this time we use the properties on the instance for the configuration
+    directed: false,
+    // for the costs we setup a function to calculate the cost per edge
+    costs: edge =>
+      edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center).vectorLength,
+    // for the source we use a predicate to determine the source to use.
+    // of course in this case, setting the source to graphComponent.currentItem
+    // would have been easier and more efficient. This is just to demonstrate predicates
+    source: node => node === graphComponent.currentItem,
+    // for the single sink, we just set the property
+    sink: sinkNode
+  })
+  const result = algorithm.run(graph)
+
+  if (!isFinite(result.distance)) {
+    return
+  }
+  result.path.nodes.forEach(node => {
+    graphComponent.highlightIndicatorManager.addHighlight(node)
+  })
+  graph.edges
+    .filter(edge => result.edges.contains(edge))
+    // and we select all matching edges
+    .forEach(edge => graphComponent.highlightIndicatorManager.addHighlight(edge))
+
+  // finally, we use the explicit "path.end" field to show the distance as a tooltip above
+  // the sink node
+  graphComponent.inputMode.mouseHoverInputMode.show(
+    result.path.end.layout.center,
+    `Distance: ${result.distance}`
+  )
 }
 
 /**
@@ -267,7 +265,7 @@ function enableDataBinding() {
 /**
  * Setup tooltips that return the value that is stored in the mapper.
  * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
- * the {@link MouseHoverInputMode#addQueryToolTipListener QueryToolTip} event of the
+ * the {@link MouseHoverInputMode.addQueryToolTipListener QueryToolTip} event of the
  * GraphEditorInputMode using the
  * {@link ToolTipQueryEventArgs} parameter.
  * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
@@ -367,33 +365,20 @@ function enableUndo() {
  */
 function configureGroupNodeStyles() {
   const graph = graphComponent.graph
-  // Creates a rectangular shape with a white background
-  graph.groupNodeDefaults.style = new ShapeNodeStyle({
-    fill: 'white',
-    stroke: '2px #0b7189'
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: '#0b7189'
   })
 
   // Sets a label style with right-aligned text
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
     horizontalTextAlignment: 'right',
-    textFill: 'white',
-    backgroundFill: '#0b7189',
-    insets: [2, 5]
+    textFill: 'white'
   })
 
-  // Places the label at the top inside of the panel.
-  // For group nodes, InteriorStretchLabelModel is usually the most appropriate label model
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
-
-  // reserve space for the label by setting larger top insets
-  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementationWrapper(
-    (node, provider) => {
-      if (graph.isGroupNode(node)) {
-        return INodeInsetsProvider.create(() => new Insets(10, 25, 10, 10))
-      }
-      return provider
-    }
-  )
+  // Places the label inside the tab area of the group node.
+  // For the GroupNodeStyle, GroupNodeLabelModel is usually the most appropriate label model.
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 }
 
 /**
@@ -469,8 +454,8 @@ function setDefaultStyles() {
 /**
  * Updates the content rectangle to encompass all existing graph elements.
  * If you create your graph elements programmatically, the content rectangle
- * (i.e. the rectangle in <b>world coordinates</b>
- * that encloses the graph) is <b>not</b> updated automatically to enclose these elements.
+ * (i.e. the rectangle in __world coordinates__
+ * that encloses the graph) is __not__ updated automatically to enclose these elements.
  * Typically, this manifests in wrong/missing scrollbars, incorrect {@link GraphOverviewComponent}
  * behavior and the like.
  *
@@ -531,5 +516,5 @@ function registerCommands() {
   // ////////////////////////////////////////////////////
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

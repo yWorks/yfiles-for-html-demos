@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,10 +49,10 @@ import {
   ClipboardBusinessObject,
   createClipboardBusinessObject
 } from './ClipboardBusinessObject.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import { TagCopyItem, TaggedNodeClipboardHelper } from './ClipboardHelper.js'
-import { DemoEdgeStyle } from '../../resources/demo-styles.js'
+import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // This demo shows different ways of using the class GraphClipboard for Copy and Paste operations.
 
@@ -63,16 +63,18 @@ let graphComponent
 let graphComponent2
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize converters for the node style
   initConverters()
 
   // initialize the GraphComponents
   graphComponent = new GraphComponent('graphComponent')
   graphComponent2 = new GraphComponent('graphComponent2')
+  applyDemoTheme(graphComponent)
+  applyDemoTheme(graphComponent2)
 
   // initializes the graph
   initializeGraph()
@@ -102,7 +104,7 @@ function initializeGraph() {
 
   // Set the default style for new nodes and edges
   graph.nodeDefaults.style = new TemplateNodeStyle('ClipboardStyle')
-  graph.edgeDefaults.style = new DemoEdgeStyle('demo-palette-31')
+  graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: 'demo-palette-31' })
 
   // Set the default locations for new labels
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
@@ -383,4 +385,5 @@ function initConverters() {
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

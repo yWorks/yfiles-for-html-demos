@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,19 +37,20 @@ import {
 } from 'yfiles'
 
 import CSS3NodeStyle from './CSS3NodeStyle.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraph()
 
@@ -137,5 +138,5 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

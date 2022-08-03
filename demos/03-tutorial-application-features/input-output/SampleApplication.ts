@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,12 +27,15 @@
  **
  ***************************************************************************/
 import {
+  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphMLSupport,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICommand,
   IGraph,
   License,
@@ -41,20 +44,20 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -99,7 +102,22 @@ function enableGraphML(): void {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
+
+  // set the style, label and label parameter for group nodes
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: '#042d37',
+    tabBackgroundFill: '#9dc6d0',
+    tabPosition: 'top-trailing',
+    stroke: '2px solid #9dc6d0',
+    cornerRadius: 10
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'left',
+    textFill: '#042d37'
+  })
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createTabBackgroundParameter()
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -171,5 +189,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,17 +41,11 @@ import {
   Rect,
   Size
 } from 'yfiles'
-import loadJson from '../../resources/load-json'
 import { NodeSelectionResizingInputMode } from './NodeSelectionResizingInputMode'
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import SampleData from './resources/SampleData'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -59,10 +53,11 @@ let graphComponent: GraphComponent = null
 // @ts-ignore
 let nodeSelectionResizingInputMode: NodeSelectionResizingInputMode = null
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // enable undo engine
   graphComponent.graph.undoEngineEnabled = true
@@ -158,5 +153,5 @@ function registerCommands(): void {
   })
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

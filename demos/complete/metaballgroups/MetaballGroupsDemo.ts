@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,9 +46,11 @@ import {
   SolidColorFill
 } from 'yfiles'
 import WebglBlobVisual from './WebglBlobVisual'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import { isWebGlSupported } from '../../utils/Workarounds'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -57,14 +59,15 @@ const redColor = Color.from('#e01a4f')
 const greyColor = Color.from('#767586')
 const purpleColor = Color.from('#aa4586')
 
-function run(licenseData: object): void {
+async function run(): Promise<void> {
   if (!isWebGlSupported()) {
     ;(document.getElementById('no-webgl-support') as HTMLDivElement).removeAttribute('style')
-    showApp(null)
+    showApp()
     return
   }
-  License.value = licenseData
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
@@ -228,4 +231,5 @@ class BlobBackground extends BaseClass<IVisualCreator>(IVisualCreator) implement
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

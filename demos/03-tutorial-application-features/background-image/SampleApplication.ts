@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,11 +27,14 @@
  **
  ***************************************************************************/
 import {
+  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICanvasObject,
   ICanvasObjectDescriptor,
   ICommand,
@@ -43,9 +46,9 @@ import {
 
 import RectangleVisualCreator from './RectangleVisualCreator'
 import ImageVisualCreator from './ImageVisualCreator'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Application Features - Add an image or colored rectangle to the background of the graph
@@ -62,9 +65,10 @@ let background: ICanvasObject = null
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
@@ -127,7 +131,20 @@ function displayRectangle(): void {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
+
+  // set the style, label and label parameter for group nodes
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: 'darkgray',
+    tabPosition: 'top-trailing',
+    contentAreaFill: 'white'
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'right',
+    textFill: 'black'
+  })
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -197,22 +214,22 @@ function registerCommands(): void {
     // display Image in the background
     displayImage()
     // enable the rectangle button
-    ;(document.querySelector("button[data-command='Rectangle']")! as HTMLButtonElement).disabled =
+    ;(document.querySelector("button[data-command='Rectangle']") as HTMLButtonElement).disabled =
       false
     // disabled the image button
-    ;(document.querySelector("button[data-command='Image']")! as HTMLButtonElement).disabled = true
+    ;(document.querySelector("button[data-command='Image']") as HTMLButtonElement).disabled = true
   })
 
   bindAction("button[data-command='Rectangle']", (): void => {
     // display colored rectangle in the background
     displayRectangle()
     // disable the rectangle button
-    ;(document.querySelector("button[data-command='Rectangle']")! as HTMLButtonElement).disabled =
+    ;(document.querySelector("button[data-command='Rectangle']") as HTMLButtonElement).disabled =
       true
     // enable the image button
-    ;(document.querySelector("button[data-command='Image']")! as HTMLButtonElement).disabled = false
+    ;(document.querySelector("button[data-command='Image']") as HTMLButtonElement).disabled = false
   })
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

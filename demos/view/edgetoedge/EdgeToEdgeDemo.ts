@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,10 +57,10 @@ import {
   Visualization
 } from 'yfiles'
 
-import { initDemoStyles } from '../../resources/demo-styles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -71,7 +71,7 @@ let graphComponent: GraphComponent
  *
  * Connecting the source or target of an edge to itself is prohibited since this is conceptually forbidden.
  * Edge-to-edge connections have to be enabled explicitly using the property
- * {@link CreateEdgeInputMode#allowEdgeToEdgeConnections}.
+ * {@link CreateEdgeInputMode.allowEdgeToEdgeConnections}.
  *
  * This demo also includes customized implementations of {@link IPortCandidateProvider},
  * {@link IEdgeReconnectionPortCandidateProvider}, {@link IHitTestable},
@@ -79,10 +79,11 @@ let graphComponent: GraphComponent
  * to enable custom behavior like reconnecting an existing edge to another edge, starting edge creation from an edge
  * etc.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputMode()
 
@@ -265,4 +266,5 @@ function setRandomEdgeColor(edge: IEdge): void {
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

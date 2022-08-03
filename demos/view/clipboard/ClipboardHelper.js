@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,7 @@ import { ClipboardBusinessObject } from './ClipboardBusinessObject.js'
  */
 export class TagCopyItem {
   /**
-   * Creates a new instance of <code>TagCopyItem</code>.
+   * Creates a new instance of {@link TagCopyItem}.
    * @param {!ClipboardBusinessObject} tag The tag of the copied item
    */
   constructor(tag) {
@@ -65,7 +65,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
    * Nodes can be copied unconditionally.
    * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
    * @param {!IModelItem} item The item to be copied
-   * @see Specified by {@link IClipboardHelper#shouldCopy}.
+   * @see Specified by {@link IClipboardHelper.shouldCopy}.
    * @returns {boolean}
    */
   shouldCopy(context, item) {
@@ -76,7 +76,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
    * Nodes can be cut unconditionally.
    * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
    * @param {!IModelItem} item The item to be cut
-   * @see Specified by {@link IClipboardHelper#shouldCut}.
+   * @see Specified by {@link IClipboardHelper.shouldCut}.
    * @returns {boolean}
    */
   shouldCut(context, item) {
@@ -88,7 +88,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
    * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
    * @param {!IModelItem} item The item to be pasted
    * @param {*} userData The state memento that had been created during cut or copy
-   * @see Specified by {@link IClipboardHelper#shouldPaste}.
+   * @see Specified by {@link IClipboardHelper.shouldPaste}.
    * @returns {boolean}
    */
   shouldPaste(context, item, userData) {
@@ -100,7 +100,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
    * (see {@link CopyItem} implementation).
    * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
    * @param {!IModelItem} item The item to be copied
-   * @see Specified by {@link IClipboardHelper#copy}.
+   * @see Specified by {@link IClipboardHelper.copy}.
    * @returns {*}
    */
   copy(context, item) {
@@ -114,7 +114,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
    * (see {@link CopyItem} implementation).
    * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
    * @param {!IModelItem} item The item to be cut
-   * @see Specified by {@link IClipboardHelper#cut}.
+   * @see Specified by {@link IClipboardHelper.cut}.
    * @returns {*}
    */
   cut(context, item) {
@@ -125,11 +125,11 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
 
   /**
    * If the pasted node has at least one label, we change the text using the one that is provided
-   * by <code>userData</code>.
+   * by `userData`.
    * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
    * @param {!IModelItem} item The copied item The item to be pasted
    * @param {*} userData The state memento that had been created during cut or copy
-   * @see Specified by {@link IClipboardHelper#paste}.
+   * @see Specified by {@link IClipboardHelper.paste}.
    */
   paste(context, item, userData) {
     if (item instanceof INode && item.labels.size > 0 && userData instanceof CopyItem) {
@@ -144,7 +144,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
  */
 class CopyItem {
   /**
-   * Creates a new instance of <code>CopyItem</code>.
+   * Creates a new instance of {@link CopyItem}.
    * @param {!string} text
    */
   constructor(text) {

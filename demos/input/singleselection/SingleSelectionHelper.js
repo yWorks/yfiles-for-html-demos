@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,7 @@ import {
   EventArgs,
   EventRecognizers,
   GraphComponent,
-  GraphEditorInputMode,
+  GraphInputMode,
   GraphItemTypes,
   ICommand,
   IModelItem,
@@ -51,6 +51,7 @@ let commandBindings = []
 let oldMultiSelectionRecognizer = null
 
 /**
+ * Restores the normal (multi-selection) behavior for the input mode and the commands of the given component.
  * @param {!GraphComponent} graphComponent
  */
 export function disableSingleSelection(graphComponent) {
@@ -78,6 +79,7 @@ export function disableSingleSelection(graphComponent) {
 }
 
 /**
+ * Enables single selection behavior for the input mode and the commands of the given component.
  * @param {!GraphComponent} graphComponent
  */
 export function enableSingleSelection(graphComponent) {
@@ -157,7 +159,7 @@ function toggleItemSelectionExecuted(graphComponent, parameter) {
     // the item is selected and needs to be unselected - just clear the selection
     inputMode.graphSelection.clear()
   } else {
-    // the items is unselected - unselect all other items and select the currentItem
+    // the item is unselected - unselect all other items and select the currentItem
     inputMode.graphSelection.clear()
     inputMode.setSelected(modelItem, true)
   }

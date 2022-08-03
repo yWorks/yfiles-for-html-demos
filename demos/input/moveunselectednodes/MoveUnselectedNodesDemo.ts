@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,7 @@ import {
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeStyle,
   ICommand,
   IGraph,
   IHitTestable,
@@ -41,34 +42,27 @@ import {
   IModelItem,
   INode,
   INodeInsetsProvider,
+  Insets,
   InteriorLabelModel,
   KeyEventRecognizers,
   License,
   MoveInputMode,
-  PanelNodeStyle,
   Point,
   Rect,
   ShowPortCandidates,
   Size
 } from 'yfiles'
 
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { colorSets } from '../../resources/basic-demo-styles'
-import { DemoEdgeStyle } from '../../resources/demo-styles'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, colorSets, createDemoEdgeStyle } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
 let moveUnselectedInputMode: MoveInputMode
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   initializeGraph()
 
@@ -91,21 +85,20 @@ function run(licenseData: object): void {
  */
 function initializeGraph(): void {
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   const graph = graphComponent.graph
 
   // set the default node style
-  const nodeStyle = new PanelNodeStyle({
-    color: colorSets['demo-orange'].fill,
-    labelInsetsColor: colorSets['demo-orange'].fill,
-    insets: [20, 5, 5, 5]
+  graph.nodeDefaults.style = new GroupNodeStyle({
+    tabFill: colorSets['demo-orange'].fill,
+    contentAreaInsets: Insets.EMPTY
   })
-  graph.nodeDefaults.style = nodeStyle
   graph.nodeDefaults.size = new Size(60, 80)
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.NORTH
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({ textFill: 'white' })
 
-  graph.edgeDefaults.style = new DemoEdgeStyle('demo-orange')
+  graph.edgeDefaults.style = createDemoEdgeStyle()
 
   // Create a sample node
   graph.addLabel(graph.createNode(), 'Node')
@@ -242,7 +235,7 @@ function registerCommands(): void {
  */
 class TopInsetsHitTestable extends BaseClass<IHitTestable>(IHitTestable) implements IHitTestable {
   /**
-   * Creates a new instance of <code>TopInsetsHitTestable</code>.
+   * Creates a new instance of {@link TopInsetsHitTestable}.
    */
   constructor(original: IHitTestable, private inputMode: GraphEditorInputMode) {
     super()
@@ -273,9 +266,7 @@ class TopInsetsHitTestable extends BaseClass<IHitTestable>(IHitTestable) impleme
         const item = enumerator.current
         // if the element is a node and its lookup returns an INodeInsetsProvider
         if (item instanceof INode) {
-          const insetsProvider = item.lookup(
-            INodeInsetsProvider.$class
-          ) as INodeInsetsProvider | null
+          const insetsProvider = item.lookup(INodeInsetsProvider.$class)
           if (insetsProvider) {
             // determine whether the given location lies inside the top insets
             const insets = insetsProvider.getInsets(item)
@@ -294,5 +285,5 @@ class TopInsetsHitTestable extends BaseClass<IHitTestable>(IHitTestable) impleme
   }
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

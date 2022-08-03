@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -246,7 +246,7 @@ export default class InteractiveLayout {
    * @param {!IEnumerable.<IModelItem>} affectedItems
    */
   onDragStarted(affectedItems) {
-    const item = affectedItems.size > 0 ? affectedItems.first() : null
+    const item = affectedItems.size > 0 ? affectedItems.at(0) : null
     if (item instanceof INode && this.graph.contains(item)) {
       this.movedNode = item
       this.copiedLayoutGraph.syncStructure()

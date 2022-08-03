@@ -30,4 +30,4 @@ See the [Layer Constraints](../../layout/layerconstraints/index.html) and [Seque
 
 ### Documentation
 
-See the Constrained Layer Assignment and Constrained Node Sequencing sections in the Developer's Guide for an in-depth discussion of the relevant concepts.
+See the [Constrained Layer Assignment](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_layer_assignment) and [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing) sections in the Developer's Guide for an in-depth discussion of the relevant concepts.

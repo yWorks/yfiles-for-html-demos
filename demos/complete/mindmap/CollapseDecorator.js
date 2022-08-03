@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -61,7 +61,7 @@ import { hasChildNodes } from './MindmapUtil.js'
  *
  * This style implements the decorator pattern. Two {@link IconLabelStyle}
  * instances are used to render the collapse and expand buttons. The actual
- * style is determined using the {@link NodeData#isCollapsed isCollapsed}
+ * style is determined using the {@link NodeData.isCollapsed isCollapsed}
  * information in the node's tag.
  *
  * A {@link SimpleLabel dummy label} is used to render the collapse
@@ -83,7 +83,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * Creates the wrappedStyle visual and adds the icon visualization.
    * @param {!IRenderContext} context The render context.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @returns {!SvgVisual}
    */
   createVisual(context, node) {
@@ -140,7 +140,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param {!IRenderContext} context The render context.
    * @param {!Visual} oldVisual The old visual.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @returns {!Visual}
    */
   updateVisual(context, oldVisual, node) {
@@ -262,7 +262,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param {!ICanvasContext} canvasContext The canvas context.
    * @param {!Rect} clip The clipping rectangle.
    * @param {!INode} node The given node.
-   * @see Overrides {@link NodeStyleBase#isVisible}
+   * @see Overrides {@link NodeStyleBase.isVisible}
    * @returns {boolean}
    */
   isVisible(canvasContext, clip, node) {
@@ -285,7 +285,7 @@ export default class CollapseDecorator extends NodeStyleBase {
   /**
    * Delegates the call to the wrappedStyle style.
    * @param {!INode} node The given node.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    * @returns {?GeneralPath}
    */
   getOutline(node) {
@@ -296,7 +296,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * Delegates the call to the wrappedStyle style.
    * @param {!ICanvasContext} canvasContext The canvas context.
    * @param {!INode} node The given node.
-   * @see Overrides {@link NodeStyleBase#getBounds}
+   * @see Overrides {@link NodeStyleBase.getBounds}
    * @returns {!Rect}
    */
   getBounds(canvasContext, node) {
@@ -310,7 +310,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param {!IInputModeContext} canvasContext The canvas context.
    * @param {!Point} p The point to test.
    * @param {!INode} node The given node.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    * @returns {boolean}
    */
   isHit(canvasContext, p, node) {
@@ -324,7 +324,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param {!IInputModeContext} canvasContext The canvas context.
    * @param {!Rect} box The marquee selection box.
    * @param {!INode} node The given node.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    * @returns {boolean}
    */
   isInBox(canvasContext, box, node) {
@@ -337,7 +337,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * Delegates the call to the wrappedStyle style.
    * @param {!INode} node The given node.
    * @param {!Class} type The type to query.
-   * @see Overrides {@link NodeStyleBase#lookup}
+   * @see Overrides {@link NodeStyleBase.lookup}
    * @returns {?object}
    */
   lookup(node, type) {
@@ -349,7 +349,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param {!INode} node The given node.
    * @param {!Point} inner The inner coordinates.
    * @param {!Point} outer The outer coordinates.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    * @returns {?Point}
    */
   getIntersection(node, inner, outer) {
@@ -362,7 +362,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * Delegates the call to the wrappedStyle style.
    * @param {!INode} node The given node.
    * @param {!Point} point The point to test.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    * @returns {boolean}
    */
   isInside(node, point) {

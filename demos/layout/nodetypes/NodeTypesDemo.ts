@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,8 +27,12 @@
  **
  ***************************************************************************/
 import {
+  BalloonLayout,
+  BalloonLayoutData,
   CircularLayout,
   CircularLayoutData,
+  CompactDiskLayout,
+  CompactDiskLayoutData,
   CompactNodePlacer,
   ComponentLayout,
   ComponentLayoutData,
@@ -53,23 +57,24 @@ import {
   TreeLayoutData,
   TreeReductionStage
 } from 'yfiles'
+import { addNavigationButtons, bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import {
-  addNavigationButtons,
-  bindAction,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import {
+  BalloonSampleData,
   CircularSampleData,
+  CompactDiskSampleData,
   ComponentSampleData,
   HierarchicSampleData,
   OrganicSampleData,
   TreeSampleData
 } from './resources/SampleData'
 import NodeTypePanel from '../../utils/NodeTypePanel'
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
+import type { ColorSetName } from '../../resources/demo-styles'
+import {
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Type describing a sample graph and the according layout algorithm to run on it.
@@ -83,15 +88,22 @@ type Sample = {
 }
 
 /**
- * Initialization of the five samples.
+ * Initialization of the seven samples.
  */
 const samples: Sample[] = [
   createHierarchicSample(),
   createOrganicSample(),
   createTreeSample(),
+  createBalloonSample(),
   createCircularSample(),
-  createComponentSample()
+  createComponentSample(),
+  createCompactDiskSample()
 ]
+
+/**
+ * The color sets for the three different node types.
+ */
+const typeColors: ColorSetName[] = ['demo-palette-21', 'demo-palette-22', 'demo-palette-23']
 
 /**
  * The graph component holding the graph and shown in this demo.
@@ -101,9 +113,10 @@ let graphComponent: GraphComponent
 /**
  * Runs this demo.
  */
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   configureGraphComponent()
   registerCommands()
   prepareSampleList()
@@ -236,6 +249,40 @@ function createComponentSample(): Sample {
 }
 
 /**
+ * Creates and configures the {@link BalloonLayout} and the {@link BalloonLayoutData}
+ * such that node types are considered.
+ */
+function createBalloonSample(): Sample {
+  //create a balloon layout including a reduction stage to support non-tree graphs too
+  const layout = new BalloonLayout()
+  const reductionStage = new TreeReductionStage()
+  reductionStage.nonTreeEdgeRouter = reductionStage.createStraightLineRouter()
+  layout.prependStage(reductionStage)
+
+  // the node types are specified as delegate on the nodeTypes property of the layout data
+  const layoutData = new BalloonLayoutData({ nodeTypes: getNodeType })
+
+  return { name: 'Balloon', layout, layoutData, sampleData: BalloonSampleData, directed: true }
+}
+
+/**
+ * Creates and configures the {@link CompactDiskLayout} and the {@link CompactDiskLayoutData}
+ * such that node types are considered.
+ */
+function createCompactDiskSample(): Sample {
+  //create a compact disk layout with a little additional node distance (since the nodes
+  // are not circles and this algorithm treats them as such)
+  const layout = new CompactDiskLayout({
+    minimumNodeDistance: 20
+  })
+
+  // the node types are specified as delegate on the nodeTypes property of the layout data
+  const layoutData = new CompactDiskLayoutData({ nodeTypes: getNodeType })
+
+  return { name: 'Compact Disk', layout, layoutData, sampleData: CompactDiskSampleData }
+}
+
+/**
  * Applies the current layout style to the current graph.
  */
 async function applyCurrentLayout(animate: boolean): Promise<void> {
@@ -265,24 +312,28 @@ async function loadSample(): Promise<void> {
 
   // Use the GraphBuilder to load sample data from json
   const builder = new GraphBuilder(graphComponent.graph)
-  const nodesSource = builder.createNodesSource({
+  builder.createNodesSource({
     data: sample.sampleData.nodeList,
     id: 'id',
     layout: 'layout',
-    tag: 'tag'
+    tag: 'tag',
+    style: (dataItem: any) => {
+      if (dataItem.tag) {
+        // Create node style depending on type tag
+        return createDemoNodeStyle(typeColors[dataItem.tag.type])
+      }
+      return createDemoNodeStyle()
+    }
   })
-  nodesSource.nodeCreator.styleBindings.addBinding(
-    'cssClass',
-    (item: any) => `type-${(item.tag && item.tag.type) || 0}`
-  )
   const edgesSource = builder.createEdgesSource({
     data: sample.sampleData.edgeList,
     sourceId: 'source',
     targetId: 'target',
     tag: null
   })
-  const defaultEdgeStyle = new DemoEdgeStyle()
-  defaultEdgeStyle.showTargetArrows = !!sample.directed
+  const defaultEdgeStyle = createDemoEdgeStyle({
+    showTargetArrow: sample.directed
+  })
   edgesSource.edgeCreator.defaults.style = defaultEdgeStyle
   builder.buildGraph()
 
@@ -313,28 +364,26 @@ function configureGraphComponent(): void {
 
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
   graphComponent.graph.nodeDefaults.size = new Size(40, 40)
-  graphComponent.graph.nodeDefaults.style = new DemoNodeStyle()
+  graphComponent.graph.nodeDefaults.style = createDemoNodeStyle()
 
   graphComponent.graph.undoEngineEnabled = true
 }
 
 /**
  * Specifies the type of the given node by storing it in the node's tag.
- * This function is used as callback by the the type panel when changing the type via the panel.
+ * This function is used as callback by the type panel when changing the type via the panel.
  */
 function setNodeType(node: INode, type: number): void {
   // We set a new tag and style so that this change is easily undo-able
   node.tag = { type: type }
-  const newStyle = node.style.clone() as DemoNodeStyle
-  newStyle.cssClass = `type-${type}`
-  graphComponent.graph.setStyle(node, newStyle)
+  graphComponent.graph.setStyle(node, createDemoNodeStyle(typeColors[type]))
 }
 
 /**
  * Initializes the {@link NodeTypePanel} that allows for changing a node's type.
  */
 function initializeTypePanel(): void {
-  const typePanel = new NodeTypePanel(graphComponent)
+  const typePanel = new NodeTypePanel(graphComponent, typeColors)
   typePanel.nodeTypeChanged = (item, newType) => {
     setNodeType(item, newType)
     graphComponent.selection.clear()
@@ -397,4 +446,5 @@ function setUIDisabled(disabled: boolean): void {
   ;(graphComponent.inputMode as GraphEditorInputMode).enabled = !disabled
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

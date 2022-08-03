@@ -10,6 +10,6 @@ Getting Started Tutorial - Step 2
 
 How to create a graph programmatically.
 
-This step shows how to create the basic graph elements.
+This step shows how to [create the basic graph elements](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-creating_graph_elements).
 
 See the sources for details.

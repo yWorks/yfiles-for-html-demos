@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -57,8 +57,37 @@
 
         <h2>Things to Try</h2>
         <ul>
+          <li>
+            Change the "Snap Touch Panning" behavior and see how it affects graph panning.
+            <dl>
+              <dt>Horizontal</dt>
+              <dd>Locks near-horizontal panning to the x-axis.</dd>
+              <dt>Vertical</dt>
+              <dd>Locks near-vertical panning to the y-axis.</dd>
+              <dt>Both</dt>
+              <dd>Snaps near-horizontal and near-vertical panning.</dd>
+            </dl>
+          </li>
+          <li>
+            Change the "Start Touch Panning" behavior and see how it affects graph panning.
+            <dl>
+              <dt>One Finger</dt>
+              <dd>
+                Starts viewport panning by dragging with one finger and edit gestures after a long
+                press delay.
+              </dd>
+              <dt>Two Fingers</dt>
+              <dd>
+                Starts viewport panning by dragging with at least two fingers. This allows edit
+                gestures (e.g. node resize) to be started immediately without a long press delay.
+              </dd>
+            </dl>
+          </li>
           <li>Create nodes by dragging them from the palette into the canvas.</li>
-          <li>Navigate the graph by dragging with one finger. Zoom with two fingers.</li>
+          <li>
+            Navigate the graph by dragging with either one or two fingers, depending on the "Start
+            Touch Panning" option. Pinch-zoom with two fingers.
+          </li>
           <li>
             Select a node by tapping it. Drag the node handles to change the node's size. Drag the
             node itself to move it around.
@@ -67,16 +96,12 @@
             Double Tap quickly on the empty canvas area to start the lasso selection tool. Release
             the finger to complete the selection gesture.
           </li>
-          <li>Long Press a node or any other graph item to open the item's context menu.</li>
-          <li>Long Press on the empty canvas area to open the background context menu.</li>
+          <li>
+            Long Press a graph item to open its context menu or the empty canvas area to open the
+            background context menu.
+          </li>
           <li>Create nodes using the background context menu.</li>
           <li>Create an edge by selecting "Create Edge" from a node's context menu.</li>
-          <li>
-            Change the "Snap Touch Panning" behavior using the selection box above the palette and
-            see how it affects graph panning. "Horizontal" locks near-horizontal panning to the
-            x-axis. "Vertical" does the same for the y-axis. "Both" snaps near-horizontal and
-            near-vertical panning.
-          </li>
         </ul>
       </div>
     </aside>
@@ -85,15 +110,24 @@
       <header class="demo-header"></header>
 
       <div id="dndPanelContainer">
-        <div id="snapPanningDiv">
-          <p id="snapPanningLabel">Snap Touch Panning</p>
+        <div id="panningOptionsDiv">
+          <p class="panningLabel">Snap Touch Panning</p>
 
-          <div id="snapPanningBox">
+          <div id="snapPanningBox" class="panningOptionsBox">
             <select>
               <option value="none">None</option>
               <option value="horizontal">Horizontal</option>
               <option value="vertical">Vertical</option>
               <option value="both">Both</option>
+            </select>
+          </div>
+
+          <p class="panningLabel">Start Touch Panning</p>
+
+          <div id="startPanningBox" class="panningOptionsBox">
+            <select>
+              <option value="one">One Finger</option>
+              <option value="two" selected>Two Fingers</option>
             </select>
           </div>
         </div>

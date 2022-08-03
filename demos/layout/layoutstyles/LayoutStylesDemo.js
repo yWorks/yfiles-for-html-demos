@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   Class,
-  Color,
   DefaultGraph,
   GraphComponent,
   GraphCopier,
@@ -44,8 +43,8 @@ import {
   IEnumerable,
   IGraph,
   IInputMode,
-  ILabelOwner,
   ILabel,
+  ILabelOwner,
   ImageNodeStyle,
   IModelItem,
   INode,
@@ -63,11 +62,6 @@ import {
   Stroke,
   TableNodeStyle
 } from 'yfiles'
-
-// We need to load the 'styles-other' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for loading all library styles.
-Class.ensure(ImageNodeStyle)
-
 import { OptionEditor } from '../../resources/demo-option-editor.js'
 import HierarchicLayoutConfig from './HierarchicLayoutConfig.js'
 import OrganicLayoutConfig from './OrganicLayoutConfig.js'
@@ -88,31 +82,35 @@ import ComponentLayoutConfig from './ComponentLayoutConfig.js'
 import TabularLayoutConfig from './TabularLayoutConfig.js'
 import PartialLayoutConfig from './PartialLayoutConfig.js'
 import GraphTransformerConfig from './GraphTransformerConfig.js'
+import CompactDiskLayoutConfig from './CompactDiskLayoutConfig.js'
 import { PresetsUiBuilder } from './PresetsUiBuilder.js'
 import ContextMenu from '../../utils/ContextMenu.js'
-import {
-  DemoArrow,
-  DemoEdgeStyle,
-  DemoGroupStyle,
-  DemoNodeStyle,
-  DemoStyleOverviewPaintable,
-  initDemoStyles
-} from '../../resources/demo-styles.js'
 import {
   addClass,
   addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
+  configureTwoPointerPanning,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
 import { isWebGlSupported } from '../../utils/Workarounds.js'
 import { createConfiguredGraphMLIOHandler } from './FaultTolerantGraphMLIOHandler.js'
 import { isSeparator, LayoutStyles, Presets } from './resources/LayoutSamples.js'
 import { LoremIpsum } from './resources/LoremIpsum.js'
+import {
+  createDemoEdgeStyle,
+  createDemoGroupStyle,
+  createDemoNodeStyle,
+  DemoStyleOverviewPaintable,
+  initDemoStyles
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
+
+// We need to load the 'styles-other' module explicitly to prevent tree-shaking
+// tools from removing this dependency which is needed for loading all library styles.
+Class.ensure(ImageNodeStyle)
 
 /**
  * The GraphComponent
@@ -156,10 +154,10 @@ let customGraphSelected = false
 let customGraph = null
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
 
@@ -173,6 +171,9 @@ async function run(licenseData) {
 
   // we start loading the input mode
   graphComponent.inputMode = createEditorMode()
+
+  // use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
 
   // use the file system for built-in I/O
   enableGraphML()
@@ -205,7 +206,7 @@ async function run(licenseData) {
 
   await initializeApplicationFromUrl()
 
-  updateStyleDefaults()
+  updateStyleDefaults(graphComponent.graph)
 }
 
 /**
@@ -291,6 +292,8 @@ function createLayoutConfig(normalizedName) {
       return new PartialLayoutConfig()
     case 'radial':
       return new RadialLayoutConfig()
+    case 'compact-disk':
+      return new CompactDiskLayoutConfig()
     case 'parallel-router':
       return new ParallelEdgeRouterConfig()
     case 'tabular':
@@ -356,7 +359,7 @@ function initializeComboBox(combobox, names) {
 /**
  * Actually applies the layout.
  * @param {boolean} clearUndo Specifies whether the undo queue should be cleared after the layout
- * calculation. This is set to <code>true</code> if this method is called directly after
+ * calculation. This is set to `true` if this method is called directly after
  * loading a new sample graph.
  */
 function applyLayout(clearUndo) {
@@ -426,8 +429,6 @@ async function onLayoutChanged(initSamples = true, appliedPresetId = '') {
     if (initSamples) {
       initializeSamples(layoutName)
     }
-
-    setDefaultArrows(graphComponent.graph, isLayoutDirected(layoutName))
 
     // maybe enable thickness buttons
     updateThicknessButtonsState(layoutName)
@@ -642,7 +643,7 @@ async function loadConfigurationFromUrl() {
     const requestedPreset = urlParams.get('preset')
     await loadConfiguration(requestedLayout, requestedSample, requestedPreset)
   } catch (e) {
-    /* URLSearchParams is not supported in IE, fallback to default algoritm and sample */
+    /* URLSearchParams is not supported in IE, fallback to default algorithm and sample */
     onLayoutChanged()
   }
 }
@@ -695,7 +696,7 @@ function storeModifiedGraph() {
 }
 
 /**
- * Loads the temporary stored modified graph into the the main {@link GraphComponent}.
+ * Loads the temporary stored modified graph into the main {@link GraphComponent}.
  */
 function loadModifiedGraph() {
   if (customGraph !== null) {
@@ -715,30 +716,30 @@ function updateModifiedGraphSample() {
 
 /**
  * Adjusts the style defaults to match the overall graph theme.
+ * @param {!IGraph} graph
  */
-function updateStyleDefaults() {
-  const graph = graphComponent.graph
-  const firstNode = graph.nodes.firstOrDefault(n => !graph.isGroupNode(n))
-  const firstGroupNode = graph.nodes.firstOrDefault(
+function updateStyleDefaults(graph) {
+  const firstNode = graph.nodes.find(n => !graph.isGroupNode(n))
+  const firstGroupNode = graph.nodes.find(
     n => graph.isGroupNode(n) && !(n.style instanceof TableNodeStyle)
   )
-  const firstEdge = graph.edges.firstOrDefault()
+  const firstEdge = graph.edges.at(0)
   if (firstNode) {
     graph.nodeDefaults.style = firstNode.style.clone()
   } else {
-    graph.nodeDefaults.style = new DemoNodeStyle()
+    graph.nodeDefaults.style = createDemoNodeStyle()
   }
   if (firstGroupNode) {
     graph.groupNodeDefaults.style = firstGroupNode.style.clone()
   } else {
-    const groupStyle = new DemoGroupStyle()
-    groupStyle.isCollapsible = graph.foldingView !== null
-    graph.groupNodeDefaults.style = groupStyle
+    graph.groupNodeDefaults.style = createDemoGroupStyle({
+      foldingEnabled: graph.foldingView !== null
+    })
   }
   if (firstEdge) {
     graph.edgeDefaults.style = firstEdge.style.clone()
   } else {
-    graph.edgeDefaults.style = new DemoEdgeStyle()
+    graph.edgeDefaults.style = createDemoEdgeStyle()
   }
 }
 
@@ -751,10 +752,9 @@ async function onSampleChanged() {
     return
   }
 
+  // load the sample
   const key = getSelectedSample()
   await onSampleChangedCore(key)
-
-  updateStyleDefaults()
 
   const presetsStruct = findPresets(getSelectedAlgorithm(), key)
   presetsUiBuilder.buildUi(presetsStruct, presetsStruct.defaultPreset)
@@ -788,13 +788,15 @@ async function onSampleChangedCore(key) {
   }
 
   customGraphSelected = false
-  setDefaultArrows(graph, isLayoutDirected(key))
 
   const filePath = `resources/${key}.graphml`
 
   // load the sample graph and start the layout algorithm in the done handler
   const ioh = createConfiguredGraphMLIOHandler(graphComponent)
   await ioh.readFromURL(graph, filePath)
+
+  // update style defaults based on the loaded sample
+  updateStyleDefaults(graph)
 
   graphComponent.zoomTo(getCenter(graph), graphComponent.zoom)
 }
@@ -855,52 +857,32 @@ function onRemoveItemLabels(graph) {
  * @param {!IGraph} graph
  */
 function onGenerateEdgeThicknesses(graph) {
-  graph.edges.forEach(edge => {
-    const oldStyle = edge.style
+  for (const edge of graph.edges) {
     const thickness = Math.random() * 4 + 1
-    const style = new PolylineEdgeStyle({
-      stroke: new Stroke({
-        fill: 'rgb(51, 102, 153)',
-        thickness
-      })
-    })
+    const style = createDemoEdgeStyle()
+    const oldStyle = edge.style
     if (oldStyle instanceof PolylineEdgeStyle) {
-      style.targetArrow = oldStyle.targetArrow
-    } else if (oldStyle instanceof DemoEdgeStyle) {
-      style.targetArrow = oldStyle.showTargetArrows ? new DemoArrow() : IArrow.NONE
+      adoptFromOldStyle(oldStyle, style, thickness)
+    } else {
+      style.stroke = createStroke(style.stroke, thickness)
     }
     graph.setStyle(edge, style)
-  })
+  }
+  graph.invalidateDisplays()
 }
 
 /**
  * @param {!IGraph} graph
  */
 function onResetEdgeThicknesses(graph) {
-  graph.edges.forEach(edge => {
-    let showTargetArrow = false
+  for (const edge of graph.edges) {
     const oldStyle = edge.style
+    const style = createDemoEdgeStyle()
     if (oldStyle instanceof PolylineEdgeStyle) {
-      const edgeStyle = new DemoEdgeStyle()
-      edgeStyle.showTargetArrows = showTargetArrow
-      graph.setStyle(edge, edgeStyle)
-    } else if (oldStyle instanceof DemoEdgeStyle) {
-      showTargetArrow = oldStyle.showTargetArrows
+      adoptFromOldStyle(oldStyle, style, style.stroke.thickness)
     }
-    if (oldStyle instanceof PolylineEdgeStyle && acceptFill(oldStyle)) {
-      graph.setStyle(
-        edge,
-        new PolylineEdgeStyle({
-          stroke: new Stroke(oldStyle.stroke.fill),
-          targetArrow: oldStyle.targetArrow
-        })
-      )
-    } else {
-      const edgeStyle = new DemoEdgeStyle()
-      edgeStyle.showTargetArrows = showTargetArrow
-      graph.setStyle(edge, edgeStyle)
-    }
-  })
+    graph.setStyle(edge, style)
+  }
   graph.invalidateDisplays()
 }
 
@@ -908,17 +890,16 @@ function onResetEdgeThicknesses(graph) {
  * @param {!IGraph} graph
  */
 function onGenerateEdgeDirections(graph) {
-  graph.edges.forEach(edge => {
+  for (const edge of graph.edges) {
     const directed = Math.random() >= 0.5
-    const style = edge.style
-    if (style instanceof PolylineEdgeStyle) {
-      style.targetArrow = directed ? new DemoArrow() : IArrow.NONE
-    } else {
-      const newStyle = new DemoEdgeStyle()
-      newStyle.showTargetArrows = directed
-      graph.setStyle(edge, newStyle)
+    const style = createDemoEdgeStyle()
+    const oldStyle = edge.style
+    if (oldStyle instanceof PolylineEdgeStyle) {
+      adoptFromOldStyle(oldStyle, style)
     }
-  })
+    style.targetArrow = directed ? getDefaultArrow(graph) : IArrow.NONE
+    graph.setStyle(edge, style)
+  }
   graph.invalidateDisplays()
 }
 
@@ -927,21 +908,55 @@ function onGenerateEdgeDirections(graph) {
  * @param {boolean} [directed=false]
  */
 function onResetEdgeDirections(graph, directed = false) {
-  graph.edges.forEach(edge => {
-    const style = edge.style
-    if (style instanceof PolylineEdgeStyle) {
-      style.targetArrow =
-        typeof directed === 'undefined' || !directed || style.targetArrow === null
-          ? IArrow.NONE
-          : new DemoArrow()
-    } else {
-      const fallback = style instanceof DemoEdgeStyle ? style.showTargetArrows : false
-      const newStyle = new DemoEdgeStyle()
-      newStyle.showTargetArrows = typeof directed !== 'undefined' ? directed : fallback
-      graph.setStyle(edge, newStyle)
+  for (const edge of graph.edges) {
+    const oldStyle = edge.style
+    const style = createDemoEdgeStyle()
+    if (oldStyle instanceof PolylineEdgeStyle) {
+      adoptFromOldStyle(oldStyle, style)
     }
-  })
+    style.targetArrow = directed ? getDefaultArrow(graph) : IArrow.NONE
+    graph.setStyle(edge, style)
+  }
   graph.invalidateDisplays()
+}
+
+/**
+ * @param {!PolylineEdgeStyle} oldStyle
+ * @param {!PolylineEdgeStyle} style
+ * @param {number} [thickness]
+ */
+function adoptFromOldStyle(oldStyle, style, thickness) {
+  const oldStroke = oldStyle.stroke
+  if (oldStroke !== null) {
+    style.stroke = createStroke(oldStroke, thickness ?? oldStroke.thickness)
+  }
+  style.sourceArrow = oldStyle.sourceArrow
+  style.targetArrow = oldStyle.targetArrow
+  style.smoothingLength = oldStyle.smoothingLength
+}
+
+/**
+ * @param {!Stroke} prototype
+ * @param {number} thickness
+ * @returns {!Stroke}
+ */
+function createStroke(prototype, thickness) {
+  return new Stroke({
+    fill: prototype.fill,
+    thickness: thickness,
+    lineCap: prototype.lineCap,
+    lineJoin: prototype.lineJoin,
+    dashStyle: prototype.dashStyle
+  }).freeze()
+}
+
+/**
+ * @param {!IGraph} graph
+ * @returns {!IArrow}
+ */
+function getDefaultArrow(graph) {
+  const defaultStyleArrow = graph.edgeDefaults.style.targetArrow
+  return defaultStyleArrow !== IArrow.NONE ? defaultStyleArrow : createDemoEdgeStyle().targetArrow
 }
 
 /**
@@ -1005,9 +1020,9 @@ function addCustomGraphEntry() {
 }
 
 /**
- * Creates the default input mode for the <code>GraphComponent</code>,
+ * Creates the default input mode for the {@link GraphComponent},
  * a {@link GraphEditorInputMode}.
- * @returns {!IInputMode} A new <code>GraphEditorInputMode</code> instance configured for snapping and
+ * @returns {!IInputMode} A new {@link GraphEditorInputMode} instance configured for snapping and
  *   orthogonal edge editing
  */
 function createEditorMode() {
@@ -1056,7 +1071,7 @@ function createEditorMode() {
  * @param {!GraphInputMode} inputMode
  */
 function initializeContextMenu(inputMode) {
-  // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
+  // Create a context menu. In this demo, we use our sample context menu implementation, but you can use any other
   // context menu widget as well. See the Context Menu demo for more details about working with context menus.
   const contextMenu = new ContextMenu(graphComponent)
 
@@ -1101,9 +1116,9 @@ function populateContextMenu(contextMenu, args) {
   )
 
   // check whether a node was it. If it was, we prefer it over edges
-  const hit = hits.find(item => INode.isInstance(item)) || hits.firstOrDefault()
+  const hit = hits.find(item => INode.isInstance(item)) || hits.at(0)
 
-  if (hit === null) {
+  if (!hit) {
     // empty canvas hit: provide 'select all'
     contextMenu.addMenuItem('Select All', () => {
       ICommand.SELECT_ALL.execute(null, graphComponent)
@@ -1290,20 +1305,6 @@ function updateUIState() {
 }
 
 /**
- * Returns whether or not the current layout algorithm considers edge directions.
- * @param {!string} key The descriptor of the current layout.
- * @returns {boolean}
- */
-function isLayoutDirected(key) {
-  return (
-    key !== 'Organic' &&
-    key !== 'Orthogonal' &&
-    key !== 'Circular' &&
-    key !== 'Edge Router with Buses'
-  )
-}
-
-/**
  * @param {!IGraph} graph
  * @param {!ILabelOwner} item
  */
@@ -1315,26 +1316,6 @@ function removeLabels(graph, item) {
   for (const label of labels) {
     graph.remove(label)
   }
-}
-
-/**
- * @param {!PolylineEdgeStyle} style
- * @returns {boolean}
- */
-function acceptFill(style) {
-  if (style.stroke && style.stroke.fill) {
-    const color = style.stroke.fill.color
-    return color !== Color.fromRGBA(51, 102, 153)
-  }
-  return false
-}
-
-/**
- * @param {!IGraph} graph
- * @param {boolean} directed
- */
-function setDefaultArrows(graph, directed) {
-  graph.edgeDefaults.style.showTargetArrows = directed
 }
 
 /**
@@ -1373,5 +1354,5 @@ function querySelector(selector) {
   return document.querySelector(selector)
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

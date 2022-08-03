@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,10 +36,12 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp, toggleClass } from '../../resources/demo-app'
 import FlowchartConfiguration from './FlowchartConfiguration'
 import FlowchartStyle, { FlowchartSerializationListener } from '../flowchart/FlowchartStyle'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -55,10 +57,11 @@ const layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   legendDiv = document.getElementById('legend') as HTMLDivElement
   configuration = new FlowchartConfiguration(layoutOrientation)
 
@@ -71,7 +74,12 @@ function run(licenseData: object): void {
   // setup a new flowchart diagram
   setUpNewDiagram()
 
-  showApp(graphComponent, { div: document.getElementById('overviewComponent') })
+  showApp(graphComponent)
+  const overviewContainer = document.getElementById('overviewComponent')!.parentElement!
+  const overviewHeader = overviewContainer.querySelector('.demo-overview-header')!
+  overviewHeader.addEventListener('click', () => {
+    toggleClass(overviewContainer, 'collapsed')
+  })
 
   graphComponent.focus()
 }
@@ -128,5 +136,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='NewLayout']", configuration.LayoutCommand, graphComponent)
 }
 
-// Start the demo
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

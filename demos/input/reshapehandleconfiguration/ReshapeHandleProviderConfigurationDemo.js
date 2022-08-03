@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,17 +40,25 @@ import {
   NodeReshapeHandleProvider,
   Rect
 } from 'yfiles'
-import { checkLicense, showApp } from '../../resources/demo-app.js'
+import { showApp } from '../../resources/demo-app.js'
 import LimitingRectangleDescriptor from './LimitingRectangleDescriptor.js'
 import PurpleNodeReshapeHandleProvider from './PurpleNodeReshapeHandleProvider.js'
-import loadJson from '../../resources/load-json.js'
-import { createDemoNodeLabelStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
+import {
+  ApplicationState,
+  ClickableNodeReshapeHandleProvider
+} from './ClickableNodeReshapeHandleProvider.js'
+import {
+  applyDemoTheme,
+  createDemoNodeLabelStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Registers a callback function as a decorator that provides a customized
  * {@link IReshapeHandleProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>IReshapeHandleProvider</code>. In this case, the 'node'
+ * for its {@link IReshapeHandleProvider}. In this case, the 'node'
  * parameter will be set to that node.
  * @param {!IGraph} graph The given graph
  * @param {!Rect} boundaryRectangle The rectangle that limits the node's size.
@@ -68,7 +76,8 @@ function registerReshapeHandleProvider(graph, boundaryRectangle) {
       node.tag === 'blue' ||
       node.tag === 'green' ||
       node.tag === 'purple' ||
-      node.tag === 'darkblue',
+      node.tag === 'darkblue' ||
+      node.tag === 'gold',
     node => {
       // Obtain the tag from the node
       const nodeTag = node.tag
@@ -96,19 +105,25 @@ function registerReshapeHandleProvider(graph, boundaryRectangle) {
       } else if (nodeTag === 'darkblue') {
         provider.handlePositions = HandlePositions.SOUTH_EAST
         provider.centerReshapeRecognizer = EventRecognizers.ALWAYS
+      } else if (nodeTag === 'gold') {
+        provider = new ClickableNodeReshapeHandleProvider(node, reshapeHandler, applicationState)
       }
       return provider
     }
   )
 }
 
+/** @type {ApplicationState} */
+let applicationState
+
 /**
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // Create a default editor input mode
@@ -119,6 +134,9 @@ function run(licenseData) {
     allowClipboardOperations: false,
     movableItems: GraphItemTypes.NONE
   })
+
+  applicationState = new ApplicationState(graphEditorInputMode, true)
+
   // and enable the undo feature.
   graph.undoEngineEnabled = true
 
@@ -142,20 +160,30 @@ function run(licenseData) {
  * @param {!IGraph} graph The input graph
  */
 function createSampleGraph(graph) {
-  createNode(graph, 80, 100, 140, 30, 'demo-red', 'red', 'Fixed Size')
-  createNode(graph, 300, 100, 140, 30, 'demo-green', 'green', 'Keep Aspect Ratio')
-  createNode(graph, 80, 250, 140, 50, 'demo-blue', 'darkblue', 'Keep Center')
-  createNode(graph, 300, 250, 140, 50, 'demo-purple', 'purple', 'Keep Aspect Ratio\nat corners')
-  createNode(graph, 80, 410, 140, 30, 'demo-orange', 'orange', 'Limited to Rectangle')
+  createNode(graph, 80, 100, 140, 30, 'demo-red', 'red', 'Fixed size')
+  createNode(graph, 300, 100, 140, 30, 'demo-green', 'green', 'Keep aspect ratio')
+  createNode(graph, 80, 200, 140, 50, 'demo-blue', 'darkblue', 'Keep center')
+  createNode(graph, 300, 200, 140, 50, 'demo-purple', 'purple', 'Keep aspect ratio\nat corners')
+  createNode(graph, 80, 310, 140, 30, 'demo-orange', 'orange', 'Limited to rectangle')
   createNode(
     graph,
     300,
-    400,
+    300,
     140,
     50,
     'demo-lightblue',
     'blue',
-    'Limited to Rectangle\nand Keep Aspect Ratio'
+    'Limited to rectangle\nand keep aspect ratio'
+  )
+  createNode(
+    graph,
+    80,
+    400,
+    140,
+    50,
+    'demo-palette-510',
+    'gold',
+    'Keep Aspect ratio\ndepending on state'
   )
 
   // clear undo after initial graph loading
@@ -169,22 +197,23 @@ function createSampleGraph(graph) {
  * @param {number} y The node's y-coordinate
  * @param {number} w The node's width
  * @param {number} h The node's height
- * @param {!ColorSetName} cssClass The given css class
+ * @param {!ColorSetName} colorSet The color set that defines the node color
  * @param {!string} tag The tag to identify the reshape handler
  * @param {!string} labelText The nodes label's text
  */
-function createNode(graph, x, y, w, h, cssClass, tag, labelText) {
+function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
   const node = graph.createNode({
     layout: new Rect(x, y, w, h),
-    style: new DemoNodeStyle(cssClass),
+    style: createDemoNodeStyle(colorSet),
     tag: tag
   })
 
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: createDemoNodeLabelStyle(cssClass)
+    style: createDemoNodeLabelStyle(colorSet)
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

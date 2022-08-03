@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,6 +29,7 @@
 import {
   BaseClass,
   Class,
+  ClickEventArgs,
   Cursor,
   HandleTypes,
   IBend,
@@ -45,12 +46,12 @@ const EPS = 1e-6
 /**
  * Handle for an outer control point bend of a bezier curve
  * The outer control point bends are those that are not located on the path, but determine the slope of the segments.
- * If the control point triple is currently collinear, this implementation moves the <b>other</b> outer control point
+ * If the control point triple is currently collinear, this implementation moves the __other__ outer control point
  * of the triple so that this invariant is kept. Otherwise, the other control point is not adjusted.
  */
 export class OuterControlPointHandle extends BaseClass(IHandle) {
   /**
-   * Creates a new instance that wraps the original <code>coreHandle</code> for the given <code>bend</code>.
+   * Creates a new instance that wraps the original `coreHandle` for the given `bend`.
    * @param {!IHandle} coreHandle
    * @param {!IBend} bend
    */
@@ -224,6 +225,12 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
   get location() {
     return this.coreHandle.location
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 }
 
 /**
@@ -234,7 +241,7 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
  */
 export class InnerControlPointHandle extends BaseClass(IHandle) {
   /**
-   * Creates a new instance that wraps the original <code>coreHandle</code> for the given <code>bend<code/>.
+   * Creates a new instance that wraps the original `coreHandle` for the given `bend`.
    * @param {!IHandle} coreHandle
    * @param {!IBend} bend
    */
@@ -385,6 +392,12 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
   get location() {
     return this.coreHandle.location
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 }
 
 /**

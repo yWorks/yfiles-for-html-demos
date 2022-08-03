@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -60,15 +60,20 @@ import {
 } from 'yfiles'
 
 import ContextMenuSupport from './ContextMenuSupport'
-import { DemoGroupStyle, DemoNodeStyle } from '../../resources/demo-styles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  applyDemoTheme,
+  createDemoGroupStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureInteraction()
   await createSampleGraph()
@@ -224,15 +229,11 @@ async function createSampleGraph(): Promise<void> {
  */
 function initializeDefaults(): void {
   const graph = graphComponent.graph
-  const nodeStyle = new DemoNodeStyle()
-  graph.nodeDefaults.style = nodeStyle
-  nodeStyle.cssClass = 'node-color'
-  graph.nodeDefaults.style = nodeStyle
+
+  graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-58')
   graph.nodeDefaults.size = new Size(50, 30)
 
-  const groupNodeStyle = new DemoGroupStyle()
-  groupNodeStyle.cssClass = 'group-border'
-  graph.groupNodeDefaults.style = groupNodeStyle
+  graph.groupNodeDefaults.style = createDemoGroupStyle({ colorSetName: 'demo-palette-58' })
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #4E4E4E',
@@ -337,4 +338,5 @@ class HighlightEdgeStyle extends EdgeStyleBase {
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

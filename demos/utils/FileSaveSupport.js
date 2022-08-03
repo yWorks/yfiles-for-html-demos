@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,11 +43,9 @@ export default class FileSaveSupport {
    * Saves the file to the file system using the HTML5 File download or
    * the proprietary msSaveOrOpenBlob function in Internet Explorer.
    *
-   * @param {string} fileContent The file contents to be saved.
-   * @param {string} fileName The default filename for the downloaded file.
+   * @param {!string} fileContent The file contents to be saved.
+   * @param {!string} fileName The default filename for the downloaded file.
    * @returns {!Promise.<string>} {Promise} A promise which resolves when the save operation is complete.
-   * @param {!string} fileContent
-   * @param {!string} fileName
    */
   static save(fileContent, fileName) {
     return new Promise((resolve, reject) => {

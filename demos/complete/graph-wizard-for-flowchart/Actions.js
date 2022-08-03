@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -144,19 +144,22 @@ export function createSmartNavigate() {
             const dy = center.y - childCenter.y
             return condition(dx, dy)
           })
+          .toArray()
 
         // check for unconnected hits in 90°
-        if (children.size === 0) {
-          children = graph.nodes.filter(child => {
-            const childCenter = child.layout.center
-            const dx = center.x - childCenter.x
-            const dy = center.y - childCenter.y
-            return condition(dx, dy)
-          })
+        if (children.length === 0) {
+          children = graph.nodes
+            .filter(child => {
+              const childCenter = child.layout.center
+              const dx = center.x - childCenter.x
+              const dy = center.y - childCenter.y
+              return condition(dx, dy)
+            })
+            .toArray()
         }
 
         // check for connected hits in general direction
-        if (children.size === 0) {
+        if (children.length === 0) {
           children = graph
             .outEdgesAt(item)
             .map(edge => edge.targetNode)
@@ -167,16 +170,19 @@ export function createSmartNavigate() {
               const dy = center.y - childCenter.y
               return condition2(dx, dy)
             })
+            .toArray()
         }
 
         // check for unconnected hits in general direction
-        if (children.size === 0) {
-          children = graph.nodes.filter(child => {
-            const childCenter = child.layout.center
-            const dx = center.x - childCenter.x
-            const dy = center.y - childCenter.y
-            return condition2(dx, dy)
-          })
+        if (children.length === 0) {
+          children = graph.nodes
+            .filter(child => {
+              const childCenter = child.layout.center
+              const dx = center.x - childCenter.x
+              const dy = center.y - childCenter.y
+              return condition2(dx, dy)
+            })
+            .toArray()
         }
 
         const childScores = children.map(child => {
@@ -199,19 +205,17 @@ export function createSmartNavigate() {
         })
         let lowestScore = Number.POSITIVE_INFINITY
         children.forEach((node, index) => {
-          if (childScores.elementAt(index) < lowestScore) {
-            lowestScore = childScores.elementAt(index)
+          if (childScores[index] < lowestScore) {
+            lowestScore = childScores[index]
             target = node
           }
         })
       } else {
         // no current item => select the one closest to the center of the viewport
         const center = mode.graphComponent.viewport.center
-        target = mode.graph.nodes
-          .orderBy(node => center.distanceTo(node.layout.center))
-          .firstOrDefault()
+        target = mode.graph.nodes.orderBy(node => center.distanceTo(node.layout.center)).at(0)
       }
-      if (target !== null) {
+      if (target) {
         mode.graphComponent.currentItem = target
         if (mode.createEdgeMode.isCreationInProgress) {
           mode.createEdgeMode.targetPortCandidate = new DefaultPortCandidate(target)
@@ -233,7 +237,7 @@ export function createSmartNavigate() {
 
 /**
  * Creates a {@link WizardAction} that navigates to the next incoming or outgoing edge relative to the
- * {@link GraphWizardInputMode.currentItem current item}.<br/>
+ * {@link GraphWizardInputMode.currentItem current item}.
  * @param {!('NextOutgoing'|'NextIncoming')} direction Whether the next outgoing or incoming edge should be navigated to.
  * @returns {!WizardAction}
  */
@@ -279,14 +283,14 @@ export function createSmartNavigateEdge(direction) {
       } else if (item instanceof INode) {
         switch (direction) {
           case 'NextOutgoing':
-            target = mode.graph.outEdgesAt(item).firstOrDefault()
+            target = mode.graph.outEdgesAt(item).at(0)
             break
           case 'NextIncoming':
-            target = mode.graph.inEdgesAt(item).firstOrDefault()
+            target = mode.graph.inEdgesAt(item).at(0)
             break
         }
       }
-      if (target !== null) {
+      if (target) {
         mode.graphComponent.currentItem = target
         if (mode.createEdgeMode.isCreationInProgress) {
           mode.createEdgeMode.targetPortCandidate = new DefaultPortCandidate(target)
@@ -309,7 +313,7 @@ export function createSmartNavigateEdge(direction) {
 }
 
 /**
- * Creates a {@link WizardAction} that starts label editing when <em>F2</em> or <em>F6+CTRL</em> is pressed.
+ * Creates a {@link WizardAction} that starts label editing when `F2` or `F6+CTRL` is pressed.
  * @returns {!WizardAction}
  */
 export function createEditLabel() {
@@ -468,13 +472,11 @@ export function createEndEdgeCreation(layoutProvider, layoutDataProvider) {
  * Runs an animated layout calculation that considers newly added and removed nodes and keeps the
  * location of fixed nodes.
  * @param {!GraphWizardInputMode} mode The current {@link GraphWizardInputMode}.
- * @param {ILayoutAlgorithm} layout The base layout to apply.
- * @param {LayoutData} layoutData The layout data for the base layout.
- * @param {Array.<INode>?} fixNodes The nodes whose location shall kept fixed.
- * @param {Array.<INode>?} newNodes The newly created nodes.
- * @param {Array.<INode>?} deletedNodes The deleted nodes.
- * @param {!ILayoutAlgorithm} layout
- * @param {!LayoutData} layoutData
+ * @param {!ILayoutAlgorithm} layout The base layout to apply.
+ * @param {!LayoutData} layoutData The layout data for the base layout.
+ * @param fixNodes The nodes whose location shall kept fixed.
+ * @param newNodes The newly created nodes.
+ * @param deletedNodes The deleted nodes.
  * @param {!Array.<INode>} [fixNodes]
  * @param {!Array.<INode>} [newNodes]
  * @param {!Array.<INode>} [deletedNodes]

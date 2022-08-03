@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -62,8 +62,8 @@ export default class CanvasLabelStyle extends LabelStyleBase {
    * Creates the visual representation for the given label.
    * @param {!IRenderContext} context The render context.
    * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link CanvasLabelStyle#updateVisual}
+   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link CanvasLabelStyle.updateVisual}
    */
   createVisual(context, label) {
     return new LabelRenderVisual(label.text, label.layout, this.font)
@@ -73,10 +73,10 @@ export default class CanvasLabelStyle extends LabelStyleBase {
    * Updates the visual representation for the given label.
    * @param {!IRenderContext} context The render context.
    * @param {!Visual} oldVisual The visual that has been created in the call to
-   * {@link CanvasLabelStyle#createVisual}.
+   * {@link CanvasLabelStyle.createVisual}.
    * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link CanvasLabelStyle#createVisual}
+   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link CanvasLabelStyle.createVisual}
    */
   updateVisual(context, oldVisual, label) {
     oldVisual.layout = label.layout

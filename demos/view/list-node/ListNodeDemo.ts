@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,8 +54,7 @@ import {
   Size,
   SolidColorFill
 } from 'yfiles'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindCommand, showApp } from '../../resources/demo-app'
 import { ListNodeStyle } from './ListNodeStyle'
 import ContextMenu from '../../utils/ContextMenu'
 import {
@@ -64,10 +63,14 @@ import {
   RowPositionHandler
 } from './RowPositionHandler'
 
-function run(licenseData: object): void {
-  License.value = licenseData
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
+
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureGraph(graphComponent.graph)
 
@@ -175,7 +178,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
  * Finds the first node whose bounds contain the given location.
  */
 function findNodeAt(mode: GraphEditorInputMode, location: Point): INode | null {
-  return mode.findItems(location, [GraphItemTypes.NODE]).firstOrDefault() as INode | null
+  return mode.findItems(location, [GraphItemTypes.NODE]).at(0) as INode | null
 }
 
 /**
@@ -284,9 +287,9 @@ function removeRow(graph: IGraph, node: INode, rowIndex: number): void {
       createPortLocationParameter(i, ri.incoming, node.style as ListNodeStyle)
     )
     // keep adjacent edges orthogonal
-    const edge = graph.edgesAt(port).firstOrDefault()
+    const edge = graph.edgesAt(port).at(0)
     if (edge) {
-      const bend = ri.incoming ? edge.bends.lastOrDefault() : edge.bends.firstOrDefault()
+      const bend = ri.incoming ? edge.bends.at(-1) : edge.bends.at(0)
       if (bend) {
         graph.setBendLocation(bend, new Point(bend.location.x, port.location.y))
       } else {
@@ -439,5 +442,5 @@ export type RowInfo = {
   incoming: boolean
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

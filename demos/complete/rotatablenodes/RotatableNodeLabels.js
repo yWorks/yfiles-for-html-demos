@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,7 @@ import {
   Class,
   FreeNodeLabelModel,
   GraphMLAttribute,
+  IEnumerable,
   ILabel,
   ILabelModel,
   ILabelModelParameter,
@@ -45,15 +46,14 @@ import {
   MarkupExtension,
   OrientedRectangle,
   TypeAttribute,
-  YBoolean,
-  IEnumerable
+  YBoolean
 } from 'yfiles'
 
 import { RotatableNodeStyleDecorator } from './RotatableNodes.js'
 
 /**
  * A {@link ILabelModel} decorator for node labels that wraps another label model and considers the
- * {@link RotatableNodeStyleDecorator#angle rotation angle} of the label owner when a
+ * {@link RotatableNodeStyleDecorator.angle rotation angle} of the label owner when a
  * {@link RotatableNodeStyleDecorator} is used.
  * This will make the node labels rotate with the node's rotation.
  */
@@ -77,8 +77,9 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
    * Provides custom implementations of {@link ILabelModelParameterProvider} and
    * {@link ILabelModelParameterFinder} that consider the nodes rotation.
    * Wraps the default implementations in a special wrapper which supports rotation.
-   * @param {!Class} type
-   * @returns {?object}
+   * @template {*} T
+   * @param {!Class.<T>} type
+   * @returns {?T}
    */
   lookup(type) {
     if (type === ILabelModelParameterProvider.$class) {

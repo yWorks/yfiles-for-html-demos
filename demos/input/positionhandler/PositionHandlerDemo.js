@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,19 +36,23 @@ import {
   MutableRectangle,
   Rect
 } from 'yfiles'
-import { checkLicense, showApp } from '../../resources/demo-app.js'
+import { showApp } from '../../resources/demo-app.js'
 import LimitingRectangleDescriptor from './LimitedRectangleDescriptor.js'
 import GreenPositionHandler from './GreenPositionHandler.js'
 import RedPositionHandler from './RedPositionHandler.js'
 import OrangePositionHandler from './OrangePositionHandler.js'
-import loadJson from '../../resources/load-json.js'
-import { createDemoNodeLabelStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
+import {
+  applyDemoTheme,
+  createDemoNodeLabelStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IPositionHandler} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>IPositionHandler</code>. In this case, the 'node' parameter will be set
+ * for its {@link IPositionHandler}. In this case, the 'node' parameter will be set
  * to that node and the 'delegateHandler' parameter will be set to the
  * position handler that would have been returned without setting this
  * function as decorator.
@@ -92,12 +96,13 @@ function registerPositionHandler(graph, boundaryRectangle) {
 }
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureUserInteraction(graphComponent)
 
@@ -159,22 +164,22 @@ function createSampleGraph(graph) {
  * @param {number} y The node's y-coordinate
  * @param {number} w The node's width
  * @param {number} h The node's height
- * @param {!ColorSetName} cssClass The given css class
+ * @param {!ColorSetName} color The given color set name
  * @param {!string} tag The tag to identify the position handler
  * @param {!string} labelText The node's label text
  */
-function createNode(graph, x, y, w, h, cssClass, tag, labelText) {
+function createNode(graph, x, y, w, h, color, tag, labelText) {
   const node = graph.createNode({
     layout: new Rect(x, y, w, h),
-    style: new DemoNodeStyle(cssClass),
+    style: createDemoNodeStyle(color),
     tag: tag
   })
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: createDemoNodeLabelStyle(cssClass)
+    style: createDemoNodeLabelStyle(color)
   })
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

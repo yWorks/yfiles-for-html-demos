@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,7 +67,7 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
   /**
    * Called when a node drag started.
    * This add a rectangle which highlights the layer into which the node would be currently dropped.
-   * @see overrides {@link ConstrainedPositionHandler#onInitialized}
+   * @see overrides {@link ConstrainedPositionHandler.onInitialized}
    * @param {!IInputModeContext} inputModeContext
    * @param {!Point} originalLocation
    */
@@ -87,7 +87,7 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
   /**
    * Called when a node drag was canceled.
    * The highlighting rectangle is removed.
-   * @see overrides {@link ConstrainedPositionHandler#onCanceled}
+   * @see overrides {@link ConstrainedPositionHandler.onCanceled}
    * @param {!IInputModeContext} context
    * @param {!Point} originalLocation
    */
@@ -100,7 +100,7 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
   /**
    * Called when a node drag was finished.
    * The layer is updated for the moved node and the highlighting rectangle is removed.
-   * @see overrides {@link ConstrainedPositionHandler#onFinished}
+   * @see overrides {@link ConstrainedPositionHandler.onFinished}
    * @param {!IInputModeContext} inputModeContext
    * @param {!Point} originalLocation
    * @param {!Point} newLocation
@@ -116,7 +116,7 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
 
   /**
    * Updates the highlighting rectangle while the node is moved.
-   * @see overrides {@link ConstrainedPositionHandler#onMoved}
+   * @see overrides {@link ConstrainedPositionHandler.onMoved}
    * @param {!IInputModeContext} inputModeContext
    * @param {!Point} originalLocation
    * @param {!Point} newLocation
@@ -129,7 +129,7 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
 
   /**
    * Does nothing because the location should not be constrained.
-   * @see overrides {@link ConstrainedPositionHandler#constrainNewLocation}
+   * @see overrides {@link ConstrainedPositionHandler.constrainNewLocation}
    * @param {!IInputModeContext} context
    * @param {!Point} originalLocation
    * @param {!Point} newLocation

@@ -1,0 +1,1281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.5.
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <key id="d0" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+  <key id="d1" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+  <key id="d2" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+  <key id="d3" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+  <key id="d4" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+  <key id="d5" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+  <key id="d6" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+  <key id="d7" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
+  <key id="d8" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+    <default>
+      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
+    </default>
+  </key>
+  <key id="d9" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+    <default>
+      <x:Static Member="y:VoidPortStyle.Instance"/>
+    </default>
+  </key>
+  <key id="d10" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+  <data key="d10">
+    <y:SharedData>
+      <yjs:SolidColorFill x:Key="1" color="#FFFF6C00"/>
+      <yjs:Stroke x:Key="2" fill="#FF662B00" lineCap="SQUARE" thickness="1.5"/>
+      <yjs:ShapeNodeStyle x:Key="3" shape="ELLIPSE">
+        <yjs:ShapeNodeStyle.stroke>
+          <yjs:Stroke fill="#FF662B00" lineCap="SQUARE" thickness="5"/>
+        </yjs:ShapeNodeStyle.stroke>
+      </yjs:ShapeNodeStyle>
+      <y:Json x:Key="4">{"type":5}</y:Json>
+      <yjs:SolidColorFill x:Key="5" color="#FF111D4A"/>
+      <yjs:Stroke x:Key="6" fill="#FF070C1E" lineCap="SQUARE" thickness="1.5"/>
+      <y:Json x:Key="7">{"type":5}</y:Json>
+      <yjs:SolidColorFill x:Key="8" color="#FF111D4A"/>
+      <yjs:Stroke x:Key="9" fill="#FF070C1E" lineCap="SQUARE" thickness="1.5"/>
+      <yjs:PolylineEdgeStyle x:Key="10">
+        <yjs:PolylineEdgeStyle.stroke>
+          <yjs:Stroke fill="#FF662B00" lineCap="SQUARE" thickness="1.5"/>
+        </yjs:PolylineEdgeStyle.stroke>
+        <yjs:PolylineEdgeStyle.targetArrow>
+          <yjs:Arrow type="NONE" stroke="#FF000000" fill="#FF000000"/>
+        </yjs:PolylineEdgeStyle.targetArrow>
+      </yjs:PolylineEdgeStyle>
+      <yjs:PolylineEdgeStyle x:Key="11">
+        <yjs:PolylineEdgeStyle.stroke>
+          <yjs:Stroke fill="#FF662B00" lineCap="SQUARE" thickness="1.5"/>
+        </yjs:PolylineEdgeStyle.stroke>
+        <yjs:PolylineEdgeStyle.targetArrow>
+          <yjs:Arrow type="NONE" stroke="#FF000000" fill="#FF000000"/>
+        </yjs:PolylineEdgeStyle.targetArrow>
+      </yjs:PolylineEdgeStyle>
+      <yjs:PolylineEdgeStyle x:Key="12">
+        <yjs:PolylineEdgeStyle.stroke>
+          <yjs:Stroke fill="#FF662B00" lineCap="SQUARE" thickness="1.5"/>
+        </yjs:PolylineEdgeStyle.stroke>
+        <yjs:PolylineEdgeStyle.targetArrow>
+          <yjs:Arrow type="NONE" stroke="#FF000000" fill="#FF000000"/>
+        </yjs:PolylineEdgeStyle.targetArrow>
+      </yjs:PolylineEdgeStyle>
+    </y:SharedData>
+  </data>
+  <graph id="G" edgedefault="directed">
+    <node id="n0">
+      <data key="d1">
+        <y:RectD X="1068.3524799084043" Y="141.48519893808793" Width="40" Height="40"/>
+      </data>
+      <data key="d2">
+        <y:Json>{"type":2}</y:Json>
+      </data>
+      <data key="d3">
+        <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 2}" fill="{y:GraphMLReference 1}" shape="ELLIPSE"/>
+      </data>
+      <port name="p0"/>
+    </node>
+    <node id="n1">
+      <data key="d1">
+        <y:RectD X="239.3524799084043" Y="103.48519893808793" Width="40" Height="40"/>
+      </data>
+      <data key="d2">
+        <y:Json>{"type":2}</y:Json>
+      </data>
+      <data key="d3">
+        <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 2}" fill="{y:GraphMLReference 1}" shape="ELLIPSE"/>
+      </data>
+      <port name="p0"/>
+      <port name="p1"/>
+    </node>
+    <node id="n2">
+      <data key="d1">
+        <y:RectD X="0" Y="244.13271902968364" Width="481.7049598168086" Height="481.7049598168086"/>
+      </data>
+      <data key="d3">
+        <y:GraphMLReference ResourceKey="3"/>
+      </data>
+      <graph id="n2:" edgedefault="directed">
+        <node id="n2::n0">
+          <data key="d1">
+            <y:RectD X="392.8263161796581" Y="520.9550731041891" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n1">
+          <data key="d1">
+            <y:RectD X="103.80164431061118" Y="436.07455945707403" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n2">
+          <data key="d1">
+            <y:RectD X="220.8524799084043" Y="464.98519893808793" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n3">
+          <data key="d1">
+            <y:RectD X="130.64455630602575" Y="384.98986339475647" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n4">
+          <data key="d1">
+            <y:RectD X="367.11367523610346" Y="571.3585504756502" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n5">
+          <data key="d1">
+            <y:RectD X="178.1530164754164" Y="352.23113465711543" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n6">
+          <data key="d1">
+            <y:RectD X="235.4434091329868" Y="345.3030032124664" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n7">
+          <data key="d1">
+            <y:RectD X="289.3911957449644" Y="365.79262048174365" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n8">
+          <data key="d1">
+            <y:RectD X="327.63758853985223" Y="409.0060620752118" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n9">
+          <data key="d1">
+            <y:RectD X="341.4207998473405" Y="465.0436493022334" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n10">
+          <data key="d1">
+            <y:RectD X="327.58326206258664" Y="521.0678462552326" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n11">
+          <data key="d1">
+            <y:RectD X="327.0839694322037" Y="611.3494630518944" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n12">
+          <data key="d1">
+            <y:RectD X="289.29498833166974" Y="564.2441845770416" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n13">
+          <data key="d1">
+            <y:RectD X="276.6555852754046" Y="637.0132216768867" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n14">
+          <data key="d1">
+            <y:RectD X="220.76480436218623" Y="645.8376788464923" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n15">
+          <data key="d1">
+            <y:RectD X="164.88260574230316" Y="636.9590352093417" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n16">
+          <data key="d1">
+            <y:RectD X="114.47912837084189" Y="611.2463942657871" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n17">
+          <data key="d1">
+            <y:RectD X="74.4882157945978" Y="571.2166884618872" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n18">
+          <data key="d1">
+            <y:RectD X="48.82445716960555" Y="520.7883043050881" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n19">
+          <data key="d1">
+            <y:RectD X="40" Y="464.89752339186987" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n20">
+          <data key="d1">
+            <y:RectD X="48.87864363715053" Y="409.0153247719868" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n21">
+          <data key="d1">
+            <y:RectD X="74.59128458070515" Y="358.61184740052556" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n22">
+          <data key="d1">
+            <y:RectD X="114.62099038460498" Y="318.62093482428145" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n23">
+          <data key="d1">
+            <y:RectD X="165.04937454140423" Y="292.95717619928917" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n24">
+          <data key="d1">
+            <y:RectD X="220.9401554546227" Y="284.13271902968364" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n25">
+          <data key="d1">
+            <y:RectD X="276.8223540745058" Y="293.0113626668343" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n26">
+          <data key="d1">
+            <y:RectD X="327.2258314459672" Y="318.72400361038916" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n27">
+          <data key="d1">
+            <y:RectD X="367.2167440222113" Y="358.75370941428923" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n28">
+          <data key="d1">
+            <y:RectD X="392.88050264720334" Y="409.1820935710886" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n29">
+          <data key="d1">
+            <y:RectD X="281.1300726190743" Y="465.87548784752624" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n30">
+          <data key="d1">
+            <y:RectD X="250.2202634514582" Y="517.632269959219" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n31">
+          <data key="d1">
+            <y:RectD X="189.9426707407882" Y="516.7419810497807" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n32">
+          <data key="d1">
+            <y:RectD X="160.57488719773428" Y="464.0949100286497" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n33">
+          <data key="d1">
+            <y:RectD X="191.48469636535032" Y="412.33812791695686" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n34">
+          <data key="d1">
+            <y:RectD X="251.76228907602027" Y="413.22841682639506" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n35">
+          <data key="d1">
+            <y:RectD X="235.32736074262385" Y="584.6814854894171" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n36">
+          <data key="d1">
+            <y:RectD X="178.0437123956827" Y="577.6978096495097" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n37">
+          <data key="d1">
+            <y:RectD X="130.56703678433126" Y="544.8930330298247" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n38">
+          <data key="d1">
+            <y:RectD X="103.77366813516457" Y="493.7823346135168" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n2::n39">
+          <data key="d1">
+            <y:RectD X="401.7049598168086" Y="465.072874484306" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+      </graph>
+      <port name="p0"/>
+      <port name="p1"/>
+      <port name="p2"/>
+    </node>
+    <node id="n3">
+      <data key="d1">
+        <y:RectD X="101.21571180072891" Y="900.314953165369" Width="346.27353621535076" Height="335.3404915454378"/>
+      </data>
+      <data key="d3">
+        <y:GraphMLReference ResourceKey="3"/>
+      </data>
+      <graph id="n3:" edgedefault="directed">
+        <node id="n3::n0">
+          <data key="d1">
+            <y:RectD X="310.920863962242" Y="1048.0997318482985" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n1">
+          <data key="d1">
+            <y:RectD X="254.3524799084043" Y="1047.985198938088" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n2">
+          <data key="d1">
+            <y:RectD X="219.17344133330323" Y="1155.5138742481258" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="4"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 6}" fill="{y:GraphMLReference 5}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n3::n3">
+          <data key="d1">
+            <y:RectD X="271.724144654783" Y="1101.8203218244475" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n4">
+          <data key="d1">
+            <y:RectD X="367.48924801607967" Y="1048.2142647585088" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n5">
+          <data key="d1">
+            <y:RectD X="345.7474064851236" Y="1114.670640865364" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n6">
+          <data key="d1">
+            <y:RectD X="289.0958094011618" Y="1155.655444710807" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n7">
+          <data key="d1">
+            <y:RectD X="208.52037510899697" Y="1081.142601760175" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n8">
+          <data key="d1">
+            <y:RectD X="208.65501662004468" Y="1014.64247797445" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n9">
+          <data key="d1">
+            <y:RectD X="271.94199919595485" Y="994.2208612830691" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":1}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FFFFC914" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF665008" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n3::n10">
+          <data key="d1">
+            <y:RectD X="162.6882703095896" Y="1114.3000045822619" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="4"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 6}" fill="{y:GraphMLReference 5}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n3::n11">
+          <data key="d1">
+            <y:RectD X="141.2157118007289" Y="1047.756133117667" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="4"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 6}" fill="{y:GraphMLReference 5}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n3::n12">
+          <data key="d1">
+            <y:RectD X="162.95755333168512" Y="981.2997570108118" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="4"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 6}" fill="{y:GraphMLReference 5}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n3::n13">
+          <data key="d1">
+            <y:RectD X="219.60915041564698" Y="940.314953165369" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="4"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 6}" fill="{y:GraphMLReference 5}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n3::n14">
+          <data key="d1">
+            <y:RectD X="289.53151848350547" Y="940.4565236280501" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="4"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 6}" fill="{y:GraphMLReference 5}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n3::n15">
+          <data key="d1">
+            <y:RectD X="346.01668950721904" Y="981.670393293914" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="4"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 6}" fill="{y:GraphMLReference 5}" shape="ELLIPSE"/>
+          </data>
+        </node>
+      </graph>
+      <port name="p0">
+        <data key="d8">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,0.4999999999999999"/>
+        </data>
+      </port>
+      <port name="p1">
+        <data key="d8">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,0.4999999999999999"/>
+        </data>
+      </port>
+    </node>
+    <node id="n4">
+      <data key="d1">
+        <y:RectD X="653.9748611765469" Y="0" Width="341.7552374637148" Height="343.970397876176"/>
+      </data>
+      <data key="d3">
+        <y:GraphMLReference ResourceKey="3"/>
+      </data>
+      <graph id="n4:" edgedefault="directed">
+        <node id="n4::n0">
+          <data key="d1">
+            <y:RectD X="802.5933305325864" Y="152.01779840327512" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+          <port name="p0"/>
+        </node>
+        <node id="n4::n1">
+          <data key="d1">
+            <y:RectD X="857.6656693892685" Y="164.9419109493956" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n4::n2">
+          <data key="d1">
+            <y:RectD X="750.442269723977" Y="173.93268030546062" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+          <port name="p0"/>
+        </node>
+        <node id="n4::n3">
+          <data key="d1">
+            <y:RectD X="765.6354752311327" Y="109.19126312703776" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n4::n4">
+          <data key="d1">
+            <y:RectD X="728.3313871371142" Y="237.3708565331846" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="7"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 9}" fill="{y:GraphMLReference 8}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n4::n5">
+          <data key="d1">
+            <y:RectD X="807.320057704957" Y="208.38847555450306" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n4::n6">
+          <data key="d1">
+            <y:RectD X="915.7300986402618" Y="152.24686422369598" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n4::n7">
+          <data key="d1">
+            <y:RectD X="897.6461940638669" Y="213.37685562797304" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n4::n8">
+          <data key="d1">
+            <y:RectD X="849.3836769277309" Y="255.02577990578973" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+          <port name="p0">
+            <data key="d8">
+              <y:FreeNodePortLocationModelParameter Ratio="0.5,0.4999999999999993"/>
+            </data>
+          </port>
+        </node>
+        <node id="n4::n9">
+          <data key="d1">
+            <y:RectD X="786.2655554159257" Y="263.970397876176" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":4}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF76B041" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF2F461A" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+          <port name="p0"/>
+        </node>
+        <node id="n4::n10">
+          <data key="d1">
+            <y:RectD X="831.9031806135968" Y="103.63466207997857" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:Json>{"type":3}</y:Json>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle fill="#FF621B00" shape="ELLIPSE">
+              <yjs:ShapeNodeStyle.stroke>
+                <yjs:Stroke fill="#FF270B00" lineCap="SQUARE" thickness="1.5"/>
+              </yjs:ShapeNodeStyle.stroke>
+            </yjs:ShapeNodeStyle>
+          </data>
+        </node>
+        <node id="n4::n11">
+          <data key="d1">
+            <y:RectD X="693.9748611765469" Y="183.67232230983726" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="7"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 9}" fill="{y:GraphMLReference 8}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n4::n12">
+          <data key="d1">
+            <y:RectD X="694.1039317750913" Y="119.92370040633458" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="7"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 9}" fill="{y:GraphMLReference 8}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n4::n13">
+          <data key="d1">
+            <y:RectD X="728.6776199296789" Y="66.36472785080028" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="7"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 9}" fill="{y:GraphMLReference 8}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n4::n14">
+          <data key="d1">
+            <y:RectD X="786.7190239372353" Y="39.99999999999997" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="7"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 9}" fill="{y:GraphMLReference 8}" shape="ELLIPSE"/>
+          </data>
+        </node>
+        <node id="n4::n15">
+          <data key="d1">
+            <y:RectD X="849.800408126325" Y="49.20013166229751" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="7"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 9}" fill="{y:GraphMLReference 8}" shape="ELLIPSE"/>
+          </data>
+          <port name="p0"/>
+        </node>
+        <node id="n4::n16">
+          <data key="d1">
+            <y:RectD X="897.893878728674" Y="91.0441460399374" Width="40" Height="40"/>
+          </data>
+          <data key="d2">
+            <y:GraphMLReference ResourceKey="7"/>
+          </data>
+          <data key="d3">
+            <yjs:ShapeNodeStyle stroke="{y:GraphMLReference 9}" fill="{y:GraphMLReference 8}" shape="ELLIPSE"/>
+          </data>
+          <port name="p0"/>
+        </node>
+        <edge id="n4::e0" source="n4::n2" target="n4::n9" sourceport="p0" targetport="p0">
+          <data key="d6">
+            <y:GraphMLReference ResourceKey="10"/>
+          </data>
+        </edge>
+        <edge id="n4::e1" source="n4::n8" target="n4::n7" sourceport="p0" targetport="p0">
+          <data key="d6">
+            <y:GraphMLReference ResourceKey="10"/>
+          </data>
+        </edge>
+        <edge id="n4::e2" source="n4::n7" target="n4::n6" sourceport="p1" targetport="p0">
+          <data key="d6">
+            <y:GraphMLReference ResourceKey="10"/>
+          </data>
+        </edge>
+        <edge id="n4::e3" source="n4::n6" target="n4::n5" sourceport="p1" targetport="p0">
+          <data key="d6">
+            <y:GraphMLReference ResourceKey="10"/>
+          </data>
+        </edge>
+        <edge id="n4::e4" source="n4::n5" target="n4::n0" sourceport="p1" targetport="p0">
+          <data key="d6">
+            <y:GraphMLReference ResourceKey="10"/>
+          </data>
+        </edge>
+        <edge id="n4::e5" source="n4::n15" target="n4::n16" sourceport="p0" targetport="p0">
+          <data key="d6">
+            <y:GraphMLReference ResourceKey="12"/>
+          </data>
+        </edge>
+      </graph>
+      <port name="p0"/>
+      <port name="p1"/>
+      <port name="p2"/>
+      <port name="p3"/>
+    </node>
+    <edge id="e0" source="n4" target="n2" sourceport="p0" targetport="p0">
+      <data key="d6">
+        <y:GraphMLReference ResourceKey="11"/>
+      </data>
+    </edge>
+    <edge id="e1" source="n3" target="n4" sourceport="p0" targetport="p1">
+      <data key="d6">
+        <y:GraphMLReference ResourceKey="11"/>
+      </data>
+    </edge>
+    <edge id="e2" source="n4" target="n0" sourceport="p2" targetport="p0">
+      <data key="d6">
+        <y:GraphMLReference ResourceKey="11"/>
+      </data>
+    </edge>
+    <edge id="e3" source="n4" target="n1" sourceport="p3" targetport="p0">
+      <data key="d6">
+        <y:GraphMLReference ResourceKey="11"/>
+      </data>
+    </edge>
+    <edge id="e4" source="n2" target="n3" sourceport="p1" targetport="p1">
+      <data key="d6">
+        <y:GraphMLReference ResourceKey="10"/>
+      </data>
+    </edge>
+    <edge id="e5" source="n1" target="n2" sourceport="p1" targetport="p2">
+      <data key="d6">
+        <y:GraphMLReference ResourceKey="12"/>
+      </data>
+    </edge>
+  </graph>
+</graphml>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,9 +54,11 @@ import {
 } from 'yfiles'
 
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
 import { ButtonInputMode, ButtonTrigger, QueryButtonsEvent } from './ButtonInputMode.js'
 import { OffsetLabelModelWrapper } from './OffsetLabelModelWrapper.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 const BUTTON_OUT_VALUE = 'button'
 const BUTTON_OVER_VALUE = 'button hovered'
@@ -371,12 +373,13 @@ function onButtonTriggerChanged(graphComponent) {
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   const graphEditorInputMode = new GraphEditorInputMode({
     focusableItems: GraphItemTypes.ALL
   })
@@ -401,5 +404,5 @@ function run(licenseData) {
   showApp(graphComponent)
 }
 
-// start demo
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

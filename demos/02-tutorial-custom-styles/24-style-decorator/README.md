@@ -17,7 +17,7 @@ Other graph item styles can be wrapped in the same fashion by subclassing [EdgeS
 ## Things to Try
 
 - Take a look at the source code of `MyNodeStyleDecorator` class.
-- Uncomment the line in `SammpleApplication.initializeGraph()` that creates an instance of [ShinyPlateNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShinyPlateNodeStyle) instead of `MySimpleNodeStyle` and observe the outcome.
+- Uncomment the line in `SampleApplication.initializeGraph()` that creates an instance of [RectangleNodeStyle](https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle) instead of `MySimpleNodeStyle` and observe the outcome.
 
 ## Left to Do
 

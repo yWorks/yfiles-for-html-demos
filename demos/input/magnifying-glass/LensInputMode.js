@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,6 +38,8 @@ import {
   MouseWheelBehaviors,
   ScrollBarVisibility
 } from 'yfiles'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
 
 // noinspection CssInvalidFunction
 /**
@@ -200,7 +202,7 @@ export class LensInputMode extends InputModeBase {
       // Get the div for the lens graphComponent
       div: this.lensElement.querySelector('.demo-lens-component'),
 
-      // Re-use the same graph, selection, and projection
+      // Re-use the same graph, selection, projection
       graph: graphComponent.graph,
       selection: graphComponent.selection,
       projection: graphComponent.projection,
@@ -214,6 +216,7 @@ export class LensInputMode extends InputModeBase {
       // Set the zoom factor of the graph component
       zoom: this.zoomFactor
     })
+    applyDemoTheme(this.lensGraphComponent)
 
     graphComponent.overlayPanel.appendChild(this.lensElement)
 

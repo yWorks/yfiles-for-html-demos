@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -112,6 +112,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
     this.spacingItem = 20
     this.rootAlignmentItem = TreeRootAlignment.CENTER
+    this.alignPortsItem = false
     this.allowMultiParentsItem = false
     this.portAssignmentItem = TreeLayoutPortAssignmentMode.NONE
 
@@ -126,8 +127,8 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return The configured layout algorithm.
    */
@@ -197,7 +198,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     return new TreeLayoutData({
       gridNodePlacerRowIndices: node => {
         const predecessors = graph.predecessors(node)
-        const parent = predecessors.firstOrDefault()
+        const parent = predecessors.at(0)
         if (parent) {
           const siblings = graph.successors(parent).toArray()
           return siblings.indexOf(node) % Math.round(Math.sqrt(siblings.length))
@@ -206,7 +207,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       },
       leftRightNodePlacerLeftNodes: node => {
         const predecessors = graph.predecessors(node)
-        const parent = predecessors.firstOrDefault()
+        const parent = predecessors.at(0)
         if (parent) {
           const siblings = graph.successors(parent).toArray()
           return siblings.indexOf(node) % 2 !== 0
@@ -229,12 +230,13 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
           ? ChildPlacement.VERTICAL_TO_RIGHT
           : ChildPlacement.HORIZONTAL_DOWNWARD
 
-        return new DefaultNodePlacer(
-          childPlacement,
-          RootAlignment.LEADING_ON_BUS,
-          this.spacingItem,
-          this.spacingItem
-        )
+        return new DefaultNodePlacer({
+          childPlacement: childPlacement,
+          rootAlignment: RootAlignment.LEADING_ON_BUS,
+          verticalDistance: this.spacingItem,
+          horizontalDistance: this.spacingItem,
+          alignPorts: this.alignPortsItem
+        })
       }
     })
   },
@@ -243,7 +245,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     const graph = graphComponent.graph
     //half the subtrees are delegated to the left placer and half to the right placer
     const leftNodes = new Set()
-    const root = graph.nodes.first(node => graph.inDegree(node) === 0)
+    const root = graph.nodes.find(node => graph.inDegree(node) === 0)
     let left = true
     for (const successor of graph.successors(root)) {
       const stack = [successor]
@@ -359,37 +361,45 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         layout.defaultNodePlacer = new DefaultNodePlacer({
           horizontalDistance: spacing,
           verticalDistance: spacing,
-          rootAlignment: rootAlignment
+          rootAlignment: rootAlignment,
+          alignPorts: this.alignPortsItem
         })
         layout.multiParentAllowed = allowMultiParents
         break
       case TreeNodePlacer.SIMPLE:
         layout.defaultNodePlacer = new SimpleNodePlacer({
           spacing,
-          rootAlignment: rootAlignment
+          rootAlignment: rootAlignment,
+          alignPorts: this.alignPortsItem
         })
         break
       case TreeNodePlacer.BUS:
         layout.defaultNodePlacer = new BusNodePlacer({
-          spacing
+          spacing,
+          alignPorts: this.alignPortsItem
         })
         layout.multiParentAllowed = allowMultiParents
         break
       case TreeNodePlacer.DOUBLE_LINE:
         layout.defaultNodePlacer = new DoubleLineNodePlacer({
           spacing,
-          rootAlignment: rootAlignment
+          rootAlignment: rootAlignment,
+          alignPorts: this.alignPortsItem
         })
         break
       case TreeNodePlacer.LEFT_RIGHT:
-        layout.defaultNodePlacer = new LeftRightNodePlacer({ spacing })
+        layout.defaultNodePlacer = new LeftRightNodePlacer({
+          spacing,
+          alignPorts: this.alignPortsItem
+        })
         layout.multiParentAllowed = allowMultiParents
         break
       case TreeNodePlacer.LAYERED:
         layout.defaultNodePlacer = new LayeredNodePlacer({
           spacing,
           layerSpacing: spacing,
-          rootAlignment: rootAlignment
+          rootAlignment: rootAlignment,
+          alignPorts: this.alignPortsItem
         })
         break
       case TreeNodePlacer.ASPECT_RATIO:
@@ -409,7 +419,8 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       case TreeNodePlacer.GRID:
         layout.defaultNodePlacer = new GridNodePlacer({
           spacing,
-          rootAlignment: rootAlignment
+          rootAlignment: rootAlignment,
+          alignPorts: this.alignPortsItem
         })
         break
       case TreeNodePlacer.COMPACT:
@@ -427,7 +438,8 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
           routingStyle: 'orthogonal',
           spacing,
           layerSpacing: spacing,
-          rootAlignment: rootAlignment
+          rootAlignment: rootAlignment,
+          alignPorts: this.alignPortsItem
         })
 
         this.delegatingRightPlacer = new LayeredNodePlacer({
@@ -436,14 +448,16 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
           verticalAlignment: 0,
           routingStyle: 'orthogonal',
           layerSpacing: spacing,
-          rootAlignment: rootAlignment
+          rootAlignment: rootAlignment,
+          alignPorts: this.alignPortsItem
         })
 
-        this.delegatingRootPlacer = new DelegatingNodePlacer(
-          RotatableNodePlacerMatrix.DEFAULT,
-          this.delegatingLeftPlacer,
-          this.delegatingRightPlacer
-        )
+        this.delegatingRootPlacer = new DelegatingNodePlacer({
+          modificationMatrix: RotatableNodePlacerMatrix.DEFAULT,
+          primaryPlacer: this.delegatingLeftPlacer,
+          secondaryPlacer: this.delegatingRightPlacer,
+          alignPorts: this.alignPortsItem
+        })
         break
     }
 
@@ -727,6 +741,45 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         this.nodePlacerItem === TreeNodePlacer.BUS ||
         this.nodePlacerItem === TreeNodePlacer.DENDROGRAM ||
         this.nodePlacerItem === TreeNodePlacer.COMPACT
+      )
+    }
+  },
+
+  /** @type {boolean} */
+  alignPortsItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Align Ports',
+          '#/api/RotatableNodePlacerBase#RotatableNodePlacerBase-property-alignPorts'
+        ),
+        OptionGroupAttribute('NodePlacerGroup', 40),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    value: false
+  },
+
+  /** @type {boolean} */
+  shouldDisableAlignPortsItem: {
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function () {
+      return (
+        (this.nodePlacerItem !== TreeNodePlacer.DEFAULT &&
+          this.nodePlacerItem !== TreeNodePlacer.SIMPLE &&
+          this.nodePlacerItem !== TreeNodePlacer.BUS &&
+          this.nodePlacerItem !== TreeNodePlacer.DOUBLE_LINE &&
+          this.nodePlacerItem !== TreeNodePlacer.LEFT_RIGHT &&
+          this.nodePlacerItem !== TreeNodePlacer.LAYERED &&
+          this.nodePlacerItem !== TreeNodePlacer.GRID &&
+          this.nodePlacerItem !== TreeNodePlacer.DELEGATING_LAYERED &&
+          this.nodePlacerItem !== TreeNodePlacer.HV) ||
+        (this.rootAlignmentItem !== TreeRootAlignment.CENTER &&
+          this.rootAlignmentItem !== TreeRootAlignment.MEDIAN &&
+          this.rootAlignmentItem !== TreeRootAlignment.LEFT &&
+          this.rootAlignmentItem !== TreeRootAlignment.RIGHT)
       )
     }
   },

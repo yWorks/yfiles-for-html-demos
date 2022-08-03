@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  CanvasComponent,
   Color,
   EdgeStyleBase,
   EdgeStyleDecorationInstaller,
@@ -449,23 +450,43 @@ export class DemoNodeStyle extends NodeStyleBase {
  * below the node group.
  */
 export class HighlightManager extends HighlightIndicatorManager {
-  /**
-   * Initializes the HighlightManager.
-   * @param {!GraphComponent} graphComponent The given graphComponent
-   */
-  constructor(graphComponent) {
-    super(graphComponent)
-    // create a new group for the edge highlight that lies below the node group
-    const graphModelManager = graphComponent.graphModelManager
-    graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
-    this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
-    this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+  constructor() {
+    super()
+    this.edgeHighlightGroup = null
   }
 
   /**
+   * Installs the manager on the canvas.
+   * Adds the highlight group
+   * @param {!CanvasComponent} canvas
+   */
+  install(canvas) {
+    if (canvas instanceof GraphComponent) {
+      // create a new group for the edge highlight that lies below the node group
+      const graphModelManager = canvas.graphModelManager
+      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
+      this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
+      this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+    }
+    super.install(canvas)
+  }
+
+  /**
+   * Uninstalls the manager from the canvas
+   * removes the highlight groups
+   * @param {!CanvasComponent} canvas
+   */
+  uninstall(canvas) {
+    super.uninstall(canvas)
+    if (this.edgeHighlightGroup) {
+      this.edgeHighlightGroup.remove()
+      this.edgeHighlightGroup = null
+    }
+  }
+  /**
    * Retrieves the Canvas Object group to use for the given item.
    * @param {!IModelItem} item The given item
-   * @returns {!ICanvasObjectGroup}
+   * @returns {?ICanvasObjectGroup}
    */
   getCanvasObjectGroup(item) {
     if (IEdge.isInstance(item)) {

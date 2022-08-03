@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,17 +45,20 @@ import {
 import createNewRandomUserData from './UserDataFactory.js'
 import DataTableLabelStyle from './DataTableLabelStyle.js'
 import DataTableNodeStyle from './DataTableNodeStyle.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize default demo styles
   initializeStyles(graphComponent.graph)
@@ -238,5 +241,5 @@ function registerCommands(graphComponent) {
   })
 }
 
-// Runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

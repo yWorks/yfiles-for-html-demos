@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  DefaultLabelStyle,
   GraphComponent,
   GraphItemTypes,
   GraphMLIOHandler,
@@ -36,10 +37,10 @@ import {
   INode,
   Mapper,
   SerializationProperties,
+  ShapeNodeStyle,
   StripeTypes,
   YBoolean
 } from 'yfiles'
-import DemoStyles, { DemoSerializationListener } from '../../resources/demo-styles'
 
 /**
  * This GraphML IO Handler can read graphs with unknown styles.
@@ -101,18 +102,6 @@ export function createConfiguredGraphMLIOHandler(
   graphComponent?: GraphComponent
 ): GraphMLIOHandler {
   const graphMLIOHandler = new FaultTolerantGraphMLIOHandler()
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  // map the previous version of the demo-style to the new implementation
-  graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
-    DemoStyles
-  )
-  graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
-
   if (graphComponent) {
     const selectedEdges = new Mapper()
     const selectedNodes = new Mapper()
@@ -140,6 +129,24 @@ export function createConfiguredGraphMLIOHandler(
       }
     })
   }
+
+  // ignore or replace some unknown bpmn styles to avoid exceptions
+  graphMLIOHandler.addHandleDeserializationListener((sender, evt) => {
+    if (evt.xmlNode instanceof Element) {
+      const element = evt.xmlNode
+      if (
+        element.localName == 'Label' &&
+        element.hasAttribute('LayoutParameter') &&
+        element.getAttribute('LayoutParameter')!.toString().includes('PoolHeaderLabelModel')
+      ) {
+        evt.result = null
+      } else if (element.localName == 'PoolNodeStyle') {
+        evt.result = new ShapeNodeStyle()
+      } else if (element.localName == 'AnnotationLabelStyle') {
+        evt.result = new DefaultLabelStyle()
+      }
+    }
+  })
 
   return graphMLIOHandler
 }

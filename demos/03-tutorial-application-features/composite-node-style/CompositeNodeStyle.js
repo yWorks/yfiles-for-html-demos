@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -58,7 +58,7 @@ import {
  */
 export class CompositeNodeStyle extends NodeStyleBase {
   /**
-   * Initializes a new <code>CompositeNodeStyle</code> instance with the given style definitions.
+   * Initializes a new {@link CompositeNodeStyle} instance with the given style definitions.
    * The first style in the given array is considered to be this composite node style' main style.
    * @param {!Array.<StyleDefinition>} styleDefinitions the style instances that will be combined in this composite node style.
    */
@@ -302,7 +302,7 @@ export class CompositeNodeStyle extends NodeStyleBase {
 
 /**
  * Sets the given rectangle's geometry to the interior of the given node. In this context,
- * <em>interior</em> means the node's paraxial bounds minus the given insets.
+ * __interior__ means the node's paraxial bounds minus the given insets.
  * @param {!IMutableRectangle} rectangle
  * @param {!INode} forNode
  * @param {!Insets} insets

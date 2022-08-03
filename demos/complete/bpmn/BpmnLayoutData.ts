@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -213,7 +213,7 @@ const addLayerConstraints = (
         node.style instanceof EventNodeStyle &&
         node.style.characteristic === EventCharacteristic.START &&
         graph.inDegree(node) === 0 &&
-        (graph.getParent(node) === null || graph.getParent(node)!.style instanceof PoolNodeStyle)
+        (graph.getParent(node) == null || graph.getParent(node)!.style instanceof PoolNodeStyle)
       ) {
         layerConstraints.placeAtTop(node)
       }
@@ -570,10 +570,8 @@ function getSideFromSegment(edge: IEdge, atSource: boolean): PortSide {
   const opposite = (atSource ? edge.targetPort : edge.sourcePort)!
   const from = port.location
 
-  const to =
-    edge.bends.size > 0
-      ? (atSource ? edge.bends.get(0) : edge.bends.last()).location
-      : opposite.location
+  const bend = edge.bends.at(atSource ? 0 : -1)
+  const to = bend?.location ?? opposite.location
 
   const dx = to.x - from.x
   const dy = to.y - from.y

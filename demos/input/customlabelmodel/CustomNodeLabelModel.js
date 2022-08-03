@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -72,8 +72,9 @@ export default class CustomNodeLabelModel extends BaseClass(
 
   /**
    * Returns instances of the support interfaces (which are actually the model instance itself)
-   * @param {!Class} type
-   * @returns {?Object}
+   * @template {*} T
+   * @param {!Class.<T>} type
+   * @returns {?T}
    */
   lookup(type) {
     if (type === ILabelModelParameterProvider.$class && this.candidateCount > 0) {
@@ -153,7 +154,7 @@ export default class CustomNodeLabelModel extends BaseClass(
    * instances that can be used for the given label and model.
    *
    * Since in {@link lookup}, we return an instance of this class only for positive {@link candidateCount}s,
-   * this method is only called for <b>discrete</b> candidates.
+   * this method is only called for __discrete__ candidates.
    * @param {!ILabel} label
    * @param {!ILabelModel} model
    * @returns {!IEnumerable.<ILabelModelParameter>}
@@ -169,7 +170,7 @@ export default class CustomNodeLabelModel extends BaseClass(
   /**
    * Tries to find a parameter that best matches the given layout for the provided label instance.
    *
-   * By default, this method is only called when <b>no discrete</b> candidates are specified (i.e. here for
+   * By default, this method is only called when __no discrete__ candidates are specified (i.e. here for
    * {@link candidateCount} = 0. This implementation just calculates the rotation angle for the center of layout and
    * creates a parameter for exactly this angle which {@link createParameter}.
    * @param {!ILabel} label
@@ -195,7 +196,7 @@ export default class CustomNodeLabelModel extends BaseClass(
  */
 export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParameter) {
   /**
-   * Creates a new instance of <code>CustomNodeLabelModelParameter</code>.
+   * Creates a new instance of {@link CustomNodeLabelModelParameter}.
    * @param {!CustomNodeLabelModel} _model The model for this parameter
    * @param {number} ratio The ratio for the given label model parameter
    */

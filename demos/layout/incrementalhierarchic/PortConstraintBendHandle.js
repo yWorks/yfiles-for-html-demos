@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -73,7 +73,7 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
   /**
    * Called when a drag of the handle is initialized.
    * To indicate in which direction the port constraint will be assigned, an arrow visual is added.
-   * @see overrides {@link ConstrainedHandle#onInitialized}
+   * @see overrides {@link ConstrainedHandle.onInitialized}
    * @param {!IInputModeContext} inputModeContext
    * @param {!Point} originalLocation
    */
@@ -88,7 +88,7 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
   /**
    * Called when a drag of the handle is canceled.
    * The arrow visual is removed.
-   * @see overrides {@link ConstrainedHandle#onCanceled}
+   * @see overrides {@link ConstrainedHandle.onCanceled}
    * @param {!IInputModeContext} inputModeContext
    * @param {!Point} originalLocation
    */
@@ -102,7 +102,7 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
   /**
    * Called when a drag of the handle is canceled.
    * The port constraints are assigned and the arrow visual is removed.
-   * @see overrides {@link ConstrainedHandle#onFinished}
+   * @see overrides {@link ConstrainedHandle.onFinished}
    * @param {!IInputModeContext} inputModeContext
    * @param {!Point} originalLocation
    * @param {!Point} newLocation
@@ -145,7 +145,7 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
 
   /**
    * Returns the unconstrained location.
-   * @see overrides {@link ConstrainedHandle#constrainNewLocation}
+   * @see overrides {@link ConstrainedHandle.constrainNewLocation}
    * @param {!IInputModeContext} context
    * @param {!Point} originalLocation
    * @param {!Point} newLocation
@@ -157,7 +157,7 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
 
   /**
    * Creates a visual that contains an arrow visualization for the direction of port constraints.
-   * @see overrides {@link IVisualCreator#createVisual}
+   * @see overrides {@link IVisualCreator.createVisual}
    * @param {!IRenderContext} context
    * @returns {!Visual}
    */
@@ -171,7 +171,7 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
 
   /**
    * Updates the arrow visualization for the direction of port constraints.
-   * @see overrides {@link IVisualCreator#createVisual}
+   * @see overrides {@link IVisualCreator.createVisual}
    * @param {!IRenderContext} context
    * @param {!Visual} oldVisual
    * @returns {!Visual}

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -485,10 +485,10 @@ export default class WizardAction {
 export type ActionStep = {
   /**
    * Executes the action of this step and returns whether the action was successful, the data
-   * necessary to {@link undo} the action and the date used as <em>inData</em> of the next step.
+   * necessary to {@link undo} the action and the date used as __inData__ of the next step.
    * @param inData Data provided by the previous step that is used in the action.
-   * @param wasCanceled <em>True</em>, if this action is called after canceling its succeeding action,
-   * and <em>false</em>, if this action is called after its successful previous action.
+   * @param wasCanceled `true`, if this action is called after canceling its succeeding action,
+   * and `false`, if this action is called after its successful previous action.
    */
   action: (
     inData: any,
@@ -496,7 +496,7 @@ export type ActionStep = {
   ) => Promise<{ success: boolean; undoData?: any; outData?: any }>
 
   /**
-   * Reverts the {@link action} using the <em>undoData</em> provided previously.
+   * Reverts the {@link action} using the `undoData` provided previously.
    * @param undoData
    */
   undo: (undoData: any) => void
@@ -505,7 +505,7 @@ export type ActionStep = {
 /**
  * Handles processing multiple {@link ActionStep}s that may be canceled to go back to previous steps.
  *
- * Returns <em>true</em> if the last step was successful, <em>false</em> otherwise.
+ * Returns `true` if the last step was successful, `false` otherwise.
  * @param steps The steps to process.
  */
 export async function handleMultipleSteps(steps: ActionStep[]): Promise<boolean> {

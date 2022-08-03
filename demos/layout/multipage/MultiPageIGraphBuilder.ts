@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -346,7 +346,7 @@ export default class MultiPageIGraphBuilder {
    * to the provided node of the {@link LayoutGraph} returned by the
    *  multi-page layout.
    * As the multi-page layout introduces auxiliary nodes, this method
-   * might return <code>null</code>.
+   * might return `null`.
    */
   getModelNode(layoutNode: any): INode | null {
     const nodeInfo = this.layout.getNodeInfo(layoutNode)
@@ -358,7 +358,7 @@ export default class MultiPageIGraphBuilder {
    * the provided edge of the {@link LayoutGraph} returned by the
    * multi-page layout.
    * As the multi-page layout introduces auxiliary nodes, this method
-   *  might return <code>null</code>
+   *  might return `null`
    */
   getModelEdge(layoutEdge: any): IEdge | null {
     const edgeInfo = this.layout.getEdgeInfo(layoutEdge)
@@ -412,7 +412,7 @@ export default class MultiPageIGraphBuilder {
 
   /**
    * Called by the various edge creation callbacks to create an edge in the resulting graph view
-   * that corresponds to the provided <code>layoutEdge</code>.
+   * that corresponds to the provided `layoutEdge`.
    * If a model edge is provided, the edge will be created between the copies of the corresponding
    * source/target ports.
    * @param pageLayoutGraph The layout graph representing the current page.
@@ -420,13 +420,13 @@ export default class MultiPageIGraphBuilder {
    *   layout in a graph canvas.
    * @param layoutEdge The edge of the layout graph that should be copied.
    * @param modelEdge The edge of the original input graph that corresponds to the
-   *   <code>layoutEdge</code> (may be <code>null</code>).
+   *   `layoutEdge` (may be `null`).
    * @param edgeDefaults The defaults to use for edge creation.
    * @return The created edge
-   * @see {@link MultiPageIGraphBuilder#createConnectorEdge}
-   * @see {@link MultiPageIGraphBuilder#createNormalEdge}
-   * @see {@link MultiPageIGraphBuilder#createProxyEdge}
-   * @see {@link MultiPageIGraphBuilder#createProxyReferenceEdge}
+   * @see {@link MultiPageIGraphBuilder.createConnectorEdge}
+   * @see {@link MultiPageIGraphBuilder.createNormalEdge}
+   * @see {@link MultiPageIGraphBuilder.createProxyEdge}
+   * @see {@link MultiPageIGraphBuilder.createProxyReferenceEdge}
    */
   createEdgeCore(
     pageLayoutGraph: LayoutGraph,
@@ -509,7 +509,7 @@ export default class MultiPageIGraphBuilder {
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created edge
-   * @see {@link MultiPageIGraphBuilder#createEdgeCore}
+   * @see {@link MultiPageIGraphBuilder.createEdgeCore}
    */
   createNormalEdge(pageLayoutGraph: LayoutGraph, layoutEdge: Edge, pageView: IGraph): IEdge {
     const modelEdge = this.getModelEdge(layoutEdge)!
@@ -540,7 +540,7 @@ export default class MultiPageIGraphBuilder {
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created edge
-   * @see {@link MultiPageIGraphBuilder#createEdgeCore}
+   * @see {@link MultiPageIGraphBuilder.createEdgeCore}
    */
   createConnectorEdge(pageLayoutGraph: LayoutGraph, layoutEdge: Edge, pageView: IGraph): IEdge {
     const representedEdge = this.getRepresentedEdge(layoutEdge)!
@@ -571,7 +571,7 @@ export default class MultiPageIGraphBuilder {
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created edge
-   * @see {@link MultiPageIGraphBuilder#createEdgeCore}
+   * @see {@link MultiPageIGraphBuilder.createEdgeCore}
    */
   createProxyEdge(pageLayoutGraph: LayoutGraph, layoutEdge: Edge, pageView: IGraph): IEdge {
     const representedEdge = this.getRepresentedEdge(layoutEdge)!
@@ -602,7 +602,7 @@ export default class MultiPageIGraphBuilder {
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created edge
-   * @see {@link MultiPageIGraphBuilder#createEdgeCore}
+   * @see {@link MultiPageIGraphBuilder.createEdgeCore}
    */
   createProxyReferenceEdge(
     pageLayoutGraph: LayoutGraph,
@@ -621,7 +621,7 @@ export default class MultiPageIGraphBuilder {
 
   /**
    * Called by the various node creation callbacks to create a node in the resulting graph view
-   * that corresponds to the provided <code>layoutNode</code>.
+   * that corresponds to the provided `layoutNode`.
    * If a model node is provided, the ports of the original node will be copied to the created view node.
    * Also, a clone of the original node style will be used as the style of the created node.
    * @param pageLayoutGraph The layout graph representing the current page
@@ -629,15 +629,15 @@ export default class MultiPageIGraphBuilder {
    *   layout in a graph canvas
    * @param layoutNode The node of the layout graph that should be copied
    * @param modelNode The node of the original input graph that corresponds to the
-   *   <code>layoutNode</code> (may be <code>null</code>)
+   *   `layoutNode` (may be `null`)
    * @param isReferenceNode Whether the node is a proxy reference node
    * @param nodeDefaults
    * @return the created node
-   * @see {@link MultiPageIGraphBuilder#createConnectorNode}
-   * @see {@link MultiPageIGraphBuilder#createNormalNode}
-   * @see {@link MultiPageIGraphBuilder#createGroupNode}
-   * @see {@link MultiPageIGraphBuilder#createProxyNode}
-   * @see {@link MultiPageIGraphBuilder#createProxyReferenceNode}
+   * @see {@link MultiPageIGraphBuilder.createConnectorNode}
+   * @see {@link MultiPageIGraphBuilder.createNormalNode}
+   * @see {@link MultiPageIGraphBuilder.createGroupNode}
+   * @see {@link MultiPageIGraphBuilder.createProxyNode}
+   * @see {@link MultiPageIGraphBuilder.createProxyReferenceNode}
    */
   createNodeCore(
     pageLayoutGraph: LayoutGraph,
@@ -723,14 +723,15 @@ export default class MultiPageIGraphBuilder {
   /**
    * Create a normal node, i.e., a node that directly corresponds to a node of the original input graph.
    * This implementation copies the labels of the corresponding node in the original input graph.
-   * Also the style of the original node is used for the returned node, unless the <code>NormalNodeStyle</code> is
-   * set.
+   * Also the style of the original node is used for the returned node, unless a style is set
+   * for the {@link normalNodeDefaults}.
+   *
    * @param pageLayoutGraph The layout graph representing the current page
    * @param layoutNode The node of the layout graph that should be copied
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created node
-   * @see {@link MultiPageIGraphBuilder#createNodeCore}
+   * @see {@link MultiPageIGraphBuilder.createNodeCore}
    */
   createNormalNode(pageLayoutGraph: LayoutGraph, layoutNode: YNode, pageView: IGraph): INode {
     const modelNode = this.getModelNode(layoutNode)
@@ -749,14 +750,15 @@ export default class MultiPageIGraphBuilder {
   /**
    * Create a group node, i.e., a node that directly corresponds to a group node of the original input graph.
    * This implementation copies the labels of the corresponding node in the original input graph.
-   * Also the style of the original node is used for the returned node, unless the <code>GroupNodeStyle</code> is
-   * set.
+   * Also the style of the original node is used for the returned node, unless a style is set
+   * for the {@link groupNodeDefaults}.
+   *
    * @param pageLayoutGraph The layout graph representing the current page
    * @param layoutNode The node of the layout graph that should be copied
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created node
-   * @see {@link MultiPageIGraphBuilder#createNodeCore}
+   * @see {@link MultiPageIGraphBuilder.createNodeCore}
    */
   createGroupNode(pageLayoutGraph: LayoutGraph, layoutNode: YNode, pageView: IGraph): INode {
     const modelNode = this.getModelNode(layoutNode)
@@ -775,13 +777,14 @@ export default class MultiPageIGraphBuilder {
   /**
    * Create a connector node, i.e., a node that represents a "jump mark" to another connector node on a different
    * page. This implementation copies the labels of the represented node and applies the
-   * <code>ConnectorNodeStyle</code>.
+   * {@link connectorNodeDefaults}.
+   *
    * @param pageLayoutGraph The layout graph representing the current page
    * @param layoutNode The node of the layout graph that should be copied
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created node
-   * @see {@link MultiPageIGraphBuilder#createNodeCore}
+   * @see {@link MultiPageIGraphBuilder.createNodeCore}
    */
   createConnectorNode(pageLayoutGraph: LayoutGraph, layoutNode: YNode, pageView: IGraph): INode {
     const representedNode = this.getRepresentedNode(layoutNode)
@@ -799,13 +802,14 @@ export default class MultiPageIGraphBuilder {
 
   /**
    * Create a proxy node, i.e., a node that "partially" represents a node of the input graph.
-   * This implementation copies the labels of the represented node and applies the <code>ProxyNodeStyle</code>.
+   * This implementation copies the labels of the represented node and applies the {@link proxyNodeDefaults}.
+   *
    * @param pageLayoutGraph The layout graph representing the current page
    * @param layoutNode The node of the layout graph that should be copied
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created node
-   * @see {@link MultiPageIGraphBuilder#createNodeCore}
+   * @see {@link MultiPageIGraphBuilder.createNodeCore}
    */
   createProxyNode(pageLayoutGraph: LayoutGraph, layoutNode: YNode, pageView: IGraph): INode {
     const representedNode = this.getRepresentedNode(layoutNode)
@@ -824,13 +828,14 @@ export default class MultiPageIGraphBuilder {
   /**
    * Create a proxy reference node, i.e., a node referencing a proxy node.
    * This implementation copies the labels of the represented node and applies the
-   * <code>ProxyReferenceNodeStyle</code>.
+   * {@link proxyReferenceNodeDefaults}.
+   *
    * @param pageLayoutGraph The layout graph representing the current page
    * @param layoutNode The node of the layout graph that should be copied
    * @param pageView The {@link IGraph} that is built to show the multi-page
    *   layout in a graph canvas
    * @return The created node
-   * @see {@link MultiPageIGraphBuilder#createNodeCore}
+   * @see {@link MultiPageIGraphBuilder.createNodeCore}
    */
   createProxyReferenceNode(
     pageLayoutGraph: LayoutGraph,

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -243,9 +243,8 @@ export class BpmnDiParser {
    * Called to parse and build a graph.
    * @param {!IGraph} graph The graph Instance build the diagram in.
    * @param {!string} data data to get the graph from.
-   * @param  [selectDiagramCallback=null] Callback method which chooses one diagram name from a given list.
+   * @param selectDiagramCallback Callback method which chooses one diagram name from a given list.
    * If no method is provided the first diagram is chosen.
-   * @param  [selectDiagramCallback]
    * @param {!SelectedDiagramCallback} [selectDiagramCallback]
    * @returns {!Promise}
    */
@@ -297,11 +296,11 @@ export class BpmnDiParser {
             edgeCount: d.plane.listOfEdges.size
           }))
         ).then(chosenName => {
-          diaToLoad = topLevelDiagrams.firstOrDefault(d => d.name === chosenName)
+          diaToLoad = topLevelDiagrams.find(d => d.name === chosenName)
           resolve(diaToLoad)
         })
       } else {
-        diaToLoad = topLevelDiagrams.firstOrDefault()
+        diaToLoad = topLevelDiagrams.at(0) ?? null
         resolve(diaToLoad)
       }
     }).then(diaToLoad => {
@@ -616,7 +615,7 @@ export class BpmnDiParser {
   }
 
   /**
-   * Returns the {@link BpmnShape} for the <code>element</code> in the context of this <code>plane</code>.
+   * Returns the {@link BpmnShape} for the `element` in the context of this `plane`.
    * @param {!BpmnElement} element The element to get the shape for.
    * @param {!BpmnPlane} plane The plane containing the shape for the element.
    * @returns {?BpmnShape}
@@ -635,7 +634,7 @@ export class BpmnDiParser {
   }
 
   /**
-   * Returns whether the <code>shape</code> belongs to this <code>element</code> or <code>referencedElement</code> in the context of the <code>plane</code>.
+   * Returns whether the `shape` belongs to this `element` or `referencedElement` in the context of the `plane`.
    * @param {!BpmnShape} shape The shape to check validity for.
    * @param {!BpmnElement} element The element to check if the shape is valid.
    * @param {?BpmnElement} referencedElement The element referenced by element.
@@ -665,7 +664,7 @@ export class BpmnDiParser {
   }
 
   /**
-   * Returns the {@link BpmnEdge} for the <code>element</code> in the context of this <code>plane</code>.
+   * Returns the {@link BpmnEdge} for the `element` in the context of this `plane`.
    * @param {!BpmnElement} element The element to get an BpmnEdge for.
    * @param {!BpmnPlane} plane The plane containing the BpmnEdges.
    * @returns {?BpmnEdge}
@@ -680,7 +679,7 @@ export class BpmnDiParser {
   }
 
   /**
-   * Recursively builds BPMN items from <code>element</code> and its descendents.
+   * Recursively builds BPMN items from `element` and its descendents.
    * @param {!BpmnElement} element The element to build an BPMN item for.
    * @param {!BpmnPlane} plane The plane containing the shapes for the current {@link BpmnDiagram}.
    * @param {?INode} localRoot The current root node.
@@ -733,7 +732,7 @@ export class BpmnDiParser {
   }
 
   /**
-   * Looks up the {@link BpmnElement} registered by <code>id</code>.
+   * Looks up the {@link BpmnElement} registered by `id`.
    * @param {!string} id The id to look up the element for.
    * @param {!object} element The element to set if one could be found for the given id.
    * @returns {boolean}
@@ -1075,7 +1074,7 @@ export class BpmnDiParser {
   }
 
   /**
-   * Callback to add some of the {@link BpmnShape} or {@link BpmnElement} data to the {@link ITagOwner#tag} of <code>iNode</code>.
+   * Callback to add some of the {@link BpmnShape} or {@link BpmnElement} data to the {@link ITagOwner.tag} of `iNode`.
    * @param {!BpmnShape} shape The bpmn shape used to create the node.
    * @param {!INode} iNode The node whose tag shall be filled.
    */
@@ -1086,7 +1085,7 @@ export class BpmnDiParser {
   }
 
   /**
-   * Callback to add some of the {@link BpmnEdge} or {@link BpmnElement} data to the {@link ITagOwner#tag} of <code>iEdge</code>.
+   * Callback to add some of the {@link BpmnEdge} or {@link BpmnElement} data to the {@link ITagOwner.tag} of `iEdge`.
    * @param {!BpmnEdge} edge The bpmn edge used to create the edge.
    * @param {!IEdge} iEdge The edge whose tag shall be filled.
    */
@@ -2220,12 +2219,8 @@ export class BpmnDiParser {
       }
 
       let parentStripe = isHorizontal
-        ? table.rootRow.childRows.some()
-          ? table.rootRow.childRows.first()
-          : table.rootRow
-        : table.rootColumn.childColumns.some()
-        ? table.rootColumn.childColumns.first()
-        : table.rootColumn
+        ? table.rootRow.childRows.at(0) ?? table.rootRow
+        : table.rootColumn.childColumns.at(0) ?? table.rootColumn
       if (tableShape) {
         parentStripe = this.addToTable(tableShape, table, node, parentStripe)
       }
@@ -2546,7 +2541,7 @@ export class BpmnDocument {
   }
 
   /**
-   * Collect all {@link BpmnDiagram} where the plane corresponds to a {@link BpmnElement} in <code>diagram</code>.
+   * Collect all {@link BpmnDiagram} where the plane corresponds to a {@link BpmnElement} in `diagram`.
    * @param {!BpmnElement} bpmnElement The element to check.
    * @param {!BpmnDiagram} diagram The diagram to collect the child diagrams for.
    */
@@ -2786,7 +2781,7 @@ export class BpmnEdge {
   }
 
   /**
-   * Calculate the preferred size for <code>text</code> using a {@link DefaultLabelStyle}.
+   * Calculate the preferred size for `text` using a {@link DefaultLabelStyle}.
    * @param {!string} text The text to measure.
    * @returns {!Size} The preferred Size of the given text.
    */
@@ -3038,7 +3033,7 @@ export class BpmnElement {
     // List of all children of this element
     this.children = new List()
 
-    // List of all {@link Node} that were children of this element but have a different namespace then {@link BpmnNamespaceManager#BPMN} or {@link BpmnNamespaceManager#BPMN_DI}.
+    // List of all {@link Node} that were children of this element but have a different namespace then {@link BpmnNamespaceManager.BPMN} or {@link BpmnNamespaceManager.BPMN_DI}.
     this.foreignChildren = new List()
 
     // List of all attributes, that do not have a Property
@@ -3842,10 +3837,14 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
   constructor() {
     super()
 
-    // Gets or sets a value indicating whether all labels of the {@link IFoldingView#getMasterItem master group node} should be recreated for the collapsed group node instance.
-    // This setting can be used to initially create a copy of all the labels of the master group node (if any) and subsequently synchronize the {@link ILabel#text} property with the master's node label text. Set it to <code>true</code> if all labels should be copied; <code>false</code> otherwise. The default is <code>false</code>.
-    // @see DefaultFolderNodeConverter#labelStyle
-    // @see DefaultFolderNodeConverter#labelLayoutParameter
+    // Gets or sets a value indicating whether all labels of the
+    // {@link IFoldingView.getMasterItem master group node} should be recreated for the
+    // collapsed group node instance. This setting can be used to initially create a copy of
+    // all the labels of the master group node (if any) and subsequently synchronize the
+    // {@link ILabel.text} property with the master's node label text.
+    // Set it to `true` if all labels should be copied; `false` otherwise. The default is `false`.
+    // @see DefaultFolderNodeConverter.labelStyle
+    // @see DefaultFolderNodeConverter.labelLayoutParameter
     this.copyLabels = false
   }
 
@@ -3863,7 +3862,9 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
   }
 
   /**
-   * Called by {@link MultiLabelFolderNodeConverter#updateFolderNodeState} to synchronize all labels, if {@link MultiLabelFolderNodeConverter#copyLabels} is enabled. Also synchronizes all port labels of ports connected to the node.
+   * Called by {@link updateFolderNodeState} to synchronize all labels,
+   * if {@link copyLabels} is enabled.
+   * Also synchronizes all port labels of ports connected to the node.
    * This will adjust the label text property.
    * @param {!FolderNodeState} state The node view state whose labels should be synchronized.
    * @param {!IFoldingView} foldingView The folding view.

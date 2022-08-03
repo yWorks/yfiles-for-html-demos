@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -93,7 +93,7 @@ export function getColorForComponent(componentId: number, useGradient: boolean):
 /**
  * Checks whether or not the given item has a valid color in its tag.
  * @param item The item to be checked.
- * @return <code>true</code> if the node's tag contains a valid color, <code>false</code> otherwise.
+ * @return `true` if the node's tag contains a valid color, `false` otherwise.
  */
 function hasValidColorTag(item: IModelItem): boolean {
   return item.tag !== null && item.tag.color !== null && item.tag.color !== undefined
@@ -101,7 +101,7 @@ function hasValidColorTag(item: IModelItem): boolean {
 
 /**
  * Returns whether or not the given two arrays are equals.
- * @return <code>true</code> if arrays are the same, <code>false</code> otherwise.
+ * @return `true` if arrays are the same, `false` otherwise.
  */
 function arraysAreEqual(array1: any[], array2: any[]): boolean {
   if (!array1 || !array2 || array1.length !== array2.length) {
@@ -213,11 +213,10 @@ export class MultiColorNodeStyle extends NodeStyleBase {
 
   /**
    * Actually creates the visual appearance of a node given the values provided by
-   * <code>RenderDataCache</code>. This renders the node and the edges to the labels and adds the
-   * elements to the <code>container</code>. All items are arranged as if the node was located at
-   * (0,0). {@link MultiColorNodeStyle#createVisual} and
-   * <code>UpdateVisual</code> finally arrange the container so that the drawing is translated into
-   * the final position.
+   * {@link MultiColorNodeStyleRenderCache}. This renders the node and the edges to the labels and adds the
+   * elements to the `container`. All items are arranged as if the node was located at
+   * (0,0). {@link createVisual} and {@link updateVisual} finally arrange the container
+   * so that the drawing is translated into the final position.
    */
   private render(
     renderContext: IRenderContext,
@@ -529,7 +528,7 @@ class MultiColorEdgeStyleRenderCache {
   ) {}
 
   /**
-   * Check if this cache is equal to another object. Returns <code>true</code> if the other
+   * Check if this cache is equal to another object. Returns `true` if the other
    * object is an instance of this class too, the path is equal and state is equal.
    */
   equals(other: any): boolean {
@@ -703,8 +702,7 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * Updates the edge path data as well as the arrow positions of the visuals stored in <param
-   * name="container" />.
+   * Updates the edge path as well as the arrow positions of the visuals.
    */
   updatePath(
     context: IRenderContext,
@@ -824,7 +822,7 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
 
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * Overridden method to include the {@link MultiColorEdgeStyle#thickness} and the HitTestRadius
+   * Overridden method to include the {@link MultiColorEdgeStyle.thickness} and the HitTestRadius
    * specified in the context in the calculation.
    */
   isHit(context: IInputModeContext, point: Point, edge: IEdge): boolean {
@@ -1079,8 +1077,7 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * Updates the edge path data as well as the arrow positions of the visuals stored in <param
-   * name="visual"/>.
+   * Updates the edge path data as well as the arrow positions of the visuals.
    */
   private updatePath(
     context: IRenderContext,
@@ -1189,10 +1186,10 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
 
   /**
    * Actually creates the visual appearance of a node given the values provided by
-   * <code>RenderDataCache</code>. This renders the node and the edges to the labels and adds the
-   * elements to the <code>container</code>. All items are arranged as if the node was located at
-   * (0,0). {@link SourceTargetNodeStyle#createVisual} and
-   * <code>UpdateVisual</code> finally arrange the container so that the drawing is translated into
+   * {@link SourceTargetNodeStyleRenderCache}. This renders the node and the edges to the labels and adds the
+   * elements to the `container`. All items are arranged as if the node was located at
+   * (0,0). {@link SourceTargetNodeStyle.createVisual} and
+   * {@link updateVisual} finally arrange the container so that the drawing is translated into
    * the final position.
    */
   private render(

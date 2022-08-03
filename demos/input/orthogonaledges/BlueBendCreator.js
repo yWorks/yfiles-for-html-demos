@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,7 +54,7 @@ export default class BlueBendCreator extends BaseClass(IBendCreator) {
    * @param {!IGraph} graph The graph, the edge belongs to
    * @param {!IEdge} edge The edge
    * @param {!Point} location The preferred coordinates of the bend
-   * @see Specified by {@link IBendCreator#createBend}.
+   * @see Specified by {@link IBendCreator.createBend}.
    * @returns {number}
    */
   createBend(context, graph, edge, location) {

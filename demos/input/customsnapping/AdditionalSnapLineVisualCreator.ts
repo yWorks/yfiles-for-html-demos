@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,7 +49,7 @@ export default class AdditionalSnapLineVisualCreator
   implements IVisualCreator
 {
   /**
-   * Creates a new instance of <code>AdditionalSnapLineVisualCreator</code>.
+   * Creates a new instance of {@link AdditionalSnapLineVisualCreator}.
    * @param from The start point
    * @param to The end point
    */

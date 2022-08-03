@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,7 +40,7 @@ export function createClipboardBusinessObject(): ClipboardBusinessObject {
 /**
  * A data object with a name and a numeric value.
  * It implements {@link IPropertyObservable} so the node style will be notified
- * about changes of the {@link #name} property and update its visualization immediately.
+ * about changes of the {@link name} property and update its visualization immediately.
  */
 export class ClipboardBusinessObject
   extends BaseClass(IPropertyObservable)
@@ -49,7 +49,7 @@ export class ClipboardBusinessObject
   private $name: string
   $propertyChangedEvent: any
   /**
-   * Creates a new instance of <code>ClipboardBusinessObject</code>
+   * Creates a new instance of {@link ClipboardBusinessObject}
    */
   constructor(name: string) {
     super()
@@ -66,7 +66,7 @@ export class ClipboardBusinessObject
 
   /**
    * Sets the name of this object.
-   * @param {string} value
+   * @param value
    */
   set name(value) {
     if (this.$name !== value) {
@@ -78,8 +78,8 @@ export class ClipboardBusinessObject
   }
 
   /**
-   * The event that is raised when the {@link ClipboardBusinessObject#name} of this object changes.
-   * @param {function(Object, PropertyChangedEventArgs)} listener
+   * The event that is raised when the {@link ClipboardBusinessObject.name} of this object changes.
+   * @param listener
    */
   addPropertyChangedListener(
     listener: (sender: this, args: PropertyChangedEventArgs) => void
@@ -88,8 +88,8 @@ export class ClipboardBusinessObject
   }
 
   /**
-   * The event that is fired when the {@link ClipboardBusinessObject#name} of this object changes.
-   * @param {function(Object, PropertyChangedEventArgs)} listener
+   * The event that is fired when the {@link ClipboardBusinessObject.name} of this object changes.
+   * @param listener
    */
   removePropertyChangedListener(listener: (sender: this, args: PropertyChangedEventArgs) => void) {
     this.$propertyChangedEvent = delegate.remove(this.$propertyChangedEvent, listener)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -66,7 +66,7 @@ import { detailTemplate, intermediateTemplate, overviewTemplate } from './resour
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle.js'
 import GraphData from './resources/data.js'
 import { showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /* global angular */
 const module = angular.module('myApp', [])
@@ -463,7 +463,7 @@ module.factory('Layout', () => {
       const assistant = employee.assistant
       if (assistant && tree.inDegree(rootNode) > 0) {
         // var inEdge = tree.inEdgesAt(rootNode).get(0);
-        const inEdge = tree.inEdgesAt(rootNode).elementAt(0)
+        const inEdge = tree.inEdgesAt(rootNode).at(0)
         const parent = inEdge.sourceNode
         const oldParentPlacer = nodePlacerMapper.get(parent)
         const assistantNodePlacer = new AssistantNodePlacer()
@@ -582,7 +582,10 @@ module.directive('linebreak', () => {
   }
 })
 
-loadJson().then(licenseData => {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   angular.bootstrap(document.body, ['myApp'])
-})
+}
+
+// noinspection JSIgnoredPromiseFromCall
+run()

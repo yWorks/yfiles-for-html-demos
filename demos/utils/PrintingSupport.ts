@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -68,7 +68,7 @@ export default class PrintingSupport {
    * Prints the detail of the given graph that is specified by either a
    * rectangle in world coordinates or a collection of world coordinate points which
    * define a bounding box in view coordinates.
-   * If no <code>region</code> is specified, the complete graph is printed.
+   * If no `region` is specified, the complete graph is printed.
    */
   printGraph(graph: IGraph, region?: Rect | Point[]): void {
     // Create a new graph component for exporting the original SVG content
@@ -82,7 +82,7 @@ export default class PrintingSupport {
    * Prints the detail of the given GraphComponent's graph that is specified by either a
    * rectangle in world coordinates or a collection of world coordinate points which
    * define a bounding box in view coordinates.
-   * If no <code>region</code> is specified, the complete graph is printed.
+   * If no `region` is specified, the complete graph is printed.
    */
   async print(graphComponent: GraphComponent, region?: Rect | Point[]): Promise<void> {
     let targetRect: Rect

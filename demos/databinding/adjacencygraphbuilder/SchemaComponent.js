@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -72,11 +72,11 @@ import {
   parseData
 } from './ModelClasses.js'
 import { EditAdjacencyNodesSourceDialog } from './EditAdjacencyNodeSourceDialog.js'
-import { DemoEdgeStyle } from '../../resources/demo-styles.js'
 import { ContentRectViewportLimiter } from './ContentRectViewportLimiter.js'
 import { addClass } from '../../resources/demo-app.js'
 import { FlippedArrow } from './FlippedArrow.js'
 import ContextMenu from '../../utils/ContextMenu.js'
+import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles.js'
 
 /**
  * @typedef {('successor'|'predecessor')} NeighborType
@@ -139,13 +139,14 @@ export class SchemaComponent {
 
     this.schemaGraphComponent = new GraphComponent(selector)
     this.configureSchemaStyles()
+    applyDemoTheme(this.schemaGraphComponent)
 
     this.schemaGraphComponent.inputMode = this.configureInputMode(this.schemaGraphComponent.graph)
     this.schemaGraphComponent.viewportLimiter = new ContentRectViewportLimiter()
 
     this.adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
     this.edgeCreator = new EdgeCreator()
-    this.edgeCreator.defaults.style = new DemoEdgeStyle()
+    this.edgeCreator.defaults.style = createDemoEdgeStyle()
 
     this.newNodesSourcesCounter = 1
   }
@@ -577,7 +578,6 @@ export class SchemaComponent {
   /**
    * Configures the given {@link CreateEdgeInputMode} to be able to finish the gesture on an empty
    * canvas with a newly created node.
-   * @param {CreateEdgeInputMode} createEdgeInputMode
    * @param {!CreateEdgeInputMode} createEdgeInputMode
    */
   enableTargetNodeCreation(createEdgeInputMode) {

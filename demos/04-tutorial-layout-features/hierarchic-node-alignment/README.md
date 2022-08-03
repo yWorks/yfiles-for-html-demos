@@ -30,4 +30,4 @@ You can also take a look at the more involved [Critical Paths](../../layout/crit
 
 ### Documentation
 
-The Developer's Guide provides more information about the concepts of the [hierarchical layout](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and especially about how to align a set of given nodes.
+The Developer's Guide provides more information about the concepts of the [hierarchical layout](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and especially about [how to align a set of given nodes](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-emphasizing_critical_paths).

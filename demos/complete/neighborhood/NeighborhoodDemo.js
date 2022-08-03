@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,14 +34,14 @@ import {
   GraphMLSupport,
   GraphViewerInputMode,
   ICommand,
+  IEnumerable,
   INode,
   License,
   List,
   NodeStyleDecorationInstaller,
   StorageLocation,
   StyleDecorationZoomPolicy,
-  TemplateNodeStyle,
-  IEnumerable
+  TemplateNodeStyle
 } from 'yfiles'
 
 import NeighborhoodView from './NeighborhoodView.js'
@@ -49,15 +49,11 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   readGraph,
   showApp
 } from '../../resources/demo-app.js'
-import DemoStyles, {
-  DemoSerializationListener,
-  initDemoStyles
-} from '../../resources/demo-styles.js'
-import loadJson from '../../resources/load-json.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * The GraphComponent
@@ -77,10 +73,10 @@ const neighborhoodModeChooserBox = document.getElementById('neighborhoodModeChoo
 const neighborhoodMaxDistanceSlider = document.getElementById('neighborhoodMaxDistanceSlider')
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
 
@@ -107,7 +103,7 @@ function run(licenseData) {
 
   // initializes the neighborhood modes' combobox
   if (neighborhoodModeChooserBox !== null) {
-    ;['Neighborhood', 'Predecessors', 'Successors', 'FolderContents'].forEach(sample => {
+    ;['Neighbors', 'Predecessors', 'Successors', 'Both', 'FolderContents'].forEach(sample => {
       const option = document.createElement('option')
       option.text = sample
       option.value = sample
@@ -134,7 +130,7 @@ function run(licenseData) {
 
   // initialize the graph and the defaults
   initConverters()
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, { foldingEnabled: true })
 
   // reads the sample graph
   readSampleGraph()
@@ -148,18 +144,11 @@ function run(licenseData) {
  */
 function enableGraphML() {
   // create a new GraphMLSupport instance that handles save and load operations
-  const gs = new GraphMLSupport({
+  new GraphMLSupport({
     graphComponent,
     // configure to load and save to the file system
     storageLocation: StorageLocation.FILE_SYSTEM
   })
-
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
 }
 
 /**
@@ -208,6 +197,7 @@ function initializeNeighborhoodView() {
     const nodes = new List(graphComponent.selection.selectedNodes)
     highlightNodes(nodes)
   }
+  applyDemoTheme(neighborhoodView.neighborhoodComponent)
 }
 
 /**
@@ -248,8 +238,8 @@ function initializeHighlighting() {
 }
 
 /**
- * Creates the input mode for the <code>GraphComponent</code>.
- * @returns {!GraphViewerInputMode} a new <code>GraphViewerInputMode</code> instance
+ * Creates the input mode for the {@link GraphComponent}.
+ * @returns {!GraphViewerInputMode} a new {@link GraphViewerInputMode} instance
  */
 function createEditorMode() {
   // create default interaction with snapping and orthogonal edge editing
@@ -306,6 +296,10 @@ function onNeighborhoodModeChanged() {
       neighborhoodView.neighborhoodMode = NeighborhoodView.MODE_SUCCESSORS
       break
     case 3:
+      neighborhoodMaxDistanceSlider.disabled = false
+      neighborhoodView.neighborhoodMode = NeighborhoodView.MODE_BOTH
+      break
+    case 4:
       neighborhoodMaxDistanceSlider.disabled = true
       neighborhoodView.neighborhoodMode = NeighborhoodView.MODE_FOLDER_CONTENTS
       break
@@ -328,21 +322,13 @@ async function readSampleGraph() {
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   const fileName = `resources/${selectedItem}.graphml`
 
-  const ioh = new GraphMLIOHandler()
-
-  // enable deserialization of the demo styles - without a namespace mapping, deserialization will fail
-  ioh.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  ioh.addHandleSerializationListener(DemoSerializationListener)
-  await readGraph(ioh, graphComponent.graph, fileName)
+  await readGraph(new GraphMLIOHandler(), graphComponent.graph, fileName)
   // when done - fit the bounds
   ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
   // re-enable navigation buttons
   setTimeout(() => (graphChooserBox.disabled = false), 10)
   // update NeighborhoodView
-  graphComponent.currentItem = graphComponent.graph.nodes.firstOrDefault()
+  graphComponent.currentItem = graphComponent.graph.nodes.at(0) ?? null
   if (INode.isInstance(graphComponent.currentItem)) {
     const nodes = new List(graphComponent.selection.selectedNodes)
     highlightNodes(nodes)
@@ -371,5 +357,5 @@ function initConverters() {
   }
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

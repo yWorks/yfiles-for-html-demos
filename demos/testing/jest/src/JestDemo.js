@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,21 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import loadJson from '../../../resources/load-json.js'
+import { fetchLicense } from '../../../resources/fetch-license.js'
 import { GraphComponent, GraphViewerInputMode, ICommand, License } from 'yfiles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../../resources/demo-app.js'
+import { bindAction, bindCommand, showApp } from '../../../resources/demo-app.js'
 import { createEdge, createNode } from './ItemFactory.js'
-import { initBasicDemoStyles } from '../../../resources/basic-demo-styles'
+import { initDemoStyles } from '../../../resources/demo-styles'
 
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
 
   graphComponent.fitGraphBounds()
 
-  initBasicDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph)
 
   registerCommands(graphComponent)
 
@@ -65,4 +65,5 @@ function registerCommands(graphComponent) {
   bindAction('#createEdgeButton', () => createEdge(graphComponent.graph, graphComponent.selection))
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

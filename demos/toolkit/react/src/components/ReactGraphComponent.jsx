@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,7 +51,7 @@ import DemoToolbar from './DemoToolbar.jsx'
 import yFilesLicense from '../license.json'
 import ReactComponentNodeStyle from '../ReactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
-import LayoutWorker from 'worker-loader!../LayoutWorker.js'
+import LayoutWorker from 'worker-loader!../LayoutWorker.js' // eslint-disable-line import/no-webpack-loader-syntax
 import { ContextMenu } from './ContextMenu'
 import ReactGraphOverviewComponent from './GraphOverviewComponent'
 import GraphSearch from '../utils/GraphSearch'

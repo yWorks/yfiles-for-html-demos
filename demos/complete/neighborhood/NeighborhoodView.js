@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,9 +34,9 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   HierarchicLayout,
+  ICollection,
   IEdge,
   IEnumerable,
-  ICollection,
   IGraph,
   IModelItem,
   INode,
@@ -58,7 +58,7 @@ import {
 } from 'yfiles'
 
 /**
- * A widget that can be used together with a {@link NeighborhoodView#graphComponent}
+ * A widget that can be used together with a {@link NeighborhoodView.graphComponent}
  * or an {@link IGraph} to display the neighborhood of a node.
  */
 export default class NeighborhoodView {
@@ -262,12 +262,12 @@ export default class NeighborhoodView {
 
   /**
    * Gets whether to automatically synchronize the
-   * {@link NeighborhoodView#graphComponent}'s selection to the
-   * {@link NeighborhoodView#selectedNodes} of the neighborhood view.
+   * {@link NeighborhoodView.graphComponent}'s selection to the
+   * {@link NeighborhoodView.selectedNodes} of the neighborhood view.
    *
-   * The default is <code>true</code>.
+   * The default is `true`.
    *
-   * The view is only updated automatically if {@link NeighborhoodView#autoUpdatesEnabled auto updates}
+   * The view is only updated automatically if {@link NeighborhoodView.autoUpdatesEnabled auto updates}
    * are enabled.
    * @type {boolean}
    */
@@ -277,12 +277,12 @@ export default class NeighborhoodView {
 
   /**
    * Sets whether to automatically synchronize the
-   * {@link NeighborhoodView#graphComponent}'s selection to the
-   * {@link NeighborhoodView#selectedNodes} of the neighborhood view.
+   * {@link NeighborhoodView.graphComponent}'s selection to the
+   * {@link NeighborhoodView.selectedNodes} of the neighborhood view.
    *
-   * The default is <code>true</code>.
+   * The default is `true`.
    *
-   * The view is only updated automatically if {@link NeighborhoodView#autoUpdatesEnabled auto updates}
+   * The view is only updated automatically if {@link NeighborhoodView.autoUpdatesEnabled auto updates}
    * are enabled.
    * @type {boolean}
    */
@@ -541,8 +541,8 @@ export default class NeighborhoodView {
   }
 
   /**
-   * Schedules a call to {@link NeighborhoodView#update}. All consequent calls that
-   * happen during the {@link NeighborhoodView#autoUpdateTimeMillis update time} are ignored.
+   * Schedules a call to {@link NeighborhoodView.update}. All consequent calls that
+   * happen during the {@link NeighborhoodView.autoUpdateTimeMillis update time} are ignored.
    */
   scheduleUpdate() {
     if (this.updateTimerId >= 0) {
@@ -559,14 +559,14 @@ export default class NeighborhoodView {
   /**
    * Updates the neighborhood view.
    *
-   * If {@link NeighborhoodView#autoUpdatesEnabled} is enabled, this method is
+   * If {@link NeighborhoodView.autoUpdatesEnabled} is enabled, this method is
    * called automatically after the graph has been edited.
    *
    * Filters the source graph and calculates a layout based on the
-   * value set in {@link NeighborhoodView#neighborhoodMode}.
+   * value set in {@link NeighborhoodView.neighborhoodMode}.
    *
-   * @see {@link NeighborhoodView#autoUpdatesEnabled}
-   * @see {@link NeighborhoodView#useSelection}
+   * @see {@link NeighborhoodView.autoUpdatesEnabled}
+   * @see {@link NeighborhoodView.useSelection}
    */
   update() {
     this.neighborhoodComponent.graph.clear()
@@ -602,10 +602,14 @@ export default class NeighborhoodView {
           // Get successors of root node
           direction = TraversalDirection.SUCCESSOR
           break
+        case NeighborhoodView.MODE_BOTH:
+          // Get predecessors and successors of root node
+          direction = TraversalDirection.BOTH
+          break
         default:
         case NeighborhoodView.MODE_NEIGHBORHOOD:
           // Get direct and indirect neighbors of root node
-          direction = TraversalDirection.BOTH
+          direction = TraversalDirection.UNDIRECTED
           break
       }
 
@@ -748,5 +752,12 @@ export default class NeighborhoodView {
    */
   static get MODE_FOLDER_CONTENTS() {
     return 3
+  }
+
+  /**
+   * @type {number}
+   */
+  static get MODE_BOTH() {
+    return 4
   }
 }

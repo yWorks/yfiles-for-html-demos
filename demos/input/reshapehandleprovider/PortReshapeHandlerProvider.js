@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,15 +27,15 @@
  **
  ***************************************************************************/
 import {
-  IReshapeHandleProvider,
-  NodeStylePortStyleAdapter,
-  IPort,
   BaseClass,
-  Size,
-  IInputModeContext,
   HandlePositions,
+  IHandle,
+  IInputModeContext,
+  IPort,
+  IReshapeHandleProvider,
   KeyEventRecognizers,
-  IHandle
+  NodeStylePortStyleAdapter,
+  Size
 } from 'yfiles'
 import { PortReshapeHandle } from './PortReshapeHandle.js'
 
@@ -60,7 +60,7 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
 
   /**
    * Returns {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER} as available handle
-   * positions depending on the modifier state of <c>Ctrl</c>.
+   * positions depending on the modifier state of `Ctrl`.
    * @param {!IInputModeContext} context The context the handles are created in.
    * @returns {!HandlePositions} {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER}
    */

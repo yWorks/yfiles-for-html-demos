@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,7 +54,7 @@ import {
  *
  * This implementation wraps {@link PolylineEdgeStyle}.
  *
- * The {@link PolylineEdgeStyle#stroke} of the wrapped style is modified based on the value stored
+ * The {@link PolylineEdgeStyle.stroke} of the wrapped style is modified based on the value stored
  * in the edge's tag. An arbitrary {@link IPortStyle port style}, that can be set in the
  * constructor, is used to render the edge's bend, a
  */
@@ -98,7 +98,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
   /**
    * Updates the provided visual.
    * @param context The render context.
-   * @param oldVisual The visual that has been created in the call to {@link EdgeStyleBase#createVisual}.
+   * @param oldVisual The visual that has been created in the call to {@link EdgeStyleBase.createVisual}.
    * @param edge The edge to which this style instance is assigned.
    * @return The updated visual.
    * @see EdgeStyleBase#updateVisual
@@ -125,7 +125,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
   }
 
   /**
-   * Renders the edge's bends, using {@link EdgeStyleDecorator#bendStyle} and dummy ports.
+   * Renders the edge's bends, using {@link EdgeStyleDecorator.bendStyle} and dummy ports.
    * @param context The render context.
    * @param group The group element.
    * @param edge The edge.
@@ -214,8 +214,8 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * @param context The canvas context.
    * @param rectangle The clipping rectangle.
    * @param edge The edge to which this style instance is assigned.
-   * @return <code>true</code> if the specified edge is visible in the clipping rectangle;
-   *   <code>false</code> otherwise.
+   * @return `true` if the specified edge is visible in the clipping rectangle;
+   *   `false` otherwise.
    * @override
    * @see EdgeStyleBase#isInside
    */
@@ -230,7 +230,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * @param context The context.
    * @param location The point to test.
    * @param edge The edge to which this style instance is assigned.
-   * @return <code>true</code> if the base visualization is hit.
+   * @return `true` if the base visualization is hit.
    * @see EdgeStyleBase#isHit
    */
   isHit(context: IInputModeContext, location: Point, edge: IEdge): boolean {
@@ -242,7 +242,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * @param context The input mode context.
    * @param rectangle The marquee selection box.
    * @param edge The edge to which this style instance is assigned.
-   * @return <code>true</code> if the base visualization is hit.
+   * @return `true` if the base visualization is hit.
    * @see EdgeStyleBase#isInBox
    */
   isInBox(context: IInputModeContext, rectangle: Rect, edge: IEdge): boolean {
@@ -256,7 +256,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * Delegates the lookup to the base style.
    * @param edge The edge to use for the context lookup.
    * @param type The type to query.
-   * @return An implementation of the <code>type</code> or <code>null</code>.
+   * @return An implementation of the `type` or `null`.
    * @see EdgeStyleBase#lookup
    */
   lookup(edge: IEdge, type: Class<any>): object | null {

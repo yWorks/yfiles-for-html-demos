@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,10 +32,11 @@ import {
   IColumn,
   IInputModeContext,
   INode,
+  Insets,
   IRenderContext,
+  IRow,
   IStripe,
   ITable,
-  Insets,
   MoveInputMode,
   NodeStyleBase,
   Point,
@@ -45,8 +46,7 @@ import {
   TableNodeStyle,
   TableNodeStyleRenderer,
   TableRenderingOrder,
-  Visual,
-  IRow
+  Visual
 } from 'yfiles'
 
 type Cache = {
@@ -81,7 +81,7 @@ class DemoTableStyleRenderer extends TableNodeStyleRenderer {
       return false
     }
 
-    const table = this.node.lookup(ITable.$class) as ITable | null
+    const table = this.node.lookup(ITable.$class)
     if (table == null) {
       return true
     }
@@ -122,7 +122,7 @@ class DemoTableStyleRenderer extends TableNodeStyleRenderer {
  */
 class TableBackgroundStyle extends NodeStyleBase {
   createVisual(renderContext: IRenderContext, node: INode): Visual | null {
-    const table = node.lookup(ITable.$class) as ITable | null
+    const table = node.lookup(ITable.$class)
     if (table != null) {
       const accInsets = table.accumulatedInsets
 
@@ -254,7 +254,7 @@ class TableBackgroundStyle extends NodeStyleBase {
     const g = oldVisual.svgElement
     if (g instanceof SVGElement && g.childElementCount > 0) {
       const cache = (g as any).cache as Cache
-      const table = node.lookup(ITable.$class) as ITable | null
+      const table = node.lookup(ITable.$class)
       if (table != null && cache) {
         const accInsets = table.accumulatedInsets
 
@@ -342,7 +342,7 @@ class TableBackgroundStyle extends NodeStyleBase {
     if (!super.isHit.call(this, inputModeContext, p, node)) {
       return false
     }
-    const table = node.lookup(ITable.$class) as ITable | null
+    const table = node.lookup(ITable.$class)
     if (table == null) {
       return true
     }
@@ -393,7 +393,7 @@ class TableBackgroundStyle extends NodeStyleBase {
  */
 export class DemoStripeStyle extends NodeStyleBase {
   createVisual(renderContext: IRenderContext, node: INode): Visual | null {
-    const stripe = node.lookup(IStripe.$class) as IStripe | null
+    const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     if (stripe !== null) {
       const isColumn = stripe instanceof IColumn
@@ -557,7 +557,7 @@ export class DemoStripeStyle extends NodeStyleBase {
   }
 
   updateVisual(renderContext: IRenderContext, oldVisual: SvgVisual, node: INode): Visual | null {
-    const stripe = node.lookup(IStripe.$class) as IStripe | null
+    const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     const g = oldVisual.svgElement
     const cache = (oldVisual as any).cache as Cache

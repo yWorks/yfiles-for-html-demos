@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -39,6 +39,72 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
     <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .node-color {
+        fill: #76b041;
+        stroke: #2f461a;
+        stroke-width: 2px;
+      }
+
+      .edge-color {
+        stroke: #2f461a;
+        stroke-width: 2px;
+      }
+
+      .edge-color-arrow {
+        fill: #0b7189;
+        stroke: #0b7189;
+      }
+
+      .demo-left #sample-description-container {
+        background-color: #c8dce1;
+        border-radius: 8px;
+        padding: 2px 0;
+        margin: 8px 0;
+      }
+
+      .demo-left #sample-description-container h2,
+      .demo-left #sample-description-container p {
+        padding: 0 16px;
+      }
+
+      .demo-left #sample-description-container ul,
+      .demo-left #sample-description-container ol {
+        padding: 0 30px;
+      }
+
+      .highlight-description {
+        animation-name: highlight-animation;
+        animation-duration: 3s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes highlight-animation {
+        0% {
+          background-color: #c8dce1;
+        }
+        20% {
+          background-color: #ff9800;
+        }
+        100% {
+          background-color: #c8dce1;
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #sample-selection--toolbar {
+        display: none;
+      }
+
+      .demo-left-hidden #sample-selection--toolbar {
+        display: inline-block;
+      }
+    </style>
   </head>
   <body class="demo-has-left">
     <aside class="demo-sidebar demo-left">
@@ -46,8 +112,6 @@
         <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
       </div>
       <div class="demo-sidebar-content">
-        <div class="tutorial-step">Custom Styles Tutorial</div>
-
         <h1>Custom Styles Demo</h1>
 
         <p>
@@ -56,38 +120,92 @@
           (SVG).
         </p>
 
-        <h2>Things to Try</h2>
+        <p>Two samples are offered, each using a different set of custom style implementations.</p>
 
-        <ul>
-          <li>Create new nodes in the canvas and inspect their styles in code.</li>
-          <li>
-            Create edges between nodes and inspect the custom style of the edge and the arrows in
-            code.
-          </li>
-          <li>
-            Click "Modify Colors" to change the color of the nodes and indirectly the color of the
-            outgoing edges.
-          </li>
-          <li>
-            Note that the labels look like nodes connected via an edge, however they are ordinary
-            labels that reuse the edge style for drawing a node to label connection. Select and drag
-            a label to move them to different locations.
-          </li>
-          <li>
-            Also note that the label style depends on the current zoom. Zooming closer to the label
-            reveals an edit label button that, when clicked, starts label text editing.
-          </li>
-          <li>
-            Selecting an edge changes its color - the traditional selection indicator is not
-            rendered.
-          </li>
-        </ul>
+        <div id="sample-selection--sidebar" class="is-loaded">
+          <h2>Samples</h2>
+          <select id="sample-select--sidebar"></select>
+          <span class="demo-separator"></span>
+        </div>
+
+        <div id="sample-description-container">
+          <div id="sample-1-description">
+            <h2>Description</h2>
+            <p>Uses the style implementations</p>
+            <ul>
+              <li><em>Sample1NodeStyle</em></li>
+              <li><em>Sample1EdgeStyle</em></li>
+              <li><em>Sample1LabelStyle</em></li>
+              <li><em>Sample1GroupNodeStyle</em></li>
+              <li><em>Sample1PortStyle</em></li>
+              <li><em>Sample1Arrow</em></li>
+            </ul>
+            <h2>Things to try</h2>
+            <ul>
+              <li>Create new nodes in the canvas and inspect their styles in code.</li>
+              <li>
+                Create edges between nodes and inspect the custom style of the edge and the arrows
+                in code.
+              </li>
+              <li>
+                Click "Modify Colors" to change the color of the nodes and indirectly the color of
+                the outgoing edges.
+              </li>
+              <li>
+                Note that the labels look like nodes connected via an edge, however they are
+                ordinary labels that reuse the edge style for drawing a node to label connection.
+                Select and drag a label to move them to different locations.
+              </li>
+              <li>
+                Also note that the label style depends on the current zoom. Zooming closer to the
+                label reveals an edit label button that, when clicked, starts label text editing.
+              </li>
+              <li>
+                Selecting an edge changes its color - the traditional selection indicator is not
+                rendered.
+              </li>
+            </ul>
+          </div>
+          <div id="sample-2-description" class="hidden">
+            <h2>Description</h2>
+            <p>Uses the style implementations</p>
+            <ul>
+              <li><em>Sample2NodeStyle</em></li>
+              <li><em>Sample2EdgeStyle</em></li>
+              <li><em>Sample2GroupNodeStyle</em></li>
+              <li><em>Sample2Arrow</em></li>
+            </ul>
+            <h2>Things to try</h2>
+            <ul>
+              <li>Create new nodes in the canvas and inspect their styles in code.</li>
+              <li>
+                Create edges between nodes and inspect the custom style of the edge and the arrows
+                in code.
+              </li>
+              <li>
+                The styles offer a <em>cssClass</em> property so that the items may easily be styled
+                via CSS. See the rules (e.g. .node-color) defined in the <em>index.html</em>.
+              </li>
+              <li>
+                Save the sample to graphml by clicking the button in the toolbar. Inspect the markup
+                extension implementations necessary to support graphml (e.g.
+                <em>DemoNodeStyleExtension</em>).
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </aside>
 
     <div class="demo-content">
       <header class="demo-header"></header>
       <div class="demo-toolbar">
+        <div id="sample-selection--toolbar">
+          <label for="sample-select--toolbar">Sample</label>
+          <select id="sample-select--toolbar"></select>
+          <span class="demo-separator"></span>
+        </div>
+
         <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
         <button
           data-command="ZoomOriginal"
@@ -103,8 +221,24 @@
 
         <span class="demo-separator"></span>
 
-        <button data-command="ModifyColors" title="Modify Colors" class="labeled">
+        <button
+          data-command="ModifyColors"
+          id="modify-colors-button"
+          title="Modify Colors"
+          class="labeled"
+        >
           Modify Colors
+        </button>
+
+        <span class="demo-separator"></span>
+
+        <button
+          data-command="Save"
+          title="Save Sample 2 to GraphML file"
+          class="labeled"
+          id="save-button"
+        >
+          Save Sample 2
         </button>
       </div>
 

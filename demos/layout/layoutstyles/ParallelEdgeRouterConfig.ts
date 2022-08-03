@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -77,8 +77,8 @@ const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return The configured layout algorithm.
    */
@@ -95,7 +95,7 @@ const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
   },
 
   /**
-   * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration. This
+   * Called by {@link LayoutConfiguration.apply} to create the layout data of the configuration. This
    * method is typically overridden to provide mappers for the different layouts.
    */
   createConfiguredLayoutData: function (

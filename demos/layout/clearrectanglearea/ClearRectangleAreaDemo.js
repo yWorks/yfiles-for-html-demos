@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,13 +67,16 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
 
-import loadJson from '../../resources/load-json.js'
-import { DemoGroupStyle, DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import SampleData from './resources/SampleData.js'
+import {
+  applyDemoTheme,
+  createDemoGroupStyle,
+  initDemoStyles
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // UI components
 const samplesComboBox = document.getElementById('sample-graph-combobox')
@@ -124,11 +127,12 @@ let graphComponent
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   registerCommands()
 
@@ -198,7 +202,6 @@ function onComponentAssignmentStrategyChanged() {
  */
 function initializeGraph() {
   graphComponent.graph.undoEngineEnabled = true
-  graphComponent.graph.nodeDefaults.style = new DemoNodeStyle()
   initDemoStyles(graphComponent.graph)
   loadGraph('hierarchic')
   graphComponent.graph.undoEngine.clear()
@@ -355,7 +358,7 @@ function getHitGroupNode(context) {
   if (nodeHitTester) {
     return nodeHitTester
       .enumerateHits(context, context.canvasComponent.lastEventLocation)
-      .firstOrDefault(n => graphComponent.graph.isGroupNode(n))
+      .find(n => graphComponent.graph.isGroupNode(n))
   }
   return null
 }
@@ -408,9 +411,9 @@ function loadGraph(sampleName) {
       parentId: 'parentId',
       layout: data => data // the data object itself has x, y, width, height properties
     })
-    const groupStyle = new DemoGroupStyle()
-    // set solidHitTest to true so group nodes are properly hit in getHitGroupNode
-    groupStyle.solidHitTest = true
+    const groupStyle = createDemoGroupStyle({})
+    // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
+    groupStyle.hitTransparentContentArea = false
     nodesSource.nodeCreator.defaults.style = groupStyle
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
@@ -472,5 +475,5 @@ class ClearRectTemplate extends BaseClass(IVisualTemplate) {
   }
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

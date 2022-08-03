@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,8 +44,8 @@ import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.j
  */
 export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   /**
-   * Creates a new instance of <code>AdditionalSnapLineMoveInputMode</code>
-   * @param {!List.<AdditionalSnapLineVisualCreator>} snapLineCreators {List.<AdditionalSnapLineVisualCreator>}
+   * Creates a new instance of {@link AdditionalSnapLineMoveInputMode}
+   * @param {!List.<AdditionalSnapLineVisualCreator>} snapLineCreators
    */
   constructor(snapLineCreators) {
     super()
@@ -84,8 +84,8 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   }
 
   /**
-   * Sets the {@link MoveInputMode#positionHandler} property.
-   * @see Overrides {@link MoveInputMode#onDragStarting}
+   * Sets the {@link MoveInputMode.positionHandler} property.
+   * @see Overrides {@link MoveInputMode.onDragStarting}
    * @param {!InputModeEventArgs} inputModeEventArgs
    */
   onDragStarting(inputModeEventArgs) {
@@ -94,8 +94,8 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   }
 
   /**
-   * Clears the {@link MoveInputMode#positionHandler} property.
-   * @see Overrides {@link MoveInputMode#onDragCanceled}
+   * Clears the {@link MoveInputMode.positionHandler} property.
+   * @see Overrides {@link MoveInputMode.onDragCanceled}
    * @param {!InputModeEventArgs} inputModeEventArgs
    */
   onDragCanceled(inputModeEventArgs) {
@@ -104,8 +104,8 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   }
 
   /**
-   * Clears the {@link MoveInputMode#positionHandler} property.
-   * @see Overrides {@link MoveInputMode#onDragFinished}
+   * Clears the {@link MoveInputMode.positionHandler} property.
+   * @see Overrides {@link MoveInputMode.onDragFinished}
    * @param {!InputModeEventArgs} inputModeEventArgs
    */
   onDragFinished(inputModeEventArgs) {

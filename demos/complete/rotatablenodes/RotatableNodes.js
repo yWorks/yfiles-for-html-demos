@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   BaseClass,
   CanvasComponent,
   Class,
+  ClickEventArgs,
   Cursor,
   GeneralPath,
   GraphComponent,
@@ -49,6 +50,7 @@ import {
   IHighlightIndicatorInstaller,
   IInputMode,
   IInputModeContext,
+  ILookup,
   IMarkupExtensionConverter,
   IModelItem,
   IModelItemCollector,
@@ -87,8 +89,7 @@ import {
   UndoEngine,
   UndoUnitBase,
   Visual,
-  YNumber,
-  ILookup
+  YNumber
 } from 'yfiles'
 
 /**
@@ -473,7 +474,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
 }
 
 /**
- * An extension of {OrientedRectangleIndicatorInstaller} that uses the rotated layout of nodes
+ * An extension of {@link OrientedRectangleIndicatorInstaller} that uses the rotated layout of nodes
  * using a
  * {@link RotatableNodeStyleDecorator}. The indicator will be rotated to fit the rotated bounds of
  * the node.
@@ -493,7 +494,8 @@ class RotatableNodeIndicatorInstaller extends OrientedRectangleIndicatorInstalle
           rect.setAttribute('y', bounds.y.toString())
           rect.setAttribute('width', bounds.width.toString())
           rect.setAttribute('height', bounds.height.toString())
-          rect.setAttribute('stroke', 'black')
+          rect.setAttribute('stroke', '#e8cb87')
+          rect.setAttribute('stroke-width', '2')
           rect.setAttribute('stroke-dasharray', '2, 2')
           rect.setAttribute('stroke-dashoffset', '1.5')
           rect.setAttribute('stroke-linecap', 'butt')
@@ -951,6 +953,12 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
         throw new Error()
     }
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 }
 
 /**
@@ -1003,16 +1011,16 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
     this.node = node
     this.reshapeHandler = node.lookup(IReshapeHandler.$class)
     // Specifies the angular step size to which rotation should snap (in degrees).
-    // Default is 45. Setting this to zero will disable snapping to predefined steps.
+    // Default is `45`. Setting this to `0` will disable snapping to predefined steps.
     this.snapStep = 45
     // Specifies the snapping distance when rotation should snap (in degrees).
-    // The rotation will snap if the angle is less than this distance from a <see
-    // cref="SnapStep">snapping angle</see>. Default is 10. Setting this to a non-positive value will
+    // The rotation will snap if the angle is less than this distance from a {@link snapStep snapping angle}.
+    // Default is `10`. Setting this to a non-positive value will
     // disable snapping to predefined steps.
     this.snapDelta = 10
     // Specifies the snapping distance (in degrees) for snapping to the same angle as other visible
     // nodes. Rotation will snap to another node's rotation angle if the current angle differs from
-    // the other one by less than this. The default is 5. Setting this to a non-positive value will
+    // the other one by less than this. The default is `5`. Setting this to a non-positive value will
     // disable same angle snapping.
     this.snapToSameAngleDelta = 5
   }
@@ -1068,7 +1076,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
 
     // Specifies the threshold value the specifies whether the angle should snap to the next multiple
     // of
-    // {@link #snapStep} in degrees. Set a value less than or equal to zero to disable this feature.
+    // {@link snapStep} in degrees. Set a value less than or equal to zero to disable this feature.
     this.snapDelta = 0
     // Specifies the steps in degrees to which rotation should snap to.
     this.snapStep = 0
@@ -1422,6 +1430,12 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       .add(up.multiply(size.height + offset))
       .add(new Point(-up.y, up.x).multiply(size.width * 0.5))
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 }
 
 /**
@@ -1707,8 +1721,9 @@ class DelegatingContext extends BaseClass(IInputModeContext) {
 
   /**
    * Delegates to the wrapped context's lookup but cancels the snap context.
-   * @param {!Class} type
-   * @returns {?object}
+   * @template {*} T
+   * @param {!Class.<T>} type
+   * @returns {?T}
    */
   lookup(type) {
     return type === SnapContext.$class ? null : this.context.lookup(type)

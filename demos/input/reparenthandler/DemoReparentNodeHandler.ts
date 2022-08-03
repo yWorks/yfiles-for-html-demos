@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -63,13 +63,13 @@ export default class DemoReparentNodeHandler extends ReparentNodeHandler {
 
   /**
    * In general, this method determines whether the provided node
-   * may be reparented to the given <code>newParent</code>.
+   * may be reparented to the given `newParent`.
    * @param context The context that provides information about the
    * user input.
    * @param node The node that will be reparented.
    * @param newParent The potential new parent.
-   * @return Whether <code>newParent</code> is a valid new parent
-   * for <code>node</code>.
+   * @return Whether `newParent` is a valid new parent
+   * for `node`.
    */
   isValidParent(context: IInputModeContext, node: INode, newParent: INode): boolean {
     // Obtain the tag from the designated child

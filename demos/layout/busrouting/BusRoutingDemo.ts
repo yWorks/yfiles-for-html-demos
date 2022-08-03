@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,10 +48,10 @@ import {
   SolidColorFill,
   Stroke
 } from 'yfiles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import SampleData from './resources/SampleData'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Provides different color fills for new edge busses in this demo.
@@ -62,7 +62,7 @@ class ColorUtil {
 
   /**
    * Returns a fill not yet in use.
-   * @see connectNodes
+   * @see {@link connectNodes}
    */
   nextFill(): Fill {
     if (this.index >= this.fills.length) {
@@ -124,12 +124,13 @@ const colorUtil = new ColorUtil()
  * Runs the demo.
  * @param licenseData The yFiles license information.
  */
-async function run(licenseData: any) {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   registerCommands()
 
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureUserInteraction(graphComponent)
 
@@ -175,8 +176,6 @@ function configureGraph(graph: IGraph): void {
 
   // increase the default node size to 50x50 pixel
   graph.nodeDefaults.size = Size.from([50, 50])
-  // use PolylineEdgeStyle as the default style
-  graph.edgeDefaults.style = new PolylineEdgeStyle()
 }
 
 /**
@@ -327,7 +326,7 @@ function newEdgeStyle(): PolylineEdgeStyle {
 
 /**
  * Helper function to disable UI during layout animation
- * @param {boolean} disabled
+ * @param disabled
  */
 function disableUI(disabled: boolean) {
   const connect = document.getElementById('connect') as HTMLButtonElement
@@ -348,5 +347,5 @@ function registerCommands() {
   bindAction("button[data-command='Connect']", connectNodes)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

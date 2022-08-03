@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,16 +56,12 @@ import {
 } from 'yfiles'
 
 import VuejsNodeStyle from './VuejsNodeStyle'
-import { checkLicense, showApp } from '../../resources/demo-app'
+import { showApp } from '../../resources/demo-app'
 import orgChartData from './resources/OrgChartData'
-import loadJson from '../../resources/load-json'
 
-// import vue typings
-// @ts-ignore
-import Vue, { PropType } from 'vue'
-// import vue typings
-// @ts-ignore
-import { ThisTypedComponentOptionsWithArrayProps } from 'vue/types/options'
+import type { PropType } from 'vue'
+import type { ThisTypedComponentOptionsWithArrayProps } from 'vue/types/options'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Mapping of statuses to colors, used in the node style.
@@ -114,10 +110,8 @@ const sharedData: { focusedNodeData: Employee | null } = {
   focusedNodeData: null
 }
 
-loadJson().then(checkLicense).then(run)
-
-function run(licenseData: object) {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   /**
    * This Vue component is used to display the graph nodes. Its template is based on the Orgchart
@@ -164,7 +158,7 @@ function run(licenseData: object) {
 
   /**
    * This Vue component wraps a {@link GraphComponent}. It takes an {@link IGraph} as a prop
-   * and emits a custom event <code>focused-item-changed</code> when the focused item of the
+   * and emits a custom event `focused-item-changed` when the focused item of the
    * GraphComponent changes.
    */
   Vue.component('graph-component', {
@@ -172,6 +166,7 @@ function run(licenseData: object) {
     created(): void {
       // the GraphComponent is created but not appended to the DOM yet
       const graphComponent = new GraphComponent()
+      // @ts-ignore
       this.$graphComponent = graphComponent
 
       // create a graph from the Orgchart data.
@@ -206,19 +201,15 @@ function run(licenseData: object) {
   /**
    * Main Vue instance which starts the demo and serves as a mediator between other Vue instances.
    */
-  new Vue({
-    el: '#yfiles-vue-app',
-    data: {
+  new (Vue.extend({
+    data: () => ({
       sharedData
-    },
+    }),
     methods: {
       getGraphComponent(): GraphComponent | null {
-        // @ts-ignore
         return this.$refs.graphComponent !== undefined &&
-          // @ts-ignore
           isVueComponentWithGraphComponent(this.$refs.graphComponent)
-          ? // @ts-ignore
-            this.$refs.graphComponent.$graphComponent
+          ? this.$refs.graphComponent.$graphComponent
           : null
       },
       zoomIn(): void {
@@ -234,20 +225,21 @@ function run(licenseData: object) {
         ICommand.FIT_GRAPH_BOUNDS.execute(null, this.getGraphComponent())
       },
       /**
-       * This is called when the custom <code>focused-item-changed</code> event is emitted on the
+       * This is called when the custom `focused-item-changed` event is emitted on the
        * graph-control.
        * @param tag The tag of the currently focused node or null if no node is focused.
        */
-      focusedItemChanged(tag: Employee | null) {
+      focusedItemChanged(tag: Employee | null): void {
         // update shared state
-        // @ts-ignore
         this.sharedData.focusedNodeData = tag
       }
     },
     mounted(): void {
       // run the demo
-      showApp(null)
+      showApp()
     }
+  }))({
+    el: '#yfiles-vue-app'
   })
 
   /**
@@ -280,8 +272,8 @@ function run(licenseData: object) {
 
   /**
    * Create the Orgchart graph using a TreeSource.
-   * @param {Object} nodesSource The source data in JSON format
-   * @param {IGraph} graph
+   * @param nodesSource The source data in JSON format
+   * @param graph
    * @return {IGraph}
    */
   function createGraph(nodesSource: Employee[], graph: IGraph) {
@@ -307,7 +299,7 @@ function run(licenseData: object) {
 
   /**
    * Applies a tree layout like in the Orgchart demo.
-   * @param {IGraph} tree
+   * @param tree
    */
   function doLayout(tree: IGraph) {
     const nodePlacerMapper = new Mapper<INode, ITreeLayoutNodePlacer>()
@@ -392,3 +384,6 @@ function run(licenseData: object) {
     })
   }
 }
+
+// noinspection JSIgnoredPromiseFromCall
+run()

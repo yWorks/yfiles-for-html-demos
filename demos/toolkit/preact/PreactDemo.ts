@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 // @ts-ignore
-import { render, html, useState } from './preact-loader'
-// @ts-ignore
 import type { FunctionalComponent } from './preact-loader'
-import loadJson from '../../resources/load-json'
+// @ts-ignore
+import { html, render, useState } from './preact-loader'
+import { fetchLicense } from '../../resources/fetch-license'
 import { License } from 'yfiles'
 import ItemList from './components/items/ItemList'
 import PreactGraphComponent from './components/graphComponent/PreactGraphComponent'
@@ -94,7 +94,9 @@ const App: FunctionalComponent = () => {
     }
     const randomItem = items[Math.floor(Math.random() * items.length)]
     const newConnections = [...connections]
-    newConnections.push({ from: randomItem.id, to: id })
+    if (randomItem) {
+      newConnections.push({ from: randomItem.id, to: id })
+    }
     setConnections(newConnections)
   }
 
@@ -107,8 +109,10 @@ const App: FunctionalComponent = () => {
     />`
 }
 
-function init(license: any) {
-  License.value = license
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   render(html` <${App} />`, document.querySelector('.preact-app'))
 }
-loadJson().then(init)
+
+// noinspection JSIgnoredPromiseFromCall
+run()

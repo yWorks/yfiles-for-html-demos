@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,7 +44,7 @@ import type { NodeData } from './MindmapUtil'
 /**
  * A decorator that renders an icon (the state label) with a text label.
  * This class implements the Decorator pattern. An innerStyle is used by this style
- * to render a text alongside with an icon. The style uses {@link StateLabelDecorator#wrappedStyle}
+ * to render a text alongside with an icon. The style uses {@link StateLabelDecorator.wrappedStyle}
  * to render the icon. The icon is determined by the StateIcon property inside a nodes tag.
  * The placement of the icon is on the right (left) side of the text label for nodes on the
  * left (right) side of the tree. Visual caching is implemented using a helper class
@@ -63,7 +63,7 @@ export default class StateLabelDecorator extends LabelStyleBase {
 
   /**
    * The decorator constructor.
-   * The wrapped labelStyle is passed as <code>wrappedStyle</code>
+   * The wrapped labelStyle is passed as `wrappedStyle`
    * and used by the iconLabelStyle to render the text label.
    * @param wrappedStyle The wrapped labelStyle that is used to render the text.
    */
@@ -120,7 +120,7 @@ export default class StateLabelDecorator extends LabelStyleBase {
    * Creates the Visual and initializes the RenderDataCache.
    * @param renderContext The render context.
    * @param label The label to which this style instance is assigned.
-   * @see Overrides {@link LabelStyleBase#createVisual}
+   * @see Overrides {@link LabelStyleBase.createVisual}
    */
   createVisual(renderContext: IRenderContext, label: ILabel): Visual {
     // create the cache for updating the visual
@@ -142,7 +142,7 @@ export default class StateLabelDecorator extends LabelStyleBase {
    * @param renderContext The render context.
    * @param oldVisual The old visual.
    * @param label The label to which this style instance is assigned.
-   * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @see Overrides {@link LabelStyleBase.updateVisual}
    */
   updateVisual(renderContext: IRenderContext, oldVisual: Visual, label: ILabel): Visual {
     const cache = this.createRenderDataCache(label.owner!.tag)
@@ -164,9 +164,9 @@ export default class StateLabelDecorator extends LabelStyleBase {
   }
 
   /**
-   * Returns the preferred size of the wrapped {@link StateLabelDecorator#wrappedStyle}.
+   * Returns the preferred size of the wrapped {@link StateLabelDecorator.wrappedStyle}.
    * @param label The given label.
-   * @see Overrides {@link LabelStyleBase#getPreferredSize}
+   * @see Overrides {@link LabelStyleBase.getPreferredSize}
    */
   getPreferredSize(label: ILabel): Size {
     const cache = this.createRenderDataCache(label.owner!.tag)

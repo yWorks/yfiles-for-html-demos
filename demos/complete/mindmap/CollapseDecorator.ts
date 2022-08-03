@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -62,7 +62,7 @@ import { hasChildNodes } from './MindmapUtil'
  *
  * This style implements the decorator pattern. Two {@link IconLabelStyle}
  * instances are used to render the collapse and expand buttons. The actual
- * style is determined using the {@link NodeData#isCollapsed isCollapsed}
+ * style is determined using the {@link NodeData.isCollapsed isCollapsed}
  * information in the node's tag.
  *
  * A {@link SimpleLabel dummy label} is used to render the collapse
@@ -86,7 +86,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * Creates the wrappedStyle visual and adds the icon visualization.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     // create the outer g element
@@ -142,16 +142,16 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param context The render context.
    * @param oldVisual The old visual.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual {
     if (!(oldVisual instanceof SvgVisual) || !('wrappedStyle-visual' in oldVisual.svgElement)) {
       return this.createVisual(context, node)
     }
 
-    const container = oldVisual.svgElement as SVGElement
+    const container = oldVisual.svgElement as SVGElement & { 'wrappedStyle-visual': SvgVisual }
     // retrieve the wrappedStyle visual from the container
-    const wrappedStyleVisual = (container as any)['wrappedStyle-visual'] as SvgVisual
+    const wrappedStyleVisual = container['wrappedStyle-visual']
     // update the wrappedStyle visual
     const newWrappedVisual = this.wrappedStyle.renderer
       .getVisualCreator(node, this.wrappedStyle)
@@ -268,7 +268,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param canvasContext The canvas context.
    * @param clip The clipping rectangle.
    * @param node The given node.
-   * @see Overrides {@link NodeStyleBase#isVisible}
+   * @see Overrides {@link NodeStyleBase.isVisible}
    */
   isVisible(canvasContext: ICanvasContext, clip: Rect, node: INode): boolean {
     // check if node bounds + icon is visible
@@ -290,7 +290,7 @@ export default class CollapseDecorator extends NodeStyleBase {
   /**
    * Delegates the call to the wrappedStyle style.
    * @param node The given node.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    */
   getOutline(node: INode): GeneralPath | null {
     return this.wrappedStyle.renderer.getShapeGeometry(node, this.wrappedStyle).getOutline()
@@ -300,7 +300,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * Delegates the call to the wrappedStyle style.
    * @param canvasContext The canvas context.
    * @param node The given node.
-   * @see Overrides {@link NodeStyleBase#getBounds}
+   * @see Overrides {@link NodeStyleBase.getBounds}
    */
   getBounds(canvasContext: ICanvasContext, node: INode): Rect {
     return this.wrappedStyle.renderer
@@ -313,7 +313,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param canvasContext The canvas context.
    * @param p The point to test.
    * @param node The given node.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(canvasContext: IInputModeContext, p: Point, node: INode): boolean {
     return this.wrappedStyle.renderer
@@ -326,7 +326,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param canvasContext The canvas context.
    * @param box The marquee selection box.
    * @param node The given node.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    */
   isInBox(canvasContext: IInputModeContext, box: Rect, node: INode): boolean {
     return this.wrappedStyle.renderer
@@ -338,7 +338,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * Delegates the call to the wrappedStyle style.
    * @param node The given node.
    * @param type The type to query.
-   * @see Overrides {@link NodeStyleBase#lookup}
+   * @see Overrides {@link NodeStyleBase.lookup}
    */
   lookup(node: INode, type: Class): object | null {
     return this.wrappedStyle.renderer.getContext(node, this.wrappedStyle).lookup(type)
@@ -349,7 +349,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param node The given node.
    * @param inner The inner coordinates.
    * @param outer The outer coordinates.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    */
   getIntersection(node: INode, inner: Point, outer: Point): Point | null {
     return this.wrappedStyle.renderer
@@ -361,7 +361,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * Delegates the call to the wrappedStyle style.
    * @param node The given node.
    * @param point The point to test.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    */
   isInside(node: INode, point: Point): boolean {
     return this.wrappedStyle.renderer.getShapeGeometry(node, this.wrappedStyle).isInside(point)

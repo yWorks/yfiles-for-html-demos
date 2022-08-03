@@ -34,6 +34,6 @@ See the [Layer Constraints](../../layout/layerconstraints/index.html) demo for a
 
 ### Documentation
 
-See the Constrained Node Sequencing section in the Developer's Guide for an in-depth discussion of the relevant concepts.
+See the [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-constrained_layer_assignment) section in the Developer's Guide for an in-depth discussion of the relevant concepts.
 
 See the [LayerConstraintData](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData) API documentation for detailed information on all available constraints.

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,10 +67,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Returns whether or not high-performance rendering is used.
-   * If set to false, the base implementation of {@link NodeStyleBase#updateVisual} is used which
-   * simply calls {@ling MySimpleNodeStyle#createVisual}.
+   * If set to false, the base implementation of {@link NodeStyleBase.updateVisual} is used which
+   * simply calls {@link MySimpleNodeStyle.createVisual}.
    * This property exists only in this sample to show the performance improvement when properly implementing
-   * {@link NodeStyleBase#updateVisual}.
+   * {@link NodeStyleBase.updateVisual}.
    * @type {boolean}
    */
   get highPerformanceRendering() {
@@ -79,10 +79,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Sets whether or not high-performance rendering is used.
-   * If set to false, the base implementation of {@link NodeStyleBase#updateVisual} is used which
-   * simply calls {@ling MySimpleNodeStyle#createVisual}.
+   * If set to false, the base implementation of {@link NodeStyleBase.updateVisual} is used which
+   * simply calls {@link createVisual}.
    * This property exists only in this sample to show the performance improvement when properly implementing
-   * {@link NodeStyleBase#updateVisual}.
+   * {@link NodeStyleBase.updateVisual}.
    * @type {boolean}
    */
   set highPerformanceRendering(value) {
@@ -91,7 +91,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
    * @param {!INode} node
@@ -187,8 +187,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Determines the color to use for filling the node.
-   * This implementation uses the {@link #nodeColor} property unless
-   * the {@link ITagOwner#tag} of the {@link INode} is of type {@link Color},
+   * This implementation uses the {@link nodeColor} property unless
+   * the {@link ITagOwner.tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
    * @param {!INode} node The node to determine the color for.
    * @returns {!string} The color for filling the node.
@@ -201,7 +201,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual for a node.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!INode} node
    * @returns {!SvgVisual}
@@ -220,9 +220,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Actually creates the visual appearance of a node given the values provided by
-   * {@link MySimpleNodeStyle#createRenderDataCache}. This renders the node and the edges to the labels and adds the
-   * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
-   * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
+   * {@link MySimpleNodeStyle.createRenderDataCache}. This renders the node and adds the
+   * elements to the `container`. All items are arranged as if the node was located at (0,0).
+   * {@link MySimpleNodeStyle.createVisual} and {@link MySimpleNodeStyle.updateVisual} finally arrange the container
    * so that the drawing is translated into the final position.
    * @param {!IRenderContext} context
    * @param {!INode} node

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -227,6 +227,9 @@ export class FlowchartNodeStyle extends NodeStyleBase {
     if (cache.fill !== this.fill) {
       if (!this.cssClass) {
         Fill.setFill(this.fill, path, context)
+        if (decoration) {
+          Fill.setFill(this.fill, decoration, context)
+        }
       }
       cache.fill = this.fill
     }
@@ -1206,12 +1209,11 @@ function createDownBracket(x, y, width, height) {
 /**
  * Returns a constant representing the orientation/placement of the
  * annotation's bracket. One of
- * <ul>
- *   <li>down</li>
- *   <li>right</li>
- *   <li>top</li>
- *   <li>left</li>
- * </ul>
+ *
+ * - down
+ * - right
+ * - top
+ * - left
  * @param {!INode} node the node
  * @param {!IRenderContext} context the render context
  * @returns {!('left'|'right'|'top'|'down')}

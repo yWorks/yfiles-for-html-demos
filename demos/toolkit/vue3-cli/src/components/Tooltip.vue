@@ -1,5 +1,5 @@
 <template>
-  <div className="diagram-tooltip">
+  <div class="diagram-tooltip">
     <h4>{{ title }}</h4>
     <p>{{ content }}</p>
   </div>

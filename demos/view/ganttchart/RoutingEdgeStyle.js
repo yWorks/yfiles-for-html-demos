@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -218,7 +218,7 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer {
 
   /**
    * Constructs the orthogonal edge path.
-   * @see Overrides {@link PathBasedEdgeStyleRenderer#createPath}
+   * @see Overrides {@link PathBasedEdgeStyleRenderer.createPath}
    * @returns {!GeneralPath}
    */
   createPath() {
@@ -335,8 +335,9 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer {
 
   /**
    * Returns an instance that implements the given type or null if no such instance is available.
-   * @param {!Class} type
-   * @returns {?object}
+   * @template {*} T
+   * @param {!Class.<T>} type
+   * @returns {?T}
    */
   lookup(type) {
     return super.lookup.call(this, type)

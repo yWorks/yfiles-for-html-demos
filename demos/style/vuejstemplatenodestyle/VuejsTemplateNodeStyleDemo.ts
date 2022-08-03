@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,9 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global CodeMirror */
-// import CodeMirror typings
-import CodeMirror, { EditorConfiguration, EditorFromTextArea } from 'codemirror'
+import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
 import {
   GraphBuilder,
   GraphComponent,
@@ -45,19 +43,12 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import SampleData from './resources/sample'
 import type { SampleDataType } from './resources/sample'
+import SampleData from './resources/sample'
 import VuejsNodeStyleMarkupExtension from '../../utils/VuejsNodeStyleMarkupExtension'
 import VuejsNodeStyle from '../../utils/VuejsNodeStyle'
-import {
-  addClass,
-  bindAction,
-  bindCommand,
-  checkLicense,
-  removeClass,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -71,8 +62,8 @@ let graphMLSupport: GraphMLSupport
  * Runs the demo.
  * @param licenseData
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
 
@@ -115,7 +106,7 @@ function initializeTextAreas(): void {
   graphComponent.focusIndicatorManager.enabled = false
 
   graphComponent.selection.addItemSelectionChangedListener(() => {
-    const selectedNode = graphComponent.selection.selectedNodes.firstOrDefault()
+    const selectedNode = graphComponent.selection.selectedNodes.at(0)
     if (selectedNode) {
       if (VuejsNodeStyle.isInstance(selectedNode.style)) {
         templateTextArea.setOption('readOnly', false)
@@ -323,4 +314,5 @@ function registerCommands(): void {
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

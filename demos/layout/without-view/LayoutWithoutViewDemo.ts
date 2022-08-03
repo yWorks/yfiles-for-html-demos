@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,10 +48,9 @@ import {
   YPoint
 } from 'yfiles'
 
-import loadJson from '../../resources/load-json'
-
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  const response = await fetch('../../../lib/license.json')
+  License.value = await response.json()
 
   // create the graph in memory
   const layoutGraph = new DefaultLayoutGraph()
@@ -254,9 +253,5 @@ function log(value?: string | object | undefined): void {
   logElement.textContent += `${value}\n`
 }
 
-/* launch the demo */
-loadJson()
-  .then(run)
-  .catch(e => {
-    log(`Error ${e}`)
-  })
+// noinspection JSIgnoredPromiseFromCall
+run()

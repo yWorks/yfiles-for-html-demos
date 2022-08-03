@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,7 +38,7 @@ import { HeatData } from './HeatData.js'
 function getRandomOutEdge(graph, startNode) {
   const probabilitySum = graph.outEdgesAt(startNode).sum(edge => edge.tag.probability)
   let value = Math.random() * probabilitySum
-  return graph.outEdgesAt(startNode).firstOrDefault(edge => {
+  return graph.outEdgesAt(startNode).find(edge => {
     value -= edge.tag.probability
     return value <= 0
   })

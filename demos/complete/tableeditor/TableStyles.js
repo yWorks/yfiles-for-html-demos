@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,10 +32,11 @@ import {
   IColumn,
   IInputModeContext,
   INode,
+  Insets,
   IRenderContext,
+  IRow,
   IStripe,
   ITable,
-  Insets,
   MoveInputMode,
   NodeStyleBase,
   Point,
@@ -45,8 +46,7 @@ import {
   TableNodeStyle,
   TableNodeStyleRenderer,
   TableRenderingOrder,
-  Visual,
-  IRow
+  Visual
 } from 'yfiles'
 
 /**

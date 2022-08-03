@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,17 +52,15 @@ import { AggregationGraphWrapper } from '../../utils/AggregationGraphWrapper'
 
 /**
  * A helper class that provides methods to aggregate and separate nodes according to a {@link NodeAggregationResult}.
- * <p>
+ *
  * Delegates most of it's work to an {@link AggregationGraphWrapper}. Implements some functionality on top:
- * </p>
- * <ul>
- * <li>When separating a node, this class creates a new aggregation node as replacement. This node represents the
- * hierarchy also in separated state and allows the user to aggregate its children again.</li>
- * <li>Creates additional "hierarchy" edges between such nodes and its children.</li>
- * <li>Since {@link NodeAggregate}s are allowed to both have children as well as represent an original node, the
+ *
+ * - When separating a node, this class creates a new aggregation node as replacement. This node represents the
+ * hierarchy also in separated state and allows the user to aggregate its children again.
+ * - Creates additional "hierarchy" edges between such nodes and its children.
+ * - Since {@link NodeAggregate}s are allowed to both have children as well as represent an original node, the
  * aggregation nodes for such aggregates are special placeholder nodes that adopt its visual appearance, its labels, as
- * well as its edges to other nodes.</li>
- * </ul>
+ * well as its edges to other nodes.
  */
 export class AggregationHelper {
   /**
@@ -157,7 +155,7 @@ export class AggregationHelper {
   }
 
   /**
-   * If a node is aggregated, calls {@link AggregationHelper#separate}, if not calls {@link AggregationHelper#aggregate}.
+   * If a node is aggregated, calls {@link AggregationHelper.separate}, if not calls {@link AggregationHelper.aggregate}.
    * @param node The node.
    * @returns The nodes affected by this operation. The created aggregation node is always the first item.
    */
@@ -200,12 +198,12 @@ export class AggregationHelper {
   }
 
   /**
-   * Aggregates the <code>aggregate</code> as well as all its children recursively.
-   * <p>
+   * Aggregates the `aggregate` as well as all its children recursively.
+   *
    * Can be used to apply the initial aggregation. If this is not the initial aggregation run, it will reuse existing aggregation nodes.
-   * </p>
+   *
    * @param aggregate The "root" aggregate.
-   * @returns The aggregation node representing the passed <code>aggregate</code>
+   * @returns The aggregation node representing the passed `aggregate`
    */
   public aggregateRecursively(aggregate: NodeAggregate): INode {
     if (aggregate.children.size === 0) {
@@ -261,7 +259,7 @@ export class AggregationHelper {
   }
 
   /**
-   * Gets the descendant {@link NodeAggregate} with the highest {@link NodeAggregate#descendantWeightSum}.
+   * Gets the descendant {@link NodeAggregate} with the highest {@link NodeAggregate.descendantWeightSum}.
    */
   private static getMostImportantDescendant(aggregate: NodeAggregate): NodeAggregate {
     // eslint-disable-next-line no-constant-condition
@@ -277,7 +275,7 @@ export class AggregationHelper {
   }
 
   /**
-   * Copies the labels from <code>source</code> to <code>target</code>.
+   * Copies the labels from `source` to `target`.
    */
   private $copyLabels(source: INode, target: INode): void {
     for (const label of source.labels) {
@@ -292,9 +290,9 @@ export class AggregationHelper {
 
   /**
    * Separates an aggregated aggregation node and replaces it by a new aggregation node.
-   * <p>
+   *
    * Creates hierarchy edges between the new aggregation node and its children.
-   * </p>
+   *
    * @param node The node.
    * @returns The nodes affected by this operation. The created aggregation node is always the first item.
    */

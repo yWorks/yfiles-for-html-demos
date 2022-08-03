@@ -409,20 +409,20 @@
     {
       "id": "group0",
       "layout": {
-        "x": 0,
+        "x": -40,
         "y": 60,
-        "width": 294,
-        "height": 385.8
+        "width": 334,
+        "height": 395.8
       },
       "label": "Group 1"
     },
     {
       "id": "group1",
       "layout": {
-        "x": 6,
+        "x": -14,
         "y": 318,
-        "width": 192,
-        "height": 123
+        "width": 212,
+        "height": 133
       },
       "group": "group0",
       "label": "Group 2"
@@ -430,10 +430,10 @@
     {
       "id": "group2",
       "layout": {
-        "x": 71.5,
+        "x": 51.5,
         "y": 466,
-        "width": 248,
-        "height": 133
+        "width": 268,
+        "height": 143
       },
       "label": "Group 3"
     }

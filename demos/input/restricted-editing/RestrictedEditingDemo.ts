@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,20 +35,21 @@ import {
   IGraph,
   License
 } from 'yfiles'
-import loadJson from '../../resources/load-json'
-import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import SampleData from './resources/SampleData'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Bootstraps this demo.
  * @param licenseData The yFiles license information.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initially disable interactive editing
   configureUserInteraction(graphComponent)
@@ -140,11 +141,10 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
  * Configures interactive editing according to the given operations value.
  * @param graphComponent the graph view for which interactive editing is configured.
  * @param operations Determines which interactive editing operations are enabled or disabled.
- * <dl>
- *   <dt>none</dt><dd>All interactive editing operations are disabled.</dd>
- *   <dt>moving</dt><dd>Interactive editing is disabled except for interactively moving items.</dd>
- *   <dt>all</dt><dd>All interactive editing operations are enabled.</dd>
- * </dl>
+ *
+ * - __none__: All interactive editing operations are disabled.
+ * - __moving__: Interactive editing is disabled except for interactively moving items.
+ * - __all__: All interactive editing operations are enabled.
  */
 function configureEditing(
   graphComponent: GraphComponent,
@@ -206,4 +206,5 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindChangeListener('#allowedEditingOperations', value => configureEditing(graphComponent, value))
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

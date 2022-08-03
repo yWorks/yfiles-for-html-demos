@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,7 +50,7 @@ const color = d3.scaleLinear().range(['#1dccc2', '#2f5b88']).interpolate(d3.inte
 export default class D3ChartNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @param {!IRenderContext} renderContext
    * @param {!INode} node
    * @returns {!SvgVisual}
@@ -101,7 +101,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @param {!IRenderContext} renderContext
    * @param {!SvgVisual} oldVisual
    * @param {!INode} node

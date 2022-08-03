@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
+import { NodeStyleBase, SvgVisual } from 'yfiles'
 import ReactDOM from 'react-dom'
-import React, { ComponentClass, FunctionComponent } from 'react'
+import React from 'react'
 
 /**
  * @param {!IRenderContext} context
@@ -50,11 +50,18 @@ function dispose(context, removedVisual, dispose) {
  */
 
 /**
- * @typedef {(ComponentClass.<ReactComponentNodeStyleProps.<TTag>>|FunctionComponent.<ReactComponentNodeStyleProps.<TTag>>)} RenderType
+ * @typedef {(ComponentClass.<ReactComponentNodeStyleProps.<TTag>>|FunctionComponent.<ReactComponentNodeStyleProps.<TTag>>)}
+ *   RenderType
+ * @typedef {import("yfiles").INode} INode
+ * @typedef {import("yfiles").IRenderContext} IRenderContext
+ * @typedef {import("yfiles").Visual} Visual
+ * @typedef {import("react").ComponentClass} ComponentClass
+ * @typedef {import("react").FunctionComponent} FunctionComponent
  */
 
 /**
- * A simple INodeStyle implementation that uses React Components for rendering the node visualizations
+ * A simple INodeStyle implementation that uses React Components for rendering the node
+ * visualizations
  */
 export default class ReactComponentNodeStyle extends NodeStyleBase {
   /**

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -80,7 +80,7 @@
         <y:RectD X="49.740000000000066" Y="128.5390625" Width="295.25999999999993" Height="341.4609375"/>
       </data>
       <data key="d7">
-        <yjs:PanelNodeStyle color="#FFF2F0D8" labelInsetsColor="#FF808080" insets="15"/>
+        <yjs:GroupNodeStyle tabFill="#FF808080" hitTransparentContentArea="true"/>
       </data>
       <graph id="n0:" edgedefault="directed">
         <node id="n0::n0">
@@ -314,7 +314,7 @@
         <y:RectD X="-386.62666666666655" Y="326.7890625" Width="298.2099999999999" Height="253.01093749999995"/>
       </data>
       <data key="d7">
-        <yjs:PanelNodeStyle color="#FFF2F0D8" labelInsetsColor="#FFFF9900" insets="15,30,15,15"/>
+        <yjs:GroupNodeStyle tabFill="#FFFF9900" hitTransparentContentArea="true" />
       </data>
       <graph id="n1:" edgedefault="directed">
         <node id="n1::n0">

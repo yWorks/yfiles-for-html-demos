@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,21 +31,20 @@ import {
   BridgeCrossingStyle,
   BridgeOrientationStyle,
   GeneralPath,
+  GroupNodeStyle,
   IBridgeCreator,
   INode,
-  Insets,
   IObstacleProvider,
   IRenderContext,
   Point
 } from 'yfiles'
-import { DemoGroupStyle } from '../../resources/demo-styles.js'
 
 /**
- * A custom delegating callback that implements {@link CustomCallback#createCustomBridge} differently.
+ * A custom delegating callback that implements {@link CustomCallback.createCustomBridge} differently.
  */
 export class CustomCallback extends BaseClass(IBridgeCreator) {
   /**
-   * Creates a new instance of <code>CustomCallback</code>
+   * Creates a new instance of {@link CustomCallback}
    * @param {!IBridgeCreator} fallback
    */
   constructor(fallback) {
@@ -133,11 +132,11 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
 /**
  * Custom {@link IObstacleProvider} implementation that returns the node style's outline
  * as an obstacle.
- * @see {@link IShapeGeometry#getOutline}
+ * @see {@link IShapeGeometry.getOutline}
  */
 export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
   /**
-   * Creates a new instance of <code>GroupNodeObstacleProvider</code>
+   * Creates a new instance of {@link GroupNodeObstacleProvider}
    * @param {!INode} groupNode
    */
   constructor(groupNode) {
@@ -148,7 +147,7 @@ export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
   /**
    * Returns an obstacle for the node style's outline.
    * @param {!IRenderContext} context The given render context
-   * @see Specified by {@link IObstacleProvider#getObstacles}.
+   * @see Specified by {@link IObstacleProvider.getObstacles}.
    * @returns {?GeneralPath}
    */
   getObstacles(context) {
@@ -170,12 +169,9 @@ export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
    */
   createPath() {
     const style = this.groupNode.style
-    if (style instanceof DemoGroupStyle) {
+    if (style instanceof GroupNodeStyle) {
       const outline = new GeneralPath()
-      outline.appendRectangle(
-        this.groupNode.layout.toRect().getEnlarged(new Insets(-4, -22, -4, -4)),
-        false
-      )
+      outline.appendRectangle(this.groupNode.layout.toRect(), false)
       return outline
     }
     const geometry = style.renderer.getShapeGeometry(this.groupNode, style)

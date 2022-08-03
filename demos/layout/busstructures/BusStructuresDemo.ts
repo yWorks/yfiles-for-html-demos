@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,16 +45,15 @@ import {
 } from 'yfiles'
 
 import SampleData from './resources/SampleData'
-import { DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles'
 import {
   addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 const busStructuresToggle = document.getElementById('bus-structures-toggle') as HTMLInputElement
 const beforeBusSlider = document.getElementById('before-bus-slider') as HTMLInputElement
@@ -95,10 +94,11 @@ const colors = [
  * Bootstraps the demo.
  * @param licenseData The yFiles license information.
  */
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureGraph(graphComponent.graph)
 
@@ -288,12 +288,11 @@ function newEdgeStyle(color: string): PolylineEdgeStyle {
  * @param graph The demo's graph.
  */
 function configureGraph(graph: IGraph): void {
-  initDemoStyles(graph)
+  initDemoStyles(graph, { theme: 'demo-palette-58' })
 
   graph.nodeDefaults.shareStyleInstance = false
-  ;(graph.nodeDefaults.style as DemoNodeStyle).cssClass = 'node-color'
   graph.nodeDefaults.size = new Size(50, 30)
-  graph.edgeDefaults.style = newEdgeStyle('#BBBBBB')
+  graph.edgeDefaults.style = newEdgeStyle(colorSets['demo-palette-58'].fill)
   graph.edgeDefaults.shareStyleInstance = false
 }
 
@@ -374,5 +373,5 @@ function registerCommands(): void {
   bindAction("button[data-command='Layout']", runLayout)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,11 +29,8 @@
 function getWebWorkerMessageHandler(
   licenseString: string
 ): Promise<typeof webWorkerMessageHandler> {
-  // creating the worker needs to use the resulting final name of the script
-  // see https://www.snowpack.dev/guides/web-worker/  for details on how to create and use
-  // web workers
-  const worker = new Worker(new URL('./layout.worker.js', import.meta.url), {
-    name: 'layout-worker',
+  // @ts-ignore
+  const worker = new Worker(new URL('./layout.worker.ts', import.meta.url), {
     type: 'module'
   })
 
@@ -60,7 +57,7 @@ function getWebWorkerMessageHandler(
 let promise: Promise<(data: Object) => Promise<Object>> | null = null
 
 export function getLayoutExecutorAsyncMessageHandler(
-  license: Object
+  license: Record<string, unknown>
 ): Promise<(data: Object) => Promise<Object>> {
   if (!promise) {
     promise = getWebWorkerMessageHandler(JSON.stringify(license))

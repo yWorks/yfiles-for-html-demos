@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,28 +34,13 @@ const path = require('path')
  */
 const logRequests = false
 
-const SUPPORTED_YFILES_VERSION = '2.4'
+const SUPPORTED_YFILES_VERSION = '2.5'
 const ignoredFiles = /(filesystem-warning|yfiles-typeinfo)\.js$/
-
-/**
- * An array of third-party library names that are loaded through <script> tags and are globally
- * available in the demos that use them. As a result, symbolic imports like
- *   import ... from 'd3'
- * have to be removed from tsc-compiled JavaScript files that are served to browser, because the
- * imports cannot be resolved at runtime.
- * (Only necessary for TypeScript demos in the distribution bundles. The TsToJSConverter should
- * have removed those imports for the corresponding JavaScript demos already.)
- */
-const thirdPartyLibraryNames = ['codemirror', 'd3', 'leaflet', 'luxon']
 
 const importYfilesRegex = /import\s+([^'"]*?)\s+from\s+['"]yfiles\/?([^'"]*)['"]/g
 const importYfilesSideEffectRegex = /import\s+['"]yfiles\/?([^'"]*)['"]/g
 const otherImportsRegex = /import\s+([^'"]*?)\s+from\s+['"](\.[^'"]*)['"]/g
 const otherImportsSideEffectsRegex = /import\s+['"](\.[^'"]*)['"]/g
-const thirdPartyImports = new RegExp(
-  `import\\s+[^'"]*?\\s+from\\s+['"](?:${thirdPartyLibraryNames.join('|')})['"]`,
-  'g'
-)
 const langVersionRegex = /\w\.version\s*=\s*['"]([^'"]+)['"]/
 
 let es6NameToEsModule = {}
@@ -225,7 +210,6 @@ function transformFile(data, filePath) {
       otherImportsSideEffectsRegex,
       (match, moduleName) => `import '${addJsSuffix(moduleName)}'`
     )
-    .replace(thirdPartyImports, match => '')
 }
 
 /**

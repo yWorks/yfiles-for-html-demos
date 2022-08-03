@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  ClickEventArgs,
   CollectSnapResultsEventArgs,
   ConcurrencyController,
   Cursor,
@@ -363,7 +364,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
   }
 
   /**
-   * Collect all {@link IGraphSelection#selectedNodes | selected nodes} and their descendents.
+   * Collect all {@link IGraphSelection.selectedNodes selected nodes} and their descendents.
    * @param {!IGraph} graph
    * @param {!IGraphSelection} selection
    * @returns {!IList.<INode>}
@@ -471,10 +472,10 @@ class OrthogonalEdgeEditingHelper {
 }
 
 /**
- * Returns if <code>position</code> is {@link HandlePositions#NORTH_WEST},
- * {@link HandlePositions#NORTH} or {@link HandlePositions#NORTH_EAST}
+ * Returns whether `position` is {@link HandlePositions.NORTH_WEST},
+ * {@link HandlePositions.NORTH} or {@link HandlePositions.NORTH_EAST}
  * @param {!HandlePositions} position The position to check.
- * @returns {boolean} If the position is at any of the north sides.
+ * @returns {boolean} `true` if the position is at any of the north sides.
  */
 function isAnyNorth(position) {
   return (
@@ -485,10 +486,10 @@ function isAnyNorth(position) {
 }
 
 /**
- * Returns if <code>position</code> is {@link HandlePositions#SOUTH_WEST},
- * {@link HandlePositions#SOUTH} or {@link HandlePositions#SOUTH_EAST}
+ * Returns whether `position` is {@link HandlePositions.SOUTH_WEST},
+ * {@link HandlePositions.SOUTH} or {@link HandlePositions.SOUTH_EAST}
  * @param {!HandlePositions} position The position to check.
- * @returns {boolean} If the position is at any of the south sides.
+ * @returns {boolean} `true` if the position is at any of the south sides.
  */
 function isAnySouth(position) {
   return (
@@ -499,10 +500,10 @@ function isAnySouth(position) {
 }
 
 /**
- * Returns if <code>position</code> is {@link HandlePositions#NORTH_WEST},
- * {@link HandlePositions#WEST} or {@link HandlePositions#SOUTH_WEST}
+ * Returns whether `position` is {@link HandlePositions.NORTH_WEST},
+ * {@link HandlePositions.WEST} or {@link HandlePositions.SOUTH_WEST}
  * @param {!HandlePositions} position The position to check.
- * @returns {boolean} If the position is at any of the west sides.
+ * @returns {boolean} `true` if the position is at any of the west sides.
  */
 function isAnyWest(position) {
   return (
@@ -513,10 +514,10 @@ function isAnyWest(position) {
 }
 
 /**
- * Returns if <code>position</code> is {@link HandlePositions#NORTH_EAST},
- * {@link HandlePositions#EAST} or {@link HandlePositions#SOUTH_EAST}
+ * Returns whether `position` is {@link HandlePositions.NORTH_EAST},
+ * {@link HandlePositions.EAST} or {@link HandlePositions.SOUTH_EAST}
  * @param {!HandlePositions} position The position to check.
- * @returns {boolean} If the position is at any of the east sides.
+ * @returns {boolean} `true` if the position is at any of the east sides.
  */
 function isAnyEast(position) {
   return (
@@ -528,8 +529,8 @@ function isAnyEast(position) {
 
 /**
  * An {@link IRectangle} implementation that encompasses a set of {@link INode} layouts. Can be
- * {@link EncompassingRectangle#invalidate | invalidated} to fit the encompassed nodes or explicitly
- * {@link Reshape">reshaped</see>.
+ * {@link EncompassingRectangle.invalidate invalidated} to fit the encompassed nodes or explicitly
+ * {@link reshape reshaped}.
  */
 class EncompassingRectangle extends BaseClass(IRectangle) {
   /**
@@ -797,7 +798,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * Calculates the {@link ReshapeHandlerHandle#minimumSize} considering all reshaped nodes.
+   * Calculates the {@link ReshapeHandlerHandle.minimumSize} considering all reshaped nodes.
    * @returns {!ISize}
    */
   calculateMinimumSize() {
@@ -805,7 +806,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * Calculates the {@link ReshapeHandlerHandle#maximumSize} considering all reshaped nodes.
+   * Calculates the {@link ReshapeHandlerHandle.maximumSize} considering all reshaped nodes.
    * @returns {!ISize}
    */
   calculateMaximumSize() {
@@ -814,9 +815,9 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
   /**
    * Calculates the horizontal and vertical factor the mouse movement has to be multiplied with to get the
-   * horizontal and vertical delta for the point (x,y) inside the <code>originalNodeLayout</code>.
-   * @param {number} x The horizontal location inside <code>originalNodeLayout</code>.
-   * @param {number} y The vertical location inside <code>originalNodeLayout</code>.
+   * horizontal and vertical delta for the point (x,y) inside the `originalNodeLayout`.
+   * @param {number} x The horizontal location inside `originalNodeLayout`.
+   * @param {number} y The vertical location inside `originalNodeLayout`.
    * @param {!Rect} originalNodeLayout The original layout of the node to calculate the factors for.
    * @param {boolean} centered Whether center resizing is active.
    * @param {!HandlePositions} position The handle position to calculate the factor for.
@@ -828,17 +829,16 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
   /**
    * Calculates the vertical and horizontal factor the mouse movement has to be multiplied with to get the
-   * horizontal and vertical delta for the point (x,y) inside the <code>originalNodeLayout</code>.
-   * <p>
-   * This factor is only used for {@link ReshapeHandlerHandle#ratioReshapeRecognizer | ratio resizing}
-   * using either {@link ReshapePolicy#HORIZONTAL} or {@link ReshapePolicy#VERTICAL}.
-   * </p>
-   * <p>
+   * horizontal and vertical delta for the point (x,y) inside the `originalNodeLayout`.
+   *
+   * This factor is only used for {@link ReshapeHandlerHandle.ratioReshapeRecognizer ratio resizing}
+   * using either {@link ReshapePolicy.HORIZONTAL} or {@link ReshapePolicy.VERTICAL}.
+   *
    * The horizontal delta for point (x,y) is the vertical mouse delta multiplied by the y value of the returned factor.
    * The vertical delta for point (x,y) is the horizontal mouse delta multiplied by the x value of the returned factor.
-   * </p>
-   * @param {number} x The horizontal location inside <code>originalNodeLayout</code>.
-   * @param {number} y The vertical location inside <code>originalNodeLayout</code>.
+   *
+   * @param {number} x The horizontal location inside `originalNodeLayout`.
+   * @param {number} y The vertical location inside `originalNodeLayout`.
    * @param {!Rect} originalNodeLayout The original layout of the node to calculate the factors for.
    * @param {boolean} centered Whether center resizing is active.
    * @returns {!Point}
@@ -1121,7 +1121,7 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
  */
 class ResizingReshapeHandler extends ReshapeHandlerBase {
   /**
-   * Considers the minimum scale factors for each node to respect its {@link INodeSizeConstraintProvider#getMinimumSize}
+   * Considers the minimum scale factors for each node to respect its {@link INodeSizeConstraintProvider.getMinimumSize}
    * and combine them to a general minimum size.
    * @returns {!ISize}
    */
@@ -1147,7 +1147,7 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
   }
 
   /**
-   * Considers the maximum scale factors for each node to respect its {@link INodeSizeConstraintProvider#getMaximumSize}
+   * Considers the maximum scale factors for each node to respect its {@link INodeSizeConstraintProvider.getMaximumSize}
    * and combine them to a general maximum size.
    * @returns {!ISize}
    */
@@ -1361,6 +1361,12 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
   get type() {
     return this.reshapeHandlerHandle.type
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 }
 
 /**

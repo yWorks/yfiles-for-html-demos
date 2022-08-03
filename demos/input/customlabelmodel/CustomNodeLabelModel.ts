@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -73,15 +73,16 @@ export default class CustomNodeLabelModel
   /**
    * Returns instances of the support interfaces (which are actually the model instance itself)
    */
-  lookup(type: Class): Object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
     if (type === ILabelModelParameterProvider.$class && this.candidateCount > 0) {
       // If we request a ILabelModelParameterProvider AND we use discrete label candidates, we return the label model
       // itself, otherwise, null is returned, which means that continuous label positions are supported.
-      return this
+      return this as T
     } else if (type === ILabelModelParameterFinder.$class) {
       // If we request a ILabelModelParameterProvider, we return the label model itself, so we can always retrieve a
       // matching parameter for a given actual position.
-      return this
+      return this as T
     }
     return null
   }
@@ -142,7 +143,7 @@ export default class CustomNodeLabelModel
    * instances that can be used for the given label and model.
    *
    * Since in {@link lookup}, we return an instance of this class only for positive {@link candidateCount}s,
-   * this method is only called for <b>discrete</b> candidates.
+   * this method is only called for __discrete__ candidates.
    */
   getParameters(label: ILabel, model: ILabelModel): IEnumerable<ILabelModelParameter> {
     const parameters = new List<ILabelModelParameter>()
@@ -155,7 +156,7 @@ export default class CustomNodeLabelModel
   /**
    * Tries to find a parameter that best matches the given layout for the provided label instance.
    *
-   * By default, this method is only called when <b>no discrete</b> candidates are specified (i.e. here for
+   * By default, this method is only called when __no discrete__ candidates are specified (i.e. here for
    * {@link candidateCount} = 0. This implementation just calculates the rotation angle for the center of layout and
    * creates a parameter for exactly this angle which {@link createParameter}.
    */
@@ -181,7 +182,7 @@ export default class CustomNodeLabelModel
  */
 export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParameter) {
   /**
-   * Creates a new instance of <code>CustomNodeLabelModelParameter</code>.
+   * Creates a new instance of {@link CustomNodeLabelModelParameter}.
    * @param _model The model for this parameter
    * @param ratio The ratio for the given label model parameter
    */

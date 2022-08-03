@@ -18,5 +18,5 @@ Select an edge and drag one of its port handles to another node. When over a nod
 
 - _Red edges_ cannot be moved to another port.
 - _Orange edges_ connect to other orange nodes, but you cannot create self-loops.
-- _Blue edges_ connect to all other ports (black dots). Note that the blue edge will reuse existing port locations.
+- _Blue edges_ connect to all other ports (black and white dots). Note that the blue edge will reuse existing port locations.
 - _Green edges_ connect to any location inside of other green nodes when the `Shift` key is pressed.

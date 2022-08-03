@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -1409,6 +1409,9 @@ body.loaded #graphComponent,
 body.loaded .demo-right {
   visibility: visible;
 }
+body.loaded .is-loaded {
+  visibility: visible;
+}
 body:not(.loaded):not(.file-system-warning):after {
   content: '';
   display: block;
@@ -1426,6 +1429,13 @@ body:not(.loaded):not(.file-system-warning):after {
     width: 100%;
     left: 0;
   }
+}
+body:not(.loaded):not(.file-system-warning) .is-loaded {
+  visibility: hidden;
+}
+body:not(.loaded) .demo-content-dynamic,
+body:not(.loaded) .demo-sidebar {
+  transition: none !important;
 }
 body.demo-left-hidden:not(.loaded):not(.file-system-warning):after {
   width: 100%;
@@ -1980,6 +1990,10 @@ body {
     display: none;
   }
 }
+.demo-header .demo-yfiles-link {
+  flex: 0 1 auto;
+  overflow: hidden;
+}
 .demo-header a {
   display: inline-block;
   height: 60px;
@@ -2092,7 +2106,8 @@ body.demo-has-right .demo-toolbar {
     line-height: 30px;
   }
 }
-.demo-toolbar > * {
+.demo-toolbar > *,
+.demo-toolbar > div > * {
   vertical-align: middle;
 }
 .demo-toolbar button {
@@ -2100,24 +2115,22 @@ body.demo-has-right .demo-toolbar {
   height: 24px;
 }
 .demo-toolbar button,
-.demo-toolbar > label,
-.demo-toolbar .overflow-container > label {
+.demo-toolbar label[class^='demo-icon-'] {
   display: inline-block;
   outline: none;
   border: none;
+  height: 24px;
+  width: 24px;
   background-repeat: no-repeat;
   background-position: 50% 50%;
   background-color: transparent;
-  height: 24px;
-  width: 24px;
   line-height: 24px;
   box-sizing: border-box;
   padding: 0;
   cursor: pointer;
 }
 .demo-toolbar button:hover,
-.demo-toolbar > label:hover,
-.demo-toolbar .overflow-container > label:hover {
+.demo-toolbar label[class^='demo-icon-']:hover {
   background-color: #dedede;
 }
 .demo-toolbar label:hover {
@@ -2129,9 +2142,10 @@ body.demo-has-right .demo-toolbar {
   width: inherit;
   padding: 0 2px;
 }
-.demo-toolbar button.labeled[class*='demo-icon'] {
+.demo-toolbar button.labeled[class^='demo-icon'] {
   padding-left: 24px;
   background-position-x: 2px;
+  width: unset;
 }
 .demo-toolbar input.demo-toggle-button {
   display: none !important;
@@ -2209,7 +2223,7 @@ body.demo-has-right .demo-toolbar {
   right: 45px;
   width: 40px;
   height: 40px;
-  background: url("data:image/svg+xml,%3Csvg fill='%23666' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z'/%3E%3C/svg%3E") no-repeat center 10px;
+  background: #ebeef0 url("data:image/svg+xml,%3Csvg fill='%23666' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z'/%3E%3C/svg%3E") no-repeat center 10px;
   cursor: pointer;
 }
 .demo-toolbar .overflow-button.hidden {
@@ -2248,7 +2262,6 @@ body.demo-has-right .demo-toolbar {
 }
 .demo-toolbar .overflow-container-wrapper .overflow-container > *,
 .demo-toolbar .overflow-container-wrapper .overflow-container > label {
-  background-color: #f7f7f7;
   display: block;
 }
 .demo-toolbar .overflow-container-wrapper .overflow-container > *:not(.labeled)[title]::after,
@@ -2275,15 +2288,45 @@ body.demo-has-right .demo-toolbar {
   background-color: #999999;
   margin: 2px 0;
 }
+.demo-toolbar .overflow-container-wrapper .overflow-container > select {
+  margin: 3px 0 6px 0;
+}
+.demo-toolbar .overflow-container-wrapper .overflow-container > span {
+  line-height: 1.5em;
+}
+.demo-sidebar button[class^='demo-icon-'],
+.demo-toolbar button[class^='demo-icon-'],
+.demo-sidebar label[class^='demo-icon-'],
+.demo-toolbar label[class^='demo-icon-'] {
+  outline: none;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color: transparent;
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.demo-sidebar button[class^='demo-icon-']:hover,
+.demo-toolbar button[class^='demo-icon-']:hover,
+.demo-sidebar label[class^='demo-icon-']:hover,
+.demo-toolbar label[class^='demo-icon-']:hover {
+  background-color: #dedede;
+}
+.demo-sidebar select,
+.demo-toolbar select {
+  margin: 0 6px;
+}
 .demo-content-dynamic {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  transition: right 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   border-left: 1px solid #d5d7d8;
   border-right: 1px solid #d5d7d8;
+  transition: right 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 .demo-has-right:not(.demo-right-hidden) .demo-content-dynamic {
   right: 320px;
@@ -2359,6 +2402,9 @@ body.demo-has-right .demo-toolbar {
     top: 60px;
   }
 }
+rect:not(.yfiles-node-highlight-inner-template):not(.yfiles-node-highlight-middle-template):not(.yfiles-node-highlight-outer-template).yfiles-node-highlight-template {
+  stroke: darkgray;
+}
 .demo-context-menu {
   background: #fff;
   border: 1px solid #d5d7d8;
@@ -2417,7 +2463,9 @@ body.demo-has-right .demo-toolbar {
   background-color: #ddd;
 }
 .demo-properties button:hover,
-.demo-properties input[type='button']:hover {
+.demo-properties input[type='button']:hover,
+.demo-properties button:focus,
+.demo-properties input[type='button']:focus {
   background-color: #bbb;
 }
 .demo-properties textarea,
@@ -2493,6 +2541,7 @@ body.demo-has-right .demo-toolbar {
 .demo-dialog.demo-error-dialog {
   width: 40em;
   min-height: 400px;
+  max-width: 95vw;
   visibility: visible;
 }
 .demo-error-dialog label .optional {
@@ -2573,4 +2622,5 @@ body.demo-has-right .demo-toolbar {
   color: #ffffff;
   padding-top: 80px;
   text-align: center;
+  font-size: large;
 }

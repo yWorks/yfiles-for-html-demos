@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,19 +45,21 @@ import OrangePortCandidateProvider from './OrangePortCandidateProvider'
 import GreenPortCandidateProvider from './GreenPortCandidateProvider'
 import BluePortCandidateProvider from './BluePortCandidateProvider'
 import RedPortCandidateProvider from './RedPortCandidateProvider'
-import { checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import type { ColorSetName } from '../../resources/basic-demo-styles'
+import { showApp } from '../../resources/demo-app'
+import type { ColorSetName } from '../../resources/demo-styles'
 import {
+  applyDemoTheme,
   createDemoNodeLabelStyle,
-  DemoNodeStyle,
+  createDemoNodeStyle,
   initDemoStyles
 } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
@@ -67,6 +69,9 @@ function run(licenseData: object): void {
       shape: 'ellipse'
     })
   )
+
+  // Initialize basic demo styles
+  initDemoStyles(graph)
 
   // Create a default editor input mode and configure it
   const graphEditorInputMode = new GraphEditorInputMode({
@@ -106,7 +111,7 @@ function run(licenseData: object): void {
  * Registers a callback function as decorator that provides a custom
  * {@link IPortCandidateProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>IPortCandidateProvider</code>. In this case, the 'node'
+ * for its {@link IPortCandidateProvider}. In this case, the 'node'
  * parameter will be assigned that node.
  * @param graph The given graph
  */
@@ -170,7 +175,7 @@ function createSampleGraph(graphComponent: GraphComponent): void {
  * @param y The node's y-coordinate
  * @param w The node's width
  * @param h The node's height
- * @param cssClass The given css class
+ * @param colorSet The color set name
  * @param tag The tag to identify the port candidate provider
  * @param labelText The nodes label's text
  */
@@ -180,22 +185,22 @@ function createNode(
   y: number,
   w: number,
   h: number,
-  cssClass: ColorSetName,
+  colorSet: ColorSetName,
   tag: string,
   labelText: string
 ): INode {
   const node = graph.createNode({
     layout: new Rect(x, y, w, h),
-    style: new DemoNodeStyle(cssClass),
+    style: createDemoNodeStyle(colorSet),
     tag: tag
   })
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: createDemoNodeLabelStyle(cssClass)
+    style: createDemoNodeLabelStyle(colorSet)
   })
   return node
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

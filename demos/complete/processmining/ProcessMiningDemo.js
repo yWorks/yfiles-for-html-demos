@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,9 +40,8 @@ import {
   TimeSpan
 } from 'yfiles'
 
-import loadJson from '../../resources/load-json.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import { isWebGlSupported, detectInternetExplorerVersion } from '../../utils/Workarounds.js'
+import { detectInternetExplorerVersion, isWebGlSupported } from '../../utils/Workarounds.js'
 
 import { AnimationController } from './AnimationController.js'
 import { ProcessingStepNodeStyle } from './ProcessingStepNodeStyle.js'
@@ -51,6 +50,7 @@ import { addHeatMap } from './Heatmap.js'
 import { createSampleGraph } from './SampleGraphCreator.js'
 import { installProcessItemVisual } from './ProcessItemVisual.js'
 import { simulateRandomWalks } from './Simulator.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // We need to load the LayoutExecutor explicitly to prevent the webpack
 // tree shaker from removing this dependency which is needed for 'morphLayout' in this demo.
@@ -58,13 +58,12 @@ Class.ensure(LayoutExecutor)
 
 /**
  * Initializes the graph and wires up the UI
- * @param {!object} license
  * @returns {!Promise}
  */
-async function initialize(license) {
+async function run() {
   if (!isWebGlSupported()) {
     document.getElementById('no-webgl-support').removeAttribute('style')
-    showApp(null)
+    showApp()
     return
   }
 
@@ -77,7 +76,7 @@ Use a more recent browser like Chrome, Edge, Firefox or Safari to run this demo 
   }
 
   // set the yfiles license
-  License.value = license
+  License.value = await fetchLicense()
 
   // create a GraphComponent
   const graphComponent = new GraphComponent('#graphComponent')
@@ -162,6 +161,5 @@ function quantize(value) {
   return Math.floor(value * 30) / 30
 }
 
-loadJson()
-  .then(initialize)
-  .catch(reason => alert(reason))
+// noinspection JSIgnoredPromiseFromCall
+run()

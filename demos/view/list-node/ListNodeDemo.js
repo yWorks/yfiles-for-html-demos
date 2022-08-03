@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,8 +54,7 @@ import {
   Size,
   SolidColorFill
 } from 'yfiles'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { ListNodeStyle } from './ListNodeStyle.js'
 import ContextMenu from '../../utils/ContextMenu.js'
 import {
@@ -64,13 +63,17 @@ import {
   RowPositionHandler
 } from './RowPositionHandler.js'
 
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
+
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureGraph(graphComponent.graph)
 
@@ -182,7 +185,7 @@ function initializeInteraction(graphComponent) {
  * @returns {?INode}
  */
 function findNodeAt(mode, location) {
-  return mode.findItems(location, [GraphItemTypes.NODE]).firstOrDefault()
+  return mode.findItems(location, [GraphItemTypes.NODE]).at(0)
 }
 
 /**
@@ -285,9 +288,9 @@ function removeRow(graph, node, rowIndex) {
     const port = getPortForData(node, ri)
     graph.setPortLocationParameter(port, createPortLocationParameter(i, ri.incoming, node.style))
     // keep adjacent edges orthogonal
-    const edge = graph.edgesAt(port).firstOrDefault()
+    const edge = graph.edgesAt(port).at(0)
     if (edge) {
-      const bend = ri.incoming ? edge.bends.lastOrDefault() : edge.bends.firstOrDefault()
+      const bend = ri.incoming ? edge.bends.at(-1) : edge.bends.at(0)
       if (bend) {
         graph.setBendLocation(bend, new Point(bend.location.x, port.location.y))
       } else {
@@ -447,5 +450,5 @@ function registerCommands(graphComponent) {
  * @property {boolean} incoming
  */
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

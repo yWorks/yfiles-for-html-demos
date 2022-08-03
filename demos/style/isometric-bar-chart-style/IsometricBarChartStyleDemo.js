@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,20 +44,18 @@ import {
 
 import {
   addNavigationButtons,
-  bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
 import AugmentationNodeDescriptor from './AugmentationNodeDescriptor.js'
 import NodeGraphModelManager from './NodeGraphModelManager.js'
 import IsometricWebGLNodeStyle from '../../complete/isometricdrawing/IsometricWebGLNodeStyle.js'
 import { IsometricBarLabelNodeStyle } from './IsometricBarLabelNodeStyle.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {HTMLSelectElement} */
 let barDataComboBox
@@ -73,10 +71,11 @@ let barLabelManager
  * multiple, already styled nodes which are associated with precomputed centrality values.
  * These values are then used in two additional NodeStyles to display a bar and a label each
  * and added as additional visualization via a custom @link{GraphModelManager}.
- * @param {!object} licenseData
+ * @param licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   barDataComboBox = document.getElementById('barDataComboBox')
   addNavigationButtons(barDataComboBox)
 
@@ -261,5 +260,5 @@ function registerCommands() {
   bindChangeListener("input[data-command='ToggleShowLabels']", toggleLabels)
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

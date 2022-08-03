@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -85,14 +85,18 @@ const PICKER_BUTTON_SPACING = 2
 
 /**
  * An input mode that simplifies the creation of a specific type of diagram by managing valid
- * {@link WizardAction actions} for modifying it.<br/>
+ * {@link WizardAction actions} for modifying it.
+ *
  * Possible actions can be {@link addAction added} and are active when their
- * {@link WizardAction.preCondition pre-condition} is met.<br/>
+ * {@link WizardAction.preCondition pre-condition} is met.
+ *
  * For active actions that have {@link WizardAction.buttonOptions buttonOptions} defined, buttons
- * are displayed using {@link ButtonInputMode}.<br/>
+ * are displayed using {@link ButtonInputMode}.
+ *
  * When the button of an action is clicked or the action {@link WizardAction.trigger trigger} is
  * satisfied, the action is {@link WizardAction.handler handled} and the active actions are
- * re-evaluated.<br/>
+ * re-evaluated.
+ *
  * When a legend is used, the {@link WizardAction.description descriptions} for
  * all active actions are added to it.
  */
@@ -138,7 +142,8 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
   }
 
   /**
-   * The {@link CreateEdgeInputMode} used to interactively creates edges for the diagram.<br/>
+   * The {@link CreateEdgeInputMode} used to interactively creates edges for the diagram.
+   *
    * The default is a {@link KeyboardCreateEdgeInputMode} that enhances {@link CreateEdgeInputMode}
    * and support selecting the target node via keyboard.
    */
@@ -283,7 +288,7 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
    * Hides all buttons and shows the picker buttons of the provided action instead.
    *
    * A promise is returned that is resolved when one of the buttons is triggered or the pickers
-   * are canceled via <em>ESC</em> key.
+   * are canceled via __ESC__ key.
    * @param action The action whose picker selection shall be displayed.
    * @param item The item used by the action.
    */
@@ -671,7 +676,7 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
   /**
    * Hides picker buttons and resolves the promise that was returned by {@link showPickerSelection}.
    * @private
-   * @param success <em>True</em>, if a picker button was selected, or <em>false</em>, if the picker
+   * @param success `true`, if a picker button was selected, or `false`, if the picker
    * selection was canceled.
    */
   private resolvePickerSelection(success: boolean): void {
@@ -969,7 +974,7 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
     if (showPickers) {
       let newActivePickersAction: WizardAction | null = action ? action : null
       if (!newActivePickersAction && this.buttonMode.focusedButton) {
-        newActivePickersAction = this._activeActions.firstOrDefault(
+        newActivePickersAction = this._activeActions.find(
           action =>
             action.button === this.buttonMode.focusedButton &&
             action.buttonOptions !== null &&
@@ -1003,8 +1008,8 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
   }
 
   /**
-   * @param {IInputModeContext} context - the context to install this mode into
-   * @param {ConcurrencyController} controller - The {@link InputModeBase#controller} for this mode.
+   * @param context - the context to install this mode into
+   * @param controller - The {@link InputModeBase.controller} for this mode.
    */
   install(context: IInputModeContext, controller: ConcurrencyController): void {
     super.install(context, controller)
@@ -1026,7 +1031,7 @@ export default class GraphWizardInputMode extends MultiplexingInputMode {
   }
 
   /**
-   * @param {IInputModeContext} context - The context to remove this mode from. This is the same instance that has been passed to {@link InputModeBase#install}.
+   * @param context - The context to remove this mode from. This is the same instance that has been passed to {@link InputModeBase.install}.
    */
   uninstall(context: IInputModeContext): void {
     super.uninstall(context)
@@ -1111,22 +1116,22 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @param {IGraph} graph - The graph to create the edge for.
-   * @param {IPortCandidate} sourcePortCandidate - The candidate to use for the source end of the edge.
-   * Usually the {@link CreateEdgeInputMode#sourcePortCandidate}. In case
-   * {@link CreateEdgeInputMode#reversedEdgeCreation}, though, the value of
-   * {@link CreateEdgeInputMode#targetPortCandidate}.
-   * @param {IPortCandidate} targetPortCandidate - The candidate to use for the target end of the edge.
-   * Usually the {@link CreateEdgeInputMode#targetPortCandidate}. In case
-   * {@link CreateEdgeInputMode#reversedEdgeCreation}, though, the value of
-   * {@link CreateEdgeInputMode#sourcePortCandidate}.
-   * @returns {IEdge}
+   * @param graph - The graph to create the edge for.
+   * @param sourcePortCandidate - The candidate to use for the source end of the edge.
+   * Usually the {@link CreateEdgeInputMode.sourcePortCandidate}. In case
+   * {@link CreateEdgeInputMode.reversedEdgeCreation}, though, the value of
+   * {@link CreateEdgeInputMode.targetPortCandidate}.
+   * @param targetPortCandidate - The candidate to use for the target end of the edge.
+   * Usually the {@link CreateEdgeInputMode.targetPortCandidate}. In case
+   * {@link CreateEdgeInputMode.reversedEdgeCreation}, though, the value of
+   * {@link CreateEdgeInputMode.sourcePortCandidate}.
+   * @returns The created edge
    */
   createEdge(
     graph: IGraph,
     sourcePortCandidate: IPortCandidate,
     targetPortCandidate: IPortCandidate
-  ): IEdge | null {
+  ): IEdge | Promise<IEdge | null> | null {
     if (!this.useCurrentItem) {
       return super.createEdge(graph, sourcePortCandidate, targetPortCandidate)
     }
@@ -1144,10 +1149,10 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @param {IInputModeContext} context - The context that this instance shall be installed into.
-   * The same instance will be passed to this instance during {@link IInputMode#uninstall}.
+   * @param context - The context that this instance shall be installed into.
+   * The same instance will be passed to this instance during {@link IInputMode.uninstall}.
    * A reference to the context may be kept and queried during the time the mode is installed.
-   * @param {ConcurrencyController} controller - The {@link CreateEdgeInputMode#controller} for this mode.
+   * @param controller - The {@link CreateEdgeInputMode.controller} for this mode.
    */
   install(context: IInputModeContext, controller: ConcurrencyController): void {
     super.install(context, controller)
@@ -1156,8 +1161,8 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @param {IInputModeContext} context - The context to deregister from. This is the same instance
-   * that had been passed to {@link IInputMode#install} during installation.
+   * @param context - The context to deregister from. This is the same instance
+   * that had been passed to {@link IInputMode.install} during installation.
    */
   uninstall(context: IInputModeContext): void {
     context.canvasComponent!.removeKeyDownListener(this.keyListener)
@@ -1180,7 +1185,7 @@ export class WizardEventArgs extends EventArgs {
 
   /**
    * Creates a new event args instance.
-   * @param {'edge-created' | 'edge-canceled'} type The type of the event.
+   * @param type The type of the event.
    * @param originalEvent The original event that triggered this event.
    */
   constructor(type: 'edge-created' | 'edge-canceled', originalEvent: EventArgs) {
@@ -1205,7 +1210,7 @@ export class WizardEventArgs extends EventArgs {
 }
 
 /**
- * Adds the <em>container-drop-shadow</em> style class to the {@link SVGElement} of the created visual.
+ * Adds the __container-drop-shadow__ style class to the {@link SVGElement} of the created visual.
  */
 class DropShadowLabelRenderer extends DefaultLabelStyleRenderer {
   constructor() {

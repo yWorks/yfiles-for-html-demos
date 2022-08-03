@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,14 +47,16 @@ import {
   PolylineEdgeStyle,
   Size
 } from 'yfiles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import { graphQLQuery } from './GraphQLQuery'
 import { SocialNetworkGraphBuilder } from './SocialNetworkGraphBuilder'
 import { SocialNetworkNodeStyle } from './SocialNetworkNodeStyle'
 import PropertiesPanel from './PropertiesPanel'
 import type { Person } from './Person'
 import { copyWithFriends } from './Person'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 Class.ensure(LayoutExecutor)
 
@@ -108,10 +110,11 @@ const queryFriends = `query loadFriends ($id: ID!) {
 /**
  * Runs the demo.
  */
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureGraph(graphComponent.graph)
 
@@ -124,7 +127,7 @@ async function run(licenseData: object): Promise<void> {
   showApp(graphComponent)
 
   await loadSinglePerson(1)
-  const initialNode = graphComponent.graph.nodes.firstOrDefault()
+  const initialNode = graphComponent.graph.nodes.at(0)
   if (initialNode) {
     await loadFriends(initialNode)
   }
@@ -307,4 +310,5 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindAction("button[data-command='LoadAll']", () => loadAll())
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

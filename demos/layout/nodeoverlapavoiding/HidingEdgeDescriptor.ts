@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,7 +46,7 @@ export class HidingEdgeDescriptor extends BaseClass(ICanvasObjectDescriptor) {
   private originalDescriptor: ICanvasObjectDescriptor
 
   /**
-   * Creates a new instance that wraps the <code>originalDescriptor</code>.
+   * Creates a new instance that wraps the `originalDescriptor`.
    */
   constructor(originalDescriptor: ICanvasObjectDescriptor) {
     super()
@@ -72,7 +72,7 @@ export class HidingEdgeDescriptor extends BaseClass(ICanvasObjectDescriptor) {
   }
 
   /**
-   * Returns {@link IVisibilityTestable#NEVER} if <code>forUserObject</code> is a hidden edge or
+   * Returns {@link IVisibilityTestable.NEVER} if `forUserObject` is a hidden edge or
    * the original implementation otherwise.
    */
   public getVisibilityTestable(forUserObject: object): IVisibilityTestable {

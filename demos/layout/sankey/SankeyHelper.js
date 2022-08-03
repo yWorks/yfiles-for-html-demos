@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -63,7 +63,7 @@ import {
  * This class adds an HTML panel on top of the contents of the graphComponent that can
  * display arbitrary information about a {@link IModelItem graph item}.
  * In order to not interfere with the positioning of the pop-up, HTML content
- * should be added as ancestor of the {@link SankeyPopupSupport#div div element}, and
+ * should be added as ancestor of the {@link SankeyPopupSupport.div div element}, and
  * use relative positioning. This implementation uses a
  * {@link ILabelModelParameter label model parameter} to determine
  * the position of the pop-up.
@@ -92,7 +92,7 @@ export class SankeyPopupSupport {
   }
 
   /**
-   * Sets the container {@link HTMLPopupSupport#div div element}.
+   * Sets the container {@link HTMLPopupSupport.div div element}.
    * @param value The div element to be set.
    * @type {!HTMLElement}
    */
@@ -101,7 +101,7 @@ export class SankeyPopupSupport {
   }
 
   /**
-   * Gets the container {@link HTMLPopupSupport#div div element}.
+   * Gets the container {@link HTMLPopupSupport.div div element}.
    * @type {!HTMLElement}
    */
   get div() {
@@ -212,7 +212,7 @@ export class SankeyPopupSupport {
 
   /**
    * Changes the location of this pop-up to the location calculated by the
-   * {@link HTMLPopupSupport#labelModelParameter}. Currently, this implementation does not support
+   * {@link HTMLPopupSupport.labelModelParameter}. Currently, this implementation does not support
    * rotated pop-ups.
    */
   updateLocation() {
@@ -368,21 +368,43 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
  * below the label group.
  */
 export class HighlightManager extends HighlightIndicatorManager {
+  constructor() {
+    super()
+    this.edgeHighlightGroup = null
+  }
+
   /**
-   * Creates a new instance of HighlightManager.
+   * Installs the manager on the canvas.
+   * Adds the highlight group
    * @param {!CanvasComponent} canvas
    */
-  constructor(canvas) {
-    super(canvas)
-    const graphModelManager = this.canvasComponent.graphModelManager
-    this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
-    this.edgeHighlightGroup.below(graphModelManager.edgeLabelGroup)
+  install(canvas) {
+    if (canvas instanceof GraphComponent) {
+      // create a new group for the edge highlight that lies below the node group
+      const graphModelManager = canvas.graphModelManager
+      this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
+      this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+    }
+    super.install(canvas)
+  }
+
+  /**
+   * Uninstalls the manager from the canvas
+   * removes the highlight groups
+   * @param {!CanvasComponent} canvas
+   */
+  uninstall(canvas) {
+    super.uninstall(canvas)
+    if (this.edgeHighlightGroup) {
+      this.edgeHighlightGroup.remove()
+      this.edgeHighlightGroup = null
+    }
   }
 
   /**
    * This implementation always returns the highlightGroup of the canvasComponent of this instance.
    * @param {!IModelItem} item The item to check
-   * @returns {!ICanvasObjectGroup} An ICanvasObjectGroup or null
+   * @returns {?ICanvasObjectGroup} An ICanvasObjectGroup or null
    */
   getCanvasObjectGroup(item) {
     if (IEdge.isInstance(item)) {

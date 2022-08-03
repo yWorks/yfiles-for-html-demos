@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,12 +49,12 @@ import {
 } from 'yfiles'
 
 import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
 import OrthogonalLabelSnapLineProviderWrapper from './OrthogonalLabelSnapLineProviderWrapper.js'
 import ShapeBasedGridNodeSnapResultProvider from './ShapeBasedGridNodeSnapResultProvider.js'
-import { checkLicense, showApp } from '../../resources/demo-app.js'
+import { showApp } from '../../resources/demo-app.js'
 import AdditionalSnapLineMoveInputMode from './AdditionalSnapLineMoveInputMode.js'
-import loadJson from '../../resources/load-json.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GridVisualCreator} */
 let grid = null
@@ -68,12 +68,13 @@ let grid = null
 let additionalSnapLineVisualCreators = null
 
 /**
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   decorateModelItemLookupForCustomSnappingBehaviour(graph)
@@ -234,7 +235,7 @@ function initializeGraphDefaults(graph) {
 
 /**
  * Adds a new {@link AdditionalSnapLineVisualCreator} to the given graph component that spans between
- * <code>from</code> and <code>to</code>.
+ * `from` and `to`.
  * @param {!GraphComponent} graphComponent The graph component for which to add snap line visualizations
  * @param {!Point} from The start location of the snap line.
  * @param {!Point} to The end location of the snap line.
@@ -286,5 +287,5 @@ function createSampleGraph(graph) {
   )
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -68,7 +68,7 @@ export default class PortCandidateTemplate extends BaseClass(IVisualTemplate) {
    * Delegates to the given {@link INodeStyle} to update the visual.
    * @param {!IRenderContext} context The context that describes where the visual will be used in.
    * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
-   * {@link IVisualTemplate#createVisual} method was called on this instance.
+   * {@link IVisualTemplate.createVisual} method was called on this instance.
    * @param {!Rect} bounds The current bounds to use for the visual.
    * @param {!object} dataObject The data object to visualize.
    * @returns {!SvgVisual}

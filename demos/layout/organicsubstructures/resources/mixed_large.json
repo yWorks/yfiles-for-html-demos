@@ -1,13 +1,18 @@
 {
   "settings": {
     "cycleSubstructureStyle": "CIRCULAR",
-    "chainSubstructureStyle": "NONE",
+    "chainSubstructureStyle": "DISK",
     "starSubstructureStyle": "CIRCULAR",
     "parallelSubstructureStyle": "RECTANGULAR",
+    "treeSubstructureStyle": "BALLOON",
+    "groupSubstructures": "NO_GROUPS",
     "useEdgeGrouping": false,
     "considerNodeTypes": true,
     "parallelSubstructureTypeSeparation": false,
     "starSubstructureTypeSeparation": false,
-    "alterTypesAndStructure": true
+    "allowItemCreation": true,
+    "allowItemModification": true,
+    "allowTypeChanges": true,
+    "overrideStyles": true
   }
 }

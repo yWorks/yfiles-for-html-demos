@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,12 +31,12 @@ import {
   IInputModeContext,
   INode,
   IRenderContext,
+  IVisualCreator,
   NodeStyleBase,
   Point,
   Rect,
   SvgVisual,
-  Visual,
-  IVisualCreator
+  Visual
 } from 'yfiles'
 
 /**
@@ -58,8 +58,8 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
    * Creates the visual representation for the given node.
    * @param {!IRenderContext} context The render context.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link SimpleSvgNodeStyle#updateVisual}
+   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link SimpleSvgNodeStyle.updateVisual}
    */
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
@@ -84,10 +84,10 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
    * Updates the visual representation for the given node.
    * @param {!IRenderContext} context The render context.
    * @param {!SvgVisual} oldVisual The visual that has been created in the call to
-   * {@link SimpleSvgNodeStyle#createVisual}.
+   * {@link SimpleSvgNodeStyle.createVisual}.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link SimpleSvgNodeStyle#createVisual}
+   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link SimpleSvgNodeStyle.createVisual}
    */
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
@@ -118,7 +118,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * Optimized implementation for a rectangular shape.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    * @param {!IInputModeContext} context The input mode context.
    * @param {!Point} p The location to be checked.
    * @param {!INode} node The node that may be hit.
@@ -131,7 +131,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * Optimized implementation for a rectangular shape.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    * @param {!INode} node The node.
    * @param {!Point} inner The inner point of the line.
    * @param {!Point} outer The outer point of the line.
@@ -144,7 +144,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * Optimized implementation for a rectangular shape.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    * @param {!INode} node The node.
    * @param {!Point} point The point to be checked.
    * @returns {boolean}
@@ -156,7 +156,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
   /**
    * Determines whether the visualization for the specified node is included in the marquee selection.
    * Optimized implementation for a rectangular shape.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    * @param {!IInputModeContext} context The input mode context.
    * @param {!Rect} rectangle the rectangle to be checked.
    * @param {!INode} node The node that may be in the rectangle.

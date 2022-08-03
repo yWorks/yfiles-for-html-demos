@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -64,9 +64,9 @@ import {
   EdgeReplacementPolicy
 } from '../../utils/AggregationGraphWrapper.js'
 import ContextMenu from '../../utils/ContextMenu.js'
-import loadJson from '../../resources/load-json.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 Class.ensure(LayoutExecutor)
 
@@ -111,12 +111,13 @@ const shapeAndFillStyle = shapeAndFill =>
   })
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the demo styles
   initDemoStyles(graphComponent.graph)
@@ -159,8 +160,7 @@ function registerCommands() {
 
 /**
  * Initializes the context menu.
- * @param {GraphComponent} graphComponent The graph component to which the context menu belongs
- * @param {!GraphComponent} graphComponent
+ * @param {!GraphComponent} graphComponent The graph component to which the context menu belongs
  */
 function configureContextMenu(graphComponent) {
   const inputMode = graphComponent.inputMode
@@ -474,4 +474,5 @@ class ShapeAndFill {
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

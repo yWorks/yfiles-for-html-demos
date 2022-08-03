@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -43,10 +43,14 @@
     <style>
       .icon-add-component {
         background-image: url('../../resources/icons/plus2-16.svg');
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
       }
 
       .icon-remove-component {
         background-image: url('../../resources/icons/minus2-16.svg');
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
       }
     </style>
   </head>
@@ -66,12 +70,18 @@
           Available styles are tree, organic, or orthogonal style, or a hierarchic style with
           different settings than the main layout.
         </p>
+        <p>
+          The subcomponent placement policy defines how subcomponents are placed within the layout
+          context of the remaining graph. If subcomponents are connected with a single node (light
+          blue and green subcomponents) then the layout is able to place them to the left or right
+          of this node.
+        </p>
 
         <h2>Things to Try</h2>
         <ul>
           <li>
-            Add nodes to a new subcomponent that gets an individual layout. Select some nodes,
-            choose a layout algorithm and style, and hit
+            Create a new subcomponent that gets an individual layout by selecting some nodes, choose
+            a layout algorithm and style, and hit
             <img src="../../resources/icons/plus2-16.svg" />. Then the new subcomponent is marked
             with a color and the layout is updated.
           </li>
@@ -101,6 +111,7 @@
 
         <span class="demo-separator"></span>
 
+        <span>Layout Algorithm:</span>
         <select
           id="layout-select"
           data-command="SelectLayout"
@@ -111,6 +122,10 @@
           <option value="orthogonal">Orthogonal Layout</option>
           <option value="hierarchic">Hierarchic Layout</option>
         </select>
+
+        <span class="demo-separator"></span>
+
+        <span>Layout Orientation:</span>
         <select
           id="orientation-select"
           data-command="SelectOrientation"
@@ -120,6 +135,19 @@
           <option value="bottom-to-top">Bottom to Top</option>
           <option value="left-to-right">Left to Right</option>
           <option value="right-to-left">Right to Left</option>
+        </select>
+
+        <span class="demo-separator"></span>
+
+        <span>Subcomponent Placement Policy:</span>
+        <select
+          id="subcomponent-policy-select"
+          data-command="SelectSubcomponentPolicy"
+          title="Select how the subcomponent is placed within the layout context of the remaining graph"
+        >
+          <option value="automatic">Automatic</option>
+          <option value="isolated">Isolated</option>
+          <option value="always-integrated">Always Integrated</option>
         </select>
         <button
           data-command="CreateSubcomponent"

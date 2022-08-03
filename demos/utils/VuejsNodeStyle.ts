@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -392,7 +392,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
   /**
    * Creates a visual that uses a Vuejs component to display a node.
-   * @see Overrides {@link LabelStyleBase#createVisual}
+   * @see Overrides {@link LabelStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     // eslint-disable-next-line new-cap
@@ -437,7 +437,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
   /**
    * Updates the visual by returning the old visual, as Vuejs handles updating the component.
-   * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @see Overrides {@link LabelStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     if (oldVisual.svgElement) {
@@ -546,8 +546,8 @@ function initializeDesignerVueComponents(): void {
     textDecoration: string | number,
     lineSpacing: string | number,
     wrapping: string | number,
-    textElement: SVGElement
-  ): SVGElement | null {
+    textElement: SVGTextElement
+  ): SVGTextElement | null {
     if (textElement.nodeType !== Node.ELEMENT_NODE || textElement.nodeName !== 'text') {
       return null
     }
@@ -623,7 +623,7 @@ function initializeDesignerVueComponents(): void {
     textDecoration: string | number,
     lineSpacing: string | number,
     wrapping: string | number,
-    textElement: SVGElement
+    textElement: SVGTextElement
   ) {
     while (textElement.firstChild) {
       textElement.removeChild(textElement.firstChild)

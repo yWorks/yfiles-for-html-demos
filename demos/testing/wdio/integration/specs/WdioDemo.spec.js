@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,8 +35,8 @@ describe('Wdio Demo', () => {
     await wdioDemoPage.open()
     // wait until graphComponent exists in DOM and is visible
     const gcElem = await $('#graphComponent')
-    await gcElem.waitForExist(5000)
-    await gcElem.waitForDisplayed(5000)
+    await gcElem.waitForExist({ timeout: 5000 })
+    await gcElem.waitForDisplayed({ timeout: 5000 })
     // wait for css animations to finish element positioning
     await browser.pause(2000)
   })

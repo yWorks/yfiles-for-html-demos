@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -90,12 +90,14 @@ import {
   TagChangeUndoUnit
 } from './MindmapUtil'
 import MindmapEditorInputMode from './MindmapEditorInputMode'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import MindmapOverviewGraphVisualCreator from './MindmapOverviewGraphVisualCreator'
 import MindmapLayout from './MindmapLayout'
 import DemoCommands from './DemoCommands'
-import loadJson from '../../resources/load-json'
 import createGraphMLIOHandler from './GraphMLUtils'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // This demo shows how to implement a Mindmap viewer and editor.
 //
@@ -181,10 +183,11 @@ let gs: GraphMLSupport = null!
  */
 let ioh: GraphMLIOHandler = null!
 
-async function run(licenseData: any) {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
 
   demoCommands = new DemoCommands(graphComponent)
@@ -430,11 +433,10 @@ function initializeCanvasOrder(): void {
 /**
  * Creates and initializes popup menus.
  * There are 3 popup menus:
- * <ul>
- * <li>{@link nodePopupMain Main popup} for general graph commands</li>
- * <li>{@link nodePopupColor Color popup} to assign a color to a node</li>
- * <li>{@link nodePopupIcon State icon popup} to assign a state icon to a node</li>
- * </ul>
+ *
+ * - {@link nodePopupMain Main popup} for general graph commands
+ * - {@link nodePopupColor Color popup} to assign a color to a node
+ * - {@link nodePopupIcon State icon popup} to assign a state icon to a node
  */
 function initializeNodePopups() {
   const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
@@ -610,12 +612,12 @@ function loadFallbackGraph(): void {
  */
 async function onGraphChanged() {
   graphComponent.updateContentRect()
-  await graphComponent.fitContent()
+  graphComponent.fitContent()
   filteredGraph.nodePredicateChanged()
   adjustNodeBounds()
   await MindmapLayout.instance.layout(graphComponent)
   limitViewport()
-  await graphComponent.fitContent()
+  graphComponent.fitContent()
   graphComponent.graph.undoEngine!.clear()
 }
 
@@ -1032,5 +1034,5 @@ function createSampleGraph(): void {
   fullGraph.setLabelText(n13.labels.get(0), 'Topic 1.3')
 }
 
-// Start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -61,17 +61,15 @@ import {
   VoidLabelStyle
 } from 'yfiles'
 
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
 import {
-  bindAction,
-  bindCommand,
-  checkLicense,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { bindAction, bindCommand, showApp, showLoadingIndicator } from '../../resources/demo-app.js'
 import { createGraphBuilder } from './Neo4jGraphBuilder.js'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -100,19 +98,20 @@ const queryErrorContainer = document.getElementById('queryError')
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   if (!('WebSocket' in window)) {
     // early exit the application if WebSockets are not supported
     document.getElementById('login').hidden = true
     document.getElementById('noWebSocketAPI').hidden = false
-    showApp(graphComponent)
+    showApp()
     return
   }
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraphDefaults()
   initializeHighlighting()
@@ -127,7 +126,7 @@ function run(licenseData) {
 function initializeGraphDefaults() {
   const graph = graphComponent.graph
 
-  graph.nodeDefaults.style = new DemoNodeStyle()
+  graph.nodeDefaults.style = createDemoNodeStyle()
   graph.nodeDefaults.size = new Size(30, 30)
 
   graph.edgeDefaults.labels.style = new DefaultLabelStyle({
@@ -140,7 +139,7 @@ function initializeGraphDefaults() {
     ExteriorLabelModelPosition.SOUTH
   )
 
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  graph.edgeDefaults.style = createDemoEdgeStyle()
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createDefaultParameter()
 }
 
@@ -517,5 +516,5 @@ function registerCommands() {
   })
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

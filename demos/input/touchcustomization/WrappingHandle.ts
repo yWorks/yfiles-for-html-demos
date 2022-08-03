@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  ClickEventArgs,
   Cursor,
   HandleTypes,
   IDragHandler,
@@ -88,10 +89,10 @@ export default class WrappingHandle extends BaseClass<IHandle>(IHandle) {
   /**
    * Handles drag events for this handle.
    * @param context The context to retrieve information about the drag from.
-   * @param originalLocation The value of the {@link IDragHandler#location} property at the time of
-   * {@link IDragHandler#initializeDrag}.
+   * @param originalLocation The value of the {@link IDragHandler.location} property at the time of
+   * {@link IDragHandler.initializeDrag}.
    * @param newLocation The coordinates in the world coordinate system that the client wants the
-   * handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * handle to be at. Depending on the implementation the {@link IDragHandler.location} may or may
    * not be modified to reflect the new value.
    */
   handleMove(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
@@ -101,12 +102,12 @@ export default class WrappingHandle extends BaseClass<IHandle>(IHandle) {
   /**
    * Finishes the drag gesture for this handle.
    * @param context The context to retrieve information about the drag from.
-   * @param originalLocation The value of the {@link IDragHandler#location}
-   * property at the time of {@link IDragHandler#initializeDrag}.
+   * @param originalLocation The value of the {@link IDragHandler.location}
+   * property at the time of {@link IDragHandler.initializeDrag}.
    * @param newLocation The coordinates in the world coordinate system that the client wants the
-   * handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * handle to be at. Depending on the implementation the {@link IDragHandler.location} may or may
    * not be modified to reflect the new value. This is the same value as delivered in the last
-   * invocation of {@link IDragHandler#handleMove}
+   * invocation of {@link IDragHandler.handleMove}
    */
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     this.wrappedHandle.dragFinished(context, originalLocation, newLocation)
@@ -115,10 +116,17 @@ export default class WrappingHandle extends BaseClass<IHandle>(IHandle) {
   /**
    * Resets the effects of the previous drag gesture if the gesture is aborted.
    * @param context The context to retrieve information about the drag from.
-   * @param originalLocation The value of the coordinate of the {@link IDragHandler#location}
-   * property at the time of {@link IDragHandler#initializeDrag}.
+   * @param originalLocation The value of the coordinate of the {@link IDragHandler.location}
+   * property at the time of {@link IDragHandler.initializeDrag}.
    */
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
     this.wrappedHandle.cancelDrag(context, originalLocation)
+  }
+
+  /**
+   * Called to indicate that the handle has been clicked by the user.
+   */
+  handleClick(evt: ClickEventArgs): void {
+    this.wrappedHandle.handleClick(evt)
   }
 }

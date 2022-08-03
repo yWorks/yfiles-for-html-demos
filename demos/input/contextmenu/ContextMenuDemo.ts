@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,14 +38,15 @@ import {
   PopulateItemContextMenuEventArgs
 } from 'yfiles'
 import ContextMenu from '../../utils/ContextMenu'
-import { checkLicense, showApp } from '../../resources/demo-app'
-import { initDemoStyles } from '../../resources/demo-styles'
-import loadJson from '../../resources/load-json'
+import { showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the demo styles
   initDemoStyles(graphComponent.graph)
@@ -141,7 +142,7 @@ function populateContextMenu(
 /**
  * Helper function that updates the node selection state when the context menu is opened on a node.
  * @param graphComponent The given graphComponent
- * @param node The node or <code>null</code>.
+ * @param node The node or `null`.
  */
 function updateSelection(graphComponent: GraphComponent, node: INode | null): void {
   if (node === null) {
@@ -167,5 +168,5 @@ function createSampleGraph(graph: IGraph): void {
   graph.addLabel(graph.createNodeAt(new Point(320, 100)), '3')
 }
 
-// Runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

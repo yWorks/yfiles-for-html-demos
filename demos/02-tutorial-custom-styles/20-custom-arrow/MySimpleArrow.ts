@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -74,7 +74,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
    * Value: Always returns 7
-   * @see Specified by {@link IArrow#length}.
+   * @see Specified by {@link IArrow.length}.
    */
   get length(): number {
     return 7
@@ -85,7 +85,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * Value: Always returns 1
    * This value is used by {@link IEdgeStyle}s to let the
    * edge appear to end shortly before its actual target.
-   * @see Specified by {@link IArrow#cropLength}.
+   * @see Specified by {@link IArrow.cropLength}.
    */
   get cropLength(): number {
     return 1
@@ -100,7 +100,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * @param anchor the anchor point for the tip of the arrow
    * @param direction the direction the arrow is pointing in
    * Itself as a flyweight.
-   * @see Specified by {@link IArrow#getVisualCreator}.
+   * @see Specified by {@link IArrow.getVisualCreator}.
    */
   getVisualCreator(
     edge: IEdge,
@@ -125,7 +125,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * subsequently be used to query the bounds. Clients will always call
    * this method before using the implementation and may not cache the instance returned.
    * This allows for applying the flyweight design pattern to implementations.
-   * @see Specified by {@link IArrow#getBoundsProvider}.
+   * @see Specified by {@link IArrow.getBoundsProvider}.
    */
   getBoundsProvider(
     edge: IEdge,
@@ -143,7 +143,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * @param context The context that contains the information needed to create the
    *   visual.
    * The arrow visual.
-   * @see Specified by {@link IVisualCreator#createVisual}.
+   * @see Specified by {@link IVisualCreator.createVisual}.
    */
   createVisual(context: IRenderContext): SvgVisual {
     // create a new path to draw the arrow
@@ -176,13 +176,13 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
 
   /**
    * This method updates or replaces a previously created {@link Visual}.
-   * In this case, the implementation simply calls {@link MySimpleArrow#createVisual}.
+   * In this case, the implementation simply calls {@link MySimpleArrow.createVisual}.
    * @param context The context that contains the information needed to create the
    *   visual.
    * @param oldVisual The visual instance that had been returned the last time the
-   *   {@link MySimpleArrow#createVisual} method was called.
+   *   {@link MySimpleArrow.createVisual} method was called.
    * The updated visual.
-   * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @see Specified by {@link IVisualCreator.updateVisual}.
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): SvgVisual {
     return this.createVisual(context)
@@ -194,7 +194,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
 
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
-   * @see Specified by {@link IBoundsProvider#getBounds}.
+   * @see Specified by {@link IBoundsProvider.getBounds}.
    */
   getBounds(context: ICanvasContext): Rect {
     return new Rect(this.anchor.x - 8, this.anchor.y - 8, 32, 32)

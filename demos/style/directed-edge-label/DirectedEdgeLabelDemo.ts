@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,22 +36,22 @@ import {
   IEdge,
   IGraph,
   License,
-  NodeStyleLabelStyleAdapter,
   OrthogonalEdgeEditingContext,
   Point,
   Size
 } from 'yfiles'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindCommand, showApp } from '../../resources/demo-app'
 import { DirectedEdgeLabelStyle } from './DirectedEdgeLabelStyle'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
-  initBasicDemoStyles(graphComponent.graph, 'demo-palette-31')
+  initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31' })
   const labelStyle = graphComponent.graph.edgeDefaults.labels.style as DefaultLabelStyle
   labelStyle.minimumSize = new Size(0, 22)
 
@@ -132,5 +132,5 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

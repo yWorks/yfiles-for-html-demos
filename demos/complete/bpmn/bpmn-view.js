@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   BaseClass,
   CanvasComponent,
   Class,
+  ClickEventArgs,
   ConstantLabelCandidateDescriptorProvider,
   CreateEdgeInputMode,
   Cursor,
@@ -306,7 +307,7 @@ export const SubState = Enum('SubState', {
    * Specifies that the folding state of an {@link INode} determines if
    * an Activity is an expanded or collapsed Sub-Process according to BPMN.
    * @see {@link ActivityNodeStyle}
-   * @see {@link IFoldingView#isExpanded}
+   * @see {@link IFoldingView.isExpanded}
    */
   DYNAMIC: 3
 })
@@ -472,7 +473,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   }
 
   /**
-   * Gets the insets to use within the node's {@link INode#layout}.
+   * Gets the insets to use within the node's {@link INode.layout}.
    * @type {!Insets}
    */
   get insets() {
@@ -480,7 +481,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   }
 
   /**
-   * Sets the insets to use within the node's {@link INode#layout}.
+   * Sets the insets to use within the node's {@link INode.layout}.
    * @type {!Insets}
    */
   set insets(value) {
@@ -488,18 +489,19 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   }
 
   /**
-   * Returns an instance that implements the given type or <code>null</code>.
+   * Returns an instance that implements the given type or `null`.
    * Typically, this method will be called in order to obtain a different view or
    * aspect of the current instance. This is quite similar to casting or using
    * a super type or interface of this instance, but is not limited to inheritance or
    * compile time constraints. An instance implementing this method is not
-   * required to return non-<code>null</code> implementations for the types, nor does it
+   * required to return non-`null` implementations for the types, nor does it
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
-   * @param {!Class} type the type for which an instance shall be returned
-   * @returns {?object} an instance that is assignable to type or <code>null</code>
-   * @see Specified by {@link ILookup#lookup}.
+   * @param {!Class.<T>} type the type for which an instance shall be returned
+   * @returns {?T} an instance that is assignable to type or `null`
+   * @see Specified by {@link ILookup.lookup}.
+   * @template {*} T
    */
   lookup(type) {
     return ScalingLabelModel.STRETCH_MODEL.lookup(type)
@@ -512,8 +514,8 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
    * @param {!ILabelModelParameter} parameter The parameter to use for the label in the context.
    * @returns {!ILookup} An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
-   * @see {@link ILookup#EMPTY}
-   * @see Specified by {@link ILabelModel#getContext}.
+   * @see {@link ILookup.EMPTY}
+   * @see Specified by {@link ILabelModel.getContext}.
    */
   getContext(label, parameter) {
     return ScalingLabelModel.STRETCH_MODEL.getContext(label, parameter)
@@ -524,12 +526,12 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
    * for a given label using the given model parameter.
    * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
-   * {@link ILabelModelParameter#model} property.
+   * {@link ILabelModelParameter.model} property.
    * @param {!ILabel} label the label to calculate the geometry for
    * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
-   * @see Specified by {@link ILabelModel#getGeometry}.
+   * @see Specified by {@link ILabelModel.getGeometry}.
    */
   getGeometry(label, parameter) {
     const scalingParameter = parameter
@@ -584,7 +586,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   /**
    * Creates a default parameter that can be used for this model.
    * @returns {!ILabelModelParameter} a parameter for this model instance
-   * @see Specified by {@link ILabelModel#createDefaultParameter}.
+   * @see Specified by {@link ILabelModel.createDefaultParameter}.
    */
   createDefaultParameter() {
     const scalingParameter = new ScalingLabelModelParameter()
@@ -789,7 +791,7 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
    * Returns the available handles provided by the wrapped handler
    * restricted to the ones in the four corners and sides for nodes with {@link GatewayNodeStyle},
    * {@link EventNodeStyle} or {@link ConversationNodeStyle}.
-   * @see Specified by {@link IReshapeHandleProvider#getAvailableHandles}.
+   * @see Specified by {@link IReshapeHandleProvider.getAvailableHandles}.
    * @param {!IInputModeContext} inputModeContext
    * @returns {!HandlePositions}
    */
@@ -816,7 +818,7 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
    * Returns a custom handle that maintains the aspect ratio of the node with
    * {@link GatewayNodeStyle},
    * {@link EventNodeStyle} or {@link ConversationNodeStyle}.
-   * @see Specified by {@link IReshapeHandleProvider#getHandle}.
+   * @see Specified by {@link IReshapeHandleProvider.getHandle}.
    * @param {!IInputModeContext} inputModeContext
    * @param {!HandlePositions} position
    * @returns {!IHandle}
@@ -866,7 +868,7 @@ class AspectRatioHandle extends BaseClass(IHandle) {
 
   /**
    * Stores the initial location and aspect ratio for reference, and calls the base method.
-   * @see Specified by {@link IDragHandler#initializeDrag}.
+   * @see Specified by {@link IDragHandler.initializeDrag}.
    * @param {!IInputModeContext} inputModeContext
    */
   initializeDrag(inputModeContext) {
@@ -895,7 +897,7 @@ class AspectRatioHandle extends BaseClass(IHandle) {
    * Constrains the movement to maintain the aspect ratio. This is done
    * by calculating the constrained location for the given new location,
    * and invoking the original handler with the constrained location.
-   * @see Specified by {@link IDragHandler#handleMove}.
+   * @see Specified by {@link IDragHandler.handleMove}.
    * @param {!IInputModeContext} inputModeContext
    * @param {!Point} originalLocation
    * @param {!Point} newLocation
@@ -957,6 +959,12 @@ class AspectRatioHandle extends BaseClass(IHandle) {
   dragFinished(inputModeContext, originalLocation, newLocation) {
     this.handle.dragFinished(inputModeContext, originalLocation, this.lastLocation)
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 
   /**
    * @type {!HandleTypes}
@@ -1259,12 +1267,12 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * for a given label using the given model parameter.
    * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
-   * {@link ILabelModelParameter#model} property.
+   * {@link ILabelModelParameter.model} property.
    * @param {!ILabel} label the label to calculate the geometry for
    * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
-   * @see Specified by {@link ILabelModel#getGeometry}.
+   * @see Specified by {@link ILabelModel.getGeometry}.
    */
   getGeometry(label, parameter) {
     if (
@@ -1281,8 +1289,8 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
   }
 
   /**
-   * Returns {@link ChoreographyLabelModel#TASK_NAME_BAND} as default parameter.
-   * @see Specified by {@link ILabelModel#createDefaultParameter}.
+   * Returns {@link ChoreographyLabelModel.TASK_NAME_BAND} as default parameter.
+   * @see Specified by {@link ILabelModel.createDefaultParameter}.
    * @returns {!ILabelModelParameter}
    */
   createDefaultParameter() {
@@ -1291,9 +1299,9 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
 
   /**
    * Creates the parameter for the participant at the given position.
-   * @param {boolean} top Whether the index refers to {@link ChoreographyNodeStyle#topParticipants}
+   * @param {boolean} top Whether the index refers to {@link ChoreographyNodeStyle.topParticipants}
    *   or
-   *   {@link ChoreographyNodeStyle#bottomParticipants}.
+   *   {@link ChoreographyNodeStyle.bottomParticipants}.
    * @param {number} index The index of the participant band the label shall be placed in.
    * @returns {!ILabelModelParameter}
    */
@@ -1308,26 +1316,27 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * @param {!ILabelModelParameter} parameter The parameter to use for the label in the context.
    * @returns {!ILookup} An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
-   * @see {@link ILookup#EMPTY}
-   * @see Specified by {@link ILabelModel#getContext}.
+   * @see {@link ILookup.EMPTY}
+   * @see Specified by {@link ILabelModel.getContext}.
    */
   getContext(label, parameter) {
     return InteriorLabelModel.CENTER.model.getContext(label, parameter)
   }
 
   /**
-   * Returns an instance that implements the given type or <code>null</code>.
+   * Returns an instance that implements the given type or `null`.
    * Typically, this method will be called in order to obtain a different view or
    * aspect of the current instance. This is quite similar to casting or using
    * a super type or interface of this instance, but is not limited to inheritance or
    * compile time constraints. An instance implementing this method is not
-   * required to return non-<code>null</code> implementations for the types, nor does it
+   * required to return non-`null` implementations for the types, nor does it
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
-   * @param {!Class} type the type for which an instance shall be returned
-   * @returns {?object} an instance that is assignable to type or <code>null</code>
-   * @see Specified by {@link ILookup#lookup}.
+   * @param {!Class.<T>} type the type for which an instance shall be returned
+   * @returns {?T} an instance that is assignable to type or `null`
+   * @see Specified by {@link ILookup.lookup}.
+   * @template {*} T
    */
   lookup(type) {
     if (type === ILabelModelParameterProvider.$class) {
@@ -1349,7 +1358,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * @param {!ILabelModel} model The model to provide parameters for.
    * @returns {!IEnumerable.<ILabelModelParameter>} A possibly empty enumerator over a
    *   set of label model parameters.
-   * @see Specified by {@link ILabelModelParameterProvider#getParameters}.
+   * @see Specified by {@link ILabelModelParameterProvider.getParameters}.
    */
   getParameters(label, model) {
     const parameters = new List()
@@ -1374,12 +1383,11 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * Finds the parameter for the next free location at a node with {@link ChoreographyNodeStyle}.
    * This function will traverse all valid positions in the following order until it finds a free
    * location:
-   * <ul>
-   *   <li>Task band</li>
-   *   <li>Participant bands</li>
-   *   <li>Top message</li>
-   *   <li>Bottom message</li>
-   * <ul>
+   *
+   * - Task band
+   * - Participant bands
+   * - Top message
+   * - Bottom message
    * @param {!INode} node
    * @returns {?ILabelModelParameter}
    */
@@ -1661,13 +1669,13 @@ export class BpmnNodeStyle extends NodeStyleBase {
    * Callback that creates the visual.
    * @param {!INode} node The node to which this style instance is assigned.
    * @param {!IRenderContext} renderContext The render context.
-   * @returns {?SvgVisual} The visual as required by the {@link IVisualCreator#createVisual}
+   * @returns {?SvgVisual} The visual as required by the {@link IVisualCreator.createVisual}
    *   interface.
-   * @see {@link NodeStyleBase#updateVisual}
+   * @see {@link NodeStyleBase.updateVisual}
    */
   createVisual(renderContext, node) {
     this.updateIcon(node)
-    if (this.icon === null) {
+    if (this.icon == null) {
       return null
     }
 
@@ -1676,7 +1684,7 @@ export class BpmnNodeStyle extends NodeStyleBase {
     const visual = this.icon.createVisual(renderContext)
 
     const container = new SvgVisualGroup()
-    if (visual !== null) {
+    if (visual != null) {
       container.add(visual)
     }
     const transform = new Matrix()
@@ -1691,27 +1699,27 @@ export class BpmnNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Callback that updates the visual previously created by {@link NodeStyleBase#createVisual}.
+   * Callback that updates the visual previously created by {@link NodeStyleBase.createVisual}.
    * @param {!INode} node The node to which this style instance is assigned.
    * @param {!IRenderContext} renderContext The render context.
    * @param {!SvgVisual} oldVisual The visual that has been created in the call to {@link
    *   NodeStyleBase#createVisual}.
-   * @returns {?SvgVisual} The visual as required by the {@link IVisualCreator#createVisual}
+   * @returns {?SvgVisual} The visual as required by the {@link IVisualCreator.createVisual}
    *   interface.
-   * @see {@link NodeStyleBase#createVisual}
+   * @see {@link NodeStyleBase.createVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
-    if (this.icon === null) {
+    if (this.icon == null) {
       return null
     }
 
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
-    if (container === null) {
+    if (container == null) {
       this.createVisual(renderContext, node)
     }
 
-    const cache = container !== null ? container['render-data-cache'] : null
-    if (cache === null || cache.modCount !== this.modCount) {
+    const cache = container != null ? container['render-data-cache'] : null
+    if (cache == null || cache.modCount !== this.modCount) {
       return this.createVisual(renderContext, node)
     }
 
@@ -1731,16 +1739,16 @@ export class BpmnNodeStyle extends NodeStyleBase {
       if (container.children.size === 0) {
         newIconVisual = this.icon.createVisual(renderContext)
       } else {
-        oldIconVisual = container.children.elementAt(0)
+        oldIconVisual = container.children.first()
         newIconVisual = this.icon.updateVisual(renderContext, oldIconVisual)
       }
 
       // update visual
       if (oldIconVisual !== newIconVisual) {
-        if (oldIconVisual !== null) {
+        if (oldIconVisual != null) {
           container.remove(oldIconVisual)
         }
-        if (newIconVisual !== null) {
+        if (newIconVisual != null) {
           container.add(newIconVisual)
         }
       }
@@ -1756,23 +1764,23 @@ export class BpmnNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Updates the {@link BpmnNodeStyle#icon}.
-   * This method is called by {@link BpmnNodeStyle#createVisual}.
+   * Updates the {@link BpmnNodeStyle.icon}.
+   * This method is called by {@link BpmnNodeStyle.createVisual}.
    * @param {!INode} node
    */
   updateIcon(node) {}
 
   /**
-   * Performs the {@link ILookup#lookup} operation for the
-   * {@link INodeStyleRenderer#getContext} that has been queried from the
-   * {@link NodeStyleBase#renderer}.
+   * Performs the {@link ILookup.lookup} operation for the
+   * {@link INodeStyleRenderer.getContext} that has been queried from the
+   * {@link NodeStyleBase.renderer}.
    * @param {!INode} node The node to use for the context lookup.
    * @param {!Class} type The type to query.
-   * @returns {!object} An implementation of the <code>type</code> or <code>null</code>.
+   * @returns {!object} An implementation of the `type` or `null`.
    */
   lookup(node, type) {
     const lookup = super.lookup(node, type)
-    if (lookup === null && type === INodeSizeConstraintProvider.$class) {
+    if (lookup == null && type === INodeSizeConstraintProvider.$class) {
       if (!this.minimumSize.equals(Size.EMPTY)) {
         const maximumSize = new Size(Number.MAX_VALUE, Number.MAX_VALUE)
         return new NodeSizeConstraintProvider(this.minimumSize, maximumSize)
@@ -1828,7 +1836,7 @@ export class Participant extends BaseClass(ICloneable) {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     const newParticipant = new Participant()
@@ -1839,7 +1847,7 @@ export class Participant extends BaseClass(ICloneable) {
 
 /**
  * An {@link IVisualCreator} that allows to set bounds for the visualization.
- * To use this class for the flyweight pattern, {@link Icon#setBounds} should be called before
+ * To use this class for the flyweight pattern, {@link Icon.setBounds} should be called before
  * creating or updating the visuals.
  */
 class Icon extends BaseClass(IVisualCreator) {
@@ -1850,7 +1858,6 @@ class Icon extends BaseClass(IVisualCreator) {
 
   /**
    * Sets the bounds the visual shall consider.
-   * @see Specified by {@link Icon#setBounds}.
    * @param {!Rect} bounds
    */
   setBounds(bounds) {
@@ -1899,7 +1906,7 @@ class LineUpIcon extends Icon {
    * @returns {?SvgVisual}
    */
   createVisual(context) {
-    if (this.bounds === null) {
+    if (this.bounds == null) {
       return null
     }
 
@@ -1932,7 +1939,7 @@ class LineUpIcon extends Icon {
    */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
-    if (container === null || container.children.size !== this.icons.size) {
+    if (container == null || container.children.size !== this.icons.size) {
       return this.createVisual(context)
     }
 
@@ -2091,7 +2098,7 @@ class CombinedIcon extends Icon {
    * @returns {?SvgVisual}
    */
   createVisual(context) {
-    if (this.bounds === null) {
+    if (this.bounds == null) {
       return null
     }
     const container = new SvgVisualGroup()
@@ -2123,7 +2130,7 @@ class CombinedIcon extends Icon {
    */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
-    if (container === null || container.children.size !== this.icons.size) {
+    if (container == null || container.children.size !== this.icons.size) {
       return this.createVisual(context)
     }
 
@@ -2134,7 +2141,7 @@ class CombinedIcon extends Icon {
       const iconBounds = new Rect(Point.ORIGIN, this.bounds.size.toSize())
       this.icons.forEach((pathIcon, index) => {
         pathIcon.setBounds(iconBounds)
-        const oldPathVisual = container.children.elementAt(index)
+        const oldPathVisual = container.children.at(index)
         const newPathVisual = pathIcon.updateVisual(context, oldPathVisual)
         if (!oldPathVisual.equals(newPathVisual)) {
           container.children.remove(oldPathVisual)
@@ -2206,7 +2213,7 @@ class PathIcon extends Icon {
     }
 
     const path = oldVisual.svgElement
-    if (path === null) {
+    if (path == null) {
       return this.createVisual(context)
     }
 
@@ -2216,7 +2223,7 @@ class PathIcon extends Icon {
       Stroke.setStroke(this.stroke, path, context)
       oldCache.stroke = this.stroke
     }
-    if (oldCache.fill !== null && oldCache.fill !== this.fill) {
+    if (oldCache.fill != null && oldCache.fill !== this.fill) {
       Fill.setFill(this.fill, path, context)
       oldCache.fill = this.fill
     }
@@ -2713,7 +2720,7 @@ class PlusData {
    * @returns {number}
    */
   hashCode() {
-    const fillHC = this.fill !== null ? this.fill.hashCode() : 1
+    const fillHC = this.fill != null ? this.fill.hashCode() : 1
     return (((this.size * 397) ^ this.stroke.hashCode()) * 397) ^ fillHC
   }
 }
@@ -4520,7 +4527,7 @@ class IconFactory {
 
     let sameStops = true
     stops1.forEach((stop1, idx) => {
-      const stop2 = stops2.elementAt(idx)
+      const stop2 = stops2.at(idx)
       const sameColor = stop1.color.equals(stop2.color)
       const sameOffset = stop1.offset === stop2.offset
       sameStops = sameStops && sameColor && sameOffset
@@ -4737,7 +4744,7 @@ class ParticipantList extends BaseClass(IList) {
    * @param {number} index
    */
   removeAt(index) {
-    this._modCount += this.innerList.elementAt(index).modCount + 1
+    this._modCount += this.innerList.get(index).modCount + 1
     this.innerList.removeAt(index)
   }
 
@@ -4810,7 +4817,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @type {number}
    */
   set type(value) {
-    if (this._type !== value || this.outlineIcon === null) {
+    if (this._type !== value || this.outlineIcon == null) {
       this.modCount++
       this._type = value
       this.updateOutlineIcon()
@@ -4898,8 +4905,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   /**
    * Gets whether the initiating message icon or the response message icon is displayed on top of
    * the node while the other one is at the bottom side. Whether the initiating and response
-   * message icons are displayed at all depends on {@link ChoreographyNodeStyle#initiatingMessage}
-   * and {@link ChoreographyNodeStyle#responseMessage}. This property only determines which one is
+   * message icons are displayed at all depends on {@link ChoreographyNodeStyle.initiatingMessage}
+   * and {@link ChoreographyNodeStyle.responseMessage}. This property only determines which one is
    * displayed on which side of the node.
    * @type {boolean}
    */
@@ -4910,8 +4917,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   /**
    * Sets whether the initiating message icon or the response message icon is displayed on top of
    * the node while the other one is at the bottom side. Whether the initiating and response
-   * message icons are displayed at all depends on {@link ChoreographyNodeStyle#initiatingMessage}
-   * and {@link ChoreographyNodeStyle#responseMessage}. This property only determines which one is
+   * message icons are displayed at all depends on {@link ChoreographyNodeStyle.initiatingMessage}
+   * and {@link ChoreographyNodeStyle.responseMessage}. This property only determines which one is
    * displayed on which side of the node.
    * @type {boolean}
    */
@@ -5077,7 +5084,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * Gets the insets for the task name band of the given item.
    * These insets are extended by the sizes of the participant bands on top and bottom side
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
-   * {@link INodeStyleRenderer#getContext context lookup}.
+   * {@link INodeStyleRenderer.getContext context lookup}.
    * @return An insets object that describes the insets of the task name band.
    * @see {@link INodeInsetsProvider}
    * @type {!Insets}
@@ -5090,7 +5097,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * Sets the insets for the task name band of the given item.
    * These insets are extended by the sizes of the participant bands on top and bottom side
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
-   * {@link INodeStyleRenderer#getContext context lookup}.
+   * {@link INodeStyleRenderer.getContext context lookup}.
    * @see {@link INodeInsetsProvider}
    * @type {!Insets}
    */
@@ -5254,7 +5261,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @param {!IRenderContext} renderContext The render context.
    * @param {!INode} node The node to which this style instance is assigned.
    * @returns {!SvgVisual} The visual.
-   * @see {@link NodeStyleBase#updateVisual}
+   * @see {@link NodeStyleBase.updateVisual}
    */
   createVisual(renderContext, node) {
     const bounds = node.layout.toRect()
@@ -5337,22 +5344,22 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Callback that updates the visual previously created by {@link NodeStyleBase#createVisual}.
+   * Callback that updates the visual previously created by {@link NodeStyleBase.createVisual}.
    * @param {!IRenderContext} renderContext The render context.
    * @param {!SvgVisual} oldVisual The visual that should be updated.
    * @param {!INode} node The node to which this style instance is assigned.
    * @returns {!SvgVisual} The visual.
-   * @see {@link NodeStyleBase#createVisual}
+   * @see {@link NodeStyleBase.createVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (!container) {
       this.createVisual(renderContext, node)
     }
-    const cache = container !== null ? container['render-data-cache'] : null
+    const cache = container != null ? container['render-data-cache'] : null
     const currentModCount =
       this.modCount + this._topParticipants.modCount + this._bottomParticipants.modCount
-    if (cache === null || cache.modCount !== currentModCount) {
+    if (cache == null || cache.modCount !== currentModCount) {
       return this.createVisual(renderContext, node)
     }
     const newBounds = node.layout.toRect()
@@ -5366,7 +5373,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       updateChildVisual(container, childIndex++, this.outlineIcon, renderContext)
 
       // task band
-      const taskBandContainer = container.children.elementAt(childIndex++)
+      const taskBandContainer = container.children.at(childIndex++)
       if (taskBandContainer instanceof SvgVisualGroup) {
         const taskBandIcon = taskBandContainer['render-data-cache']
         const taskBandBounds = this.getRelativeTaskNameBandBounds(node)
@@ -5380,8 +5387,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       // top participants
       let topOffset = 0
       for (let i = 0; i < this._topParticipants.size; i++) {
-        const participant = this._topParticipants.elementAt(i)
-        const participantIcon = cache.topParticipantIcons.elementAt(i)
+        const participant = this._topParticipants.at(i)
+        const participantIcon = cache.topParticipantIcons.at(i)
         const height = participant.getSize()
         participantIcon.setBounds(new Rect(0, topOffset, newBounds.width, height))
         updateChildVisual(container, childIndex++, participantIcon, renderContext)
@@ -5391,8 +5398,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       // bottom participants
       let bottomOffset = newBounds.height
       for (let i = 0; i < this._bottomParticipants.size; i++) {
-        const participant = this._bottomParticipants.elementAt(i)
-        const participantIcon = cache.bottomParticipantIcons.elementAt(i)
+        const participant = this._bottomParticipants.at(i)
+        const participantIcon = cache.bottomParticipantIcons.at(i)
         const height = participant.getSize()
         bottomOffset -= height
         participantIcon.setBounds(new Rect(0, bottomOffset, newBounds.width, height))
@@ -5596,12 +5603,12 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the outline of the visual style.
-   * This implementation yields <code>null</code> to indicate that
-   * the {@link INode#layout} depicts the outline.
-   * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
-   * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
+   * This implementation yields `null` to indicate that
+   * the {@link INode.layout} depicts the outline.
+   * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
+   * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @returns {!GeneralPath} The outline of the visual representation or `null`.
    */
   getOutline(node) {
     ChoreographyNodeStyle.SHAPE_NODE_STYLE.renderer.getShapeGeometry(
@@ -5641,9 +5648,9 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
-   * This method is called in response to a {@link IHitTestable#isHit}
-   * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
-   * This implementation uses the {@link NodeStyleBase#getOutline outline} to determine
+   * This method is called in response to a {@link IHitTestable.isHit}
+   * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
+   * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
    * @param {!INode} node The node to which this style instance is assigned.
    * @param {!Point} p The point to test.
@@ -5708,9 +5715,9 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the bounds of the visual for the node in the given context.
-   * This method is called in response to a {@link IBoundsProvider#getBounds}
-   * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
-   * This implementation simply yields the {@link INode#layout}.
+   * This method is called in response to a {@link IBoundsProvider.getBounds}
+   * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
+   * This implementation simply yields the {@link INode.layout}.
    * @param {!INode} node The node to which this style instance is assigned.
    * @param {!ICanvasContext} canvasContext The canvas context.
    * @returns {!Rect} The visual bounds of the visual representation.
@@ -5742,12 +5749,12 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Performs the {@link ILookup#lookup} operation for
-   * the {@link INodeStyleRenderer#getContext}
-   * that has been queried from the {@link NodeStyleBase#renderer}.
+   * Performs the {@link ILookup.lookup} operation for
+   * the {@link INodeStyleRenderer.getContext}
+   * that has been queried from the {@link NodeStyleBase.renderer}.
    * @param {!INode} node The node to use for the context lookup.
    * @param {!Class} type The type to query.
-   * @returns {!object} An implementation of the <code>type</code> or <code>null</code>.
+   * @returns {!object} An implementation of the `type` or `null`.
    */
   lookup(node, type) {
     if (type === INodeSizeConstraintProvider.$class) {
@@ -5769,7 +5776,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     const clone = new ChoreographyNodeStyle()
@@ -5914,10 +5921,10 @@ class ChoreographyEditLabelHelper extends EditLabelHelper {
  * @param {!IRenderContext} context
  */
 function updateChildVisual(container, index, icon, context) {
-  const oldPathVisual = container.children.elementAt(index)
+  const oldPathVisual = container.children.at(index)
   let newPathVisual = icon.updateVisual(context, oldPathVisual)
   if (!oldPathVisual.equals(newPathVisual)) {
-    newPathVisual = newPathVisual !== null ? newPathVisual : new SvgVisualGroup()
+    newPathVisual = newPathVisual != null ? newPathVisual : new SvgVisualGroup()
     container.children.remove(oldPathVisual)
     container.children.insert(index, newPathVisual)
   }
@@ -5925,8 +5932,8 @@ function updateChildVisual(container, index, icon, context) {
 
 /**
  * A label style for message labels of nodes using a {@link ChoreographyNodeStyle}.
- * To place labels with this style, {@link ChoreographyLabelModel#NORTH_MESSAGE}
- * or {@link ChoreographyLabelModel#SOUTH_MESSAGE} are recommended.
+ * To place labels with this style, {@link ChoreographyLabelModel.NORTH_MESSAGE}
+ * or {@link ChoreographyLabelModel.SOUTH_MESSAGE} are recommended.
  */
 class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   /**
@@ -5954,7 +5961,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
    * @type {?ILabelModelParameter}
    */
   get textPlacement() {
-    return this.delegateStyle !== null ? this.delegateStyle.textPlacement : null
+    return this.delegateStyle != null ? this.delegateStyle.textPlacement : null
   }
 
   /**
@@ -5963,7 +5970,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
    * @type {?ILabelModelParameter}
    */
   set textPlacement(value) {
-    if (this.delegateStyle !== null) {
+    if (this.delegateStyle != null) {
       this.delegateStyle.textPlacement = value
     }
   }
@@ -5985,7 +5992,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     return new ChoreographyMessageLabelStyle()
@@ -5997,11 +6004,11 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
    * for a given label and this style instance.
    * The idiom for retrieving, e.g. an {@link IVisualCreator} implementation
    * for a given style is:
-   * <pre><code>
+   * ```
    * var creator = style.renderer.getVisualCreator(label, style);
    * var visual = creator.createVisual(renderContext);
-   * </code></pre>
-   * @see Specified by {@link ILabelStyle#renderer}.
+   * ```
+   * @see Specified by {@link ILabelStyle.renderer}.
    * @type {!ILabelStyleRenderer}
    */
   get renderer() {
@@ -6121,16 +6128,16 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   /**
    * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
-   * This method may return a flyweight implementation, but never <code>null</code>.
+   * This method may return a flyweight implementation, but never `null`.
    * @param {!ILabel} item The item to provide an instance for
    * @param {!ILabelStyle} style The style to use for the creation of the visual
    * @returns {!IVisualCreator} An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
-   *   design pattern for implementations. This method may not return <code>null</code> but should
-   *   yield a {@link VoidVisualCreator#INSTANCE void} implementation instead.
-   * @see {@link VoidVisualCreator#INSTANCE}
-   * @see Specified by {@link INodeStyleRenderer#getVisualCreator}.
+   *   design pattern for implementations. This method may not return `null` but should
+   *   yield a {@link VoidVisualCreator.INSTANCE void} implementation instead.
+   * @see {@link VoidVisualCreator.INSTANCE}
+   * @see Specified by {@link INodeStyleRenderer.getVisualCreator}.
    */
   getVisualCreator(item, style) {
     this.item = item
@@ -6148,7 +6155,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link INodeStyleRenderer#getBoundsProvider}.
+   * @see Specified by {@link INodeStyleRenderer.getBoundsProvider}.
    */
   getBoundsProvider(item, style) {
     const delegateStyle = this.getCurrentStyle(item, style)
@@ -6165,7 +6172,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link INodeStyleRenderer#getVisibilityTestable}.
+   * @see Specified by {@link INodeStyleRenderer.getVisibilityTestable}.
    */
   getVisibilityTestable(item, style) {
     const delegateStyle = this.getCurrentStyle(item, style)
@@ -6182,8 +6189,8 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
-   *   <code>null</code> to indicate that the item cannot be hit tested.
-   * @see Specified by {@link INodeStyleRenderer#getHitTestable}.
+   *   `null` to indicate that the item cannot be hit tested.
+   * @see Specified by {@link INodeStyleRenderer.getHitTestable}.
    */
   getHitTestable(item, style) {
     const delegateStyle = this.getCurrentStyle(item, style)
@@ -6200,7 +6207,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link INodeStyleRenderer#getMarqueeTestable}.
+   * @see Specified by {@link INodeStyleRenderer.getMarqueeTestable}.
    */
   getMarqueeTestable(item, style) {
     const delegateStyle = this.getCurrentStyle(item, style)
@@ -6210,14 +6217,14 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   /**
    * Gets a temporary context instance that can be used to query additional information
    * for the item's style.
-   * Implementations may return {@link ILookup#EMPTY} if they don't support this, but may not return
-   * <code>null</code>.
+   * Implementations may return {@link ILookup.EMPTY} if they don't support this, but may not return
+   * `null`.
    * @param {!ILabel} item The item to provide a context instance for.
    * @param {!ILabelStyle} style The style to use for the context.
-   * @returns {!ILookup} An non-<code>null</code> lookup implementation.
-   * @see {@link ILookup#EMPTY}
+   * @returns {!ILookup} An non-`null` lookup implementation.
+   * @see {@link ILookup.EMPTY}
    * @see {@link ILookup}
-   * @see Specified by {@link INodeStyleRenderer#getContext}.
+   * @see Specified by {@link INodeStyleRenderer.getContext}.
    */
   getContext(item, style) {
     const delegateStyle = this.getCurrentStyle(item, style)
@@ -6225,14 +6232,14 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   }
 
   /**
-   * Calculates the {@link ILabel#preferredSize preferred size}
+   * Calculates the {@link ILabel.preferredSize preferred size}
    * of a given label using the associated style.
    * @param {!ILabel} label The label to determine the preferred size for
    * @param {!ILabelStyle} style The style instance that uses this instance as its
-   * {@link ILabelStyle#renderer}
-   * @returns {!Size} A size that can be used as the {@link ILabel#preferredSize}
+   * {@link ILabelStyle.renderer}
+   * @returns {!Size} A size that can be used as the {@link ILabel.preferredSize}
    * if this renderer paints the label using the associated style.
-   * @see Specified by {@link ILabelStyleRenderer#getPreferredSize}.
+   * @see Specified by {@link ILabelStyleRenderer.getPreferredSize}.
    */
   getPreferredSize(label, style) {
     const delegateStyle = this.getCurrentStyle(label, style)
@@ -6246,9 +6253,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * to populate the visual canvas object tree.
    * @param {!IRenderContext} context The context that describes where the visual will be used.
    * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
-   *   <code>null</code>.
-   * @see {@link IVisualCreator#updateVisual}
-   * @see Specified by {@link IVisualCreator#createVisual}.
+   *   `null`.
+   * @see {@link IVisualCreator.updateVisual}
+   * @see Specified by {@link IVisualCreator.createVisual}.
    */
   createVisual(context) {
     const container = new SvgVisualGroup()
@@ -6265,27 +6272,27 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * in the {@link IRenderContext}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
+   * to {@link IVisualCreator.createVisual}. Implementation may update the `oldVisual`
    * and return that same reference, or create a new visual and return the new instance or
-   * <code>null</code>.
+   * `null`.
    * @param {!IRenderContext} context The context that describes where the visual will be used in.
    * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
-   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @returns {!SvgVisual} `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
-   * @see {@link IVisualCreator#createVisual}
+   * @see {@link IVisualCreator.createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
-   * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @see Specified by {@link IVisualCreator.updateVisual}.
    */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (!container) {
       this.createVisual(context)
     }
-    const cache = container !== null ? oldVisual['render-data-cache'] : null
+    const cache = container != null ? oldVisual['render-data-cache'] : null
     const newCache = this.createRenderData()
-    if (cache === null || !cache.equals(newCache) || container.children.size !== 1) {
+    if (cache == null || !cache.equals(newCache) || container.children.size !== 1) {
       return this.createVisual(context)
     }
     const delegateStyle = this.getCurrentStyle(this.item, this.style)
@@ -6398,14 +6405,14 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * @type {?Fill}
    */
   set color(value) {
-    if (this._stroke === null || !IconFactory.equalFill(this._stroke.fill, value)) {
+    if (this._stroke == null || !IconFactory.equalFill(this._stroke.fill, value)) {
       this.updateStroke(value)
       this.updateArrow(this.type)
     }
   }
 
   /**
-   * Gets the inner stroke color of the edge when {@link BpmnEdgeStyle#type} is
+   * Gets the inner stroke color of the edge when {@link BpmnEdgeStyle.type} is
    * {@link EdgeType.CONVERSATION}.
    * @type {?Fill}
    */
@@ -6414,12 +6421,12 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * Sets the inner stroke color of the edge when {@link BpmnEdgeStyle#type} is
+   * Sets the inner stroke color of the edge when {@link BpmnEdgeStyle.type} is
    * {@link EdgeType.CONVERSATION}.
    * @type {?Fill}
    */
   set innerColor(value) {
-    if (this._innerStroke === null || !IconFactory.equalFill(this._innerStroke.fill, value)) {
+    if (this._innerStroke == null || !IconFactory.equalFill(this._innerStroke.fill, value)) {
       const stroke = new Stroke(value)
       stroke.lineJoin = LineJoin.ROUND
       stroke.freeze()
@@ -6430,7 +6437,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     const bpmnEdgeStyle = new BpmnEdgeStyle()
@@ -6461,8 +6468,8 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
 
   /**
    * Gets the smoothing length used for creating smooth bends.
-   * A value of <code>0.0d</code> will disable smoothing.
-   * @see Specified by {@link PolylineEdgeStyle#smoothing}.
+   * A value of `0.0d` will disable smoothing.
+   * @see Specified by {@link PolylineEdgeStyle.smoothing}.
    * @type {number}
    */
   get smoothing() {
@@ -6471,8 +6478,8 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
 
   /**
    * Sets the smoothing length used for creating smooth bends.
-   * A value of <code>0.0d</code> will disable smoothing.
-   * @see Specified by {@link PolylineEdgeStyle#smoothing}.
+   * A value of `0.0d` will disable smoothing.
+   * @see Specified by {@link PolylineEdgeStyle.smoothing}.
    * @type {number}
    */
   set smoothing(value) {
@@ -6480,7 +6487,6 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * @param {Fill} fill
    * @param {?Fill} fill
    */
   updateStroke(fill) {
@@ -6520,7 +6526,6 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * @param {EdgeType} type
    * @param {number} type
    */
   updateArrow(type) {
@@ -6570,8 +6575,8 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * @param {!IRenderContext} context The context that describes where the visual will be used.
    * @param {!IEdge} edge The edge for which the visual is created.
    * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
-   *   <code>null</code>.
-   * @see {@link IVisualCreator#updateVisual}
+   *   `null`.
+   * @see {@link IVisualCreator.updateVisual}
    */
   createVisual(context, edge) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -6616,19 +6621,19 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * in the {@link IRenderContext}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
+   * to {@link IVisualCreator.createVisual}. Implementation may update the `oldVisual`
    * and return that same reference, or create a new visual and return the new instance or
-   * <code>null</code>.
+   * `null`.
    * @param {!IRenderContext} context The context that describes where the visual will be used in.
    * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param {!IEdge} edge The edge for which the visual is updated.
-   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @returns {!SvgVisual} `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
-   * @see {@link IVisualCreator#createVisual}
+   * @see {@link IVisualCreator.createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
-   * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @see Specified by {@link IVisualCreator.updateVisual}.
    */
   updateVisual(context, oldVisual, edge) {
     const container = oldVisual.svgElement
@@ -6872,7 +6877,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * @type {number}
    */
   set activityType(value) {
-    if (this._activityType !== value || this._activityIcon === null) {
+    if (this._activityType !== value || this._activityIcon == null) {
       this.modCount++
       this._activityType = value
       this.updateActivityIcon()
@@ -6900,7 +6905,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Gets the event type that is used for the task type {@link TaskType#EVENT_TRIGGERED}.
+   * Gets the event type that is used for the task type {@link TaskType.EVENT_TRIGGERED}.
    * @type {number}
    */
   get triggerEventType() {
@@ -6908,7 +6913,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Sets the event type that is used for the task type {@link TaskType#EVENT_TRIGGERED}.
+   * Sets the event type that is used for the task type {@link TaskType.EVENT_TRIGGERED}.
    * @type {number}
    */
   set triggerEventType(value) {
@@ -6922,7 +6927,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Gets the event characteristic that is used for the task type {@link TaskType#EVENT_TRIGGERED}.
+   * Gets the event characteristic that is used for the task type {@link TaskType.EVENT_TRIGGERED}.
    * @type {number}
    */
   get triggerEventCharacteristic() {
@@ -6930,7 +6935,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Sets the event characteristic that is used for the task type {@link TaskType#EVENT_TRIGGERED}.
+   * Sets the event characteristic that is used for the task type {@link TaskType.EVENT_TRIGGERED}.
    * @type {number}
    */
   set triggerEventCharacteristic(value) {
@@ -7026,7 +7031,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * Gets the insets for the node.
    * These insets are extended at the left and bottom side if markers are active
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
-   * {@link NodeStyleBase#lookup lookup}.
+   * {@link NodeStyleBase.lookup lookup}.
    * @see {@link INodeInsetsProvider}
    * @return An insets object that describes the insets of node.
    * @type {!Insets}
@@ -7039,7 +7044,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * Sets the insets for the node.
    * These insets are extended at the left and bottom side if markers are active
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
-   * {@link NodeStyleBase#lookup lookup}.
+   * {@link NodeStyleBase.lookup lookup}.
    * @see {@link INodeInsetsProvider}
    * @param insets An insets object that describes the insets of node.
    * @type {!Insets}
@@ -7113,7 +7118,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Gets the outline color for event icons if {@link ActivityNodeStyle#taskType} is
+   * Gets the outline color for event icons if {@link ActivityNodeStyle.taskType} is
    * {@link EventType.EVENT_TRIGGERED}. If this is set to null, the outline color is automatic,
    * based on the TriggerEventCharacteristic.
    * @type {?Fill}
@@ -7160,7 +7165,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
         this.background
       )
     }
-    if (this._taskIcon !== null) {
+    if (this._taskIcon != null) {
       this._taskIcon = IconFactory.createPlacedIcon(
         this._taskIcon,
         BPMN_CONSTANTS_PLACEMENTS_TASK_TYPE,
@@ -7250,7 +7255,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   /**
    * Gets the outline of the visual style.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @returns {!GeneralPath} The outline of the visual representation or `null`.
    */
   getOutline(node) {
     return ActivityNodeStyle.createRoundRectPath(
@@ -7267,8 +7272,8 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * @param {!IInputModeContext} canvasContext The canvas context.
    * @param {!Point} p The point to test.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} <code>true</code> if the specified node representation is hit; otherwise,
-   *   <code>false</code>.
+   * @returns {boolean} `true` if the specified node representation is hit; otherwise,
+   *   `false`.
    */
   isHit(canvasContext, p, node) {
     return ActivityNodeStyle.SHAPE_NODE_STYLE.renderer
@@ -7277,10 +7282,10 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Performs the {@link ILookup#lookup} operation.
+   * Performs the {@link ILookup.lookup} operation.
    * @param {!INode} node The node to use for the context lookup.
    * @param {!Class} type The type to query.
-   * @returns {!object} An implementation of the <code>type</code> or <code>null</code>.
+   * @returns {!object} An implementation of the `type` or `null`.
    */
   lookup(node, type) {
     if (type === INodeInsetsProvider.$class) {
@@ -7458,12 +7463,12 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
    * @param {!IStripe} node The node to which this style instance is assigned.
    * @param {!IRenderContext} renderContext The render context.
    * @returns {?SvgVisual} The visual.
-   * @see {@link NodeStyleBase#updateVisual}
+   * @see {@link NodeStyleBase.updateVisual}
    */
   createVisual(renderContext, node) {
     const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
-    if (stripe !== null) {
+    if (stripe != null) {
       const container = new SvgVisualGroup()
       let stripeInsets
       let descriptor
@@ -7522,21 +7527,21 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
   }
 
   /**
-   * Callback that updates the visual previously created by {@link NodeStyleBase#createVisual}.
-   * This method is called in response to a {@link IVisualCreator#updateVisual}
-   * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
-   * This implementation simply delegates to {@link NodeStyleBase#createVisual} so subclasses
+   * Callback that updates the visual previously created by {@link NodeStyleBase.createVisual}.
+   * This method is called in response to a {@link IVisualCreator.updateVisual}
+   * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
+   * This implementation simply delegates to {@link NodeStyleBase.createVisual} so subclasses
    * should override to improve rendering performance.
    * @param {!IStripe} node The node to which this style instance is assigned.
    * @param {!IRenderContext} renderContext The render context.
    * @param {!SvgVisualGroup} oldVisual The visual that should be updated.
    * @returns {?SvgVisual} The visual.
-   * @see {@link NodeStyleBase#createVisual}
+   * @see {@link NodeStyleBase.createVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
-    if (stripe !== null) {
+    if (stripe != null) {
       let stripeInsets
       // Check if values have changed - then update everything
       let descriptor
@@ -7947,7 +7952,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     return this.memberwiseClone()
@@ -7958,9 +7963,9 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * @param {!IRenderContext} context The context that describes where the visual will be used.
    * @param {!ILabel} label The label for which the visual is created.
    * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
-   *   <code>null</code>.
-   * @see {@link IVisualCreator#updateVisual}
-   * @see Specified by {@link IVisualCreator#createVisual}.
+   *   `null`.
+   * @see {@link IVisualCreator.updateVisual}
+   * @see Specified by {@link IVisualCreator.createVisual}.
    */
   createVisual(context, label) {
     this.configure(context, label)
@@ -8018,26 +8023,26 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * This method updates or replaces a previously created {@link Visual}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
+   * to {@link IVisualCreator.createVisual}. Implementation may update the `oldVisual`
    * and return that same reference, or create a new visual and return the new instance or
-   * <code>null</code>.
+   * `null`.
    * @param {!IRenderContext} context The context that describes where the visual will be used in.
    * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param {!ILabel} label The label whose visual is updated.
-   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @returns {!SvgVisual} `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    */
   updateVisual(context, oldVisual, label) {
     this.configure(context, label)
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
-    if (container === null || container.children.size !== 3) {
+    if (container == null || container.children.size !== 3) {
       return this.createVisual(context, label)
     }
 
     const oldIconVisual = container.children.get(0)
     let newIconVisual = null
-    if (this.iconStyle !== null) {
+    if (this.iconStyle != null) {
       const labelAsNode = ConnectedIconLabelStyle.LABEL_AS_NODE
       newIconVisual = this.iconStyle.renderer
         .getVisualCreator(labelAsNode, labelAsNode.style)
@@ -8049,7 +8054,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
     const oldTextVisual = container.children.get(1)
     let newTextVisual = null
-    if (this.textStyle !== null && this.textPlacement !== null) {
+    if (this.textStyle != null && this.textPlacement != null) {
       const dummyTextLabel = ConnectedIconLabelStyle.DUMMY_TEXT_LABEL
       newTextVisual = this.textStyle.renderer
         .getVisualCreator(dummyTextLabel, dummyTextLabel.style)
@@ -8061,7 +8066,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
     const oldConnectorVisual = container.children.get(2)
     let newConnectorVisual = null
-    if (this.connectorStyle !== null) {
+    if (this.connectorStyle != null) {
       const dummyEdge = ConnectedIconLabelStyle.DUMMY_EDGE
       newConnectorVisual = dummyEdge.style.renderer
         .getVisualCreator(dummyEdge, dummyEdge.style)
@@ -8109,7 +8114,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * @param {!IInputModeContext} context the context the hit test is performed in
    * @param {!ILabel} label the label that might be hit.
    * @returns {boolean} whether something has been hit
-   * @see Specified by {@link IHitTestable#isHit}.
+   * @see Specified by {@link IHitTestable.isHit}.
    */
   isHit(context, location, label) {
     this.configure(context, label)
@@ -8121,16 +8126,16 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * This callback returns <code>true</code> if the corresponding
+   * This callback returns `true` if the corresponding
    * item is considered to intersect the given rectangular box.
-   * This method may return <code>false</code> if the item cannot be
+   * This method may return `false` if the item cannot be
    * selected using a selection marquee or optionally if the
    * item is only partially contained within the box.
    * @param {!Rect} box the box describing the marquee's bounds
    * @param {!IInputModeContext} context the current canvas context
    * @param {!ILabel} label the label.
-   * @returns {boolean} <code>true</code> if the item is considered to be captured by the marquee
-   * @see Specified by {@link IMarqueeTestable#isInBox}.
+   * @returns {boolean} `true` if the item is considered to be captured by the marquee
+   * @see Specified by {@link IMarqueeTestable.isInBox}.
    */
   isInBox(context, box, label) {
     this.configure(context, label)
@@ -8141,14 +8146,14 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * Returns a tight rectangular area where the whole rendering
    * would fit into.
    * If calculating the bounds is too expensive or the painting is not
-   * bound to a certain area, this method may return {@link Rect#INFINITE}.
+   * bound to a certain area, this method may return {@link Rect.INFINITE}.
    * If nothing is painted, this method should return an empty rectangle, where
    * either or both the width and height is non-positive or
-   * {@link Rect#EMPTY}.
+   * {@link Rect.EMPTY}.
    * @param {!ICanvasContext} context the context to calculate the bounds for
    * @param {!ILabel} label the label.
-   * @returns {!Rect} the bounds or {@link Rect#EMPTY} to indicate an unbound area
-   * @see Specified by {@link IBoundsProvider#getBounds}.
+   * @returns {!Rect} the bounds or {@link Rect.EMPTY} to indicate an unbound area
+   * @see Specified by {@link IBoundsProvider.getBounds}.
    */
   getBounds(context, label) {
     this.configure(context, label)
@@ -8164,9 +8169,9 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * @param {!Rect} clip The visible region clip.
    * @param {!ICanvasContext} context The context to determine the visibility for.
    * @param {!ILabel} label the label.
-   * @returns {boolean} <code>false</code> if and only if it is safe not to paint the element because
+   * @returns {boolean} `false` if and only if it is safe not to paint the element because
    * it would not affect the given clipping region.
-   * @see Specified by {@link IVisibilityTestable#isVisible}.
+   * @see Specified by {@link IVisibilityTestable.isVisible}.
    */
   isVisible(context, clip, label) {
     this.configure(context, label)
@@ -8336,7 +8341,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     const style = new AnnotationLabelStyle()
@@ -8420,7 +8425,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * @param {!IInputModeContext} context The input mode context.
    * @param {!Point} location The location to check.
    * @param {!ILabel} label The label.
-   * @see {@link ILabelStyleRenderer#getHitTestable}.
+   * @see {@link ILabelStyleRenderer.getHitTestable}.
    * @returns {boolean}
    */
   isHit(context, location, label) {
@@ -8429,10 +8434,10 @@ export class AnnotationLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * Calculates the {@link ILabel#preferredSize preferred size}
+   * Calculates the {@link ILabel.preferredSize preferred size}
    * of a given label using the associated style.
    * @param {!ILabel} label The label to determine the preferred size for.
-   * @returns {!Size} A size that can be used as the {@link ILabel#preferredSize}.
+   * @returns {!Size} A size that can be used as the {@link ILabel.preferredSize}.
    */
   getPreferredSize(label) {
     const preferredTextSize = AnnotationLabelStyle.TEXT_STYLE.renderer.getPreferredSize(
@@ -8453,9 +8458,9 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * @param {!IRenderContext} context The context that describes where the visual will be used.
    * @param {!ILabel} label The label.
    * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
-   *   <code>null</code>.
-   * @see {@link IVisualCreator#updateVisual}
-   * @see Specified by {@link IVisualCreator#createVisual}.
+   *   `null`.
+   * @see {@link IVisualCreator.updateVisual}
+   * @see Specified by {@link IVisualCreator.createVisual}.
    */
   createVisual(context, label) {
     const container = new SvgVisualGroup()
@@ -8473,19 +8478,19 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * in the {@link IRenderContext}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
+   * to {@link IVisualCreator.createVisual}. Implementation may update the `oldVisual`
    * and return that same reference, or create a new visual and return the new instance or
-   * <code>null</code>.
+   * `null`.
    * @param {!IRenderContext} context The context that describes where the visual will be used in.
    * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param {!ILabel} label The label.
-   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @returns {!SvgVisual} `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
-   * @see {@link IVisualCreator#createVisual}
+   * @see {@link IVisualCreator.createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
-   * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @see Specified by {@link IVisualCreator.updateVisual}.
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
@@ -8495,7 +8500,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     const cache = container['render-data-cache']
     const delegateStyle = this.getCurrentStyle(label)
     const newCache = this.createRenderData()
-    if (cache === null || !cache.equals(cache, newCache) || container.children.size !== 1) {
+    if (cache == null || !cache.equals(cache, newCache) || container.children.size !== 1) {
       return this.createVisual(context, label)
     }
     const oldDelegateVisual = container.children.get(0)
@@ -8616,9 +8621,9 @@ export class StripeDescriptor {
    * @returns {number}
    */
   hashCode() {
-    let result = this._backgroundFill !== null ? this._backgroundFill.hashCode() : 0
-    result = (result * 397) ^ (this._insetFill !== null ? this._insetFill.hashCode() : 0)
-    result = (result * 397) ^ (this._borderFill !== null ? this._borderFill.hashCode() : 0)
+    let result = this._backgroundFill != null ? this._backgroundFill.hashCode() : 0
+    result = (result * 397) ^ (this._insetFill != null ? this._insetFill.hashCode() : 0)
+    result = (result * 397) ^ (this._borderFill != null ? this._borderFill.hashCode() : 0)
     result = (result * 397) ^ this._borderThickness.hashCode()
     return result
   }
@@ -8626,7 +8631,7 @@ export class StripeDescriptor {
 
 /**
  * An {@link INodeStyle} implementation representing a Pool according to the BPMN.
- * The main visualization is delegated to {@link PoolNodeStyle#tableNodeStyle}.
+ * The main visualization is delegated to {@link PoolNodeStyle.tableNodeStyle}.
  */
 export class PoolNodeStyle extends NodeStyleBase {
   /**
@@ -8718,9 +8723,9 @@ export class PoolNodeStyle extends NodeStyleBase {
    * @param {!IRenderContext} renderContext The context that describes where the visual will be used.
    * @param {!INode} node The node.
    * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
-   *   <code>null</code>.
-   * @see {@link IVisualCreator#updateVisual}
-   * @see Specified by {@link IVisualCreator#createVisual}.
+   *   `null`.
+   * @see {@link IVisualCreator.updateVisual}
+   * @see Specified by {@link IVisualCreator.createVisual}.
    */
   createVisual(renderContext, node) {
     const container = new SvgVisualGroup()
@@ -8742,24 +8747,24 @@ export class PoolNodeStyle extends NodeStyleBase {
    * in the {@link IRenderContext}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
+   * to {@link IVisualCreator.createVisual}. Implementation may update the `oldVisual`
    * and return that same reference, or create a new visual and return the new instance or
-   * <code>null</code>.
+   * `null`.
    * @param {!IRenderContext} renderContext The context that describes where the visual will be used
    *   in.
    * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param {!INode} node The node
-   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @returns {!SvgVisual} `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
-   * @see {@link IVisualCreator#createVisual}
+   * @see {@link IVisualCreator.createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
-   * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @see Specified by {@link IVisualCreator.updateVisual}.
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
-    if (container === null || container.children.size === 0) {
+    if (container == null || container.children.size === 0) {
       return this.createVisual(renderContext, node)
     }
 
@@ -8772,9 +8777,9 @@ export class PoolNodeStyle extends NodeStyleBase {
       container.children.insert(0, newTableVisual)
     }
 
-    const oldMultipleVisual = container.children.size > 1 ? container.children.last() : null
+    const oldMultipleVisual = container.children.size > 1 ? container.children.at(-1) : undefined
     if (this.multipleInstance) {
-      if (oldMultipleVisual === null) {
+      if (oldMultipleVisual == null) {
         this._multipleInstanceIcon.setBounds(node.layout.toRect())
         const multipleInstanceIconVisual = this._multipleInstanceIcon.createVisual(renderContext)
         container.add(multipleInstanceIconVisual)
@@ -8785,13 +8790,13 @@ export class PoolNodeStyle extends NodeStyleBase {
           oldMultipleVisual
         )
         if (oldMultipleVisual !== newMultipleVisual) {
-          if (oldMultipleVisual !== null) {
+          if (oldMultipleVisual != null) {
             container.children.remove(oldMultipleVisual)
           }
           container.add(newMultipleVisual)
         }
       }
-    } else if (oldMultipleVisual !== null) {
+    } else if (oldMultipleVisual != null) {
       // there has been a multipleInstance icon before
       container.children.remove(oldMultipleVisual)
     }
@@ -8799,11 +8804,11 @@ export class PoolNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Returns an instance that implements the given type or <code>null</code>.
+   * Returns an instance that implements the given type or `null`.
    * @param {!INode} node the node
    * @param {!Class} type the type for which an instance shall be returned
-   * @returns {!object} an instance that is assignable to type or <code>null</code>
-   * @see Specified by {@link ILookup#lookup}.
+   * @returns {!object} an instance that is assignable to type or `null`
+   * @see Specified by {@link ILookup.lookup}.
    */
   lookup(node, type) {
     if (type === IEditLabelHelper.$class) {
@@ -8824,7 +8829,7 @@ export class PoolNodeStyle extends NodeStyleBase {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     const clone = new PoolNodeStyle()
@@ -8921,22 +8926,23 @@ function createDefaultTableNodeStyle(vertical) {
 
 /**
  * A label model for nodes using a {@link PoolNodeStyle} that position labels inside the
- * {@link ITable#insets table insets}.
+ * {@link ITable.insets table insets}.
  */
 export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelParameterProvider) {
   /**
-   * Returns an instance that implements the given type or <code>null</code>.
+   * Returns an instance that implements the given type or `null`.
    * Typically, this method will be called in order to obtain a different view or
    * aspect of the current instance. This is quite similar to casting or using
    * a super type or interface of this instance, but is not limited to inheritance or
    * compile time constraints. An instance implementing this method is not
-   * required to return non-<code>null</code> implementations for the types, nor does it
+   * required to return non-`null` implementations for the types, nor does it
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
-   * @param {!Class} type the type for which an instance shall be returned
-   * @returns {?object} an instance that is assignable to type or <code>null</code>
-   * @see Specified by {@link ILookup#lookup}.
+   * @param {!Class.<T>} type the type for which an instance shall be returned
+   * @returns {?T} an instance that is assignable to type or `null`
+   * @see Specified by {@link ILookup.lookup}.
+   * @template {*} T
    */
   lookup(type) {
     if (type === ILabelModelParameterProvider.$class) {
@@ -8956,17 +8962,17 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
    * for a given label using the given model parameter.
    * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
-   * {@link ILabelModelParameter#model} property.
+   * {@link ILabelModelParameter.model} property.
    * @param {!ILabel} label the label to calculate the geometry for
    * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
-   * @see Specified by {@link ILabelModel#getGeometry}.
+   * @see Specified by {@link ILabelModel.getGeometry}.
    */
   getGeometry(label, parameter) {
     const php = parameter instanceof PoolHeaderLabelModelParameter ? parameter : null
     const owner = label.owner
-    if (php === null || owner === null) {
+    if (php == null || owner == null) {
       return IOrientedRectangle.EMPTY
     }
 
@@ -9022,7 +9028,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   /**
    * Creates a default parameter that can be used for this model.
    * @returns {!ILabelModelParameter} a parameter for this model instance
-   * @see Specified by {@link ILabelModel#createDefaultParameter}.
+   * @see Specified by {@link ILabelModel.createDefaultParameter}.
    */
   createDefaultParameter() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_WEST
@@ -9035,8 +9041,8 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
    * @param {!ILabelModelParameter} parameter The parameter to use for the label in the context.
    * @returns {!ILookup} An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
-   * @see {@link ILookup#EMPTY}
-   * @see Specified by {@link ILabelModel#getContext}.
+   * @see {@link ILookup.EMPTY}
+   * @see Specified by {@link ILabelModel.getContext}.
    */
   getContext(label, parameter) {
     return ILookup.EMPTY
@@ -9049,7 +9055,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
    * @param {!ILabelModel} model The model to provide parameters for.
    * @returns {!IEnumerable.<ILabelModelParameter>} A possibly empty enumerator over a
    *   set of label model parameters.
-   * @see Specified by {@link ILabelModelParameterProvider#getParameters}.
+   * @see Specified by {@link ILabelModelParameterProvider.getParameters}.
    */
   getParameters(label, model) {
     return POOL_HEADER_LABEL_MODEL_PARAMETERS
@@ -9140,7 +9146,7 @@ class PoolHeaderLabelModelParameter extends BaseClass(ILabelModelParameter) {
    * @returns {boolean}
    */
   supports(label) {
-    return label.owner.lookup(ITable.$class) !== null
+    return label.owner.lookup(ITable.$class) != null
   }
 }
 
@@ -9175,7 +9181,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
-   * @see Specified by {@link IArrow#length}.
+   * @see Specified by {@link IArrow.length}.
    * @type {number}
    */
   get length() {
@@ -9185,7 +9191,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   /**
    * Sets the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
-   * @see Specified by {@link IArrow#length}.
+   * @see Specified by {@link IArrow.length}.
    * @type {number}
    */
   set length(value) {
@@ -9196,7 +9202,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * Gets the cropping length associated with this instance.
    * This value is used by {@link IEdgeStyle}s to let the
    * edge appear to end shortly before its actual target.
-   * @see Specified by {@link IArrow#cropLength}.
+   * @see Specified by {@link IArrow.cropLength}.
    * @type {number}
    */
   get cropLength() {
@@ -9207,7 +9213,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * Sets the cropping length associated with this instance.
    * This value is used by {@link IEdgeStyle}s to let the
    * edge appear to end shortly before its actual target.
-   * @see Specified by {@link IArrow#cropLength}.
+   * @see Specified by {@link IArrow.cropLength}.
    * @type {number}
    */
   set cropLength(value) {
@@ -9223,7 +9229,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @param {!Point} anchor the anchor point for the tip of the arrow
    * @param {!Point} direction the direction the arrow is pointing in
    * @returns {!IVisualCreator} Itself as a flyweight.
-   * @see Specified by {@link IArrow#getPaintable}.
+   * @see Specified by {@link IArrow.getPaintable}.
    */
   getPaintable(edge, atSource, anchor, direction) {
     this.anchor = anchor
@@ -9243,7 +9249,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    *   that can subsequently be used to query the bounds. Clients will always call this method
    *   before using the implementation and may not cache the instance returned. This allows for
    *   applying the flyweight design pattern to implementations.
-   * @see Specified by {@link IArrow#getBoundsProvider}.
+   * @see Specified by {@link IArrow.getBoundsProvider}.
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
     this.anchor = anchor
@@ -9269,8 +9275,8 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * that will be included into the {@link IRenderContext}.
    * @param {!IRenderContext} context The context that describes where the visual will be used.
    * @returns {!SvgVisual} The arrow visual to include in the canvas object visual tree.
-   * @see {@link IconArrow#updateVisual}
-   * @see Specified by {@link IVisualCreator#createVisual}.
+   * @see {@link IconArrow.updateVisual}
+   * @see Specified by {@link IVisualCreator.createVisual}.
    */
   createVisual(context) {
     this.icon.setBounds(
@@ -9298,22 +9304,22 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * in the {@link IRenderContext}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link IconArrow#createVisual}. Implementation may update the <code>oldVisual</code>
+   * to {@link IconArrow.createVisual}. Implementation may update the `oldVisual`
    * and return that same reference, or create a new visual and return the new instance or
-   * <code>null</code>.
+   * `null`.
    * @param {!IRenderContext} context The context that describes where the visual will be used in.
    * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IconArrow#createVisual} method was called on this instance.
    * @returns {!SvgVisual} the old visual if this instance modified the visual, or a new visual that
    *   should replace the existing one in the canvas object visual tree.
-   * @see {@link IconArrow#createVisual}
+   * @see {@link IconArrow.createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
-   * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @see Specified by {@link IVisualCreator.updateVisual}.
    */
   updateVisual(context, oldVisual) {
     const p = oldVisual instanceof SvgVisualGroup ? oldVisual : null
-    if (p !== null) {
+    if (p != null) {
       p.transform = new Matrix(
         this.direction.x,
         -this.direction.y,
@@ -9329,7 +9335,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
 
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
-   * @see Specified by {@link IBoundsProvider#getBounds}.
+   * @see Specified by {@link IBoundsProvider.getBounds}.
    * @param {!ICanvasContext} context
    * @returns {!Rect}
    */
@@ -9532,7 +9538,7 @@ export class MessageLabelStyle extends LabelStyleBase {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     const messageLabelStyle = new MessageLabelStyle()
@@ -9604,12 +9610,12 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the outline of the visual style.
-   * This implementation yields <code>null</code> to indicate that
-   * the {@link INode#layout} depicts the outline.
-   * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
-   * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
+   * This implementation yields `null` to indicate that
+   * the {@link INode.layout} depicts the outline.
+   * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
+   * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @returns {!GeneralPath} The outline of the visual representation or `null`.
    */
   getOutline(node) {
     const halfEllipseHeight = 0.125
@@ -9775,8 +9781,8 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Updates the {@link BpmnNodeStyle#icon}.
-   * This method is called by {@link BpmnNodeStyle#createVisual}.
+   * Updates the {@link BpmnNodeStyle.icon}.
+   * This method is called by {@link BpmnNodeStyle.createVisual}.
    */
   updateIcon() {
     if (!this.dataIcon) {
@@ -9792,7 +9798,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
     if (this.collection) {
       icons.add(this.collectionIcon)
     }
-    if (this.typeIcon !== null) {
+    if (this.typeIcon != null) {
       icons.add(this.typeIcon)
     }
     if (icons.size > 1) {
@@ -9804,12 +9810,12 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the outline of the visual style.
-   * This implementation yields <code>null</code> to indicate that
-   * the {@link INode#layout} depicts the outline.
-   * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
-   * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
+   * This implementation yields `null` to indicate that
+   * the {@link INode.layout} depicts the outline.
+   * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
+   * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @returns {!GeneralPath} The outline of the visual representation or `null`.
    */
   getOutline(node) {
     const cornerSize = Math.min(node.layout.width, node.layout.height) * 0.4
@@ -9945,12 +9951,12 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the outline of the visual style.
-   * This implementation yields <code>null</code> to indicate that
-   * the {@link INode#layout} depicts the outline.
-   * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
-   * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
+   * This implementation yields `null` to indicate that
+   * the {@link INode.layout} depicts the outline.
+   * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
+   * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @returns {!GeneralPath} The outline of the visual representation or `null`.
    */
   getOutline(node) {
     const width = Math.min(
@@ -10033,7 +10039,7 @@ export class EventNodeStyle extends BpmnNodeStyle {
    * @type {number}
    */
   set characteristic(value) {
-    if (this._characteristic !== value || this.eventIcon === null) {
+    if (this._characteristic !== value || this.eventIcon == null) {
       this.modCount++
       this._characteristic = value
       this.createEventIcon()
@@ -10071,7 +10077,7 @@ export class EventNodeStyle extends BpmnNodeStyle {
   /**
    * Sets the outline color of the event icon.
    * If this is set to null, the outline color is automatic, based on the
-   * {@link EventNodeStyle#characteristic}.
+   * {@link EventNodeStyle.characteristic}.
    * @type {?Fill}
    */
   set outline(value) {
@@ -10135,8 +10141,8 @@ export class EventNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Updates the {@link BpmnNodeStyle#icon}.
-   * This method is called by {@link BpmnNodeStyle#createVisual}.
+   * Updates the {@link BpmnNodeStyle.icon}.
+   * This method is called by {@link BpmnNodeStyle.createVisual}.
    */
   updateIcon() {
     if (!this.eventIcon) {
@@ -10172,12 +10178,12 @@ export class EventNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the outline of the visual style.
-   * This implementation yields <code>null</code> to indicate that
-   * the {@link INode#layout} depicts the outline.
-   * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
-   * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
+   * This implementation yields `null` to indicate that
+   * the {@link INode.layout} depicts the outline.
+   * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
+   * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @returns {!GeneralPath} The outline of the visual representation or `null`.
    */
   getOutline(node) {
     const size = Math.min(node.layout.width, node.layout.height)
@@ -10195,9 +10201,9 @@ export class EventNodeStyle extends BpmnNodeStyle {
 
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
-   * This method is called in response to a {@link IHitTestable#isHit}
-   * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
-   * This implementation uses the {@link NodeStyleBase#getOutline outline} to determine
+   * This method is called in response to a {@link IHitTestable.isHit}
+   * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
+   * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
    * @param {!INode} node The node to which this style instance is assigned.
    * @param {!Point} p The point to test.
@@ -10230,7 +10236,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
    * Gets the insets for the node.
    * These insets are returned via an {@link INodeInsetsProvider} if such an instance is queried
    * through the
-   * {@link INodeStyleRenderer#getContext context lookup}.
+   * {@link INodeStyleRenderer.getContext context lookup}.
    * @see {@link INodeInsetsProvider}
    * @return An insets object that describes the insets of node.
    * @type {!Insets}
@@ -10304,7 +10310,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     const groupNodeStyle = new GroupNodeStyle()
@@ -10320,11 +10326,11 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
    * for a given node and this style instance.
    * The idiom for retrieving, e.g. an {@link IVisualCreator} implementation
    * for a given style is:
-   * <pre><code>
+   * ```
    * var creator = style.renderer.getVisualCreator(node, style);
    * var visual = creator.createVisual(renderContext);
-   * </code></pre>
-   * @see Specified by {@link INodeStyle#renderer}.
+   * ```
+   * @see Specified by {@link INodeStyle.renderer}.
    * @type {!INodeStyleRenderer}
    */
   get renderer() {
@@ -10365,16 +10371,16 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   /**
    * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
-   * This method may return a flyweight implementation, but never <code>null</code>.
+   * This method may return a flyweight implementation, but never `null`.
    * @param {!INode} node The node to provide an instance for
    * @param {!INodeStyle} style The style to use for the creation of the visual
    * @returns {!IVisualCreator} An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
-   *   design pattern for implementations. This method may not return <code>null</code> but should
-   *   yield a {@link VoidVisualCreator#INSTANCE void} implementation instead.
-   * @see {@link VoidVisualCreator#INSTANCE}
-   * @see Specified by {@link INodeStyleRenderer#getVisualCreator}.
+   *   design pattern for implementations. This method may not return `null` but should
+   *   yield a {@link VoidVisualCreator.INSTANCE void} implementation instead.
+   * @see {@link VoidVisualCreator.INSTANCE}
+   * @see Specified by {@link INodeStyleRenderer.getVisualCreator}.
    */
   getVisualCreator(node, style) {
     return this._shapeNodeStyle.renderer.getVisualCreator(node, this._shapeNodeStyle)
@@ -10390,7 +10396,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link INodeStyleRenderer#getBoundsProvider}.
+   * @see Specified by {@link INodeStyleRenderer.getBoundsProvider}.
    */
   getBoundsProvider(node, style) {
     return this._shapeNodeStyle.renderer.getBoundsProvider(node, this._shapeNodeStyle)
@@ -10406,7 +10412,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link INodeStyleRenderer#getVisibilityTestable}.
+   * @see Specified by {@link INodeStyleRenderer.getVisibilityTestable}.
    */
   getVisibilityTestable(node, style) {
     return this._shapeNodeStyle.renderer.getVisibilityTestable(node, this._shapeNodeStyle)
@@ -10422,8 +10428,8 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
-   *   <code>null</code> to indicate that the item cannot be hit tested.
-   * @see Specified by {@link INodeStyleRenderer#getHitTestable}.
+   *   `null` to indicate that the item cannot be hit tested.
+   * @see Specified by {@link INodeStyleRenderer.getHitTestable}.
    */
   getHitTestable(node, style) {
     return this._shapeNodeStyle.renderer.getHitTestable(node, this._shapeNodeStyle)
@@ -10439,7 +10445,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link INodeStyleRenderer#getMarqueeTestable}.
+   * @see Specified by {@link INodeStyleRenderer.getMarqueeTestable}.
    */
   getMarqueeTestable(node, style) {
     return this._shapeNodeStyle.renderer.getMarqueeTestable(node, this._shapeNodeStyle)
@@ -10448,14 +10454,14 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   /**
    * Gets a temporary context instance that can be used to query additional information
    * for the item's style.
-   * Implementations may return {@link ILookup#EMPTY} if they don't support this, but may not return
-   * <code>null</code>.
+   * Implementations may return {@link ILookup.EMPTY} if they don't support this, but may not return
+   * `null`.
    * @param {!INode} item The item to provide a context instance for.
    * @param {!INodeStyle} style The style to use for the context.
-   * @returns {!ILookup} An non-<code>null</code> lookup implementation.
-   * @see {@link ILookup#EMPTY}
+   * @returns {!ILookup} An non-`null` lookup implementation.
+   * @see {@link ILookup.EMPTY}
    * @see {@link ILookup}
-   * @see Specified by {@link INodeStyleRenderer#getContext}.
+   * @see Specified by {@link INodeStyleRenderer.getContext}.
    */
   getContext(item, style) {
     this.lastNode = item
@@ -10473,32 +10479,33 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    *   information from. Clients should not cache this instance and must always call this method
    *   immediately before using the value returned. This enables the use of the flyweight design
    *   pattern for implementations
-   * @see Specified by {@link INodeStyleRenderer#getShapeGeometry}.
+   * @see Specified by {@link INodeStyleRenderer.getShapeGeometry}.
    */
   getShapeGeometry(node, style) {
     return this._shapeNodeStyle.renderer.getShapeGeometry(node, this._shapeNodeStyle)
   }
 
   /**
-   * Returns an instance that implements the given type or <code>null</code>.
+   * Returns an instance that implements the given type or `null`.
    * Typically, this method will be called in order to obtain a different view or
    * aspect of the current instance. This is quite similar to casting or using
    * a super type or interface of this instance, but is not limited to inheritance or
    * compile time constraints. An instance implementing this method is not
-   * required to return non-<code>null</code> implementations for the types, nor does it
+   * required to return non-`null` implementations for the types, nor does it
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be reobtained for subsequent use.
-   * @param {!Class} type the type for which an instance shall be returned
-   * @returns {?object} an instance that is assignable to type or <code>null</code>
-   * @see Specified by {@link ILookup#lookup}.
+   * @param {!Class.<T>} type the type for which an instance shall be returned
+   * @returns {?T} an instance that is assignable to type or `null`
+   * @see Specified by {@link ILookup.lookup}.
+   * @template {*} T
    */
   lookup(type) {
-    if (type === INodeInsetsProvider.$class && this.lastStyle !== null) {
+    if (type === INodeInsetsProvider.$class && this.lastStyle != null) {
       return new GroupInsetsProvider(this.lastStyle)
     }
     const lookup = this._shapeNodeStyle.renderer.getContext(this.lastNode, this._shapeNodeStyle)
-    return lookup !== null ? lookup.lookup(type) : null
+    return lookup != null ? lookup.lookup(type) : null
   }
 }
 
@@ -10631,7 +10638,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
 
   updateTypeIcon() {
     this.typeIcon = IconFactory.createGatewayType(this.type, this.iconColor)
-    if (this.typeIcon !== null) {
+    if (this.typeIcon != null) {
       this.typeIcon = IconFactory.createPlacedIcon(
         this.typeIcon,
         BPMN_CONSTANTS_PLACEMENTS_GATEWAY_TYPE,
@@ -10641,27 +10648,27 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Updates the {@link BpmnNodeStyle#icon}.
-   * This method is called by {@link BpmnNodeStyle#createVisual}.
+   * Updates the {@link BpmnNodeStyle.icon}.
+   * This method is called by {@link BpmnNodeStyle.createVisual}.
    */
   updateIcon() {
     if (!this.gatewayIcon) {
       this.updateGatewayIcon()
     }
     this.icon =
-      this.typeIcon !== null
+      this.typeIcon != null
         ? IconFactory.createCombinedIcon(List.fromArray([this.gatewayIcon, this.typeIcon]))
         : this.gatewayIcon
   }
 
   /**
    * Gets the outline of the visual style.
-   * This implementation yields <code>null</code> to indicate that
-   * the {@link INode#layout} depicts the outline.
-   * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
-   * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
+   * This implementation yields `null` to indicate that
+   * the {@link INode.layout} depicts the outline.
+   * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
+   * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @returns {!GeneralPath} The outline of the visual representation or `null`.
    */
   getOutline(node) {
     const size = Math.min(node.layout.width, node.layout.height)
@@ -10706,9 +10713,9 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
 
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
-   * This method is called in response to a {@link IHitTestable#isHit}
-   * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
-   * This implementation uses the {@link NodeStyleBase#getOutline outline} to determine
+   * This method is called in response to a {@link IHitTestable.isHit}
+   * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
+   * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
    * @param {!INode} node The node to which this style instance is assigned.
    * @param {!Point} p The point to test.
@@ -10822,7 +10829,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
   /**
    * Sets the outline color of the event.
    * If this is set to null, the outline color is automatic, based on the
-   * {@link EventPortStyle#characteristic}.
+   * {@link EventPortStyle.characteristic}.
    * @type {?Fill}
    */
   set outline(value) {
@@ -10866,7 +10873,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
   /**
    * Create a clone of this object.
    * @returns {*} A clone of this object.
-   * @see Specified by {@link ICloneable#clone}.
+   * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
     return this.memberwiseClone()
@@ -10876,7 +10883,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * Gets the renderer implementation that can be queried for implementations
    * that provide details about the visual appearance and visual behavior
    * for a given port and this style instance.
-   * @see Specified by {@link IPortStyle#renderer}.
+   * @see Specified by {@link IPortStyle.renderer}.
    * @type {!IPortStyleRenderer}
    */
   get renderer() {
@@ -10901,10 +10908,10 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @returns {!IVisualCreator} An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
-   *   design pattern for implementations. This method may not return <code>null</code> but should
-   *   yield a {@link VoidVisualCreator#INSTANCE void} implementation instead.
-   * @see {@link VoidVisualCreator#INSTANCE}
-   * @see Specified by {@link IPortStyleRenderer#getVisualCreator}.
+   *   design pattern for implementations. This method may not return `null` but should
+   *   yield a {@link VoidVisualCreator.INSTANCE void} implementation instead.
+   * @see {@link VoidVisualCreator.INSTANCE}
+   * @see Specified by {@link IPortStyleRenderer.getVisualCreator}.
    */
   getVisualCreator(port, style) {
     const adapter = style.adapter
@@ -10920,7 +10927,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link IPortStyleRenderer#getBoundsProvider}.
+   * @see Specified by {@link IPortStyleRenderer.getBoundsProvider}.
    */
   getBoundsProvider(port, style) {
     const adapter = style.adapter
@@ -10936,7 +10943,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link IPortStyleRenderer#getVisibilityTestable}.
+   * @see Specified by {@link IPortStyleRenderer.getVisibilityTestable}.
    */
   getVisibilityTestable(port, style) {
     const adapter = style.adapter
@@ -10952,8 +10959,8 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
-   *   <code>null</code> to indicate that the item cannot be hit tested.
-   * @see Specified by {@link IPortStyleRenderer#getHitTestable}.
+   *   `null` to indicate that the item cannot be hit tested.
+   * @see Specified by {@link IPortStyleRenderer.getHitTestable}.
    */
   getHitTestable(port, style) {
     const adapter = style.adapter
@@ -10969,7 +10976,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
-   * @see Specified by {@link IPortStyleRenderer#getMarqueeTestable}.
+   * @see Specified by {@link IPortStyleRenderer.getMarqueeTestable}.
    */
   getMarqueeTestable(port, style) {
     const adapter = style.adapter
@@ -10981,10 +10988,10 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * for the item's style.
    * @param {!IPort} port The item to provide a context instance for.
    * @param {!IPortStyle} style The style to use for the context.
-   * @returns {!ILookup} An non-<code>null</code> lookup implementation.
-   * @see {@link ILookup#EMPTY}
+   * @returns {!ILookup} An non-`null` lookup implementation.
+   * @see {@link ILookup.EMPTY}
    * @see {@link ILookup}
-   * @see Specified by {@link IPortStyleRenderer#getContext}.
+   * @see Specified by {@link IPortStyleRenderer.getContext}.
    */
   getContext(port, style) {
     const adapter = style.adapter
@@ -10993,18 +11000,19 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   }
 
   /**
-   * Returns an instance that implements the given type or <code>null</code>.
+   * Returns an instance that implements the given type or `null`.
    * Typically, this method will be called in order to obtain a different view or
    * aspect of the current instance. This is quite similar to casting or using
    * a super type or interface of this instance, but is not limited to inheritance or
    * compile time constraints. An instance implementing this method is not
-   * required to return non-<code>null</code> implementations for the types, nor does it
+   * required to return non-`null` implementations for the types, nor does it
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
-   * @param {!Class} type the type for which an instance shall be returned
-   * @returns {?object} an instance that is assignable to type or <code>null</code>
-   * @see Specified by {@link ILookup#lookup}.
+   * @param {!Class.<T>} type the type for which an instance shall be returned
+   * @returns {?T} an instance that is assignable to type or `null`
+   * @see Specified by {@link ILookup.lookup}.
+   * @template {*} T
    */
   lookup(type) {
     if (type === IEdgePathCropper.$class) {
@@ -11105,7 +11113,7 @@ class VisualToggleButton extends SvgVisual {
     if (this.svgElement.childElementCount >= 1) {
       this.svgElement.removeChild(this.svgElement.firstElementChild)
     }
-    if (newChild !== null) {
+    if (newChild != null) {
       this.svgElement.appendChild(newChild.svgElement)
     }
   }
@@ -11306,8 +11314,8 @@ class CollapseButtonIcon extends Icon {
   /**
    * Adds the toggle group state command to the given button visual.
    * This method adds event listeners for click and tap events to
-   * the given button visual that call {@link CollapseButtonIcon#toggleExpansionState}.
-   * It is called by {@link CollapseButtonIcon#createButton}.
+   * the given button visual that call {@link CollapseButtonIcon.toggleExpansionState}.
+   * It is called by {@link CollapseButtonIcon.createButton}.
    * @param {!VisualToggleButton} button The button visual to add the event listeners to.
    * @param {!IRenderContext} context The context.
    */
@@ -11366,12 +11374,12 @@ class CollapseButtonIcon extends Icon {
  */
 function isExpanded(context, item) {
   let expanded = true
-  const canvas = context !== null ? context.canvasComponent : null
+  const canvas = context != null ? context.canvasComponent : null
 
-  if (canvas !== null) {
+  if (canvas != null) {
     const graph = canvas.graph
     const foldedGraph = graph.foldingView
-    if (foldedGraph !== null && foldedGraph.graph.contains(item)) {
+    if (foldedGraph != null && foldedGraph.graph.contains(item)) {
       expanded = foldedGraph.isExpanded(item)
     }
   }
@@ -11379,7 +11387,7 @@ function isExpanded(context, item) {
 }
 
 /**
- * Executes the {@link ICommand#TOGGLE_EXPANSION_STATE}, if it can be executed.
+ * Executes the {@link ICommand.TOGGLE_EXPANSION_STATE}, if it can be executed.
  * @param {!INode} currentNode The group whose state should be toggled.
  * @param {!IRenderContext} context The context.
  */
@@ -14486,7 +14494,7 @@ const IO_SUPPORT = {
  * BPMN Namespace "http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0".
  *
  * The only difference is that the new BPMN styles deserialize the
- * {@link ChoreographyNodeStyle#initiatingColor} as white (which better fits the BPMN specification)
+ * {@link ChoreographyNodeStyle.initiatingColor} as white (which better fits the BPMN specification)
  * instead of Light.GRAY as it used to be.
  */
 export const LegacyBpmnExtensions = Object.assign({}, IO_SUPPORT)

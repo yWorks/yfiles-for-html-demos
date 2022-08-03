@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,7 +42,7 @@ const NODE_DISTANCE = 15
 
 /**
  * A layout stage that excludes nodes with a special tag
- * (<code>{ moveAside: boolean }</code>) from the core layout
+ * (`{ moveAside: boolean }`) from the core layout
  * and instead moves those nodes to the side of the resulting layout.
  *
  * This sample demonstrates how to use properties of the original graph to do

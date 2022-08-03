@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,9 +28,8 @@
  ***************************************************************************/
 import {
   Arrow,
+  ArrowNodeStyle,
   ArrowType,
-  BevelNodeStyle,
-  Color,
   DefaultGraph,
   DefaultLabelStyle,
   DefaultPortCandidateDescriptor,
@@ -41,6 +40,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GroupNodeStyle,
   HandleInputMode,
   HandleTypes,
   IBend,
@@ -57,14 +57,14 @@ import {
   License,
   MouseEventRecognizers,
   NodeDropInputMode,
-  PanelNodeStyle,
   Point,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
   Rect,
+  RectangleCornerStyle,
+  RectangleNodeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
-  ShinyPlateNodeStyle,
   Size,
   SnapPanningBehaviors,
   SolidColorFill,
@@ -79,19 +79,23 @@ import EdgeReconnectionPortCandidateProvider from './EdgeReconnectionPortCandida
 import WrappingHandle from './WrappingHandle'
 import HandleTemplate from './HandleTemplate'
 import DialContextMenu from './DialContextMenu'
-import { DemoGroupStyle, DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles'
 import TouchHandleInputMode from './TouchHandleInputMode'
-import { checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { showApp } from '../../resources/demo-app'
 import PortCandidateTemplate from './PortCandidateTemplate'
-import { colorSets } from '../../resources/basic-demo-styles'
+import {
+  colorSets,
+  createDemoGroupStyle,
+  createDemoNodeStyle,
+  initDemoStyles
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
 const handleRadius = 15
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -105,6 +109,8 @@ function run(licenseData: object): void {
   graphComponent.inputMode = geim
   // initialize the pan snapping selection box
   initializePanSnapping(geim)
+  // initialize the pan start options selection box
+  initializePanStart(geim)
   // configure the custom handles
   initializeCustomHandles(graphComponent)
   // configure the custom port candidates
@@ -126,7 +132,7 @@ function run(licenseData: object): void {
 }
 
 /**
- * Creates the default input mode for the <code>GraphControl</code>,
+ * Creates the default input mode for the {@link GraphComponent},
  * a {@link GraphEditorInputMode} and configures it.
  */
 function createEditorMode(): GraphEditorInputMode {
@@ -163,8 +169,7 @@ function createEditorMode(): GraphEditorInputMode {
   // configure drag and drop
   const nodeDropInputMode = geim.nodeDropInputMode
   nodeDropInputMode.enabled = true
-  nodeDropInputMode.isGroupNodePredicate = node =>
-    node.style instanceof PanelNodeStyle || node.style instanceof DemoGroupStyle
+  nodeDropInputMode.isGroupNodePredicate = node => node.style instanceof GroupNodeStyle
   nodeDropInputMode.showPreview = true
 
   // configure input mode priorities
@@ -526,7 +531,7 @@ function addCanvasActions(contextMenu: DialContextMenu): void {
 
 /**
  * Helper method that updates the selection state when the context menu is opened on a graph item.
- * @param item The item or <code>null</code>.
+ * @param item The item or `null`.
  */
 function updateSelection(item: IModelItem | null): void {
   if (
@@ -746,7 +751,7 @@ function createBend(location: Point, item: IModelItem): void {
       edge,
       location
     )
-    bend = edge.bends.elementAt(bendIndex)
+    bend = edge.bends.at(bendIndex)!
   } else {
     bend = graphComponent.graph.addBend(edge, location)
   }
@@ -791,6 +796,60 @@ function initializePanSnapping(geim: GraphEditorInputMode): void {
 }
 
 /**
+ * Configures the starting gestures for the minor input modes of the given GraphEditorInputMode
+ * so that they either start with a long press (holding the finger for a short amount of time)
+ * or immediately on finger down. The latter works best if you do not allow panning with a single
+ * finger and vice versa.
+ * @param geim The input mode to configure.
+ * @param useLongPress Whether to configure the input mode for long presses.
+ */
+function configureTouchStartGestures(geim: GraphEditorInputMode, useLongPress: boolean) {
+  const recognizerTouch = useLongPress
+    ? TouchEventRecognizers.TOUCH_LONG_PRESS_PRIMARY
+    : TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+  geim.moveInputMode.pressedRecognizerTouch = recognizerTouch
+  geim.createEdgeInputMode.prepareRecognizerTouch = recognizerTouch
+  geim.createBendInputMode.prepareRecognizerTouch = recognizerTouch
+  geim.handleInputMode.pressedRecognizerTouch = recognizerTouch
+  geim.marqueeSelectionInputMode.pressedRecognizerTouch = recognizerTouch
+  geim.moveUnselectedInputMode.pressedRecognizerTouch = recognizerTouch
+  geim.moveLabelInputMode.pressedRecognizerTouch = recognizerTouch
+}
+
+/**
+ * Initializes the snap panning selection box.
+ */
+function initializePanStart(geim: GraphEditorInputMode): void {
+  // initialize the demo with two-finger panning
+  configurePanStartGesture(geim, 'two')
+  // listen for behavior switch
+  const select = document.querySelector('#startPanningBox>select') as HTMLSelectElement
+  select.addEventListener('change', () => {
+    const item = select[select.selectedIndex] as HTMLOptionElement
+    configurePanStartGesture(geim, item.value)
+  })
+}
+
+/**
+ * Configures the panning behavior and edit gestures of the demo.
+ */
+function configurePanStartGesture(inputMode: GraphEditorInputMode, panningMode: string): void {
+  switch (panningMode) {
+    case 'one':
+      //Enable start panning with ONE and TWO fingers
+      inputMode.moveViewportInputMode.allowSinglePointerMovement = true
+      // With one finger panning, you typically want to start editing with a long press
+      configureTouchStartGestures(inputMode, true)
+      break
+    case 'two':
+      //Enable start panning with TWO fingers, only
+      inputMode.moveViewportInputMode.allowSinglePointerMovement = false
+      // This allows us to use one finger gestures for most of the other edits
+      configureTouchStartGestures(inputMode, false)
+  }
+}
+
+/**
  * Creates the nodes that provide the visualizations for the drag and drop panel.
  */
 function createDnDPanelNodes(): INode[] {
@@ -798,9 +857,8 @@ function createDnDPanelNodes(): INode[] {
   const nodeContainer = new DefaultGraph()
 
   // Create a group node
-  const groupNodeStyle = new DemoGroupStyle()
-  groupNodeStyle.isCollapsible = true
-  groupNodeStyle.solidHitTest = true
+  const groupNodeStyle = createDemoGroupStyle({ foldingEnabled: true })
+  groupNodeStyle.hitTransparentContentArea = false
 
   // A label model with insets for the expand/collapse button
   const groupLabelModel = new InteriorStretchLabelModel({ insets: new Insets(4, 4, 4, 4) })
@@ -818,7 +876,7 @@ function createDnDPanelNodes(): INode[] {
   )
 
   // create a node with standard demo node styling
-  nodeContainer.createNode(new Rect(0, 0, 100, 60), new DemoNodeStyle('demo-palette-13'))
+  nodeContainer.createNode(new Rect(0, 0, 100, 60), createDemoNodeStyle())
 
   // create a shape style node
   const shapeNodeStyle = new ShapeNodeStyle({
@@ -831,15 +889,15 @@ function createDnDPanelNodes(): INode[] {
   // create a bevel style node
   nodeContainer.createNode(
     new Rect(0, 0, 100, 60),
-    new BevelNodeStyle({ color: colorSets['demo-palette-15'].fill })
+    new ArrowNodeStyle({ fill: colorSets['demo-palette-15'].fill })
   )
 
-  // create a shiny plate style node
-  const shinyPlateNodeStyle = new ShinyPlateNodeStyle({
+  // create a node that has a rectangle with cut corners as style
+  const rectangleNodeStyle = new RectangleNodeStyle({
     fill: colorSets['demo-palette-11'].fill,
-    drawShadow: false
+    cornerStyle: RectangleCornerStyle.CUT
   })
-  nodeContainer.createNode(new Rect(0, 0, 100, 60), shinyPlateNodeStyle)
+  nodeContainer.createNode(new Rect(0, 0, 100, 60), rectangleNodeStyle)
 
   return nodeContainer.nodes.toArray()
 }
@@ -857,4 +915,5 @@ function populateGraph(graph: IGraph): void {
   graph.addBend(e, new Point(200, 250))
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

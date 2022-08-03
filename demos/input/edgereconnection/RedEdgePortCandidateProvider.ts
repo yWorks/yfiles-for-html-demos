@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,7 +50,7 @@ export default class RedEdgePortCandidateProvider
   edge: IEdge
 
   /**
-   * Creates a new instance of <code>OrangeEdgePortCandidateProvider</code>.
+   * Creates a new instance of {@link RedEdgePortCandidateProvider}.
    * @param edge The given edge
    */
   constructor(edge: IEdge) {
@@ -61,7 +61,7 @@ export default class RedEdgePortCandidateProvider
   /**
    * Returns only the current port as candidate, thus effectively disabling relocation.
    * @param context The context for which the candidates should be provided
-   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getSourcePortCandidates}.
+   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getSourcePortCandidates}.
    */
   getSourcePortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const candidates = new List<IPortCandidate>()
@@ -72,7 +72,7 @@ export default class RedEdgePortCandidateProvider
   /**
    * Returns no candidates, thus effectively disabling relocation.
    * @param context The context for which the candidates should be provided
-   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
+   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getTargetPortCandidates}.
    */
   getTargetPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     return IListEnumerable.EMPTY

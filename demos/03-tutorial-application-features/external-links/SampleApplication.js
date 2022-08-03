@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,22 +45,23 @@ import {
   Size
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import LinkItemHoverInputMode from './LinkItemHoverInputMode.js'
-import loadJson from '../../resources/load-json.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   const inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -122,7 +123,7 @@ function initializeLinkListener() {
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -199,5 +200,5 @@ function registerCommands() {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

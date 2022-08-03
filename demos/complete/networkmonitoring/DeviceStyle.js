@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,7 +54,7 @@ export default class DeviceStyle extends NodeStyleBase {
   }
 
   /**
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!INode} node
    * @returns {!SvgVisual}
@@ -107,7 +107,7 @@ export default class DeviceStyle extends NodeStyleBase {
   }
 
   /**
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!Visual} oldVisual
    * @param {!INode} node
@@ -159,7 +159,7 @@ export default class DeviceStyle extends NodeStyleBase {
 
   /**
    * Gets the outline of the node, which is an elliptic shape in this case.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    * @param {!INode} node
    * @returns {!GeneralPath}
    */
@@ -172,7 +172,7 @@ export default class DeviceStyle extends NodeStyleBase {
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * This method is implemented explicitly to optimize the performance for elliptic shape.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    * @param {!INode} node
    * @param {!Point} inner
    * @param {!Point} outer
@@ -185,7 +185,7 @@ export default class DeviceStyle extends NodeStyleBase {
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * This method is implemented explicitly to optimize the performance for elliptic shape.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    * @param {!INode} node
    * @param {!Point} point
    * @returns {boolean}
@@ -197,7 +197,7 @@ export default class DeviceStyle extends NodeStyleBase {
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * This method is implemented explicitly to optimize the performance for elliptic shape.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    * @param {!IInputModeContext} canvasContext
    * @param {!Point} location
    * @param {!INode} node

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -239,7 +239,9 @@ class MyMarqueeTemplate extends BaseClass<IVisualTemplate>(IVisualTemplate) {
     const wrappedStyle = graph!.nodeDefaults.style
     const visualCreator = wrappedStyle.renderer.getVisualCreator(this.dummyNode, wrappedStyle)
     const visual = visualCreator.createVisual(context) as SvgVisual
-    visual.svgElement.setAttribute('opacity', '0.3')
+    if (visual) {
+      visual.svgElement.setAttribute('opacity', '0.3')
+    }
     return visual
   }
   updateVisual(

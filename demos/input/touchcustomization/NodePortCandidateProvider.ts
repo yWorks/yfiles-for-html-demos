@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,7 +43,7 @@ import {
  */
 export default class NodePortCandidateProvider extends PortCandidateProviderBase {
   /**
-   * Creates a new instance of <code>NodePortCandidateProvider</code>.
+   * Creates a new instance of {@link NodePortCandidateProvider}.
    * @param node The given node.
    */
   constructor(private node: INode) {
@@ -53,7 +53,7 @@ export default class NodePortCandidateProvider extends PortCandidateProviderBase
   /**
    * Returns a list that contains the port candidates.
    * @param context The context for which the candidates should be provided
-   * @see Overrides {@link PortCandidateProviderBase#getPortCandidates}
+   * @see Overrides {@link PortCandidateProviderBase.getPortCandidates}
    */
   getPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const candidates = new List<IPortCandidate>()

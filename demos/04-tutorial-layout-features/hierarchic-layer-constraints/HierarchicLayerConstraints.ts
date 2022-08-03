@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,10 +48,10 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   const layoutData = new HierarchicLayoutData()
 
   // get the nodes for which we want to define layer constraints
-  const node0 = graph.nodes.first(node => node.tag === 0)
-  const node2 = graph.nodes.first(node => node.tag === 2)
-  const node7 = graph.nodes.first(node => node.tag === 7)
-  const node9 = graph.nodes.first(node => node.tag === 9)
+  const node0 = graph.nodes.find(node => node.tag === 0)!
+  const node2 = graph.nodes.find(node => node.tag === 2)!
+  const node7 = graph.nodes.find(node => node.tag === 7)!
+  const node9 = graph.nodes.find(node => node.tag === 9)!
 
   // this is the factory that we apply the constraints to
   const layerConstraints = layoutData.layerConstraints

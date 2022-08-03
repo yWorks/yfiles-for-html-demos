@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,17 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 import * as y from 'yfiles'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+
 const { GraphComponent, GraphEditorInputMode, ICommand, License } = y
 
-function run(licenseData) {
+async function run() {
   if (window.INTEGRATION_TEST) {
     // expose yfiles for testing purposes
     window.y = y
   }
-  License.value = licenseData
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
@@ -58,4 +59,5 @@ function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -91,8 +91,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Determines the color to use for filling the node.
-   * This implementation uses the {@link MySimpleNodeStyle#nodeColor} property unless
-   * the {@link ITagOwner#tag} of the {@link INode} is of type {@link Color},
+   * This implementation uses the {@link MySimpleNodeStyle.nodeColor} property unless
+   * the {@link ITagOwner.tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
    * @param {!INode} node The node to determine the color for.
    * @returns {!string} The color for filling the node.
@@ -105,7 +105,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual for a node.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!INode} node
    * @returns {!SvgVisual}
@@ -124,7 +124,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
    * @param {!INode} node
@@ -195,9 +195,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Actually creates the visual appearance of a node given the values provided by
-   * {@link MySimpleNodeStyle#createRenderDataCache}. This renders the node and the edges to the labels and adds the
-   * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
-   * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
+   * {@link MySimpleNodeStyle.createRenderDataCache}. This renders the node and the edges to the labels and adds the
+   * elements to the `container`. All items are arranged as if the node was located at (0,0).
+   * {@link MySimpleNodeStyle.createVisual} and {@link MySimpleNodeStyle.updateVisual} finally arrange the container
    * so that the drawing is translated into the final position.
    * @param {!IRenderContext} context
    * @param {!INode} node
@@ -395,7 +395,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows for correct edge path intersection calculation, among others.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    * @param {!INode} node
    * @returns {!GeneralPath}
    */
@@ -408,7 +408,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Get the bounding box of the node.
    * This is used for bounding box calculations and includes the visual shadow.
-   * @see Overrides {@link NodeStyleBase#getBounds}
+   * @see Overrides {@link NodeStyleBase.getBounds}
    * @param {!IInputModeContext} canvasContext
    * @param {!INode} node
    * @returns {!Rect}
@@ -421,7 +421,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Overridden to take the connection lines to the label into account.
    * Otherwise label intersection lines might not be painted if the node is outside
    * of the clipping bounds.
-   * @see Overrides {@link NodeStyleBase#isVisible}
+   * @see Overrides {@link NodeStyleBase.isVisible}
    * @param {!ICanvasContext} canvasContext
    * @param {!Rect} clip
    * @param {!INode} node
@@ -441,7 +441,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
    * @returns {boolean} True if p is inside node.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    * @param {!IInputModeContext} canvasContext
    * @param {!Point} p
    * @param {!INode} node
@@ -454,7 +454,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Checks if a node is inside a certain box. Considers HitTestRadius.
    * @returns {boolean} True if the box intersects the elliptical shape of the node. Also true if box lies completely
    *   inside node.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    * @param {!IInputModeContext} canvasContext
    * @param {!Rect} box
    * @param {!INode} node
@@ -484,7 +484,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    * @param {!INode} node
    * @param {!Point} point
    * @returns {boolean}

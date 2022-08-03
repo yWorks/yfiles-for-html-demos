@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,9 +31,9 @@ import {
   ConstrainedPositionHandler,
   IDragHandler,
   IInputModeContext,
+  IPoint,
   IPositionHandler,
-  Point,
-  IPoint
+  Point
 } from 'yfiles'
 
 /**
@@ -49,7 +49,7 @@ export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
   private lastLocation: Point = null!
 
   /**
-   * Creates a new instance of <code>GreenPositionHandler</code>
+   * Creates a new instance of {@link GreenPositionHandler}
    * @param handler The default handler
    */
   constructor(handler: IPositionHandler) {
@@ -67,7 +67,7 @@ export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Stores the initial location of the movement for reference and calls the base method.
    * @param inputModeContext The context to retrieve information about the drag from
-   * @see Specified by {@link IDragHandler#initializeDrag}.
+   * @see Specified by {@link IDragHandler.initializeDrag}.
    */
   initializeDrag(inputModeContext: IInputModeContext): void {
     this.handler.initializeDrag(inputModeContext)
@@ -79,12 +79,12 @@ export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
    * constrained location for the given new location, and invoking the
    * original handler with the constrained location.
    * @param inputModeContext The context to retrieve information about the drag from
-   * @param originalLocation The value of the {@link IDragHandler#location}
-   * property at the time of {@link IDragHandler#initializeDrag}
+   * @param originalLocation The value of the {@link IDragHandler.location}
+   * property at the time of {@link IDragHandler.initializeDrag}
    * @param newLocation The coordinates in the world coordinate system that the client wants
-   * the handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * the handle to be at. Depending on the implementation the {@link IDragHandler.location} may or may
    * not be modified to reflect the new value.
-   * @see Specified by {@link IDragHandler#handleMove}.
+   * @see Specified by {@link IDragHandler.handleMove}.
    */
   handleMove(
     inputModeContext: IInputModeContext,
@@ -113,8 +113,8 @@ export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
    * Called when dragging has been canceled by the user.
    * @param inputModeContext The context to retrieve information about the drag from
    * @param originalLocation The value of the coordinate of the
-   * {@link IDragHandler#location} property at the time of
-   *   {@link IDragHandler#initializeDrag}.
+   * {@link IDragHandler.location} property at the time of
+   *   {@link IDragHandler.initializeDrag}.
    */
   cancelDrag(inputModeContext: IInputModeContext, originalLocation: Point): void {
     this.handler.cancelDrag(inputModeContext, originalLocation)
@@ -123,12 +123,12 @@ export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Called when dragging has finished.
    * @param inputModeContext The context to retrieve information about the drag from
-   * @param originalLocation The value of the {@link IDragHandler#location}
-   * property at the time of {@link IDragHandler#initializeDrag}
+   * @param originalLocation The value of the {@link IDragHandler.location}
+   * property at the time of {@link IDragHandler.initializeDrag}
    * @param newLocation The coordinates in the world coordinate system that the client wants
-   * the handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * the handle to be at. Depending on the implementation the {@link IDragHandler.location} may or may
    * not be modified to reflect the new value. This is the same value as delivered in the last invocation of
-   * {@link IDragHandler#handleMove}
+   * {@link IDragHandler.handleMove}
    */
   dragFinished(
     inputModeContext: IInputModeContext,

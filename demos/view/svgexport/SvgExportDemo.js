@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -65,13 +65,12 @@ import {
   addClass,
   bindAction,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
 import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
-import loadJson from '../../resources/load-json.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * The area that will be exported.
@@ -86,21 +85,22 @@ let exportRect
 let ieVersion = -1
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   ieVersion = detectInternetExplorerVersion()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInteraction(graphComponent)
   retainNodeAspectRatio(graphComponent.graph)
 
   // add nodes and edges with different visualizations to demonstrate that the SVG export does not
   // depend on the styles used to visualize elements
-  addNetworkSample(graphComponent.graph)
+  await addNetworkSample(graphComponent.graph)
   addCssStyleSample(graphComponent.graph)
   addBezierEdgesSample(graphComponent.graph)
 
@@ -119,10 +119,12 @@ function run(licenseData) {
  * @param {number} scale The scale factor for the export operation.
  * E.g. a scale factor of 2 will result in an exported graphic that is twice as large as the
  * original area.
+ * @param {boolean} transparent If true, the exported SVG document will have no background element;
+ * otherwise it will have an opaque white background element.
  * @param {?Rect} rectangle The area to export.
  * @returns {!Promise.<Element>} A promise that resolves with the exported SVG element.
  */
-function exportSvg(graphComponent, scale, rectangle) {
+function exportSvg(graphComponent, scale, transparent, rectangle) {
   // create a new graph component for exporting the original SVG content
   const exportComponent = new GraphComponent()
   // ... and assign it the same graph.
@@ -137,7 +139,8 @@ function exportSvg(graphComponent, scale, rectangle) {
     worldBounds: targetRect,
     scale,
     encodeImagesBase64: true,
-    inlineSvgImages: true
+    inlineSvgImages: true,
+    background: transparent ? 'transparent' : 'white'
   })
 
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
@@ -253,25 +256,34 @@ function addCssStyleSample(graph) {
 /**
  * Adds sample nodes and edges representing a simple computer network.
  * @param {!IGraph} graph The demo's graph.
+ * @returns {!Promise}
  */
-function addNetworkSample(graph) {
+async function addNetworkSample(graph) {
   const edgeStyle = new PolylineEdgeStyle({
     targetArrow: IArrow.DEFAULT
   })
 
-  const switchStyle = new ImageNodeStyle('./resources/switch.svg')
-  const workstationStyle = new ImageNodeStyle('./resources/workstation.svg')
+  const switchStyle = new ImageNodeStyle({
+    image: './resources/switch.svg',
+    // determine the intrinsic aspect ratio of the image
+    aspectRatio: await ImageNodeStyle.getAspectRatio('./resources/switch.svg')
+  })
+  const workstationStyle = new ImageNodeStyle({
+    image: './resources/workstation.svg',
+    // determine the intrinsic aspect ratio of the image
+    aspectRatio: await ImageNodeStyle.getAspectRatio('./resources/workstation.svg')
+  })
 
   const labelModel = new ExteriorLabelModel()
   const labelModelParameter1 = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
   const labelModelParameter2 = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
 
   // create sample nodes
-  const n1 = graph.createNode([150, 0, 40, 40], switchStyle)
-  const n2 = graph.createNode([0, 80, 40, 40], workstationStyle)
-  const n3 = graph.createNode([100, 80, 40, 40], workstationStyle)
-  const n4 = graph.createNode([200, 80, 40, 40], workstationStyle)
-  const n5 = graph.createNode([300, 80, 40, 40], workstationStyle)
+  const n1 = graph.createNode([150, 0, 60, 40], switchStyle)
+  const n2 = graph.createNode([0, 80, 60, 40], workstationStyle)
+  const n3 = graph.createNode([100, 80, 60, 40], workstationStyle)
+  const n4 = graph.createNode([200, 80, 60, 40], workstationStyle)
+  const n5 = graph.createNode([300, 80, 60, 40], workstationStyle)
 
   // create sample edges
   graph.createEdge(n1, n2, edgeStyle)
@@ -434,14 +446,15 @@ function registerCommands(graphComponent) {
       return
     }
 
+    const transparent = document.getElementById('transparent')
     const inputUseRect = document.getElementById('useRect')
     const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
-    const svg = await exportSvg(graphComponent, scale, rectangle)
+    const svg = await exportSvg(graphComponent, scale, transparent.checked, rectangle)
     showExportDialog(svg)
   })
 
   bindAction('#closeButton', hidePopup)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

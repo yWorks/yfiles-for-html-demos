@@ -19,7 +19,7 @@
 
 <!-- Shadow -->
 {#if zoom > zoomIntermediate}
-  <rect fill="#C0C0C0" {width} {height} x={2} y={2} />
+  <rect fill="#C0C0C0" {width} {height} x={2} y={2}></rect>
 {/if}
 <!-- Background and outline -->
 {#if selected || highlighted}
@@ -30,10 +30,9 @@
     width={width - 4}
     height={height - 4}
     x="2"
-    y="2"
-  />
+    y="2"></rect>
 {:else}
-  <rect fill="white" stroke="#C0C0C0" {width} {height} />
+  <rect fill="white" stroke="#C0C0C0" {width} {height}></rect>
 {/if}
 <g
   style="font-family: Roboto,sans-serif; font-weight: 300; fill: #444"
@@ -47,8 +46,7 @@
       height="75"
       transform={zoom > zoomDetail
         ? 'scale(0.85) translate(15 20)'
-        : 'scale(0.75) translate(15 30)'}
-    />
+        : 'scale(0.75) translate(15 30)'}></use>
   {/if}
   <!-- Name -->
   <text

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,7 @@ import { MarkupLabelStyle, TextEditorInputMode } from 'yfiles'
  */
 export class RichTextEditorInputMode extends TextEditorInputMode {
   /**
-   * Wire up Quill with the {@link TextEditorInputMode#editorText}.
+   * Wire up Quill with the {@link TextEditorInputMode.editorText}.
    * @yjs:keep=root
    * @type {!string}
    */
@@ -44,7 +44,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
   }
 
   /**
-   * Wire up Quill with the {@link TextEditorInputMode#editorText}.
+   * Wire up Quill with the {@link TextEditorInputMode.editorText}.
    * @yjs:keep=root
    * @type {!string}
    */
@@ -56,6 +56,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
   /**
    * Creates a new instance of the {@link RichTextEditorInputMode} which utilizes Quill to provide a WYSIWYG text editor that
    * allows to easily create labels with the {@link MarkupLabelStyle}.
+   * @yjs:keep=theme,handlers
    */
   constructor() {
     const container = RichTextEditorInputMode.initializeQuillContainer()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -65,7 +65,7 @@ export function alignLeft(graph: IGraph, nodes: IEnumerable<INode>): void {
 }
 
 /**
- * Aligns the given nodes such that <code>y + height</code> is the same value for all nodes.
+ * Aligns the given nodes such that `y + height` is the same value for all nodes.
  * @param graph the graph that contains the given nodes.
  * @param nodes the nodes to be repositioned.
  */
@@ -76,7 +76,7 @@ export function alignBottom(graph: IGraph, nodes: IEnumerable<INode>): void {
 }
 
 /**
- * Aligns the given nodes such that <code>x + width</code> is the same value for all nodes.
+ * Aligns the given nodes such that `x + width` is the same value for all nodes.
  * @param graph the graph that contains the given nodes.
  * @param nodes the nodes to be repositioned.
  */
@@ -116,6 +116,10 @@ export function alignVertically(graph: IGraph, nodes: IEnumerable<INode>): void 
  * @param coordinate the coordinate property to use for positioning the nodes.
  */
 function alignMinCoordImpl(graph: IGraph, nodes: IEnumerable<INode>, coordinate: 'x' | 'y'): void {
+  if (nodes.size == 0) {
+    return
+  }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
 
   const min = nodes.reduce(
@@ -143,6 +147,10 @@ function alignMaxCoordImpl(
   coordinate: 'x' | 'y',
   size: 'width' | 'height'
 ): void {
+  if (nodes.size == 0) {
+    return
+  }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
 
   const max = nodes.reduce(
@@ -150,7 +158,7 @@ function alignMaxCoordImpl(
     nodes.first().layout[coordinate]
   )
   // technically, the initial value should be
-  //   nodes.first().layout[coordinate] + nodes.first().layout[size]
+  //   nodes.at(0).layout[coordinate] + nodes.at(0).layout[size]
   // but since the reduction calculates a maximum and nodes must have non-negative width and height,
   // it does not matter for the result
   for (const node of nodes) {
@@ -174,6 +182,10 @@ function alignCenterCoordImpl(
   coordinate: 'x' | 'y',
   size: 'width' | 'height'
 ): void {
+  if (nodes.size == 0) {
+    return
+  }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
 
   const node = nodes.reduce(
@@ -237,6 +249,10 @@ function distributeImpl(
   coordinate: 'x' | 'y',
   size: 'width' | 'height'
 ): void {
+  if (nodes.size == 0) {
+    return
+  }
+
   const edit = graph.beginEdit('Distribute Nodes', 'Distribute Nodes')
 
   const fnl = nodes.first().layout

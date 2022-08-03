@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -28,7 +28,7 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml">
 	<key id="d0" for="node" attr.type="string" attr.name="Url"/>
 	<key id="d1" for="node" attr.type="string" attr.name="ToolTip"/>
 	<key id="d2" for="node" attr.type="string" attr.name="Description"/>
@@ -78,11 +78,31 @@
 					<yjs:Font fontSize="10" fontStyle="NORMAL" fontFamily="Arial" fontWeight="NORMAL"/>
 				</yjs:DefaultLabelStyle.font>
 			</yjs:DefaultLabelStyle>
-			<demostyle:DemoNodeStyle x:Key="4"/>
-			<demostyle:DemoEdgeStyle x:Key="5"/>
+      <yjs:ShapeNodeStyle x:Key="4" fill="#FFFF6C00" shape="ROUND_RECTANGLE">
+        <yjs:ShapeNodeStyle.stroke>
+          <yjs:Stroke fill="#FF662B00" lineCap="SQUARE" thickness="1.5"/>
+        </yjs:ShapeNodeStyle.stroke>
+      </yjs:ShapeNodeStyle>
+      <yjs:PolylineEdgeStyle x:Key="5">
+        <yjs:PolylineEdgeStyle.stroke>
+          <yjs:Stroke fill="#FF662B00" lineCap="SQUARE" thickness="1.5"/>
+        </yjs:PolylineEdgeStyle.stroke>
+        <yjs:PolylineEdgeStyle.targetArrow>
+          <yjs:Arrow type="TRIANGLE" scale="0.75" fill="#FF662B00"/>
+        </yjs:PolylineEdgeStyle.targetArrow>
+      </yjs:PolylineEdgeStyle>
 			<y:InteriorStretchLabelModel x:Key="6" Insets="4, 4, 18, 4"/>
 			<yjs:DefaultLabelStyle x:Key="7" textFill="#ffffffff"/>
-			<demostyle:DemoGroupStyle x:Key="8" isCollapsible="true"/>
+			<yjs:GroupNodeStyle x:Key="8" tabWidth="30" tabHeight="20" tabInset="3" tabPosition="TOP_TRAILING" groupIcon="MINUS" iconForegroundFill="#FF0B7189" iconOffset="2" tabBackgroundFill="#FF0B7189" tabFill="#FF9DC6D0" hitTransparentContentArea="true">
+         <yjs:GroupNodeStyle.stroke>
+           <yjs:Stroke fill="#FF0B7189" lineCap="SQUARE" thickness="2"/>
+         </yjs:GroupNodeStyle.stroke>
+       </yjs:GroupNodeStyle>
+      <y:GroupNodeLabelModelParameter PlaceOnTab="false" x:Key="9">
+        <y:GroupNodeLabelModelParameter.Model>
+          <y:GroupNodeLabelModel/>
+        </y:GroupNodeLabelModelParameter.Model>
+      </y:GroupNodeLabelModelParameter>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">
@@ -90,11 +110,8 @@
 		<node id="n0">
 			<data key="d3">
 				<x:List>
-                    <y:Label Style="{y:GraphMLReference 7}" PreferredSize="29,14">
+                    <y:Label Style="{y:GraphMLReference 7}" LayoutParameter="{y:GraphMLReference 9}" PreferredSize="29,14">
                         <y:Label.Text>Group</y:Label.Text>
-                        <y:Label.LayoutParameter>
-                            <y:InteriorStretchLabelModelParameter Model="{y:GraphMLReference 6}" Position="North"/>
-                        </y:Label.LayoutParameter>
                     </y:Label>
 				</x:List>
 			</data>
@@ -179,11 +196,8 @@
 		<node id="n1">
 			<data key="d3">
 				<x:List>
-                    <y:Label Style="{y:GraphMLReference 7}" PreferredSize="29,14">
+                    <y:Label Style="{y:GraphMLReference 7}" LayoutParameter="{y:GraphMLReference 9}" PreferredSize="29,14">
                         <y:Label.Text>Group</y:Label.Text>
-                        <y:Label.LayoutParameter>
-                            <y:InteriorStretchLabelModelParameter Model="{y:GraphMLReference 6}" Position="North"/>
-                        </y:Label.LayoutParameter>
                     </y:Label>
 				</x:List>
 			</data>
@@ -268,11 +282,8 @@
 		<node id="n2">
 			<data key="d3">
 				<x:List>
-                    <y:Label Style="{y:GraphMLReference 7}" PreferredSize="29,14">
+                    <y:Label Style="{y:GraphMLReference 7}" LayoutParameter="{y:GraphMLReference 9}" PreferredSize="29,14">
                         <y:Label.Text>Group</y:Label.Text>
-                            <y:Label.LayoutParameter>
-                                <y:InteriorStretchLabelModelParameter Model="{y:GraphMLReference 6}" Position="North"/>
-                            </y:Label.LayoutParameter>
                     </y:Label>
 				</x:List>
 			</data>
@@ -304,11 +315,8 @@
 				<node id="n2::n1">
 					<data key="d3">
 						<x:List>
-                            <y:Label Style="{y:GraphMLReference 7}" PreferredSize="29,14">
+                            <y:Label Style="{y:GraphMLReference 7}" LayoutParameter="{y:GraphMLReference 9}" PreferredSize="29,14">
                                 <y:Label.Text>Group</y:Label.Text>
-                                <y:Label.LayoutParameter>
-                                    <y:InteriorStretchLabelModelParameter Model="{y:GraphMLReference 6}" Position="North"/>
-                                </y:Label.LayoutParameter>
                             </y:Label>
 						</x:List>
 					</data>

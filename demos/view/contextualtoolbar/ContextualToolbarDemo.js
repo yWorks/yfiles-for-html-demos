@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,9 +44,11 @@ import {
   SmartEdgeLabelModel
 } from 'yfiles'
 
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 import ContextualToolbar from './ContextualToolbar.js'
-import loadJson from '../../resources/load-json.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -54,11 +56,12 @@ let graphComponent
 let contextualToolbar
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.graph.undoEngineEnabled = true
 
   // initialize the contextual toolbar
@@ -223,5 +226,5 @@ function createSampleGraph(graph) {
   })
 }
 
-// Start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

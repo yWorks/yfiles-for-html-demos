@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,6 +36,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
+  GroupNodeLabelModel,
   HierarchicLayout,
   ICommand,
   IEdge,
@@ -44,8 +45,6 @@ import {
   IModelItem,
   INode,
   INodeStyle,
-  InteriorStretchLabelModel,
-  InteriorStretchLabelModelPosition,
   License,
   Mapper,
   OrganicEdgeRouter,
@@ -55,23 +54,27 @@ import {
   PartialLayoutData,
   PartialLayoutEdgeRoutingStrategy,
   PartialLayoutOrientation,
+  PolylineEdgeStyle,
   Size,
   SubgraphPlacement,
   YBoolean
 } from 'yfiles'
 
-import { DemoEdgeStyle, DemoGroupStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
 import {
   addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   readGraph,
   setComboboxValue,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import {
+  applyDemoTheme,
+  createDemoGroupStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // We need to load the modules 'router-polyline' and 'router-other' explicitly to prevent
 // tree-shaking tools from removing this dependency which is needed for 'PartialLayout'.
@@ -99,12 +102,13 @@ let fixedGroupNodeStyle
 let fixedEdgeStyle
 
 /**
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize default styles
   initializeGraph()
@@ -277,12 +281,12 @@ function initializeGraph() {
   graphComponent.graph = foldingManager.createFoldingView().graph
 
   // initialize styles
-  partialNodeStyle = newDemoNodeStyle('', false)
-  partialGroupStyle = newDemoNodeStyle('', true)
-  partialEdgeStyle = newDemoEdgeStyle('partial-edge')
-  fixedNodeStyle = newDemoNodeStyle('fixed-node', false)
-  fixedGroupNodeStyle = newDemoNodeStyle('fixed-group-node', true)
-  fixedEdgeStyle = newDemoEdgeStyle('fixed-edge')
+  partialNodeStyle = createNodeStyle(true)
+  partialGroupStyle = createGroupNodeStyle(true)
+  partialEdgeStyle = createEdgeStyle(true)
+  fixedNodeStyle = createNodeStyle(false)
+  fixedGroupNodeStyle = createGroupNodeStyle(false)
+  fixedEdgeStyle = createEdgeStyle(false)
 
   const graph = graphComponent.graph
   graphComponent.navigationCommandsEnabled = true
@@ -291,10 +295,8 @@ function initializeGraph() {
   graph.nodeDefaults.style = partialNodeStyle
   graph.edgeDefaults.style = partialEdgeStyle
 
-  const labelModel = new InteriorStretchLabelModel({ insets: 4 })
-  graph.groupNodeDefaults.labels.layoutParameter = labelModel.createParameter(
-    InteriorStretchLabelModelPosition.NORTH
-  )
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createTabBackgroundParameter()
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
     horizontalTextAlignment: 'left',
     textFill: 'white'
@@ -308,33 +310,34 @@ function initializeGraph() {
 
 /**
  * Creates a new style instance for nodes in this demo.
- * @param {!string} cssClassName The name of the CSS class to use for the new style instance.
- * @param {boolean} group If true, a DemoGroupStyle instance is created;
- * otherwise a DemoNodeStyle instance  is created.
+ * @param {boolean} partial Whether the node is partial or fixed.
  * @returns {!INodeStyle}
  */
-function newDemoNodeStyle(cssClassName, group) {
-  if (group) {
-    const style = new DemoGroupStyle()
-    style.isCollapsible = true
-    style.cssClass = cssClassName
-    return style
-  } else {
-    const style = new DemoNodeStyle()
-    style.cssClass = cssClassName
-    return style
-  }
+function createNodeStyle(partial) {
+  return createDemoNodeStyle(partial ? 'demo-orange' : 'demo-palette-58')
+}
+
+/**
+ * Creates a new style instance for group nodes in this demo.
+ * @param {boolean} partial Whether the node is partial or fixed.
+ * @returns {!INodeStyle}
+ */
+function createGroupNodeStyle(partial) {
+  const palette = partial ? 'demo-palette-12' : 'demo-palette-58'
+  return createDemoGroupStyle({ colorSetName: palette, foldingEnabled: true })
 }
 
 /**
  * Creates a new style instance for edges in this demo.
- * @param {!string} cssClassName The name of the CSS class to use for the new style instance.
+ * @param {boolean} partial Whether the edge is partial or fixed.
  * @returns {!IEdgeStyle}
  */
-function newDemoEdgeStyle(cssClassName) {
-  const style = new DemoEdgeStyle()
-  style.cssClass = cssClassName
-  return style
+function createEdgeStyle(partial) {
+  const edgeColor = partial ? '#ff6c00' : '#4d4d4d'
+  return new PolylineEdgeStyle({
+    stroke: `1.5px ${edgeColor}`,
+    targetArrow: `${edgeColor} small triangle`
+  })
 }
 
 /**
@@ -596,5 +599,5 @@ function getElementById(id) {
   return document.getElementById(id)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

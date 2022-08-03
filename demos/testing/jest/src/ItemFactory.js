@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,10 +47,7 @@ export function createNode(graph, x, y) {
  */
 export function createEdge(graph, selection) {
   if (selection.selectedNodes.size >= 2) {
-    return graph.createEdge(
-      selection.selectedNodes.elementAt(0),
-      selection.selectedNodes.elementAt(1)
-    )
+    return graph.createEdge(selection.selectedNodes.at(0), selection.selectedNodes.at(1))
   } else {
     return null
   }

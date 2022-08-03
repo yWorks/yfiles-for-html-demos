@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,39 +34,29 @@ import {
   GraphItemTypes,
   GraphMLIOHandler,
   ICommand,
-  ILayoutAlgorithm,
   INode,
-  LayoutData,
   License,
   NodeAlignmentPolicy,
   Size
 } from 'yfiles'
 
-import { initDemoStyles } from '../../resources/demo-styles'
 import { createThreeTierLayout, createThreeTierLayoutData } from './ThreeTierLayout'
-import { createTableLayout, createTableLayoutData } from './TableLayout'
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  checkLicense,
-  readGraph,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The GraphComponent.
  */
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * Runs the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraph()
   initializeInputModes()
@@ -78,29 +68,16 @@ function run(licenseData: object): void {
 }
 
 /**
- * Runs a table layout or a three tier layout depending on the selected sample.
+ * Runs the 'three tier layout', i.e., {@link RecursiveGroupLayout} with {@link HierarchicLayout}
+ * as core layout.
  */
 async function runLayout(): Promise<void> {
   setUIDisabled(true)
 
-  const selectedLayout = (document.getElementById('select-sample') as HTMLSelectElement).value
   const fromSketch = (document.getElementById('from-sketch') as HTMLInputElement).checked
 
-  let layout: ILayoutAlgorithm
-  let layoutData: LayoutData
-  switch (selectedLayout) {
-    case 'table':
-      layout = createTableLayout(fromSketch)
-      layoutData = createTableLayoutData()
-      break
-    case 'three-tier':
-      layout = createThreeTierLayout(fromSketch)
-      layoutData = createThreeTierLayoutData(graphComponent.graph, fromSketch)
-      break
-    default:
-      setUIDisabled(false)
-      return
-  }
+  const layout = createThreeTierLayout(fromSketch)
+  const layoutData = createThreeTierLayoutData(graphComponent.graph, fromSketch)
   try {
     graphComponent.fitGraphBounds()
     await graphComponent.morphLayout(layout, '0.5s', layoutData)
@@ -153,18 +130,14 @@ function registerCommands(): void {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindChangeListener("select[data-command='SelectSample']", loadSample)
-
-  bindAction("button[data-command='Reset']", loadSample)
   bindAction("button[data-command='Layout']", runLayout)
 }
 
 /**
- * Loads the table or three-tire.
+ * Loads the three-tier example graph.
  */
 async function loadSample(): Promise<void> {
-  const filename = (document.getElementById('select-sample') as HTMLSelectElement).value
-  const path = `resources/${filename}.graphml`
+  const path = `resources/three-tier.graphml`
 
   const ioHandler = new GraphMLIOHandler()
   await readGraph(ioHandler, graphComponent.graph, path)
@@ -177,7 +150,7 @@ async function loadSample(): Promise<void> {
     graphComponent.graph.nodeDefaults.size = firstLeaf.layout.toSize()
     graphComponent.graph.nodeDefaults.style = firstLeaf.style
   }
-  runLayout()
+  await runLayout()
 }
 
 /**
@@ -185,11 +158,9 @@ async function loadSample(): Promise<void> {
  * layout calculation.
  */
 function setUIDisabled(disabled: boolean): void {
-  ;(document.getElementById('select-sample') as HTMLSelectElement).disabled = disabled
-  ;(document.getElementById('reset') as HTMLInputElement).disabled = disabled
   ;(document.getElementById('from-sketch') as HTMLInputElement).disabled = disabled
   ;(document.getElementById('layout') as HTMLInputElement).disabled = disabled
 }
 
-// start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

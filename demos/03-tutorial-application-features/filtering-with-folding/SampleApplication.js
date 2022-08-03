@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,17 +27,18 @@
  **
  ***************************************************************************/
 import {
-  CollapsibleNodeStyleDecorator,
   DefaultGraph,
+  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
   FilteredGraphWrapper,
   FoldingManager,
-  FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICommand,
   IEdge,
   IFoldingView,
@@ -49,20 +50,21 @@ import {
   UndoUnitBase
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true,
@@ -115,16 +117,6 @@ function enableFilteringAndFolding() {
   // set default styles for newly created graph elements
   initTutorialDefaults(fullGraph)
 
-  // add a collapse/expand button to the group node style
-  fullGraph.groupNodeDefaults.style = new CollapsibleNodeStyleDecorator({
-    wrapped: fullGraph.groupNodeDefaults.style,
-    buttonPlacement: FreeNodeLabelModel.INSTANCE.createParameter({
-      layoutRatio: [0, 0],
-      layoutOffset: [2.5, 2.5],
-      labelRatio: [0, 0]
-    })
-  })
-
   // we want to hide items whose tag contains the string 'filtered'
   const nodePredicate = node => !node.tag || !node.tag.filtered
   const edgePredicate = edge => !edge.tag || !edge.tag.filtered
@@ -158,7 +150,26 @@ function filterItemWithUndoUnit(item, state) {
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph, { foldingEnabled: true })
+
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    groupIcon: 'minus',
+    iconBackgroundShape: 'circle',
+    iconForegroundFill: 'white',
+    iconPosition: 'trailing',
+    tabFill: '#242265',
+    tabPosition: 'top-trailing',
+    stroke: '2px solid #242265',
+    cornerRadius: 8,
+    tabWidth: 70,
+    contentAreaInsets: 8
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'right',
+    textFill: '#FFF'
+  })
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -166,6 +177,7 @@ function initTutorialDefaults(graph) {
   graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
     insets: 5
   }).createParameter('south')
+
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
@@ -320,5 +332,5 @@ class ChangeFilterStateUndoUnit extends UndoUnitBase {
   }
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

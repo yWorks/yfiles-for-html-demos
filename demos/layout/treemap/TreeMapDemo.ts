@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,8 +44,8 @@ import {
   IGraph,
   ILabel,
   INode,
-  IRenderContext,
   InteriorStretchLabelModel,
+  IRenderContext,
   License,
   NodeStyleBase,
   NodeStyleDecorationInstaller,
@@ -62,13 +62,13 @@ import {
   VoidLabelStyle,
   YDimension,
   YInsets,
-  YString,
-  YNode
+  YNode,
+  YString
 } from 'yfiles'
 
 import TreeMapData from './resources/TreeMapData'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Mapper registry key for node names.
@@ -93,8 +93,8 @@ let masterGraph: IGraph
 /**
  * Starts and sets up the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
   initializeGraph()
@@ -527,10 +527,10 @@ function getPreferredSize(graph: IGraph): YDimension {
   const zoomingMode = getElementById<HTMLSelectElement>('select-zooming-mode').value
   const defaultMapSize = 1000
   const preferredSizes = masterGraph.mapperRegistry.getMapper(PREFERRED_SIZE_KEY)!
-  const root = graph.nodes.filter(node => !graph.getParent(node)).firstOrDefault()
+  const root = graph.nodes.filter(node => !graph.getParent(node)).at(0)
   const groupTag = root && root.tag ? root.tag.groupTag : null
   const preferredSize = preferredSizes.get(
-    masterGraph.nodes.filter(node => node.tag && node.tag.groupTag === groupTag).firstOrDefault()
+    masterGraph.nodes.filter(node => node.tag && node.tag.groupTag === groupTag).at(0)
   ) as Size
   if (zoomingMode === 'aspect-ratio' && preferredSize) {
     // if we have a preferred size specified, then the according property on the layout algorithm is configured
@@ -767,4 +767,5 @@ function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

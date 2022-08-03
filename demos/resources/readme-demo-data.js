@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -66,6 +66,7 @@ function getDemoData() {
       "partial",
       "graph transformer",
       "label placement",
+      "compact disk",
       "v2.4.0.0"
     ],
     "ts": true
@@ -334,6 +335,29 @@ function getDemoData() {
       "tree",
       "directed",
       "bundling"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-disk",
+    "name": "Layout Styles: Compact Disk",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=compact-disk&sample=compact-disk-with-edges",
+    "summary": "Suitable to visualize diagrams with few edges in a compact disk-like fashion.",
+    "category": "layout",
+    "type": "layout-styles",
+    "thumbnailPath": "resources/image/layoutstyles-compact-disk.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "layout",
+      "compact disk"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "layout styles samples",
+      "concentric",
+      "compact disk",
+      "round"
     ],
     "ts": true
   },
@@ -698,7 +722,7 @@ function getDemoData() {
     "category": "complete",
     "type": "use-cases",
     "thumbnailPath": "resources/image/mapintegration.png",
-    "sourcePath": "complete/mapintegration/MapIntegrationDemo.js",
+    "sourcePath": "complete/mapintegration/InteractiveMapDemo.js",
     "tags": [
       "style",
       "layout",
@@ -854,6 +878,34 @@ function getDemoData() {
       "generic labeling",
       "labels",
       "data analysis"
+    ],
+    "ts": true
+  },
+  {
+    "id": "tree-of-life",
+    "name": "Tree of Life",
+    "demoPath": "complete/tree-of-life/index.html",
+    "summary": "An interactive radial dendrogram visualization of the Tree of Life.",
+    "category": "complete",
+    "thumbnailPath": "resources/image/tree-of-life.png",
+    "sourcePath": "complete/tree-of-life/TreeOfLifeDemo.js",
+    "tags": [
+      "styles",
+      "layout",
+      "webgl2"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "background",
+      "visual",
+      "RadialLayout",
+      "labels",
+      "smart click navigation",
+      "graph search",
+      "explore",
+      "phylogenetic",
+      "biology",
+      "webgl2"
     ],
     "ts": true
   },
@@ -1089,7 +1141,9 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.3.0.0",
+      "v2.5.0.0",
       "balloon",
+      "cactus",
       "aggregation graph wrapper",
       "curves",
       "bezier",
@@ -1277,6 +1331,130 @@ function getDemoData() {
     "ts": true
   },
   {
+    "id": "default-label-style",
+    "name": "Default Label Style",
+    "demoPath": "style/default-label-style/index.html",
+    "summary": "Shows the features of the DefaultLabelStyle class.",
+    "category": "style",
+    "thumbnailPath": "resources/image/default-label-style.png",
+    "sourcePath": "style/default-label-style/DefaultLabelStyleDemo.js",
+    "tags": [
+      "style",
+      "labels"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "library style",
+      "style options"
+    ],
+    "ts": true
+  },
+  {
+    "id": "rectangle-node-style",
+    "name": "Rectangle Node Style",
+    "demoPath": "style/rectangle-node-style/index.html",
+    "summary": "Shows the different node shapes that can be implemented with the RectangleNodeStyle class.",
+    "category": "style",
+    "thumbnailPath": "resources/image/rectangle-node-style.png",
+    "sourcePath": "style/rectangle-node-style/RectangleNodeStyleDemo.js",
+    "tags": [
+      "style",
+      "interaction"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "handles",
+      "rectangles",
+      "rounded rectangles",
+      "round rectangles",
+      "pills",
+      "hexagons",
+      "octagons",
+      "library style",
+      "style options"
+    ],
+    "ts": true
+  },
+  {
+    "id": "shape-node-style",
+    "name": "Shape Node Style",
+    "demoPath": "style/shape-node-style/index.html",
+    "summary": "Shows the features of the ShapeNodeStyle class.",
+    "category": "style",
+    "thumbnailPath": "resources/image/shape-node-style.png",
+    "sourcePath": "style/defaultlabelstyle/ShapeNodeStyleDemo.js",
+    "tags": [
+      "style",
+      "nodes"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "library style",
+      "style options"
+    ],
+    "ts": true
+  },
+  {
+    "id": "group-node-style",
+    "name": "Group Node Style",
+    "demoPath": "style/group-node-style/index.html",
+    "summary": "Shows the group and folder node visualization options offered by the GroupNodeStyle class.",
+    "category": "style",
+    "thumbnailPath": "resources/image/group-node-style.png",
+    "sourcePath": "style/group-node-style/GroupNodeStyleDemo.js",
+    "tags": [
+      "style",
+      "nodes",
+      "webgl2"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "library style",
+      "style options"
+    ],
+    "ts": true
+  },
+  {
+    "id": "arrow-node-style",
+    "name": "Arrow Node Style",
+    "demoPath": "style/arrow-node-style/index.html",
+    "summary": "Shows the features of the ArrowNodeStyle class.",
+    "category": "style",
+    "thumbnailPath": "resources/image/arrow-node-style.png",
+    "sourcePath": "style/arrow-node-style/ArrowNodeStyleDemo.js",
+    "tags": [
+      "style",
+      "nodes",
+      "arrows"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "library style",
+      "style options"
+    ],
+    "ts": true
+  },
+  {
+    "id": "arrow-edge-style",
+    "name": "Arrow Edge Style",
+    "demoPath": "style/arrow-edge-style/index.html",
+    "summary": "Shows the features of the ArrowEdgeStyle class.",
+    "category": "style",
+    "thumbnailPath": "resources/image/arrow-edge-style.png",
+    "sourcePath": "style/arrow-edge-style/ArrowEdgeStyleDemo.js",
+    "tags": [
+      "style",
+      "edges",
+      "arrows"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "library style",
+      "style options"
+    ],
+    "ts": true
+  },
+  {
     "id": "webgl-animations",
     "name": "WebGL2 Animations",
     "demoPath": "style/webgl-animations/index.html",
@@ -1290,7 +1468,8 @@ function getDemoData() {
       "webgl2"
     ],
     "keywords": [
-      "v2.4.0.0"
+      "v2.4.0.0",
+      "v2.5.0.0"
     ],
     "ts": true
   },
@@ -1313,6 +1492,29 @@ function getDemoData() {
       "dendrogram",
       "background",
       "data analysis"
+    ],
+    "ts": true
+  },
+  {
+    "id": "intersection-detection",
+    "name": "Intersection Detection",
+    "demoPath": "analysis/intersection-detection/index.html",
+    "summary": "Shows how to compute and highlight intersections between graph items.",
+    "category": "analysis",
+    "type": "features",
+    "thumbnailPath": "resources/image/intersection-detection.png",
+    "sourcePath": "analysis/intersection-detection/IntersectionDetectionDemo.js",
+    "tags": [
+      "analysis"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "intersection",
+      "intersections",
+      "overlap",
+      "overlaps",
+      "crossings",
+      "algorithm"
     ],
     "ts": true
   },
@@ -1381,6 +1583,28 @@ function getDemoData() {
       "folding",
       "overview",
       "Labels"
+    ],
+    "ts": true
+  },
+  {
+    "id": "valid-begin-cursors",
+    "name": "Valid Begin Cursors",
+    "demoPath": "input/valid-begin-cursors/index.html",
+    "summary": "Shows how various cursors can be used to indicate valid gestures at the current location.",
+    "category": "input",
+    "type": "features",
+    "thumbnailPath": "resources/image/valid-begin-cursors.png",
+    "sourcePath": "input/valid-begin-cursors/ValidBeginCursorsDemo.js",
+    "tags": [
+      "interaction"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "cursors",
+      "marquee",
+      "lasso",
+      "viewport",
+      "tooltips"
     ],
     "ts": true
   },
@@ -1704,8 +1928,29 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.4.0.0",
+      "v2.5.0.0",
       "styles",
       "notable style"
+    ],
+    "ts": true
+  },
+  {
+    "id": "webgl-selection-styles",
+    "name": "WebGL2 Selection Styles",
+    "demoPath": "style/webgl-selection-styles/index.html",
+    "summary": "Shows the possible styling configurations for selections in WebGL2 rendering.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/webgl-selection-styles.png",
+    "sourcePath": "style/webgl-selection-styles/WebGLSelectionStylesDemo.js",
+    "tags": [
+      "style",
+      "webgl2",
+      "selection"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "styles"
     ],
     "ts": true
   },
@@ -1728,6 +1973,25 @@ function getDemoData() {
       "v2.2.0.0",
       "labels",
       "notable style"
+    ],
+    "ts": true
+  },
+  {
+    "id": "theming",
+    "name": "Theming",
+    "demoPath": "style/theming/index.html",
+    "summary": "Shows various interaction visualization themes simultaneously.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/theming.png",
+    "sourcePath": "style/theming/ThemingDemo.js",
+    "tags": [
+      "theme",
+      "handle",
+      "color"
+    ],
+    "keywords": [
+      "v2.5.0.0"
     ],
     "ts": true
   },
@@ -2237,12 +2501,15 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.4.0.0",
+      "v2.5.0.0",
       "types",
       "tree",
       "hierarchic",
       "organic",
       "components",
       "circular",
+      "balloon",
+      "compact disk",
       "data analysis"
     ],
     "ts": true
@@ -2517,10 +2784,33 @@ function getDemoData() {
       "component"
     ],
     "keywords": [
+      "v2.5.0.0",
       "tree",
       "organic",
       "orthogonal"
     ],
+    "ts": true
+  },
+  {
+    "id": "tabular-groups",
+    "name": "Tabular Groups",
+    "summary": "Shows how to configure the tabular groups feature of the hierarchical layout.",
+    "demoPath": "layout/tabular-groups/index.html",
+    "thumbnailPath": "resources/image/tabular-groups.png",
+    "category": "layout",
+    "tags": [
+      "hierarchic",
+      "tabular",
+      "groups"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "layout",
+      "table",
+      "column",
+      "compact"
+    ],
+    "sourcePath": "layout/tabular-groups/TabularGroupsDemo.js",
     "ts": true
   },
   {
@@ -2973,6 +3263,69 @@ function getDemoData() {
     "ts": true
   },
   {
+    "id": "port-aware-graph-builder",
+    "name": "Port-aware Graph Builder",
+    "demoPath": "databinding/port-aware-graph-builder/index.html",
+    "summary": "Builds a graph using <code>GraphBuilder</code> and connects the items to specific ports.",
+    "category": "databinding",
+    "type": "loading",
+    "thumbnailPath": "resources/image/port-aware-graph-builder.png",
+    "sourcePath": "databinding/port-aware-graph-builder/PortAwareGraphBuilderDemo.js",
+    "tags": [
+      "json",
+      "data binding",
+      "layout"
+    ],
+    "keywords": [
+      "hierarchic",
+      "ports",
+      "v2.5.0.0"
+    ],
+    "ts": true
+  },
+  {
+    "id": "port-aware-adjacency-graph-builder",
+    "name": "Port-aware Adjacency Graph Builder",
+    "demoPath": "databinding/port-aware-adjacency-graph-builder/index.html",
+    "summary": "Builds a graph using <code>AdjacencyGraphBuilder</code> and connects the items to specific ports.",
+    "category": "databinding",
+    "type": "loading",
+    "thumbnailPath": "resources/image/port-aware-adjacency-graph-builder.png",
+    "sourcePath": "databinding/port-aware-adjacency-graph-builder/PortAwareAdjacencyGraphBuilderDemo.js",
+    "tags": [
+      "json",
+      "data binding",
+      "layout"
+    ],
+    "keywords": [
+      "hierarchic",
+      "ports",
+      "v2.5.0.0"
+    ],
+    "ts": true
+  },
+  {
+    "id": "port-aware-tree-builder",
+    "name": "Port-aware Tree Builder",
+    "demoPath": "databinding/port-aware-tree-builder/index.html",
+    "summary": "Builds a graph using <code>TreeBuilder</code> and connects the items to specific ports.",
+    "category": "databinding",
+    "type": "loading",
+    "thumbnailPath": "resources/image/port-aware-tree-builder.png",
+    "sourcePath": "databinding/port-aware-tree-builder/PortAwareTreeBuilderDemo.js",
+    "tags": [
+      "json",
+      "data binding",
+      "layout"
+    ],
+    "keywords": [
+      "tree",
+      "ports",
+      "v2.5.0.0"
+    ],
+    "ts": true
+  },
+  {
     "id": "image-export",
     "name": "Image Export",
     "demoPath": "view/imageexport/index.html",
@@ -3336,7 +3689,7 @@ function getDemoData() {
     "sourcePath": "toolkit/svelte/src/index.ts",
     "tags": [
       "svelte",
-      "snowpack"
+      "vite"
     ],
     "keywords": [
       "v2.4.0.4",
@@ -3430,27 +3783,6 @@ function getDemoData() {
       "es modules",
       "integration"
     ]
-  },
-  {
-    "id": "dojo",
-    "name": "Dojo",
-    "demoPath": "toolkit/dojo/README.html",
-    "summary": "Shows the integration of yFiles for HTML in a basic Dojo app based on Dojo's cli-create-app.",
-    "category": "integration",
-    "type": "integration",
-    "thumbnailPath": "resources/image/demo-dojo.png",
-    "sourcePath": "toolkit/dojo/src/main.ts",
-    "tags": [
-      "dojo",
-      "typescript"
-    ],
-    "keywords": [
-      "v2.2.0.2",
-      "overview",
-      "es modules",
-      "integration"
-    ],
-    "ts": true
   },
   {
     "id": "web-components",
@@ -3714,47 +4046,6 @@ function getDemoData() {
     "keywords": [
       "v2.4.0.4",
       "webworker"
-    ],
-    "ts": true
-  },
-  {
-    "id": "snowpack",
-    "name": "Snowpack",
-    "demoPath": "loading/snowpack/README.html",
-    "summary": "Shows how to integrate the yFiles library in a <a href=\"https://snowpack.dev\" target=\"_blank\">Snowpack</a> project.",
-    "category": "loading",
-    "type": "integration",
-    "thumbnailPath": "resources/image/snowpack.png",
-    "sourcePath": "loading/snowpack/src/index.ts",
-    "tags": [
-      "es modules",
-      "deployment"
-    ],
-    "keywords": [
-      "v2.4.0.4",
-      "hierarchic",
-      "hmr"
-    ],
-    "ts": true
-  },
-  {
-    "id": "wmr",
-    "name": "WMR Loading Demo",
-    "demoPath": "loading/wmr/README.html",
-    "summary": "Shows how to load yFiles for HTML with <a href=\"https://wmr.dev/\" rel=\"noopener\" target=\"_blank\">WMR</a> as a loader.",
-    "category": "loading",
-    "type": "integration",
-    "thumbnailPath": "resources/image/wmr.png",
-    "sourcePath": "loading/wmr/public/index.ts",
-    "tags": [
-      "deployment",
-      "web worker",
-      "layout"
-    ],
-    "keywords": [
-      "v2.4.0.4",
-      "organic",
-      "hierarchic"
     ],
     "ts": true
   },
@@ -4144,6 +4435,29 @@ function getDemoData() {
     "ts": true
   },
   {
+    "id": "custom-handle-provider",
+    "name": "Custom Handle Provider",
+    "demoPath": "input/custom-handle-provider/index.html",
+    "summary": "Shows how to implement custom handles that allow to interactively change the shape of an ArrowNodeStyle.",
+    "category": "input",
+    "type": "source-code",
+    "thumbnailPath": "resources/image/custom-handle-provider.png",
+    "sourcePath": "input/custom-handle-provider/CustomHandleProviderDemo.js",
+    "tags": [
+      "interaction",
+      "style"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "handles",
+      "arrow",
+      "shaft",
+      "IHandleProvider",
+      "IHandle"
+    ],
+    "ts": true
+  },
+  {
     "id": "label-handle-provider",
     "name": "Label Handle Provider",
     "demoPath": "input/labelhandleprovider/index.html",
@@ -4503,7 +4817,7 @@ function getDemoData() {
     "keywords": [
       "DefaultLabelStyle",
       "ShapeNodeStyle",
-      "ShinyPlateNodeStyle",
+      "RectangleNodeStyle",
       "PolylineEdgeStyle",
       "Arrow"
     ],
@@ -5072,6 +5386,7 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial2step29.png",
     "category": "tutorial-custom-styles",
     "tags": [
+      "v2.5.0.0",
       "tutorial",
       "custom style"
     ],
@@ -5459,7 +5774,7 @@ function getDemoData() {
     "name": "Save and Load GraphML",
     "summary": "Shows how to use GraphML input and output.",
     "demoPath": "03-tutorial-application-features/input-output/index.html",
-    "thumbnailPath": "resources/image/tutorial3step1.png",
+    "thumbnailPath": "resources/image/tutorial3input-output.png",
     "category": "tutorial-application-features",
     "tags": [
       "graphml",
@@ -5481,7 +5796,7 @@ function getDemoData() {
     "name": "Custom Data in GraphML",
     "summary": "Shows how to read and write additional data from and to GraphML.",
     "demoPath": "03-tutorial-application-features/custom-graphml/index.html",
-    "thumbnailPath": "resources/image/tutorial3step1.png",
+    "thumbnailPath": "resources/image/tutorial3custom-graphml.png",
     "category": "tutorial-application-features",
     "tags": [
       "graphml",
@@ -5674,6 +5989,28 @@ function getDemoData() {
       "resizing"
     ],
     "sourcePath": "03-tutorial-application-features/snapping/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-application-features--theming",
+    "name": "Theming",
+    "summary": "Shows how to use a theme to change the look-and-feel of an application.",
+    "demoPath": "03-tutorial-application-features/theming/index.html",
+    "thumbnailPath": "resources/image/tutorial3theming.png",
+    "category": "tutorial-application-features",
+    "tags": [
+      "interaction",
+      "tutorial",
+      "theme"
+    ],
+    "keywords": [
+      "dark mode",
+      "light mode",
+      "colors",
+      "theming",
+      "v2.5.0.0"
+    ],
+    "sourcePath": "03-tutorial-application-features/theming/SampleApplication.js",
     "ts": true
   },
   {
@@ -6220,6 +6557,55 @@ function getDemoData() {
       "layout"
     ],
     "sourcePath": "04-tutorial-layout-features/recursive-group-layout/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--cactus-group-layout",
+    "name": "Cactus Group Layout",
+    "summary": "Shows how to configure the cactus group layout to arrange grouped graphs.",
+    "demoPath": "04-tutorial-layout-features/cactus/index.html",
+    "thumbnailPath": "resources/image/tutorial4cactus.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "cactus",
+      "groups"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "tutorial",
+      "layout",
+      "hierarchy",
+      "round",
+      "nesting",
+      "bundling",
+      "fractal"
+    ],
+    "sourcePath": "04-tutorial-layout-features/cactus/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-layout-features--compact-disk-groups",
+    "name": "Compact Disk Groups",
+    "summary": "Shows how to configure the compact disk layout to arrange children of group nodes.",
+    "demoPath": "04-tutorial-layout-features/compact-disk-groups/index.html",
+    "thumbnailPath": "resources/image/tutorial4compactdiskgroups.png",
+    "category": "tutorial-layout-features",
+    "tags": [
+      "compact",
+      "disk",
+      "groups"
+    ],
+    "keywords": [
+      "v2.5.0.0",
+      "tutorial",
+      "layout",
+      "round",
+      "nesting",
+      "node types",
+      "recursive",
+      "RecursiveGroupLayout"
+    ],
+    "sourcePath": "04-tutorial-layout-features/compact-disk-groups/SampleApplication.js",
     "ts": true
   }
 ]

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { FoldingManager, IFoldingView } from 'yfiles'
 import {
   CollectSnapResultsEventArgs,
   DragDropEffects,
@@ -49,11 +50,9 @@ import {
   Rect
 } from 'yfiles'
 
-import type { FoldingManager, IFoldingView } from 'yfiles'
-
 /**
  * An {@link ItemDropInputMode} specialized to drag and drop {@link IGraph graphs}.
- * <p>
+ *
  * It can {@link ItemDropInputMode.showPreview visualize a preview} of the
  * {@link ItemDropInputMode.draggedItem dragged graph} during
  * the drag operation, and supports {@link ItemDropInputMode.snappingEnabled snapping} via the
@@ -63,18 +62,17 @@ import type { FoldingManager, IFoldingView } from 'yfiles'
  * {@link HighlightIndicatorManager}. In addition, it supports dragging nodes into
  * {@link IGraph.isGroupNode groups} and, optionally,
  * {@link IFoldingView.collapse folders}.
- * </p>
  */
 export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
   /**
    * Gets or sets a value indicating whether graphs can be dropped on
-   * {@link IFoldingView#collapse collapsed} folder nodes.
-   * <p>
-   * If this property is set to <code>true</code>, dropping a graph on collapsed folder nodes
+   * {@link IFoldingView.collapse collapsed} folder nodes.
+   *
+   * If this property is set to `true`, dropping a graph on collapsed folder nodes
    * will create the graph inside the folder node in the master graph. In that case the
-   * {@link ItemDropInputMode#addItemCreatedListener ItemCreated} event will yield the items if the
-   * graph in the {@link FoldingManager#masterGraph master graph}. The items of the graph will
-   * not be {@link IGraph#contains contained} in the currently visible graph. By default this
+   * {@link ItemDropInputMode.addItemCreatedListener ItemCreated} event will yield the items if the
+   * graph in the {@link FoldingManager.masterGraph master graph}. The items of the graph will
+   * not be {@link IGraph.contains contained} in the currently visible graph. By default this
    * feature is disabled.
    */
   public allowFolderNodeAsParent: boolean
@@ -101,7 +99,7 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
 
   /**
    * Creates the dragged graph in the target graph after the dragged graph has been dropped.
-   * This method is called by the {@link ItemDropInputMode#itemCreator} that
+   * This method is called by the {@link ItemDropInputMode.itemCreator} that
    * is set as default on this class.
    * @param context The context for which the graph should be created.
    * @param graph The target {@link IGraph graph} in which to create the dragged graph.
@@ -174,8 +172,8 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
   }
 
   /**
-   * Updates the {@link GraphDropInputMode#previewGraph preview graph} so the dragged graph is
-   * displayed at the specified {@link GraphDropInputMode#setDragLocation}.
+   * Updates the {@link GraphDropInputMode.previewGraph preview graph} so the dragged graph is
+   * displayed at the specified {@link GraphDropInputMode.setDragLocation}.
    * @param previewGraph The preview graph to update.
    * @param dragLocation The current drag location.
    */
@@ -242,12 +240,11 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
     if (hitTestEnumerator instanceof INodeHitTester) {
       // hit testing needs to be done with a context whose parent input mode is this mode,
       // because hit testables may behave differently depending on context
-      // this is e.g. the case for the DemoGroupStyle used in this demo
-      // see DemoGroupStyle#isHit in ../../resources/demo-styles.ts
+      // this is e.g. the case for the GroupNodeStyle used in this demo
       const childInputModeContext = IInputModeContext.createInputModeContext(this)
       return hitTestEnumerator
         .enumerateHits(childInputModeContext, dragLocation)
-        .firstOrDefault(node => this.isValidDropTargetParentNode(graph, node))
+        .find(node => this.isValidDropTargetParentNode(graph, node))
     }
     return null
   }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,14 +27,6 @@
  **
  ***************************************************************************/
 import {
-  addNavigationButtons,
-  addOptions,
-  bindCommand,
-  checkLicense,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app.js'
-import {
   Color,
   DefaultGraph,
   DefaultLabelStyle,
@@ -52,11 +44,19 @@ import {
   WebGL2IconNodeStyle,
   WebGL2SelectionIndicatorManager,
   WebGL2ShapeNodeShape,
-  WebGL2Stroke
+  WebGL2Stroke,
+  WebGL2TextureRendering
 } from 'yfiles'
-import loadJson from '../../resources/load-json.js'
+import {
+  addNavigationButtons,
+  addOptions,
+  bindCommand,
+  showApp,
+  showLoadingIndicator
+} from '../../resources/demo-app.js'
 import { createFontAwesomeIcon, createUrlIcon } from '../../utils/IconCreation.js'
 import { isWebGl2Supported } from '../../utils/Workarounds.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 const iconSize = new Size(128, 128)
 
@@ -85,17 +85,17 @@ const faClasses = [
 
 // the "graph loading" indicator element
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
+async function run() {
   if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support').removeAttribute('style')
-    showApp(null)
+    showApp()
     return
   }
 
-  License.value = licenseData
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
 
@@ -127,78 +127,93 @@ async function createSmallSampleGraph(graphComponent) {
   const webGL2GraphModelManager = graphComponent.graphModelManager
   const ctx = createCanvasContext(iconSize)
 
+  // Pre-created icons because they are shared between several nodes and have to be created in
+  // asynchronous code
+
+  // Create icon from SVG file
+  const svgFileIcon = await createUrlIcon(
+    ctx,
+    './resources/play-16.svg',
+    new Size(16, 16),
+    iconSize
+  )
+  // Create icon from SVG data URI
+  const svgDataURIIcon = await createUrlIcon(
+    ctx,
+    'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxNnB4IiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAuNSAxNi41IDE2IDE2IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAuNSAxNi41IDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPiAgICANCiAgICA8cG9seWdvbiBmaWxsPSIjZmZmZmZmIiBwb2ludHM9IjMuNSwyNS41IDcuNSwyOS41IDE0LjUsMjEuNSAxNC41LDE4LjUgNy41LDI2LjUgMy41LDIyLjUgICIvPg0KPC9nPg0KPC9zdmc+DQo=',
+    new Size(16, 16),
+    iconSize
+  )
+  // Create Font Awesome icon
+  const fontAwesomeIcon = createFontAwesomeIcon(ctx, 'fas fa-anchor', iconSize)
+  // Create icon from PNG file
+  const pngIcon = await createUrlIcon(ctx, './resources/usericon.png', new Size(256, 256), iconSize)
+  // Create another icon from SVG file
+  const svgFileIconGear = await createUrlIcon(
+    ctx,
+    './resources/settings-16.svg',
+    new Size(16, 16),
+    iconSize
+  )
+
   for (let i = 0; i < iconColors.length; i++) {
     const color = iconColors[i]
 
-    // create icon from SVG file
-    const svgFileIcon = await createUrlIcon(
-      ctx,
-      './resources/play-16.svg',
-      new Size(16, 16),
-      iconSize
-    )
-    const svgFileIconNode = graph.createNodeAt({
-      location: new Point(150 * i, 0),
-      labels: ['Icon from SVG file']
-    })
+    // Create node with icon from SVG file
     webGL2GraphModelManager.setStyle(
-      svgFileIconNode,
+      graph.createNodeAt({
+        labels: ['Icon from SVG file'],
+        location: new Point(150 * i, 0)
+      }),
       new WebGL2IconNodeStyle({
         icon: svgFileIcon,
         fill: color,
-        stroke: new WebGL2Stroke(color, 4)
+        iconColor: 'white',
+        textureRendering:
+          i % 2 == 0 ? WebGL2TextureRendering.SDF : WebGL2TextureRendering.INTERPOLATED,
+        stroke: 'none'
       })
     )
 
-    // create icon from SVG data url
-    const svgDataURIIcon = await createUrlIcon(
-      ctx,
-      'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxNnB4IiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAuNSAxNi41IDE2IDE2IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAuNSAxNi41IDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPiAgICANCiAgICA8cG9seWdvbiBmaWxsPSIjZmZmZmZmIiBwb2ludHM9IjMuNSwyNS41IDcuNSwyOS41IDE0LjUsMjEuNSAxNC41LDE4LjUgNy41LDI2LjUgMy41LDIyLjUgICIvPg0KPC9nPg0KPC9zdmc+DQo=',
-      new Size(16, 16),
-      iconSize
-    )
-    const svgDataURIIconNode = graph.createNodeAt({
-      location: new Point(150 * i, 100),
-      labels: ['Icon from SVG dataURI']
-    })
+    // Create node with icon from SVG data URI
     webGL2GraphModelManager.setStyle(
-      svgDataURIIconNode,
+      graph.createNodeAt({
+        labels: ['Icon from SVG data URI'],
+        location: new Point(150 * i, 100)
+      }),
       new WebGL2IconNodeStyle({
         icon: svgDataURIIcon,
         shape: WebGL2ShapeNodeShape.RECTANGLE,
+        iconColor: 'white',
         fill: color,
-        stroke: new WebGL2Stroke(Color.TRANSPARENT)
+        textureRendering:
+          i % 2 == 0 ? WebGL2TextureRendering.SDF : WebGL2TextureRendering.INTERPOLATED,
+        stroke: 'none'
       })
     )
 
-    // create font awesome icon
-    const fontAwesomeIcon = createFontAwesomeIcon(ctx, 'fas fa-anchor', iconSize)
-    const fontAwesomeIconNode = graph.createNodeAt({
-      location: new Point(150 * i, 200),
-      labels: ['Icon from Font Awesome']
-    })
+    // Create node with Font Awesome icon
     webGL2GraphModelManager.setStyle(
-      fontAwesomeIconNode,
+      graph.createNodeAt({
+        labels: ['Icon from Font Awesome'],
+        location: new Point(150 * i, 200)
+      }),
       new WebGL2IconNodeStyle({
         icon: fontAwesomeIcon,
         fill: color,
-        stroke: new WebGL2Stroke(Color.TRANSPARENT)
+        iconColor: 'white',
+        textureRendering:
+          i % 2 == 0 ? WebGL2TextureRendering.SDF : WebGL2TextureRendering.INTERPOLATED,
+        stroke: 'none'
       })
     )
 
-    // create icon from PNG file
-    const pngIcon = await createUrlIcon(
-      ctx,
-      './resources/usericon.png',
-      new Size(256, 256),
-      iconSize
-    )
-    const pngIconNode = graph.createNodeAt({
-      location: new Point(150 * i, 300),
-      labels: ['Icon from PNG file']
-    })
+    // Create node with icon from PNG file
     webGL2GraphModelManager.setStyle(
-      pngIconNode,
+      graph.createNodeAt({
+        labels: ['Icon from PNG file'],
+        location: new Point(150 * i, 300)
+      }),
       new WebGL2IconNodeStyle({
         icon: pngIcon,
         fill: Color.TRANSPARENT,
@@ -206,33 +221,28 @@ async function createSmallSampleGraph(graphComponent) {
       })
     )
 
-    // create colored icon from SVG file
-    const coloredSvgFileIcon = await createUrlIcon(
-      ctx,
-      './resources/settings-16.svg',
-      new Size(16, 16),
-      iconSize
-    )
-    const coloredSvgFileIconNode = graph.createNodeAt({
-      location: new Point(150 * i, 400),
-      labels: ['Icon with Fill Color']
-    })
+    // Create node with icon and fill/background color
     webGL2GraphModelManager.setStyle(
-      coloredSvgFileIconNode,
+      graph.createNodeAt({
+        labels: ['Icon with Fill Color'],
+        location: new Point(150 * i, 400)
+      }),
       new WebGL2IconNodeStyle({
-        icon: coloredSvgFileIcon,
+        icon: svgFileIconGear,
         fill: Color.DARK_GRAY,
+        textureRendering:
+          i % 2 == 0 ? WebGL2TextureRendering.SDF : WebGL2TextureRendering.INTERPOLATED,
         stroke: new WebGL2Stroke(Color.DARK_GRAY, 4),
         iconColor: color
       })
     )
 
-    const aspectRatioIconNode = graph.createNode({
-      layout: new Rect(150 * i - 25, 500, 50, 30),
-      labels: ['Keep Aspect Ratio']
-    })
+    // Create node with icon that keeps its aspect ratio
     webGL2GraphModelManager.setStyle(
-      aspectRatioIconNode,
+      graph.createNode({
+        labels: ['Keep Aspect Ratio'],
+        layout: new Rect(150 * i - 25, 500, 50, 30)
+      }),
       new WebGL2IconNodeStyle({
         icon: pngIcon,
         shape: 'rectangle',
@@ -271,13 +281,25 @@ function createLargeSampleGraph(graphComponent) {
         iconColorIndex = Math.floor(Math.random() * iconColors.length)
       }
 
+      let strokeColorIndex = colorIndex
+      // select a different random color for the icon
+      while (strokeColorIndex === colorIndex) {
+        strokeColorIndex = Math.floor(Math.random() * iconColors.length)
+      }
+
       const node = graph.createNodeAt(new Point(i * 50, k * 50))
       webGL2GraphModelManager.setStyle(
         node,
         new WebGL2IconNodeStyle({
+          shape:
+            Math.random() > 0.5 ? WebGL2ShapeNodeShape.ELLIPSE : WebGL2ShapeNodeShape.RECTANGLE,
           fill: iconColors[colorIndex],
-          stroke: new WebGL2Stroke(iconColors[colorIndex]),
+          stroke:
+            Math.random() > 0.5
+              ? new WebGL2Stroke(iconColors[strokeColorIndex], 1)
+              : WebGL2Stroke.NONE,
           icon: fontAwesomeIcons[iconIndex],
+          textureRendering: WebGL2TextureRendering.SDF,
           iconColor: iconColors[iconColorIndex]
         })
       )
@@ -293,7 +315,7 @@ function createLargeSampleGraph(graphComponent) {
  */
 function initializeFastRendering(graphComponent) {
   graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager(graphComponent)
+  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
   graphComponent.focusIndicatorManager.enabled = false
 }
 
@@ -382,4 +404,5 @@ function initializeUI(graphComponent) {
   addOptions(sampleSelectElement, 'Different icon types', 'Large graph')
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

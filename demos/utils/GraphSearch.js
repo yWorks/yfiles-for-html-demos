@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,12 +27,8 @@
  **
  ***************************************************************************/
 import {
-  CanvasComponent,
   Color,
-  GraphComponent,
   HighlightIndicatorManager,
-  ICanvasObjectInstaller,
-  INode,
   Insets,
   NodeStyleDecorationInstaller,
   Point,
@@ -73,9 +69,8 @@ export default class GraphSearch {
   constructor(graphComponent) {
     this.matchingNodes = []
     this.graphComponent = graphComponent
-    this.searchHighlightIndicatorInstaller = new SearchHighlightIndicatorManager(
-      this.graphComponent
-    )
+    this.searchHighlightIndicatorInstaller = new SearchHighlightIndicatorManager()
+    this.searchHighlightIndicatorInstaller.install(graphComponent)
   }
 
   /**
@@ -118,37 +113,26 @@ export default class GraphSearch {
 
   /**
    * Zooms to the nodes that match the result of the current search.
+   * @returns {!Promise}
    */
   zoomToSearchResult() {
     if (this.matchingNodes.length === 0) {
-      this.graphComponent.fitGraphBounds()
-      return
+      return Promise.resolve()
     }
-    // determine the rectangle which contains the matching nodes
-    let minX = Number.POSITIVE_INFINITY
-    let maxX = Number.NEGATIVE_INFINITY
-    let minY = Number.POSITIVE_INFINITY
-    let maxY = Number.NEGATIVE_INFINITY
 
-    this.matchingNodes.forEach(node => {
-      const nodeLayout = node.layout
-      minX = Math.min(minX, nodeLayout.x)
-      maxX = Math.max(maxX, nodeLayout.x + nodeLayout.width)
-      minY = Math.min(minY, nodeLayout.y)
-      maxY = Math.max(maxY, nodeLayout.y + nodeLayout.height)
-    })
-    if (isFinite(minX) && isFinite(maxX) && isFinite(minY) && isFinite(maxY)) {
-      let rect = new Rect(minX, minY, maxX - minX, maxY - minY)
-      // enlarge it with some insets
-      rect = rect.getEnlarged(new Insets(20))
-      // calculate the maximum possible zoom
-      const componentWidth = this.graphComponent.size.width
-      const componentHeight = this.graphComponent.size.height
-      const maxPossibleZoom = Math.min(componentWidth / rect.width, componentHeight / rect.height)
-      // zoom to this rectangle with maximum zoom 1.5
-      const zoom = Math.min(maxPossibleZoom, 1.5)
-      this.graphComponent.zoomToAnimated(new Point(rect.centerX, rect.centerY), zoom)
+    const maxRect = this.matchingNodes
+      .map(node => node.layout.toRect())
+      .reduce((prev, current) => Rect.add(prev, current))
+    if (!maxRect.isFinite) {
+      return Promise.resolve()
     }
+
+    const rect = maxRect.getEnlarged(new Insets(20))
+    const componentWidth = this.graphComponent.size.width
+    const componentHeight = this.graphComponent.size.height
+    const maxPossibleZoom = Math.min(componentWidth / rect.width, componentHeight / rect.height)
+    const zoom = Math.min(maxPossibleZoom, 1.5)
+    return this.graphComponent.zoomToAnimated(new Point(rect.centerX, rect.centerY), zoom)
   }
 
   /**
@@ -173,11 +157,9 @@ export default class GraphSearch {
 class SearchHighlightIndicatorManager extends HighlightIndicatorManager {
   /**
    * Creates the SearchHighlightIndicatorManager.
-   * @param {!CanvasComponent} canvasComponent The associated graphComponent
-   * highlighting
    */
-  constructor(canvasComponent) {
-    super(canvasComponent)
+  constructor() {
+    super()
     // initialize the default highlight style
     const highlightColor = Color.TOMATO
     this.$decorationInstaller = new NodeStyleDecorationInstaller({

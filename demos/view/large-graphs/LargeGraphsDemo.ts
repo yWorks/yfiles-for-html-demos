@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,14 +39,7 @@ import {
   NodeReshapeHandleProvider
 } from 'yfiles'
 
-import {
-  addNavigationButtons,
-  addOptions,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { addNavigationButtons, addOptions, bindCommand, showApp } from '../../resources/demo-app'
 
 import RenderingTypesManager from './RenderingTypesManager'
 
@@ -57,18 +50,19 @@ import {
 } from './LargeGraphDemoConfiguration'
 import OrgChartDemoConfiguration from './OrgChartDemoConfiguration'
 import { isWebGl2Supported } from '../../utils/Workarounds'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let renderingTypesManager: RenderingTypesManager = null!
 
-async function run(licenseData: object): Promise<void> {
+async function run(): Promise<void> {
   if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
-    showApp(null)
+    showApp()
     return
   }
 
-  License.value = licenseData
+  License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   configureInteraction(graphComponent)
   initToolbar(graphComponent)
@@ -297,5 +291,5 @@ function initToolbar(graphComponent: GraphComponent): void {
   addNavigationButtons(svgThresholdSelect, false)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

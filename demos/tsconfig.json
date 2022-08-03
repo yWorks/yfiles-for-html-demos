@@ -1,29 +1,24 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "target": "es6",
-    "module": "es6",
-    "moduleResolution": "node",
-    "removeComments": false,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
     "lib": [
-      "dom.iterable",
-      "es2017",
-      "dom"
+      "es2021",
+      "dom",
+      "dom.iterable"
     ],
-    "forceConsistentCasingInFileNames": true
+    "module": "es2020",
+    "target": "es2021",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node"
   },
   "exclude": [
-    "loading/snowpack",
     "loading/vite",
     "loading/webworker-umd",
     "loading/webworker-webpack",
-    "loading/wmr",
     "node_modules",
     "toolkit/angular",
-    "toolkit/dojo",
-    "toolkit/preact",
     "toolkit/react-typescript",
     "toolkit/svelte",
     "toolkit/vue2-cli-typescript",

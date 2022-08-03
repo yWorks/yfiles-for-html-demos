@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,7 +67,7 @@ export class ZoomInAndBackAnimation extends BaseClass(IAnimation) {
 
   /**
    * Gets the preferred duration of the animation.
-   * @see Specified by {@link IAnimation#preferredDuration}.
+   * @see Specified by {@link IAnimation.preferredDuration}.
    */
   get preferredDuration(): TimeSpan {
     return this.duration
@@ -75,8 +75,8 @@ export class ZoomInAndBackAnimation extends BaseClass(IAnimation) {
 
   /**
    * Initializes the animation. Call this method once before subsequent
-   * calls to {@link IAnimation#animate}.
-   * @see Specified by {@link IAnimation#initialize}.
+   * calls to {@link IAnimation.animate}.
+   * @see Specified by {@link IAnimation.initialize}.
    */
   initialize(): void {
     this.initialZoomLog = Math.log(this.canvas.zoom) / Math.log(2)
@@ -87,7 +87,7 @@ export class ZoomInAndBackAnimation extends BaseClass(IAnimation) {
    * Does the animation according to the relative animation time.
    * The animation starts with the time 0 and ends with time 1.
    * @param time the animation time [0,1]
-   * @see Specified by {@link IAnimation#animate}.
+   * @see Specified by {@link IAnimation.animate}.
    */
   animate(time: number): void {
     const newZoom =
@@ -99,7 +99,7 @@ export class ZoomInAndBackAnimation extends BaseClass(IAnimation) {
 
   /**
    * Cleans up after an animation has finished.
-   * @see Specified by {@link IAnimation#cleanUp}.
+   * @see Specified by {@link IAnimation.cleanUp}.
    */
   cleanUp(): void {}
 }
@@ -129,7 +129,7 @@ export class CirclePanAnimation extends BaseClass(IAnimation) {
 
   /**
    * Gets the preferred duration of the animation.
-   * @see Specified by {@link IAnimation#preferredDuration}.
+   * @see Specified by {@link IAnimation.preferredDuration}.
    */
   get preferredDuration(): TimeSpan {
     return this.duration
@@ -137,8 +137,8 @@ export class CirclePanAnimation extends BaseClass(IAnimation) {
 
   /**
    * Initializes the animation. Call this method once before subsequent
-   * calls to {@link IAnimation#animate}.
-   * @see Specified by {@link IAnimation#initialize}.
+   * calls to {@link IAnimation.animate}.
+   * @see Specified by {@link IAnimation.initialize}.
    */
   initialize(): void {
     this.lastAngle = 0
@@ -149,7 +149,7 @@ export class CirclePanAnimation extends BaseClass(IAnimation) {
    * Does the animation according to the relative animation time.
    * The animation starts with the time 0 and ends with time 1.
    * @param time the animation time [0,1]
-   * @see Specified by {@link IAnimation#animate}.
+   * @see Specified by {@link IAnimation.animate}.
    */
   animate(time: number): void {
     // The circle radius depends on the viewport size to be zoom-invariant
@@ -172,7 +172,7 @@ export class CirclePanAnimation extends BaseClass(IAnimation) {
 
   /**
    * Cleans up after an animation has finished.
-   * @see Specified by {@link IAnimation#cleanUp}.
+   * @see Specified by {@link IAnimation.cleanUp}.
    */
   cleanUp(): void {}
 }
@@ -206,7 +206,7 @@ export class CircleNodeAnimation extends BaseClass(IAnimation) {
 
   /**
    * Gets the preferred duration of the animation.
-   * @see Specified by {@link IAnimation#preferredDuration}.
+   * @see Specified by {@link IAnimation.preferredDuration}.
    */
   get preferredDuration(): TimeSpan {
     return this.duration
@@ -214,8 +214,8 @@ export class CircleNodeAnimation extends BaseClass(IAnimation) {
 
   /**
    * Initializes the animation. Call this method once before subsequent
-   * calls to {@link IAnimation#animate}.
-   * @see Specified by {@link IAnimation#initialize}.
+   * calls to {@link IAnimation.animate}.
+   * @see Specified by {@link IAnimation.initialize}.
    */
   initialize(): void {
     this.startBounds = this.nodes.map(n => n.layout.toRect()).toList()
@@ -225,7 +225,7 @@ export class CircleNodeAnimation extends BaseClass(IAnimation) {
    * Does the animation according to the relative animation time.
    * The animation starts with the time 0 and ends with time 1.
    * @param time the animation time [0,1]
-   * @see Specified by {@link IAnimation#animate}.
+   * @see Specified by {@link IAnimation.animate}.
    */
   animate(time: number): void {
     const totalAngle = 2 * Math.PI * this.revolutions
@@ -246,7 +246,7 @@ export class CircleNodeAnimation extends BaseClass(IAnimation) {
 
   /**
    * Cleans up after an animation has finished.
-   * @see Specified by {@link IAnimation#cleanUp}.
+   * @see Specified by {@link IAnimation.cleanUp}.
    */
   cleanUp(): void {}
 }

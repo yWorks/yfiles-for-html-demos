@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,11 +34,10 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphOverviewComponent,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICommand,
-  INodeInsetsProvider,
-  Insets,
   InteriorLabelModel,
-  InteriorStretchLabelModel,
   License,
   Point,
   PolylineEdgeStyle,
@@ -46,14 +45,14 @@ import {
   Size
 } from 'yfiles'
 
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindCommand, showApp } from '../../resources/demo-app'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -93,33 +92,20 @@ function run(licenseData: object): void {
  */
 function configureGroupNodeStyles(): void {
   const graph = graphComponent.graph
-  // Creates a rectangular shape with a white background
-  graph.groupNodeDefaults.style = new ShapeNodeStyle({
-    fill: 'white',
-    stroke: '2px #0b7189'
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: '#0b7189'
   })
 
   // Sets a label style with right-aligned text
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
     horizontalTextAlignment: 'right',
-    textFill: 'white',
-    backgroundFill: '#0b7189',
-    insets: [2, 5]
+    textFill: 'white'
   })
 
-  // Places the label at the top inside of the panel.
-  // For group nodes, InteriorStretchLabelModel is usually the most appropriate label model
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
-
-  // reserve space for the label by setting larger top insets
-  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementationWrapper(
-    (node, provider) => {
-      if (graph.isGroupNode(node)) {
-        return INodeInsetsProvider.create(() => new Insets(10, 25, 10, 10))
-      }
-      return provider
-    }
-  )
+  // Places the label inside the tab area of the group node.
+  // For the GroupNodeStyle, GroupNodeLabelModel is usually the most appropriate label model.
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 }
 
 /**
@@ -139,8 +125,8 @@ function createGroupNodes(): void {
   // Creates a group node that encloses n1, n2 and n3
   const groupNode = graph.groupNodes([n1, n2, n3])
   graph.addLabel(groupNode, 'Group Node')
-  // Edges from the the group node itself are also allowed
-  const edgeFromGroup = graph.createEdge(groupNode, graph.nodes.elementAt(1))
+  // Edges from the group node itself are also allowed
+  const edgeFromGroup = graph.createEdge(groupNode, graph.nodes.at(1)!)
   graph.addBend(edgeFromGroup, new Point(100, -35), 0)
   graph.addBend(edgeFromGroup, new Point(170, -35), 1)
 
@@ -291,8 +277,8 @@ function setDefaultStyles(): void {
 /**
  * Updates the content rectangle to encompass all existing graph elements.
  * If you create your graph elements programmatically, the content rectangle
- * (i.e. the rectangle in <b>world coordinates</b>
- * that encloses the graph) is <b>not</b> updated automatically to enclose these elements.
+ * (i.e. the rectangle in __world coordinates__
+ * that encloses the graph) is __not__ updated automatically to enclose these elements.
  * Typically, this manifests in wrong/missing scrollbars, incorrect {@link GraphOverviewComponent}
  * behavior and the like.
  *
@@ -304,7 +290,7 @@ function setDefaultStyles(): void {
  *
  * Uncomment various combinations of lines in this method and observe the different effects.
  *
- * The following demos in this tutorial will assume that you've called <code>GraphComponent.fitGraphBounds()</code>
+ * The following demos in this tutorial will assume that you've called {@link GraphComponent.fitGraphBounds}
  * in this method.
  */
 function updateViewport(): void {
@@ -344,5 +330,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='ExitGroup']", ICommand.EXIT_GROUP, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -62,7 +62,6 @@ import {
   addClass,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp,
   showLoadingIndicator
@@ -72,7 +71,7 @@ import InsuranceFraudData from './resources/InsuranceFraudData.js'
 import FraudDetection from './FraudDetection.js'
 import NodePopup from './NodePopup.js'
 import TimelineComponent from './TimelineComponent.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * @typedef {Object} NodeTag
@@ -164,10 +163,10 @@ let fraudHighlightManager
  * Starts a demo which shows fraud detection on a graph with changing time-frames. Since the nodes
  * have different timestamps (defined in their tag object), they will only appear in some
  * time-frames. Time-frames are chosen using a timeline component.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   timelineComponent = new TimelineComponent('timelineComponent', graphComponent)
   nodePopup = new NodePopup(graphComponent, 'mainGraphPopup')
@@ -606,7 +605,8 @@ function initializeGraph() {
   graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
 
   // initialize the fraud highlight manager
-  fraudHighlightManager = new FraudHighlightManager(graphComponent)
+  fraudHighlightManager = new FraudHighlightManager()
+  fraudHighlightManager.install(graphComponent)
 }
 
 /**
@@ -894,5 +894,5 @@ function animateViewPort(componentIdx, highlight) {
   }
 }
 
-// start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

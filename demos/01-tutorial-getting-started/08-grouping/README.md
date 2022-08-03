@@ -10,7 +10,7 @@ Getting Started Tutorial - Step 8
 
 Enabling and using the grouping feature.
 
-This step shows how to configure support for grouped (or hierarchically organized) graphs. Note that collapse/expand functionality is introduced later in this tutorial.
+This step shows how to configure [support for grouped (or hierarchically organized) graphs](https://docs.yworks.com/yfileshtml/#/dguide/interaction-grouping). Note that collapse/expand functionality is introduced later in this tutorial.
 
 [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) already provides the following default gestures for grouping/ungrouping:
 

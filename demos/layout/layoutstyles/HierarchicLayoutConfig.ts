@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,14 +29,15 @@
 import {
   AsIsLayerer,
   Class,
-  Enum,
   ComponentArrangementPolicy,
+  Enum,
   FeedbackEdgeSet,
   GenericLabeling,
   GraphComponent,
   GraphMLAttribute,
   GroupAlignmentPolicy,
   GroupCompactionPolicy,
+  HashMap,
   HierarchicLayout,
   HierarchicLayoutBusDescriptor,
   HierarchicLayoutData,
@@ -45,6 +46,7 @@ import {
   HierarchicLayoutNodeLayoutDescriptor,
   HierarchicLayoutPortAssignmentMode,
   HierarchicLayoutRoutingStyle,
+  HierarchicLayoutSubcomponentDescriptor,
   IArrow,
   IEdge,
   IGraph,
@@ -55,22 +57,21 @@ import {
   LayoutMode,
   LayoutOrientation,
   LeftRightNodePlacer,
+  List,
   LongestPath,
+  MapEntry,
   NodeLabelMode,
   OrganicLayout,
   PolylineEdgeStyle,
   RecursiveEdgeStyle,
   SimpleProfitModel,
+  SimplexNodePlacer,
   TopLevelGroupToSwimlaneStage,
   TreeLayout,
   YBoolean,
   YNumber,
   YPoint,
-  YString,
-  SimplexNodePlacer,
-  List,
-  HashMap,
-  MapEntry
+  YString
 } from 'yfiles'
 
 import LayoutConfiguration, {
@@ -89,7 +90,6 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '../../resources/demo-option-editor'
-import { DemoEdgeStyle } from '../../resources/demo-styles'
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -145,8 +145,8 @@ const HierarchicLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return The configured layout algorithm.
    */
@@ -334,9 +334,7 @@ const HierarchicLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
     if (this.edgeDirectednessItem) {
       layoutData.edgeDirectedness.delegate = edge => {
         const style = edge.style
-        if (style instanceof DemoEdgeStyle && style.showTargetArrows) {
-          return 1
-        } else if (
+        if (
           style instanceof PolylineEdgeStyle &&
           style.targetArrow &&
           style.targetArrow !== IArrow.NONE
@@ -363,20 +361,25 @@ const HierarchicLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
       const treeLayout = new TreeLayout()
       treeLayout.defaultNodePlacer = new LeftRightNodePlacer()
       for (const listOfNodes of this.findSubComponents(graph, 'TL')) {
-        layoutData.subComponents.add(treeLayout).items = listOfNodes
+        layoutData.subcomponents.add(new HierarchicLayoutSubcomponentDescriptor(treeLayout)).items =
+          listOfNodes
       }
       // layout all siblings with label 'HL' separately with hierarchical layout
       const hierarchicLayout = new HierarchicLayout()
       hierarchicLayout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
       for (const listOfNodes of this.findSubComponents(graph, 'HL')) {
-        layoutData.subComponents.add(hierarchicLayout).items = listOfNodes
+        layoutData.subcomponents.add(
+          new HierarchicLayoutSubcomponentDescriptor(hierarchicLayout)
+        ).items = listOfNodes
       }
       // layout all siblings with label 'OL' separately with organic layout
       const organicLayout = new OrganicLayout()
       organicLayout.preferredEdgeLength = 100
       organicLayout.deterministic = true
       for (const listOfNodes of this.findSubComponents(graph, 'OL')) {
-        layoutData.subComponents.add(organicLayout).items = listOfNodes
+        layoutData.subcomponents.add(
+          new HierarchicLayoutSubcomponentDescriptor(organicLayout)
+        ).items = listOfNodes
       }
     }
 

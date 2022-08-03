@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,7 @@ import '../../../resources/style/demo.css'
 import { GraphComponent, GraphEditorInputMode, License } from 'yfiles'
 import licenseValue from '../../../../lib/license.json'
 
-import { enableWorkarounds } from './Workarounds'
+import { enableWorkarounds } from '../../../utils/Workarounds'
 import { addLayoutButton, removeLayoutButton } from './layout-button'
 import { createSampleGraph } from './create-sample-graph'
 

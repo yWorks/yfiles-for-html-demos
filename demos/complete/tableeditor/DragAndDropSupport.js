@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,11 +28,14 @@
  ***************************************************************************/
 import {
   DashStyle,
+  DefaultLabelStyle,
+  DragSource,
   Fill,
   IGraph,
+  INodeStyle,
+  Insets,
   IStripe,
   ITable,
-  Insets,
   LineCap,
   NodeDropInputMode,
   NodeStyleStripeStyleAdapter,
@@ -43,16 +46,14 @@ import {
   StripeDropInputMode,
   Stroke,
   Table,
-  VoidNodeStyle,
-  DragSource,
-  DefaultLabelStyle
+  VoidNodeStyle
 } from 'yfiles'
 import { DemoStripeStyle, DemoTableStyle } from './TableStyles.js'
-import { DemoNodeStyle } from '../../resources/demo-styles.js'
 import { addClass, removeClass } from '../../resources/demo-app.js'
 import { pointerEventsSupported } from '../../utils/Workarounds.js'
 
 import { DragAndDropPanel } from '../../utils/DndPanel.js'
+import { createDemoNodeStyle } from '../../resources/demo-styles.js'
 
 /**
  * Configures drag and drop interaction that considers dropping nodes on table nodes.
@@ -202,7 +203,7 @@ function createDndPanelNodes() {
   const columnSampleTableNode = new SimpleNode()
   columnSampleTableNode.layout = columnSampleTable.layout.toRect()
   columnSampleTableNode.style = new DemoTableStyle(columnSampleTable)
-  columnSampleTableNode.tag = columnSampleTable.rootColumn.childColumns.first()
+  columnSampleTableNode.tag = columnSampleTable.rootColumn.childColumns.at(0)
   nodeContainer.push(columnSampleTableNode)
 
   // add sample rows and columns
@@ -210,18 +211,30 @@ function createDndPanelNodes() {
   const rowSampleTableNode = new SimpleNode()
   rowSampleTableNode.layout = rowSampleTable.layout.toRect()
   rowSampleTableNode.style = new DemoTableStyle(rowSampleTable)
-  rowSampleTableNode.tag = rowSampleTable.rootRow.childRows.first()
+  rowSampleTableNode.tag = rowSampleTable.rootRow.childRows.at(0)
   nodeContainer.push(rowSampleTableNode)
 
   // add normal sample leaf and group nodes
-  const demoStyleNode = new SimpleNode()
-  demoStyleNode.layout = new Rect(0, 0, 80, 50)
-  demoStyleNode.style = new DemoNodeStyle()
-  nodeContainer.push(demoStyleNode)
+  const normalNode = new SimpleNode()
+  normalNode.layout = new Rect(0, 0, 80, 50)
+  normalNode.style = createDemoNodeStyle()
+  nodeContainer.push(normalNode)
 
   const groupNode = new SimpleNode()
   groupNode.layout = new Rect(0, 0, 120, 70)
-  groupNode.style = new ShapeNodeStyle({
+  groupNode.style = createGroupNodeStyle()
+  groupNode.tag = 'GroupNode'
+  nodeContainer.push(groupNode)
+
+  return nodeContainer
+}
+
+/**
+ * Creates a style that visualizes nodes as dash-dotted outline only.
+ * @returns {!INodeStyle}
+ */
+export function createGroupNodeStyle() {
+  return new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
     fill: 'transparent',
     stroke: new Stroke({
@@ -229,8 +242,4 @@ function createDndPanelNodes() {
       lineCap: LineCap.SQUARE
     })
   })
-  groupNode.tag = 'GroupNode'
-  nodeContainer.push(groupNode)
-
-  return nodeContainer
 }

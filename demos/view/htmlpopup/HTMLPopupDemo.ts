@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,16 +46,15 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import DemoStyles, { DemoSerializationListener } from '../../resources/demo-styles'
 import HTMLPopupSupport from './HTMLPopupSupport'
-import { bindCommand, checkLicense, readGraph, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindCommand, readGraph, showApp } from '../../resources/demo-app'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Runs the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
 
@@ -124,12 +123,12 @@ function initializePopups(graphComponent: GraphComponent): void {
     }
   })
 
-  // On clicks on empty space, set currentItem to <code>null</code> to hide the pop-ups
+  // On clicks on empty space, set currentItem to `null` to hide the pop-ups
   inputMode.addCanvasClickedListener((sender, args) => {
     graphComponent.currentItem = null
   })
 
-  // On press of the ESCAPE key, set currentItem to <code>null</code> to hide the pop-ups
+  // On press of the ESCAPE key, set currentItem to `null` to hide the pop-ups
   inputMode.keyboardInputMode.addKeyBinding(
     Key.ESCAPE,
     ModifierKeys.NONE,
@@ -207,13 +206,6 @@ async function readSampleGraph(graphComponent: GraphComponent): Promise<void> {
     // configure to load and save to the file system
     storageLocation: StorageLocation.FILE_SYSTEM
   })
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
-
   await readGraph(gs.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml')
   graphComponent.fitGraphBounds()
 }
@@ -252,5 +244,5 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// Starts the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

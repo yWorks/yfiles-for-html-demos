@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,16 +37,16 @@ import {
   GraphMLSupport,
   GraphSnapContext,
   GridSnapTypes,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   HorizontalTextAlignment,
   IArrow,
   ICommand,
   INode,
-  InteriorStretchLabelModel,
   License,
   MinimumNodeSizeStage,
   NodeDropInputMode,
   OrthogonalEdgeEditingContext,
-  PanelNodeStyle,
   Point,
   PolylineEdgeStyle,
   Rect,
@@ -69,20 +69,23 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
+  configureTwoPointerPanning,
   removeClass,
   setComboboxValue,
   showApp
 } from '../../resources/demo-app'
 import { pointerEventsSupported } from '../../utils/Workarounds'
-import loadJson from '../../resources/load-json'
 import { DragAndDropPanel } from '../../utils/DndPanel'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent = null!
 
-async function run(licenseData: any): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureUserInteraction()
   initializeDnDPanel()
@@ -172,7 +175,7 @@ function configureUserInteraction(): void {
     gridSnapType: GridSnapTypes.ALL
   })
 
-  graphComponent.inputMode = new GraphEditorInputMode({
+  const graphEditorInputMode = new GraphEditorInputMode({
     allowGroupingOperations: true,
     orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
     snapContext,
@@ -182,6 +185,11 @@ function configureUserInteraction(): void {
       enabled: true
     })
   })
+
+  graphComponent.inputMode = graphEditorInputMode
+
+  // use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
 }
 
 /**
@@ -250,13 +258,12 @@ function initializeGraphDefaults(): void {
   })
   graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'rgb(214, 229, 248)',
-    insets: [20, 15, 15, 15],
-    labelInsetsColor: 'rgb(214, 229, 248)'
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: 'rgb(214, 229, 248)'
   })
 
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createTabBackgroundParameter()
 }
 
 /**
@@ -400,4 +407,5 @@ function setUIDisabled(disabled: boolean): void {
   ;(document.getElementById('layout') as HTMLInputElement).disabled = disabled
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

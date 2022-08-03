@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,9 +45,9 @@ import {
 
 import PrintingSupport from '../../utils/PrintingSupport'
 import PositionHandler from './PositionHandler'
-import { initDemoStyles } from '../../resources/demo-styles'
-import { bindAction, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent = null!
 
@@ -71,8 +71,8 @@ let useTileHeight: HTMLInputElement = null!
 /**
  * Runs the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   init()
 
   initializeInputModes()
@@ -89,6 +89,7 @@ function run(licenseData: object): void {
  */
 function init() {
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   scale = document.getElementById('scale')! as HTMLInputElement
   margin = document.getElementById('margin')! as HTMLInputElement
   useRect = document.getElementById('useRect')! as HTMLInputElement
@@ -220,5 +221,5 @@ function isValidInput(input: string, text: string): boolean {
   return true
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -140,7 +140,7 @@ export default class FraudDetection {
               const targetNode = edge.targetNode!
 
               if (targetNode.tag.type === 'Car') {
-                const accident = this.graphComponent.graph.outEdgesAt(targetNode).firstOrDefault()
+                const accident = this.graphComponent.graph.outEdgesAt(targetNode).at(0)
                 if (accident) {
                   accidents.push(accident)
                 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,7 +45,7 @@ export default class HandleTemplate extends BaseClass<IVisualTemplate>(IVisualTe
   private readonly dummyNode: SimpleNode
 
   /**
-   * Creates a new instance of <code>HandleTemplate</code>
+   * Creates a new instance of {@link HandleTemplate}
    * @param template - The template svg string used to render the handle.
    * @param size - The handle size.
    */
@@ -67,7 +67,7 @@ export default class HandleTemplate extends BaseClass<IVisualTemplate>(IVisualTe
   /**
    * @param context The context that describes where the visual will be used in.
    * @param oldVisual The visual instance that had been returned the last time the
-   * {@link IVisualTemplate#createVisual} method was called on this instance.
+   * {@link IVisualTemplate.createVisual} method was called on this instance.
    * @param bounds The initial bounds to use for the visual.
    * @param dataObject The data object to visualize.
    */

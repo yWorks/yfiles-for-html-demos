@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -399,7 +399,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * Creates the visual for an edge.
    * @param context The render context
    * @param edge The edge to which this style instance is assigned.
-   * @see Overrides {@link EdgeStyleBase#createVisual}
+   * @see Overrides {@link EdgeStyleBase.createVisual}
    * @return The new visual
    */
   createVisual(context: IRenderContext, edge: IEdge): Visual {
@@ -427,7 +427,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param context The render context
    * @param oldVisual The old visual
    * @param edge The edge to which this style instance is assigned.
-   * @see Overrides {@link EdgeStyleBase#updateVisual}
+   * @see Overrides {@link EdgeStyleBase.updateVisual}
    * @return The updated visual
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): Visual {
@@ -588,7 +588,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param canvasContext The render context
    * @param p The coordinates of the query in the world coordinate system
    * @param edge The given edge
-   * @see Overrides {@link EdgeStyleBase#isHit}
+   * @see Overrides {@link EdgeStyleBase.isHit}
    * @return True if the edge has been hit, false otherwise
    */
   isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
@@ -611,7 +611,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
-   * @see Overrides {@link EdgeStyleBase#getPath}
+   * @see Overrides {@link EdgeStyleBase.getPath}
    * @return A {@link GeneralPath} following the edge
    */
   getPath(edge: IEdge): GeneralPath {

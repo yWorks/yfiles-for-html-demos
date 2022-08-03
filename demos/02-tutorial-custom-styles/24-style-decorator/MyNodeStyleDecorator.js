@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -75,7 +75,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Creates the visual for a node rendering the decorator element on top of the wrapped element.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!INode} node
    * @returns {!SvgVisual}
@@ -110,7 +110,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Re-renders the node using the old visual containing the decorator and the wrapped element for performance
    * reasons.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
    * @param {!INode} node
@@ -226,7 +226,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Get the bounding box of the node.
-   * @see Overrides {@link NodeStyleBase#getBounds}
+   * @see Overrides {@link NodeStyleBase.getBounds}
    * @param {!IInputModeContext} canvasContext
    * @param {!INode} node
    * @returns {!Rect}
@@ -240,7 +240,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Overridden to take the connection lines to the label into account.
    * Otherwise label intersection lines might not be painted if the node is outside
    * of the clipping bounds.
-   * @see Overrides {@link NodeStyleBase#isVisible}
+   * @see Overrides {@link NodeStyleBase.isVisible}
    * @param {!ICanvasContext} canvasContext
    * @param {!Rect} clip
    * @param {!INode} node
@@ -267,7 +267,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
    * @returns {boolean} True if p is inside node.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    * @param {!IInputModeContext} canvasContext
    * @param {!Point} p
    * @param {!INode} node
@@ -281,7 +281,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Checks if a node is inside a certain box. Considers HitTestRadius.
    * @returns {boolean} True if the box intersects the elliptical shape of the node. Also true if box lies completely
    *   inside node.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    * @param {!IInputModeContext} canvasContext
    * @param {!Rect} box
    * @param {!INode} node
@@ -293,7 +293,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Performs the lookup operation.
-   * @see Overrides {@link NodeStyleBase#lookup}
+   * @see Overrides {@link NodeStyleBase.lookup}
    * @param {!INode} node
    * @param {!Class} type
    * @returns {*}
@@ -305,7 +305,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Gets the intersection of a line with the node.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    * @param {!INode} node
    * @param {!Point} inner
    * @param {!Point} outer
@@ -319,7 +319,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    * @param {!INode} node
    * @param {!Point} point
    * @returns {boolean}
@@ -332,7 +332,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Gets the outline of the node.
    * This allows for correct edge path intersection calculation, among others.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    * @param {!INode} node
    * @returns {?GeneralPath}
    */

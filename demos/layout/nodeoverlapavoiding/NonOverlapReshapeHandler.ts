@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -98,7 +98,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
     this.clearTimeout()
     this.handler.cancelReshape(context, originalBounds)
 
-    const waitInputMode = context.lookup(WaitInputMode.$class) as WaitInputMode | null
+    const waitInputMode = context.lookup(WaitInputMode.$class)
     if (waitInputMode) {
       // disable user interaction while the finish cancel is running
       waitInputMode.waiting = true
@@ -122,7 +122,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
     this.clearTimeout()
     this.handler.reshapeFinished(context, originalBounds, newBounds)
 
-    const waitInputMode = context.lookup(WaitInputMode.$class) as WaitInputMode | null
+    const waitInputMode = context.lookup(WaitInputMode.$class)
     if (waitInputMode) {
       // disable user interaction while the finish layout is running
       waitInputMode.waiting = true

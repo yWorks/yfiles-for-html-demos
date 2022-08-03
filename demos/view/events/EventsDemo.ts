@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -101,26 +101,26 @@ import {
   VoidNodeStyle
 } from 'yfiles'
 
-import { initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import {
   addClass,
   bindAction,
   bindActions,
   bindCommand,
-  checkLicense,
+  configureTwoPointerPanning,
   removeClass,
   showApp
 } from '../../resources/demo-app'
 import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
 import EventView from './EventView'
-import loadJson from '../../resources/load-json'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * This demo shows how to register to the various events provided by the {@link IGraph graph},
  * the graph component} and the input modes.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   eventView = new EventView()
 
@@ -767,7 +767,7 @@ function deregisterCreateBendInputModeEvents(): void {
 /**
  * "Simulate" a context menu, so the various context menu events are fired.
  * Please see the ContextMenu demo for details about wiring a context menu implementation
- * to the input modes. See the Dojo and jQuery toolkit demos about using a third-party
+ * to the input modes. See the jQuery toolkit demos about using a third-party
  * context menu widget with yFiles.
  */
 function onContextMenu(): void {
@@ -2984,6 +2984,7 @@ function logWithType(sender: object, message: string, type: string | null): void
 
 function initializeGraphComponent(): void {
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 }
 
 function initializeInputModes(): void {
@@ -3007,11 +3008,15 @@ function initializeInputModes(): void {
   graphComponent.div.addEventListener('contextmenu', onContextMenu, true)
 
   graphComponent.inputMode = editorMode
+
+  // use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
 }
 
 function initializeGraph(): void {
   const graph = graphComponent.graph
-  initDemoStyles(graph)
+  initDemoStyles(graph, { foldingEnabled: true })
+  graph.nodeDefaults.size = new Size(60, 40)
   graph.edgeDefaults.labels.style = new DefaultLabelStyle({
     backgroundFill: 'white',
     insets: [3, 5, 3, 5]
@@ -3431,5 +3436,5 @@ function initOptionHeadings(): void {
   }
 }
 
-// Start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

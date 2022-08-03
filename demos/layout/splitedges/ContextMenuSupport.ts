@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -258,7 +258,7 @@ export default class ContextMenuSupport {
         let sourceNode: INode = edge.sourceNode!
         let predecessor = graph
           .inEdgesAt(sourceNode)
-          .firstOrDefault(
+          .find(
             inEdge =>
               inEdge.tag &&
               inEdge.tag.targetSplitId &&
@@ -271,7 +271,7 @@ export default class ContextMenuSupport {
           sourceNode = predecessor.sourceNode!
           predecessor = graph
             .inEdgesAt(sourceNode)
-            .firstOrDefault(
+            .find(
               inEdge =>
                 inEdge.tag &&
                 inEdge.tag.targetSplitId &&
@@ -281,7 +281,7 @@ export default class ContextMenuSupport {
         let targetNode: INode = edge.targetNode!
         let successor = graph
           .outEdgesAt(targetNode)
-          .firstOrDefault(
+          .find(
             outEdge =>
               outEdge.tag &&
               outEdge.tag.sourceSplitId &&
@@ -294,7 +294,7 @@ export default class ContextMenuSupport {
           targetNode = successor.targetNode!
           successor = graph
             .outEdgesAt(targetNode)
-            .firstOrDefault(
+            .find(
               outEdge =>
                 outEdge.tag &&
                 outEdge.tag.sourceSplitId &&

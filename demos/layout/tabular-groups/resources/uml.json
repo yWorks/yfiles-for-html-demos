@@ -1,0 +1,675 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "layout": { "x": 397, "y": -438.42698412698405, "width": 174, "height": 183.9269841269841 },
+      "labels": [
+        {
+          "text": "IAddressable",
+          "anchorX": 397,
+          "anchorY": -420.42698412698405,
+          "upX": 0,
+          "upY": -1,
+          "width": 174,
+          "height": 18
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 1,
+      "layout": { "x": 403, "y": -412.4269841269841, "width": 162, "height": 92 },
+      "labels": [
+        {
+          "text": "Attributes",
+          "anchorX": 403,
+          "anchorY": -394.4269841269841,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 0
+    },
+    {
+      "id": 2,
+      "layout": { "x": 409, "y": -386.4269841269841, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "address",
+          "anchorX": 409,
+          "anchorY": -362.9269841269841,
+          "upX": 0,
+          "upY": -1,
+          "width": 51,
+          "height": 17
+        }
+      ],
+      "parent": 1
+    },
+    {
+      "id": 3,
+      "layout": { "x": 409, "y": -356.4269841269841, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "name",
+          "anchorX": 409,
+          "anchorY": -332.9269841269841,
+          "upX": 0,
+          "upY": -1,
+          "width": 39,
+          "height": 17
+        }
+      ],
+      "parent": 1
+    },
+    {
+      "id": 4,
+      "layout": { "x": 602, "y": -216, "width": 174, "height": 216 },
+      "labels": [
+        {
+          "text": "Department",
+          "anchorX": 602,
+          "anchorY": -198,
+          "upX": 0,
+          "upY": -1,
+          "width": 174,
+          "height": 18
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 5,
+      "layout": { "x": 608, "y": -128, "width": 162, "height": 122 },
+      "labels": [
+        {
+          "text": "Attributes",
+          "anchorX": 608,
+          "anchorY": -110,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 4
+    },
+    {
+      "id": 6,
+      "layout": { "x": 614, "y": -102, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "name",
+          "anchorX": 614,
+          "anchorY": -78.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 39,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 7,
+      "layout": { "x": 614, "y": -72, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "departmentId",
+          "anchorX": 614,
+          "anchorY": -48.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 79,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 8,
+      "layout": { "x": 614, "y": -42, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "description",
+          "anchorX": 614,
+          "anchorY": -18.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 67,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 9,
+      "layout": { "x": 608, "y": -190, "width": 162, "height": 62 },
+      "labels": [
+        {
+          "text": "Operations",
+          "anchorX": 608,
+          "anchorY": -172,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 4
+    },
+    {
+      "id": 10,
+      "layout": { "x": 614, "y": -164, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "getCategory()",
+          "anchorX": 614,
+          "anchorY": -140.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 82,
+          "height": 17
+        }
+      ],
+      "parent": 9
+    },
+    {
+      "id": 11,
+      "layout": { "x": 192, "y": -349.2134920634921, "width": 174, "height": 276 },
+      "labels": [
+        {
+          "text": "User",
+          "anchorX": 192,
+          "anchorY": -331.2134920634921,
+          "upX": 0,
+          "upY": -1,
+          "width": 174,
+          "height": 18
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 12,
+      "layout": { "x": 198, "y": -261.2134920634921, "width": 162, "height": 182 },
+      "labels": [
+        {
+          "text": "Attributes",
+          "anchorX": 198,
+          "anchorY": -243.21349206349208,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 11
+    },
+    {
+      "id": 13,
+      "layout": { "x": 204, "y": -235.21349206349205, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "email",
+          "anchorX": 204,
+          "anchorY": -211.71349206349205,
+          "upX": 0,
+          "upY": -1,
+          "width": 37,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 14,
+      "layout": { "x": 204, "y": -205.21349206349205, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "address",
+          "anchorX": 204,
+          "anchorY": -181.71349206349205,
+          "upX": 0,
+          "upY": -1,
+          "width": 51,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 15,
+      "layout": { "x": 204, "y": -115.21349206349207, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "name",
+          "anchorX": 204,
+          "anchorY": -91.71349206349207,
+          "upX": 0,
+          "upY": -1,
+          "width": 39,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 16,
+      "layout": { "x": 204, "y": -145.21349206349205, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "userId",
+          "anchorX": 204,
+          "anchorY": -121.71349206349205,
+          "upX": 0,
+          "upY": -1,
+          "width": 42,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 17,
+      "layout": { "x": 204, "y": -175.21349206349205, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "password",
+          "anchorX": 204,
+          "anchorY": -151.71349206349205,
+          "upX": 0,
+          "upY": -1,
+          "width": 60,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 18,
+      "layout": { "x": 198, "y": -323.2134920634921, "width": 162, "height": 62 },
+      "labels": [
+        {
+          "text": "Operations",
+          "anchorX": 198,
+          "anchorY": -305.2134920634921,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 11
+    },
+    {
+      "id": 19,
+      "layout": { "x": 204, "y": -297.2134920634921, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "verifyLogin()",
+          "anchorX": 204,
+          "anchorY": -273.7134920634921,
+          "upX": 0,
+          "upY": -1,
+          "width": 75,
+          "height": 17
+        }
+      ],
+      "parent": 18
+    },
+    {
+      "id": 20,
+      "layout": { "x": 397, "y": -224.5, "width": 174, "height": 224.5 },
+      "labels": [
+        {
+          "text": "Session Manager",
+          "anchorX": 397,
+          "anchorY": -206.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 174,
+          "height": 18
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 21,
+      "layout": { "x": 403, "y": -106.5, "width": 162, "height": 92 },
+      "labels": [
+        {
+          "text": "Attributes",
+          "anchorX": 403,
+          "anchorY": -88.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 20
+    },
+    {
+      "id": 22,
+      "layout": { "x": 409, "y": -80.5, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "userId",
+          "anchorX": 409,
+          "anchorY": -57,
+          "upX": 0,
+          "upY": -1,
+          "width": 42,
+          "height": 17
+        }
+      ],
+      "parent": 21
+    },
+    {
+      "id": 23,
+      "layout": { "x": 409, "y": -50.5, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "departmentName",
+          "anchorX": 409,
+          "anchorY": -27,
+          "upX": 0,
+          "upY": -1,
+          "width": 101,
+          "height": 17
+        }
+      ],
+      "parent": 21
+    },
+    {
+      "id": 24,
+      "layout": { "x": 403, "y": -198.5, "width": 162, "height": 92 },
+      "labels": [
+        {
+          "text": "Operations",
+          "anchorX": 403,
+          "anchorY": -180.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 20
+    },
+    {
+      "id": 25,
+      "layout": { "x": 409, "y": -142.5, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "getUser()",
+          "anchorX": 409,
+          "anchorY": -119,
+          "upX": 0,
+          "upY": -1,
+          "width": 59,
+          "height": 17
+        }
+      ],
+      "parent": 24
+    },
+    {
+      "id": 26,
+      "layout": { "x": 409, "y": -172.5, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "getDepartment()",
+          "anchorX": 409,
+          "anchorY": -149,
+          "upX": 0,
+          "upY": -1,
+          "width": 96,
+          "height": 17
+        }
+      ],
+      "parent": 24
+    },
+    {
+      "id": 27,
+      "layout": { "x": -12, "y": -349.2134920634921, "width": 174, "height": 276 },
+      "labels": [
+        {
+          "text": "Administrator",
+          "anchorX": -12,
+          "anchorY": -331.2134920634921,
+          "upX": 0,
+          "upY": -1,
+          "width": 174,
+          "height": 18
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 28,
+      "layout": { "x": -6, "y": -231.21349206349208, "width": 162, "height": 152 },
+      "labels": [
+        {
+          "text": "Attributes",
+          "anchorX": -6,
+          "anchorY": -213.21349206349208,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 27
+    },
+    {
+      "id": 29,
+      "layout": { "x": 0, "y": -205.21349206349205, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "email",
+          "anchorX": 0,
+          "anchorY": -181.71349206349205,
+          "upX": 0,
+          "upY": -1,
+          "width": 37,
+          "height": 17
+        }
+      ],
+      "parent": 28
+    },
+    {
+      "id": 30,
+      "layout": { "x": 0, "y": -175.21349206349205, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "name",
+          "anchorX": 0,
+          "anchorY": -151.71349206349205,
+          "upX": 0,
+          "upY": -1,
+          "width": 39,
+          "height": 17
+        }
+      ],
+      "parent": 28
+    },
+    {
+      "id": 31,
+      "layout": { "x": 0, "y": -145.21349206349205, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "address",
+          "anchorX": 0,
+          "anchorY": -121.71349206349205,
+          "upX": 0,
+          "upY": -1,
+          "width": 51,
+          "height": 17
+        }
+      ],
+      "parent": 28
+    },
+    {
+      "id": 32,
+      "layout": { "x": 0, "y": -115.21349206349207, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "password",
+          "anchorX": 0,
+          "anchorY": -91.71349206349207,
+          "upX": 0,
+          "upY": -1,
+          "width": 60,
+          "height": 17
+        }
+      ],
+      "parent": 28
+    },
+    {
+      "id": 33,
+      "layout": { "x": -6, "y": -323.2134920634921, "width": 162, "height": 92.00000000000003 },
+      "labels": [
+        {
+          "text": "Operations",
+          "anchorX": -6,
+          "anchorY": -305.2134920634921,
+          "upX": 0,
+          "upY": -1,
+          "width": 162,
+          "height": 18
+        }
+      ],
+      "isGroup": true,
+      "parent": 27
+    },
+    {
+      "id": 34,
+      "layout": { "x": 0, "y": -267.213492063492, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "search()",
+          "anchorX": 0,
+          "anchorY": -243.71349206349203,
+          "upX": 0,
+          "upY": -1,
+          "width": 53,
+          "height": 17
+        }
+      ],
+      "parent": 33
+    },
+    {
+      "id": 35,
+      "layout": { "x": 0, "y": -297.2134920634921, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "activateUser()",
+          "anchorX": 0,
+          "anchorY": -273.7134920634921,
+          "upX": 0,
+          "upY": -1,
+          "width": 83,
+          "height": 17
+        }
+      ],
+      "parent": 33
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 26,
+      "target": 23,
+      "sourcePort": { "x": 559, "y": -157.5 },
+      "targetPort": { "x": 559, "y": -35.5 },
+      "bends": [
+        { "x": 581, "y": -157.5 },
+        { "x": 581, "y": -35.5 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 1,
+      "source": 11,
+      "target": 0,
+      "sourcePort": { "x": 366, "y": -275 },
+      "targetPort": { "x": 397, "y": -275 },
+      "bends": [],
+      "labels": []
+    },
+    {
+      "id": 2,
+      "source": 11,
+      "target": 20,
+      "sourcePort": { "x": 366, "y": -199 },
+      "targetPort": { "x": 397, "y": -199 },
+      "bends": [],
+      "labels": []
+    },
+    {
+      "id": 3,
+      "source": 20,
+      "target": 4,
+      "sourcePort": { "x": 571, "y": -20.5 },
+      "targetPort": { "x": 602, "y": -20.5 },
+      "bends": [],
+      "labels": []
+    },
+    {
+      "id": 4,
+      "source": 27,
+      "target": 0,
+      "sourcePort": { "x": 162, "y": -323.7134920634921 },
+      "targetPort": { "x": 397, "y": -364.2134920634921 },
+      "bends": [
+        { "x": 172, "y": -323.7134920634921 },
+        { "x": 172, "y": -364.2134920634921 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 5,
+      "source": 34,
+      "target": 15,
+      "sourcePort": { "x": 150, "y": -244.71349206349203 },
+      "targetPort": { "x": 204, "y": -100.21349206349207 },
+      "bends": [
+        { "x": 172, "y": -244.71349206349205 },
+        { "x": 172, "y": -100.21349206349207 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 6,
+      "source": 34,
+      "target": 16,
+      "sourcePort": { "x": 150, "y": -259.713492063492 },
+      "targetPort": { "x": 204, "y": -130.21349206349205 },
+      "bends": [
+        { "x": 182, "y": -259.713492063492 },
+        { "x": 182, "y": -130.21349206349205 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 7,
+      "source": 35,
+      "target": 19,
+      "sourcePort": { "x": 150, "y": -282.2134920634921 },
+      "targetPort": { "x": 204, "y": -282.2134920634921 },
+      "bends": [],
+      "labels": []
+    }
+  ]
+}

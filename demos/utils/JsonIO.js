@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -88,7 +88,8 @@ import {
  * @typedef {object} JSONLabel
  * @property {string} text
  * @property {JSONOrientedRectangle|null} layout
- * @property {'default'|'interior-stretch-north'|'interior-stretch-south'|'interior-stretch-east'|'interior-stretch-west'|'interior-stretch-center'} layoutParameter
+ * @property {'default'|'interior-stretch-north'|'interior-stretch-south'|'interior-stretch-east'|'interior-stretch-west'|'interior-stretch-center'}
+ *   layoutParameter
  */
 
 /**
@@ -451,9 +452,9 @@ export class JSONReader {
 
     if (tableGroupNode != null && table != null) {
       const rowId = this.nodeRowProvider(nodeData)
-      const row = rowIdMap.get(rowId) || table.rows.elementAt(0)
+      const row = rowIdMap.get(rowId) || table.rows.at(0)
       const columnId = this.nodeColumnProvider(nodeData)
-      const column = columnIdMap.get(columnId) || table.columns.elementAt(0)
+      const column = columnIdMap.get(columnId) || table.columns.at(0)
       if (row != null && column != null) {
         ITable.placeNodeInCell(graph, node, tableGroupNode, column, row)
       }
@@ -494,9 +495,10 @@ export class JSONReader {
   /**
    * Creates a label for the given label owner based on the given data to the given graph.
    *
-   * The label layout parameter is created from the label geometry with the ILabelModelParameterFinder of the label
-   * model. For interior stretch label models, the layout
-   * parameter is retrieved from the label data to ensure the layout algorithm handles them correctly.
+   * The label layout parameter is created from the label geometry with the
+   * ILabelModelParameterFinder of the label model. For interior stretch label models, the layout
+   * parameter is retrieved from the label data to ensure the layout algorithm handles them
+   * correctly.
    *
    * @param {IGraph} graph
    * @param {JSONLabel} labelData
@@ -552,8 +554,8 @@ export class JSONReader {
   /**
    * Creates a label for the given label owner based on the given data to the given table.
    *
-   * The label layout parameter is created from the label geometry with the ILabelModelParameterFinder of the label
-   * model.
+   * The label layout parameter is created from the label geometry with the
+   * ILabelModelParameterFinder of the label model.
    *
    * @param {Table} table
    * @param {JSONLabel} labelData
@@ -751,7 +753,8 @@ export class JSONWriter {
    * Returns a JSON object that describes the structure and layout information of the given graph.
    *
    * @param graph {IGraph} The graph.
-   * @returns {JSONGraph} A JSON object that describes the structure and layout information of the given graph.
+   * @returns {JSONGraph} A JSON object that describes the structure and layout information of the
+   *   given graph.
    */
   write(graph) {
     const oldNodeIdProvider = this.nodeIdProvider

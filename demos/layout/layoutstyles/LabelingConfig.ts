@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,8 +56,8 @@ import {
 } from '../../resources/demo-option-editor'
 import LayoutConfiguration, {
   LabelPlacementAlongEdge,
-  LabelPlacementSideOfEdge,
-  LabelPlacementOrientation
+  LabelPlacementOrientation,
+  LabelPlacementSideOfEdge
 } from './LayoutConfiguration'
 
 const SELECTED_LABELS_KEY = new ILabelLayoutDpKey(YBoolean.$class, null, 'SelectedLabels')
@@ -94,8 +94,8 @@ const LabelingConfig = (Class as any)('LabelingConfig', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return The configured layout.
    */
@@ -326,6 +326,7 @@ const LabelingConfig = (Class as any)('LabelingConfig', {
             ['With Nodes', OptimizationStrategy.NODE_OVERLAP],
             ['Between Labels', OptimizationStrategy.LABEL_OVERLAP],
             ['With Edges', OptimizationStrategy.EDGE_OVERLAP],
+            ['Partition Grid Overlap', OptimizationStrategy.PARTITION_GRID_OVERLAP],
             ["Don't optimize", OptimizationStrategy.NONE]
           ]
         }),

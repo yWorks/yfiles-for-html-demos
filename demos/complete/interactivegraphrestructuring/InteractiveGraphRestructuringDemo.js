@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,15 +41,16 @@ import {
   NodeStyleDecorationInstaller,
   Point,
   Rect,
-  ShapeNodeStyle
+  RectangleNodeStyle,
+  Stroke
 } from 'yfiles'
 
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 import GraphData from './resources/GraphData.js'
 import SubtreePositionHandler from './SubtreePositionHandler.js'
 import Subtree from './Subtree.js'
+import { createDemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -58,16 +59,13 @@ let graphComponent = null
 let subTree = null
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
 
   initDemoStyles(graphComponent.graph)
-  const demoNodeStyle = new DemoNodeStyle()
-  demoNodeStyle.cssClass = 'node'
-  graphComponent.graph.nodeDefaults.style = demoNodeStyle
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
 
   initializeHighlightDecorator()
@@ -123,10 +121,22 @@ function initializeInputMode() {
   mode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DRAG
   graphComponent.inputMode = mode
 
+  // node style that is applied by SubtreePositionHandler while moving subtree nodes
+  const movingNodeStyle = createDemoNodeStyle('demo-palette-12')
+  movingNodeStyle.stroke = new Stroke(movingNodeStyle.stroke.fill, 3.5)
+
+  const graph = graphComponent.graph
+
   // adds the position handler that will relocate the selected node along with the subtree rooted at it
-  graphComponent.graph.decorator.nodeDecorator.positionHandlerDecorator.setImplementationWrapper(
-    (node, handler) => new SubtreePositionHandler(node, handler)
+  graph.decorator.nodeDecorator.positionHandlerDecorator.setImplementationWrapper(
+    (node, handler) => new SubtreePositionHandler(node, handler, movingNodeStyle)
   )
+
+  const defaultStyle = graph.nodeDefaults.style
+  const defaultFill = defaultStyle.stroke.fill
+  // normal and thicker stroke that will be set by the hovered item change listener
+  const normalStroke = new Stroke(defaultFill, 1.5).freeze()
+  const hoveredThickStroke = new Stroke(defaultFill, 3.5).freeze()
 
   // enable the ItemHoverInputMode and let it handle edges and nodes
   mode.itemHoverInputMode.enabled = true
@@ -138,16 +148,16 @@ function initializeInputMode() {
     if (subTree !== null) {
       subTree.nodes.forEach(node => {
         const style = node.style
-        style.cssClass = style.cssClass.replace(' hovering', '')
+        style.stroke = normalStroke
       })
     }
 
     const newItem = args.item
     if (newItem) {
-      subTree = new Subtree(graphComponent.graph, newItem)
+      subTree = new Subtree(graph, newItem)
       subTree.nodes.forEach(node => {
         const style = node.style
-        style.cssClass += ' hovering'
+        style.stroke = hoveredThickStroke
       })
     }
     graphComponent.invalidate()
@@ -160,8 +170,8 @@ function initializeInputMode() {
 function initializeHighlightDecorator() {
   graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setImplementation(
     new NodeStyleDecorationInstaller({
-      nodeStyle: new ShapeNodeStyle({
-        shape: 'round-rectangle',
+      nodeStyle: new RectangleNodeStyle({
+        cornerStyle: 'round',
         fill: null,
         stroke: '5px solid #00d8ff'
       }),
@@ -180,5 +190,5 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

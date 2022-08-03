@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -99,28 +99,27 @@ export const EdgeReplacementPolicy = {
 
 /**
  * An IGraph implementation that wraps another graph and can replace some of its items by other items.
- * <p>
- * More precisely, a set of nodes can be aggregated to a new node with the {@link AggregationGraphWrapper#aggregate}
+ *
+ * More precisely, a set of nodes can be aggregated to a new node with the {@link AggregationGraphWrapper.aggregate}
  * method. This will hide the set of nodes and create a new aggregation node while replacing adjacent edges with aggregation edges.
- * </p>
- * <p>
- * Items of the wrapped graph ("original graph") are called <em>original items</em> while the temporary items that are
- * created for aggregation are called <em>aggregation items</em>.
- * </p>
- * <p>
+ *
+ *
+ * Items of the wrapped graph ("original graph") are called __original items__ while the temporary items that are
+ * created for aggregation are called __aggregation items__.
+ *
+ *
  * This class implements a concept similar to grouping and folding. The conceptual difference is that with folding the
  * group nodes remain in the graph while the group is in expanded state. Contrary, with the AggregationGraphWrapper the
  * aggregation nodes are only in the graph when the nodes are aggregated. The difference in the implementation is that
  * the AggregationGraphWrapper reuses all original graph items, ensuring reference equality between items of the wrapped
  * graph and items of the AggregationGraphWrapper.
- * </p>
- * <p>
+ *
+ *
  * Note that this implementation does not support editing user gestures, e.g. with the GraphEditorInputMode.
- * </p>
- * <p>
+ *
+ *
  * Note also that this instance will register listeners with the wrapped graph instance, so
- * {@link AggregationGraphWrapper#dispose} should be called if this instance is not used any more.
- * </p>
+ * {@link AggregationGraphWrapper.dispose} should be called if this instance is not used any more.
  */
 export class AggregationGraphWrapper extends GraphWrapperBase {
   // This implementation combines a filtered graph (for hiding items) and additional aggregation items contained in
@@ -154,7 +153,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   /**
    * Creates a new instance of this graph wrapper.
    * @param graph The graph to be wrapped ("original graph").
-   * @throws If the <code>graph</code> is another {@link AggregationGraphWrapper}
+   * @throws If the `graph` is another {@link AggregationGraphWrapper}
    */
   constructor(graph: IGraph) {
     super(graph)
@@ -216,7 +215,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
   /**
    * Sets what kind of edges should be created when replacing original edges with aggregation edges.
-   * The default value is {@link EdgeReplacementPolicy#UNDIRECTED}.
+   * The default value is {@link EdgeReplacementPolicy.UNDIRECTED}.
    */
   public edgeReplacementPolicy = EdgeReplacementPolicy.NONE
 
@@ -243,7 +242,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
-   * Calls the base method with the {@link AggregationGraphWrapper#$filteredGraph} instead of the passed graph for correct event forwarding.
+   * Calls the base method with the {@link AggregationGraphWrapper.$filteredGraph} instead of the passed graph for correct event forwarding.
    */
   public onGraphChanged(oldGraph: IGraph, newGraph: IGraph): void {
     if (!oldGraph) {
@@ -279,7 +278,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
-   * Hides the <code>portOwner</code> and all items depending on it and raises the according removed events.
+   * Hides the `portOwner` and all items depending on it and raises the according removed events.
    * For nodes, their labels, ports and adjacent edges are hidden. For edges, their labels, ports and bends are hidden.
    */
   private $hide(portOwner: IPortOwner): void {
@@ -404,19 +403,19 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
-   * Aggregates the <code>nodes</code> to a new aggregation node.
-   * This temporarily removes the <code>nodes</code> together with their labels, ports, and adjacent edges. Then a new
+   * Aggregates the `nodes` to a new aggregation node.
+   * This temporarily removes the `nodes` together with their labels, ports, and adjacent edges. Then a new
    * aggregation node is created and replacement edges for all removed edges are created: for each edge between a node
-   * in <code>nodes</code> and a node not in <code>nodes</code> a new edge is created. If this would lead to multiple
+   * in `nodes` and a node not in `nodes` a new edge is created. If this would lead to multiple
    * edges between the aggregation node and another node, only one edge (or two, see
-   * {@link AggregationGraphWrapper#edgeReplacementPolicy}) is created.
+   * {@link AggregationGraphWrapper.edgeReplacementPolicy}) is created.
    * @param nodes The nodes to be temporarily removed.
-   * @param layout The layout for the new aggregation node or <code>null</code>
-   * @param style The style for the new aggregation node or <code>null</code>
-   * @param tag The style for the new aggregation node or <code>null</code>
+   * @param layout The layout for the new aggregation node or `null`
+   * @param style The style for the new aggregation node or `null`
+   * @param tag The style for the new aggregation node or `null`
    * @returns A new aggregation node.
-   * @throws Any of the <code>nodes</code> is not in the graph.
-   * @see AggregationGraphWrapper#separate
+   * @throws Any of the `nodes` is not in the graph.
+   * @see {@link AggregationGraphWrapper.separate}
    */
   public aggregate(
     nodes: IListEnumerable<INode>,
@@ -424,7 +423,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     style?: INodeStyle,
     tag?: any
   ): INode {
-    const badNode = nodes.firstOrDefault(node => !this.contains(node))
+    const badNode = nodes.find(node => !this.contains(node))
     if (badNode != null) {
       throw new Error(
         `ArgumentError: Affected parameter nodes: Cannot aggregate node ${badNode} that is not in this graph.`
@@ -463,7 +462,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
-   * Replaces adjacent edges by new aggregation edges. Prevents duplicate edges following {@link AggregationGraphWrapper#edgeReplacementPolicy}.
+   * Replaces adjacent edges by new aggregation edges. Prevents duplicate edges following {@link AggregationGraphWrapper.edgeReplacementPolicy}.
    */
   private $replaceAdjacentEdges(
     nodes: IListEnumerable<INode>,
@@ -555,11 +554,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
-   * Separates nodes again that were previously aggregated via {@link AggregationGraphWrapper#aggregate}.
+   * Separates nodes again that were previously aggregated via {@link AggregationGraphWrapper.aggregate}.
    * Removes the aggregation node permanently together with its labels, ports, and adjacent edges. Then inserts the
-   * items that were temporarily removed in {@link AggregationGraphWrapper#aggregate} again.
+   * items that were temporarily removed in {@link AggregationGraphWrapper.aggregate} again.
    * @param node The aggregation node to separate.
-   * @throws The <code>node</code> is not in the graph or is currently hidden or is not an aggregation node.
+   * @throws The `node` is not in the graph or is currently hidden or is not an aggregation node.
    */
   public separate(node: INode): void {
     if (!(node instanceof AggregationNode)) {
@@ -685,11 +684,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   private $findAggregationNode(node: INode): AggregationNode | null {
-    return this.aggregationNodes.firstOrDefault(n => n.aggregatedNodes.includes(node))
+    return this.aggregationNodes.find(n => n.aggregatedNodes.includes(node))
   }
 
   /**
-   * Separates all aggregation nodes such that this graph contains exactly the same items as the {@link GraphWrapperBase#wrappedGraph}.
+   * Separates all aggregation nodes such that this graph contains exactly the same items as the {@link GraphWrapperBase.wrappedGraph}.
    */
   public separateAll(): void {
     do {
@@ -703,11 +702,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
-   * Returns <code>true</code> iff the <code>item</code> is an aggregation item and therefore not contained in the wrapped graph.
-   * Does not check if the item is currently {@link AggregationGraphWrapper#contains contained} in the graph or whether
+   * Returns `true` iff the `item` is an aggregation item and therefore not contained in the wrapped graph.
+   * Does not check if the item is currently {@link AggregationGraphWrapper.contains contained} in the graph or whether
    * the items was created by this graph instance.
    * @param item The item to check.
-   * @returns <code>true</code> iff the <code>item</code> is an aggregation item.
+   * @returns `true` iff the `item` is an aggregation item.
    */
   public isAggregationItem(item: IModelItem): boolean {
     return (
@@ -719,17 +718,17 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
-   * Returns the items that are directly aggregated by the <code>item</code>.
-   * <p>
-   * In contrast to {@link AggregationGraphWrapper#getAllAggregatedOriginalItems} this method returns both original as
+   * Returns the items that are directly aggregated by the `item`.
+   *
+   * In contrast to {@link AggregationGraphWrapper.getAllAggregatedOriginalItems} this method returns both original as
    * well as aggregation items, but only direct descendants in the aggregation hierarchy.
-   * </p>
-   * <p>
-   * <code>item</code> doesn't need to be {@link AggregationGraphWrapper#contains contained} currently but might be
+   *
+   *
+   * `item` doesn't need to be {@link AggregationGraphWrapper.contains contained} currently but might be
    * aggregated in another item.
-   * </p>
+   *
    * @param item The aggregation item.
-   * @returns The items that are aggregated by the <code>item</code>. If an aggregation node is passed, this will return
+   * @returns The items that are aggregated by the `item`. If an aggregation node is passed, this will return
    * the aggregated nodes. If an aggregation edge is passed, this will return the edges it replaces. Otherwise an empty
    * enumerable will be returned. The enumerable may contain both aggregation items as well as original items.
    */
@@ -746,13 +745,13 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
-   * Returns the (recursively) aggregated original items of the <code>item</code>.
-   * In contrast to {@link AggregationGraphWrapper#getAggregatedItems} this method returns only original items, but also
+   * Returns the (recursively) aggregated original items of the `item`.
+   * In contrast to {@link AggregationGraphWrapper.getAggregatedItems} this method returns only original items, but also
    * items recursively nested in the aggregation hierarchy.
    * @param item The aggregation item.
-   * @returns A list of items of the {@link GraphWrapperBase#wrappedGraph} that is either directly contained in the
-   * <code>item</code> or recursively in any contained aggregation items. This list consists only of items of the wrapped graph.
-   * @see AggregationGraphWrapper#getAggregatedItems
+   * @returns A list of items of the {@link GraphWrapperBase.wrappedGraph} that is either directly contained in the
+   * `item` or recursively in any contained aggregation items. This list consists only of items of the wrapped graph.
+   * @see {@link AggregationGraphWrapper.getAggregatedItems}
    */
   public getAllAggregatedOriginalItems(item: IModelItem): IListEnumerable<IModelItem> {
     const result = new List<IModelItem>()
@@ -769,7 +768,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
   /**
    * Removes the given item from the graph.
-   * If <code>item</code> is an aggregation node or aggregation edge, all aggregated items are removed as well.
+   * If `item` is an aggregation node or aggregation edge, all aggregated items are removed as well.
    * @param item The item to remove.
    */
   public remove(item: IModelItem): void {
@@ -1416,7 +1415,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       return aggregationNode.parent
     }
 
-    const aggregationNodeParent = this.aggregationNodes.firstOrDefault(
+    const aggregationNodeParent = this.aggregationNodes.find(
       parent => !!parent.children && parent.children.includes(node)
     )
     if (aggregationNodeParent) {
@@ -1541,7 +1540,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
 
     if (source instanceof INode) {
-      const sourceNode = source as INode
+      const sourceNode = source
       const targetNode = target as INode
       if (sourceNode instanceof AggregationNode || targetNode instanceof AggregationNode) {
         const sourcePort = this.addPort(sourceNode)
@@ -1575,7 +1574,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     return aggregationEdge
   }
 
-  public lookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  public lookup<T extends any>(type: Class<T>): T | null {
     return this.$lookupDecorator.lookup(type)
   }
 
@@ -1587,7 +1587,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     this.$lookupDecorator.removeLookup(IGraph.$class, lookup)
   }
 
-  baseLookup(type: Class): object | null {
+  baseLookup<T>(type: Class<T>): T | null {
     return super.lookup(type)
   }
 
@@ -1620,7 +1620,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
 /**
  * An ILookupDecorator implementation that contains its own lookup chains.
- * New chain links are added to the chains of this decorator as well as to the decorator of the {@link GraphWrapperBase#wrappedGraph}.
+ * New chain links are added to the chains of this decorator as well as to the decorator of the {@link GraphWrapperBase.wrappedGraph}.
  */
 class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
   private $wrappedDecorator: ILookupDecorator | null
@@ -1722,13 +1722,14 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
     }
   }
 
-  public lookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  public lookup<T extends any>(type: Class<T>): T | null {
     if (type === ILookupDecorator.$class) {
       this.$wrappedDecorator = this.$graph.baseLookup(type) as ILookupDecorator
-      return this
+      return this as T
     }
     if (type === LookupChain.$class) {
-      return this.$graphLookupChain
+      return this.$graphLookupChain as T
     }
 
     const lookup = this.$graph.getLookup()
@@ -1736,7 +1737,7 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
       return lookup.lookup(type)
     }
 
-    return this.$graphLookupChain.contextLookup(this.$graph, type)
+    return this.$graphLookupChain.contextLookup(this.$graph, type) as T
   }
 
   public delegateLookup(item: IModelItem, type: Class): object | null {
@@ -1908,9 +1909,10 @@ class AggregationNode extends BaseClass(INode) {
     this.$parent = null
   }
 
-  public innerLookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  public innerLookup<T extends any>(type: Class<T>): T | null {
     if (type === INodeStyle.$class) {
-      return this.style
+      return this.style as T
     }
     if (type.isInstance(this.layout)) {
       return this.layout
@@ -1921,8 +1923,9 @@ class AggregationNode extends BaseClass(INode) {
     return null
   }
 
-  lookup(type: Class): object | null {
-    return this.graph ? this.graph.delegateLookup(this, type) : null
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
+    return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   public toString(): string {
@@ -2045,20 +2048,21 @@ class AggregationEdge extends BaseClass(IEdge) {
   opposite<T extends IPort | IPortOwner>(port: T): T {
     if (port instanceof IPort) {
       return (port === this.sourcePort ? this.targetPort : this.sourcePort) as T
-    } else {
-      return ((port as IPortOwner) === this.sourceNode
-        ? this.targetNode!
-        : this.sourceNode!) as unknown as T
     }
+    return ((port as unknown as INode) === this.sourceNode
+      ? this.targetNode!
+      : this.sourceNode!) as unknown as T
   }
 
-  lookup(type: Class): Record<string, any> | null {
-    return this.graph ? this.graph.delegateLookup(this, type) : null
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
+    return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
-  public innerLookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  public innerLookup<T extends any>(type: Class<T>): T | null {
     if (type === IEdgeStyle.$class) {
-      return this.style
+      return this.style as T
     }
     if (type.isInstance(this.bends)) {
       return this.bends
@@ -2129,11 +2133,13 @@ class AggregationBend extends BaseClass(IBend) {
     this.$graph = graph
   }
 
-  lookup(type: Class): object | null {
-    return this.graph ? this.graph.delegateLookup(this, type) : null
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
+    return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
-  public innerLookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  public innerLookup<T extends any>(type: Class<T>): T | null {
     if (type.isInstance(this.location)) {
       return this.location
     }
@@ -2221,19 +2227,21 @@ class AggregationPort extends BaseClass(IPort) {
     this.$graph = graph
   }
 
-  lookup(type: Class): object | null {
-    return this.graph ? this.graph.delegateLookup(this, type) : null
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
+    return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
-  public innerLookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  public innerLookup<T extends any>(type: Class<T>): T | null {
     if (type === IPortStyle.$class) {
-      return this.style
+      return this.style as T
     }
     if (type === IPortLocationModelParameter.$class) {
-      return this.locationParameter
+      return this.locationParameter as T
     }
     if (type === IPoint.$class) {
-      return this.dynamicLocation
+      return this.dynamicLocation as T
     }
     if (type.isInstance(this)) {
       return this
@@ -2349,16 +2357,18 @@ class AggregationLabel extends BaseClass(ILabel) {
     this.$layout = new OrientedRectangle()
   }
 
-  lookup(type: Class): object | null {
-    return this.graph ? this.graph.delegateLookup(this, type) : null
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
+    return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
-  public innerLookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  public innerLookup<T extends any>(type: Class<T>): T | null {
     if (type === ILabelStyle.$class) {
-      return this.style
+      return this.style as T
     }
     if (type === ILabelModelParameter.$class) {
-      return this.layoutParameter
+      return this.layoutParameter as T
     }
     if (type.isInstance(this)) {
       return this

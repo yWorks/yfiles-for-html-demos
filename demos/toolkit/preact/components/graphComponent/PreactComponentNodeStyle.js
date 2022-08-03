@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -58,7 +58,7 @@ function dispose(context, removedVisual, dispose) {
  * A simple INodeStyle implementation that uses Preact Components/render functions
  * for rendering the node visualizations
  * Use it like this:
- * <code>
+ * ```
  *  declare type TagType = { name: string }
  *
  *  const MyNodeTemplate = ({ width, height, tag }: PreactComponentNodeStyleProps<TagType>) => (
@@ -72,7 +72,7 @@ function dispose(context, removedVisual, dispose) {
  *
  *  const tag: TagType = { name: 'yFiles' }
  *  graph.createNode({ style, tag })
- * </code>
+ * ```
  */
 export default class PreactComponentNodeStyle extends NodeStyleBase {
   /**

@@ -10,10 +10,10 @@
     "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json'); require('fs-extra').copySync('../../resources/style/demo.css', 'src/demo.css'); require('fs-extra').copySync('../../resources/icons', 'src/icons');\""
   },
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.6-dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.0+dev.tgz"
   },
   "devDependencies": {
-    "@web/dev-server": "^0.1.22",
-    "fs-extra": "^10.0.0"
+    "@web/dev-server": "^0.1.32",
+    "fs-extra": "^10.1.0"
   }
 }

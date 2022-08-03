@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,10 +44,10 @@ import {
   Size,
   StorageLocation
 } from 'yfiles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { ZIndexChangedEventArgs, ZOrderGraphEditorInputMode, ZOrderSupport } from './ZOrderSupport'
-import DemoStyles, { DemoSerializationListener, initDemoStyles } from '../../resources/demo-styles'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { ZIndexChangedEventArgs, ZOrderSupport } from './ZOrderSupport'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -58,9 +58,10 @@ let zOrderSupport: ZOrderSupport = null
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the graph
   initializeGraph()
@@ -72,14 +73,7 @@ function run(licenseData: object): void {
 
   // use a custom GraphMLIOHandler that supports writing and parsing node z-orders to/from GraphML
   const ioHandler = new GraphMLIOHandler()
-
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  ioHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  ioHandler.addHandleSerializationListener(DemoSerializationListener)
-  zOrderSupport.configureZOrderGraphMLIOHandler(ioHandler)
+  zOrderSupport.configureGraphMLIOHandler(ioHandler)
 
   // eslint-disable-next-line no-new
   new GraphMLSupport({
@@ -88,7 +82,7 @@ function run(licenseData: object): void {
     graphMLIOHandler: ioHandler
   })
 
-  const inputMode = graphComponent.inputMode as ZOrderGraphEditorInputMode
+  const inputMode = graphComponent.inputMode as GraphEditorInputMode
   inputMode.focusableItems = GraphItemTypes.NONE
   // prevent interactive label changes since they display the z-index in this demo
   inputMode.selectableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
@@ -137,7 +131,7 @@ function initializeGraph(): void {
   view.enqueueNavigationalUndoUnits = true
 
   // set default demo styles
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, { foldingEnabled: true })
 
   graphComponent.graph.nodeDefaults.size = new Size(70, 40)
 
@@ -249,11 +243,11 @@ function registerCommands(): void {
   bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 
-  bindCommand("button[data-command='Raise']", ZOrderGraphEditorInputMode.RAISE, graphComponent)
-  bindCommand("button[data-command='Lower']", ZOrderGraphEditorInputMode.LOWER, graphComponent)
-  bindCommand("button[data-command='ToFront']", ZOrderGraphEditorInputMode.TO_FRONT, graphComponent)
-  bindCommand("button[data-command='ToBack']", ZOrderGraphEditorInputMode.TO_BACK, graphComponent)
+  bindCommand("button[data-command='Raise']", ZOrderSupport.RAISE, graphComponent)
+  bindCommand("button[data-command='Lower']", ZOrderSupport.LOWER, graphComponent)
+  bindCommand("button[data-command='ToFront']", ZOrderSupport.TO_FRONT, graphComponent)
+  bindCommand("button[data-command='ToBack']", ZOrderSupport.TO_BACK, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

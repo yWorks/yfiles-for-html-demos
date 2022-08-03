@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -72,13 +72,12 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
 import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
-import loadJson from '../../resources/load-json.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * This demo supports specific PDF output sizes.
@@ -124,10 +123,10 @@ let exportRect
 const ieVersion = detectInternetExplorerVersion()
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   if (window.location.protocol === 'file:') {
     alert(
       'This demo features image export with inlined images. ' +
@@ -138,6 +137,7 @@ function run(licenseData) {
 
   // initialize the main GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   initializeInteraction(graphComponent)
   retainAspectRatio(graphComponent.graph)
 
@@ -597,5 +597,5 @@ function registerCommands(graphComponent) {
   bindAction('#closeButton', hidePopup)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

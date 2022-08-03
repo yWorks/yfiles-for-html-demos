@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -60,10 +60,11 @@ import PositionHandler from './PositionHandler'
 import FileSaveSupport from '../../utils/FileSaveSupport'
 import ServerSideImageExport from './ServerSideImageExport'
 import ClientSideImageExport from './ClientSideImageExport'
-import { addClass, bindAction, checkLicense, removeClass, showApp } from '../../resources/demo-app'
+import { addClass, bindAction, removeClass, showApp } from '../../resources/demo-app'
 import { detectInternetExplorerVersion } from '../../utils/Workarounds'
 
-import loadJson from '../../resources/load-json'
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Server URLs for server-side export.
@@ -91,8 +92,8 @@ let exportRect: MutableRectangle
  */
 const ieVersion = detectInternetExplorerVersion()
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   if (window.location.protocol === 'file:') {
     alert(
       'This demo features image export with inlined images. ' +
@@ -103,6 +104,7 @@ function run(licenseData: object): void {
 
   // initialize the main GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   initializeInteraction(graphComponent)
   retainAspectRatio(graphComponent.graph)
 
@@ -450,5 +452,5 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindAction('#closeButton', hidePopup)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

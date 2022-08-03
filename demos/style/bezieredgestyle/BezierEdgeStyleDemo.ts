@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,10 +56,8 @@ import {
   bindChangeListener,
   bindCommand,
   bindInputListener,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
 import { BezierGraphEditorInputMode } from './BezierGraphEditorInputMode'
 import { InnerControlPointHandle, OuterControlPointHandle } from './BezierHandles'
 import { BezierBendCreator } from './BezierBendCreator'
@@ -67,6 +65,9 @@ import { BezierEdgeHandleProvider } from './BezierEdgeHandleProvider'
 import { BezierSelectionIndicatorInstaller } from './BezierSelectionIndicatorInstaller'
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
 import { SampleCircle, SampleLabels } from './resources/SampleGraphs'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -93,9 +94,10 @@ const bezierEdgeStyle: BezierEdgeStyle = new BezierEdgeStyle({
   })
 })
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = createEditorMode()
 
   // eslint-disable-next-line no-new
@@ -326,5 +328,5 @@ function registerCommands(): void {
   })
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

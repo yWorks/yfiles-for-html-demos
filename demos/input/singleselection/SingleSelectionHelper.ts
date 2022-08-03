@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,7 @@ import {
   EventArgs,
   EventRecognizers,
   GraphComponent,
-  GraphEditorInputMode,
+  GraphInputMode,
   GraphItemTypes,
   ICommand,
   IModelItem,
@@ -46,8 +46,11 @@ let commandBindings: KeyboardInputModeBinding[] = []
  */
 let oldMultiSelectionRecognizer: Recognizer | null = null
 
+/**
+ * Restores the normal (multi-selection) behavior for the input mode and the commands of the given component.
+ */
 export function disableSingleSelection(graphComponent: GraphComponent) {
-  const mode = graphComponent.inputMode as GraphEditorInputMode
+  const mode = graphComponent.inputMode as GraphInputMode
   // restore old settings
   mode.marqueeSelectionInputMode.enabled = true
   if (oldMultiSelectionRecognizer) {
@@ -70,8 +73,11 @@ export function disableSingleSelection(graphComponent: GraphComponent) {
   commandBindings = []
 }
 
+/**
+ * Enables single selection behavior for the input mode and the commands of the given component.
+ */
 export function enableSingleSelection(graphComponent: GraphComponent) {
-  const mode = graphComponent.inputMode as GraphEditorInputMode
+  const mode = graphComponent.inputMode as GraphInputMode
   // remember old recognizer so we can restore it later
   oldMultiSelectionRecognizer = mode.multiSelectionRecognizer
 
@@ -128,7 +134,7 @@ function toggleItemSelectionCanExecute(graphComponent: GraphComponent, parameter
 function toggleItemSelectionExecuted(graphComponent: GraphComponent, parameter: any): boolean {
   // get the item
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem
-  const inputMode = graphComponent.inputMode as GraphEditorInputMode
+  const inputMode = graphComponent.inputMode as GraphInputMode
 
   // check if it allowed to be selected
   if (
@@ -145,7 +151,7 @@ function toggleItemSelectionExecuted(graphComponent: GraphComponent, parameter: 
     // the item is selected and needs to be unselected - just clear the selection
     inputMode.graphSelection.clear()
   } else {
-    // the items is unselected - unselect all other items and select the currentItem
+    // the item is unselected - unselect all other items and select the currentItem
     inputMode.graphSelection.clear()
     inputMode.setSelected(modelItem, true)
   }

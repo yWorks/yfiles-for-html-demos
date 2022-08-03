@@ -26,17 +26,15 @@
     ]
   },
   "dependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.6-dev.tgz"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "yfiles": "../../../lib-dev/yfiles-25.0.0+dev.tgz"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "jest-puppeteer": "^6.0.0",
-    "puppeteer": "^10.4.0"
-  },
-  "resolutions": {
-    "react-scripts/eslint-webpack-plugin": "2.4.1"
+    "eslint-config-react-app": "^7.0.1",
+    "jest-puppeteer": "^6.1.0",
+    "puppeteer": "^14.4.1"
   }
 }

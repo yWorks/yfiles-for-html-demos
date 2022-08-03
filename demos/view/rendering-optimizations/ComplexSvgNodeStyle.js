@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -59,7 +59,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
   /**
    * Creates the actual defs element.
    * @param {!ICanvasContext} context The canvas context.
-   * @see Specified by {@link ISvgDefsCreator#createDefsElement}.
+   * @see Specified by {@link ISvgDefsCreator.createDefsElement}.
    * @returns {!SVGElement}
    */
   createDefsElement(context) {
@@ -74,7 +74,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
    * Updates the defs element. This implementation does nothing.
    * @param {!SVGElement} oldElement The old defs element.
    * @param {!ICanvasContext} context The canvas context.
-   * @see Specified by {@link ISvgDefsCreator#updateDefsElement}.
+   * @see Specified by {@link ISvgDefsCreator.updateDefsElement}.
    */
   updateDefsElement(context, oldElement) {}
 
@@ -84,7 +84,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
    * @param {!ICanvasContext} context The canvas context.
    * @param {!Node} node The node.
    * @param {!string} id The defs id.
-   * @see Specified by {@link ISvgDefsCreator#accept}.
+   * @see Specified by {@link ISvgDefsCreator.accept}.
    * @returns {boolean}
    */
   accept(context, node, id) {
@@ -143,7 +143,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @param {!INode} node The node to create the visual for.
    * @returns {!SvgVisual} The visual for the given node.
    * @see {@link updateVisual}
-   * @see {@link ComplexSvgNodeStyle#updateVisual}
+   * @see {@link ComplexSvgNodeStyle.updateVisual}
    */
   createVisual(context, node) {
     const useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use')
@@ -175,10 +175,10 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * Updates the visual representation for the given node.
    * @param {!IRenderContext} context The render context.
    * @param {!SvgVisual} oldVisual The visual that has been created in the call to
-   * {@link ComplexSvgNodeStyle#createVisual}.
+   * {@link ComplexSvgNodeStyle.createVisual}.
    * @param {!INode} node The node to create the visual for.
    * @returns {!SvgVisual} The new or updated visual for the given node.
-   * @see {@link ComplexSvgNodeStyle#createVisual}
+   * @see {@link ComplexSvgNodeStyle.createVisual}
    */
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
@@ -204,7 +204,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * Gets the outline of the node's visual, an ellipse in this case.
    * This allows correct edge path intersection calculation, among others.
    * @param {!INode} node The node.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    * @returns {!GeneralPath}
    */
   getOutline(node) {
@@ -217,7 +217,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * Gets the bounding box of the node's visual.
    * @param {!ICanvasContext} context The canvas context.
    * @param {!INode} node The node.
-   * @see Overrides {@link NodeStyleBase#getBounds}
+   * @see Overrides {@link NodeStyleBase.getBounds}
    * @returns {!Rect}
    */
   getBounds(context, node) {
@@ -230,7 +230,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @param {!Point} location The location to be checked.
    * @param {!INode} node The node that may be hit.
    * @returns {boolean} Whether the visual representation of the node has been hit at the given location.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(context, location, node) {
     const nodeLayout = node.layout.toRect()
@@ -246,7 +246,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @param {!Rect} rectangle The rectangle to be checked.
    * @param {!INode} node The node that may be in the rectangle.
    * @returns {boolean} true if the specified node is selected by the marquee rectangle; false otherwise.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    */
   isInBox(context, rectangle, node) {
     // early exit if not even the bounds are contained in the box
@@ -274,7 +274,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @param {!INode} node The node.
    * @param {!Point} location The point to check.
    * @returns {boolean} Whether the point is considered to lie inside the shape.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    */
   isInside(node, location) {
     if (!super.isInside(node, location)) {
@@ -288,7 +288,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @param {!INode} node The node.
    * @param {!Point} inner The coordinates of a point lying inside the shape.
    * @param {!Point} outer The coordinates of a point lying outside the shape.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    * @returns {?Point}
    */
   getIntersection(node, inner, outer) {

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,10 +35,13 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GroupNodeStyleIconBackgroundShape,
+  GroupNodeStyleIconPosition,
+  GroupNodeStyleIconType,
+  GroupNodeStyleTabPosition,
   IArrow,
   ICommand,
   IGraph,
-  ILabel,
   INode,
   Insets,
   ItemEventArgs,
@@ -50,37 +53,37 @@ import {
   WebGL2ArrowType,
   WebGL2BridgeEdgeStyle,
   WebGL2DefaultLabelStyle,
+  WebGL2Effect,
   WebGL2GraphModelManager,
+  WebGL2GroupNodeStyle,
   WebGL2IconLabelStyle,
   WebGL2LabelShape,
-  WebGL2NodeEffect,
   WebGL2PolylineEdgeStyle,
   WebGL2SelectionIndicatorManager,
   WebGL2ShapeNodeShape,
   WebGL2ShapeNodeStyle,
-  WebGL2Stroke
+  WebGL2Stroke,
+  WebGL2TextureRendering
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindCommand, configureTwoPointerPanning, showApp } from '../../resources/demo-app'
 import { isWebGl2Supported } from '../../utils/Workarounds'
 import { createFontAwesomeIcon } from '../../utils/IconCreation'
+import { fetchLicense } from '../../resources/fetch-license'
+import { configureEditor, getNumber, getStroke, getValue, updateEditor } from './PropertiesEditor'
 
-let fontAwesomeIcons: ImageData[] | null = null
-let foldingManager: FoldingManager | null = null
+let fontAwesomeIcons: ImageData[]
+let foldingManager: FoldingManager
 
-/**
- * Bootstraps the demo.
- */
-function run(licenseData: object) {
+async function run(): Promise<void> {
   if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
-    showApp(null)
+    showApp()
     return
   }
 
-  License.value = licenseData
+  License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
 
   enableWebGLRendering(graphComponent)
@@ -94,6 +97,10 @@ function run(licenseData: object) {
   // create an initial sample graph
   createGraph(graphComponent)
 
+  // enable undo engine
+  graphComponent.graph.foldingView!.manager.masterGraph.undoEngineEnabled = true
+
+  // center the graph in the visible area
   graphComponent.fitGraphBounds()
 
   // bind the buttons to their commands
@@ -129,69 +136,15 @@ function enableFolding(graphComponent: GraphComponent) {
   foldingManager = new FoldingManager(graphComponent.graph)
 
   const view = foldingManager.createFoldingView()
-  // each view contains a folding-enabled graph, the view graph
-  const viewGraph = view.graph
-  // the view graph is the graph to display
-  graphComponent.graph = viewGraph
-
-  // after a group is expanded, it's child nodes are re-added to the view graph and need to be styled again
-  view.addGroupExpandedListener((sender, evt) => {
-    const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
-    const node = evt.item
-
-    viewGraph.getChildren(node).forEach(node => {
-      const masterNode = view.getMasterItem(node)
-      if (masterNode) {
-        if (masterNode.tag) {
-          // re-apply the node style that was saved in the tag
-          const descriptor = masterNode.tag as MyWebGLStyleDescriptor
-          const style = new WebGL2ShapeNodeStyle(
-            descriptor.shape,
-            descriptor.color,
-            descriptor.effect === WebGL2NodeEffect.AMBIENT_STROKE_COLOR
-              ? WebGL2Stroke.BLACK
-              : WebGL2Stroke.NONE,
-            descriptor.effect
-          )
-          gmm.setStyle(node, style)
-        }
-      }
-
-      // apply WebGL2 label styles to the node's label
-      node.labels.forEach(label => {
-        // For simplicity's sake, we do not store any information on label styles when collapsing a
-        // group. Instead, we simply set new style instances for labels when expanding a group.
-        if (label.text === '') {
-          // if the label has no text, WebGL2IconLabelStyle is used to show a random icon
-          const iconIndex = Math.floor(Math.random() * fontAwesomeIcons!.length)
-          gmm.setStyle(
-            label,
-            new WebGL2IconLabelStyle({
-              icon: fontAwesomeIcons![iconIndex],
-              iconColor: 'grey',
-              backgroundColor: 'white',
-              backgroundStroke: 'grey'
-            })
-          )
-        } else {
-          // if the label has text, WebGL2DefaultLabelStyle is used
-          gmm.setStyle(
-            label,
-            new WebGL2DefaultLabelStyle({
-              shape: WebGL2LabelShape.PILL,
-              backgroundStroke: WebGL2Stroke.BLACK,
-              backgroundColor: 'white',
-              insets: 5
-            })
-          )
-        }
-      })
-    })
-  })
+  // Each view contains a folding-enabled graph, the view graph.
+  // The view graph is the graph to display.
+  graphComponent.graph = view.graph
 
   // set a default size for collapsed nodes
   const folderNodeConverter = foldingManager.folderNodeConverter as DefaultFolderNodeConverter
-  folderNodeConverter.folderNodeSize = new Size(100, 20)
+  folderNodeConverter.folderNodeSize = new Size(100, 24)
+  // Copy the first label to keep the collapse/expand button
+  folderNodeConverter.copyFirstLabel = true
 
   // configure expand/collapse behaviour
   const geim = graphComponent.inputMode as GraphEditorInputMode
@@ -202,39 +155,20 @@ function enableFolding(graphComponent: GraphComponent) {
   // ensure that labels are hit-tested before nodes, so that the image label used for expanding/collapsing has precedence
   geim.clickHitTestOrder = [GraphItemTypes.LABEL, GraphItemTypes.EDGE, GraphItemTypes.NODE]
   geim.allowEditLabelOnDoubleClick = false
-
-  // add a click listener to check if an expand/collapse label has been left-clicked
-  geim.addItemLeftClickedListener((sender, args) => {
-    if (!(args.item instanceof ILabel) || !(args.item.owner instanceof INode)) {
-      return
-    }
-    const node = args.item.owner
-    const masterNode = view.getMasterItem(node)
-    if (!foldingManager?.masterGraph.isGroupNode(masterNode)) {
-      return
-    }
-    const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
-    if (view.isExpanded(masterNode!)) {
-      geim.navigationInputMode.collapseGroup(node)
-      gmm.setStyle(node, getWebGLGroupStyle())
-      addImageLabel(node, graphComponent, 1, new Color(61, 85, 219))
-    } else {
-      geim.navigationInputMode.expandGroup(node)
-      gmm.setStyle(node, getWebGLGroupStyle())
-      addImageLabel(node, graphComponent, 0, new Color(61, 85, 219))
-    }
-  })
 }
+
 /**
- * Configures the interaction behaviour
+ * Configures the interaction behavior.
  */
 function configureInteraction(graphComponent: GraphComponent) {
+  const graph = graphComponent.graph
+
   // For calling WebGL2 specific methods, we use the WebGLGraphModelManager set on the GraphComponent.
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  const gmm = getModelManager(graphComponent)
 
   // Allow editing of the graph
   const geim = new GraphEditorInputMode({
-    allowClipboardOperations: false,
+    allowClipboardOperations: true,
     allowGroupingOperations: true,
     marqueeSelectableItems: GraphItemTypes.NODE | GraphItemTypes.BEND,
     //Completely disable handles for ports and edges
@@ -242,66 +176,86 @@ function configureInteraction(graphComponent: GraphComponent) {
   })
 
   // Disable moving of individual edge segments
-  graphComponent.graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
+  graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
 
-  //Don't show bend handles and disable bend creation for styles that don't support bends
-  graphComponent.graph.decorator.bendDecorator.handleDecorator.hideImplementation(b => {
-    const style = gmm.getStyle(b.owner!)
+  // Do not show bend handles and disable bend creation for styles that do not support bends
+  graph.decorator.bendDecorator.handleDecorator.hideImplementation(bend => {
+    const style = gmm.getStyle(bend.owner!)
     return !(style instanceof WebGL2PolylineEdgeStyle)
   })
-  graphComponent.graph.decorator.edgeDecorator.bendCreatorDecorator.hideImplementation(e => {
-    const style = gmm.getStyle(e)
+  graph.decorator.edgeDecorator.bendCreatorDecorator.hideImplementation(edge => {
+    const style = gmm.getStyle(edge)
     return !(style instanceof WebGL2PolylineEdgeStyle)
   })
 
   // On node creation, set the configured style as well as a random color
-  geim.addNodeCreatedListener((inputMode: GraphEditorInputMode, evt: ItemEventArgs<INode>) => {
-    const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  geim.addNodeCreatedListener((sender: GraphEditorInputMode, evt: ItemEventArgs<INode>) => {
     const node = evt.item
-
     if (graphComponent.graph.isGroupNode(node)) {
-      gmm.setStyle(node, getWebGLGroupStyle())
-      // add a minus sign as image label
-      addImageLabel(node, graphComponent, 0, new Color(61, 85, 219))
-      return
+      gmm.setStyle(node, getConfiguredGroupNodeStyle())
+    } else {
+      addLabel(graphComponent, node)
+      addImageLabel(graphComponent, node, Color.from('gray'))
+      gmm.setStyle(node, getConfiguredNodeStyle())
     }
-
-    addLabel(node, graphComponent)
-    addImageLabel(node, graphComponent)
-    const shape = getConfiguredNodeShape()
-    const color = getConfiguredNodeColor()
-    const stroke = getConfiguredNodeStroke()
-    const effect = getConfiguredNodeEffect()
-    gmm.setStyle(node, new WebGL2ShapeNodeStyle(shape, color, stroke, effect))
-    // used for restoring node shape etc. after collapsing and expanding a group node
-    node.tag = new MyWebGLStyleDescriptor(shape, color, stroke, effect)
   })
 
   // On edge creation, set the configured edge style
   geim.createEdgeInputMode.addEdgeCreatedListener((sender, evt) => {
-    const edge = evt.item
-    const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
-    gmm.setStyle(edge, getConfiguredEdgeStyle())
+    gmm.setStyle(evt.item, getConfiguredEdgeStyle())
   })
 
-  geim.createEdgeInputMode.addGestureStartedListener((sender, evt) => {
+  geim.createEdgeInputMode.addGestureStartedListener(() => {
     ;(geim.createEdgeInputMode.dummyEdge.style as PolylineEdgeStyle).targetArrow = IArrow.NONE
   })
 
   geim.addLabelAddedListener((sender, evt) => {
-    const label = evt.item
-    gmm.setStyle(
-      label,
-      new WebGL2DefaultLabelStyle({
-        shape: getConfiguredLabelShape(),
-        backgroundStroke: WebGL2Stroke.BLACK,
-        backgroundColor: 'white',
-        insets: 5
-      })
-    )
+    gmm.setStyle(evt.item, getConfiguredLabelStyle())
   })
 
+  const onSelectionChanged = () => updateEditorValues(graphComponent)
+  geim.addDeletedSelectionListener(onSelectionChanged)
+  geim.addGroupedSelectionListener(onSelectionChanged)
+  geim.addMultiSelectionFinishedListener(onSelectionChanged)
+
   graphComponent.inputMode = geim
+
+  // Use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
+}
+
+/**
+ * Updates the value of the style properties editor on selection changed events.
+ */
+function updateEditorValues(graphComponent: GraphComponent): void {
+  const gmm = getModelManager(graphComponent)
+  const selection = graphComponent.selection
+
+  const styles: any = {}
+  if (selection.selectedNodes.size > 0) {
+    for (const node of selection.selectedNodes) {
+      const style = gmm.getStyle(node)
+      if (!styles.group && style instanceof WebGL2GroupNodeStyle) {
+        styles.group = style
+      }
+      if (!styles.node && style instanceof WebGL2ShapeNodeStyle) {
+        styles.node = style
+      }
+      if (styles.group && styles.node) {
+        break
+      }
+    }
+  }
+
+  if (selection.selectedEdges.size > 0) {
+    styles.edge = gmm.getStyle(selection.selectedEdges.first())
+  }
+
+  if (selection.selectedLabels.size > 0) {
+    styles.label = gmm.getStyle(selection.selectedLabels.first())
+  }
+
+  updateEditor(styles)
 }
 
 /**
@@ -309,7 +263,7 @@ function configureInteraction(graphComponent: GraphComponent) {
  */
 function enableWebGLRendering(graphComponent: GraphComponent) {
   graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager(graphComponent)
+  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
   graphComponent.focusIndicatorManager.enabled = false
 }
 
@@ -338,121 +292,286 @@ function createFontAwesomeIcons(): ImageData[] {
 }
 
 /**
- * Creates a color using the "nodeFill" color input.
+ * Creates a WebGL-group-style as configured in the side panel
  */
-function getConfiguredNodeColor(): Color {
-  const pickerValue = (document.getElementById('nodeFill') as HTMLInputElement).value
-  return Color.from(pickerValue)
+function getConfiguredGroupNodeStyle() {
+  const groupNodeEffectValue = getValue('groupNodeEffect')
+  const effect = WebGL2Effect[groupNodeEffectValue as keyof typeof WebGL2Effect] as WebGL2Effect
+
+  const fillPickerValue = getValue('groupNodeFill')
+  const fill = Color.from(fillPickerValue)
+
+  const contentFillPickerValue = getValue('groupNodeContentFill')
+  const contentFill = Color.from(contentFillPickerValue)
+
+  const tabBackgroundFillPickerValue = getValue('groupNodeTabBackgroundFill')
+  const tabBackgroundFill = Color.from(tabBackgroundFillPickerValue)
+
+  const iconBackgroundFillPickerValue = getValue('groupNodeIconBackgroundFill')
+  const iconBackgroundFill = Color.from(iconBackgroundFillPickerValue)
+
+  const iconForegroundFillPickerValue = getValue('groupNodeIconForegroundFill')
+  const iconForegroundFill = Color.from(iconForegroundFillPickerValue)
+
+  const tabHeight = getNumber('groupNodeTabHeight')
+  const tabWidth = getNumber('groupNodeTabWidth')
+  const cornerRadius = getNumber('groupNodeCornerRadius')
+
+  const iconBackgroundShapeValue = getValue('groupNodeIconBackgroundShape')
+  const iconBackgroundShape = GroupNodeStyleIconBackgroundShape[
+    iconBackgroundShapeValue as keyof typeof GroupNodeStyleIconBackgroundShape
+  ] as GroupNodeStyleIconBackgroundShape
+
+  const tabSlope = getNumber('groupNodeTabSlope')
+
+  const tabInset = getNumber('groupNodeTabInset')
+
+  const tabPosition = getConfiguredTabPosition()
+  const iconPosition = getIconPosition(tabPosition)
+
+  let groupIcon = GroupNodeStyleIconType.NONE
+  let folderIcon = GroupNodeStyleIconType.NONE
+  switch (getValue('groupNodeIcon')) {
+    case 'PLUSMINUS':
+      groupIcon = GroupNodeStyleIconType.MINUS
+      folderIcon = GroupNodeStyleIconType.PLUS
+      break
+    case 'CHEVRON':
+      groupIcon = GroupNodeStyleIconType.CHEVRON_DOWN
+      folderIcon = GroupNodeStyleIconType.CHEVRON_RIGHT
+      break
+    case 'TRIANGLE':
+      groupIcon = GroupNodeStyleIconType.TRIANGLE_DOWN
+      folderIcon = GroupNodeStyleIconType.TRIANGLE_RIGHT
+  }
+
+  const iconSize = tabHeight - 4
+  const iconOffset =
+    tabPosition == GroupNodeStyleTabPosition.NONE ? iconSize / 2 : (tabHeight - iconSize) / 2
+
+  return new WebGL2GroupNodeStyle({
+    tabPosition: tabPosition,
+    tabFill: fill,
+    tabBackgroundFill: tabBackgroundFill,
+    iconBackgroundFill: iconBackgroundFill,
+    iconForegroundFill: iconForegroundFill,
+    contentAreaFill: contentFill,
+    tabWidth: tabWidth,
+    tabHeight: tabHeight,
+    cornerRadius: cornerRadius,
+    groupIcon: groupIcon,
+    folderIcon: folderIcon,
+    iconBackgroundShape: iconBackgroundShape,
+    iconPosition: iconPosition,
+    effect: effect,
+    tabInset: tabInset,
+    tabSlope: tabSlope,
+    stroke: getConfiguredStroke('group'),
+    iconOffset: iconOffset,
+    iconSize: iconSize,
+    hitTransparentContentArea: tabPosition != GroupNodeStyleTabPosition.NONE
+  })
 }
 
 /**
- * Depending on the nodeStroke checkbox, returns either a black stroke or none.
+ * Creates a {@link GroupNodeStyleTabPosition} as configured in the side panel
  */
-function getConfiguredNodeStroke() {
-  const paintStroke = document.querySelector<HTMLInputElement>('#nodeStroke')!.checked
-  if (paintStroke) {
-    return WebGL2Stroke.BLACK
-  }
-  return WebGL2Stroke.NONE
+function getConfiguredTabPosition(): GroupNodeStyleTabPosition {
+  const value = getValue('groupNodeTabPosition')
+  return GroupNodeStyleTabPosition[
+    value as keyof typeof GroupNodeStyleTabPosition
+  ] as GroupNodeStyleTabPosition
+}
+
+/**
+ * Get an icon position that fits the current tab position best
+ */
+function getIconPosition(position: GroupNodeStyleTabPosition) {
+  return position == GroupNodeStyleTabPosition.TOP_LEADING ||
+    position == GroupNodeStyleTabPosition.BOTTOM_LEADING ||
+    position == GroupNodeStyleTabPosition.LEFT_LEADING ||
+    position == GroupNodeStyleTabPosition.RIGHT_LEADING
+    ? GroupNodeStyleIconPosition.LEADING
+    : GroupNodeStyleIconPosition.TRAILING
+}
+
+/**
+ * Creates a {@link WebGL2ShapeNodeStyle} as configured in the side panel
+ */
+function getConfiguredNodeStyle(): WebGL2ShapeNodeStyle {
+  return new WebGL2ShapeNodeStyle({
+    shape: getConfiguredNodeShape(),
+    fill: getConfiguredNodeColor(),
+    effect: getConfiguredEffect('node'),
+    stroke: getConfiguredStroke('node')
+  })
+}
+
+/**
+ * Creates a color using the "nodeFill" color input.
+ */
+function getConfiguredNodeColor(): Color {
+  const pickerValue = getValue('nodeFill')
+  return Color.from(pickerValue)
 }
 
 /**
  * Returns the {@link WebGL2ShapeNodeShape} as configured in the HTML combobox.
  */
 function getConfiguredNodeShape(): WebGL2ShapeNodeShape {
-  const shapeComboValue = (document.querySelector('#nodeShape')! as HTMLSelectElement).value
-  return WebGL2ShapeNodeShape[
-    shapeComboValue as keyof typeof WebGL2ShapeNodeShape
-  ] as WebGL2ShapeNodeShape
+  const value = getValue('nodeShape')
+  return WebGL2ShapeNodeShape[value as keyof typeof WebGL2ShapeNodeShape] as WebGL2ShapeNodeShape
 }
 
 /**
- * Returns the {@link WebGL2NodeEffect} as configured in the HTML combobox.
+ * Returns the edge style as configured in the relevant HTML combo boxes.
  */
-function getConfiguredNodeEffect(): WebGL2NodeEffect {
-  const effectComboValue = (document.querySelector('#nodeEffect')! as HTMLSelectElement).value
-  return WebGL2NodeEffect[effectComboValue as keyof typeof WebGL2NodeEffect] as WebGL2NodeEffect
+function getConfiguredEdgeStyle() {
+  switch (getValue('edgeStyle')) {
+    default:
+    case 'Default':
+      return new WebGL2PolylineEdgeStyle({
+        stroke: getConfiguredStroke('edge'),
+        sourceArrow: getConfiguredArrowType('sourceArrow'),
+        targetArrow: getConfiguredArrowType('targetArrow'),
+        effect: getConfiguredEffect('edge'),
+        smoothingLength: getConfiguredSmoothingLength(),
+        selfLoopDistance: getConfiguredSelfloopDistance()
+      })
+    case 'Arc':
+      return new WebGL2ArcEdgeStyle({
+        height: 60,
+        fixedHeight: true,
+        stroke: getConfiguredStroke('edge'),
+        sourceArrow: getConfiguredArrowType('sourceArrow'),
+        targetArrow: getConfiguredArrowType('targetArrow'),
+        effect: getConfiguredEffect('edge'),
+        selfLoopDistance: getConfiguredSelfloopDistance()
+      })
+    case 'Bridge':
+      return new WebGL2BridgeEdgeStyle({
+        height: 60,
+        fanLength: 40,
+        stroke: getConfiguredStroke('edge'),
+        sourceArrow: getConfiguredArrowType('sourceArrow'),
+        targetArrow: getConfiguredArrowType('targetArrow'),
+        effect: getConfiguredEffect('edge'),
+        selfLoopDistance: getConfiguredSelfloopDistance()
+      })
+  }
+}
+
+function getConfiguredArrowType(id: string): WebGL2ArrowType {
+  const value = getValue(id)
+  return WebGL2ArrowType[value as keyof typeof WebGL2ArrowType] as WebGL2ArrowType
+}
+
+function getConfiguredSmoothingLength(): number {
+  return getNumber('bendSmoothing')
+}
+
+function getConfiguredSelfloopDistance(): number {
+  return getNumber('selfloopDistance')
 }
 
 /**
- * Returns the {@link WebGL2ArrowType}s for source and target arrows as configured in the
- * relevant HTML comboboxes.
+ * Creates a {@link WebGL2IconLabelStyle} as configured in the side panel
  */
-function getConfiguredArrowTypes(): { source: WebGL2ArrowType; target: WebGL2ArrowType } {
-  const sourceArrowComboValue = (document.querySelector('#sourceArrow')! as HTMLSelectElement).value
-  const sourceArrow = WebGL2ArrowType[
-    sourceArrowComboValue as keyof typeof WebGL2ArrowType
-  ] as WebGL2ArrowType
+function getConfiguredIconLabelStyle(iconIndex: number, iconColor?: Color): WebGL2IconLabelStyle {
+  if (iconIndex < 0) {
+    iconIndex = Math.floor(Math.random() * fontAwesomeIcons.length)
+  }
 
-  const targetArrowComboValue = (document.querySelector('#targetArrow')! as HTMLSelectElement).value
-  const targetArrow = WebGL2ArrowType[
-    targetArrowComboValue as keyof typeof WebGL2ArrowType
-  ] as WebGL2ArrowType
+  return new WebGL2IconLabelStyle({
+    icon: fontAwesomeIcons[iconIndex],
+    iconColor: iconColor ? iconColor : getConfiguredLabelTextColor(),
+    backgroundColor: getConfiguredLabelBackgroundColor(),
+    backgroundStroke: getConfiguredStroke('label'),
+    effect: getConfiguredEffect('label'),
+    textureRendering: getConfiguredTextureRenderType(),
+    shape: getConfiguredLabelShape()
+  })
+}
 
-  return { source: sourceArrow, target: targetArrow }
+/**
+ * Creates a {@link WebGL2DefaultLabelStyle} as configured in the side panel
+ */
+function getConfiguredLabelStyle(): WebGL2DefaultLabelStyle {
+  return new WebGL2DefaultLabelStyle({
+    shape: getConfiguredLabelShape(),
+    textColor: getConfiguredLabelTextColor(),
+    backgroundColor: getConfiguredLabelBackgroundColor(),
+    backgroundStroke: getConfiguredStroke('label'),
+    effect: getConfiguredEffect('label'),
+    textureRendering: getConfiguredTextureRenderType(),
+    samplingRate: getConfiguredOversamplingRate(),
+    insets: 5
+  })
+}
+
+/**
+ * Returns the {@link WebGL2TextureRendering} as configured in the HTML combobox.
+ */
+function getConfiguredTextureRenderType(): WebGL2TextureRendering {
+  const value = getValue('labelRenderingType')
+  return value == 'SDF' ? WebGL2TextureRendering.SDF : WebGL2TextureRendering.INTERPOLATED
+}
+/**
+ * Returns the oversampling rate for textures as configured.
+ */
+function getConfiguredOversamplingRate(): number {
+  return getNumber('labelOversampling')
 }
 
 /**
  * Returns the {@link WebGL2LabelShape} as configured in the HTML combobox.
  */
 function getConfiguredLabelShape(): WebGL2LabelShape {
-  const labelStyleComboValue = (document.querySelector('#labelShape')! as HTMLSelectElement).value
-  return WebGL2LabelShape[labelStyleComboValue as keyof typeof WebGL2LabelShape] as WebGL2LabelShape
+  const value = getValue('labelShape')
+  return WebGL2LabelShape[value as keyof typeof WebGL2LabelShape] as WebGL2LabelShape
 }
 
 /**
- * Returns the edge style as configured in the relevant HTML comboboxes.
+ * Returns the label text color as configured in the HTML color picker.
  */
-function getConfiguredEdgeStyle() {
-  const configuredArrowTypes = getConfiguredArrowTypes()
-  switch ((document.querySelector('#edgeStyle')! as HTMLSelectElement).value) {
-    default:
-    case 'Default':
-      return new WebGL2PolylineEdgeStyle({
-        stroke: 'black',
-        sourceArrow: configuredArrowTypes.source,
-        targetArrow: configuredArrowTypes.target
-      })
-    case 'Arc':
-      return new WebGL2ArcEdgeStyle({
-        height: 60,
-        fixedHeight: true,
-        stroke: 'black',
-        sourceArrow: configuredArrowTypes.source,
-        targetArrow: configuredArrowTypes.target
-      })
-    case 'Bridge':
-      return new WebGL2BridgeEdgeStyle({
-        height: 60,
-        fanLength: 40,
-        stroke: 'black',
-        sourceArrow: configuredArrowTypes.source,
-        targetArrow: configuredArrowTypes.target
-      })
-  }
+function getConfiguredLabelTextColor(): string {
+  return getValue('labelTextColor')
+}
+
+/**
+ * Returns the label background color as configured in the HTML color picker.
+ */
+function getConfiguredLabelBackgroundColor(): string {
+  return getValue('labelBackgroundColor')
+}
+
+/**
+ * Returns a {@link WebGL2Stroke} from the corresponding tab
+ */
+function getConfiguredStroke(type: 'node' | 'edge' | 'label' | 'group') {
+  return getStroke(type)
+}
+
+/**
+ * Returns the {@link WebGL2Effect} as configured in the corresponding HTML combobox.
+ */
+function getConfiguredEffect(type: 'node' | 'edge' | 'label'): WebGL2Effect {
+  const value = getValue(`${type}Effect`)
+  return WebGL2Effect[value as keyof typeof WebGL2Effect] as WebGL2Effect
 }
 
 /**
  * Adds a Label to a node using the configured label shape and the number of nodes in the graph
  * for the label text.
  *
- * @param node the node to add the label to
  * @param graphComponent the graph component
+ * @param node the node to add the label to
  */
-function addLabel(node: INode, graphComponent: GraphComponent) {
+function addLabel(graphComponent: GraphComponent, node: INode) {
   const graph = graphComponent.graph
-  const graphModelManager = graphComponent.graphModelManager as WebGL2GraphModelManager
-
   const label = graph.addLabel(node, `Node ${graph.nodes.size}`)
-  graphModelManager.setStyle(
-    label,
-    new WebGL2DefaultLabelStyle({
-      shape: getConfiguredLabelShape(),
-      backgroundStroke: WebGL2Stroke.BLACK,
-      backgroundColor: 'white',
-      insets: 5
-    })
-  )
+  const gmm = getModelManager(graphComponent)
+  gmm.setStyle(label, getConfiguredLabelStyle())
 }
 
 /**
@@ -470,14 +589,8 @@ function createCanvasContext(iconSize: Size) {
  * Adds a label with {@link WebGL2IconLabelStyle} containing a random grey font awesome image. Optionally, color and icon may be set.
  * to a node.
  */
-function addImageLabel(
-  node: INode,
-  graphComponent: GraphComponent,
-  iconIndex?: number,
-  iconColor?: Color
-) {
+function addImageLabel(graphComponent: GraphComponent, node: INode, iconColor?: Color) {
   const graph = graphComponent.graph
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
   const label = graph.addLabel(
     node,
     '',
@@ -487,21 +600,11 @@ function addImageLabel(
       layoutOffset: [0, 0]
     })
   )
-  if (iconIndex === undefined) {
-    iconIndex = Math.floor(Math.random() * fontAwesomeIcons!.length)
-  }
 
-  const size = new Size(30, 30)
-  graph.setLabelPreferredSize(label, size)
-  gmm.setStyle(
-    label,
-    new WebGL2IconLabelStyle({
-      icon: fontAwesomeIcons![iconIndex],
-      iconColor: iconColor ? iconColor : 'grey',
-      backgroundColor: 'white',
-      backgroundStroke: 'grey'
-    })
-  )
+  graph.setLabelPreferredSize(label, new Size(30, 30))
+
+  const gmm = getModelManager(graphComponent)
+  gmm.setStyle(label, getConfiguredIconLabelStyle(-1, iconColor))
 }
 
 /**
@@ -509,7 +612,7 @@ function addImageLabel(
  */
 function createGraph(graphComponent: GraphComponent) {
   const graph = graphComponent.graph
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  const gmm = getModelManager(graphComponent)
 
   const shapes: WebGL2ShapeNodeShape[] = [
     WebGL2ShapeNodeShape.ELLIPSE,
@@ -522,18 +625,18 @@ function createGraph(graphComponent: GraphComponent) {
     WebGL2ShapeNodeShape.PILL
   ]
 
-  const effects: WebGL2NodeEffect[] = [
-    WebGL2NodeEffect.NONE,
-    WebGL2NodeEffect.SHADOW,
-    WebGL2NodeEffect.AMBIENT_FILL_COLOR,
-    WebGL2NodeEffect.AMBIENT_STROKE_COLOR
+  const effects: WebGL2Effect[] = [
+    WebGL2Effect.NONE,
+    WebGL2Effect.SHADOW,
+    WebGL2Effect.AMBIENT_FILL_COLOR,
+    WebGL2Effect.AMBIENT_STROKE_COLOR
   ]
 
   const effect2arrow = new Map([
-    [WebGL2NodeEffect.NONE, WebGL2ArrowType.NONE],
-    [WebGL2NodeEffect.SHADOW, WebGL2ArrowType.POINTED],
-    [WebGL2NodeEffect.AMBIENT_FILL_COLOR, WebGL2ArrowType.TRIANGLE],
-    [WebGL2NodeEffect.AMBIENT_STROKE_COLOR, WebGL2ArrowType.DEFAULT]
+    [WebGL2Effect.NONE, WebGL2ArrowType.NONE],
+    [WebGL2Effect.SHADOW, WebGL2ArrowType.POINTED],
+    [WebGL2Effect.AMBIENT_FILL_COLOR, WebGL2ArrowType.TRIANGLE],
+    [WebGL2Effect.AMBIENT_STROKE_COLOR, WebGL2ArrowType.DEFAULT]
   ])
 
   const nodeSize = 70
@@ -586,52 +689,39 @@ function createGraph(graphComponent: GraphComponent) {
         nodeSize * 2
       ]
     })
-    const groupNodeStyle = getWebGLGroupStyle()
-    gmm.setStyle(groupNode, groupNodeStyle)
-    // add a minus sign as image label
-    addImageLabel(groupNode, graphComponent, 0, new Color(61, 85, 219))
+    gmm.setStyle(groupNode, getConfiguredGroupNodeStyle())
 
     for (const shape of shapes) {
       const width = shape === WebGL2ShapeNodeShape.PILL ? 100 : nodeSize
 
-      // save the styles properties so as to be able to recreate it after group has been collapsed - optional for folding
-      const styleDescriptor = new MyWebGLStyleDescriptor(
-        shape,
-        Color.fromHSLA(countNormalNodes / 32, 1, 0.5, 1.0),
-        effect === WebGL2NodeEffect.AMBIENT_STROKE_COLOR ? WebGL2Stroke.BLACK : WebGL2Stroke.NONE,
-        effect
-      )
-      const node = graph.createNode({
-        layout: [x * nodeDistance, y * nodeDistance, width, nodeSize],
-        tag: styleDescriptor
-      })
+      const node = graph.createNode([x * nodeDistance, y * nodeDistance, width, nodeSize])
 
-      addLabel(node, graphComponent)
+      addLabel(graphComponent, node)
 
       gmm.setStyle(
         node,
         new WebGL2ShapeNodeStyle(
           shape,
           Color.fromHSLA(countNormalNodes / 32, 1, 0.5, 1.0),
-          effect === WebGL2NodeEffect.AMBIENT_STROKE_COLOR ? WebGL2Stroke.BLACK : WebGL2Stroke.NONE,
+          effect === WebGL2Effect.AMBIENT_STROKE_COLOR ? WebGL2Stroke.BLACK : WebGL2Stroke.NONE,
           effect
         )
       )
       countNormalNodes++
 
-      addImageLabel(node, graphComponent)
+      addImageLabel(graphComponent, node, Color.from('gray'))
       if (lastNode) {
-        if (effect === WebGL2NodeEffect.NONE) {
+        if (effect === WebGL2Effect.NONE) {
           for (let styleIdx = 0; styleIdx < arcEdgeStyles.length; styleIdx++) {
             const edge = graph.createEdge(lastNode, node)
             gmm.setStyle(edge, arcEdgeStyles[styleIdx])
           }
-        } else if (effect === WebGL2NodeEffect.SHADOW) {
+        } else if (effect === WebGL2Effect.SHADOW) {
           for (let styleIdx = 0; styleIdx < bridgeEdgeStyles.length; styleIdx++) {
             const edge = graph.createEdge(lastNode, node)
             gmm.setStyle(edge, bridgeEdgeStyles[styleIdx])
           }
-        } else if (effect === WebGL2NodeEffect.AMBIENT_FILL_COLOR) {
+        } else if (effect === WebGL2Effect.AMBIENT_FILL_COLOR) {
           const edge = graph.createEdge(lastNode, node)
           gmm.setStyle(edge, polylineEdgeStyle)
           // add some bends to display polyline functionality
@@ -657,112 +747,82 @@ function createGraph(graphComponent: GraphComponent) {
 }
 
 /**
+ * Updates the styles of the currently selected items in the given graph component.
+ * @param graphComponent The demo's main graph view.
+ * @param type The type of selected items whose styles need to be updated.
+ */
+function updateSelectedItems(
+  graphComponent: GraphComponent,
+  type: 'node' | 'group' | 'edge' | 'label'
+): void {
+  const gmm = getModelManager(graphComponent)
+  const selection = graphComponent.selection
+
+  switch (type) {
+    case 'node':
+      for (const node of selection.selectedNodes) {
+        if (!(gmm.getStyle(node) instanceof WebGL2GroupNodeStyle)) {
+          gmm.setStyle(node, getConfiguredNodeStyle())
+        }
+      }
+      break
+    case 'group':
+      for (const node of selection.selectedNodes) {
+        if (gmm.getStyle(node) instanceof WebGL2GroupNodeStyle) {
+          gmm.setStyle(node, getConfiguredGroupNodeStyle())
+        }
+      }
+      break
+    case 'edge':
+      for (const edge of selection.selectedEdges) {
+        gmm.setStyle(edge, getConfiguredEdgeStyle())
+      }
+      break
+    case 'label':
+      for (const label of selection.selectedLabels) {
+        const style = gmm.getStyle(label)
+        if (style instanceof WebGL2DefaultLabelStyle) {
+          gmm.setStyle(label, getConfiguredLabelStyle())
+        } else {
+          const idx = fontAwesomeIcons.findIndex(icon => icon === style.icon)
+          gmm.setStyle(label, getConfiguredIconLabelStyle(idx))
+        }
+      }
+      break
+  }
+
+  //Handle state may have changed, make sure to update it
+  ;(<GraphEditorInputMode>graphComponent.inputMode).requeryHandles()
+  graphComponent.invalidate()
+}
+
+/**
+ * Returns the WebGL model manager used by the given graph component.
+ */
+function getModelManager(graphComponent: GraphComponent): WebGL2GraphModelManager {
+  return graphComponent.graphModelManager as WebGL2GraphModelManager
+}
+
+/**
  * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
  */
 function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+
   bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 
-  // Applies the configured styles to either the selected or all graph items.
-  bindAction("button[data-command='ApplyStyles']", (): void => {
-    const useSelection = document.querySelector<HTMLInputElement>('#stylesOnSelection')!.checked
-    const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent, null)
+  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent, null)
 
-    const nodesToStyle = useSelection
-      ? graphComponent.selection.selectedNodes.filter(
-          node => !graphComponent.graph.isGroupNode(node)
-        )
-      : graphComponent.graph.nodes.filter(node => !graphComponent.graph.isGroupNode(node))
+  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent, null)
+  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent, null)
+  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent, null)
+  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, null)
 
-    const configuredNodeShape = getConfiguredNodeShape()
-    const configuredNodeEffect = getConfiguredNodeEffect()
-    nodesToStyle.forEach(node => {
-      const configuredNodeColor = getConfiguredNodeColor()
-      const configuredNodeStroke = getConfiguredNodeStroke()
-      gmm.setStyle(
-        node,
-        new WebGL2ShapeNodeStyle(
-          configuredNodeShape,
-          configuredNodeColor,
-          configuredNodeStroke,
-          configuredNodeEffect
-        )
-      )
-      // update the tag as well
-      node.tag = new MyWebGLStyleDescriptor(
-        configuredNodeShape,
-        configuredNodeColor,
-        configuredNodeStroke,
-        configuredNodeEffect
-      )
-    })
-
-    const edgesToStyle = useSelection
-      ? graphComponent.selection.selectedEdges
-      : graphComponent.graph.edges
-    const configuredEdgeStyle = getConfiguredEdgeStyle()
-    edgesToStyle.forEach(edge => {
-      gmm.setStyle(edge, configuredEdgeStyle)
-    })
-
-    const labelsToStyle = useSelection
-      ? graphComponent.selection.selectedLabels.filter(label => label.text.length > 0)
-      : graphComponent.graph.labels
-    const configuredLabelShape = getConfiguredLabelShape()
-    labelsToStyle.forEach(label => {
-      if (gmm.getStyle(label) instanceof WebGL2DefaultLabelStyle) {
-        gmm.setStyle(
-          label,
-          new WebGL2DefaultLabelStyle({
-            shape: configuredLabelShape,
-            textColor: 'black',
-            backgroundStroke: 'black',
-            backgroundColor: 'white',
-            insets: 5
-          })
-        )
-      }
-    })
-    //Handle state may have changed, make sure to update it
-    ;(<GraphEditorInputMode>graphComponent.inputMode).requeryHandles()
-    graphComponent.invalidate()
-  })
+  configureEditor(type => updateSelectedItems(graphComponent, type))
 }
 
-/**
- * A default WebGL-style to use for group nodes
- */
-function getWebGLGroupStyle() {
-  return new WebGL2ShapeNodeStyle(
-    WebGL2ShapeNodeShape.ROUND_RECTANGLE,
-    'rgb(253,253,253)',
-    '1px gray',
-    'shadow'
-  )
-}
-
-/**
- * Simple DTO to remember a node's WebGL-style properties for re-initialization
- */
-class MyWebGLStyleDescriptor {
-  effect: WebGL2NodeEffect
-  shape: WebGL2ShapeNodeShape
-  color: Color
-  stroke: WebGL2Stroke
-  constructor(
-    shape: WebGL2ShapeNodeShape,
-    color: Color,
-    stroke: WebGL2Stroke,
-    effect: WebGL2NodeEffect
-  ) {
-    this.effect = effect
-    this.shape = shape
-    this.color = color
-    this.stroke = stroke
-  }
-}
-
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

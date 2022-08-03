@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,6 +39,7 @@ import {
   NodeStyleBase,
   Point,
   Rect,
+  RectangleNodeStyle,
   ShapeNodeStyle,
   SolidColorFill,
   Stroke,
@@ -53,7 +54,7 @@ import {
  */
 export default class PackageNodeStyleDecorator extends NodeStyleBase {
   wrapped: INodeStyle
-  selectionStyle: ShapeNodeStyle
+  selectionStyle: RectangleNodeStyle | ShapeNodeStyle
 
   /**
    * Initializes a new instance of this class.
@@ -61,11 +62,8 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    */
   constructor(wrapped: INodeStyle) {
     super()
-    this.wrapped = wrapped || new ShapeNodeStyle()
-    this.selectionStyle = wrapped instanceof ShapeNodeStyle ? wrapped.clone() : new ShapeNodeStyle()
-    if (wrapped instanceof ShapeNodeStyle) {
-      this.selectionStyle.shape = wrapped.shape
-    }
+    this.wrapped = wrapped || new RectangleNodeStyle()
+    this.selectionStyle = createSelectionStyle(wrapped)
     const selectionFill = new SolidColorFill('#FF6C00')
     this.selectionStyle.stroke = new Stroke(selectionFill)
     this.selectionStyle.fill = selectionFill
@@ -371,6 +369,23 @@ class NodeRenderDataCache {
       this.selected === other.selected &&
       this.pendingDependencies === other.pendingDependencies
     )
+  }
+}
+
+/**
+ * Creates the style instance that represents the selected state of nodes that use the given
+ * style instance when not selected.
+ * @param style the style that shows the node when not selected.
+ */
+function createSelectionStyle(style: INodeStyle): RectangleNodeStyle | ShapeNodeStyle {
+  if (style instanceof RectangleNodeStyle) {
+    return style.clone()
+  } else if (style instanceof ShapeNodeStyle) {
+    const selectionStyle = style.clone()
+    selectionStyle.shape = style.shape
+    return selectionStyle
+  } else {
+    return new RectangleNodeStyle()
   }
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,12 +52,11 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
-import loadJson from '../../resources/load-json.js'
 import { initDataView, updateDataView } from './data-view.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
 // tools from removing this dependency which is needed for 'morphLayout'.
@@ -92,10 +91,10 @@ const selectBox = document.querySelector("select[data-command='SelectBuilder']")
 
 /**
  * This demo shows how to automatically build a graph from business data.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
@@ -222,7 +221,7 @@ function createAdjacencyGraphBuilder(graph, builderType) {
     adjacencyNodesSource.addSuccessorsSource(
       data => data.children,
       adjacencyNodesSource,
-      new EdgeCreator()
+      new EdgeCreator({ defaults: graph.edgeDefaults })
     )
   } else if (builderType === TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY) {
     // update the data view with the current data
@@ -234,7 +233,10 @@ function createAdjacencyGraphBuilder(graph, builderType) {
       'id'
     )
     // Configure the successor nodes
-    adjacencyNodesSource.addSuccessorIds(data => data.children, new EdgeCreator())
+    adjacencyNodesSource.addSuccessorIds(
+      data => data.children,
+      new EdgeCreator({ defaults: graph.edgeDefaults })
+    )
   }
 
   return adjacencyGraphBuilder
@@ -305,5 +307,5 @@ function registerCommands(graphComponent) {
   addNavigationButtons(selectBox)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

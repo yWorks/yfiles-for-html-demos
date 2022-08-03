@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,13 +55,23 @@ import {
   Table,
   TableEditorInputMode
 } from 'yfiles'
-import { configureDndInputMode, configureDndPanel } from './DragAndDropSupport'
+import {
+  configureDndInputMode,
+  configureDndPanel,
+  createGroupNodeStyle
+} from './DragAndDropSupport'
 import TableStyles from './TableStyles'
 import MyReparentHandler from './MyReparentHandler'
 import ContextMenu from '../../utils/ContextMenu'
-import DemoStyles, { DemoEdgeStyle, DemoSerializationListener } from '../../resources/demo-styles'
-import { bindAction, bindCommand, checkLicense, readGraph, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import {
+  bindAction,
+  bindCommand,
+  configureTwoPointerPanning,
+  readGraph,
+  showApp
+} from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The component displaying the demo's graph.
@@ -81,24 +91,23 @@ let isLayoutRunning = false
 /**
  * Bootstraps this demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   graph = graphComponent.graph
 
   // initialize the input mode
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
-    allowCreateNode: false,
-    contextMenuItems: GraphItemTypes.NODE,
-    nodeDropInputMode: configureDndInputMode(graph)
-  })
+  graphComponent.inputMode = createEditorMode()
+
+  // use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
 
   // initialize default styles
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  initDemoStyles(graph)
+  graph.groupNodeDefaults.style = createGroupNodeStyle()
 
   // configures the drag and drop panel
   configureDndPanel()
@@ -137,13 +146,23 @@ async function createGraph() {
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0',
     TableStyles
   )
-  graphMLSupport.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  graphMLSupport.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
   await readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml')
   graphComponent.fitGraphBounds()
+}
+
+/**
+ * Creates the editor input mode for this demo.
+ */
+function createEditorMode(): GraphEditorInputMode {
+  const mode = new GraphEditorInputMode({
+    allowGroupingOperations: true,
+    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
+    allowCreateNode: false,
+    contextMenuItems: GraphItemTypes.NODE,
+    nodeDropInputMode: configureDndInputMode(graph)
+  })
+
+  return mode
 }
 
 /**
@@ -301,7 +320,7 @@ function populateContextMenu(
     item => item.lookup(ITable.$class) !== null
   )
   if (tableNode !== null && tableNode.size > 0) {
-    contextMenu.addMenuItem(`ContextMenu for ${tableNode.first()}`, null)
+    contextMenu.addMenuItem(`ContextMenu for ${tableNode.at(0)}`, null)
     args.showMenu = true
     return
   }
@@ -313,7 +332,7 @@ function populateContextMenu(
  * Table support is automatically enabled in {@link LayoutExecutor}. The layout will:
  * - Arrange all leaf nodes in a hierarchic layout inside their respective table cells
  * - Resize all table cells to encompass their child nodes. Optionally,
- *   {@link TableLayoutConfigurator#compaction} allows to shrink table cells, otherwise, table cells
+ *   {@link TableLayoutConfigurator.compaction} allows to shrink table cells, otherwise, table cells
  *   can only grow.
  */
 async function applyLayout() {
@@ -382,5 +401,5 @@ function registerCommands(): void {
   bindAction("button[data-command='LayoutCommand']", applyLayout)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

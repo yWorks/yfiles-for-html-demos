@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,17 +44,20 @@ import {
   Rect
 } from 'yfiles'
 
-import { DemoEdgeStyle } from '../../resources/demo-styles'
-import { checkLicense, showApp } from '../../resources/demo-app'
+import { showApp } from '../../resources/demo-app'
 import PortLookupEdgePortHandleProvider from './PortLookupEdgePortHandleProvider'
 import BlueBendCreator from './BlueBendCreator'
 import BlueOrthogonalEdgeHelper from './BlueOrthogonalEdgeHelper'
 import OrangeOrthogonalEdgeHelper from './OrangeOrthogonalEdgeHelper'
 import PurpleOrthogonalEdgeHelper from './PurpleOrthogonalEdgeHelper'
 import RedOrthogonalEdgeHelper from './RedOrthogonalEdgeHelper'
-import loadJson from '../../resources/load-json'
-import { createBasicNodeStyle } from '../../resources/basic-demo-styles'
-import type { ColorSetName } from '../../resources/basic-demo-styles'
+import type { ColorSetName } from '../../resources/demo-styles'
+import {
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Registers different IOrthogonalEdgeHelpers to demonstrate various custom behaviour.
@@ -116,10 +119,11 @@ function registerOrthogonalEdgeHelperDecorators(graph: IGraph): void {
   )
 }
 
-function run(licenseData: object) {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // Create a default editor input mode
@@ -191,20 +195,19 @@ function createSampleGraph(graph: IGraph): void {
 function createSubgraph(
   graph: IGraph,
   yOffset: number,
-  cssClass: ColorSetName,
+  colorSet: ColorSetName,
   tag: string,
   createPorts = false
 ): IEdge {
   // Create two nodes
-  const nodeStyle = createBasicNodeStyle(cssClass)
+  const nodeStyle = createDemoNodeStyle(colorSet)
 
   const n1 = graph.createNode(new Rect(110, 100 + yOffset, 40, 40), nodeStyle, tag)
   const n2 = graph.createNode(new Rect(450, 130 + yOffset, 40, 40), nodeStyle, tag)
 
-  // Create an edge, either between the two nodes or between the their ports
+  // Create an edge, either between the two nodes or between their ports
   let edge: IEdge
-  const edgeStyle = new DemoEdgeStyle(cssClass)
-  edgeStyle.showTargetArrows = false
+  const edgeStyle = createDemoEdgeStyle({ colorSetName: colorSet, showTargetArrow: false })
 
   if (!createPorts) {
     edge = graph.createEdge(n1, n2, edgeStyle, tag)
@@ -246,5 +249,5 @@ function createSamplePorts(graph: IGraph, node: INode, toEastSide: boolean): IPo
   return ports
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

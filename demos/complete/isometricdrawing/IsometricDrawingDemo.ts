@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,6 +67,7 @@ import {
   PreferredPlacementDescriptor,
   Rect,
   RenderModes,
+  ScrollBarVisibility,
   SerializationProperties,
   Size,
   StorageLocation,
@@ -74,11 +75,18 @@ import {
   WebGLPolylineEdgeStyle
 } from 'yfiles'
 import IsometricData from './resources/IsometricData'
-import { bindAction, bindInputListener, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import {
+  bindAction,
+  bindInputListener,
+  configureTwoPointerPanning,
+  showApp
+} from '../../resources/demo-app'
 import IsometricWebGLNodeStyle from './IsometricWebGLNodeStyle'
 import HeightHandleProvider from './HeightHandleProvider'
 import { isWebGlSupported } from '../../utils/Workarounds'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 const MINIMUM_NODE_HEIGHT = 3
 
@@ -96,14 +104,15 @@ let gridVisualCreator: GridVisualCreator = null!
  * Starts the demo which displays graphs in an isometric fashion to create an impression of a
  * 3-dimensional view.
  */
-function run(licenseData: object): void {
+async function run(): Promise<void> {
   if (!isWebGlSupported()) {
     document.getElementById('no-webgl-support')!.removeAttribute('style')
-    showApp(null)
+    showApp()
     return
   }
-  License.value = licenseData
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // enable/configure folding
   const manager = new FoldingManager(graphComponent.graph)
@@ -122,9 +131,12 @@ function run(licenseData: object): void {
   graphEditorInputMode.snapContext = new GraphSnapContext()
   graphComponent.inputMode = graphEditorInputMode
 
+  // use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
+
   initializeGraph()
 
-  loadGraph()
+  await loadGraph()
 
   registerCommands()
 
@@ -259,7 +271,7 @@ function initializeGraph(): void {
  * Loads a graph from JSON and initializes all styles and isometric data.
  * The graph also gets an initial layout.
  */
-function loadGraph(): void {
+async function loadGraph(): Promise<void> {
   const graph = graphComponent.graph
 
   const graphBuilder = new GraphBuilder(graph)
@@ -284,7 +296,7 @@ function loadGraph(): void {
 
   graphBuilder.buildGraph()
 
-  runHierarchicLayout()
+  await runHierarchicLayout()
 }
 
 /**
@@ -307,7 +319,7 @@ function adaptGroupNodes(): void {
 
 /**
  * Ensures that the node has geometry and color information present in its tag.
- * @param {INode} node
+ * @param node
  */
 function ensureNodeTag(node: INode): void {
   if (!node.tag || typeof node.tag !== 'object') {
@@ -399,4 +411,5 @@ function setUIDisabled(disabled: boolean): void {
   ;(document.getElementById('rotation') as HTMLInputElement).disabled = disabled
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

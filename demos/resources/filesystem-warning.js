@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -78,7 +78,7 @@
         "  import { ... } from 'yfiles' </pre>" +
         '        <p style="margin: 0">with</p>' +
         '        <pre style="color: #333;background-color: #f7f7f7;margin: 5px 0;">\n' +
-        "  import { ... } from '../../../lib/es-modules/yfiles.js' </pre>" +
+        "  import { ... } from '../../node_modules/yfiles/yfiles.js' </pre>" +
         '        <p style="margin-top: 0;">removes the need of resolving symbolic module names.</p>' +
         '        <p style="margin-bottom: 0;">' +
         '         For more information see the <a href="../../../doc/api/index.html#/dguide/getting_started-application#getting_started-module_loading" style="color: #ffaf00; text-decoration: underline;">Module Loading</a> ' +

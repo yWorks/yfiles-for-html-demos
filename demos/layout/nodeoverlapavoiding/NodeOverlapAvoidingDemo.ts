@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,23 +54,23 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import SampleData from './resources/SampleData'
 import { NonOverlapPositionHandler } from './NonOverlapPositionHandler'
 import { NonOverlapReshapeHandler } from './NonOverlapReshapeHandler'
 import { LayoutHelper } from './LayoutHelper'
 import { HidingEdgeDescriptor } from './HidingEdgeDescriptor'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
-function run(licenseData: object) {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureModelManager(graphComponent.graphModelManager)
   initializeInputModes()
@@ -131,7 +131,7 @@ function initializeInputModes(): void {
   // but only apply it to the selected node and not to the children of groups
   graph.decorator.nodeDecorator.positionHandlerDecorator.setFactory(
     (node: INode) => {
-      return node === graphComponent.selection.selectedNodes.firstOrDefault()
+      return node === graphComponent.selection.selectedNodes.at(0)
     },
     (node: INode) => {
       // Lookup the node position handler that only handles the location of the node itself
@@ -194,7 +194,7 @@ function initializeInputModes(): void {
 
 /**
  * Makes space for a new node.
- * @param {INode} node
+ * @param node
  */
 function makeSpace(node: INode): void {
   new LayoutHelper(graphComponent, node).layoutImmediately()
@@ -271,5 +271,5 @@ function registerCommands(): void {
   })
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

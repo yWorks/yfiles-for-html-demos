@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -68,8 +68,8 @@ export async function connectToDB(
 function createCypherQueryRunner(neo4jDriver: any, databaseName: string) {
   /**
    * Runs the Cypher query.
-   * @param {string} query
-   * @param {Object} [params]
+   * @param query
+   * @param [params]
    * @return {Promise}
    * @yjs:keep=run
    */
@@ -104,11 +104,11 @@ export type Relationship = {
   properties: Object
 }
 
-export type Record = {
+export type Neo4jRecord = {
   keys: String[]
   length: Number
   get: (key: string | Number) => any
-  forEach: (visitor: (value: Object, key: string, record: Record) => void) => void
+  forEach: (visitor: (value: Object, key: string, record: Neo4jRecord) => void) => void
 }
 
 export type Integer = {
@@ -120,5 +120,5 @@ export type Integer = {
 
 export type Result = {
   summary: Promise<any>
-  records: Record[]
+  records: Neo4jRecord[]
 }

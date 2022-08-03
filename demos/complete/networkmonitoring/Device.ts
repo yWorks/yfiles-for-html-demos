@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -83,7 +83,7 @@ export default class Device {
   /**
    * Value indicating whether this device failed. A failed device has to be repaired before
    * it can send or receive packets again.
-   * The actual result for {@link Device#enabled} and {@link Device#failed} is essentially the
+   * The actual result for {@link Device.enabled} and {@link Device.failed} is essentially the
    * same, just the interaction and graphical appearance in the demo changes.
    */
   failed = false
@@ -124,7 +124,7 @@ export default class Device {
    * Determines whether this device can send packets.
    * By definition in our model, neither switches nor WiFi access points can send packets; they
    * just relay them. Servers and databases won't send packets without receiving one first.
-   * @return <code>true</code> if the device is not a switch or access point, <code>false</code>
+   * @return `true` if the device is not a switch or access point, `false`
    * otherwise.
    */
   canSendPackets(): boolean {
@@ -143,7 +143,7 @@ export default class Device {
    * Determines whether this device can receive packets.
    * By definition in our model, switches and WiFi access points only relay packets. Everything
    * else can receive them.
-   * @return <code>true</code> if the device is not a switch or access point, <code>false</code>
+   * @return `true` if the device is not a switch or access point, `false`
    * otherwise.
    */
   canReceivePackets(): boolean {
@@ -170,14 +170,13 @@ export default class Device {
    * permitted.
    *
    * This means that the following exemplary packet paths are never considered:
-   * <ul>
-   *   <li>Server ? Switch ? Server</li>
-   *   <li>Laptop ? WiFi ? Workstation</li>
-   *   <li>Workstation ? Switch ? Smartphone</li>
-   * </ul>
+   *
+   * - Server &rarr; Switch &rarr; Server
+   * - Laptop &rarr; WiFi &rarr; Workstation
+   * - Workstation &rarr; Switch &rarr; Smartphone
    * @param targetNode The candidate target device's type.
-   * @return <code>true</code> if the packet could travel to the target device according to the
-   * described rules, <code>false</code> otherwise.
+   * @return `true` if the packet could travel to the target device according to the
+   * described rules, `false` otherwise.
    */
   canConnectTo(targetNode: Device): boolean {
     if (this.kind === DeviceKind.SWITCH || targetNode.kind === DeviceKind.SWITCH) {

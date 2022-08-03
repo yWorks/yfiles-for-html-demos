@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -85,14 +85,14 @@ import ActivityNodeHighlightStyle from './ActivityNodeHighlightStyle'
 import RoutingEdgeStyle from './RoutingEdgeStyle'
 import ActivityNodePortLocationModel from './ActivityNodePortLocationModel'
 import ActivityNodeStyle from './ActivityNodeStyle'
-import { checkLicense, showApp } from '../../resources/demo-app'
+import { showApp } from '../../resources/demo-app'
 import dataModel from './resources/datamodel'
 import type { Activity, Task } from './GanttMapper'
 import { GanttMapper } from './GanttMapper'
-import loadJson from '../../resources/load-json'
 
-// import luxon typings
-import luxon from 'luxon'
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
+
 const { DateTime } = luxon
 
 let mainComponent: GraphComponent
@@ -106,8 +106,8 @@ let timelineComponent: GraphComponent
  */
 const mapper = new GanttMapper(dataModel)
 
-function run(licenseData: any): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // create the three components
   taskComponent = createTaskComponent()
   mainComponent = createMainGraphComponent()
@@ -479,9 +479,7 @@ function configureInteraction(): void {
     GraphItemTypes.PORT
   ]
 
-  graphEditorInputMode.focusableItems = GraphItemTypes.NODE
-
-  // On clicks on empty space, set currentItem to <code>null</code> to hide the node info
+  // On clicks on empty space, set currentItem to `null` to hide the node info
   graphEditorInputMode.addCanvasClickedListener(hideActivityInfo)
 
   // disable default marquee selection
@@ -755,7 +753,7 @@ function configureMoveInputMode(graphEditorInputMode: GraphEditorInputMode): voi
       return
     }
     // show info box
-    const item = moveUnselectedInputMode.affectedItems.first() as INode
+    const item = moveUnselectedInputMode.affectedItems.at(0) as INode
     const location = item.layout.topLeft
     const text = mapper.getDate(location.x).toFormat('Do MMM HH:mm')
 
@@ -767,7 +765,7 @@ function configureMoveInputMode(graphEditorInputMode: GraphEditorInputMode): voi
       return
     }
     // show info box
-    const item = moveUnselectedInputMode.affectedItems.first() as INode
+    const item = moveUnselectedInputMode.affectedItems.at(0) as INode
     const location = item.layout.topLeft
     const text = mapper.getDate(location.x).toFormat('Do MMM HH:mm')
 
@@ -777,7 +775,7 @@ function configureMoveInputMode(graphEditorInputMode: GraphEditorInputMode): voi
   moveUnselectedInputMode.addDragFinishedListener(() => {
     hideInfo()
     if (moveUnselectedInputMode.affectedItems.size > 0) {
-      onNodeMoved(moveUnselectedInputMode.affectedItems.first() as INode)
+      onNodeMoved(moveUnselectedInputMode.affectedItems.at(0) as INode)
     }
   })
 
@@ -897,6 +895,7 @@ function onGraphModified(): void {
  */
 function createMainGraphComponent(): GraphComponent {
   const graphComponent = new GraphComponent('mainComponent')
+  applyDemoTheme(graphComponent)
 
   // switch on the horizontal scrollbar
   graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.ALWAYS
@@ -989,5 +988,5 @@ function updateContentRects() {
   mainComponent.contentRect = new Rect(mainCr.x, taskCr.y, mainCr.width, taskCr.height)
 }
 
-// Start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

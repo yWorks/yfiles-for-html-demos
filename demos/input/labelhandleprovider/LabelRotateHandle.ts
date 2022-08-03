@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,6 +29,7 @@
 import {
   BaseClass,
   CanvasComponent,
+  ClickEventArgs,
   Cursor,
   HandleTypes,
   ICanvasObject,
@@ -171,9 +172,7 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
     const graph = context.graph
     if (graph !== null) {
       const model = this.label.layoutParameter.model
-      const finder = model.lookup(
-        ILabelModelParameterFinder.$class
-      ) as ILabelModelParameterFinder | null
+      const finder = model.lookup(ILabelModelParameterFinder.$class)
       if (finder !== null) {
         const param = finder.findBestParameter(this.label, model, this.getCurrentLabelLayout())
         graph.setLabelLayoutParameter(this.label, param)
@@ -197,6 +196,11 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
       this.up.y
     )
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   */
+  handleClick(evt: ClickEventArgs): void {}
 }
 
 /**

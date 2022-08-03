@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,8 +52,8 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
    * Creates the visual representation for the given node.
    * @param renderContext The render context.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link SimpleCanvasNodeStyle#updateVisual}
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link SimpleCanvasNodeStyle.updateVisual}
    */
   createVisual(renderContext: IRenderContext, node: INode): Visual {
     return new NodeRenderVisual(node.layout, this.color)
@@ -63,10 +63,10 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
    * Updates the visual representation for the given node.
    * @param renderContext The render context.
    * @param oldVisual The visual that has been created in the call to
-   * {@link SimpleCanvasNodeStyle#createVisual}.
+   * {@link SimpleCanvasNodeStyle.createVisual}.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link SimpleCanvasNodeStyle#createVisual}
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link SimpleCanvasNodeStyle.createVisual}
    */
   updateVisual(renderContext: IRenderContext, oldVisual: Visual, node: INode): Visual {
     return oldVisual
@@ -75,7 +75,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * Optimized implementation for a rectangular shape.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    * @param context The input mode context.
    * @param p The location to be checked.
    * @param node The node that may be hit.
@@ -87,7 +87,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * Optimized implementation for a rectangular shape.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    * @param node The node.
    * @param inner The inner point of the line.
    * @param outer The outer point of the line.
@@ -99,7 +99,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * Optimized implementation for a rectangular shape.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    * @param node The node.
    * @param point The point to be checked.
    */
@@ -110,7 +110,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
   /**
    * Determines whether the visualization for the specified node is included in the marquee selection.
    * Optimized implementation for a rectangular shape.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    * @param context The input mode context.
    * @param box the rectangle to be checked.
    * @param node The node that may be in the rectangle.
@@ -140,7 +140,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    * Draw a simple rectangle with a solid orange fill.
    * @param context The render context.
    * @param htmlCanvasContext The html canvas context.
-   * @see Overrides {@link HtmlCanvasVisual#paint}
+   * @see Overrides {@link HtmlCanvasVisual.paint}
    */
   paint(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
     htmlCanvasContext.fillStyle = this.color

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,11 +47,10 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
-import loadJson from '../../resources/load-json.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Holds the graphComponent.
@@ -67,11 +66,12 @@ let bridgeManager
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // draw edges in front, so that group nodes don't hide the bridges
@@ -330,7 +330,7 @@ function createSampleGraph() {
 
   const groupNode = graph.createGroupNode({
     labels: ['Group Node'],
-    children: [{ layout: new Rect(400, 150, 30, 30) }]
+    children: [{ layout: new Rect(400, 140, 30, 30) }]
   })
   graph.adjustGroupNodeLayout(groupNode)
   graph.setNodeLayout(groupNode, groupNode.layout.toRect().getEnlarged(new Insets(15, 0, 15, 0)))
@@ -338,5 +338,5 @@ function createSampleGraph() {
   graphComponent.fitGraphBounds()
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

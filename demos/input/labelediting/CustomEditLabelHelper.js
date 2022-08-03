@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,12 +42,11 @@ import { addClass, removeClass } from '../../resources/demo-app.js'
  * Custom label edit helper.
  *
  * This class does the following:
- * <ul>
- * <li>Allow at most two labels</li>
- * <li>Disallow editing the first label</li>
- * <li>Use custom placement and style for the first label</li>
- * <li>Change the appearance of the {@link TextEditorInputMode}</li>
- * </ul>
+ *
+ * - Allow at most two labels
+ * - Disallow editing the first label
+ * - Use custom placement and style for the first label
+ * - Change the appearance of the {@link TextEditorInputMode}
  * For convenience, this implementation inherits from the predefined {@link EditLabelHelper} class.
  */
 export default class CustomEditLabelHelper extends EditLabelHelper {

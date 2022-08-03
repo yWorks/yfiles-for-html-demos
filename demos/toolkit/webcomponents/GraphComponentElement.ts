@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,8 @@
  **
  ***************************************************************************/
 import { GraphComponent, IGraph, IInputMode } from 'yfiles'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
 
 if (window.customElements) {
   const template = document.createElement('template')
@@ -77,6 +79,7 @@ if (window.customElements) {
       }
 
       this._graphComponent = new GraphComponent()
+      applyDemoTheme(this._graphComponent)
       this.isInShadowRoot = true
 
       stamped.appendChild(this.graphComponent.div)

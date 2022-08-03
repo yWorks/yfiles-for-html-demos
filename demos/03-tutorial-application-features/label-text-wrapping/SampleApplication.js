@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,24 +41,27 @@ import {
   InteriorStretchLabelModelPosition,
   License,
   Rect,
+  RectangleNodeStyle,
+  ShapeNodeStyle,
   Size
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -103,7 +106,7 @@ function setDefaultLabelLayoutParameters() {
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -126,14 +129,47 @@ function createGraph() {
   const northLabelStyle = new DefaultLabelStyle({
     horizontalTextAlignment: 'center'
   })
+  const graph = graphComponent.graph
+  const defaultNodeStyle = graph.nodeDefaults.style
 
   // create nodes
-  const graph = graphComponent.graph
-  const node1 = graph.createNode(new Rect(0, 0, 100, 100))
-  const node2 = graph.createNode(new Rect(160, 0, 100, 100))
-  const node3 = graph.createNode(new Rect(320, 0, 100, 100))
-  const node4 = graph.createNode(new Rect(480, 0, 100, 100))
-  const node5 = graph.createNode(new Rect(640, 0, 100, 100))
+  const node1 = graph.createNode(new Rect(0, 0, 190, 200))
+  const node2 = graph.createNode(new Rect(250, -150, 190, 200))
+  const node3 = graph.createNode(new Rect(250, 150, 190, 200))
+  const node4 = graph.createNode(new Rect(500, -150, 190, 200))
+  const node5 = graph.createNode(new Rect(500, 150, 190, 200))
+  const node6 = graph.createNode(
+    new Rect(750, -150, 190, 200),
+    new ShapeNodeStyle({
+      shape: 'hexagon',
+      fill: defaultNodeStyle.fill,
+      stroke: defaultNodeStyle.stroke
+    })
+  )
+  const node7 = graph.createNode(
+    new Rect(750, 150, 190, 200),
+    new ShapeNodeStyle({
+      shape: 'triangle2',
+      fill: defaultNodeStyle.fill,
+      stroke: defaultNodeStyle.stroke
+    })
+  )
+  const node8 = graph.createNode(
+    new Rect(1000, 150, 190, 200),
+    new ShapeNodeStyle({
+      shape: 'ellipse',
+      fill: defaultNodeStyle.fill,
+      stroke: defaultNodeStyle.stroke
+    })
+  )
+  const node9 = graph.createNode(
+    new Rect(1000, -150, 190, 200),
+    new ShapeNodeStyle({
+      shape: 'octagon',
+      fill: defaultNodeStyle.fill,
+      stroke: defaultNodeStyle.stroke
+    })
+  )
 
   // use a label model that stretches the label over the full node layout, with small insets
   const centerLabelModel = new InteriorStretchLabelModel({ insets: 5 })
@@ -145,7 +181,10 @@ function createGraph() {
   // the text that should be displayed
   const longText = rtlDirection
     ? 'סעיף א. כל בני אדם נולדו בני חורין ושווים בערכם ובזכויותיהם. כולם חוננו בתבונה ובמצפון, לפיכך חובה עליהם לנהוג איש ברעהו ברוח של אחוה.'
-    : 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+    : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n' +
+      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n \n' +
+      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n' +
+      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
   const font = new Font({ fontSize: 16 })
 
   // A label that does not wrap at all. By default, it is clipped at the given bounds, though this can also be
@@ -189,7 +228,7 @@ function createGraph() {
   graph.addLabel(node4, longText, centerParameter, ellipsisWordWrappingStyle)
   graph.addLabel(node4, 'Word Wrapping\nwith Ellipsis', northParameter, northLabelStyle)
 
-  // A label that is wrapped at  single charactes but also renders ellipsis if there is not enough space.
+  // A label that is wrapped at single characters but also renders ellipsis if there is not enough space.
   const ellipsisCharacterWrappingStyle = new DefaultLabelStyle({
     font,
     wrapping: 'character-ellipsis',
@@ -198,6 +237,72 @@ function createGraph() {
   })
   graph.addLabel(node5, longText, centerParameter, ellipsisCharacterWrappingStyle)
   graph.addLabel(node5, 'Character Wrapping\nwith Ellipsis', northParameter, northLabelStyle)
+
+  // A label that is wrapped at word boundaries but uses a hexagon shape to fit the text inside.
+  // The textWrappingShape can be combined with any wrapping and the textWrappingPadding is kept
+  // empty inside this shape.
+  const wordHexagonShapeStyle = new DefaultLabelStyle({
+    font,
+    wrapping: 'word',
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left',
+    textWrappingShape: 'hexagon',
+    textWrappingPadding: 5
+  })
+  graph.addLabel(node6, longText, centerParameter, wordHexagonShapeStyle)
+  graph.addLabel(node6, 'Word Wrapping\nat Hexagon Shape', northParameter, northLabelStyle)
+
+  // A label that is wrapped at single characters inside a triangular shape.
+  const characterEllipsisTriangleShapeStyle = new DefaultLabelStyle({
+    font,
+    wrapping: 'character-ellipsis',
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left',
+    textWrappingShape: 'triangle2',
+    textWrappingPadding: 5
+  })
+  graph.addLabel(node7, longText, centerParameter, characterEllipsisTriangleShapeStyle)
+  graph.addLabel(node7, 'Character Wrapping\nat Triangle Shape', northParameter, northLabelStyle)
+
+  // A label that is wrapped at single characters inside an elliptic shape.
+  // In addition to the textWrappingPadding some insets are defined for the top and bottom side
+  // to keep the upper and lower part of the ellipse empty.
+  const characterEllipsisEllipseShapeStyle = new DefaultLabelStyle({
+    font,
+    wrapping: 'character-ellipsis',
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left',
+    textWrappingShape: 'ellipse',
+    textWrappingPadding: 5,
+    insets: [40, 0, 40, 0]
+  })
+  graph.addLabel(node8, longText, centerParameter, characterEllipsisEllipseShapeStyle)
+  graph.addLabel(
+    node8,
+    'Character Wrapping\nat Ellipse Shape\nwith Top/Bottom Insets',
+    northParameter,
+    northLabelStyle
+  )
+
+  // A label that is wrapped at word boundaries inside an octagon shape.
+  // In addition to the textWrappingPadding some insets are defined for the top and bottom side
+  // to keep the upper and lower part of the octagon empty.
+  const wordEllipsisOctagonShapeStyle = new DefaultLabelStyle({
+    font,
+    wrapping: 'word-ellipsis',
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left',
+    textWrappingShape: 'octagon',
+    textWrappingPadding: 5,
+    insets: [40, 0, 40, 0]
+  })
+  graph.addLabel(node9, longText, centerParameter, wordEllipsisOctagonShapeStyle)
+  graph.addLabel(
+    node9,
+    'Word Wrapping\nat Octagon Shape\nwith Top/Bottom Insets',
+    northParameter,
+    northLabelStyle
+  )
 
   graph.undoEngine.clear()
   graphComponent.fitGraphBounds()
@@ -213,6 +318,7 @@ function reinitializeDemo() {
     gcContainer.removeChild(gcContainer.firstElementChild)
   }
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -246,5 +352,5 @@ function registerCommands() {
   })
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

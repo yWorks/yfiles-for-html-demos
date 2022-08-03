@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,10 +57,15 @@ import {
 /**
  * A label style that renders labels at the same size regardless of the zoom level.
  * The style is implemented as a wrapper for an existing label style.
+ *
+ * Note that due to the way this class caches the layout for the visualization of the selection,
+ * its instances shouldn't be shared between graph items.
  */
 export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   innerLabelStyle: ILabelStyle
   dummyLabelLayout: OrientedRectangle = new OrientedRectangle()
+  // Provides the oriented rectangle displayed by the selection, based on the last handled item.
+  // Thus, instances of this style shouldn't be shared between graph items.
   dummyLabelBounds: OrientedRectangle = new OrientedRectangle()
   dummyLabel: SimpleLabel
   zoomThreshold: number
@@ -107,7 +112,7 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
    *
    * @param label The label to which this style instance is assigned.
    * @param ctx The render context.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
    */
   createVisual(ctx: IRenderContext, label: ILabel): SvgVisualGroup {
     this.updateDummyLabel(ctx, label)
@@ -152,7 +157,7 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
    * @param label The label to which this style instance is assigned.
    * @param ctx The render context.
    * @param oldVisual The visual that has been created in the call to createVisual.
-   * @return visual as required by the {@link IVisualCreator#createVisual} interface.
+   * @return visual as required by the {@link IVisualCreator.createVisual} interface.
    */
   updateVisual(ctx: IRenderContext, oldVisual: SvgVisualGroup, label: ILabel): SvgVisual | null {
     this.updateDummyLabel(ctx, label)
@@ -217,6 +222,24 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
     this.dummyLabelBounds.reshape(originalLayout)
     this.dummyLabelBounds.resize(originalLayout.width * scale, originalLayout.height * scale)
     this.dummyLabelBounds.setCenter(originalLayout.orientedRectangleCenter)
+  }
+
+  /**
+   * Creates a new copy of this instance.
+   *
+   * In addition to the defualt memberwise clone, the internal fields for caching the layout are
+   * initialized with new instances, too.
+   */
+  clone(): this {
+    const clone = super.clone()
+    clone.dummyLabelBounds = new OrientedRectangle()
+    clone.dummyLabelLayout = new OrientedRectangle()
+    clone.dummyLabel = new SimpleLabel(
+      null,
+      '',
+      FreeLabelModel.INSTANCE.createDynamic(clone.dummyLabelLayout)
+    )
+    return clone
   }
 
   /**
@@ -445,7 +468,8 @@ class DummyContext extends BaseClass(IRenderContext) {
     return this.innerContext.getDefsId(defsSupport)
   }
 
-  lookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
     return this.innerContext.lookup(type)
   }
 

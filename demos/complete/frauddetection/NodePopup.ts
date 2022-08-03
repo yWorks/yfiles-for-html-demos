@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,7 +41,7 @@ import {
 /**
  * Adds a HTML panel on top of the contents of the GraphComponent that can display arbitrary information about a
  * {@link IModelItem graph element}. In order to not interfere with the positioning of the popup, HTML
- * content should be added as ancestor of the {@link #div div element}, and use relative positioning.
+ * content should be added as ancestor of the {@link div div element}, and use relative positioning.
  * This implementation uses a {@link ILabelModelParameter layout parameter} to determine the position of
  * the popup.
  */
@@ -216,7 +216,7 @@ export default class NodePopup {
   }
 
   /**
-   * Changes the location of this popup to the location calculated by the {@link NodePopup#layoutParameter}.
+   * Changes the location of this popup to the location calculated by the {@link NodePopup.layoutParameter}.
    * Currently, this implementation does not support rotated popups.
    */
   updateLocation(): void {

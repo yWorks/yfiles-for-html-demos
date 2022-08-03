@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   Arrow,
+  ArrowNodeStyle,
   Class,
   DefaultLabelStyle,
   DefaultPortCandidate,
@@ -42,14 +43,14 @@ import {
   GraphEditorInputMode,
   GraphSnapContext,
   GridSnapTypes,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICommand,
   IEdge,
   IEdgeStyle,
   ILabel,
   ImageNodeStyle,
   INode,
-  InteriorStretchLabelModel,
-  InteriorStretchLabelModelPosition,
   IPort,
   LabelDropInputMode,
   License,
@@ -61,7 +62,6 @@ import {
   Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
-  ShinyPlateNodeStyle,
   SimpleEdge,
   SimpleLabel,
   SimpleNode,
@@ -76,14 +76,18 @@ import {
   addClass,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
 import { nativeDragAndDropSupported } from '../../utils/Workarounds'
-import { DemoGroupStyle, DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles'
-import loadJson from '../../resources/load-json'
 import EdgeDropInputMode from './EdgeDropInputMode'
+import {
+  applyDemoTheme,
+  createDemoGroupStyle,
+  createDemoNodeStyle,
+  initDemoStyles
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 Class.ensure(Arrow)
 
@@ -101,10 +105,11 @@ let dragAndDropPanel: DragAndDropPanel = null!
  *  This demo shows how to enable drag and drop functionality for nodes using class
  *  {@link NodeDropInputMode}.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // configure the input mode
@@ -223,11 +228,9 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge>[] {
   const itemContainer: DragAndDropPanelItem<INode | IEdge>[] = []
 
   // Create some nodes
-  const groupNodeStyle = new DemoGroupStyle()
+  const groupNodeStyle = createDemoGroupStyle({})
 
   // A label model with insets for the expand/collapse button
-  const groupLabelModel = new InteriorStretchLabelModel({ insets: 4 })
-
   const groupLabelStyle = new DefaultLabelStyle({
     textFill: 'white'
   })
@@ -238,7 +241,7 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge>[] {
   const groupLabel = new SimpleLabel(
     groupNode,
     'Group Node',
-    groupLabelModel.createParameter(InteriorStretchLabelModelPosition.NORTH)
+    new GroupNodeLabelModel().createTabBackgroundParameter()
   )
   groupLabel.style = groupLabelStyle
   groupNode.labels = new ListEnumerable([groupLabel])
@@ -246,7 +249,7 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge>[] {
 
   const demoStyleNode = new SimpleNode()
   demoStyleNode.layout = new Rect(0, 0, 60, 40)
-  demoStyleNode.style = new DemoNodeStyle()
+  demoStyleNode.style = createDemoNodeStyle()
   itemContainer.push(new DragAndDropPanelItem<INode>(demoStyleNode, 'Demo Node'))
 
   const shapeStyleNode = new SimpleNode()
@@ -258,13 +261,12 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge>[] {
   })
   itemContainer.push(new DragAndDropPanelItem<INode>(shapeStyleNode, 'Shape Node'))
 
-  const shinyPlateNode = new SimpleNode()
-  shinyPlateNode.layout = new Rect(0, 0, 60, 40)
-  shinyPlateNode.style = new ShinyPlateNodeStyle({
-    fill: 'rgb(255, 140, 0)',
-    drawShadow: false
+  const arrowNode = new SimpleNode()
+  arrowNode.layout = new Rect(0, 0, 60, 40)
+  arrowNode.style = new ArrowNodeStyle({
+    fill: 'rgb(255, 140, 0)'
   })
-  itemContainer.push(new DragAndDropPanelItem<INode>(shinyPlateNode, 'Shiny Plate Node'))
+  itemContainer.push(new DragAndDropPanelItem<INode>(arrowNode, 'Arrow Node'))
 
   const imageStyleNode = new SimpleNode()
   imageStyleNode.layout = new Rect(0, 0, 60, 60)
@@ -419,8 +421,8 @@ function configureInputModes(graphComponent: GraphComponent) {
     snappingEnabled: false,
     // by default the mode available in GraphEditorInputMode is disabled, so first enable it
     enabled: true,
-    // nodes that have a DemoGroupStyle assigned have to be created as group nodes
-    isGroupNodePredicate: draggedNode => draggedNode.style instanceof DemoGroupStyle
+    // nodes that have a GroupNodeStyle assigned have to be created as group nodes
+    isGroupNodePredicate: draggedNode => draggedNode.style instanceof GroupNodeStyle
   })
 
   mode.labelDropInputMode = new LabelDropInputMode({
@@ -528,5 +530,5 @@ function updateDisabledIndicator(): void {
   }
 }
 
-// Runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

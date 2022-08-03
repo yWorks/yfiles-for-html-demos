@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,10 +48,10 @@ import {
   WaitInputMode
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import { isModuleSupportedInWorker } from '../../utils/Workarounds'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent = null!
 
@@ -80,10 +80,11 @@ if (isModuleSupportedInWorker()) {
   graphComponentDiv!.style.display = 'none'
 }
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize styles as well as graph
   graphComponent.inputMode = new GraphEditorInputMode()
@@ -100,8 +101,8 @@ function run(licenseData: object): void {
 
 /**
  * Applies a hierarchic layout in a web worker task.
- * @param {boolean} clearUndo Specifies whether the undo queue should be cleared after the layout
- * calculation. This is set to <code>true</code> if this method is called directly after
+ * @param clearUndo Specifies whether the undo queue should be cleared after the layout
+ * calculation. This is set to `true` if this method is called directly after
  * loading a new sample graph.
  */
 async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
@@ -245,7 +246,7 @@ function initializeGraph() {
   manager.masterGraph.undoEngineEnabled = true
 
   // Configure default styling etc.
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, { foldingEnabled: true })
 
   // set default label styles
   graphComponent.graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
@@ -268,7 +269,7 @@ function initializeGraph() {
 
 /**
  * Creates the sample graph for this demo.
- * @param {IGraph} graph The input graph to be filled.
+ * @param graph The input graph to be filled.
  */
 function createSampleGraph(graph: IGraph) {
   graph.clear()
@@ -340,7 +341,7 @@ function createSampleGraph(graph: IGraph) {
 /**
  * Generate and add random labels for a collection of ModelItems.
  * Existing items will be deleted before adding the new items.
- * @param {IList.<ILabelOwner>} items the collection of items the labels are
+ * @param items the collection of items the labels are
  *   generated for
  */
 function generateItemLabels(items: IList<ILabelOwner>) {
@@ -875,5 +876,5 @@ function getLoremIpsum() {
   ]
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

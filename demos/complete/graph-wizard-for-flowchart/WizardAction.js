@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -487,7 +487,7 @@ export default class WizardAction {
 /**
  * Handles processing multiple {@link ActionStep}s that may be canceled to go back to previous steps.
  *
- * Returns <em>true</em> if the last step was successful, <em>false</em> otherwise.
+ * Returns `true` if the last step was successful, `false` otherwise.
  * @param {!Array.<ActionStep>} steps The steps to process.
  * @returns {!Promise.<boolean>}
  */

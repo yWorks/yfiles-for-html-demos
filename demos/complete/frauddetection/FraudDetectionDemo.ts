@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -62,7 +62,6 @@ import {
   addClass,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp,
   showLoadingIndicator
@@ -72,7 +71,7 @@ import InsuranceFraudData from './resources/InsuranceFraudData'
 import FraudDetection from './FraudDetection'
 import NodePopup from './NodePopup'
 import TimelineComponent from './TimelineComponent'
-import loadJson from '../../resources/load-json'
+import { fetchLicense } from '../../resources/fetch-license'
 
 type NodeTag = {
   id: number
@@ -154,8 +153,8 @@ let fraudHighlightManager: HighlightIndicatorManager<IModelItem>
  * have different timestamps (defined in their tag object), they will only appear in some
  * time-frames. Time-frames are chosen using a timeline component.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   timelineComponent = new TimelineComponent('timelineComponent', graphComponent)
   nodePopup = new NodePopup(graphComponent, 'mainGraphPopup')
@@ -595,7 +594,8 @@ function initializeGraph(): void {
   graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
 
   // initialize the fraud highlight manager
-  fraudHighlightManager = new FraudHighlightManager(graphComponent)
+  fraudHighlightManager = new FraudHighlightManager()
+  fraudHighlightManager.install(graphComponent)
 }
 
 /**
@@ -888,5 +888,5 @@ function animateViewPort(componentIdx: number, highlight: boolean) {
   }
 }
 
-// start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

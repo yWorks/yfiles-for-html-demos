@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,6 +32,7 @@ import {
   ClearAreaStrategy,
   ComponentAssignmentStrategy,
   CompositeLayoutData,
+  FilteredGraphWrapper,
   GivenCoordinatesStage,
   GivenCoordinatesStageData,
   GraphComponent,
@@ -44,8 +45,7 @@ import {
   LayoutGraphAdapter,
   List,
   Point,
-  Rect,
-  FilteredGraphWrapper
+  Rect
 } from 'yfiles'
 
 /**
@@ -93,7 +93,7 @@ export class ClearAreaLayoutHelper {
   }
 
   /**
-   * Returns the center of the {@link ClearAreaLayoutHelper#graph}.
+   * Returns the center of the {@link ClearAreaLayoutHelper.graph}.
    * @param {!IEnumerable.<INode>} nodes
    * @returns {!Point}
    */
@@ -303,7 +303,7 @@ export class ClearAreaLayoutHelper {
   }
 
   /**
-   * Moves the {@link ClearAreaLayout#areaOutline} to the current drag location.
+   * Moves the {@link ClearAreaLayout.areaOutline} to the current drag location.
    */
   updateOutline() {
     if (this.location !== this.oldLocation) {

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -82,7 +82,7 @@ export default class HierarchicGrouping {
   }
 
   /**
-   * Enables the folding commands on the <code>navigationInputMode</code> of the provided <code>inputMode</code> and
+   * Enables the folding commands on the `navigationInputMode` of the provided `inputMode` and
    * registers event listeners for the expand and collapse commands that trigger the automatic layout.
    *
    * @param inputMode The input mode to be configured.

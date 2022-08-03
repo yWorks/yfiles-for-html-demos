@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,19 +39,23 @@ import {
   Size
 } from 'yfiles'
 
-import { checkLicense, showApp } from '../../resources/demo-app'
+import { showApp } from '../../resources/demo-app'
 import LimitedRectangleDescriptor from './LimitedRectangleDescriptor'
 import GreenSizeConstraintProvider from './GreenSizeConstraintProvider'
 import BlueSizeConstraintProvider from './BlueSizeConstraintProvider'
-import loadJson from '../../resources/load-json'
-import type { ColorSetName } from '../../resources/basic-demo-styles'
-import { createDemoNodeLabelStyle, DemoNodeStyle } from '../../resources/demo-styles'
+import type { ColorSetName } from '../../resources/demo-styles'
+import {
+  applyDemoTheme,
+  createDemoNodeLabelStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link INodeSizeConstraintProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>ISizeConstraintProvider</code>. In this case, the 'node' parameter will be set
+ * for its {@link ISizeConstraintProvider}. In this case, the 'node' parameter will be set
  * to that node.
  * @param graph The given graph
  * @param boundaryRectangle The rectangle that limits the node's size.
@@ -78,10 +82,11 @@ function registerSizeConstraintProvider(graph: IGraph, boundaryRectangle: Mutabl
   })
 }
 
-function run(licenseData: any): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // create a default editor input mode
   graphComponent.inputMode = new GraphEditorInputMode({
@@ -138,7 +143,7 @@ function createSampleGraph(graph: IGraph): void {
  * @param y The node's y-coordinate
  * @param w The node's width
  * @param h The node's height
- * @param cssClass The given css class
+ * @param colorSet The color set to use for the new node and its label
  * @param tag The tag to identify the size constraint provider
  * @param labelText The nodes label's text
  */
@@ -148,21 +153,22 @@ function createNode(
   y: number,
   w: number,
   h: number,
-  cssClass: ColorSetName,
+  colorSet: ColorSetName,
   tag: string,
   labelText: string
 ): void {
   const node = graph.createNode({
     layout: new Rect(x, y, w, h),
-    style: new DemoNodeStyle(cssClass),
+    style: createDemoNodeStyle(colorSet),
     tag: tag
   })
 
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: createDemoNodeLabelStyle(cssClass)
+    style: createDemoNodeLabelStyle(colorSet)
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

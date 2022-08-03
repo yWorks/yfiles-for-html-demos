@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,7 +47,7 @@ export default class DataTableNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual for a node.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!INode} node
    * @returns {!SvgVisual}
@@ -71,7 +71,7 @@ export default class DataTableNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the label using the old visual for performance reasons.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
    * @param {!INode} node

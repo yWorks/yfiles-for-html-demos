@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,19 +46,20 @@ import {
   SvgExport
 } from 'yfiles'
 import { GraphDropInputMode } from './GraphDropInputMode'
-import { addClass, bindCommand, checkLicense, removeClass, showApp } from '../../resources/demo-app'
+import { addClass, bindCommand, removeClass, showApp } from '../../resources/demo-app'
 import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
-import loadJson from '../../resources/load-json'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
 let graphDropInputMode: GraphDropInputMode
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // enable the option to expand and collapse group nodes
   const masterGraph = new DefaultGraph()
@@ -70,7 +71,7 @@ async function run(licenseData: object): Promise<void> {
 
   initializeInputModes()
 
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, { foldingEnabled: true })
 
   await initializePalette()
 
@@ -80,7 +81,7 @@ async function run(licenseData: object): Promise<void> {
 }
 
 /**
- * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent#inputMode}
+ * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and initializes the input mode for dropping graphs.
  */
 function initializeInputModes(): void {
@@ -224,7 +225,7 @@ function toGraph(graphData: GraphData): IGraph {
   const manager = new FoldingManager(masterGraph)
   const graph = manager.createFoldingView().graph
 
-  initDemoStyles(graph)
+  initDemoStyles(graph, { foldingEnabled: true })
 
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
@@ -322,4 +323,5 @@ function registerCommands(): void {
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

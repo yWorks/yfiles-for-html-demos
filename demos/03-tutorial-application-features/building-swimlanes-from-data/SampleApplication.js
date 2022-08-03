@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,6 +52,7 @@ import {
   OrthogonalEdgeEditingContext,
   ParentNodeDetectionModes,
   Rect,
+  RectangleNodeStyle,
   ReparentStripeHandler,
   ShapeNodeStyle,
   SimplexNodePlacer,
@@ -65,20 +66,21 @@ import {
 } from 'yfiles'
 
 import FileSaveSupport from '../../utils/FileSaveSupport.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true,
@@ -250,9 +252,9 @@ function buildGraph(graph, graphData) {
     })
     if (nodeData.fill) {
       // If the node data specifies an individual fill color, adjust the style.
-      const shapeNodeStyle = graph.nodeDefaults.style.clone()
-      shapeNodeStyle.fill = nodeData.fill
-      graph.setStyle(node, shapeNodeStyle)
+      const nodeStyle = graph.nodeDefaults.style.clone()
+      nodeStyle.fill = nodeData.fill
+      graph.setStyle(node, nodeStyle)
     }
     nodes[nodeData.id] = node
 
@@ -265,8 +267,8 @@ function buildGraph(graph, graphData) {
         graph,
         node,
         tableGroupNode,
-        table.columns.elementAt(lanes[nodeData.lane]),
-        table.rows.elementAt(0)
+        table.columns.at(lanes[nodeData.lane]),
+        table.rows.first()
       )
     }
   })
@@ -410,7 +412,7 @@ function runLayout(duration) {
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -461,5 +463,5 @@ async function loadJSON(url) {
   return response.json()
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

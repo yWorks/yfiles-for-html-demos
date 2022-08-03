@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -66,8 +66,8 @@ import {
 } from './SankeyHelper'
 import ContextMenu from '../../utils/ContextMenu'
 import { SankeyLayout } from './SankeyLayout'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindCommand, showApp } from '../../resources/demo-app'
+import { fetchLicense } from '../../resources/fetch-license'
 
 const colors = [
   { dark: Color.from('#000000'), light: Color.from('#80000000') },
@@ -105,8 +105,8 @@ let inLayout = false
 /**
  * Runs the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
 
   initializeGraph()
@@ -180,7 +180,7 @@ function initializeGraph(): void {
   graph.decorator.edgeDecorator.handleProviderDecorator.hideImplementation()
   graph.decorator.edgeDecorator.selectionDecorator.hideImplementation()
 
-  graphComponent.highlightIndicatorManager = new HighlightManager(graphComponent)
+  graphComponent.highlightIndicatorManager = new HighlightManager()
 }
 
 /**
@@ -309,8 +309,7 @@ function populateContextMenu(
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
 
   // Check whether a node was it. If it was, we prefer it over edges
-  const hit =
-    hits.find((item: IModelItem): boolean => INode.isInstance(item)) || hits.firstOrDefault()
+  const hit = hits.find((item: IModelItem): boolean => INode.isInstance(item)) || hits.at(0)
 
   const graphSelection = graphComponent.selection
   if (INode.isInstance(hit)) {
@@ -443,7 +442,7 @@ function createColorPopupMenu(color: Color): void {
   div.addEventListener(
     'click',
     (): void => {
-      const selectedNode = graphComponent.selection.selectedNodes.firstOrDefault()
+      const selectedNode = graphComponent.selection.selectedNodes.at(0)
       if (!selectedNode) {
         return
       }
@@ -661,5 +660,5 @@ function assignEdgeColorsAtNode(node: INode): void {
   }
 }
 
-// runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

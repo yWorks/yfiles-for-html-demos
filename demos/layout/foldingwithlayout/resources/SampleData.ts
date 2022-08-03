@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,234 +28,632 @@
  ***************************************************************************/
 export default {
   nodesSource: [
-    { id: '00', layout: { x: 300, y: 0, width: 30, height: 30 } },
-    { id: '01', layout: { x: 300, y: 50, width: 30, height: 30 } },
-    { id: '10', layout: { x: 300, y: 112, width: 30, height: 30 }, group: 'group1' },
-    { id: '11', layout: { x: 300, y: 162, width: 30, height: 30 }, group: 'group1' },
-    { id: '12', layout: { x: 152.5, y: 732, width: 30, height: 30 }, group: 'group1' },
-    { id: '20', layout: { x: 300, y: 224, width: 30, height: 30 }, group: 'group2' },
-    { id: '21', layout: { x: 255, y: 648, width: 30, height: 30 }, group: 'group2' },
-    { id: '22', layout: { x: 440, y: 224, width: 30, height: 30 }, group: 'group2' },
-    { id: '30', layout: { x: 305, y: 311, width: 30, height: 30 }, group: 'group3' },
-    { id: '31', layout: { x: 297.5, y: 584, width: 30, height: 30 }, group: 'group3' },
-    { id: '40', layout: { x: 312.5, y: 388, width: 30, height: 30 }, group: 'group4' },
-    { id: '41', layout: { x: 327.5, y: 465, width: 30, height: 30 }, group: 'group4' },
-    { id: '42', layout: { x: 327.5, y: 520, width: 30, height: 30 }, group: 'group4' },
-    { id: '50', layout: { x: 90, y: 388, width: 30, height: 30 }, group: 'group5' },
-    { id: '51', layout: { x: 20, y: 520, width: 30, height: 30 }, group: 'group5' },
-    { id: '60', layout: { x: 97.5, y: 465, width: 30, height: 30 }, group: 'group6' },
-    { id: '61', layout: { x: 90, y: 520, width: 30, height: 30 }, group: 'group6' },
-    { id: '62', layout: { x: 150, y: 520, width: 30, height: 30 }, group: 'group6' }
+    { id: 0, layout: { x: 188, y: 0, width: 30, height: 30 } },
+    { id: 1, layout: { x: 188, y: 50, width: 30, height: 30 } },
+    { id: 3, group: 'group1', layout: { x: 188, y: 112, width: 30, height: 30 } },
+    { id: 4, group: 'group1', layout: { x: 93.5, y: 167, width: 30, height: 30 } },
+    { id: 5, group: 'group1', layout: { x: 89.5, y: 927, width: 30, height: 30 } },
+    { id: 7, group: 'group2', layout: { x: 93.5, y: 229, width: 30, height: 30 } },
+    { id: 8, group: 'group2', layout: { x: 48, y: 616, width: 30, height: 30 } },
+    { id: 9, group: 'group2', layout: { x: 18, y: 229, width: 30, height: 30 } },
+    { id: 11, group: 'group3', layout: { x: 93.5, y: 306, width: 30, height: 30 } },
+    { id: 12, group: 'group3', layout: { x: 86, y: 552, width: 30, height: 30 } },
+    { id: 14, group: 'group4', layout: { x: 101, y: 383, width: 30, height: 30 } },
+    { id: 15, group: 'group4', layout: { x: 116, y: 438, width: 30, height: 30 } },
+    { id: 16, group: 'group3', layout: { x: 116, y: 488, width: 30, height: 30 } },
+    { id: 18, group: 'group5', layout: { x: 171.5, y: 702, width: 30, height: 30 } },
+    { id: 19, group: 'group5', layout: { x: 87, y: 834, width: 30, height: 30 } },
+    { id: 21, group: 'group6', layout: { x: 179, y: 779, width: 30, height: 30 } },
+    { id: 22, group: 'group6', layout: { x: 156, y: 834, width: 30, height: 30 } },
+    { id: 23, group: 'group6', layout: { x: 216, y: 834, width: 30, height: 30 } }
   ],
-
   edgesSource: [
-    { from: '00', to: '01', sourcePort: { x: 315, y: 30 }, targetPort: { x: 315, y: 50 } },
-    { from: '01', to: '10', sourcePort: { x: 315, y: 80 }, targetPort: { x: 315, y: 112 } },
-    { from: '10', to: '11', sourcePort: { x: 315, y: 142 }, targetPort: { x: 315, y: 162 } },
     {
-      from: '10',
-      to: '50',
-      sourcePort: { x: 305, y: 142 },
-      targetPort: { x: 105, y: 388 },
+      from: 0,
+      to: 1,
+      sourcePort: {
+        x: 203,
+        y: 30
+      },
+      targetPort: {
+        x: 203,
+        y: 50
+      }
+    },
+    {
+      from: 1,
+      to: 3,
+      sourcePort: {
+        x: 203,
+        y: 80
+      },
+      targetPort: {
+        x: 203,
+        y: 112
+      },
+      tag: {
+        from: '01',
+        to: '10',
+        sourcePort: {
+          x: 315,
+          y: 80
+        },
+        targetPort: {
+          x: 315,
+          y: 112
+        }
+      }
+    },
+    {
+      from: 3,
+      to: 4,
+      sourcePort: {
+        x: 193,
+        y: 142
+      },
+      targetPort: {
+        x: 108.5,
+        y: 167
+      },
       bends: [
-        { x: 305, y: 152 },
-        { x: 105, y: 152 }
+        {
+          x: 193,
+          y: 152
+        },
+        {
+          x: 108.5,
+          y: 152
+        }
       ]
     },
     {
-      from: '10',
-      to: '12',
-      sourcePort: { x: 325, y: 142 },
-      targetPort: { x: 180, y: 732 },
+      from: 3,
+      to: 18,
+      sourcePort: {
+        x: 203,
+        y: 142
+      },
+      targetPort: {
+        x: 194,
+        y: 702
+      },
       bends: [
-        { x: 325, y: 152 },
-        { x: 402.5, y: 152 },
-        { x: 402.5, y: 717 },
-        { x: 180, y: 717 }
-      ]
-    },
-    { from: '11', to: '20', sourcePort: { x: 315, y: 192 }, targetPort: { x: 315, y: 224 } },
-    {
-      from: '20',
-      to: '21',
-      sourcePort: { x: 307.5, y: 254 },
-      targetPort: { x: 262.5, y: 648 },
-      bends: [
-        { x: 307.5, y: 274 },
-        { x: 262.5, y: 274 }
-      ]
-    },
-    {
-      from: '20',
-      to: '30',
-      sourcePort: { x: 322.5, y: 254 },
-      targetPort: { x: 320, y: 311 },
-      bends: [
-        { x: 322.5, y: 264 },
-        { x: 320, y: 264 }
+        {
+          x: 203,
+          y: 665
+        },
+        {
+          x: 194,
+          y: 665
+        }
       ]
     },
     {
-      from: '21',
-      to: '12',
-      sourcePort: { x: 270, y: 678 },
-      targetPort: { x: 175, y: 732 },
+      from: 3,
+      to: 5,
+      sourcePort: {
+        x: 213,
+        y: 142
+      },
+      targetPort: {
+        x: 117,
+        y: 927
+      },
       bends: [
-        { x: 270, y: 707 },
-        { x: 175, y: 707 }
+        {
+          x: 213,
+          y: 152
+        },
+        {
+          x: 279,
+          y: 152
+        },
+        {
+          x: 279,
+          y: 912
+        },
+        {
+          x: 117,
+          y: 912
+        }
       ]
     },
     {
-      from: '22',
-      to: '12',
-      sourcePort: { x: 255, y: 254 },
-      targetPort: { x: 170, y: 732 },
+      from: 4,
+      to: 7,
+      sourcePort: {
+        x: 108.5,
+        y: 197
+      },
+      targetPort: {
+        x: 108.5,
+        y: 229
+      }
+    },
+    {
+      from: 7,
+      to: 8,
+      sourcePort: {
+        x: 98.5,
+        y: 259
+      },
+      targetPort: {
+        x: 55.5,
+        y: 616
+      },
       bends: [
-        { x: 440, y: 697 },
-        { x: 170, y: 697 }
+        {
+          x: 98.5,
+          y: 269
+        },
+        {
+          x: 53,
+          y: 269
+        },
+        {
+          x: 53,
+          y: 592
+        },
+        {
+          x: 55.5,
+          y: 592
+        }
       ]
     },
     {
-      from: '30',
-      to: '31',
-      sourcePort: { x: 312.5, y: 341 },
-      targetPort: { x: 302.5, y: 584 },
-      bends: [
-        { x: 312.5, y: 351 },
-        { x: 287.5, y: 351 },
-        { x: 287.5, y: 569 },
-        { x: 302.5, y: 569 }
-      ]
-    },
-    { from: '30', to: '40', sourcePort: { x: 327.5, y: 341 }, targetPort: { x: 327.5, y: 388 } },
-    {
-      from: '31',
-      to: '21',
-      sourcePort: { x: 312.5, y: 614 },
-      targetPort: { x: 277.5, y: 648 },
-      bends: [
-        { x: 312.5, y: 633 },
-        { x: 277.5, y: 633 }
-      ]
+      from: 7,
+      to: 11,
+      sourcePort: {
+        x: 108.5,
+        y: 259
+      },
+      targetPort: {
+        x: 108.5,
+        y: 306
+      }
     },
     {
-      from: '40',
-      to: '41',
-      sourcePort: { x: 335, y: 418 },
-      targetPort: { x: 342.5, y: 465 },
+      from: 8,
+      to: 5,
+      sourcePort: {
+        x: 63,
+        y: 646
+      },
+      targetPort: {
+        x: 97,
+        y: 927
+      },
       bends: [
-        { x: 335, y: 428 },
-        { x: 342.5, y: 428 }
-      ]
-    },
-    {
-      from: '40',
-      to: '31',
-      sourcePort: { x: 320, y: 418 },
-      targetPort: { x: 312.5, y: 584 },
-      bends: [
-        { x: 320, y: 428 },
-        { x: 312.5, y: 428 }
-      ]
-    },
-    { from: '41', to: '42', sourcePort: { x: 342.5, y: 495 }, targetPort: { x: 342.5, y: 520 } },
-    {
-      from: '42',
-      to: '31',
-      sourcePort: { x: 342.5, y: 550 },
-      targetPort: { x: 322.5, y: 584 },
-      bends: [
-        { x: 342.5, y: 569 },
-        { x: 322.5, y: 569 }
-      ]
-    },
-    { from: '50', to: '60', sourcePort: { x: 112.5, y: 418 }, targetPort: { x: 112.5, y: 465 } },
-    {
-      from: '50',
-      to: '51',
-      sourcePort: { x: 97.5, y: 418 },
-      targetPort: { x: 35, y: 520 },
-      bends: [
-        { x: 97.5, y: 428 },
-        { x: 35, y: 428 }
+        {
+          x: 63,
+          y: 892
+        },
+        {
+          x: 97,
+          y: 892
+        }
       ]
     },
     {
-      from: '51',
-      to: '12',
-      sourcePort: { x: 35, y: 550 },
-      targetPort: { x: 155, y: 732 },
+      from: 9,
+      to: 5,
+      sourcePort: {
+        x: 33,
+        y: 259
+      },
+      targetPort: {
+        x: 92,
+        y: 927
+      },
       bends: [
-        { x: 35, y: 683 },
-        { x: 155, y: 683 }
+        {
+          x: 33,
+          y: 902
+        },
+        {
+          x: 92,
+          y: 902
+        }
       ]
     },
-    { from: '60', to: '61', sourcePort: { x: 105, y: 495 }, targetPort: { x: 105, y: 520 } },
     {
-      from: '60',
-      to: '62',
-      sourcePort: { x: 120, y: 495 },
-      targetPort: { x: 165, y: 520 },
+      from: 11,
+      to: 12,
+      sourcePort: {
+        x: 101,
+        y: 336
+      },
+      targetPort: {
+        x: 91,
+        y: 552
+      },
       bends: [
-        { x: 120, y: 505 },
-        { x: 165, y: 505 }
+        {
+          x: 101,
+          y: 346
+        },
+        {
+          x: 77,
+          y: 346
+        },
+        {
+          x: 77,
+          y: 537
+        },
+        {
+          x: 91,
+          y: 537
+        }
       ]
     },
     {
-      from: '61',
-      to: '12',
-      sourcePort: { x: 105, y: 550 },
-      targetPort: { x: 160, y: 732 },
+      from: 11,
+      to: 14,
+      sourcePort: {
+        x: 116,
+        y: 336
+      },
+      targetPort: {
+        x: 116,
+        y: 383
+      },
+      tag: {
+        from: '30',
+        to: '40',
+        sourcePort: {
+          x: 327.5,
+          y: 341
+        },
+        targetPort: {
+          x: 327.5,
+          y: 388
+        }
+      }
+    },
+    {
+      from: 12,
+      to: 8,
+      sourcePort: {
+        x: 101,
+        y: 582
+      },
+      targetPort: {
+        x: 70.5,
+        y: 616
+      },
       bends: [
-        { x: 105, y: 673 },
-        { x: 160, y: 673 }
+        {
+          x: 101,
+          y: 601
+        },
+        {
+          x: 70.5,
+          y: 601
+        }
       ]
     },
-    { from: '62', to: '12', sourcePort: { x: 165, y: 550 }, targetPort: { x: 165, y: 732 } },
-    { from: '20', to: '50', sourcePort: { x: 165, y: 550 }, targetPort: { x: 165, y: 732 } }
+    {
+      from: 14,
+      to: 15,
+      sourcePort: {
+        x: 123.5,
+        y: 413
+      },
+      targetPort: {
+        x: 131,
+        y: 438
+      },
+      bends: [
+        {
+          x: 123.5,
+          y: 423
+        },
+        {
+          x: 131,
+          y: 423
+        }
+      ]
+    },
+    {
+      from: 14,
+      to: 12,
+      sourcePort: {
+        x: 108.5,
+        y: 413
+      },
+      targetPort: {
+        x: 101,
+        y: 552
+      },
+      bends: [
+        {
+          x: 108.5,
+          y: 423
+        },
+        {
+          x: 101,
+          y: 423
+        }
+      ]
+    },
+    {
+      from: 15,
+      to: 16,
+      sourcePort: {
+        x: 131,
+        y: 468
+      },
+      targetPort: {
+        x: 131,
+        y: 488
+      },
+      tag: {
+        from: '41',
+        to: '42',
+        sourcePort: {
+          x: 342.5,
+          y: 495
+        },
+        targetPort: {
+          x: 342.5,
+          y: 520
+        }
+      }
+    },
+    {
+      from: 16,
+      to: 12,
+      sourcePort: {
+        x: 131,
+        y: 518
+      },
+      targetPort: {
+        x: 111,
+        y: 552
+      },
+      bends: [
+        {
+          x: 131,
+          y: 537
+        },
+        {
+          x: 111,
+          y: 537
+        }
+      ]
+    },
+    {
+      from: 18,
+      to: 21,
+      sourcePort: {
+        x: 194,
+        y: 732
+      },
+      targetPort: {
+        x: 194,
+        y: 779
+      },
+      tag: {
+        from: '50',
+        to: '60',
+        sourcePort: {
+          x: 112.5,
+          y: 418
+        },
+        targetPort: {
+          x: 112.5,
+          y: 465
+        }
+      }
+    },
+    {
+      from: 18,
+      to: 19,
+      sourcePort: {
+        x: 179,
+        y: 732
+      },
+      targetPort: {
+        x: 102,
+        y: 834
+      },
+      bends: [
+        {
+          x: 179,
+          y: 742
+        },
+        {
+          x: 102,
+          y: 742
+        }
+      ]
+    },
+    {
+      from: 19,
+      to: 5,
+      sourcePort: {
+        x: 102,
+        y: 864
+      },
+      targetPort: {
+        x: 102,
+        y: 927
+      },
+      tag: {
+        from: '51',
+        to: '12',
+        sourcePort: {
+          x: 35,
+          y: 550
+        },
+        targetPort: {
+          x: 155,
+          y: 732
+        },
+        bends: [
+          {
+            x: 35,
+            y: 683
+          },
+          {
+            x: 155,
+            y: 683
+          }
+        ]
+      }
+    },
+    {
+      from: 21,
+      to: 22,
+      sourcePort: {
+        x: 186.5,
+        y: 809
+      },
+      targetPort: {
+        x: 171,
+        y: 834
+      },
+      bends: [
+        {
+          x: 186.5,
+          y: 819
+        },
+        {
+          x: 171,
+          y: 819
+        }
+      ]
+    },
+    {
+      from: 21,
+      to: 23,
+      sourcePort: {
+        x: 201.5,
+        y: 809
+      },
+      targetPort: {
+        x: 231,
+        y: 834
+      },
+      bends: [
+        {
+          x: 201.5,
+          y: 819
+        },
+        {
+          x: 231,
+          y: 819
+        }
+      ]
+    },
+    {
+      from: 22,
+      to: 5,
+      sourcePort: {
+        x: 171,
+        y: 864
+      },
+      targetPort: {
+        x: 107,
+        y: 927
+      },
+      bends: [
+        {
+          x: 171,
+          y: 892
+        },
+        {
+          x: 107,
+          y: 892
+        }
+      ]
+    },
+    {
+      from: 23,
+      to: 5,
+      sourcePort: {
+        x: 231,
+        y: 864
+      },
+      targetPort: {
+        x: 112,
+        y: 927
+      },
+      bends: [
+        {
+          x: 231,
+          y: 902
+        },
+        {
+          x: 112,
+          y: 902
+        }
+      ]
+    },
+    {
+      from: 7,
+      to: 18,
+      sourcePort: {
+        x: 118.5,
+        y: 259
+      },
+      targetPort: {
+        x: 179,
+        y: 702
+      },
+      bends: [
+        {
+          x: 118.5,
+          y: 269
+        },
+        {
+          x: 179,
+          y: 269
+        }
+      ]
+    }
   ],
-
   groupsSource: [
     {
       id: 'group1',
-      layout: { x: 0, y: 85, width: 200, height: 150 },
+      layout: { x: 0, y: 85, width: 288, height: 881 },
       label: 'group one',
       collapsed: true
     },
     {
       id: 'group2',
-      layout: { x: 230, y: 197, width: 200, height: 150 },
-      parentGroup: 'group1',
+      layout: { x: 9, y: 202, width: 179, height: 453 },
       label: 'group two',
-      collapsed: true
+      collapsed: true,
+      parentGroup: 'group1'
     },
     {
       id: 'group3',
-      layout: { x: 277.5, y: 284, width: 200, height: 150 },
-      parentGroup: 'group2',
+      layout: { x: 68, y: 279, width: 96, height: 312 },
       label: 'group three',
-      collapsed: true
+      collapsed: true,
+      parentGroup: 'group2'
     },
     {
       id: 'group4',
-      layout: { x: 302.5, y: 361, width: 200, height: 150 },
-      parentGroup: 'group3',
+      layout: { x: 92, y: 356, width: 63, height: 171 },
       label: 'group four',
-      collapsed: true
+      collapsed: true,
+      parentGroup: 'group3'
     },
     {
       id: 'group5',
-      layout: { x: 10, y: 361, width: 200, height: 150 },
-      parentGroup: 'group1',
+      layout: { x: 78, y: 675, width: 186, height: 207 },
       label: 'group five',
-      collapsed: true
+      collapsed: true,
+      parentGroup: 'group1'
     },
     {
       id: 'group6',
-      layout: { x: 80, y: 438, width: 200, height: 150 },
-      parentGroup: 'group5',
+      layout: { x: 147, y: 752, width: 108, height: 121 },
       label: 'group six',
-      collapsed: true
+      collapsed: true,
+      parentGroup: 'group5'
     }
   ]
 }

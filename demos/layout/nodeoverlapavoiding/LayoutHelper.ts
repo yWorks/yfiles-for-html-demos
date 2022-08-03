@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -195,7 +195,7 @@ export class LayoutHelper implements PendingLayout {
   }
 
   /**
-   * Creates a layout algorithm suiting the <code>resizeState</code>.
+   * Creates a layout algorithm suiting the `resizeState`.
    */
   private createLayout(resizeState: ResizeState): ILayoutAlgorithm {
     const sequentialLayout = new SequentialLayout()
@@ -234,7 +234,7 @@ export class LayoutHelper implements PendingLayout {
   }
 
   /**
-   * Creates a layout data suiting the <code>resizeState</code>.
+   * Creates a layout data suiting the `resizeState`.
    */
   private createLayoutData(resizeState: ResizeState): LayoutData {
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData!)
@@ -344,7 +344,7 @@ export class LayoutHelper implements PendingLayout {
   }
 
   /**
-   * Determines whether source or target node of the given edge is part of {@link LayoutHelper#nodes}.
+   * Determines whether source or target node of the given edge is part of {@link LayoutHelper.nodes}.
    */
   private isInterEdge(edge: IEdge): boolean {
     const sourceInNodes = this.nodes.has(edge.sourceNode!)
@@ -353,7 +353,7 @@ export class LayoutHelper implements PendingLayout {
   }
 
   /**
-   * Determines whether both source and target node of the given edge is part of {@link LayoutHelper#nodes}.
+   * Determines whether both source and target node of the given edge is part of {@link LayoutHelper.nodes}.
    */
   private isSubgraphEdge(edge: IEdge): boolean {
     return this.nodes.has(edge.sourceNode!) && this.nodes.has(edge.targetNode!)

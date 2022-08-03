@@ -2,7 +2,9 @@
 **/dist/
 **/node_modules/
 /03-tutorial-application-features/webgl-rendering/resources/*.json
+/complete/tree-of-life/resources/TreeOfLifeData.json
 /internal/webgl-performance-tests/resources/*.json
+/resources/style/demo.css
 /starter-kits/**
 /view/large-graphs/resources/*.json
 /view/rendering-optimizations/resources/*.json

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,8 +32,10 @@ import {
   ArrowType,
   BalloonLayout,
   BezierEdgeStyle,
+  CactusGroupLayout,
   CircularLayout,
   Color,
+  DataProviders,
   DefaultGraph,
   DefaultLabelStyle,
   EdgeBundleDescriptor,
@@ -62,6 +64,10 @@ import {
   Key,
   KeyEventArgs,
   LayoutExecutor,
+  LayoutGraph,
+  LayoutGraphHider,
+  LayoutGroupingSupport,
+  LayoutStageBase,
   License,
   NodeAggregation,
   NodeAggregationPolicy,
@@ -78,70 +84,49 @@ import {
   StringTemplateNodeStyle,
   Stroke,
   StyleDecorationZoomPolicy,
+  TemporaryGroupDescriptor,
+  TemporaryGroupNodeInsertionData,
+  TemporaryGroupNodeInsertionStage,
   TimeSpan,
   TreeReductionStage,
   TreeReductionStageData,
   ViewportAnimation,
+  VoidEdgeStyle,
   YRectangle
 } from 'yfiles'
 
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
 import { AggregationHelper, AggregationNodeInfo } from './AggregationHelper'
 import { AggregationGraphWrapper, EdgeReplacementPolicy } from '../../utils/AggregationGraphWrapper'
 import SampleGraph from './resources/SampleGraph'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
+
+let graphComponent: GraphComponent = null!
 
 /**
  * The original graph before aggregation.
  */
-// @ts-ignore
-let originalGraph: IGraph = null
+let originalGraph: IGraph = null!
 
 /**
  * Encapsulates aggregation and separation methods.
  */
-// @ts-ignore
-let aggregationHelper: AggregationHelper = null
+let aggregationHelper: AggregationHelper = null!
 
-// @ts-ignore
-let graphViewerInputMode: GraphViewerInputMode = null
-
-// @ts-ignore
-let aggregationNodeStyle: StringTemplateNodeStyle = null
-// @ts-ignore
-let hierarchyEdgeStyle: BezierEdgeStyle = null
-// @ts-ignore
-let descendantLabelStyle: DefaultLabelStyle = null
-
-const calculatingIndicator = document.getElementById('calculating-indicator') as HTMLElement
-const switchViewButton = document.getElementById('switch-view') as HTMLButtonElement
-const runButton = document.getElementById('run-aggregation') as HTMLButtonElement
-const aggregationModeSelect = document.getElementById(
-  'aggregation-mode-select'
-) as HTMLSelectElement
-const maximumDurationRange = document.getElementById('maximum-duration-range') as HTMLInputElement
-const minimumClusterSizeRange = document.getElementById(
-  'minimum-cluster-size-range'
-) as HTMLInputElement
-const maximumClusterSizeRange = document.getElementById(
-  'maximum-cluster-size-range'
-) as HTMLInputElement
+let graphViewerInputMode: GraphViewerInputMode = null!
+let aggregationNodeStyle: StringTemplateNodeStyle = null!
+let hierarchyEdgeStyle: BezierEdgeStyle = null!
+let descendantLabelStyle: DefaultLabelStyle = null!
 
 /**
  * Bootstraps the demo.
  */
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   const overviewComponent = new GraphOverviewComponent('#overviewComponent', graphComponent)
 
   // initialize node click listener that toggles the aggregation status
@@ -177,7 +162,7 @@ async function run(licenseData: object): Promise<void> {
 }
 
 /**
- * Registers a listener to the {@link GraphViewerInputMode#addItemClickedListener ItemClicked} event that toggles the aggregation of a node, runs a layout and sets the current item.
+ * Registers a listener to the {@link GraphViewerInputMode.addItemClickedListener ItemClicked} event that toggles the aggregation of a node, runs a layout and sets the current item.
  */
 function initializeToggleAggregation(): void {
   graphViewerInputMode = new GraphViewerInputMode({
@@ -224,7 +209,7 @@ function toggleAggregationNode(node: INode): void {
   graphComponent.currentItem = affectedNodes.get(0)
 
   // run layout
-  runBalloonLayout(affectedNodes)
+  runLayoutOnHierarchyView(affectedNodes)
 }
 
 /**
@@ -414,7 +399,7 @@ async function runAggregation(): Promise<void> {
   aggregationHelper.aggregateGraph.dispose()
   await runAggregationAndReplaceGraph(originalGraph)
 
-  switchViewButton.innerText = 'Switch To Filtered View'
+  document.querySelector<HTMLButtonElement>('#switch-view')!.innerText = 'Switch To Filtered View'
 
   await setUiDisabled(false)
 
@@ -425,13 +410,14 @@ async function runAggregation(): Promise<void> {
  * Switches between the view with hierarchy nodes and without and runs an appropriate layout.
  */
 async function switchView(): Promise<void> {
+  const switchViewButton = document.querySelector<HTMLButtonElement>('#switch-view')!
   if (graphComponent.graph instanceof AggregationGraphWrapper) {
     graphComponent.graph = createFilteredView()
     await runCircularLayout()
     switchViewButton.innerText = 'Switch To Hierarchic View'
   } else {
     graphComponent.graph = aggregationHelper.aggregateGraph
-    await runBalloonLayout()
+    await runLayoutOnHierarchyView()
     switchViewButton.innerText = 'Switch To Filtered View'
   }
 }
@@ -480,12 +466,12 @@ async function runAggregationAndReplaceGraph(originalGraph: IGraph): Promise<voi
   // initializes the highlight styles of the graphComponent's current graph
   initializeHighlightStyles()
 
-  await runBalloonLayout()
+  await runLayoutOnHierarchyView()
 }
 
 /**
  * Asynchronously runs the {@link NodeAggregation} algorithm with the settings from the properties panel.
- * Afterwards, the {@link NodeAggregationResult} is applied to the <code>aggregateGraph</code>.
+ * Afterwards, the {@link NodeAggregationResult} is applied to the `aggregateGraph`.
  */
 async function applyAggregation(
   originalGraph: IGraph,
@@ -505,10 +491,16 @@ async function applyAggregation(
 }
 
 function createConfiguredAggregation(): NodeAggregation {
-  const aggregationMode = aggregationModeSelect.value
-  const maximumDuration = maximumDurationRange.value
-  const minimumClusterSize = minimumClusterSizeRange.value
-  const maximumClusterSize = maximumClusterSizeRange.value
+  const aggregationMode = document.querySelector<HTMLSelectElement>(
+    '#aggregation-mode-select'
+  )!.value
+  const maximumDuration = document.querySelector<HTMLInputElement>('#maximum-duration-range')!.value
+  const minimumClusterSize = document.querySelector<HTMLInputElement>(
+    '#minimum-cluster-size-range'
+  )!.value
+  const maximumClusterSize = document.querySelector<HTMLInputElement>(
+    '#maximum-cluster-size-range'
+  )!.value
   return new NodeAggregation({
     aggregation:
       aggregationMode === 'structural'
@@ -522,9 +514,20 @@ function createConfiguredAggregation(): NodeAggregation {
 }
 
 /**
- * Runs a balloon layout where the hierarchy edges are the tree edges and original edges are bundled.
+ * Runs a layout on the hierarchy view.
+ */
+async function runLayoutOnHierarchyView(affectedNodes?: IListEnumerable<INode>): Promise<void> {
+  return document.querySelector<HTMLSelectElement>('#layout-style-select')!.value === 'cactus'
+    ? runCactusLayout(affectedNodes)
+    : runBalloonLayout(affectedNodes)
+}
+
+/**
+ * Runs a {@link BalloonLayout} where the hierarchy edges are the tree edges and original edges are bundled.
  */
 async function runBalloonLayout(affectedNodes?: IListEnumerable<INode>): Promise<void> {
+  switchHierarchyEdgeVisibility(graphComponent.graph, true)
+
   // create the balloon layout
   const layout = new BalloonLayout({
     integratedNodeLabeling: true,
@@ -569,6 +572,205 @@ async function runCircularLayout(): Promise<void> {
   const circularLayout = new CircularLayout()
   circularLayout.balloonLayout.interleavedMode = InterleavedMode.ALL_NODES
   await graphComponent.morphLayout(circularLayout, '0.5s')
+}
+
+/**
+ * Runs a {@link CactusGroupLayout} where the hierarchy edges are not shown but the hierarchy is
+ * visualized by placing child nodes along the circular border of the parent node.
+ * The original edges are drawn in a bundled style.
+ *
+ * The approach uses {@link TemporaryGroupNodeInsertionStage} and some custom layout stage code
+ * to temporarily represent inner tree nodes (which have successors) as group nodes with children.
+ * This is required because the cactus layout works on hierarchical grouping structures as
+ * input and not on tree graph structures.
+ */
+async function runCactusLayout(affectedNodes?: IListEnumerable<INode>): Promise<void> {
+  const graph = graphComponent.graph
+  switchHierarchyEdgeVisibility(graph, false)
+
+  // collect hierarchy tree nodes that have children, which must temporarily be modeled as a groups
+  const innerTreeNodes: INode[] = []
+  const innerTreeNode2Descriptor = new Map<INode, TemporaryGroupDescriptor>()
+  for (const node of graph.nodes) {
+    if (graph.outEdgesAt(node).some(e => aggregationHelper.isHierarchyEdge(e))) {
+      innerTreeNodes.push(node)
+      innerTreeNode2Descriptor.set(node, new TemporaryGroupDescriptor())
+    }
+  }
+
+  // prepare the layout data for the TemporaryGroupNodeInsertionStage
+  const tmpGroupStageData = new TemporaryGroupNodeInsertionData()
+  for (const treeNode of innerTreeNodes) {
+    const descriptor = innerTreeNode2Descriptor.get(treeNode)!
+
+    // register a temporary group for each inner tree node...
+    const temporaryGroup = tmpGroupStageData.temporaryGroups.add(descriptor)
+    // ... members of the group are all the successor nodes
+    temporaryGroup.source = graph
+      .outEdgesAt(treeNode)
+      .filter(e => aggregationHelper.isHierarchyEdge(e))
+      .map(e => e.targetNode!)
+
+    // if the tree node has a parent too, then the parent descriptor must be setup as well
+    const inEdge = graph
+      .inEdgesAt(treeNode)
+      .filter(e => aggregationHelper.isHierarchyEdge(e))
+      .at(0)
+    if (inEdge) {
+      const parentGroupDescriptor = innerTreeNode2Descriptor.get(inEdge.sourceNode!)
+      if (parentGroupDescriptor) {
+        descriptor.parent = parentGroupDescriptor
+      }
+    }
+  }
+
+  // create a mapper that maps from the inner tree node to the temporary group descriptor,
+  // which is necessary that the custom layout stages know
+  const innerNodesMapper = graph.mapperRegistry.createDelegateMapper(
+    INode.$class,
+    TemporaryGroupDescriptor.$class,
+    'INNER_TREE_NODES',
+    n => {
+      if (innerTreeNode2Descriptor.has(n)) {
+        return innerTreeNode2Descriptor.get(n)
+      }
+      return null
+    }
+  )
+
+  // create a layout executor that also zooms to all nodes that were affected by the last operation
+  const layoutExecutor = new ZoomToNodesLayoutExecutor(
+    affectedNodes || IListEnumerable.EMPTY,
+    graphComponent,
+    new CustomCactusLayoutStage()
+  )
+  layoutExecutor.duration = TimeSpan.fromSeconds(0.5)
+  layoutExecutor.animateViewport = true
+  layoutExecutor.easedAnimation = true
+  layoutExecutor.layoutData = tmpGroupStageData
+  await layoutExecutor.start()
+
+  // clean-up the mapper registered earlier
+  graph.mapperRegistry.removeMapper(innerNodesMapper)
+}
+
+/**
+ * A layout stage that configures and applies the {@link CactusGroupLayout} and uses further
+ * stages to make the input suitable for it.
+ */
+class CustomCactusLayoutStage extends LayoutStageBase {
+  applyLayout(graph: LayoutGraph): void {
+    if (graph.nodeCount < 2) {
+      // single node or no node: nothing to do for the layout
+      return
+    }
+
+    // configure the cactus group layout
+    const cactus = new CactusGroupLayout({
+      fromSketchMode: true,
+      preferredRootWedge: 360,
+      integratedNodeLabeling: true,
+      nodeLabelingPolicy: NodeLabelingPolicy.RAY_LIKE_LEAVES
+    })
+    // ... configure bundling
+    cactus.edgeBundling.defaultBundleDescriptor.bundled = true
+    cactus.edgeBundling.defaultBundleDescriptor.bezierFitting = true
+
+    // ... configure the parent-child overlap ratio so that they are allowed to overlap a bit
+    graph.addDataProvider(
+      CactusGroupLayout.PARENT_OVERLAP_RATIO_DP_KEY,
+      DataProviders.createConstantDataProvider(0.5)
+    )
+
+    // apply the cactus group layout with temporary groups
+    new TemporaryGroupNodeInsertionStage(new TemporaryGroupCustomizationStage(cactus)).applyLayout(
+      graph
+    )
+
+    // clean-up
+    graph.removeDataProvider(CactusGroupLayout.PARENT_OVERLAP_RATIO_DP_KEY)
+  }
+}
+
+/**
+ * A layout stage that prepares the temporary group nodes inserted by
+ * {@link TemporaryGroupDescriptor} for the {@link CactusGroupLayout} algorithm.
+ */
+class TemporaryGroupCustomizationStage extends LayoutStageBase {
+  constructor(cactus: CactusGroupLayout) {
+    super(cactus)
+  }
+
+  applyLayout(graph: LayoutGraph): void {
+    const innerNodesDp = graph.getDataProvider('INNER_TREE_NODES')!
+    const isInsertedTmpGroupDp = graph.getDataProvider(
+      TemporaryGroupNodeInsertionStage.INSERTED_GROUP_NODE_DP_KEY
+    )!
+    const childNode2DescriptorDp = graph.getDataProvider(
+      TemporaryGroupNodeInsertionStage.TEMPORARY_GROUP_DESCRIPTOR_DP_KEY
+    )!
+    const grouping = new LayoutGroupingSupport(graph)
+
+    // collect the temporary group nodes inserted by TemporaryGroupNodeInsertionStage earlier
+    // and the respective original tree node
+    const temporaryGroups = graph.nodes
+      .filter(n => isInsertedTmpGroupDp.getBoolean(n))
+      .map(tmpGroup => {
+        const child = grouping.getChildren(tmpGroup)!.firstNode()
+        const originalTreeNode = graph.nodes.find(
+          n => innerNodesDp.get(n) === childNode2DescriptorDp.get(child)
+        )!
+        return { group: tmpGroup, treeNode: originalTreeNode }
+      })
+      .toArray()
+    grouping.dispose()
+
+    // pre-processing: transfer data from original tree node to temporary group node
+    for (const group of temporaryGroups) {
+      const groupNode = group.group
+      const treeNode = group.treeNode
+
+      // transfer sketch (size and location) from the original tree node to the temporary group
+      graph.setSize(groupNode, graph.getSize(treeNode))
+      graph.setCenter(groupNode, graph.getCenter(treeNode))
+
+      // change edges such that they connect to the group node (if there are any)
+      for (const edge of treeNode.edges.toArray()) {
+        const atSource = edge.source == treeNode
+        const other = edge.opposite(treeNode)
+        graph.changeEdge(edge, atSource ? groupNode : other, atSource ? other : groupNode)
+      }
+    }
+
+    // now hide all the tree node, they are now modeled by the inserted temporary group nodes
+    const treeNodeHider = new LayoutGraphHider(graph)
+    for (const group of temporaryGroups) {
+      treeNodeHider.hide(group.treeNode)
+    }
+
+    // apply the cactus layout
+    super.applyLayoutCore(graph)
+
+    // un-hide all the hidden tree nodes
+    treeNodeHider.unhideAll()
+
+    // post-processing: transfer from temporary group node to original tree node
+    for (const group of temporaryGroups) {
+      const groupNode = group.group
+      const treeNode = group.treeNode
+
+      // transfer size and location
+      graph.setSize(treeNode, graph.getSize(groupNode))
+      graph.setLocation(treeNode, graph.getLocation(groupNode))
+
+      // change edges such that they again connect to the original tree nodes
+      for (const edge of groupNode.edges.toArray()) {
+        const atSource = edge.source == groupNode
+        const other = edge.opposite(groupNode)
+        graph.changeEdge(edge, atSource ? treeNode : other, atSource ? other : treeNode)
+      }
+    }
+  }
 }
 
 /**
@@ -645,21 +847,39 @@ function initializeStyles(): void {
 }
 
 /**
+ * Switches the visibility of hierarchy edges by setting either the default hierarchy edge
+ * style or a void edge style that does not visualize the edge.
+ */
+function switchHierarchyEdgeVisibility(graph: IGraph, visible: boolean) {
+  for (const edge of graph.edges) {
+    if (aggregationHelper.isHierarchyEdge(edge)) {
+      if (visible && edge.style !== hierarchyEdgeStyle) {
+        graph.setStyle(edge, hierarchyEdgeStyle)
+      } else if (!visible && edge.style !== VoidEdgeStyle.INSTANCE) {
+        graph.setStyle(edge, VoidEdgeStyle.INSTANCE)
+      }
+    }
+  }
+}
+
+/**
  * Enables/disables the UI.
  */
 function setUiDisabled(disabled: boolean): Promise<void> {
   return new Promise<void>(resolve => {
-    calculatingIndicator.style.display = !disabled ? 'none' : 'block'
-    aggregationModeSelect.disabled = disabled
-    maximumDurationRange.disabled = disabled
-    minimumClusterSizeRange.disabled = disabled
-    maximumClusterSizeRange.disabled = disabled
+    document.querySelector<HTMLElement>('#calculating-indicator')!.style.display = !disabled
+      ? 'none'
+      : 'block'
+    document.querySelector<HTMLSelectElement>('#aggregation-mode-select')!.disabled = disabled
+    document.querySelector<HTMLInputElement>('#maximum-duration-range')!.disabled = disabled
+    document.querySelector<HTMLInputElement>('#minimum-cluster-size-range')!.disabled = disabled
+    document.querySelector<HTMLInputElement>('#maximum-cluster-size-range')!.disabled = disabled
     ;(graphComponent.inputMode as GraphViewerInputMode)!.waitInputMode.waiting = disabled
-    runButton.disabled = disabled
+    document.querySelector<HTMLButtonElement>('#run-aggregation')!.disabled = disabled
 
     // enable switching to filtered view only if there are some real edges in the graph
     // otherwise the graph in filtered view will be empty
-    switchViewButton.disabled =
+    document.querySelector<HTMLButtonElement>('#switch-view')!.disabled =
       disabled ||
       graphComponent.graph.nodes.every(node =>
         aggregationHelper.aggregateGraph.isAggregationItem(node)
@@ -709,18 +929,18 @@ function loadGraph(graph: IGraph): IGraph {
  * Updates the info panels.
  */
 function onInfoPanelPropertiesChanged(): void {
-  const originalNodesElement = document.getElementById('original-nodes') as HTMLLabelElement
+  const originalNodesElement = document.querySelector<HTMLLabelElement>('#original-nodes')!
   originalNodesElement.innerText = `${aggregationHelper ? aggregationHelper.visibleNodes : 0} / ${
     originalGraph.nodes.size
   }`
-  const originalEdgesElement = document.getElementById('original-edges') as HTMLLabelElement
+  const originalEdgesElement = document.querySelector<HTMLLabelElement>('#original-edges')!
   originalEdgesElement.innerText = `${aggregationHelper ? aggregationHelper.visibleEdges : 0} / ${
     originalGraph.edges.size
   }`
   const currentItem = graphComponent.currentItem
-  const nodeLabel = currentItem instanceof ILabelOwner ? currentItem.labels.firstOrDefault() : null
+  const nodeLabel = currentItem instanceof ILabelOwner ? currentItem.labels.at(0) : null
   const nodeName = nodeLabel ? nodeLabel.text.replace('\n', ' ') : ''
-  const currentItemElement = document.getElementById('current-item') as HTMLLabelElement
+  const currentItemElement = document.querySelector<HTMLLabelElement>('#current-item')!
   currentItemElement.innerText = nodeName
   currentItemElement.style.display = nodeName !== '' ? 'block' : 'none'
 
@@ -728,24 +948,19 @@ function onInfoPanelPropertiesChanged(): void {
   if (aggregationHelper && graphComponent.currentItem instanceof INode) {
     aggregate = aggregationHelper.getAggregateForNode(graphComponent.currentItem)
   }
-  const descendantCountElement = document.getElementById('descendant-count') as HTMLLabelElement
+  const descendantCountElement = document.querySelector<HTMLLabelElement>('#descendant-count')!
   descendantCountElement.innerText = aggregate ? aggregate.descendantCount.toString() : '0'
-  const descendantWeightSumElement = document.getElementById(
-    'descendant-weight-sum'
-  ) as HTMLLabelElement
-  if (aggregate) {
-    const descendantWeightSum =
-      Math.round((aggregate.descendantWeightSum + Number.EPSILON) * 100) / 100
-    descendantWeightSumElement.innerText = descendantWeightSum.toString()
-  } else {
-    descendantWeightSumElement.innerText = '0'
-  }
+  const descendantWeightSumElement = document.querySelector<HTMLElement>('#descendant-weight-sum')!
+  descendantWeightSumElement.innerText = aggregate
+    ? (aggregate.descendantWeightSum + Number.EPSILON).toFixed(2)
+    : '0'
 
   // enable switching to filtered view only if there are some real edges in the graph
   // otherwise the graph in filtered view will be empty
-  switchViewButton.disabled = graphComponent.graph.nodes.every(node =>
-    aggregationHelper.aggregateGraph.isAggregationItem(node)
-  )
+  document.querySelector<HTMLButtonElement>('#switch-view')!.disabled =
+    graphComponent.graph.nodes.every(node =>
+      aggregationHelper.aggregateGraph.isAggregationItem(node)
+    )
 }
 
 /**
@@ -793,29 +1008,31 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  const maximumDurationLabel = document.getElementById('maximum-duration-label') as HTMLLabelElement
-  bindChangeListener(
-    "input[data-command='MaximumDuration']",
-    value => (maximumDurationLabel.innerText = value)
-  )
-  const minimumClusterSizeLabel = document.getElementById(
-    'minimum-cluster-size-label'
-  ) as HTMLLabelElement
-  bindChangeListener(
-    "input[data-command='MinimumClusterSize']",
-    value => (minimumClusterSizeLabel.innerText = value)
-  )
-  const maximumClusterSizeLabel = document.getElementById(
-    'maximum-cluster-size-label'
-  ) as HTMLLabelElement
-  bindChangeListener(
-    "input[data-command='MaximumClusterSize']",
-    value => (maximumClusterSizeLabel.innerText = value)
-  )
+  bindChangeListener("input[data-command='MaximumDuration']", value => {
+    const maximumDurationLabel =
+      document.querySelector<HTMLLabelElement>('#maximum-duration-label')!
+    maximumDurationLabel.innerText = value
+  })
+  bindChangeListener("input[data-command='MinimumClusterSize']", value => {
+    const minimumClusterSizeLabel = document.querySelector<HTMLLabelElement>(
+      '#minimum-cluster-size-label'
+    )!
+    minimumClusterSizeLabel.innerText = value
+  })
+  bindChangeListener("input[data-command='MaximumClusterSize']", value => {
+    const maximumClusterSizeLabel = document.querySelector<HTMLLabelElement>(
+      '#maximum-cluster-size-label'
+    )!
+    maximumClusterSizeLabel.innerText = value
+  })
 
   bindAction("button[data-command='RunAggregation']", runAggregation)
   bindAction("button[data-command='SwitchView']", switchView)
+
+  document
+    .querySelector<HTMLSelectElement>('#layout-style-select')!
+    .addEventListener('change', runAggregation)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

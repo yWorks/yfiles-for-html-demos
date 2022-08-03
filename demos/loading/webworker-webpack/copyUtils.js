@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,5 +33,4 @@ const fs = require('fs-extra')
 
 fs.copySync('../../utils/Workarounds.ts', './src/utils/Workarounds.ts')
 fs.copySync('../../resources/demo-styles.ts', './src/resources/demo-styles.ts')
-fs.copySync('../../resources/basic-demo-styles.ts', './src/resources/basic-demo-styles.ts')
 fs.copySync('../../resources/demo-colors.ts', './src/resources/demo-colors.ts')

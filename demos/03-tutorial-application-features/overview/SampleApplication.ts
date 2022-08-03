@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,15 +37,9 @@ import {
   Size
 } from 'yfiles'
 
-import {
-  bindAction,
-  bindCommand,
-  checkLicense,
-  showApp,
-  toggleClass
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { bindAction, bindCommand, showApp, toggleClass } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Application Features - Add an overview component to the application
@@ -57,11 +51,12 @@ let graphComponent: GraphComponent
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   /////////////////////// overview component ///////////////////////
 
@@ -114,7 +109,7 @@ function run(licenseData: object): void {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 
   graph.nodeDefaults.size = new Size(40, 40)
 }
@@ -172,5 +167,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

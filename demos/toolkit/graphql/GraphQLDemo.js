@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,13 +47,15 @@ import {
   PolylineEdgeStyle,
   Size
 } from 'yfiles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import { graphQLQuery } from './GraphQLQuery.js'
 import { SocialNetworkGraphBuilder } from './SocialNetworkGraphBuilder.js'
 import { SocialNetworkNodeStyle } from './SocialNetworkNodeStyle.js'
 import PropertiesPanel from './PropertiesPanel.js'
 import { copyWithFriends } from './Person.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 Class.ensure(LayoutExecutor)
 
@@ -109,13 +111,13 @@ const queryFriends = `query loadFriends ($id: ID!) {
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureGraph(graphComponent.graph)
 
@@ -128,7 +130,7 @@ async function run(licenseData) {
   showApp(graphComponent)
 
   await loadSinglePerson(1)
-  const initialNode = graphComponent.graph.nodes.firstOrDefault()
+  const initialNode = graphComponent.graph.nodes.at(0)
   if (initialNode) {
     await loadFriends(initialNode)
   }
@@ -324,4 +326,5 @@ function registerCommands(graphComponent) {
   bindAction("button[data-command='LoadAll']", () => loadAll())
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

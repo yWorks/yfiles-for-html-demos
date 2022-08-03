@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 // @ts-ignore
-import { h, render } from '../../preact-loader'
-// @ts-ignore
 import type { ComponentType } from '../../preact-loader'
+// @ts-ignore
+import { h, render } from '../../preact-loader'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { INode, IRenderContext } from 'yfiles'
 import { NodeStyleBase, SvgVisual, Visual } from 'yfiles'
@@ -58,7 +58,7 @@ declare type Cache<TTag> = { cache: PreactComponentNodeStyleProps<TTag> }
  * A simple INodeStyle implementation that uses Preact Components/render functions
  * for rendering the node visualizations
  * Use it like this:
- * <code>
+ * ```
  *  declare type TagType = { name: string }
  *
  *  const MyNodeTemplate = ({ width, height, tag }: PreactComponentNodeStyleProps<TagType>) => (
@@ -72,7 +72,7 @@ declare type Cache<TTag> = { cache: PreactComponentNodeStyleProps<TTag> }
  *
  *  const tag: TagType = { name: 'yFiles' }
  *  graph.createNode({ style, tag })
- * </code>
+ * ```
  */
 export default class PreactComponentNodeStyle<TTag> extends NodeStyleBase {
   constructor(private readonly type: RenderType<TTag>) {

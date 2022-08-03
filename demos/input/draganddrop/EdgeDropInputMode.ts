@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,11 +31,11 @@ import {
   GraphItemTypes,
   IEdge,
   IGraph,
+  IModelItem,
   ItemDropInputMode,
   Point,
   Rect,
-  VoidNodeStyle,
-  IModelItem
+  VoidNodeStyle
 } from 'yfiles'
 
 /**
@@ -103,14 +103,11 @@ export default class EdgeDropInputMode extends ItemDropInputMode<IEdge> {
    */
   updatePreview(previewGraph: IGraph, dragLocation: Point): void {
     previewGraph.setNodeCenter(
-      previewGraph.nodes.elementAt(0),
+      previewGraph.nodes.first(),
       dragLocation.subtract(this.previewNodeOffset)
     )
 
-    previewGraph.setNodeCenter(
-      previewGraph.nodes.elementAt(1),
-      dragLocation.add(this.previewNodeOffset)
-    )
+    previewGraph.setNodeCenter(previewGraph.nodes.at(1)!, dragLocation.add(this.previewNodeOffset))
 
     const edge = previewGraph.edges.first()
     previewGraph.clearBends(edge)

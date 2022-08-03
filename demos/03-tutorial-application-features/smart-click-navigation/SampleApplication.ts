@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,22 +46,22 @@ import {
   ShapeNodeStyle
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import GraphBuilderData from './resources/graph'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 const graphChooserBox = document.getElementById('graphChooserBox') as HTMLSelectElement
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   // Conveniently store a reference to the graph that is displayed
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
@@ -243,7 +243,7 @@ function updateHighlight(item: IModelItem): void {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 }
 
 /**
@@ -256,5 +256,5 @@ function registerCommands(): void {
   })
 }
 
-// Start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

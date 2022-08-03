@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import { FreeNodePortLocationModel, GraphComponent, License, Point, Rect } from 'yfiles'
-import { checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { showApp } from '../../resources/demo-app'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -117,5 +117,5 @@ function populateGraph(): void {
 
 // ////////////////////////////////////////////////////
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

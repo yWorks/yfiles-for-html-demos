@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,7 +52,7 @@ export default class LabelHandleProvider
   implements IHandleProvider
 {
   /**
-   * Creates a new instance of <code>LabelHandleProvider</code>.
+   * Creates a new instance of {@link LabelHandleProvider}.
    * @param label The given label
    */
   constructor(private readonly label: ILabel) {
@@ -60,7 +60,7 @@ export default class LabelHandleProvider
   }
 
   /**
-   * Implementation of {@link IHandleProvider#getHandles}.
+   * Implementation of {@link IHandleProvider.getHandles}.
    *
    * Returns a list of available handles for the label this instance has been created for.
    */

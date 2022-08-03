@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,8 +30,10 @@ import {
   BaseClass,
   GraphComponent,
   IEdge,
+  IGraph,
   IInputModeContext,
   INode,
+  INodeStyle,
   IPoint,
   IPositionHandler,
   List,
@@ -39,7 +41,6 @@ import {
 } from 'yfiles'
 import Subtree from './Subtree.js'
 import RelocateSubtreeLayoutHelper from './RelocateSubtreeLayoutHelper.js'
-import { DemoNodeStyle } from '../../resources/demo-styles.js'
 
 /**
  * An {@link IPositionHandler} that moves a node and its subtree.
@@ -48,12 +49,15 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
   /**
    * Creates a new instance of a SubtreePositionHandler.
    * @param {?INode} node The selected node
-   * @param {?IPositionHandler} originalHandler The original position handler
+   * @param {?IPositionHandler} nodePositionHandler The original position handler
+   * @param {!INodeStyle} movingNodeStyle The node style that is set while the node is moving
    */
-  constructor(node, originalHandler) {
+  constructor(node, nodePositionHandler, movingNodeStyle) {
     super()
+    this.movingNodeStyle = movingNodeStyle
+    this.nodePositionHandler = nodePositionHandler
     this.node = node
-    this.nodePositionHandler = originalHandler
+    this.node2NormalStyle = new Map()
   }
 
   /**
@@ -72,8 +76,9 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     this.subtree = new Subtree(context.graph, this.node)
 
     this.subtree.nodes.forEach(node => {
-      const style = node.style
-      style.cssClass += ' moving'
+      // store normal style of the node and set the moving node style while dragging
+      this.node2NormalStyle.set(node, node.style)
+      context.graph.setStyle(node, this.movingNodeStyle)
     })
 
     this.layoutHelper = new RelocateSubtreeLayoutHelper(context.canvasComponent, this.subtree)
@@ -102,10 +107,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
   cancelDrag(context, originalLocation) {
     this.compositeHandler.cancelDrag(context, originalLocation)
     this.layoutHelper.cancelLayout()
-    this.subtree.nodes.forEach(node => {
-      const style = node.style
-      style.cssClass = style.cssClass.replace(' moving', '')
-    })
+    this.resetStyles(context.graph)
   }
 
   /**
@@ -117,10 +119,23 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
   dragFinished(context, originalLocation, newLocation) {
     this.compositeHandler.dragFinished(context, originalLocation, newLocation)
     this.layoutHelper.stopLayout()
+    this.resetStyles(context.graph)
+  }
+
+  /**
+   * Replaces the temporary styles used while moving nodes with the original styles.
+   * @param {!IGraph} graph
+   */
+  resetStyles(graph) {
+    const nodeToStyle = this.node2NormalStyle
     this.subtree.nodes.forEach(node => {
-      const style = node.style
-      style.cssClass = style.cssClass.replace(' moving', '')
+      if (nodeToStyle.has(node)) {
+        // reset style to the normal node style of this node
+        const style = nodeToStyle.get(node)
+        graph.setStyle(node, style)
+      }
     })
+    nodeToStyle.clear()
   }
 
   /**

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -120,11 +120,13 @@ import BpmnView, {
   YFILES_BPMN_PREFIX
 } from './bpmn-view'
 import * as DemoApp from '../../resources/demo-app'
+import { addNavigationButtons, configureTwoPointerPanning } from '../../resources/demo-app'
 import { DragAndDropPanel } from '../../utils/DndPanel'
-import loadJson from '../../resources/load-json'
 import { BpmnDiParser } from './bpmn-di'
 import { pointerEventsSupported } from '../../utils/Workarounds'
-import { addNavigationButtons } from '../../resources/demo-app'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -158,10 +160,11 @@ addNavigationButtons(graphChooserBox)
 /**
  * Starts the BPMN editor.
  */
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize UI elements
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
 
   // load the folding and style modules and initialize the GraphComponent
@@ -196,7 +199,7 @@ async function run(licenseData: object): Promise<void> {
       )
     }
     dragSource.addQueryContinueDragListener((src, args) => {
-      if (args.dropTarget === null) {
+      if (args.dropTarget == null) {
         DemoApp.removeClass(dragPreview, 'hidden')
       } else {
         DemoApp.addClass(dragPreview, 'hidden')
@@ -340,6 +343,9 @@ function initializeInputMode(): void {
   // assign input mode to graph component
   graphComponent.inputMode = graphEditorInputMode
 
+  // use two finger panning to allow easier editing with touch gesture
+  configureTwoPointerPanning(graphComponent)
+
   // Configure the context menus
   initializeContextMenu()
 }
@@ -445,7 +451,7 @@ async function onGraphChooserBoxSelectionChanged(): Promise<void> {
   const isBpmnDi = selectedItem.getAttribute('data-type') === 'bpmn-di'
   if (isBpmnDi) {
     const content = await loadBpmnDiSample(graphName)
-    if (content !== null) {
+    if (content != null) {
       const bpmnDiParser = new BpmnDiParser()
       await bpmnDiParser.load(graphComponent.graph, content)
     }
@@ -866,16 +872,14 @@ function createStylePanelNodes(): INode[] {
   poolTable.columnDefaults.insets = Insets.EMPTY
   poolTable.createGrid(1, 1)
   // Use twice the default width for this sample column (looks nicer in the preview...)
-  poolTable.setSize(
-    poolTable.rootColumn.childColumns.first(),
-    poolTable.rootColumn.childColumns.first().actualSize * 2
-  )
+  const column = poolTable.rootColumn.childColumns.first()
+  poolTable.setSize(column, column.actualSize * 2)
   nodeContainer.setNodeLayout(poolNode, poolTable.layout.toRect())
   nodeContainer.addLabel(poolNode, 'Pool', PoolHeaderLabelModel.WEST)
 
   const rowPoolNodeStyle = new PoolNodeStyle(false)
   const rowNode = nodeContainer.createNodeAt(Point.ORIGIN, rowPoolNodeStyle)
-  const rowTable = rowNode.lookup(ITable.$class)! as ITable
+  const rowTable = rowNode.lookup(ITable.$class)!
   const rowSampleRow = rowTable.createRow(100)
   const rowSampleColumn = rowTable.createColumn({
     width: 200,
@@ -887,7 +891,7 @@ function createStylePanelNodes(): INode[] {
   nodeContainer.setNodeLayout(rowNode, rowTable.layout.toRect())
   // Set the first row as tag so the NodeDragComponent knows that a row and not a complete pool node shall be
   // dragged
-  rowNode.tag = rowTable.rootRow.childRows.first()
+  rowNode.tag = rowTable.rootRow.childRows.at(0)
 
   // Add BPMN sample nodes
   nodeContainer.createNode(
@@ -966,5 +970,5 @@ class AdditionalEditLabelHelper extends EditLabelHelper {
   }
 }
 
-// start the demo
-loadJson().then(DemoApp.checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

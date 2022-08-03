@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,8 +29,7 @@
 /* eslint-disable no-undef */
 
 import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
-// import d3 typings
-import d3, { NumberValue } from 'd3'
+import type { NumberValue } from 'd3'
 
 const margin = {
   top: 3,
@@ -55,7 +54,7 @@ const color = d3
 export default class D3ChartNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(renderContext: IRenderContext, node: INode): SvgVisual {
     // create a g element and use it as a container for the sparkline visualization
@@ -105,7 +104,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(renderContext: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     const g = oldVisual.svgElement

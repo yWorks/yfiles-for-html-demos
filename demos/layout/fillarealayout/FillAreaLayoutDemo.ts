@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -53,12 +53,11 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import SampleData from './resources/SampleData'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -73,9 +72,10 @@ let selectionRect: Rect | null = null
  */
 let componentAssignmentStrategy: ComponentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
 
-function run(licenseData: object) {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputModes()
 
@@ -90,7 +90,7 @@ function run(licenseData: object) {
 }
 
 /**
- * Initializes the {@link GraphEditorInputMode} as the {@link CanvasComponent#inputMode}
+ * Initializes the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and registers handlers which are called when selected nodes are deleted.
  */
 function initializeInputModes(): void {
@@ -244,5 +244,5 @@ function registerCommands(): void {
   })
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

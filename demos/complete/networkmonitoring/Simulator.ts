@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -136,7 +136,7 @@ export default class Simulator {
   /**
    * Creates new packets.
    * Packets are only sent from laptops, workstations, smartphones and tablets.
-   * @see {@link Device#canSendPackets}
+   * @see {@link Device.canSendPackets}
    */
   createPackets(): void {
     // Find all connections that are still enabled and unbroken. Connections are automatically
@@ -169,9 +169,9 @@ export default class Simulator {
    * Moves the active packets around the network according to certain rules.
    * Packets move freely and randomly within the network until they arrive at a non-switch, non-WiFi device.
    * Servers and databases always bounce back a new packet when they receive one, while client devices
-   * simply receive packets and maybe spawn new ones in {@link Simulator#createPackets}.
-   * @see {@link NetworkSimulator#createPackets}
-   * @see {@link Device#canConnectTo}
+   * simply receive packets and maybe spawn new ones in {@link Simulator.createPackets}.
+   * @see {@link NetworkSimulator.createPackets}
+   * @see {@link Device.canConnectTo}
    */
   movePackets(): void {
     // Find packets that need to be considered for moving.
@@ -235,7 +235,7 @@ export default class Simulator {
 
   /**
    * Removes packets from the history that are no longer considered for connection or device load.
-   * @see {@link NetworkSimulator#HISTORY_SIZE}
+   * @see {@link NetworkSimulator.HISTORY_SIZE}
    */
   pruneOldPackets(): void {
     this.historicalPackets = this.historicalPackets.filter(

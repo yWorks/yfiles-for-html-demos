@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,7 +39,7 @@ module.exports = {
   },
   chainWebpack: config => {
     // the yFiles library files are ES5 compatible and don't need to be babeled explicitly
-    config.module.rule('js').exclude.add(/es-modules/)
+    config.module.rule('js').exclude.add(/node_modules[\\/]yfiles/)
     // cache loader and worker loader don't work well together - exclude worker file from the rule
     config.module.rule('ts').exclude.add(/\.worker/)
     // add worker and babel loader for the worker file
@@ -52,14 +52,5 @@ module.exports = {
       .end()
       .use('babel-loader')
       .loader('babel-loader')
-  },
-  css: {
-    loaderOptions: {
-      postcss: {
-        config: {
-          path: './postcss.config.js' // don't search for postcss config outside this demo folder
-        }
-      }
-    }
   }
 }

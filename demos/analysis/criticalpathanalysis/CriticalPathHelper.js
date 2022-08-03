@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,14 +32,12 @@ import {
   HierarchicLayoutData,
   IEdge,
   IGraph,
-  IMapper,
   INode,
   LabelPlacements,
   PortCalculator,
   PreferredPlacementDescriptor,
-  RankAssignmentAlgorithm,
-  ShortestPath,
-  YGraphAdapter
+  RankAssignment,
+  ShortestPath
 } from 'yfiles'
 
 /**
@@ -57,13 +55,13 @@ export function calculateCriticalPathEdges(graphComponent) {
   // the duration when moving from the source's task to the target's task
   const transitionDuration = edge => edge.tag.transitionDuration | 0
 
-  // runs the rank assignment algorithm
-  const results = runRankAssignmentAlgorithm(graph, taskDuration, transitionDuration)
+  // runs the rank assignment algorithm to calculate the ranks and the slacks
+  const results = calculateRanksAndSlacks(graph, taskDuration, transitionDuration)
 
   // Finds the nodes with the lowest/highest ranking...
   // In this graph, it is not really necessary since START and FINISH nodes will be the marked as
   // lowest/highest but for the general case, we have to find them based on the result of the algorithm
-  const { lowestNode, highestNode } = findHighestLowestNodes(graph, results.rank)
+  const { lowestNode, highestNode } = findHighestLowestNodes(graph)
 
   // Calculates the shortest path between these two nodes on the graph when the edges
   // are weighted by their slack number
@@ -87,11 +85,10 @@ export function calculateCriticalPathEdges(graphComponent) {
 /**
  * Returns the nodes with the lowest and highest ranking
  * @param {!IGraph} graph The input graph
- * @param {!IMapper.<INode,number>} rank The mapper that contains the node ranking
  */
-export function findHighestLowestNodes(graph, rank) {
+export function findHighestLowestNodes(graph) {
   const order = graph.nodes.orderBy(
-    node => rank.get(node) || 0,
+    node => node.tag.layerId || 0,
     (a, b) => Math.sign(Number(a) - Number(b))
   )
   const lowestNode = order.first()
@@ -102,40 +99,33 @@ export function findHighestLowestNodes(graph, rank) {
 }
 
 /**
- * Runs the rank assignment algorithm.
+ * Runs the rank assignment algorithm to calculate a rank for each node and a slack for each edge.
  * @param {!IGraph} graph The input graph
  * @param {!function} taskDuration The duration of each task represented by nodes
  * @param {!function} transitionDuration The duration when moving from one task to another (edge transition duration)
  * @returns {!object}
  */
-function runRankAssignmentAlgorithm(graph, taskDuration, transitionDuration) {
-  const adapter = new YGraphAdapter(graph)
-  const layerMap = adapter.yGraph.createNodeMap()
-  const layerMapper = adapter.createNodeMapper(layerMap)
+function calculateRanksAndSlacks(graph, taskDuration, transitionDuration) {
   // for each edge the min distance is the time needed for the task of each source node to be completed
   // plus the time needed to move from the source task to the target task
   const minDistance = edge => {
     return transitionDuration(edge) + taskDuration(edge.sourceNode)
   }
 
-  // run the simplex version of the rank assignment algorithm
-  RankAssignmentAlgorithm.simplex(
-    adapter.yGraph,
-    layerMap,
-    null,
-    adapter.createEdgeMap(minDistance)
-  )
+  // run the rank assignment algorithm
+  const rankAssignmentResult = new RankAssignment({
+    minimumEdgeLengths: edge => transitionDuration(edge) + taskDuration(edge.sourceNode)
+  }).run(graph)
+
   // store the ranking of each node at its tag
+  const rankIds = rankAssignmentResult.nodeRankIds
   graph.nodes.forEach(node => {
-    node.tag.layerId = layerMapper.get(node)
+    node.tag.layerId = rankIds.get(node) || 0
   })
 
   return {
-    rank: layerMapper,
     slack: edge =>
-      (layerMapper.get(edge.targetNode) || 0) -
-      (layerMapper.get(edge.sourceNode) || 0) -
-      minDistance(edge)
+      (rankIds.get(edge.targetNode) || 0) - (rankIds.get(edge.sourceNode) || 0) - minDistance(edge)
   }
 }
 
@@ -173,5 +163,5 @@ export async function runLayout(graphComponent) {
 
   // run the layout
   await graphComponent.morphLayout(new PortCalculator(layout), '0.5s', layoutData)
-  await graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 }

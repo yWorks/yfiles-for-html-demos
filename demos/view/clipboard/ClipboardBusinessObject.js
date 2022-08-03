@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,11 +42,11 @@ export function createClipboardBusinessObject() {
 /**
  * A data object with a name and a numeric value.
  * It implements {@link IPropertyObservable} so the node style will be notified
- * about changes of the {@link #name} property and update its visualization immediately.
+ * about changes of the {@link name} property and update its visualization immediately.
  */
 export class ClipboardBusinessObject extends BaseClass(IPropertyObservable) {
   /**
-   * Creates a new instance of <code>ClipboardBusinessObject</code>
+   * Creates a new instance of {@link ClipboardBusinessObject}
    * @param {!string} name
    */
   constructor(name) {
@@ -64,7 +64,7 @@ export class ClipboardBusinessObject extends BaseClass(IPropertyObservable) {
 
   /**
    * Sets the name of this object.
-   * @param {string} value
+   * @param value
    * @type {*}
    */
   set name(value) {
@@ -77,8 +77,7 @@ export class ClipboardBusinessObject extends BaseClass(IPropertyObservable) {
   }
 
   /**
-   * The event that is raised when the {@link ClipboardBusinessObject#name} of this object changes.
-   * @param {function(Object, PropertyChangedEventArgs)} listener
+   * The event that is raised when the {@link ClipboardBusinessObject.name} of this object changes.
    * @param {!function} listener
    */
   addPropertyChangedListener(listener) {
@@ -86,8 +85,7 @@ export class ClipboardBusinessObject extends BaseClass(IPropertyObservable) {
   }
 
   /**
-   * The event that is fired when the {@link ClipboardBusinessObject#name} of this object changes.
-   * @param {function(Object, PropertyChangedEventArgs)} listener
+   * The event that is fired when the {@link ClipboardBusinessObject.name} of this object changes.
    * @param {!function} listener
    */
   removePropertyChangedListener(listener) {

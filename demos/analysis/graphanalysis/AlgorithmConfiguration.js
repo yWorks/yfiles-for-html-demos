@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -208,10 +208,11 @@ export default class AlgorithmConfiguration {
     if (this.useUniformWeights) {
       return 1
     }
-    // if edge has at least one label...
-    if (edge.labels.size > 0) {
-      // ..try to return it's value
-      const edgeWeight = parseFloat(edge.labels.elementAt(0).text)
+    // if edge has at least one label ...
+    const firstLabel = edge.labels.at(0)
+    if (firstLabel) {
+      // ... try to return its value
+      const edgeWeight = parseFloat(firstLabel.text)
       if (!isNaN(edgeWeight)) {
         return edgeWeight > 0 ? edgeWeight : 0
       }

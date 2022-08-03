@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,19 +40,22 @@ import {
 } from 'yfiles'
 
 import MySimpleNodeStyle from './MySimpleNodeStyle.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the graph
   initializeGraph()
@@ -146,21 +149,18 @@ function startAnimation() {
   if (animator === null) {
     animator = new Animator(graphComponent)
   }
-  const graphAnimation = IAnimation.createGraphAnimation(
-    graphComponent.graph,
-    IMapper.fromDelegate(
+  const graphAnimation = IAnimation.createGraphAnimation({
+    graph: graphComponent.graph,
+    targetNodeLayouts: IMapper.fromDelegate(
       node =>
         new Rect(Math.random() * 2400, Math.random() * 2400, node.layout.width, node.layout.height)
     ),
-    null,
-    null,
-    null,
-    '5s'
-  )
+    preferredDuration: '5s'
+  })
   animator.animate(graphAnimation)
 }
 
 // ////////////////////////////////////////////////////
 
-// Start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

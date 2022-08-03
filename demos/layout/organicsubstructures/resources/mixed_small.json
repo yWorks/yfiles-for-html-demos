@@ -4,10 +4,15 @@
     "chainSubstructureStyle": "NONE",
     "starSubstructureStyle": "SEPARATED_RADIAL",
     "parallelSubstructureStyle": "RECTANGULAR",
+    "treeSubstructureStyle": "ORIENTED",
+    "groupSubstructures": "NO_GROUPS",
     "useEdgeGrouping": true,
     "considerNodeTypes": true,
     "parallelSubstructureTypeSeparation": false,
     "starSubstructureTypeSeparation": false,
-    "alterTypesAndStructure": true
+    "allowItemCreation": true,
+    "allowItemModification": true,
+    "allowTypeChanges": true,
+    "overrideStyles": true
   }
 }

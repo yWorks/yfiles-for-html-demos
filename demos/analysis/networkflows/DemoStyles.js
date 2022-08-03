@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -399,7 +399,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * Creates the visual for an edge.
    * @param {!IRenderContext} context The render context
    * @param {!IEdge} edge The edge to which this style instance is assigned.
-   * @see Overrides {@link EdgeStyleBase#createVisual}
+   * @see Overrides {@link EdgeStyleBase.createVisual}
    * @returns {!Visual} The new visual
    */
   createVisual(context, edge) {
@@ -425,7 +425,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param {!IRenderContext} context The render context
    * @param {!SvgVisual} oldVisual The old visual
    * @param {!IEdge} edge The edge to which this style instance is assigned.
-   * @see Overrides {@link EdgeStyleBase#updateVisual}
+   * @see Overrides {@link EdgeStyleBase.updateVisual}
    * @returns {!Visual} The updated visual
    */
   updateVisual(context, oldVisual, edge) {
@@ -575,7 +575,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param {!IInputModeContext} canvasContext The render context
    * @param {!Point} p The coordinates of the query in the world coordinate system
    * @param {!IEdge} edge The given edge
-   * @see Overrides {@link EdgeStyleBase#isHit}
+   * @see Overrides {@link EdgeStyleBase.isHit}
    * @returns {boolean} True if the edge has been hit, false otherwise
    */
   isHit(canvasContext, p, edge) {
@@ -598,7 +598,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param {!IEdge} edge The edge to create the path for.
-   * @see Overrides {@link EdgeStyleBase#getPath}
+   * @see Overrides {@link EdgeStyleBase.getPath}
    * @returns {!GeneralPath} A {@link GeneralPath} following the edge
    */
   getPath(edge) {

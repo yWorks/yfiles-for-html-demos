@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -202,11 +202,11 @@ export default class PathsConfig extends AlgorithmConfiguration {
             if (
               path.size === 1 ||
               (index === 0 &&
-                (target === path.elementAt(index + 1).sourceNode ||
-                  target === path.elementAt(index + 1).targetNode)) ||
+                (target === path.at(index + 1).sourceNode ||
+                  target === path.at(index + 1).targetNode)) ||
               (index > 0 &&
-                (source === path.elementAt(index - 1).sourceNode ||
-                  source === path.elementAt(index - 1).targetNode))
+                (source === path.at(index - 1).sourceNode ||
+                  source === path.at(index - 1).targetNode))
             ) {
               allPaths[i].push(source)
               allPaths[i].push(edge)
@@ -441,7 +441,7 @@ export default class PathsConfig extends AlgorithmConfiguration {
    * Returns whether or not all the given nodes belong to the graph.
    * @param {!Array.<INode>} nodes The nodes.
    * @param {!IGraph} graph The graph.
-   * @returns {boolean} <code>true</code> if all nodes belong to the graph, <code>false</code> otherwise.
+   * @returns {boolean} `true` if all nodes belong to the graph, `false` otherwise.
    */
   nodesInGraph(nodes, graph) {
     return nodes.every(node => graph.contains(node))

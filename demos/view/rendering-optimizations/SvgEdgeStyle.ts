@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -62,8 +62,8 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
    * Creates the visual representation for the given edge.
    * @param context The render context.
    * @param edge The edge to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link SvgEdgeStyle#updateVisual}
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link SvgEdgeStyle.updateVisual}
    */
   createVisual(context: IRenderContext, edge: IEdge): SvgVisual {
     const source = edge.sourcePort!.location
@@ -88,10 +88,10 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
    * Updates the visual representation for the given edge.
    * @param context The render context.
    * @param oldVisual The visual that has been created in the call to
-   * {@link SvgEdgeStyle#createVisual}.
+   * {@link SvgEdgeStyle.createVisual}.
    * @param edge The edge to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link SvgEdgeStyle#createVisual}
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link SvgEdgeStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): SvgVisual {
     const source = edge.sourcePort!.location
@@ -139,7 +139,7 @@ const helperEdgeStyle = new PolylineEdgeStyle({
 
 /**
  * Stores the data that is necessary to determine whether or not the visual representation of
- * an edge has to be changed in {@link SvgEdgeStyle#updateVisual}.
+ * an edge has to be changed in {@link SvgEdgeStyle.updateVisual}.
  */
 class RenderDataCache {
   public readonly bendLocations: Point[]
@@ -185,8 +185,8 @@ function getBendLocations(edge: IEdge): Point[] {
  * Compares two arrays for equality.
  * @param a The first array.
  * @param b The second array.
- * @returns <code>true</code> if both arrays have the same length and all elements of one array
- * compare equal to the respective element in the other array, <code>false</code> otherwise.
+ * @returns `true` if both arrays have the same length and all elements of one array
+ * compare equal to the respective element in the other array, `false` otherwise.
  */
 function arrayEqual(a: Point[], b: Point[]): boolean {
   if (YObject.referenceEquals(a, b)) {

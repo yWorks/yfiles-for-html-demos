@@ -1,34 +1,40 @@
-<script context="module" lang="ts">
+<script lang="ts">
   import { onMount } from 'svelte'
+  import type { LayoutDescriptor } from 'yfiles'
   import {
     EventRecognizers,
     GraphBuilder,
     GraphComponent,
     GraphViewerInputMode,
+    HierarchicLayout,
     HierarchicLayoutEdgeLayoutDescriptor,
     HierarchicLayoutRoutingStyle,
     ICommand,
-    LayoutDescriptor,
+    LayoutExecutor,
     LayoutExecutorAsync,
     License,
     PolylineEdgeStyle,
     Rect
   } from 'yfiles'
-  import licenseValue from './license.json'
+  import licenseValue from '../../../../lib/license.json'
   import SvelteComponentNodeStyle from './SvelteComponentNodeStyle'
   import SvgNodeComponent from './SvgNodeComponent.svelte'
   import type { Person } from './types'
   import { getLayoutExecutorAsyncMessageHandler } from './web-worker-client-message-handler'
+  import { isModuleSupportedInWorker } from '../../../utils/Workarounds'
 
   License.value = licenseValue
-  const messageHandlerPromise = getLayoutExecutorAsyncMessageHandler(licenseValue)
-</script>
 
-<script lang="ts">
-  export let width: string = '100%'
-  export let height: string = '100%'
+  // Vite supports Web Worker out-of-the-box but relies on the browser's native Web Worker support when served in DEV mode.
+  // Thus, during development, fall back to client-sided layout calculation if module workers are not supported.
+  // In the production build, Web Workers are supported because the build creates cross-browser compatible workers.
+  const useWorkerLayout = isModuleSupportedInWorker() || import.meta.env.PROD
+  const messageHandlerPromise = useWorkerLayout ? getLayoutExecutorAsyncMessageHandler(licenseValue) : Promise.resolve(null)
+
+  export let width = '100%'
+  export let height = '100%'
   export let data: { nodes: Person[]; edges: { from: string; to: string }[] }
-  export let search: string
+  export let search = ''
   export let selectedEmployee: Person | null = null
 
   export const methods = {
@@ -60,9 +66,7 @@
   }
 
   onMount(() => {
-    graphComponent = new GraphComponent({
-      div: graphComponentDiv
-    })
+    graphComponent = new GraphComponent(graphComponentDiv)
     const inputMode = new GraphViewerInputMode()
     // Disable multi-selection
     inputMode.availableCommands.remove(ICommand.SELECT_ALL)
@@ -70,7 +74,7 @@
     // Expose the currently selected node to users of the component
     inputMode.addMultiSelectionFinishedListener(() => {
       // Get the selected node's tag
-      let current = graphComponent.selection.selectedNodes.firstOrDefault()?.tag
+      let current = graphComponent.selection.selectedNodes.at(0)?.tag
       if (current) {
         // Create a proxy that updates the view whenever something in the Person object changes
         current = new Proxy<Person>(current, {
@@ -127,15 +131,27 @@
     if (!layoutRunning) {
       layoutRunning = true
       try {
-        const messageHandler = await messageHandlerPromise
-        await new LayoutExecutorAsync({
-          graphComponent,
-          messageHandler,
-          layoutDescriptor,
-          duration: '0.5s',
-          animateViewport: true,
-          easedAnimation: true
-        }).start()
+        if (useWorkerLayout) {
+          // create an asynchronous layout executor that calculates a layout on the worker
+          const messageHandler = await messageHandlerPromise
+          await new LayoutExecutorAsync({
+            graphComponent,
+            messageHandler,
+            layoutDescriptor,
+            duration: '0.5s',
+            animateViewport: true,
+            easedAnimation: true
+          }).start()
+        } else {
+          // client-sided fallback
+          await new LayoutExecutor({
+            graphComponent,
+            layout: new HierarchicLayout(layoutDescriptor.properties),
+            duration: '0.5s',
+            animateViewport: true,
+            easedAnimation: true
+          }).start()
+        }
       } finally {
         layoutRunning = false
       }

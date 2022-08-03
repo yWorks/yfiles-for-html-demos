@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,11 +27,14 @@
  **
  ***************************************************************************/
 import {
+  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICanvasObject,
   ICanvasObjectDescriptor,
   ICommand,
@@ -43,9 +46,9 @@ import {
 
 import RectangleVisualCreator from './RectangleVisualCreator.js'
 import ImageVisualCreator from './ImageVisualCreator.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Application Features - Add an image or colored rectangle to the background of the graph
@@ -61,11 +64,12 @@ let background = null
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
@@ -128,7 +132,20 @@ function displayRectangle() {
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
+
+  // set the style, label and label parameter for group nodes
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: 'darkgray',
+    tabPosition: 'top-trailing',
+    contentAreaFill: 'white'
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'right',
+    textFill: 'black'
+  })
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -213,5 +230,5 @@ function registerCommands() {
   })
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

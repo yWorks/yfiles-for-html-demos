@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,31 +42,32 @@ import {
   Point,
   Rect,
   Size,
+  WebGL2FocusIndicatorManager,
   WebGL2GraphModelManager,
   WebGL2SelectionIndicatorManager
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import { isWebGl2Supported } from '../../utils/Workarounds'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * Bootstraps the demo.
  */
-async function run(licenseData: object) {
+async function run(): Promise<void> {
   if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
-    showApp(null)
+    showApp()
     return
   }
 
-  License.value = licenseData
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
@@ -96,8 +97,8 @@ async function run(licenseData: object) {
  */
 function enableWebGLRendering(graphComponent: GraphComponent) {
   graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager(graphComponent)
-  graphComponent.focusIndicatorManager.enabled = false
+  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
+  graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager()
 }
 
 /**
@@ -121,13 +122,13 @@ function initInteraction(graphComponent: GraphComponent) {
  *
  * WebGL2 rendering converts the normal yFiles style of each graph item into a corresponding
  * WebGL visualization. It's also possible to explicitly specify the WebGL visualization with the
- * {@link WebGL2GraphModelManager#}
+ * {@link WebGL2GraphModelManager}.
  *
  * @param graph The graph.
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(120, 120)
@@ -216,5 +217,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

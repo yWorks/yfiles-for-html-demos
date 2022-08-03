@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,106 +27,242 @@
  **
  ***************************************************************************/
 import {
+  Class,
   CollapsibleNodeStyleDecorator,
+  DefaultLabelStyle,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
+  GraphMLIOHandler,
+  GraphMLSupport,
+  HandleSerializationEventArgs,
   ICommand,
   IGraph,
-  IInputMode,
   InteriorLabelModel,
   InteriorLabelModelPosition,
   License,
   Point,
-  Size
+  Rect,
+  Size,
+  VoidPortStyle
 } from 'yfiles'
 
-import CustomCollapsibleNodeStyleDecoratorRenderer from './CustomCollapsibleNodeStyleDecoratorRenderer.js'
-import CustomGroupNodeStyle from './CustomGroupNodeStyle.js'
-import CustomSimpleLabelStyle from './CustomSimpleLabelStyle.js'
-import CustomSimpleEdgeStyle from './CustomSimpleEdgeStyle.js'
-import CustomSimpleNodeStyle from './CustomSimpleNodeStyle.js'
-import CustomSimplePortStyle from './CustomSimplePortStyle.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import Sample1CollapsibleNodeStyleDecoratorRenderer from './Sample1CollapsibleNodeStyleDecoratorRenderer.js'
+import Sample1GroupNodeStyle from './Sample1GroupNodeStyle.js'
+import Sample1LabelStyle from './Sample1LabelStyle.js'
+import Sample1EdgeStyle from './Sample1EdgeStyle.js'
+import Sample1NodeStyle from './Sample1NodeStyle.js'
+import Sample1PortStyle from './Sample1PortStyle.js'
+import {
+  addClass,
+  addNavigationButtons,
+  addOptions,
+  bindAction,
+  bindCommand,
+  removeClass,
+  showApp
+} from '../../resources/demo-app.js'
+import { Sample2GroupNodeStyle, Sample2GroupNodeStyleExtension } from './Sample2GroupNodeStyle.js'
+import { Sample2EdgeStyle, Sample2EdgeStyleExtension } from './Sample2EdgeStyle.js'
+import { Sample2NodeStyle, Sample2NodeStyleExtension } from './Sample2NodeStyle.js'
+import { Sample2Arrow, Sample2ArrowExtension } from './Sample2Arrow.js'
 
-/** @type {FoldingManager} */
-let foldingManager
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
-  // From now on, everything can be done on the actual managed view instance
-  enableFolding(graphComponent)
+  // Enable folding such that the group styles show an expand/collapse button
+  const foldingManager = new FoldingManager(graphComponent.graph)
+  graphComponent.graph = foldingManager.createFoldingView().graph
 
-  // Initialize default styles for nodes
-  initializeStyles(graphComponent.graph)
-
-  // Create some graph elements with the above defined styles.
+  // Create some graph elements
   createSampleGraph(graphComponent.graph)
 
+  // Initially, set the styles of sample #1
+  applySample1(graphComponent.graph)
+  applyDefaultStyles(graphComponent.graph)
+
   // Initialize the input mode
-  graphComponent.inputMode = createEditorMode()
+  graphComponent.inputMode = new GraphEditorInputMode({
+    allowGroupingOperations: true
+  })
+
+  // Enable support to save the second sample to graphml
+  enableGraphML(graphComponent)
 
   graphComponent.fitGraphBounds()
 
-  registerCommands(graphComponent)
+  initializeUI(graphComponent)
 
   showApp(graphComponent)
 }
 
 /**
- * Sets a custom NodeStyle instance as a template for newly created
- * nodes in the graph.
+ * Sets the styles of sample #1 to the graph defaults.
  * @param {!IGraph} graph
  */
-function initializeStyles(graph) {
-  // Wrap the style with CollapsibleNodeStyleDecorator
+function applySample1(graph) {
+  // Wrap the group style with CollapsibleNodeStyleDecorator
   // Use a custom renderer to change the collapse button visualization
   const nodeStyleDecorator = new CollapsibleNodeStyleDecorator(
-    new CustomGroupNodeStyle(),
-    new CustomCollapsibleNodeStyleDecoratorRenderer(new Size(14, 14))
+    new Sample1GroupNodeStyle(),
+    new Sample1CollapsibleNodeStyleDecoratorRenderer(new Size(14, 14))
   )
-  // Use a different label model for button placement
-  const newInteriorLabelModel = new InteriorLabelModel({ insets: 2 })
-  nodeStyleDecorator.buttonPlacement = newInteriorLabelModel.createParameter(
+  // Use a specific label model for the placement of the group button
+  nodeStyleDecorator.buttonPlacement = new InteriorLabelModel({ insets: 2 }).createParameter(
     InteriorLabelModelPosition.SOUTH_EAST
   )
+
   graph.groupNodeDefaults.style = nodeStyleDecorator
 
-  // Create a new style and use it as default port style
-  graph.nodeDefaults.ports.style = new CustomSimplePortStyle()
-
-  // Create a new style and use it as default node style
-  graph.nodeDefaults.style = new CustomSimpleNodeStyle()
-  // Create a new style and use it as default edge style
-  graph.edgeDefaults.style = new CustomSimpleEdgeStyle()
-  // Create a new style and use it as default label style
-  graph.nodeDefaults.labels.style = new CustomSimpleLabelStyle()
+  graph.nodeDefaults.style = new Sample1NodeStyle()
+  graph.nodeDefaults.labels.style = new Sample1LabelStyle()
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
-  graph.edgeDefaults.labels.style = new CustomSimpleLabelStyle()
+  graph.nodeDefaults.ports.style = new Sample1PortStyle()
 
-  graph.nodeDefaults.size = new Size(50, 50)
+  graph.edgeDefaults.style = new Sample1EdgeStyle()
+  graph.edgeDefaults.labels.style = new Sample1LabelStyle()
 }
 
 /**
- * Creates the default input mode for the graphComponent,
- * a {@link GraphEditorInputMode}.
- * @returns {!IInputMode} a new GraphEditorInputMode instance
+ * Sets the styles of sample #2 to the graph defaults.
+ * @param {!IGraph} graph
  */
-function createEditorMode() {
-  return new GraphEditorInputMode({
-    allowEditLabel: true,
-    hideLabelDuringEditing: false,
-    allowGroupingOperations: true
+function applySample2(graph) {
+  // define the demo node style using the 'node-color' css rule
+  graph.nodeDefaults.style = new Sample2NodeStyle('node-color')
+
+  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+    backgroundFill: '#c8dfb3',
+    shape: 'pill',
+    insets: 5
   })
+  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
+  graph.nodeDefaults.ports.style = VoidPortStyle.INSTANCE
+
+  graph.groupNodeDefaults.style = new Sample2GroupNodeStyle()
+
+  // define the demo edge style using the 'edge-color' css rule
+  graph.edgeDefaults.style = new Sample2EdgeStyle('edge-color')
+  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+    backgroundFill: '#acb5a3',
+    shape: 'pill',
+    insets: 5
+  })
+}
+
+/**
+ * Applies the default styles to the graph items.
+ * @param {!IGraph} graph
+ */
+function applyDefaultStyles(graph) {
+  for (const item of graph.nodes) {
+    graph.setStyle(
+      item,
+      graph.isGroupNode(item)
+        ? graph.groupNodeDefaults.getStyleInstance()
+        : graph.nodeDefaults.getStyleInstance()
+    )
+  }
+  for (const item of graph.nodeLabels) {
+    graph.setStyle(item, graph.nodeDefaults.labels.getStyleInstance(item.owner))
+  }
+  for (const item of graph.edges) {
+    graph.setStyle(item, graph.edgeDefaults.getStyleInstance())
+  }
+  for (const item of graph.edgeLabels) {
+    graph.setStyle(item, graph.edgeDefaults.labels.getStyleInstance(item.owner))
+  }
+  for (const item of graph.ports) {
+    graph.setStyle(item, graph.nodeDefaults.ports.getStyleInstance(item.owner))
+  }
+  // There are no ports at edges, and no labels at ports in this demo
+}
+
+/**
+ * Enables saving and loading of the demo's custom styles {@link Sample2NodeStyle}, {@link Sample2EdgeStyle},
+ * {@link Sample2Arrow} and {@link Sample2GroupNodeStyle} from and to GraphML.
+ *
+ * Only supported for the styles shown in sample 2.
+ * @param {!GraphComponent} graphComponent
+ */
+function enableGraphML(graphComponent) {
+  const gs = new GraphMLSupport({
+    graphComponent,
+    storageLocation: 'file-system'
+  })
+
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
+  gs.graphMLIOHandler.addXamlNamespaceMapping(
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
+    {
+      Sample2NodeStyle,
+      Sample2NodeStyleExtension,
+      Sample2EdgeStyle,
+      Sample2EdgeStyleExtension,
+      Sample2Arrow,
+      Sample2ArrowExtension,
+      Sample2GroupNodeStyle,
+      Sample2GroupNodeStyleExtension
+    }
+  )
+  gs.graphMLIOHandler.addHandleSerializationListener(demoSerializationListener)
+}
+
+/**
+ * Serialization listener which enables to write and load the custom style implementations
+ * {@link Sample2NodeStyle}, {@link Sample2EdgeStyle}, {@link Sample2Arrow} and {@link Sample2GroupNodeStyle} to
+ * and from graphml.
+ *
+ * It uses the respective markup extension classes {@link Sample2NodeStyleExtension},
+ * {@link Sample2EdgeStyleExtension}, {@link Sample2ArrowExtension} and {@link Sample2GroupNodeStyleExtension}.
+ *
+ * @param {!GraphMLIOHandler} source the graphml handler
+ * @param {!HandleSerializationEventArgs} args the event arguments
+ * @constructor
+ */
+function demoSerializationListener(source, args) {
+  const item = args.item
+
+  let markupExtension
+  let markupExtensionClass = null
+  if (item instanceof Sample2NodeStyle) {
+    markupExtension = new Sample2NodeStyleExtension()
+    markupExtension.cssClass = item.cssClass
+    markupExtensionClass = Sample2NodeStyleExtension.$class
+  } else if (item instanceof Sample2GroupNodeStyle) {
+    markupExtension = new Sample2GroupNodeStyleExtension()
+    markupExtension.cssClass = item.cssClass
+    markupExtension.isCollapsible = item.isCollapsible
+    markupExtension.solidHitTest = item.solidHitTest
+    markupExtensionClass = Sample2GroupNodeStyleExtension.$class
+  } else if (item instanceof Sample2EdgeStyle) {
+    markupExtension = new Sample2EdgeStyleExtension()
+    markupExtension.cssClass = item.cssClass
+    markupExtension.showTargetArrows = item.showTargetArrows
+    markupExtension.useMarkerArrows = item.useMarkerArrows
+    markupExtensionClass = Sample2EdgeStyleExtension.$class
+  } else if (item instanceof Sample2Arrow) {
+    markupExtension = new Sample2ArrowExtension()
+    markupExtension.cssClass = item.cssClass
+    markupExtensionClass = Sample2ArrowExtension.$class
+  }
+
+  if (markupExtension && markupExtensionClass) {
+    const context = args.context
+    context.serializeReplacement(markupExtensionClass, item, markupExtension)
+    args.handled = true
+  }
 }
 
 /**
@@ -134,6 +270,7 @@ function createEditorMode() {
  * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
+  graph.nodeDefaults.size = new Size(50, 50)
   const n0 = graph.createNodeAt({
     location: new Point(291, 433),
     tag: 'rgb(108, 0, 255)'
@@ -195,52 +332,103 @@ function createSampleGraph(graph) {
   graph.createEdge(n3, n7)
   graph.createEdge(n9, n4)
 
-  // put all nodes into a group
-  const group1 = graph.groupNodes(graph.nodes)
+  // Add all nodes to a group
+  const group1 = graph.groupNodes({ children: graph.nodes })
   group1.tag = 'gold'
+  graph.setNodeLayout(group1, new Rect(0, -50, 600, 600))
 }
 
 /**
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
+function initializeUI(graphComponent) {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindAction("button[data-command='ModifyColors']", () => modifyColors(graphComponent))
-}
+  bindAction("button[data-command='ModifyColors']", () => {
+    // Set the tag of all non-group nodes to a new color
+    graphComponent.graph.nodes
+      .filter(node => !graphComponent.graph.isGroupNode(node))
+      .forEach(node => {
+        node.tag = `hsl(${Math.random() * 360},100%,50%)`
+      })
+    // Finally, the view is invalidated because the graph cannot know that we have changed values
+    // on which the styles depend
+    graphComponent.graph.invalidateDisplays()
+  })
 
-/**
- * Enables folding - changes the graphComponent's graph to a managed view
- * that provides the actual collapse/expand state.
- * @param {!GraphComponent} graphComponent
- */
-function enableFolding(graphComponent) {
-  // Creates the folding manager and sets its master graph to
-  // the single graph that has served for all purposes up to this point
-  foldingManager = new FoldingManager(graphComponent.graph)
-  // Creates a managed view from the master graph and
-  // replaces the existing graph view with a managed view
-  graphComponent.graph = foldingManager.createFoldingView().graph
-}
+  // Wire the save button, but initially disable it - will be enabled on selecting sample 2
+  const saveButton = getElementById('save-button')
+  saveButton.addEventListener('click', () => ICommand.SAVE.execute(null, graphComponent))
+  saveButton.disabled = true
 
-/**
- * Modifies the tag of each leaf node.
- * @param {!GraphComponent} graphComponent
- */
-function modifyColors(graphComponent) {
-  const graph = graphComponent.graph
-  // set the tag of all non-group (leaf) nodes to a new color
-  graph.nodes
-    .filter(node => !graph.isGroupNode(node))
-    .forEach(node => {
-      node.tag = `hsl(${Math.random() * 360},100%,50%)`
+  const sampleSelectElements = ['#sample-select--sidebar', '#sample-select--toolbar'].map(
+    selector => document.querySelector(selector)
+  )
+  for (const selectElement of sampleSelectElements) {
+    addOptions(selectElement, 'Sample 1', 'Sample 2')
+    addNavigationButtons(selectElement)
+
+    selectElement.addEventListener('change', () => {
+      const sampleName = selectElement.value
+      const modifyColorsButton = getElementById('modify-colors-button')
+      switch (sampleName) {
+        case 'Sample 1':
+        default:
+          // Set up the styles of the first sample
+          applySample1(graphComponent.graph)
+
+          // Update UI accordingly
+          updateDescriptionText('sample-1-description', 'sample-2-description')
+          modifyColorsButton.disabled = false
+          saveButton.disabled = true
+          break
+        case 'Sample 2':
+          // Set up the styles of the second sample
+          applySample2(graphComponent.graph)
+
+          // Update UI accordingly
+          updateDescriptionText('sample-2-description', 'sample-1-description')
+          modifyColorsButton.disabled = true
+          saveButton.disabled = false
+          break
+      }
+
+      // Apply the new default styles
+      applyDefaultStyles(graphComponent.graph)
+
+      // Updates all other select elements
+      for (const selectElement of sampleSelectElements) {
+        selectElement.value = sampleName
+      }
     })
-  // and invalidate the view as the graph cannot know that we changed the styles
-  graphComponent.invalidate()
+  }
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+/**
+ * Updates the description text in the demo's left sidebar.
+ * @param {!string} visibleId the div element which becomes visible
+ * @param {!string} hiddenId the div element which gets hidden
+ */
+function updateDescriptionText(visibleId, hiddenId) {
+  addClass(getElementById(hiddenId), 'hidden')
+  removeClass(getElementById(visibleId), 'hidden')
+  const descriptionContainer = getElementById('sample-description-container')
+  removeClass(descriptionContainer, 'highlight-description')
+  setTimeout(() => addClass(descriptionContainer, 'highlight-description'), 0)
+}
+
+/**
+ * Returns a reference to the first element with the specified ID in the current document.
+ * @returns {!T} A reference to the first element with the specified ID in the current document.
+ * @template {HTMLElement} T
+ * @param {!string} id
+ */
+function getElementById(id) {
+  return document.getElementById(id)
+}
+
+// noinspection JSIgnoredPromiseFromCall
+run()

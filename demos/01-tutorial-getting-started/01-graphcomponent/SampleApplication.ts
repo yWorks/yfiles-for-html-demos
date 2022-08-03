@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,12 +28,12 @@
  ***************************************************************************/
 import { ExteriorLabelModel, GraphComponent, License } from 'yfiles'
 
-import loadJson from '../../resources/load-json'
+import { fetchLicense } from '../../resources/fetch-license'
 
 import { enableWorkarounds } from '../../utils/Workarounds'
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
   // create one simple node as an example
@@ -45,4 +45,5 @@ function run(licenseData: object): void {
 }
 
 enableWorkarounds()
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

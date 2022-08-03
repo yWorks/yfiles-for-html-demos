@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,18 +54,18 @@ import {
 } from 'yfiles'
 
 import EditablePathNodeStyle, { PathHandle, updateHandles } from './EditablePathNodeStyle.js'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { createBasicEdgeStyle } from '../../resources/basic-demo-styles.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { createDemoEdgeStyle } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
 
   // initialize the graph
@@ -116,7 +116,7 @@ function initializeGraph() {
   graph.nodeDefaults.size = new Size(200, 200)
 
   // Set some defaults for the edges
-  graph.edgeDefaults.style = createBasicEdgeStyle('demo-orange')
+  graph.edgeDefaults.style = createDemoEdgeStyle()
 
   // Create some graph elements with the above defined styles.
   createSampleGraph()
@@ -239,9 +239,7 @@ function createEditorMode() {
     if (evt.item instanceof INode && evt.item.style instanceof EditablePathNodeStyle) {
       const existingHandle = evt.item.style
         .getHandles(evt.context, evt.item)
-        .firstOrDefault(
-          handle => handle.location.distanceTo(evt.location) < evt.context.hitTestRadius
-        )
+        .find(handle => handle.location.distanceTo(evt.location) < evt.context.hitTestRadius)
       if (existingHandle) {
         changeShapeHandleInputMode.handles.clear()
         // if we were clicked with the modifier presses, remove the corresponding segment instead
@@ -262,7 +260,7 @@ function createEditorMode() {
         const createdHandle = evt.item.style
           .getHandles(evt.context, evt.item)
           .orderBy(handle => handle.location.distanceTo(evt.location))
-          .firstOrDefault()
+          .at(0)
         if (createdHandle) {
           changeShapeHandleInputMode.handles.clear()
           changeShapeHandleInputMode.handles.add(createdHandle)
@@ -342,5 +340,5 @@ function registerCommands() {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

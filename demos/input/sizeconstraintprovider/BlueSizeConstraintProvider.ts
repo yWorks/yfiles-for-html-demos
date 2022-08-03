@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,7 +39,7 @@ export default class BlueSizeConstraintProvider
 {
   /**
    * Returns the current node size to prevent the shrinking of nodes.
-   * @see Specified by {@link INodeSizeConstraintProvider#getMinimumSize}.
+   * @see Specified by {@link INodeSizeConstraintProvider.getMinimumSize}.
    */
   getMinimumSize(node: INode): Size {
     return node.layout.toSize()
@@ -47,7 +47,7 @@ export default class BlueSizeConstraintProvider
 
   /**
    * Returns three times the current node size.
-   * @see Specified by {@link INodeSizeConstraintProvider#getMaximumSize}.
+   * @see Specified by {@link INodeSizeConstraintProvider.getMaximumSize}.
    */
   getMaximumSize(node: INode): Size {
     return new Size(node.layout.width * 3, node.layout.height * 3)
@@ -55,7 +55,7 @@ export default class BlueSizeConstraintProvider
 
   /**
    * Returns an empty rectangle since this area is not constraint.
-   * @see Specified by {@link INodeSizeConstraintProvider#getMinimumEnclosedArea}.
+   * @see Specified by {@link INodeSizeConstraintProvider.getMinimumEnclosedArea}.
    */
   getMinimumEnclosedArea(node: INode): Rect {
     return Rect.EMPTY

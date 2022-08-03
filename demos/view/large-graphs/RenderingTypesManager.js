@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -111,7 +111,7 @@ export default class RenderingTypesManager {
 
     this.svgThresholdValue = svgThreshold
 
-    graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager(graphComponent)
+    graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
     graphComponent.focusIndicatorManager.enabled = false
 
     // Sets the node styles, if the style providers are available.
@@ -287,11 +287,6 @@ export default class RenderingTypesManager {
     if (this.webGL2NodeStyleProvider != null) {
       for (const node of graph.nodes) {
         this.setWebGL2NodeStyle(node, graph, graphModelManager)
-      }
-    }
-    if (this.webGL2EdgeStyleProvider != null) {
-      for (const edge of graph.edges) {
-        this.setWebGL2PolylineEdgeStyle(edge, graph, graphModelManager)
       }
     }
   }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,11 +51,13 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
 import { ChordDiagramLayout } from './ChordDiagramLayout'
 import { ChordEdgeStyle } from './ChordEdgeStyle'
 import { CircleSegmentNodeStyle } from './CircleSegmentNodeStyle'
 import SampleData from './resources/SampleData'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // this custom layout data will be used to transfer edge weights to the chord diagram layout algorithm
 const chordDiagramLayoutData: GenericLayoutData = new GenericLayoutData()
@@ -65,12 +67,13 @@ let weightMapping: IMapper<IEdge, number>
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
+async function run(): Promise<void> {
   Class.ensure(LayoutExecutor)
 
-  License.value = licenseData
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // setup effects of hovering and selecting edges
   configureUserInteraction(graphComponent)
@@ -271,7 +274,8 @@ function registerCommands(graphComponent: GraphComponent): void {
   // when the slider is moved, increase/decrease the weight of the edge and update the chord layout
   bindInputListener('#thickness', value => updateDiagram(graphComponent, parseFloat(value)))
   // when the gap slider is moved increase/decrease the gaps between the nodes
-  bindInputListener('#gap_ratio', value => updateGapRatio(graphComponent, value))
+  bindInputListener('#gap_ratio', value => updateGapRatio(graphComponent, parseFloat(value)))
 }
 
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -93,16 +93,16 @@ type NodeTag = {
  * nodes of the source graph are filtered based on whether they belong to the current time window represented by the
  * animated rectangle. The input is the HTML Element in which the component should be added and the graph component
  * of the source graph. The user can determine whether the timeline component should take care of the filtering of
- * nodes of the source graph. In the first case, property {@link TimelineComponent#filteringEnabled} should be set to
+ * nodes of the source graph. In the first case, property {@link TimelineComponent.filteringEnabled} should be set to
  * true. Otherwise, the user has to add a listener to the component that fires an event whenever the time window
- * changes, using method {@link TimelineComponent#addTimeFrameChangedListener}.
+ * changes, using method {@link TimelineComponent.addTimeFrameChangedListener}.
  *
  * Events like hover and selection of timeline nodes can be fired using methods
- * {@link TimelineComponent#addHighlightChangedListener} and {@link TimelineComponent#addSelectionChangedListener}.
+ * {@link TimelineComponent.addHighlightChangedListener} and {@link TimelineComponent.addSelectionChangedListener}.
  * Also, the timeline component has already registered listeners for reacting on hovering and selection of the nodes
  * of the source graph.
  *
- * Finally, the {@link TimelineComponent#createTimeline} method has to be called in order to display the
+ * Finally, the {@link TimelineComponent.createTimeline} method has to be called in order to display the
  * timeline component. The method has to be set after all necessary listeners have been registered.
  */
 export default class TimelineComponent {
@@ -492,9 +492,7 @@ export default class TimelineComponent {
     nodeDecorator.focusIndicatorDecorator.hideImplementation()
 
     // initialize the highlight manager
-    this.timelineComponent.highlightIndicatorManager = new HighlightIndicatorManager(
-      this.timelineComponent
-    )
+    this.timelineComponent.highlightIndicatorManager = new HighlightIndicatorManager()
   }
 
   /**
@@ -2056,7 +2054,7 @@ class TimeFramePositionHandler
 
   /**
    * Stores the initial location of the movement for reference, and calls the base method.
-   * @see Specified by {@link IDragHandler#initializeDrag}.
+   * @see Specified by {@link IDragHandler.initializeDrag}.
    */
   initializeDrag(context: any): void {
     this.offset.x = this.location.x - context.canvasComponent.lastMouseEvent.location.x

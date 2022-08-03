@@ -10,15 +10,15 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
-    "vue": "^3.0.0",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.6-dev.tgz"
+    "core-js": "^3.23.2",
+    "vue": "^3.2.37",
+    "yfiles": "../../../lib-dev/yfiles-25.0.0+dev.tgz"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
-    "@yworks/optimizer": "^1.7.1",
+    "@vue/cli-plugin-babel": "~5.0.6",
+    "@vue/cli-service": "~5.0.6",
+    "@vue/compiler-sfc": "^3.2.37",
+    "@yworks/optimizer": "^1.7.3",
     "worker-loader": "^3.0.8"
   }
 }

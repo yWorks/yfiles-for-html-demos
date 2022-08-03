@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -64,20 +64,15 @@ import {
   TreeReductionStage
 } from 'yfiles'
 
-import {
-  createDemoEdgeLabelStyle,
-  DemoEdgeStyle,
-  DemoNodeStyle
-} from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import {
   addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * @typedef {*} EdgeLabelPlacementOption
@@ -124,11 +119,12 @@ const add180CheckBox = document.getElementById('add180CheckBox')
 /**
  * This demo shows how to influence the placement of edge labels by a generic labeling algorithm as well as by a
  * layout algorithm with integrated edge labeling using a PreferredPlacementDescriptor.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   graph = graphComponent.graph
 
   descriptorMapper = new Mapper()
@@ -152,7 +148,7 @@ function run(licenseData) {
 /**
  * Does the label placement using the selected labeling/layout algorithm. Before this, the
  * PreferredPlacementDescriptor of the labels is set according to the option handlers settings.
- * @see {@link #updateLabelProperties}
+ * @see {@link updateLabelProperties}
  * @param {boolean} fitViewToContent Whether to animate the viewport
  */
 async function doLayout(fitViewToContent) {
@@ -471,13 +467,10 @@ function initializeGraph() {
  * Initializes node, edge and label styles that are applied when the graph is created.
  */
 function initializeStyles() {
-  graph.nodeDefaults.style = new DemoNodeStyle()
+  initDemoStyles(graph)
   graph.nodeDefaults.size = new Size(50, 30)
 
-  graph.edgeDefaults.style = new DemoEdgeStyle()
   graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
-
-  graph.edgeDefaults.labels.style = createDemoEdgeLabelStyle()
 }
 
 /**
@@ -745,4 +738,5 @@ function getAffectedLabels() {
   return selectedLabels.size > 0 ? selectedLabels : graph.edgeLabels
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

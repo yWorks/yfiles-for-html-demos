@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.5.
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>WebGL2 Selection Styles Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .gridContainer {
+        display: grid;
+        grid-template-columns: 110px 100px;
+        grid-auto-flow: row;
+        margin-bottom: 15px;
+        justify-items: start;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>WebGL2 Selection Styles Demo</h1>
+
+        <p>
+          This demo shows the available <em>selection</em> styles for nodes, edges, and labels in
+          WebGL2 rendering.
+        </p>
+
+        <p>
+          In WebGL2, selections can be configured in various ways: There are multiple patterns to
+          choose from, and colors, thickness, and margins are configurable. Additionally, selections
+          can be activated and deactivated using animated transitions, and for the appropriate
+          selection styles, a "marching ants" animation is available, too.
+        </p>
+
+        <h2>Things to Try</h2>
+
+        <ul>
+          <li>Configure the basic pattern used.</li>
+          <li>
+            Experiment with the primary and secondary color and how they are used in the various
+            selection styles.
+          </li>
+          <li>Tweak the thickness and margin of the selection style.</li>
+          <li>Activate transitions, select and deselect various graph elements.</li>
+          <li>Activate the dash animation and select various graph elements.</li>
+          <li>
+            Observe that only styles with repeating patterns along the selection visualization are
+            animated.
+          </li>
+        </ul>
+        <p>
+          In this demo, the same selection style is used for all graph elements. This is only a
+          configuration in the demo, since with the API the styles for the different element types
+          can be configured individually. See the <em>updateSelectionStyles</em> function in the
+          demo source code.
+        </p>
+      </div>
+    </aside>
+
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Style Properties</h2>
+        <h3>Style Pattern</h3>
+        <p style="font-size: smaller">
+          The style pattern defines the basic rendering of the selection visualization.
+        </p>
+        <div class="gridContainer">
+          Style Pattern
+          <select data-command="ChangeSelectionStyle" style="display: block">
+            <option value="hatch-brush">Hatch</option>
+            <option value="solid" selected>Solid</option>
+            <option value="hairline-border">Hairline Border</option>
+            <option value="outer-border">Solid Outer Border</option>
+            <option value="inner-border">Solid Inner Border</option>
+            <option value="double-line">Double Line</option>
+            <option value="double-border">Double Border</option>
+            <option value="double-border-thin">Double Border Thin</option>
+            <option value="double-border-thick">Double Border Thick</option>
+            <option value="dash">Dash</option>
+            <option value="dot">Dot</option>
+            <option value="dash-dot">Dash Dot</option>
+            <option value="dash-dot-dot">Dash Dot Dot</option>
+            <option value="stripes">Stripes</option>
+            <option value="dotted-hairline-border">Dotted Hairline</option>
+          </select>
+        </div>
+        <h3>Color Scheme</h3>
+        <p style="font-size: smaller">
+          There are two configurable colors for a WebGL2 selection: <em>primary</em> and
+          <em>secondary</em>. The primary color is used for solid strokes, dash patterns and as the
+          inner stroke for border patterns. The secondary stroke is used as the background for
+          dashed patterns and as the outer stroke for border patterns.
+        </p>
+        <div class="gridContainer">
+          Primary
+          <input
+            type="color"
+            data-command="ChangePrimaryColor"
+            value="#fc0335"
+            style="width: 105px; border: none"
+          />
+          <label for="change-primary-transparency">Transparency</label>
+          <input
+            type="range"
+            id="change-primary-transparency"
+            data-command="ChangePrimaryColorTransparency"
+            value="0"
+            min="0"
+            max="100"
+            style="width: 100px"
+          />
+        </div>
+        <div class="gridContainer">
+          Secondary
+          <input
+            type="color"
+            data-command="ChangeSecondaryColor"
+            value="#e3f207"
+            style="width: 105px; border: none"
+          />
+          <label for="change-secondary-transparency">Transparency</label>
+          <input
+            type="range"
+            id="change-secondary-transparency"
+            data-command="ChangeSecondaryColorTransparency"
+            value="0"
+            min="0"
+            max="100"
+            style="width: 100px"
+          />
+        </div>
+        <h3>Thickness and Margins</h3>
+        <div class="gridContainer">
+          <label for="change-thickness">Thickness</label>
+          <input
+            type="range"
+            id="change-thickness"
+            data-command="ChangeThickness"
+            value="3"
+            min="1"
+            max="10"
+            style="width: 100px"
+          />
+          <label for="change-margins">Margins</label>
+          <input
+            type="range"
+            id="change-margins"
+            data-command="ChangeMargins"
+            value="3"
+            min="0"
+            max="30"
+            style="width: 100px"
+          />
+        </div>
+        <h3>Transition and Animation</h3>
+        <p style="font-size: smaller">
+          If <em>transition</em> is activated, the selection is activated and deactivated in a
+          smooth manner. <em>Dash animation</em> activates a "marching ants" animation for dashed or
+          striped styles. Easing configures the course of an animation.
+        </p>
+        <div class="gridContainer">
+          <label for="change-animated">Transition</label>
+          <input type="checkbox" id="change-animated" data-command="ChangeAnimated" checked />
+          <label for="change--dash-animated">Dash Animation</label>
+          <input
+            type="checkbox"
+            id="change--dash-animated"
+            data-command="ChangeDashedAnimated"
+            disabled
+          />
+          Easing
+          <select data-command="ChangeEasing" style="display: block">
+            <option value="linear" selected>Linear</option>
+            <option value="ease">Ease</option>
+            <option value="ease-in">Ease In</option>
+            <option value="ease-out">Ease Out</option>
+            <option value="ease-in-out">Ease In-out</option>
+          </select>
+        </div>
+        <h3>Zoom Policy</h3>
+        <p style="font-size: smaller">
+          The zoom policy determines in which coordinate system the selection visualizations are
+          rendered. <em>Mixed</em> applies a heuristic in which world coordinates are used at large
+          zoom levels and view coordinates are used at small zoom levels.
+        </p>
+        <div class="gridContainer">
+          Zoom Policy
+          <select data-command="ChangeZoomPolicy" style="display: block">
+            <option value="mixed" selected>Mixed</option>
+            <option value="view-coordinates">View Coordinates</option>
+            <option value="world-coordinates">World Coordinates</option>
+          </select>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="Reset" title="Reset the graph" class="demo-icon-yIconNew"></button>
+        <span class="demo-separator"></span>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <button data-command="SelectNodes" title="Select all nodes" class="labeled">
+          Select Nodes
+        </button>
+        <button data-command="SelectEdges" title="Select all edges" class="labeled">
+          Select Edges
+        </button>
+        <button data-command="SelectLabels" title="Select all labels" class="labeled">
+          Select Labels
+        </button>
+        <button data-command="ClearSelection" title="Clear selection" class="labeled">
+          Clear Selection
+        </button>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+        <div id="no-webgl-support" style="display: none">
+          Your browser or device does not support WebGL2.<br />
+          This demo only works if WebGL2 is available.<br />
+          Please use a modern browser like Chrome, Edge, Firefox, or Opera.<br />
+          In older versions of Safari and older Apple devices, WebGL2 is an experimental feature
+          that needs to be activated explicitly.
+        </div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="WebGLSelectionStylesDemo.js"></script>
+  </body>
+</html>

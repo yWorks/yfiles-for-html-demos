@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -99,7 +99,7 @@ export default class OrgChartPropertiesView {
 
       // Create links to the parent and colleague nodes.
       // (Note that the parent references are added to the
-      // source data in {@link OrgChartViewerDemo#addParentReferences()}.
+      // source data in {@link OrgChartViewerDemo.addParentReferences()}.
       const parent = employee.parent
       if (parent) {
         const parentTr = document.createElement('tr')
@@ -145,11 +145,11 @@ export default class OrgChartPropertiesView {
     }
   }
 
-  // Creates an SVG element that references the provided SVG icon, e.g.:
-  // <svg width="50" height="50"><use xlink:href="#usericon_male1"></use></svg>
   /**
    * Creates an SVG element that references the provided SVG icon, e.g.:
+   * ```
    * <svg width="50" height="50"><use xlink:href="#usericon_male1"></use></svg>
+   * ```
    * @param {!string} iconRef
    * @param {number} width
    * @param {number} height

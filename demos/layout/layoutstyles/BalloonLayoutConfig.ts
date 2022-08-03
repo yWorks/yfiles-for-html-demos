@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,7 +55,8 @@ import LayoutConfiguration, {
   EdgeLabeling,
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  NodeLabelingPolicies
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -107,7 +108,7 @@ const BalloonLayoutConfig = (Class as any)('BalloonLayoutConfig', {
 
   /**
    * Creates and configures a layout.
-   * @param graphComponent The <code>GraphComponent</code> to apply the
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return The configured layout algorithm.
    */
@@ -773,13 +774,6 @@ const BalloonLayoutConfig = (Class as any)('BalloonLayoutConfig', {
   }
 })
 export default BalloonLayoutConfig
-
-export enum NodeLabelingPolicies {
-  NONE,
-  HORIZONTAL,
-  RAYLIKE_LEAVES,
-  CONSIDER_CURRENT_POSITION
-}
 
 export enum RoutingStyle {
   ORTHOGONAL,

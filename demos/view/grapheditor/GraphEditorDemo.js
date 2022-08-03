@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,14 +51,15 @@ import {
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import DemoStyles, {
-  DemoSerializationListener,
-  DemoStyleOverviewPaintable,
-  initDemoStyles
-} from '../../resources/demo-styles.js'
-import loadJson from '../../resources/load-json.js'
+import {
+  bindAction,
+  bindCommand,
+  configureTwoPointerPanning,
+  showApp
+} from '../../resources/demo-app.js'
 import { isWebGlSupported } from '../../utils/Workarounds.js'
+import { DemoStyleOverviewPaintable, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -68,10 +69,10 @@ let overviewComponent
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // Initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -96,6 +97,9 @@ function run(licenseData) {
 
   // Specify a configured input mode that enables graph editing
   graphComponent.inputMode = createEditorMode()
+
+  // use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
 
   // Create a sample graph
   createSampleGraph(graph)
@@ -195,17 +199,10 @@ function createLabelSnapContext() {
  * @param {!GraphComponent} graphComponent
  */
 function enableGraphML(graphComponent) {
-  const gs = new GraphMLSupport({
+  new GraphMLSupport({
     graphComponent,
     storageLocation: StorageLocation.FILE_SYSTEM
   })
-
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
 }
 
 /**
@@ -214,7 +211,7 @@ function enableGraphML(graphComponent) {
  */
 function setDefaultStyles(graph) {
   // Assign the default demo styles
-  initDemoStyles(graph)
+  initDemoStyles(graph, { foldingEnabled: true })
 
   // Set the default node label position to centered below the node with the FreeNodeLabelModel that supports label
   // snapping
@@ -313,7 +310,7 @@ function populateContextMenu(contextMenu, args) {
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
 
   // Check whether a node was it. If it was, we prefer it over edges
-  const hit = hits.find(item => INode.isInstance(item)) || hits.firstOrDefault()
+  const hit = hits.find(item => INode.isInstance(item)) || hits.at(0)
 
   const graphSelection = graphComponent.selection
   if (INode.isInstance(hit)) {
@@ -414,5 +411,5 @@ function createSampleGraph(graph) {
   graph.createEdge(n12, n15)
 }
 
-// Start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

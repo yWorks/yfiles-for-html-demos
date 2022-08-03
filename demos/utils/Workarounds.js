@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -101,18 +101,17 @@ export function detectInternetExplorerVersion() {
  * Returns the windows NT version or -1 if it is lower than windows 95 or another OS.
  * See also https://stackoverflow.com/questions/228256/operating-system-from-user-agent-http-header
  * The windows NT version or the windows version for windows 98 or older:
- * <ul>
- *   <li>95: Windows 95</li>
- *   <li>98: Windows 98</li>
- *   <li>4.0: Windows NT 4.0</li>
- *   <li>5.0: Windows 2000</li>
- *   <li>5.1: Windows XP</li>
- *   <li>5.2: Windows Server 2003</li>
- *   <li>6.0: Windows Vista</li>
- *   <li>6.1: Windows 7</li>
- *   <li>6.2: Windows 8</li>
- *   <li>10.0: Windows 10</li>
- * </ul>
+ *
+ *   - 95: Windows 95
+ *   - 98: Windows 98
+ *   - 4.0: Windows NT 4.0
+ *   - 5.0: Windows 2000
+ *   - 5.1: Windows XP
+ *   - 5.2: Windows Server 2003
+ *   - 6.0: Windows Vista
+ *   - 6.1: Windows 7
+ *   - 6.2: Windows 8
+ *   - 10.0: Windows 10
  * @returns {number}
  */
 export function detectWindowsVersion() {
@@ -164,15 +163,15 @@ export function detectArmDevice() {
  * Returns the iOS version or -1 if it is another OS.
  * See also https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
  * The iOS version:
- * <ul>
- *   <li>3: iOS 3 or less</li>
- *   <li>4: iOS 4</li>
- *   <li>5: iOS 5</li>
- *   <li>6: iOS 6</li>
- *   <li>7: iOS 7</li>
- *   <li>8: iOS 8 - 12, iOS 13 on non-Safari browsers</li>
- *   <li>13: iOS 13+</li>
- * </ul>
+ *
+ *   - 3: iOS 3 or less
+ *   - 4: iOS 4
+ *   - 5: iOS 5
+ *   - 6: iOS 6
+ *   - 7: iOS 7
+ *   - 8: iOS 8 - 12, iOS 13 on non-Safari browsers
+ *   - 13: iOS 13+
+ *
  * NOTE: Since Safari for iOS 13, the user agent changed such that iOS and Mac OS X cannot be
  * distinguished anymore. The check still works on other browsers on iOS e.g. Chrome.
  * Therefore, there is another check for Safari 13+.

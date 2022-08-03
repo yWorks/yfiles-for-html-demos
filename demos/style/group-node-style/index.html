@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.5.
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Group Node Style Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <style>
+      /*
+       * Slightly increase the size of the expansion state icon if the mouse hovers over it
+       */
+      .yfiles-group-node-icon:hover .yfiles-icon-background,
+      .yfiles-group-node-icon:hover .yfiles-icon-foreground {
+        transform-origin: 0 0;
+        transform: scale(1.2);
+      }
+      /*
+       * Specify the duration for the "increase size" animation that is triggered when hovering
+       * over the icon
+       */
+      .yfiles-group-node-icon .yfiles-icon-background,
+      .yfiles-group-node-icon .yfiles-icon-foreground {
+        transition: transform 0.3s;
+      }
+
+      /*
+       * Animate the expansion state icon change for chevrons and triangles.
+       * This works for chevrons and triangles, because the up/down/left/right variants of the
+       * respective icons use one path definition with different transformations.
+       */
+      .yfiles-group-node-icon .yfiles-icon-foreground > * {
+        transition: transform 0.3s;
+      }
+
+      .yfiles-tooltip {
+        background-color: #e0edf0;
+      }
+
+      .tooltip-container {
+        margin: 8px;
+      }
+
+      .tooltip-container h4 {
+        margin-top: 0;
+      }
+
+      .tooltip-container .color {
+        width: 80px;
+        height: 16px;
+      }
+
+      .tooltip-content {
+        display: grid;
+        grid-template-columns: 3fr 4fr;
+        align-items: center;
+        column-gap: 20px;
+        row-gap: 2px;
+      }
+    </style>
+
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Group Node Style Demo</h1>
+        <p>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" target="_blank">GroupNodeStyle</a> is a style primarily intended for groups and folders, i.e.,
+          collapsed groups.
+        </p>
+        <p>
+          This style offer many configuration options for customizing its look. Please see chapter
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles#styles-GroupNodeStyle" target="_blank">GroupNodeStyle</a> in the
+          Developer's Guide and the <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" target="_blank">GroupNodeStyle</a> API documentation for more detailed
+          information.
+        </p>
+        <p>
+          The related <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeLabelModel" target="_blank">GroupNodeLabelModel</a> places node labels inside the tab or the
+          background area next to the tab of a group or folder when used together with
+          <code>GroupNodeStyle</code>.
+        </p>
+
+        <h2>Things to try</h2>
+        <ul>
+          <li>
+            Click the expansion state icons
+            <br />
+            <img src="../../resources/icons/group-minus-16.svg" alt="Minus" title="Minus" />&nbsp;
+            <img src="../../resources/icons/group-plus-16.svg" alt="Plus" title="Plus" />&nbsp;
+            <img
+              src="../../resources/icons/group-chevron-down-16.svg"
+              alt="Chevron Down"
+              title="Chevron Down"
+            />&nbsp;
+            <img
+              src="../../resources/icons/group-chevron-up-16.svg"
+              alt="Chevron Up"
+              title="Chevron Up"
+            />&nbsp;
+            <img
+              src="../../resources/icons/group-triangle-down-16.svg"
+              alt="Triangle Down"
+              title="Triangle Down"
+            />&nbsp;
+            <img
+              src="../../resources/icons/group-triangle-up-16.svg"
+              alt="Triangle Up"
+              title="Triangle Up"
+            />
+            <br />
+            to collapse groups or expand folders.
+          </li>
+          <li>
+            Double-click a group or a folder. This will collapse a group and expand a folder even if
+            there is no expansion state icon.
+          </li>
+          <li>
+            When using the SVG style, move the mouse over one of the expansion state icons. The icon
+            will slightly increase in size in response to the mouse hovering over it.
+            <br />
+            This CSS transition effect is specified in the demo's local &lt;style&gt; definition.
+          </li>
+          <li>
+            When using SVG styles, collapse a group or expand a folder with a
+            chevron or triangle icon. The expansion state icon will change in an animated fashion in
+            response to the state change.
+            <br />
+            This CSS transition effect is specified in the demo's local &lt;style&gt; definition.
+          </li>
+        </ul>
+
+        <h2>Related Demos</h2>
+        <ul>
+          <li>
+            <a href="../shape-node-style/index.html">Shape Node Style</a>
+          </li>
+          <li>
+            <a href="../rectangle-node-style/index.html">Rectangle Node Style</a>
+          </li>
+          <li>
+            <a href="../arrow-node-style/index.html">Arrow Node Style</a>
+          </li>
+          <li>
+            <a href="../../02-tutorial-custom-styles/01-custom-node-style/index.html"
+              >Tutorial: Custom Node Style</a
+            >
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+        <span class="demo-separator"></span>
+        <select title="Select the type of node style to use" id="styleTypeChooser">
+          <option value="svg">SVG Style</option>
+          <option value="webgl">WebGL2 Style</option>
+        </select>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="GroupNodeStyleDemo.js"></script>
+  </body>
+</html>

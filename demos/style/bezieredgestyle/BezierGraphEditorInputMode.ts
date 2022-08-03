@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,19 +27,19 @@
  **
  ***************************************************************************/
 import {
-  GraphEditorInputMode,
-  IModelItem,
-  SelectionEventArgs,
-  ItemEventArgs,
-  IBend,
   BezierEdgeStyle,
-  IGraph,
-  HandleInputMode,
-  InputModeEventArgs,
-  Point,
   CreateBendInputMode,
+  CreateEdgeInputMode,
+  GraphEditorInputMode,
+  HandleInputMode,
+  IBend,
   IEdge,
-  CreateEdgeInputMode
+  IGraph,
+  IModelItem,
+  InputModeEventArgs,
+  ItemEventArgs,
+  Point,
+  SelectionEventArgs
 } from 'yfiles'
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
 
@@ -131,7 +131,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
 
   /**
    * This class removes the dragged bend when the handle input mode is canceled.
-   * This is to support the {@link GraphEditorInputMode#onCreateBendInputModeBendCreated}
+   * This is to support the {@link GraphEditorInputMode.onCreateBendInputModeBendCreated}
    * implementation for bends that are created during the gesture and the user wants to cancel
    * the gesture, not only moving the bend back to the original location, but also removing
    * the newly created bend.

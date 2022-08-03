@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,17 +52,11 @@ import {
   VoidPortStyle
 } from 'yfiles'
 
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
 import { RoutingCreateEdgeInputMode, RoutingStrategy } from './RoutingCreateEdgeInputMode'
 import PortCandidateTemplate from './PortCandidateTemplate'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 const defaultColor = '#F0EBE6'
 const nodeColors = ['#D4B483', '#C1666B', '#48A9A6', '#4357AD']
@@ -70,9 +64,10 @@ const nodeColors = ['#D4B483', '#C1666B', '#48A9A6', '#4357AD']
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // configures default styles for newly created graph elements
   initDemoStyles(graphComponent.graph)
@@ -471,5 +466,5 @@ function registerCommands(graphComponent: GraphComponent): void {
   )
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

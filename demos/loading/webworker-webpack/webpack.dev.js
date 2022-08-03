@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,13 +37,12 @@ module.exports = {
     app: ['regenerator-runtime/runtime', './src/WebWorkerWebpackDemo.ts']
   },
   devServer: {
-    contentBase: [
+    static: [
       path.join(__dirname, 'dist'),
       // serve the package root as well, so relative links to assets (css/images) work in dev server
       path.join(__dirname, '../../../')
     ],
     compress: true,
-    hot: true,
     port: 9003
   },
   // default devtool needs to be disabled for the SourceMapDevToolPlugin below to be used

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  ClickEventArgs,
   Cursor,
   HandlePositions,
   HandleTypes,
@@ -61,7 +62,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     this.initialRenderSize = Size.EMPTY
 
     // The margins the handle is placed form the port visualization bounds.
-    // The margins are applied in view coordinates. Default is <c>4</c>.
+    // The margins are applied in view coordinates. Default is `4`.
     this.margins = 4
   }
 
@@ -229,4 +230,10 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     }
     return Cursor.NONE
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 }

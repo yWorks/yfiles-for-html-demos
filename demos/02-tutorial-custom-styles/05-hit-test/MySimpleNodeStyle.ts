@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -72,7 +72,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
    * @return True if p is inside node.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(canvasContext: IInputModeContext, p: Point, node: INode): boolean {
     // return super.isHit(canvasContext, p, node);
@@ -84,7 +84,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Checks if a node is inside a certain box. Considers HitTestRadius.
    * @return True if the box intersects the elliptical shape of the node. Also true if box lies completely
    *   inside node.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    */
   isInBox(canvasContext: IInputModeContext, box: Rect, node: INode): boolean {
     // return super.isInBox(canvasContext, box, node);
@@ -128,8 +128,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Determines the color to use for filling the node.
-   * This implementation uses the {@link #nodeColor} property unless
-   * the {@link ITagOwner#tag} of the {@link INode} is of type {@link string},
+   * This implementation uses the {@link nodeColor} property unless
+   * the {@link ITagOwner.tag} of the {@link INode} is of type {@link string},
    * in which case that color overrides this style's setting.
    * @param node The node to determine the color for.
    * @return The color for filling the node.
@@ -142,7 +142,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual for a node.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -158,7 +158,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     const container = oldVisual.svgElement
@@ -223,9 +223,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Actually creates the visual appearance of a node given the values provided by
-   * {@link MySimpleNodeStyle#createRenderDataCache}. This renders the node and the edges to the labels and adds the
-   * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
-   * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
+   * {@link MySimpleNodeStyle.createRenderDataCache}. This renders the node and adds the
+   * elements to the `container`. All items are arranged as if the node was located at (0,0).
+   * {@link MySimpleNodeStyle.createVisual} and {@link MySimpleNodeStyle.updateVisual} finally arrange the container
    * so that the drawing is translated into the final position.
    */
   render(context: IRenderContext, node: INode, container: SVGElement, cache: any): void {
@@ -351,7 +351,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows for correct edge path intersection calculation, among others.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    */
   getOutline(node: INode): GeneralPath {
     const outline = new GeneralPath()
@@ -362,7 +362,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    */
   isInside(node: INode, point: Point): boolean {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)

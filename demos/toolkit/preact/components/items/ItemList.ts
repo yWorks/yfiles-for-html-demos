@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,7 +52,7 @@ export default (props: Props) => {
   return html`<div class="item-list">
     <h2>Data Items</h2>
     <div>
-      <button onClick="${props.addDataItem}">Add Item</button>
+      <button class="add-button" onClick="${props.addDataItem}">Add Item</button>
     </div>
     ${itemElements}
   </div>`

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,10 +39,12 @@ export class Tooltip {
   private readonly element: HTMLDivElement
   private dummy: HTMLDivElement
   private hideTimer: any
+  private deltaHeight: number
 
   constructor() {
     this.element = document.getElementById('preset-tooltip') as HTMLDivElement
     this.dummy = Tooltip.createDummyElement(this.element)
+    this.deltaHeight = this.element.parentElement!.getBoundingClientRect().top
   }
 
   /**
@@ -65,7 +67,7 @@ export class Tooltip {
       const contentDiv = element.querySelector('.content') as HTMLDivElement
       contentDiv.innerHTML = content
       element.style.display = 'block'
-      element.style.top = `${activatorAnchorY}px`
+      element.style.top = `${activatorAnchorY - this.deltaHeight}px`
 
       const tooltipBounds = element.getBoundingClientRect()
       const triangle = element.querySelector('.triangle') as HTMLSpanElement

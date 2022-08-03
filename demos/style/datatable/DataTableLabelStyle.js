@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,7 +45,7 @@ export default class DataTableLabelStyle extends LabelStyleBase {
 
   /**
    * Creates the visual for the given label.
-   * @see Overrides {@link LabelStyleBase#createVisual}
+   * @see Overrides {@link LabelStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!ILabel} label
    * @returns {!SvgVisual}
@@ -67,7 +67,7 @@ export default class DataTableLabelStyle extends LabelStyleBase {
 
   /**
    * Re-renders the label using the old visual for performance reasons.
-   * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @see Overrides {@link LabelStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
    * @param {!ILabel} label

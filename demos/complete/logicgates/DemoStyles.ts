@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -82,7 +82,7 @@ export class AndGateNodeStyle extends GateNodeStyle {
    * Creates the visual for a node.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -100,7 +100,7 @@ export class AndGateNodeStyle extends GateNodeStyle {
    * @param context The render context
    * @param oldVisual The old visual
    * @param node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual {
     if (!(oldVisual instanceof SvgVisual)) {
@@ -225,7 +225,7 @@ export class NotNodeStyle extends GateNodeStyle {
    * Creates the visual for a node.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -244,7 +244,7 @@ export class NotNodeStyle extends GateNodeStyle {
    * @param context The render context
    * @param oldVisual The old visual
    * @param node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     const container = oldVisual.svgElement
@@ -353,7 +353,7 @@ export class OrNodeStyle extends GateNodeStyle {
    * Creates the visual for a node.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -372,7 +372,7 @@ export class OrNodeStyle extends GateNodeStyle {
    * @param context The render context
    * @param oldVisual The old visual
    * @param node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): SvgVisual {
     if (!(oldVisual instanceof SvgVisual)) {
@@ -521,7 +521,7 @@ export class XOrNodeStyle extends GateNodeStyle {
    * Creates the visual for a node.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -540,7 +540,7 @@ export class XOrNodeStyle extends GateNodeStyle {
    * @param context The render context
    * @param oldVisual The old visual
    * @param node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): SvgVisual {
     if (!(oldVisual instanceof SvgVisual)) {

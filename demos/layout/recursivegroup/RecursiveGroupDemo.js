@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,40 +34,31 @@ import {
   GraphItemTypes,
   GraphMLIOHandler,
   ICommand,
-  ILayoutAlgorithm,
   INode,
-  LayoutData,
   License,
   NodeAlignmentPolicy,
   Size
 } from 'yfiles'
 
-import { initDemoStyles } from '../../resources/demo-styles.js'
 import { createThreeTierLayout, createThreeTierLayoutData } from './ThreeTierLayout.js'
-import { createTableLayout, createTableLayoutData } from './TableLayout.js'
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  checkLicense,
-  readGraph,
-  showApp
-} from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * The GraphComponent.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraph()
   initializeInputModes()
@@ -79,30 +70,17 @@ function run(licenseData) {
 }
 
 /**
- * Runs a table layout or a three tier layout depending on the selected sample.
+ * Runs the 'three tier layout', i.e., {@link RecursiveGroupLayout} with {@link HierarchicLayout}
+ * as core layout.
  * @returns {!Promise}
  */
 async function runLayout() {
   setUIDisabled(true)
 
-  const selectedLayout = document.getElementById('select-sample').value
   const fromSketch = document.getElementById('from-sketch').checked
 
-  let layout
-  let layoutData
-  switch (selectedLayout) {
-    case 'table':
-      layout = createTableLayout(fromSketch)
-      layoutData = createTableLayoutData()
-      break
-    case 'three-tier':
-      layout = createThreeTierLayout(fromSketch)
-      layoutData = createThreeTierLayoutData(graphComponent.graph, fromSketch)
-      break
-    default:
-      setUIDisabled(false)
-      return
-  }
+  const layout = createThreeTierLayout(fromSketch)
+  const layoutData = createThreeTierLayoutData(graphComponent.graph, fromSketch)
   try {
     graphComponent.fitGraphBounds()
     await graphComponent.morphLayout(layout, '0.5s', layoutData)
@@ -153,19 +131,15 @@ function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindChangeListener("select[data-command='SelectSample']", loadSample)
-
-  bindAction("button[data-command='Reset']", loadSample)
   bindAction("button[data-command='Layout']", runLayout)
 }
 
 /**
- * Loads the table or three-tire.
+ * Loads the three-tier example graph.
  * @returns {!Promise}
  */
 async function loadSample() {
-  const filename = document.getElementById('select-sample').value
-  const path = `resources/${filename}.graphml`
+  const path = `resources/three-tier.graphml`
 
   const ioHandler = new GraphMLIOHandler()
   await readGraph(ioHandler, graphComponent.graph, path)
@@ -178,7 +152,7 @@ async function loadSample() {
     graphComponent.graph.nodeDefaults.size = firstLeaf.layout.toSize()
     graphComponent.graph.nodeDefaults.style = firstLeaf.style
   }
-  runLayout()
+  await runLayout()
 }
 
 /**
@@ -187,11 +161,9 @@ async function loadSample() {
  * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {
-  document.getElementById('select-sample').disabled = disabled
-  document.getElementById('reset').disabled = disabled
   document.getElementById('from-sketch').disabled = disabled
   document.getElementById('layout').disabled = disabled
 }
 
-// start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

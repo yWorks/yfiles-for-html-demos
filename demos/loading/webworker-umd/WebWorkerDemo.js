@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -79,8 +79,10 @@ require([
     }
   }
 
-  function run(licenseData) {
-    License.value = licenseData
+  async function run() {
+    const response = await fetch('../../../lib/license.json')
+    License.value = await response.json()
+
     graphComponent = new GraphComponent('graphComponent')
     // initialize styles as well as graph
     graphComponent.inputMode = new GraphEditorInputMode({
@@ -96,7 +98,7 @@ require([
   /**
    * Runs the web worker layout task.
    * @param {boolean} clearUndo Specifies whether the undo queue should be cleared after the layout
-   * calculation. This is set to <code>true</code> if this method is called directly after
+   * calculation. This is set to `true` if this method is called directly after
    * loading a new sample graph.
    */
   async function runWebWorkerLayout(clearUndo) {
@@ -920,9 +922,5 @@ require([
   }
 
   // start demo
-  fetch('../../../lib/license.json').then(response => {
-    response.json().then(json => {
-      run(json)
-    })
-  })
+  run()
 })

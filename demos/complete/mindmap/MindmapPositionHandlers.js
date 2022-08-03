@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -94,7 +94,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Returns a view of the location of the item.
-   * @see Specified by {@link IPositionHandler#location}.
+   * @see Specified by {@link IPositionHandler.location}.
    * @type {!IPoint}
    */
   get location() {
@@ -269,7 +269,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Computes the nearest parent candidate for the moved node.
    * Returns null if the distance to the found candidate exceeds
-   * the {@link SubtreePositionHandler#MAX_DISTANCE limit}.
+   * the {@link SubtreePositionHandler.MAX_DISTANCE limit}.
    * @param {boolean} isLeft True if the node is on the left of the subtree, false otherwise.
    * @param {!IGraph} graph The input graph.
    * @returns {?INode} The parent candidate, or null.

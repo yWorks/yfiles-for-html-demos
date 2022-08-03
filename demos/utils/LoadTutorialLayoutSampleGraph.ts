@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,6 +32,8 @@ import {
   DefaultLabelStyle,
   FreeEdgeLabelModel,
   GraphBuilder,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   HorizontalTextAlignment,
   IArrow,
   IEdgeStyle,
@@ -40,8 +42,7 @@ import {
   INodeStyle,
   Insets,
   InteriorLabelModel,
-  InteriorStretchLabelModel,
-  PanelNodeStyle,
+  LabelShape,
   PolylineEdgeStyle,
   ShapeNodeStyle,
   ShapeNodeStyleRenderer,
@@ -49,7 +50,6 @@ import {
   Stroke,
   VerticalTextAlignment
 } from 'yfiles'
-import { DemoLabelStyleRenderer } from '../resources/basic-demo-styles'
 
 /**
  * @yjs:keep=nodeList,edgeList
@@ -92,7 +92,8 @@ export async function loadLayoutSampleGraph(graph: IGraph, fileName: string): Pr
     (data: any) => data.labels || []
   ).labelCreator
   groupLabelCreator.textProvider = (data: any) => data.text
-  groupLabelCreator.layoutParameterProvider = (data: any) => InteriorStretchLabelModel.NORTH
+  groupLabelCreator.layoutParameterProvider = (data: any) =>
+    new GroupNodeLabelModel().createTabBackgroundParameter()
   groupLabelCreator.styleProvider = (data: any) => getTutorialGroupLabelStyle()
 
   const edgesSource = builder.createEdgesSource({
@@ -121,28 +122,30 @@ function initStyles(graph: IGraph): void {
   graph.nodeDefaults.style = getTutorialNodeStyle(null)
   graph.edgeDefaults.style = getTutorialEdgeStyle(null)
   graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({ cropAtPort: true, extraCropLength: 1.0 })
+    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 1.0 })
   )
   graph.nodeDefaults.labels.style = getTutorialLabelStyle(2.5, null)
   graph.edgeDefaults.labels.style = getTutorialLabelStyle(2.0, null)
   graph.groupNodeDefaults.style = getTutorialGroupNodeStyle(null)
   graph.groupNodeDefaults.labels.style = getTutorialGroupLabelStyle()
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createTabBackgroundParameter()
 }
 
 function getTutorialGroupLabelStyle(): ILabelStyle {
   return new DefaultLabelStyle({
-    horizontalTextAlignment: 'right',
-    textFill: '#0C313A',
-    insets: [4, 5, 2, 5]
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: 'left',
+    textFill: '#9CC5CF'
   })
 }
 
 function getTutorialGroupNodeStyle(data: any): INodeStyle {
-  return new PanelNodeStyle({
-    color: data && data.fill ? data.fill : '#FFFFFF',
-    insets: data && data.insets ? data.insets : [30, 5, 5, 5],
-    labelInsetsColor: data && data.labelInsetsColor ? data.labelInsetsColor : '#9CC5CF'
+  const fill = data && data.fill ? data.fill : '#0B7189'
+  return new GroupNodeStyle({
+    tabFill: fill,
+    stroke: `2px solid ${fill}`,
+    tabPosition: 'top'
   })
 }
 
@@ -179,7 +182,8 @@ function getArrow(dataArrow: string | null, stroke: Stroke): IArrow {
 }
 
 function getTutorialLabelStyle(rounding: number, data: any): ILabelStyle {
-  const labelStyle = new DefaultLabelStyle(new DemoLabelStyleRenderer(rounding))
+  const labelStyle = new DefaultLabelStyle()
+  labelStyle.shape = LabelShape.ROUND_RECTANGLE
   labelStyle.backgroundFill = data && data.fill ? data.fill : '#FFC398'
   labelStyle.textFill = data && data.textFill ? data.textFill : '#662b00'
   labelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER

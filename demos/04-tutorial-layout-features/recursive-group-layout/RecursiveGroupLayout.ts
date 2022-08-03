@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,10 +50,10 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   layoutData: LayoutData
 } {
   // gets the group nodes
-  const groupNode1 = graph.nodes.first(node => node.tag === 'Group 1')
-  const groupNode2 = graph.nodes.first(node => node.tag === 'Group 2')
-  const groupNode3 = graph.nodes.first(node => node.tag === 'Group 3')
-  const groupNode4 = graph.nodes.first(node => node.tag === 'Group 4')
+  const groupNode1 = graph.nodes.find(node => node.tag === 'Group 1')
+  const groupNode2 = graph.nodes.find(node => node.tag === 'Group 2')
+  const groupNode3 = graph.nodes.find(node => node.tag === 'Group 3')
+  const groupNode4 = graph.nodes.find(node => node.tag === 'Group 4')
 
   // the RecursiveGroupLayout can use a core layout algorithm to arrange the top level hierarchy
   const coreLayout = new HierarchicLayout()

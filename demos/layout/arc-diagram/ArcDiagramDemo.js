@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,17 +42,18 @@ import {
   Size,
   Stroke
 } from 'yfiles'
-import loadJson from '../../resources/load-json.js'
 import {
   addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
 import { ArcDiagramLayout, NodeOrder } from './ArcDiagramLayout.js'
 import SampleData from './resources/SampleData.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 const chooser = document.getElementById('nodeorder')
 
@@ -62,14 +63,15 @@ Class.ensure(LayoutExecutor)
 
 /**
  * Bootstraps this demo.
- * @param {!object} licenseData The yFiles license information.
+ * @param licenseData The yFiles license information.
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initially disable interactive editing
   configureUserInteraction(graphComponent)
@@ -189,4 +191,5 @@ function registerCommands(graphComponent) {
   bindAction('#arrange', () => arrange(graphComponent))
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

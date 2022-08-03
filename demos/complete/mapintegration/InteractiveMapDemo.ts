@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global L */
-
 import {
   Animator,
   ArcEdgeStyle,
@@ -70,7 +68,7 @@ import {
 import FlightData from './resources/FlightData'
 import CenterGraphStage from './CenterGraphStage'
 import ZoomAnimation from './ZoomAnimation'
-import { addClass, checkLicense, showApp } from '../../resources/demo-app'
+import { addClass, showApp } from '../../resources/demo-app'
 import {
   applyLayoutStyles,
   applyMapStyles,
@@ -80,9 +78,8 @@ import {
 } from './StylesSupport'
 import ShortestPathSupport from './ShortestPathSupport'
 import CircleVisual from './CircleVisual'
-import loadJson from '../../resources/load-json'
-// import leaflet typings
-import L, { Map } from 'leaflet'
+import type { Map } from 'leaflet'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -352,14 +349,11 @@ const ToggleGraphControl = L.Control.extend({
         // move the nodes to their new locations in an animation while zooming to the old viewport
         toggleButton.disabled = true
         const zoomAnimation = new ZoomAnimation(graphComponent, 1, viewportCenter, 700)
-        const graphAnimation = IAnimation.createGraphAnimation(
-          graphComponent.graph,
-          nodeLocations,
-          null,
-          null,
-          null,
-          '700ms'
-        )
+        const graphAnimation = IAnimation.createGraphAnimation({
+          graph: graphComponent.graph,
+          targetNodeLayouts: nodeLocations,
+          preferredDuration: '700ms'
+        })
         graph.edges.forEach(edge => graphComponent.graph.clearBends(edge))
         const animation = IAnimation.createParallelAnimation([zoomAnimation, graphAnimation])
         const animator = new Animator(graphComponent)
@@ -408,8 +402,8 @@ const ToggleGraphControl = L.Control.extend({
 /**
  * @yjs:keep=control
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // @ts-ignore
   worldMap = L.map('graphComponent')
 
@@ -581,4 +575,5 @@ function createGraph(): void {
   builder.buildGraph()
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

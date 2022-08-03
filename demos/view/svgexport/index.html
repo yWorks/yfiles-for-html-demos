@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -40,21 +40,6 @@
     <link rel="stylesheet" href="./resources/styles.css" />
 
     <style>
-      .demo-properties label.short {
-        width: 6em;
-      }
-
-      .demo-properties input[type='number'] {
-        width: 5em;
-      }
-
-      .demo-properties button.export-button {
-        width: 6.5em;
-        height: 10ex;
-        margin: auto;
-        vertical-align: middle;
-      }
-
       .demo-exportDialog {
         z-index: 10000;
         position: absolute;
@@ -139,7 +124,57 @@
 
       #svgContainerInner svg {
         background-color: white;
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAAAAACT4cgpAAAAAXNSR0IArs4c6QAAABhJREFUeNpjuAsF/6GAYYQLwBgwiREuAADft9wQLSQokgAAAABJRU5ErkJggg==);
+        background-repeat: repeat;
         box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .settings-grid {
+        display: grid;
+        align-items: center;
+        grid-template-areas:
+          'legend legend legend'
+          'label1 label1 editor1'
+          'label2 editor2 editor2'
+          'label3 label3 editor3'
+          'button button button';
+      }
+
+      .settings-legend {
+        grid-area: legend;
+        font-weight: bold;
+        font-size: larger;
+      }
+      .settings-label-row1 {
+        grid-area: label1;
+      }
+      .settings-label-row2 {
+        grid-area: label2;
+      }
+      .settings-label-row3 {
+        grid-area: label3;
+      }
+      .settings-editor-row1 {
+        grid-area: editor1;
+        justify-self: end;
+        width: initial !important;
+      }
+      .settings-editor-row2 {
+        grid-area: editor2;
+        justify-self: stretch;
+      }
+      .settings-editor-row3 {
+        grid-area: editor3;
+        justify-self: end;
+        width: initial !important;
+      }
+      .settings-editor-row4 {
+        grid-area: button;
+        justify-self: stretch;
+        margin-top: 12px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: initial !important;
       }
     </style>
 
@@ -214,34 +249,46 @@
         <h2>Export</h2>
 
         <div class="demo-properties">
-          <div id="formContainer">
-            <fieldset>
-              <legend>Export Properties</legend>
-              <div class="demo-form-block">
-                <label for="useRect">Export Rectangle Contents</label>
-                <input
-                  id="useRect"
-                  data-name="inputUseRect"
-                  type="checkbox"
-                  name="useRect"
-                  checked="checked"
-                />
-              </div>
-              <div class="demo-form-block">
-                <label for="scale" class="short">Scale</label>
-                <input
-                  id="scale"
-                  data-name="inputScale"
-                  type="number"
-                  min="0.1"
-                  max="200.0"
-                  step="0.1"
-                  name="scale"
-                  value="1.0"
-                />
-              </div>
-            </fieldset>
-            <button data-name="ExportButton" data-command="Export" value="Export">Export</button>
+          <div class="settings-grid">
+            <label class="settings-legend">Export Properties</label>
+            <label for="useRect" class="settings-label-row1">Export Rectangle Contents</label>
+            <input
+              class="settings-editor-row1"
+              id="useRect"
+              data-name="inputUseRect"
+              type="checkbox"
+              name="useRect"
+              checked="checked"
+            />
+            <label for="scale" class="settings-label-row2">Scale</label>
+            <input
+              class="settings-editor-row2"
+              id="scale"
+              data-name="inputScale"
+              type="number"
+              min="0.1"
+              max="200.0"
+              step="0.1"
+              name="scale"
+              value="1.0"
+            />
+            <label for="transparent" class="settings-label-row3">Transparent Background</label>
+            <input
+              class="settings-editor-row3"
+              id="transparent"
+              data-name="inputTransparent"
+              type="checkbox"
+              name="transparent"
+              checked="checked"
+            />
+            <button
+              class="settings-editor-row4"
+              data-name="ExportButton"
+              data-command="Export"
+              value="Export"
+            >
+              Export
+            </button>
           </div>
         </div>
         <a

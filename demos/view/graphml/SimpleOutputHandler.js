@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,7 +54,7 @@ export default class SimpleOutputHandler extends OutputHandlerBase {
    * Only primitive data types are written. Complex data types are ignored, because they
    * cannot be serialized in a meaningful manner.
    *
-   * @see Overrides {@link OutputHandlerBase#writeValueCore}
+   * @see Overrides {@link OutputHandlerBase.writeValueCore}
    * @param {!IWriteContext} context
    * @param {*} data
    */
@@ -87,7 +87,7 @@ export default class SimpleOutputHandler extends OutputHandlerBase {
 
   /**
    * Gets the value for the given key.
-   * @see Overrides {@link OutputHandlerBase#getValue}
+   * @see Overrides {@link OutputHandlerBase.getValue}
    * @param {!IWriteContext} context
    * @param {*} key
    * @returns {*}

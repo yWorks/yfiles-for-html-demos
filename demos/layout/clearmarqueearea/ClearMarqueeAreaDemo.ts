@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,13 +56,12 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initDemoStyles, DemoGroupStyle } from '../../resources/demo-styles'
 import SampleData from './resources/SampleData'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
+import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -74,9 +73,10 @@ let componentAssignmentStrategy: ComponentAssignmentStrategy = ComponentAssignme
 
 let clearAreaStrategy: ClearAreaStrategy = ClearAreaStrategy.PRESERVE_SHAPES
 
-function run(licenseData: object) {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputModes()
   initDemoStyles(graphComponent.graph)
@@ -200,12 +200,12 @@ function onDragFinished(sender: any, e: MarqueeSelectionEventArgs): void {
 }
 
 /**
- * Returns the group node at the given location. If there is no group node, <code>null</code> is returned.
+ * Returns the group node at the given location. If there is no group node, `null` is returned.
  */
 function getHitGroupNode(context: IInputModeContext, location: Point): INode | null {
   return (context.lookup(INodeHitTester.$class) as INodeHitTester)
     .enumerateHits(context, location)
-    .firstOrDefault(n => graphComponent.graph.isGroupNode(n))
+    .find(n => graphComponent.graph.isGroupNode(n))
 }
 
 /**
@@ -233,9 +233,9 @@ function loadGraph(sampleName: string): void {
       parentId: 'parentId',
       layout: (data: any) => data // the data object itself has x, y, width, height properties
     })
-    const groupStyle = new DemoGroupStyle()
-    // set solidHitTest to true so group nodes are properly hit in getHitGroupNode
-    groupStyle.solidHitTest = true
+    const groupStyle = createDemoGroupStyle({})
+    // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
+    groupStyle.hitTransparentContentArea = false
     nodesSource.nodeCreator.defaults.style = groupStyle
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
@@ -317,5 +317,5 @@ function registerCommands(): void {
   })
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

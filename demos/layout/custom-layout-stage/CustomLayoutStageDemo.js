@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,22 +44,16 @@ import {
   Size
 } from 'yfiles'
 
-import {
-  bindAction,
-  bindActions,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindActions, bindCommand, showApp } from '../../resources/demo-app.js'
 import MoveNodesAsideStage from './MoveNodesAsideStage.js'
 import AlignmentStage from './AlignmentStage.js'
 import ZigZagEdgesStage from './ZigZagEdgesStage.js'
 import {
+  applyDemoTheme,
   createDemoNodeLabelStyle,
-  DemoEdgeStyle,
-  DemoNodeStyle
+  initDemoStyles
 } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * The graph component in which the graph is displayed.
@@ -69,11 +63,12 @@ let graphComponent
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode()
 
   // Create the sample graph
@@ -226,8 +221,7 @@ function createCoreLayout() {
  */
 function createGraph(graph) {
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.style = new DemoNodeStyle()
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  initDemoStyles(graph, { shape: ShapeNodeShape.ROUND_RECTANGLE })
   graph.edgeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-21')
 
@@ -308,5 +302,5 @@ function registerCommands() {
   bindAction("button[data-command='RunAllStages']", () => runAllLayouts())
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

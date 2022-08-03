@@ -24,4 +24,4 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Documentation
 
-The Developer's Guide has detailed information about the [organic layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout) in general and about how to run the algorithm on a subset of nodes specifically.
+The Developer's Guide has detailed information about the [organic layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout) in general and about [how to run the algorithm on a subset of nodes](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#organic_layout-incremental) specifically.

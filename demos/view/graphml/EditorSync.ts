@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,8 +39,7 @@ import {
   ParseEventArgs,
   WriteEventArgs
 } from 'yfiles'
-// import codemirror typings
-import CodeMirror, { Editor, Position, TextMarker } from 'codemirror'
+import type { Editor, Position, TextMarker } from 'codemirror'
 
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
@@ -346,7 +345,7 @@ export default class EditorSync {
   }
 
   /**
-   * Unhighlight a deselected item by providing null-options to {@link #replaceMarker}.
+   * Unhighlight a deselected item by providing null-options to {@link replaceMarker}.
    */
   onItemDeselected(masterItem: IModelItem): void {
     this.replaceMarker(masterItem, {})

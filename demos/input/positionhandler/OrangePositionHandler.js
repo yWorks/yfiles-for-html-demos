@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,7 +44,7 @@ import {
  */
 export default class OrangePositionHandler extends ConstrainedPositionHandler {
   /**
-   * Creates a new instance of <code>OrangePositionHandler</code>
+   * Creates a new instance of {@link OrangePositionHandler}
    * @param {!MutableRectangle} boundaryRectangle The boundary rectangle
    * @param {!INode} node The given node
    * @param {!IPositionHandler} delegateHandler The default handler
@@ -63,7 +63,7 @@ export default class OrangePositionHandler extends ConstrainedPositionHandler {
    * left corner of the node and not for the node's bounding box.
    * @param {!IInputModeContext} inputModeContext The input mode context
    * @param {!Point} originalLocation The original location
-   * @see Overrides {@link ConstrainedDragHandler#onInitialized}
+   * @see Overrides {@link ConstrainedDragHandler.onInitialized}
    */
   onInitialized(inputModeContext, originalLocation) {
     super.onInitialized.call(this, inputModeContext, originalLocation)
@@ -81,7 +81,7 @@ export default class OrangePositionHandler extends ConstrainedPositionHandler {
    * @param {!IInputModeContext} context The context in which the drag will be performed
    * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
    * @param {!Point} newLocation The new location of the handler
-   * @see Overrides {@link ConstrainedDragHandler#constrainNewLocation}
+   * @see Overrides {@link ConstrainedDragHandler.constrainNewLocation}
    * @returns {!Point}
    */
   constrainNewLocation(context, originalLocation, newLocation) {

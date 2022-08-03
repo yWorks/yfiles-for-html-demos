@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -198,12 +198,12 @@
   opacity: 1;
 }
 
-#snapPanningDiv {
+#panningOptionsDiv {
   border-bottom: 5px solid #eee;
   padding: 20px 5px;
 }
 
-#snapPanningBox {
+.panningOptionsBox {
   background: url('../../resources/icons/arrowheadDownWhite.png') no-repeat 99px 7px;
   height: 29px;
   overflow: hidden;
@@ -213,7 +213,7 @@
   background-color: #0b7189;
 }
 
-#snapPanningBox select {
+.panningOptionsBox select {
   background: transparent;
   border: none;
   font-size: 14px;
@@ -223,12 +223,12 @@
   color: #fff;
 }
 
-#snapPanningBox option {
+.panningOptionsBox option {
   color: #000;
 }
 
-#snapPanningLabel {
-  margin: 0 0 10px 0;
+.panningLabel {
+  margin: 10px 0 10px 0;
   text-align: center;
   color: #333333;
 }

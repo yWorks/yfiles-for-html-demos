@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -218,7 +218,7 @@ export class ListNodeStyle extends NodeStyleBase {
 
   /**
    * Calculates the index of the row at the given location.
-   * @return the index of the row at the given location or <code>-1</code> if there is no such row.
+   * @return the index of the row at the given location or `-1` if there is no such row.
    */
   getRowIndex(node: INode, location: Point): number {
     const layout = node.layout

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,7 @@ import { ConstrainedHandle, IHandle, IInputModeContext, INode, Point } from 'yfi
  */
 export default class NodeLayoutPortLocationHandle extends ConstrainedHandle {
   /**
-   * Creates a new instance of <code>NodeLayoutPortLocationHandle</code>.
+   * Creates a new instance of {@link NodeLayoutPortLocationHandle}.
    * @param {!INode} node
    * @param {!IHandle} wrappedHandle
    */
@@ -47,11 +47,11 @@ export default class NodeLayoutPortLocationHandle extends ConstrainedHandle {
    * Returns the constraints for the new location.
    * @param {!IInputModeContext} context The context in which the drag will be performed
    * @param {!Point} originalLocation The value of the
-   * {@link ConstrainedDragHandler<TWrapped>#location} property at the time of
-   * {@link ConstrainedDragHandler<TWrapped>#initializeDrag}
+   * {@link ConstrainedHandle.location} property at the time of
+   * {@link ConstrainedHandle.initializeDrag}
    * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants
    * the handle to be at. Depending on the implementation the
-   * {@link ConstrainedDragHandler<TWrapped>#location} may or may not be modified to reflect the new
+   * {@link ConstrainedHandle.location} may or may not be modified to reflect the new
    *   value
    * @returns {!Point}
    */

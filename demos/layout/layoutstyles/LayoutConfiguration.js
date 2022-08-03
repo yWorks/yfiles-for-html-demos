@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -77,13 +77,13 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
    * Applies this configuration to the given {@link GraphComponent}.
    *
    * This is the main method of this class. Typically, it calls
-   * {@link LayoutConfiguration#createConfiguredLayout} to create and configure a layout and the graph's
-   * {@link IGraph#mapperRegistry} if necessary. Then, it  calculate a layout and applies it to
-   * the given <code>graphComponent</code>. Finally, this method invokes
-   * {@link LayoutConfiguration#postProcess} after the calculation.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * {@link LayoutConfiguration.createConfiguredLayout} to create and configure a layout and the graph's
+   * {@link IGraph.mapperRegistry} if necessary. Then, it  calculate a layout and applies it to
+   * the given `graphComponent`. Finally, this method invokes
+   * {@link LayoutConfiguration.postProcess} after the calculation.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
-   * @param {function()} doneHandler An optional function that is invoked after the layout finished
+   * @param doneHandler An optional function that is invoked after the layout finished
    */
   apply: async function (graphComponent, doneHandler) {
     if (this.$layoutRunning) {
@@ -140,8 +140,8 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
@@ -150,13 +150,13 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
   },
 
   /**
-   * Called by {@link LayoutConfiguration#runLayout} after the layout animation is done. This method is
+   * Called by {@link LayoutConfiguration.runLayout} after the layout animation is done. This method is
    * typically overridden to remove mappers from the mapper registry of the graph.
    */
   postProcess: function (graphComponent) {},
 
   /**
-   * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration. This
+   * Called by {@link LayoutConfiguration.apply} to create the layout data of the configuration. This
    * method is typically overridden to provide mappers for the different layouts.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
@@ -346,4 +346,16 @@ const LabelPlacementOrientation = {
   ORTHOGONAL: 1,
   HORIZONTAL: 2,
   VERTICAL: 3
+}
+
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const NodeLabelingPolicies = {
+  NONE: 0,
+  HORIZONTAL: 1,
+  RAYLIKE_LEAVES: 2,
+  CONSIDER_CURRENT_POSITION: 3,
+  RAYLIKE: 4
 }

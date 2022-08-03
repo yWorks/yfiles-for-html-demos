@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -85,8 +85,8 @@ export function createFeatureLayoutConfiguration(graph) {
   // define a comparison function for the out-edges at a tree node such that the respective
   // child nodes are order with respect to the label text (if they have a label)
   layoutData.outEdgeComparers.delegate = node => (edge1, edge2) => {
-    const targetLabel1 = edge1.targetNode.labels.firstOrDefault()
-    const targetLabel2 = edge2.targetNode.labels.firstOrDefault()
+    const targetLabel1 = edge1.targetNode.labels.at(0)
+    const targetLabel2 = edge2.targetNode.labels.at(0)
     if (targetLabel1 && targetLabel2) {
       //compare label text
       return targetLabel1.text.localeCompare(targetLabel2.text)

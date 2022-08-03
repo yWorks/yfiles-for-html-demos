@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,18 +40,26 @@ import {
   NodeReshapeHandleProvider,
   Rect
 } from 'yfiles'
-import { checkLicense, showApp } from '../../resources/demo-app'
+import { showApp } from '../../resources/demo-app'
 import LimitingRectangleDescriptor from './LimitingRectangleDescriptor'
 import PurpleNodeReshapeHandleProvider from './PurpleNodeReshapeHandleProvider'
-import loadJson from '../../resources/load-json'
-import type { ColorSetName } from '../../resources/basic-demo-styles'
-import { createDemoNodeLabelStyle, DemoNodeStyle } from '../../resources/demo-styles'
+import {
+  ApplicationState,
+  ClickableNodeReshapeHandleProvider
+} from './ClickableNodeReshapeHandleProvider'
+import type { ColorSetName } from '../../resources/demo-styles'
+import {
+  applyDemoTheme,
+  createDemoNodeLabelStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Registers a callback function as a decorator that provides a customized
  * {@link IReshapeHandleProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>IReshapeHandleProvider</code>. In this case, the 'node'
+ * for its {@link IReshapeHandleProvider}. In this case, the 'node'
  * parameter will be set to that node.
  * @param graph The given graph
  * @param boundaryRectangle The rectangle that limits the node's size.
@@ -71,7 +79,8 @@ function registerReshapeHandleProvider(graph: IGraph, boundaryRectangle: Rect): 
       node.tag === 'blue' ||
       node.tag === 'green' ||
       node.tag === 'purple' ||
-      node.tag === 'darkblue',
+      node.tag === 'darkblue' ||
+      node.tag === 'gold',
     (node: any): NodeReshapeHandleProvider => {
       // Obtain the tag from the node
       const nodeTag = node.tag
@@ -99,16 +108,21 @@ function registerReshapeHandleProvider(graph: IGraph, boundaryRectangle: Rect): 
       } else if (nodeTag === 'darkblue') {
         provider.handlePositions = HandlePositions.SOUTH_EAST
         provider.centerReshapeRecognizer = EventRecognizers.ALWAYS
+      } else if (nodeTag === 'gold') {
+        provider = new ClickableNodeReshapeHandleProvider(node, reshapeHandler, applicationState)
       }
       return provider
     }
   )
 }
 
-function run(licenseData: any): void {
-  License.value = licenseData
+let applicationState: ApplicationState
+
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // Create a default editor input mode
@@ -119,6 +133,9 @@ function run(licenseData: any): void {
     allowClipboardOperations: false,
     movableItems: GraphItemTypes.NONE
   })
+
+  applicationState = new ApplicationState(graphEditorInputMode, true)
+
   // and enable the undo feature.
   graph.undoEngineEnabled = true
 
@@ -142,20 +159,30 @@ function run(licenseData: any): void {
  * @param graph The input graph
  */
 function createSampleGraph(graph: IGraph): void {
-  createNode(graph, 80, 100, 140, 30, 'demo-red', 'red', 'Fixed Size')
-  createNode(graph, 300, 100, 140, 30, 'demo-green', 'green', 'Keep Aspect Ratio')
-  createNode(graph, 80, 250, 140, 50, 'demo-blue', 'darkblue', 'Keep Center')
-  createNode(graph, 300, 250, 140, 50, 'demo-purple', 'purple', 'Keep Aspect Ratio\nat corners')
-  createNode(graph, 80, 410, 140, 30, 'demo-orange', 'orange', 'Limited to Rectangle')
+  createNode(graph, 80, 100, 140, 30, 'demo-red', 'red', 'Fixed size')
+  createNode(graph, 300, 100, 140, 30, 'demo-green', 'green', 'Keep aspect ratio')
+  createNode(graph, 80, 200, 140, 50, 'demo-blue', 'darkblue', 'Keep center')
+  createNode(graph, 300, 200, 140, 50, 'demo-purple', 'purple', 'Keep aspect ratio\nat corners')
+  createNode(graph, 80, 310, 140, 30, 'demo-orange', 'orange', 'Limited to rectangle')
   createNode(
     graph,
     300,
-    400,
+    300,
     140,
     50,
     'demo-lightblue',
     'blue',
-    'Limited to Rectangle\nand Keep Aspect Ratio'
+    'Limited to rectangle\nand keep aspect ratio'
+  )
+  createNode(
+    graph,
+    80,
+    400,
+    140,
+    50,
+    'demo-palette-510',
+    'gold',
+    'Keep Aspect ratio\ndepending on state'
   )
 
   // clear undo after initial graph loading
@@ -169,7 +196,7 @@ function createSampleGraph(graph: IGraph): void {
  * @param y The node's y-coordinate
  * @param w The node's width
  * @param h The node's height
- * @param cssClass The given css class
+ * @param colorSet The color set that defines the node color
  * @param tag The tag to identify the reshape handler
  * @param labelText The nodes label's text
  */
@@ -179,21 +206,22 @@ function createNode(
   y: number,
   w: number,
   h: number,
-  cssClass: ColorSetName,
+  colorSet: ColorSetName,
   tag: string,
   labelText: string
 ): void {
   const node = graph.createNode({
     layout: new Rect(x, y, w, h),
-    style: new DemoNodeStyle(cssClass),
+    style: createDemoNodeStyle(colorSet),
     tag: tag
   })
 
   graph.addLabel({
     owner: node,
     text: labelText,
-    style: createDemoNodeLabelStyle(cssClass)
+    style: createDemoNodeLabelStyle(colorSet)
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

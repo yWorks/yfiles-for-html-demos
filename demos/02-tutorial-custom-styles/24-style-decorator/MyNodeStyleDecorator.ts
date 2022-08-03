@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -78,7 +78,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Creates the visual for a node rendering the decorator element on top of the wrapped element.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     // create the outer g element
@@ -110,7 +110,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Re-renders the node using the old visual containing the decorator and the wrapped element for performance
    * reasons.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     const container = oldVisual.svgElement as SVGGElement
@@ -216,7 +216,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Get the bounding box of the node.
-   * @see Overrides {@link NodeStyleBase#getBounds}
+   * @see Overrides {@link NodeStyleBase.getBounds}
    */
   getBounds(canvasContext: IInputModeContext, node: INode): Rect {
     // delegate this to the wrapped style
@@ -227,7 +227,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Overridden to take the connection lines to the label into account.
    * Otherwise label intersection lines might not be painted if the node is outside
    * of the clipping bounds.
-   * @see Overrides {@link NodeStyleBase#isVisible}
+   * @see Overrides {@link NodeStyleBase.isVisible}
    */
   isVisible(canvasContext: ICanvasContext, clip: Rect, node: INode): boolean {
     // first check if the wrapped style is visible
@@ -250,7 +250,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
    * @return True if p is inside node.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(canvasContext: IInputModeContext, p: Point, node: INode): boolean {
     // delegate this to the wrapped style since we don't want the visual decorator to be hit testable
@@ -261,7 +261,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Checks if a node is inside a certain box. Considers HitTestRadius.
    * @return True if the box intersects the elliptical shape of the node. Also true if box lies completely
    *   inside node.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    */
   isInBox(canvasContext: IInputModeContext, box: Rect, node: INode): boolean {
     // delegate this to the wrapped style
@@ -270,7 +270,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Performs the lookup operation.
-   * @see Overrides {@link NodeStyleBase#lookup}
+   * @see Overrides {@link NodeStyleBase.lookup}
    */
   lookup(node: INode, type: Class): any | null {
     // delegate this to the wrapped style
@@ -279,7 +279,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Gets the intersection of a line with the node.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    */
   getIntersection(node: INode, inner: Point, outer: Point): Point | null {
     // delegate this to the wrapped style
@@ -289,7 +289,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    */
   isInside(node: INode, point: Point): boolean {
     // delegate this to the wrapped style
@@ -299,7 +299,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Gets the outline of the node.
    * This allows for correct edge path intersection calculation, among others.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    */
   getOutline(node: INode): GeneralPath | null {
     // delegate this to the wrapped style

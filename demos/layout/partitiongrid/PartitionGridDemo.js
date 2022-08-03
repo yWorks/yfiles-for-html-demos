@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,6 +34,7 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeLabelModel,
   HashMap,
   HierarchicLayout,
   IAnimation,
@@ -44,13 +45,11 @@ import {
   ILayoutAlgorithm,
   INode,
   Insets,
-  InteriorStretchLabelModel,
   LayoutExecutor,
   License,
   List,
   MouseButtons,
   OrganicLayout,
-  PanelNodeStyle,
   PartitionCellId,
   PartitionGrid,
   PartitionGridData,
@@ -64,8 +63,9 @@ import {
 
 import PartitionGridVisualCreator, { generateGradientColors } from './PartitionGridVisualCreator.js'
 import GraphData from './resources/GraphData.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, createDemoGroupStyle } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Holds the GraphComponent.
@@ -139,11 +139,12 @@ let selectedCellId
 
 /**
  * Runs the demo.
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraph(graphComponent.graph)
 
@@ -180,12 +181,9 @@ function initializeGraph(graph) {
   graph.nodeDefaults.shareStyleInstance = false
 
   // set the default styles for group nodes
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: 'lavenderblush',
-    insets: [25, 5, 5, 5],
-    labelInsetsColor: 'peachpuff'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  graph.groupNodeDefaults.style = createDemoGroupStyle({ colorSetName: 'demo-palette-22' })
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createTabBackgroundParameter()
 
   // set the default style for edges
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -510,14 +508,14 @@ function configureAlgorithm(layoutAlgorithm) {
 }
 
 /**
- * Updates the mapping between the columns/rows and the number of nodes the each column/row
+ * Updates the mapping between the columns/rows and the number of nodes that each column/row
  * contains. It has to be called whenever a node changes a column/row.
  * @param {!INode} node The given node
  * @param {!CellId} oldTag The given node's old tag
  */
 function updateMapping(node, oldTag) {
   // remove from old row if there was in one
-  if (oldTag && oldTag.rowIndex && oldTag.rowIndex !== -1) {
+  if (oldTag != null && oldTag.rowIndex != null && oldTag.rowIndex !== -1) {
     const oldRowNodes = rows2nodes.get(oldTag.rowIndex)
     if (oldRowNodes) {
       oldRowNodes.splice(oldRowNodes.indexOf(node), 1)
@@ -536,7 +534,7 @@ function updateMapping(node, oldTag) {
     }
   }
 
-  if (oldTag && oldTag.columnIndex && oldTag.columnIndex !== -1) {
+  if (oldTag != null && oldTag.columnIndex != null && oldTag.columnIndex !== -1) {
     const oldColumnNodes = columns2nodes.get(oldTag.columnIndex)
     if (oldColumnNodes) {
       oldColumnNodes.splice(oldColumnNodes.indexOf(node), 1)
@@ -559,7 +557,7 @@ function updateMapping(node, oldTag) {
 /**
  * Returns an array containing the indices of the rows/columns that contain nodes (non-empty).
  * @param {number} stripeCount the number of rows/columns in the current partition grid
- * @param {boolean} isRow <code>True</code> if we examine the rows, <code>false</code> otherwise
+ * @param {boolean} isRow `true` if we examine the rows, `false` otherwise
  * @returns {!Array.<number>} An array containing the indices of the non-empty rows/columns
  */
 function getNonEmptyIndices(stripeCount, isRow) {
@@ -622,9 +620,6 @@ function determineCellIndex(point) {
         return
       }
     })
-  } else {
-    rowIndex = getRandomInt(3)
-    columnIndex = getRandomInt(5)
   }
   return {
     rowIndex,
@@ -635,7 +630,7 @@ function determineCellIndex(point) {
 /**
  * Adjusts the bounds of the graph component so that possible empty rows/columns on the top/bottom
  * or left/right are also included in the graphComponent's bounds. This is necessary since method
- * {@link GraphComponent#fitGraphBounds} considers only the content rectangle of the graph
+ * {@link GraphComponent.fitGraphBounds} considers only the content rectangle of the graph
  * component which is defined from the positions of graph elements (nodes, edges, bends, etc) but,
  * not from visual objects, like the partition grid visual. This means that possible empty rows on
  * the top/bottom or columns on the left/right have to be manually included in the graphComponent's
@@ -673,10 +668,10 @@ function adjustGraphComponentBounds() {
 
 /**
  * Returns a partition cell for the given node if it has valid row/column indices or
- * <code>null</code> otherwise.
+ * `null` otherwise.
  * @param {!INode} node The given node to create the cell id for
  * @returns {?PartitionCellId} A partition cell for the given node if it has valid row/column indices
- * or <code>null</code> otherwise
+ * or `null` otherwise
  */
 function createNodeCellId(node) {
   if (hasActiveRestrictions(node)) {
@@ -688,10 +683,10 @@ function createNodeCellId(node) {
 /**
  * Returns a partition cell for the given group node if any of its descendants has a valid
  * partition cell id or
- * <code>null</code> otherwise.
+ * `null` otherwise.
  * @param {!INode} node The group node to create the cell id for
  * @returns {?PartitionCellId} A partition cell id for the given group node if any of its descendants
- * has a valid partition cell id or <code>null</code> otherwise
+ * has a valid partition cell id or `null` otherwise
  */
 function getGroupNodeCellId(node) {
   const graph = graphComponent.graph
@@ -725,8 +720,8 @@ function getGroupNodeCellId(node) {
 /**
  * Returns whether or not a given node has valid row/column indices.
  * @param {!INode} node The given node
- * @returns {boolean} <code>True</code> if the given node has valid row/column indices,
- *   <code>false</code> otherwise
+ * @returns {boolean} `true` if the given node has valid row/column indices,
+ *   `false` otherwise
  */
 function hasActiveRestrictions(node) {
   return node.tag && node.tag.rowIndex >= 0 && node.tag.columnIndex >= 0
@@ -1022,8 +1017,8 @@ function updateGrid() {
  * Checks whether the input provided by the user is valid, i.e., not larger than the desired value.
  * @param {!Event} input The user's input
  * @param {number} maxValue The maximum expected value
- * @returns {boolean} <code>True</code> if the input provided by the user is valid, i.e., not larger
- * than the desired value, <code>false</code> otherwise
+ * @returns {boolean} `true` if the input provided by the user is valid, i.e., not larger
+ * than the desired value, `false` otherwise
  */
 function isValidInput(input, maxValue) {
   const target = input.target
@@ -1061,8 +1056,8 @@ function canExecuteOrganicLayout() {
     return false
   }
 
-  // the <em>Organic</em> layout doesn't support to stretch a group node if it contains child nodes assigned
-  // to different rows or columns. In this case the <em>Organic</em> layout button will be disabled.
+  // the __Organic__ layout doesn't support to stretch a group node if it contains child nodes assigned
+  // to different rows or columns. In this case the __Organic__ layout button will be disabled.
   const graph = graphComponent.graph
   for (let i = 0; i < graph.nodes.size; i++) {
     const node = graph.nodes.get(i)
@@ -1170,11 +1165,9 @@ function canExecuteAddRestrictions() {
  * the cell that belongs based on its current position.
  */
 function executeAddRestrictions() {
-  // if there exists no grid, initialize it with some default values
+  // if there exists no grid, we cannot add placement restrictions
   if (!existsPartitionGrid()) {
-    rowCount = 4
-    columnCount = 5
-    updateGrid()
+    return
   }
 
   // add the restrictions for the selected nodes
@@ -1205,7 +1198,7 @@ function generateNodeColors() {
 
 /**
  * Enables/Disables some toolbar elements and the input mode of the graph component.
- * @param {boolean} disabled <code>True</code> if the UI should be disabled, <code>false</code> otherwise.
+ * @param {boolean} disabled `true` if the UI should be disabled, `false` otherwise.
  */
 function setUIDisabled(disabled) {
   getElementById('AddRow').disabled = disabled
@@ -1215,7 +1208,7 @@ function setUIDisabled(disabled) {
 
 /**
  * Enables/disables the delete column/row buttons and updates the partition grid visual
- * @param {boolean} disabled <code>True</code> if the buttons should be disabled, <code>false</code> otherwise.
+ * @param {boolean} disabled `true` if the buttons should be disabled, `false` otherwise.
  * @param {!Point} location The location of the last mouse event
  */
 function toggleDeleteButtonsVisibility(disabled, location) {
@@ -1268,5 +1261,5 @@ function getElementById(id) {
   return document.getElementById(id)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

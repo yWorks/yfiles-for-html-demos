@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,8 +30,10 @@ import {
   BaseClass,
   GraphComponent,
   IEdge,
+  IGraph,
   IInputModeContext,
   INode,
+  INodeStyle,
   IPoint,
   IPositionHandler,
   List,
@@ -39,27 +41,28 @@ import {
 } from 'yfiles'
 import Subtree from './Subtree'
 import RelocateSubtreeLayoutHelper from './RelocateSubtreeLayoutHelper'
-import { DemoNodeStyle } from '../../resources/demo-styles'
 
 /**
  * An {@link IPositionHandler} that moves a node and its subtree.
  */
 export default class SubtreePositionHandler extends BaseClass(IPositionHandler) {
-  private readonly node: INode | null
-  private nodePositionHandler!: IPositionHandler | null
   private layoutHelper!: RelocateSubtreeLayoutHelper
   private compositeHandler!: IPositionHandler
   private subtree!: Subtree
+  private readonly node2NormalStyle = new Map<INode, INodeStyle>()
 
   /**
    * Creates a new instance of a SubtreePositionHandler.
    * @param node The selected node
-   * @param originalHandler The original position handler
+   * @param nodePositionHandler The original position handler
+   * @param movingNodeStyle The node style that is set while the node is moving
    */
-  constructor(node: INode | null, originalHandler: IPositionHandler | null) {
+  constructor(
+    private readonly node: INode | null,
+    private readonly nodePositionHandler: IPositionHandler | null,
+    private readonly movingNodeStyle: INodeStyle
+  ) {
     super()
-    this.node = node
-    this.nodePositionHandler = originalHandler
   }
 
   /**
@@ -77,8 +80,9 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     this.subtree = new Subtree(context.graph!, this.node!)
 
     this.subtree.nodes.forEach(node => {
-      const style = node.style as DemoNodeStyle
-      style.cssClass += ' moving'
+      // store normal style of the node and set the moving node style while dragging
+      this.node2NormalStyle.set(node, node.style)
+      context.graph!.setStyle(node, this.movingNodeStyle)
     })
 
     this.layoutHelper = new RelocateSubtreeLayoutHelper(
@@ -110,10 +114,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
     this.compositeHandler.cancelDrag(context, originalLocation)
     this.layoutHelper.cancelLayout()
-    this.subtree.nodes.forEach(node => {
-      const style = node.style as DemoNodeStyle
-      style.cssClass = style.cssClass.replace(' moving', '')
-    })
+    this.resetStyles(context.graph!)
   }
 
   /**
@@ -125,10 +126,22 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     this.compositeHandler.dragFinished(context, originalLocation, newLocation)
     this.layoutHelper.stopLayout()
+    this.resetStyles(context.graph!)
+  }
+
+  /**
+   * Replaces the temporary styles used while moving nodes with the original styles.
+   */
+  private resetStyles(graph: IGraph): void {
+    const nodeToStyle = this.node2NormalStyle
     this.subtree.nodes.forEach(node => {
-      const style = node.style as DemoNodeStyle
-      style.cssClass = style.cssClass.replace(' moving', '')
+      if (nodeToStyle.has(node)) {
+        // reset style to the normal node style of this node
+        const style = nodeToStyle.get(node)!
+        graph.setStyle(node, style)
+      }
     })
+    nodeToStyle.clear()
   }
 
   /**
@@ -153,7 +166,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     subtree.edges.forEach((edge: IEdge) => {
       const positionHandler = edge.lookup(IPositionHandler.$class)
       if (positionHandler) {
-        positionHandlers.add(positionHandler as IPositionHandler)
+        positionHandlers.add(positionHandler)
       }
     })
     return IPositionHandler.combine(positionHandlers)

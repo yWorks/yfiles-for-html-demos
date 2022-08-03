@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,7 +36,7 @@ export default class MindmapEditorInputMode extends GraphEditorInputMode {
   /**
    * Enables selection only for cross reference edges.
    * @param {!IModelItem} item The item to check.
-   * @see Overrides {@link GraphEditorInputMode#shouldClickSelect}
+   * @see Overrides {@link GraphEditorInputMode.shouldClickSelect}
    * @returns {boolean}
    */
   shouldClickSelect(item) {
@@ -49,7 +49,7 @@ export default class MindmapEditorInputMode extends GraphEditorInputMode {
   /**
    * Disables moving root node.
    * @param {!IModelItem} item The item to check.
-   * @see Overrides {@link GraphEditorInputMode#shouldMove}
+   * @see Overrides {@link GraphEditorInputMode.shouldMove}
    * @returns {boolean}
    */
   shouldMove(item) {

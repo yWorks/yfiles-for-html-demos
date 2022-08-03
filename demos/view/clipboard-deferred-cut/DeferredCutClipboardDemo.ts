@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,26 +44,26 @@ import {
 } from 'yfiles'
 
 import { bindCommand, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
 import { setClipboardStyles } from './ClipboardStyles'
 import { DeferredCutClipboard } from './DeferredCutClipboard'
 import ContextMenu from '../../utils/ContextMenu'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // add the graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // set the styles and create a sample graph
   initDemoStyles(graphComponent.graph)
   setClipboardStyles(graphComponent.graph)
   createSampleGraph(graphComponent.graph)
-  await graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 
   // configure the clipboard itself
   const clipboard = new DeferredCutClipboard()
@@ -92,7 +92,7 @@ async function run(licenseData: object): Promise<void> {
  * Creates a sample graph.
  */
 function createSampleGraph(graph: IGraph): void {
-  graph.nodeDefaults.size = new Size(40, 40)
+  graph.nodeDefaults.size = new Size(50, 50)
   const edgeLabelModel = new EdgePathLabelModel({
     autoRotation: true,
     distance: 10,
@@ -193,5 +193,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 }
 
-// start the application
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

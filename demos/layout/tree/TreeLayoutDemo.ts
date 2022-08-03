@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,6 +40,7 @@ import {
   TreeBuilder,
   TreeLayout
 } from 'yfiles'
+import type { Configuration } from './TreeLayoutConfigurations'
 import {
   createCategoryTreeConfiguration,
   createDefaultTreeConfiguration,
@@ -54,12 +55,12 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
 import NodePlacerPanel, { LayerColors } from './NodePlacerPanel'
-import type { Configuration } from './TreeLayoutConfigurations'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The graph component which contains the tree graph.
@@ -79,11 +80,12 @@ let busy = false
 /**
  * Launches the TreeLayoutDemo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // initialize the graph component
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the settings panel and registers a listener which updates the layout if settings were changed
   nodePlacerPanel = new NodePlacerPanel(graphComponent)
@@ -348,4 +350,5 @@ function registerCommands(): void {
   addNavigationButtons(samples)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

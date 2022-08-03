@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 // @ts-ignore
-import { html, h, useRef, useEffect } from '../../preact-loader'
-// @ts-ignore
 import type { RefObject } from '../../preact-loader'
+// @ts-ignore
+import { h, html, useEffect, useRef } from '../../preact-loader'
 import type { ConnectionItem, DataItem } from '../../PreactDemo'
 import { showApp } from '../../../../resources/demo-app'
 import {

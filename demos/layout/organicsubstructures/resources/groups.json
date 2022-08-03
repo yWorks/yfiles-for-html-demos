@@ -1,0 +1,18 @@
+{
+  "settings": {
+    "cycleSubstructureStyle": "NONE",
+    "chainSubstructureStyle": "NONE",
+    "starSubstructureStyle": "NONE",
+    "parallelSubstructureStyle": "NONE",
+    "treeSubstructureStyle": "NONE",
+    "groupSubstructures": "ALL",
+    "useEdgeGrouping": false,
+    "considerNodeTypes": true,
+    "parallelSubstructureTypeSeparation": false,
+    "starSubstructureTypeSeparation": false,
+    "allowItemCreation": false,
+    "allowItemModification": false,
+    "allowTypeChanges": true,
+    "overrideStyles": false
+  }
+}

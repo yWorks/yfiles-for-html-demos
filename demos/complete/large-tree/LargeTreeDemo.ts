@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,22 +47,15 @@ import {
   SubgraphLayout,
   SubgraphLayoutData,
   WebGL2Animation,
-  WebGL2FadeAnimationType,
   WebGL2GraphModelManager,
   WebGL2PolylineEdgeStyle,
   WebGL2SelectionIndicatorManager,
   WebGL2ShapeNodeStyle
 } from 'yfiles'
 
-import {
-  bindAction,
-  bindCommand,
-  checkLicense,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp, showLoadingIndicator } from '../../resources/demo-app'
 import { isWebGl2Supported } from '../../utils/Workarounds'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The current number of tree layers. Also the starting value for the demo
@@ -77,15 +70,15 @@ let webGL2EdgeStyle: WebGL2PolylineEdgeStyle
  */
 const maxGraphSize = 250_000
 
-function run(licenseData: object): void {
+async function run(): Promise<void> {
   if (!isWebGl2Supported()) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
-    showApp(null)
+    showApp()
     return
   }
 
-  License.value = licenseData
+  License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
 
@@ -114,7 +107,7 @@ function initializeStyleDefaults(): void {
  */
 function enableWebGLRendering(graphComponent: GraphComponent): void {
   graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager(graphComponent)
+  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
 }
 
 /**
@@ -196,7 +189,10 @@ async function createGraph(graphComponent: GraphComponent, layers: number): Prom
   const rootNode = createTreeNode(graph, 0, queue, Point.ORIGIN)
   gmm.setStyle(rootNode, nodeStyles[0])
 
-  const fadeInAnimation = gmm.createFadeAnimation(WebGL2FadeAnimationType.FADE_IN, '1s')
+  const fadeInAnimation = gmm.createFadeAnimation({
+    type: 'fade-out',
+    timing: '1s ease reverse'
+  })
 
   extendTree(graphComponent, layers, childCount, queue, fadeInAnimation)
   graph.tag = { maxLayer: layers, childCount: childCount }
@@ -228,7 +224,10 @@ async function addLayer(graphComponent: GraphComponent): Promise<void> {
     })
 
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
-  const fadeInAnimation = gmm.createFadeAnimation(WebGL2FadeAnimationType.FADE_IN, '1s')
+  const fadeInAnimation = gmm.createFadeAnimation({
+    type: 'fade-out',
+    timing: '1s ease reverse'
+  })
 
   const numberChildren = queue.length * childCount
 
@@ -305,7 +304,7 @@ async function runExtendLayout(
   const graph = graphComponent.graph
 
   const fixedNodeData = new FixNodeLayoutData({
-    fixedNodes: graph.nodes.first(n => graph.inDegree(n) == 0)
+    fixedNodes: graph.nodes.find(n => graph.inDegree(n) == 0)!
   })
   const layout = new FixNodeLayoutStage(coreLayout)
 
@@ -371,9 +370,15 @@ async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]):
   const layout = new SequentialLayout({ layouts: [balloonLayout, barycenterStage] })
 
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
-  const nodeFadeOutAnimation = gmm.createFadeAnimation(WebGL2FadeAnimationType.FADE_OUT, '1s')
+  const nodeFadeOutAnimation = gmm.createFadeAnimation({
+    type: 'fade-out',
+    timing: '1s ease'
+  })
   // Fading out edges faster looks better
-  const edgeFadeOutAnimation = gmm.createFadeAnimation(WebGL2FadeAnimationType.FADE_OUT, '500ms')
+  const edgeFadeOutAnimation = gmm.createFadeAnimation({
+    type: 'fade-out',
+    timing: '500ms ease'
+  })
 
   removeNodes.forEach(node => {
     gmm.setAnimations(node, [nodeFadeOutAnimation])
@@ -470,5 +475,5 @@ class AnimatedLayoutExecutor extends LayoutExecutor {
   }
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

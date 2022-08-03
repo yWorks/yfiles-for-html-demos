@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,21 +44,18 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, readGraph, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import DemoStyles, {
-  DemoNodeStyle,
-  DemoSerializationListener,
-  initDemoStyles
-} from '../../resources/demo-styles'
+import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
 let routingPolicy: HTMLSelectElement
 
-async function run(licenseData: any): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // enable undo and folding
   graphComponent.graph.undoEngineEnabled = true
@@ -70,8 +67,7 @@ async function run(licenseData: any): Promise<void> {
   graphComponent.inputMode = createInputMode()
 
   // configures default styles for newly created graph elements
-  initDemoStyles(graphComponent.graph)
-  graphComponent.graph.nodeDefaults.style = new DemoNodeStyle()
+  initDemoStyles(graphComponent.graph, { foldingEnabled: true })
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
   graphComponent.graph.nodeDefaults.size = new Size(125, 100)
 
@@ -94,12 +90,6 @@ async function loadSampleGraph(): Promise<void> {
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
   await readGraph(gs.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml')
   // when done - fit the bounds
   graphComponent.fitGraphBounds()
@@ -187,5 +177,5 @@ function registerCommands(): void {
   routingPolicy = document.getElementById('selectRoutingPolicy') as HTMLSelectElement
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

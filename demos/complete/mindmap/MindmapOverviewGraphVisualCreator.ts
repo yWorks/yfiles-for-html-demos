@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,7 +38,7 @@ export default class MindmapOverviewGraphVisualCreator extends GraphOverviewCanv
    * @param renderContext The render context.
    * @param ctx The HTML canvas rendering context.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link GraphOverviewCanvasVisualCreator#paintNode}
+   * @see Overrides {@link GraphOverviewCanvasVisualCreator.paintNode}
    */
   paintNode(renderContext: IRenderContext, ctx: CanvasRenderingContext2D, node: INode): void {
     ctx.fillStyle = 'rgb(200, 200, 200)'
@@ -67,7 +67,7 @@ export default class MindmapOverviewGraphVisualCreator extends GraphOverviewCanv
    * @param renderContext The render context.
    * @param ctx The HTML canvas rendering context.
    * @param edge The edge to which this style instance is assigned.
-   * @see Overrides {@link GraphOverviewCanvasVisualCreator#paintEdge}
+   * @see Overrides {@link GraphOverviewCanvasVisualCreator.paintEdge}
    */
   paintEdge(renderContext: IRenderContext, ctx: CanvasRenderingContext2D, edge: IEdge): void {
     ctx.beginPath()

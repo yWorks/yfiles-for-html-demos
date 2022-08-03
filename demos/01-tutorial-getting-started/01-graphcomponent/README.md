@@ -10,7 +10,7 @@ Getting Started Tutorial - Step 1
 
 How to create a basic view.
 
-This step introduces class [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent), which is the central UI element for working with graphs. The application does not provide any interactive features except mouse wheel zooming, which is enabled by default. It is merely meant as a very basic example of how to display a GraphComponent within a web page.
+This step introduces class [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent), which is the [central UI element for working with graphs](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application). The application does not provide any interactive features except mouse wheel zooming, which is enabled by default. It is merely meant as a very basic example of how to display a GraphComponent within a web page.
 
 See the sources for details.
 

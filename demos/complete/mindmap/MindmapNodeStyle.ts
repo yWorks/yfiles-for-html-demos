@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,7 +45,7 @@ export default class MindmapNodeStyle extends NodeStyleBase {
    * Creates the visual for this node style.
    * @param renderContext The render context.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(renderContext: IRenderContext, node: INode): SvgVisual {
     // create a container element
@@ -61,7 +61,7 @@ export default class MindmapNodeStyle extends NodeStyleBase {
    * @param renderContext The render context.
    * @param oldVisual The old visual.
    * @param node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(renderContext: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     const nodeSize = node.layout.toSize()

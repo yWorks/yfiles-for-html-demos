@@ -1,10 +1,6 @@
 <script lang="ts">
+  import type { FontStyleStringValues, FontWeightStringValues, TextWrappingStringValues } from 'yfiles'
   import { Enum, Font, Size, TextMeasurePolicy, TextRenderSupport, TextWrapping } from 'yfiles'
-  import type {
-    FontStyleStringValues,
-    FontWeightStringValues,
-    TextWrappingStringValues
-  } from 'yfiles'
 
   export let maxWidth = -1
   export let maxHeight = -1
@@ -53,7 +49,7 @@
 </script>
 
 {#if rtl}
-  <g transform={`translate(${x} ${y})`} {fill} bind:this={element} />
+  <g transform={`translate(${x} ${y})`} {fill} bind:this={element}></g>
 {:else}
-  <text transform={`translate(${x} ${y})`} {fill} bind:this={element} />
+  <text transform={`translate(${x} ${y})`} {fill} bind:this={element}></text>
 {/if}

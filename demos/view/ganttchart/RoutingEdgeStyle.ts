@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -207,7 +207,7 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer<RoutingEdgeSty
 
   /**
    * Constructs the orthogonal edge path.
-   * @see Overrides {@link PathBasedEdgeStyleRenderer#createPath}
+   * @see Overrides {@link PathBasedEdgeStyleRenderer.createPath}
    */
   createPath(): GeneralPath {
     // create a new GeneralPath with the edge points
@@ -313,7 +313,8 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer<RoutingEdgeSty
   /**
    * Returns an instance that implements the given type or null if no such instance is available.
    */
-  lookup(type: Class): object | null {
-    return super.lookup.call(this, type)
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
+    return super.lookup.call(this, type) as T
   }
 }

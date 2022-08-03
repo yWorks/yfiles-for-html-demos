@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  CanvasComponent,
   EdgeStyleBase,
   EdgeStyleDecorationInstaller,
   GeneralPath,
@@ -63,7 +64,7 @@ export class IconNodeStyle extends NodeStyleBase {
    * Creates the visual for a circular node with an icon.
    * @param context The render context
    * @param node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -109,7 +110,7 @@ export class IconNodeStyle extends NodeStyleBase {
    * @param context The render context
    * @param oldVisual The old visual
    * @param node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     const g = oldVisual.svgElement
@@ -206,7 +207,7 @@ export class IconNodeStyle extends NodeStyleBase {
    * Gets the outline of the node, an ellipse in this case.
    * @param node The given node
    * This allows for correct edge path intersection calculation, among others.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    */
   getOutline(node: INode): GeneralPath {
     const outline = new GeneralPath()
@@ -219,7 +220,7 @@ export class IconNodeStyle extends NodeStyleBase {
    * This is used for bounding box calculations and includes the visual shadow.
    * @param canvasContext The context to calculate the bounds for
    * @param node The given node
-   * @see Overrides {@link NodeStyleBase#getBounds}
+   * @see Overrides {@link NodeStyleBase.getBounds}
    */
   getBounds(canvasContext: ICanvasContext, node: INode): Rect {
     return node.layout.toRect()
@@ -230,7 +231,7 @@ export class IconNodeStyle extends NodeStyleBase {
    * @param canvasContext The canvas context
    * @param point The point to test
    * @param node The given node
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(canvasContext: ICanvasContext, point: Point, node: INode): boolean {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, canvasContext.hitTestRadius)
@@ -241,7 +242,7 @@ export class IconNodeStyle extends NodeStyleBase {
    * @param context The input mode context
    * @param box The marquee selection box
    * @param node The given node
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    */
   isInBox(context: IInputModeContext, box: Rect, node: INode): boolean {
     // early exit if not even the bounds are contained in the box
@@ -271,7 +272,7 @@ export class IconNodeStyle extends NodeStyleBase {
    * Exact geometric check whether a point lies inside the circular node.
    * @param node The given node
    * @param point The point to test
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    */
   isInside(node: INode, point: Point): boolean {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
@@ -287,7 +288,7 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
    * Creates the visual for an edge.
    * @param context The render context
    * @param edge The given edge
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, edge: IEdge): EdgeRenderVisual {
     return new EdgeRenderVisual(edge)
@@ -298,7 +299,7 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
    * @param context The render context
    * @param oldVisual The old visual
    * @param edge The given edge
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, edge: IEdge): Visual {
     return oldVisual
@@ -369,22 +370,41 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
  * A highlight manager responsible for highlighting the fraud components.
  */
 export class FraudHighlightManager extends HighlightIndicatorManager<IModelItem> {
-  edgeHighlightGroup: ICanvasObjectGroup
-  nodeHighlightGroup: ICanvasObjectGroup
+  edgeHighlightGroup: ICanvasObjectGroup | null = null
+  nodeHighlightGroup: ICanvasObjectGroup | null = null
 
   /**
-   * Creates a new HighlightManager for fraud.
+   * Installs the manager on the canvas.
+   * Adds the highlight groups
    */
-  constructor(canvas: GraphComponent) {
-    super(canvas)
-    const graphModelManager = canvas.graphModelManager
-    // the edges' highlight group should be above the nodes
-    this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
-    this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+  install(canvas: CanvasComponent) {
+    if (canvas instanceof GraphComponent) {
+      const graphModelManager = canvas.graphModelManager
+      // the edges' highlight group should be above the nodes
+      this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
+      this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
 
-    // the nodes' highlight group should be above the nodes
-    this.nodeHighlightGroup = graphModelManager.contentGroup.addGroup()
-    this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
+      // the nodes' highlight group should be above the nodes
+      this.nodeHighlightGroup = graphModelManager.contentGroup.addGroup()
+      this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
+    }
+    super.install(canvas)
+  }
+
+  /**
+   * Uninstalls the manager from the canvas
+   * removes the highlight groups
+   */
+  uninstall(canvas: CanvasComponent) {
+    super.uninstall(canvas)
+    if (this.edgeHighlightGroup) {
+      this.edgeHighlightGroup.remove()
+      this.edgeHighlightGroup = null
+    }
+    if (this.nodeHighlightGroup) {
+      this.nodeHighlightGroup.remove()
+      this.nodeHighlightGroup = null
+    }
   }
 
   /**
@@ -393,7 +413,7 @@ export class FraudHighlightManager extends HighlightIndicatorManager<IModelItem>
    * @return An ICanvasObjectGroup or null
    */
   getCanvasObjectGroup(item: IModelItem): ICanvasObjectGroup | null {
-    if (IEdge.isInstance(item)) {
+    if (item instanceof IEdge) {
       return this.edgeHighlightGroup
     } else if (INode.isInstance(item)) {
       return this.nodeHighlightGroup

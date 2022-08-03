@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,16 +39,17 @@ import {
 } from 'yfiles'
 
 import HtmlLabelStyle from './HtmlLabelStyle'
-import { initDemoStyles } from '../../resources/demo-styles'
-import { addClass, checkLicense, showApp, bindCommand } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { addClass, bindCommand, showApp } from '../../resources/demo-app'
+import { fetchLicense } from '../../resources/fetch-license'
+
 /**
  * Simple demo that shows how to create a custom style that uses HTML for rendering the labels.
  * This is done using the foreignObject SVG element. Note that Internet Explorer does not currently (as of version
  * 11) support this feature.
  */
-function run(licenseData: any): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // Check whether foreignObjects are supported...
   const foreignObject = window.document.createElementNS(
     'http://www.w3.org/2000/svg',
@@ -63,6 +64,7 @@ function run(licenseData: any): void {
 
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode()
 
   // Make links work again, as the GraphComponent prevents the default action when clicking a link
@@ -211,4 +213,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

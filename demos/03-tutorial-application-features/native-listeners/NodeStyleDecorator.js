@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,7 +46,7 @@ import {
 /**
  * This node style decorator adds a circle with a native click listener representing a button.
  *
- * Checks like {@link IHitTestable#isHit} or {@link IMarqueeTestable#isInBox} are
+ * Checks like {@link IHitTestable.isHit} or {@link IMarqueeTestable.isInBox} are
  * simply delegated to the base style because the button is placed inside the node layout.
  */
 export default class NodeStyleDecorator extends NodeStyleBase {
@@ -64,7 +64,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param {!IRenderContext} context The render context.
    * @param {!INode} node The node to which this style instance is assigned.
    * @returns {!SvgVisual} The created visual.
-   * @see NodeStyleBase#createVisual
+   * @see {@link NodeStyleBase.createVisual}
    */
   createVisual(context, node) {
     const layout = node.layout.toRect()
@@ -105,10 +105,10 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * Updates the provided visual.
    * @param {!IRenderContext} context The render context.
    * @param {!Visual} oldVisual The visual that has been created in the call to
-   *        {@link NodeStyleBase#createVisual}.
+   *        {@link NodeStyleBase.createVisual}.
    * @param {!INode} node The node to which this style instance is assigned.
    * @returns {!Visual} The updated visual.
-   * @see NodeStyleBase#updateVisual
+   * @see {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context, oldVisual, node) {
     const layout = node.layout.toRect()
@@ -152,8 +152,8 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param {!ICanvasContext} context The canvas context.
    * @param {!Rect} rectangle The clipping rectangle.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} <code>true</code> if either the base visualization or the decoration is visible.
-   * @see NodeStyleBase#isVisible
+   * @returns {boolean} `true` if either the base visualization or the decoration is visible.
+   * @see {@link NodeStyleBase.isVisible}
    */
   isVisible(context, rectangle, node) {
     return this.baseStyle.renderer
@@ -166,8 +166,8 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param {!IInputModeContext} context The context.
    * @param {!Point} location The point to test.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} <code>true</code> if the base visualization is hit.
-   * @see NodeStyleBase#isHit
+   * @returns {boolean} `true` if the base visualization is hit.
+   * @see {@link NodeStyleBase.isHit}
    */
   isHit(context, location, node) {
     return this.baseStyle.renderer.getHitTestable(node, this.baseStyle).isHit(context, location)
@@ -178,8 +178,8 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param {!IInputModeContext} context The input mode context.
    * @param {!Rect} rectangle The marquee selection box.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} <code>true</code> if the base visualization is hit.
-   * @see NodeStyleBase#isInBox
+   * @returns {boolean} `true` if the base visualization is hit.
+   * @see {@link NodeStyleBase.isInBox}
    */
   isInBox(context, rectangle, node) {
     return this.baseStyle.renderer
@@ -191,10 +191,10 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * Gets the intersection of a line with the visual representation of the node.
    * @param {!INode} node The node to which this style instance is assigned.
    * @param {!Point} inner The coordinates of a point lying
-   *   {@link NodeStyleBase#isInside inside} the shape.
+   *   {@link NodeStyleBase.isInside inside} the shape.
    * @param {!Point} outer The coordinates of a point lying outside the shape.
-   * @returns {?Point} The intersection point if one has been found or <code>null</code>, otherwise.
-   * @see NodeStyleBase#getIntersection
+   * @returns {?Point} The intersection point if one has been found or `null`, otherwise.
+   * @see {@link NodeStyleBase.getIntersection}
    */
   getIntersection(node, inner, outer) {
     return this.baseStyle.renderer
@@ -206,8 +206,8 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * Returns whether the provided point is inside of the base visualization.
    * @param {!INode} node The node to which this style instance is assigned.
    * @param {!Point} location The point to test.
-   * @returns {boolean} <code>true</code> if the provided location is inside of the base visualization.
-   * @see NodeStyleBase#isInside
+   * @returns {boolean} `true` if the provided location is inside of the base visualization.
+   * @see {@link NodeStyleBase.isInside}
    */
   isInside(node, location) {
     return this.baseStyle.renderer.getShapeGeometry(node, this.baseStyle).isInside(location)

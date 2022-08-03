@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -53,27 +53,32 @@
           contents of group nodes and the overall graph.
         </p>
 
-        <h2>Sample: Table</h2>
+        <h3>Three-Tier Example</h3>
         <p>
-          Demonstrates a table node structure. Each group node in the drawing represents a table and
-          the nodes within the groups represent the table rows. Edges are connected to specific
-          rows. The rows are sorted according to their y-coordinate in the initial drawing.
-        </p>
-
-        <h2>Sample: Three-Tier</h2>
-        <p>
-          Demonstrates different layouts of elements assigned to different tiers. Each group node
-          can be assigned to the left, right or middle tier (depending on the group node label).
+          The example in this demo uses different layouts of elements assigned to different tiers.
+          Each group node can be assigned to the left, right or middle tier (depending on the group
+          node label).
         </p>
         <p>
-          All group nodes labeled <em>left</em> are placed on the left side. Their content is drawn
-          using a <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a> with layout orientation left-to-right. Analogously, all
-          group nodes labeled <em>right</em> are placed on the right side. Their content is drawn
-          using a <em>TreeLayout</em> with layout orientation right-to-left. Elements not assigned
-          to <em>left</em> or <em>right</em> group nodes are always arranged in the middle using the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> with layout orientation left-to-right. Note that group nodes
-          not labeled <em>left</em> or <em>right</em> are handled non-recursively.
+          As the overall layout, the so-called <em>core layout</em>, the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> is used.
         </p>
+        <ul>
+          <li>
+            All group nodes labeled <em>left</em> are placed on the left side. Their content is
+            drawn using a <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a> with layout orientation left-to-right.
+          </li>
+          <li>
+            Analogously, all group nodes labeled <em>right</em> are placed on the right side. Their
+            content is drawn using a <em>TreeLayout</em> with layout orientation right-to-left.
+          </li>
+          <li>
+            Elements not assigned to <em>left</em> or <em>right</em> group nodes are always arranged
+            in the middle using the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> with layout orientation
+            left-to-right. Note that group nodes not labeled <em>left</em> or <em>right</em> are
+            handled non-recursively.
+          </li>
+        </ul>
 
         <h3>Usage</h3>
         <ul>
@@ -82,10 +87,19 @@
           </li>
           <li>
             Enable <em>From Sketch</em> option to make <em>HierarchicLayout</em> keep the relative
-            locations of the group nodes to each other. This allows for manually adjusting the order
-            of the tables.
+            locations of the group nodes to each other.
           </li>
         </ul>
+
+        <h3>Code Snippet</h3>
+        <p>
+          You can copy the code snippet to configure the layout from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout/recursivegroup/ThreeTierLayout.ts"
+            target="_blank"
+            >GitHub</a
+          >.
+        </p>
       </div>
     </aside>
 
@@ -103,19 +117,6 @@
           data-command="FitContent"
           title="Fit Content"
           class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <select id="select-sample" data-command="SelectSample">
-          <option value="table">Sample: Table</option>
-          <option value="three-tier">Sample: Three-Tier</option>
-        </select>
-        <button
-          id="reset"
-          data-command="Reset"
-          title="Reset the Sample"
-          class="demo-icon-yIconReload"
         ></button>
 
         <span class="demo-separator"></span>

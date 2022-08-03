@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -75,7 +75,7 @@ export default class PortConstraintBendHandle
   /**
    * Called when a drag of the handle is initialized.
    * To indicate in which direction the port constraint will be assigned, an arrow visual is added.
-   * @see overrides {@link ConstrainedHandle#onInitialized}
+   * @see overrides {@link ConstrainedHandle.onInitialized}
    */
   onInitialized(inputModeContext: IInputModeContext, originalLocation: Point): void {
     super.onInitialized(inputModeContext, originalLocation)
@@ -88,7 +88,7 @@ export default class PortConstraintBendHandle
   /**
    * Called when a drag of the handle is canceled.
    * The arrow visual is removed.
-   * @see overrides {@link ConstrainedHandle#onCanceled}
+   * @see overrides {@link ConstrainedHandle.onCanceled}
    */
   onCanceled(inputModeContext: IInputModeContext, originalLocation: Point): void {
     super.onCanceled(inputModeContext, originalLocation)
@@ -100,7 +100,7 @@ export default class PortConstraintBendHandle
   /**
    * Called when a drag of the handle is canceled.
    * The port constraints are assigned and the arrow visual is removed.
-   * @see overrides {@link ConstrainedHandle#onFinished}
+   * @see overrides {@link ConstrainedHandle.onFinished}
    */
   onFinished(
     inputModeContext: IInputModeContext,
@@ -144,7 +144,7 @@ export default class PortConstraintBendHandle
 
   /**
    * Returns the unconstrained location.
-   * @see overrides {@link ConstrainedHandle#constrainNewLocation}
+   * @see overrides {@link ConstrainedHandle.constrainNewLocation}
    */
   constrainNewLocation(
     context: IInputModeContext,
@@ -156,7 +156,7 @@ export default class PortConstraintBendHandle
 
   /**
    * Creates a visual that contains an arrow visualization for the direction of port constraints.
-   * @see overrides {@link IVisualCreator#createVisual}
+   * @see overrides {@link IVisualCreator.createVisual}
    */
   createVisual(context: IRenderContext): Visual {
     const a = window.document.createElementNS('http://www.w3.org/2000/svg', 'use')
@@ -168,7 +168,7 @@ export default class PortConstraintBendHandle
 
   /**
    * Updates the arrow visualization for the direction of port constraints.
-   * @see overrides {@link IVisualCreator#createVisual}
+   * @see overrides {@link IVisualCreator.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): Visual {
     if (!(oldVisual instanceof SvgVisual)) {

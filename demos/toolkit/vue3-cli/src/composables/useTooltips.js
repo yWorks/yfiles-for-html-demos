@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -73,20 +73,20 @@ export function useTooltips(getGraphComponent) {
   }
 
   /**
-   * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
-   * show the latter by using a dynamically compiled Vue component.
+   * The tooltip may either be a plain string or it can also be a rich HTML element. In this case,
+   * we show the latter by using a dynamically compiled Vue component.
    */
   function createContent(item) {
     const title = item instanceof INode ? 'Node Tooltip' : 'Edge Tooltip'
     let content = ''
 
     if (item instanceof INode) {
-      const label = item.labels.firstOrDefault()
+      const label = item.labels.at(0)
       content = label ? `Label: "${label.text}"` : 'Label: Unlabeled'
     } else if (item instanceof IEdge) {
       // there should be only nodes and edges due to inputMode.tooltipItems
-      const sourceLabel = item.sourceNode.labels.firstOrDefault()
-      const targetLabel = item.targetNode.labels.firstOrDefault()
+      const sourceLabel = item.sourceNode.labels.at(0)
+      const targetLabel = item.targetNode.labels.at(0)
       content = `Connecting ${(sourceLabel && sourceLabel.text) || 'Unlabeled'} with ${
         (targetLabel && targetLabel.text) || 'Unlabeled'
       }`

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   ExteriorLabelModel,
+  ExteriorLabelModelPosition,
   GraphComponent,
   ILabelModelParameter,
   INode,
@@ -36,22 +37,25 @@ import {
   Size
 } from 'yfiles'
 import { addClass, removeClass } from '../resources/demo-app.js'
+import { colorSets } from '../resources/demo-styles.js'
 
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can display arbitrary information
  * about an {@link INode}. In order to not interfere with the positioning of the pop-up, HTML content should be added
- * as ancestor of the {@link NodeTypePanel#div div element}, and use relative positioning. This implementation uses
+ * as ancestor of the {@link NodeTypePanel.div div element}, and use relative positioning. This implementation uses
  * an {@link ILabelModelParameter} to determine the position of the pop-up.
  */
 export default class NodeTypePanel {
   /**
    * Creates a new instance of {@link NodeTypePanel}.
    * @param {!GraphComponent} graphComponent
+   * @param {!Array.<ColorSetName>} typeColors
    */
-  constructor(graphComponent) {
+  constructor(graphComponent, typeColors) {
+    this.typeColors = typeColors
+    this.graphComponent = graphComponent
     this.dirty = false
     this._currentItems = null
-    this.graphComponent = graphComponent
     this.div = document.getElementById('node-type-panel')
 
     // make the popup invisible
@@ -64,8 +68,8 @@ export default class NodeTypePanel {
 
   /**
    * Sets the {@link INode nodes} to display the type choice pop-up for.
-   * Setting this property to a value other than <code>null</code> shows the pop-up.
-   * Setting the property to <code>null</code> hides the pop-up.
+   * Setting this property to a value other than `null` shows the pop-up.
+   * Setting the property to `null` hides the pop-up.
    * @type {?Array.<INode>}
    */
   set currentItems(items) {
@@ -112,11 +116,13 @@ export default class NodeTypePanel {
    * Registers click listeners for all buttons of this {@link NodeTypePanel}.
    */
   registerClickListeners() {
-    for (const btn of this.div.querySelectorAll('.node-type-button')) {
-      const classes = btn.getAttribute('class')
+    for (const element of this.div.querySelectorAll('.node-type-button')) {
+      const button = element
+      const classes = button.getAttribute('class')
       const type = NodeTypePanel.findType(classes)
       if (type > -1) {
-        this.addClickListener(btn, type)
+        button.style.backgroundColor = colorSets[this.typeColors[type]].fill
+        this.addClickListener(button, type)
       }
     }
   }
@@ -190,7 +196,7 @@ export default class NodeTypePanel {
 
   /**
    * Changes the location of this pop-up to the location calculated by the
-   * {@link NodeTypePanel#labelModelParameter}.
+   * {@link NodeTypePanel.labelModelParameter}.
    */
   updateLocation() {
     if (!this.currentItems || this.currentItems.length === 0) {
@@ -200,7 +206,9 @@ export default class NodeTypePanel {
     const height = this.div.offsetHeight
     const zoom = this.graphComponent.zoom
 
-    const labelModelParameter = ExteriorLabelModel.NORTH
+    const labelModelParameter = new ExteriorLabelModel({ insets: [10, 0, 0, 0] }).createParameter(
+      ExteriorLabelModelPosition.NORTH
+    )
     const dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParameter)
     if (labelModelParameter.supports(dummyLabel)) {
       dummyLabel.preferredSize = new Size(width / zoom, height / zoom)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -60,8 +60,8 @@ export default class SvgLabelStyle extends LabelStyleBase {
    * Creates the visual representation for the given label.
    * @param context The render context.
    * @param label The label to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link SvgLabelStyle#updateVisual}
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link SvgLabelStyle.updateVisual}
    */
   createVisual(context: IRenderContext, label: ILabel): Visual {
     const layout = label.layout
@@ -84,10 +84,10 @@ export default class SvgLabelStyle extends LabelStyleBase {
    * Updates the visual representation for the given label.
    * @param context The render context.
    * @param oldVisual The visual that has been created in the call to
-   * {@link SvgLabelStyle#createVisual}.
+   * {@link SvgLabelStyle.createVisual}.
    * @param label The label to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link SvgLabelStyle#createVisual}
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link SvgLabelStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): Visual {
     const layout = label.layout

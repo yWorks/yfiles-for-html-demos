@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  CanvasComponent,
   Color,
   Cursor,
   DefaultLabelStyle,
@@ -39,19 +40,19 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  HierarchicalClusteringResult,
   HierarchicLayout,
   HierarchicLayoutCore,
   HierarchicLayoutEdgeLayoutDescriptor,
   HierarchicLayoutLayeringStrategy,
-  HierarchicalClusteringResult,
   HighlightIndicatorManager,
+  ICanvasObject,
   ICanvasObjectDescriptor,
   ICanvasObjectGroup,
   ICanvasObjectInstaller,
-  ICanvasObject,
+  IEdge,
   IEnumerable,
   IGraph,
-  IEdge,
   IHitTestable,
   IInputModeContext,
   ILabel,
@@ -59,15 +60,15 @@ import {
   IModelItem,
   IMutableRectangle,
   INode,
-  IPositionHandler,
   Insets,
+  IPositionHandler,
   LabelStyleDecorationInstaller,
   LayoutGraph,
   Mapper,
   Maps,
-  NodeDpKey,
   MutablePoint,
   MutableRectangle,
+  NodeDpKey,
   NodeStyleDecorationInstaller,
   Point,
   PolylineEdgeStyle,
@@ -87,7 +88,7 @@ import {
 } from 'yfiles'
 
 import { AxisVisual, CutoffVisual, generateColors } from './DemoVisuals.js'
-import { colorSets } from '../../resources/basic-demo-styles.js'
+import { colorSets } from '../../resources/demo-styles.js'
 
 const DENDROGRAM_GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -155,9 +156,7 @@ export class DendrogramComponent {
 
     this.dendrogramComponent.inputMode = mode
     this.dendrogramComponent.autoDrag = false
-    this.dendrogramComponent.highlightIndicatorManager = new HighlightManager(
-      this.dendrogramComponent
-    )
+    this.dendrogramComponent.highlightIndicatorManager = new HighlightManager()
   }
 
   /**
@@ -665,7 +664,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
 
     // move each node to the x direction so that each node lies in the center of the distance between the two first
     // bends of the
-    this.adjustXCoordinates(graph, graph.nodes.firstOrDefault())
+    this.adjustXCoordinates(graph, graph.nodes.at(0))
 
     graph.edges.forEach(edge => {
       const updatedPath = new YList()
@@ -680,10 +679,11 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
    * The graph should be traversed such that each time first the children of the root are examined and then, the
    * root.
    * @param {!LayoutGraph} graph The given graph
-   * @param {?YNode} root The root node
+   * @param root The root node
+   * @param {!YNode} [root]
    */
   adjustXCoordinates(graph, root) {
-    if (!root) {
+    if (root == null) {
       return
     }
     root.outEdges.forEach(edge => {
@@ -790,22 +790,50 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
  * A highlight manager responsible for highlighting the dendrogram elements.
  */
 class HighlightManager extends HighlightIndicatorManager {
-  /**
-   * Creates a new instance of HighlightManager.
-   * @param {!GraphComponent} graphComponent
-   */
-  constructor(graphComponent) {
-    super(graphComponent)
-    const graphModelManager = graphComponent.graphModelManager
+  constructor() {
+    super()
+
     // the edges' highlight group should be above the nodes
-    // the edges' highlight group should be above the nodes
-    this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
-    this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+    this.edgeHighlightGroup = null
 
     // the nodes' highlight group should be above the nodes
-    // the nodes' highlight group should be above the nodes
-    this.nodeHighlightGroup = graphModelManager.contentGroup.addGroup()
-    this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
+    this.nodeHighlightGroup = null
+  }
+
+  /**
+   * Installs the manager on the canvas.
+   * Adds the highlight groups
+   * @param {!CanvasComponent} canvas
+   */
+  install(canvas) {
+    if (canvas instanceof GraphComponent) {
+      const graphModelManager = canvas.graphModelManager
+      // the edges' highlight group should be above the nodes
+      this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
+      this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+
+      // the nodes' highlight group should be above the nodes
+      this.nodeHighlightGroup = graphModelManager.contentGroup.addGroup()
+      this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
+    }
+    super.install(canvas)
+  }
+
+  /**
+   * Uninstalls the manager from the canvas
+   * removes the highlight groups
+   * @param {!CanvasComponent} canvas
+   */
+  uninstall(canvas) {
+    super.uninstall(canvas)
+    if (this.edgeHighlightGroup) {
+      this.edgeHighlightGroup.remove()
+      this.edgeHighlightGroup = null
+    }
+    if (this.nodeHighlightGroup) {
+      this.nodeHighlightGroup.remove()
+      this.nodeHighlightGroup = null
+    }
   }
 
   /**

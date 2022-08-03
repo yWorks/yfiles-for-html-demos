@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,6 +41,10 @@ import {
   NodeEventArgs,
   SvgExport
 } from 'yfiles'
+
+import { detectSafariVersion } from '../../utils/Workarounds'
+
+const isSafari = detectSafariVersion() > 0
 
 /**
  * An input mode which supports dragging nodes from the component to another HTML element.
@@ -93,6 +97,9 @@ export class NodeDragInputMode extends InputModeBase {
    */
   cancel(): void {
     this.node = null
+    if (isSafari && this.img) {
+      this.img.parentNode?.removeChild(this.img)
+    }
     this.img = null
     return super.cancel()
   }
@@ -107,6 +114,10 @@ export class NodeDragInputMode extends InputModeBase {
     if (this.node) {
       event.dataTransfer!.setData('text/plain', this.getId(this.node))
       const layout = this.node.layout
+      if (isSafari && this.img) {
+        // Safari does not show the generated SVG unless it is added to the DOM
+        document.body.appendChild(this.img)
+      }
       event.dataTransfer!.setDragImage(this.img!, layout.width / 2, layout.height / 2)
     } else {
       event.preventDefault()
@@ -148,9 +159,7 @@ export class NodeDragInputMode extends InputModeBase {
     }
     const nodeHitTester = this.inputModeContext!.lookup(INodeHitTester.$class) as INodeHitTester
     if (nodeHitTester) {
-      const node = nodeHitTester
-        .enumerateHits(this.inputModeContext!, evt.location)
-        .firstOrDefault()
+      const node = nodeHitTester.enumerateHits(this.inputModeContext!, evt.location).at(0)
       if (node) {
         this.node = node
         // pre-render the image, otherwise it is not shown during the drag

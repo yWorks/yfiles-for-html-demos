@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,10 +52,11 @@ const CROSS_REFERENCE_MARKER = 'CrossReference'
 /**
  * Gets the mindmap root.
  * @param {!IGraph} graph The input graph.
+ * @returns {!INode}
  */
 export function getRoot(graph) {
   // return the first node with no incoming mindmap edges
-  return graph.nodes.first(node => getInEdge(node, graph) === null)
+  return graph.nodes.find(node => getInEdge(node, graph) === null)
 }
 
 /**
@@ -63,8 +64,6 @@ export function getRoot(graph) {
  * of a given root.
  * @param {!IGraph} graph The input graph.
  * @param {!INode} subtreeRoot The root node of the subtree.
- * @param nodes A list to be filled with the nodes of the subtree.
- * @param edges A list to be filled with the edges of the subtree.
  * @returns {!object}
  */
 export function getSubtree(graph, subtreeRoot) {

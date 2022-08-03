@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,9 +57,9 @@ import {
 
 /**
  * Layout Stage which handles {@link RotatableNodeStyleDecorator rotated nodes}.
- * The during the {@link LayoutStageBase#coreLayout} the layout is calculated with the rotated node's
+ * The during the {@link LayoutStageBase.coreLayout} the layout is calculated with the rotated node's
  * bounding box, i.e. a rectangular box which is large enough to fully include the rotated node. The edges are
- * connected with the actual rotated shape of the node according to the {@link #edgeRoutingMode}.
+ * connected with the actual rotated shape of the node according to the {@link edgeRoutingMode}.
  */
 export default class RotatedNodeLayoutStage extends LayoutStageBase {
   /**
@@ -85,10 +85,10 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
   /**
    * Executes the layout algorithm.
    * Enlarges the node layout to fully encompass the rotated layout (the rotated layout's bounding box). If the
-   * {@link #edgeRoutingMode} is set to 'fixed-port', port constraints are created to keep the ports at their current
+   * {@link edgeRoutingMode} is set to 'fixed-port', port constraints are created to keep the ports at their current
    * location. Existing port constraints are adjusted to the rotation.
-   * Then, the {@link LayoutStageBase#coreLayout} is executed.
-   * After the core layout the original node sizes are restored. If the {@link #edgeRoutingMode} is set to
+   * Then, the {@link LayoutStageBase.coreLayout} is executed.
+   * After the core layout the original node sizes are restored. If the {@link edgeRoutingMode} is set to
    * 'shortest-straight-path-to-border', the last edge segment is extended from the bounding box to the rotated
    * layout.
    * @param {!LayoutGraph} graph

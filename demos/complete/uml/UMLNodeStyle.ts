@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,21 +32,28 @@ import {
   Fill,
   Font,
   FontStyle,
+  GraphComponent,
   GraphEditorInputMode,
+  GraphMLIOHandler,
+  HandleSerializationEventArgs,
   HorizontalTextAlignment,
   IClipboardHelper,
   IEditLabelHelper,
+  IGraphClipboardContext,
   ILabel,
   ILabelStyle,
+  ILookup,
+  IModelItem,
   INode,
   INodeSizeConstraintProvider,
   INodeStyle,
-  IRenderContext,
-  IVisualCreator,
   Insets,
   InteriorStretchLabelModel,
   InteriorStretchLabelModelPosition,
+  IRectangle,
+  IRenderContext,
   ItemClickedEventArgs,
+  IVisualCreator,
   LabelEditingEventArgs,
   MarkupExtension,
   NodeStyleBase,
@@ -64,14 +71,7 @@ import {
   TypeAttribute,
   VerticalTextAlignment,
   Visual,
-  YObject,
-  GraphComponent,
-  IGraphClipboardContext,
-  IModelItem,
-  IRectangle,
-  ILookup,
-  HandleSerializationEventArgs,
-  GraphMLIOHandler
+  YObject
 } from 'yfiles'
 
 import { UMLClassModel } from './UMLClassModel'
@@ -361,7 +361,7 @@ export class UMLNodeStyle extends NodeStyleBase {
    * Updates the location of the UML node style. If anything other changed, a new visual is created.
    * @param ctx The render context.
    * @param oldVisual The visual that has been created in the call to
-   *   {@link NodeStyleBase#createVisual}.
+   *   {@link NodeStyleBase.createVisual}.
    * @param node The node to which this style instance is assigned.
    */
   updateVisual(ctx: IRenderContext, oldVisual: SvgVisual, node: INode): Visual {
@@ -1024,10 +1024,12 @@ function createSvgRect(
   y: number,
   width: number,
   height: number,
-  color: string
+  color: string | null
 ): SVGRectElement {
   const svgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-  svgRect.setAttribute('fill', color)
+  if (color) {
+    svgRect.setAttribute('fill', color)
+  }
   svgRect.setAttribute('x', String(x))
   svgRect.setAttribute('y', String(y))
   svgRect.setAttribute('width', String(width))
@@ -1035,10 +1037,12 @@ function createSvgRect(
   return svgRect
 }
 
-function getSvgColor(fill: Fill): string {
-  const color = (fill as SolidColorFill).color
-  const svgColor = `rgb(${color.r},${color.g},${color.b})`
-  return svgColor
+function getSvgColor(fill: Fill): string | null {
+  if (!(fill instanceof SolidColorFill)) {
+    return null
+  }
+  const color = fill.color
+  return `rgb(${color.r},${color.g},${color.b})`
 }
 
 /**

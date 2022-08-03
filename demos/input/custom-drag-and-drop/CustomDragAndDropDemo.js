@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,22 +39,24 @@ import {
   ShapeNodeStyle,
   Size
 } from 'yfiles'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { pointerEventsSupported } from '../../utils/Workarounds.js'
 import { ColorDropInputMode } from './ColorDropInputMode.js'
 import SampleData from './resources/SampleData.js'
 
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
+
 const PALETTE_SIZE = 15
 
 /**
- * @param {!object} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputModes(graphComponent)
 
@@ -65,7 +67,7 @@ async function run(licenseData) {
   createSampleGraph(graphComponent.graph)
 
   // center the sample graph in the visible area
-  await graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
@@ -211,4 +213,5 @@ function registerCommands(graphComponent) {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

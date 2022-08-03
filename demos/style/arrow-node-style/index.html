@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.5.
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Arrow Node Style Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .option-element {
+        width: 47%;
+      }
+
+      input[type='range'] {
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+      }
+
+      .demo-properties label.option-label {
+        width: 50%;
+      }
+
+      .demo-properties .demo-form-block input[type='range'] {
+        width: 37%;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Arrow Node Style Demo</h1>
+
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle" target="_blank">ArrowNodeStyle</a> provides several properties to customize its shape. There
+          are five basic <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#shape" target="_blank">shapes</a> provided that can be rotated
+          in four <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#direction" target="_blank">directions</a>.
+        </p>
+        <p>
+          For the <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#ARROW" target="_blank">Arrow</a>,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#DOUBLE_ARROW" target="_blank">Double Arrow</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#NOTCHED_ARROW" target="_blank">Notched Arrow</a> shapes, the thickness of the
+          arrow shaft can be defined as a <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#shaftRatio" target="_blank">shaft ratio</a> of
+          the node size.
+        </p>
+        <p>
+          For all shapes, the <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#angle" target="_blank">angle</a> of the arrow tip can be
+          defined. The angle is between an arrow blade and the perpendicular to which the arrow is
+          pointing.
+        </p>
+
+        <h2>Things to try</h2>
+
+        <ul>
+          <li>
+            Select a node and see its style settings in the property panel on the right-hand side.
+          </li>
+          <li>
+            Change some of the settings while a node is selected and see how it affects the selected
+            node.
+          </li>
+          <li>
+            Resize a selected node via its resize handles and see how the shape changes based on the
+            node size ratio.
+          </li>
+          <li>
+            Click on the canvas background to create a new node using the style settings of the
+            property panel.
+          </li>
+        </ul>
+
+        To learn how to customize the handles of the arrow node style, please see the
+        <a href="../../input/custom-handle-provider/index.html">Custom Handle Provider Demo</a>.
+
+        <h2>Related Demos</h2>
+        <ul>
+          <li>
+            <a href="../shape-node-style/index.html">Shape Node Style</a>
+          </li>
+          <li>
+            <a href="../rectangle-node-style/index.html">Rectangle Node Style</a>
+          </li>
+          <li>
+            <a href="../group-node-style/index.html">Group Node Style</a>
+          </li>
+          <li>
+            <a href="../../02-tutorial-custom-styles/01-custom-node-style/index.html"
+              >Tutorial: Custom Node Style</a
+            >
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <div class="demo-properties">
+          <h2>Style Properties</h2>
+          <div class="demo-form-block">
+            <label for="basic-shape" class="option-label">Basic Shape</label>
+            <select id="basic-shape" class="option-element">
+              <option value="ARROW">Arrow</option>
+              <option value="DOUBLE_ARROW">Double Arrow</option>
+              <option value="NOTCHED_ARROW">Notched Arrow</option>
+              <option value="TRAPEZOID">Trapezoid</option>
+              <option value="PARALLELOGRAM">Parallelogram</option>
+            </select>
+
+            <label for="shape-direction" class="option-label">Shape Direction</label>
+            <select id="shape-direction" class="option-element">
+              <option value="RIGHT">Right</option>
+              <option value="DOWN">Down</option>
+              <option value="LEFT">Left</option>
+              <option value="UP">Up</option>
+            </select>
+
+            <label for="angle-range" class="option-label">Angle</label>
+            <input
+              type="range"
+              id="angle-range"
+              min="-180"
+              max="180"
+              value="90"
+              data-command="Angle"
+            />
+            <label id="angle-label">90</label>
+
+            <label for="shaft-ratio" class="option-label">Shaft Ratio</label>
+            <input
+              type="range"
+              id="shaft-ratio"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.3"
+              data-command="ShaftRatio"
+            />
+            <label id="shaft-ratio-label">0.3</label>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="ArrowNodeStyleDemo.js"></script>
+  </body>
+</html>

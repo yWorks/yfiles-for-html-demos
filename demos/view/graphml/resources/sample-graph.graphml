@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -461,12 +461,14 @@
 			<data key="d1"/>
 			<data key="d2"/>
 			<data key="d4">
-				<y:RectD X="90.11059576361504" Y="-158.74858932675596" Width="57.150000000000006" Height="58"/>
+				<y:RectD X="90.11059576361504" Y="-170" Width="57.150000000000006" Height="65"/>
 			</data>
 			<data key="d6">
-				<yjs:CollapsibleNodeStyleDecorator>
-					<yjs:PanelNodeStyle color="DarkGray" labelInsetsColor="#FF969696"/>
-				</yjs:CollapsibleNodeStyleDecorator>
+				<yjs:GroupNodeStyle x:Key="8" tabWidth="30" tabHeight="20" tabInset="3" tabPosition="TOP_TRAILING" groupIcon="MINUS" iconForegroundFill="#FF0B7189" iconOffset="2" tabBackgroundFill="#FF0B7189" tabFill="#FF969696" hitTransparentContentArea="true">
+          <yjs:GroupNodeStyle.stroke>
+            <yjs:Stroke fill="#FF0B7189" lineCap="SQUARE" thickness="2"/>
+          </yjs:GroupNodeStyle.stroke>
+        </yjs:GroupNodeStyle>
 			</data>
 			<graph id="n5:" edgedefault="directed">
 				<node id="n5::n0">
@@ -476,7 +478,7 @@
 						<y:RectD X="103.68559576361503" Y="-142.74858932675596" Width="30" Height="30"/>
 					</data>
 					<data key="d6">
-						<yjs:ShinyPlateNodeStyle fill="#FF000000"/>
+						<yjs:RectangleNodeStyle fill="{y:GraphMLReference 9}"/>
 					</data>
 					<port name="p0">
 						<data key="d12">

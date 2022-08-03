@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -61,21 +61,32 @@ import {
   createRealizationStyle,
   isInheritance
 } from './UMLEdgeStyleFactory'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindCommand,
+  configureTwoPointerPanning,
+  showApp
+} from '../../resources/demo-app'
 import * as umlModel from './UMLClassModel'
 import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UMLNodeStyle'
-import loadJson from '../../resources/load-json'
 import { ButtonInputMode, ButtonTrigger } from '../../input/button-input-mode/ButtonInputMode'
 import { createEdgeCreationButtons, createExtensibilityButtons } from './UMLContextButtonFactory'
 
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
+
 let graphComponent: GraphComponent
 
-async function run(licenseData: object) {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // configure the input mode
   graphComponent.inputMode = createInputMode()
+
+  // use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
 
   // configures default styles for newly created graph elements
   graphComponent.graph.nodeDefaults.style = new UMLNodeStyle(new umlModel.UMLClassModel())
@@ -412,5 +423,5 @@ function registerCommands(): void {
   bindAction("button[data-command='Layout']", executeLayout)
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

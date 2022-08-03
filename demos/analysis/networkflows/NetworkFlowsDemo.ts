@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -79,10 +79,11 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The GraphComponent.
@@ -150,9 +151,10 @@ const applyButton = document.getElementById('apply') as HTMLButtonElement
 /**
  * Runs the demo.
  */
-function run(licenseData: any): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraph()
   initializeGraphComponent()
@@ -454,8 +456,9 @@ function runFlowAlgorithm(): void {
 function calculateMaxFlowMinCut(minCut: boolean): number {
   const graph = graphComponent.graph
 
-  if (graph.nodes.size === 1) {
-    graph.nodes.first().tag = {
+  const singleNode = graph.nodes.at(0)
+  if (singleNode) {
+    singleNode.tag = {
       flow: 0,
       supply: 0,
       adjustable: false,
@@ -1158,5 +1161,5 @@ function createSampleGraph(): void {
   onAlgorithmChanged()
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

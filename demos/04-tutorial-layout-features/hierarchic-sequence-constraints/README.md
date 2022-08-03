@@ -28,6 +28,6 @@ See the [Sequence Constraints](../../layout/sequenceconstraints/index.html) demo
 
 ### Documentation
 
-See the Constrained Node Sequencing section in the Developer's Guide for an in-depth discussion of the relevant concepts.
+See the [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing) section in the Developer's Guide for an in-depth discussion of the relevant concepts.
 
 See the [SequenceConstraintData](https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData) API documentation for detailed information on all available constraints.

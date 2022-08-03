@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,9 +56,10 @@ import {
 } from 'yfiles'
 
 import VuejsNodeStyle from './VuejsNodeStyle.js'
-import { checkLicense, showApp } from '../../resources/demo-app.js'
+import { showApp } from '../../resources/demo-app.js'
 import orgChartData from './resources/OrgChartData.js'
-import loadJson from '../../resources/load-json.js'
+
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Mapping of statuses to colors, used in the node style.
@@ -104,13 +105,11 @@ const sharedData = {
   focusedNodeData: null
 }
 
-loadJson().then(checkLicense).then(run)
-
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   /**
    * This Vue component is used to display the graph nodes. Its template is based on the Orgchart
@@ -154,7 +153,7 @@ function run(licenseData) {
 
   /**
    * This Vue component wraps a {@link GraphComponent}. It takes an {@link IGraph} as a prop
-   * and emits a custom event <code>focused-item-changed</code> when the focused item of the
+   * and emits a custom event `focused-item-changed` when the focused item of the
    * GraphComponent changes.
    */
   Vue.component('graph-component', {
@@ -196,17 +195,15 @@ function run(licenseData) {
   /**
    * Main Vue instance which starts the demo and serves as a mediator between other Vue instances.
    */
-  new Vue({
-    el: '#yfiles-vue-app',
-    data: {
+  new (Vue.extend({
+    data: () => ({
       sharedData
-    },
+    }),
     methods: {
       getGraphComponent() {
         return this.$refs.graphComponent !== undefined &&
           isVueComponentWithGraphComponent(this.$refs.graphComponent)
-          ? // @ts-ignore
-            this.$refs.graphComponent.$graphComponent
+          ? this.$refs.graphComponent.$graphComponent
           : null
       },
       zoomIn() {
@@ -222,7 +219,7 @@ function run(licenseData) {
         ICommand.FIT_GRAPH_BOUNDS.execute(null, this.getGraphComponent())
       },
       /**
-       * This is called when the custom <code>focused-item-changed</code> event is emitted on the
+       * This is called when the custom `focused-item-changed` event is emitted on the
        * graph-control.
        * @param tag The tag of the currently focused node or null if no node is focused.
        */
@@ -233,8 +230,10 @@ function run(licenseData) {
     },
     mounted() {
       // run the demo
-      showApp(null)
+      showApp()
     }
+  }))({
+    el: '#yfiles-vue-app'
   })
 
   /**
@@ -267,8 +266,8 @@ function run(licenseData) {
 
   /**
    * Create the Orgchart graph using a TreeSource.
-   * @param {Object} nodesSource The source data in JSON format
-   * @param {IGraph} graph
+   * @param nodesSource The source data in JSON format
+   * @param graph
    * @return {IGraph}
    */
   function createGraph(nodesSource, graph) {
@@ -294,7 +293,7 @@ function run(licenseData) {
 
   /**
    * Applies a tree layout like in the Orgchart demo.
-   * @param {IGraph} tree
+   * @param tree
    */
   function doLayout(tree) {
     const nodePlacerMapper = new Mapper()
@@ -374,3 +373,6 @@ function run(licenseData) {
     })
   }
 }
+
+// noinspection JSIgnoredPromiseFromCall
+run()

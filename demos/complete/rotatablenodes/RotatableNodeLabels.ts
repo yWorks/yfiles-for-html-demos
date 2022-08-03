@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,7 @@ import {
   Class,
   FreeNodeLabelModel,
   GraphMLAttribute,
+  IEnumerable,
   ILabel,
   ILabelModel,
   ILabelModelParameter,
@@ -45,15 +46,14 @@ import {
   MarkupExtension,
   OrientedRectangle,
   TypeAttribute,
-  YBoolean,
-  IEnumerable
+  YBoolean
 } from 'yfiles'
 
 import { RotatableNodeStyleDecorator } from './RotatableNodes'
 
 /**
  * A {@link ILabelModel} decorator for node labels that wraps another label model and considers the
- * {@link RotatableNodeStyleDecorator#angle rotation angle} of the label owner when a
+ * {@link RotatableNodeStyleDecorator.angle rotation angle} of the label owner when a
  * {@link RotatableNodeStyleDecorator} is used.
  * This will make the node labels rotate with the node's rotation.
  */
@@ -85,21 +85,18 @@ export class RotatableNodeLabelModelDecorator
    * {@link ILabelModelParameterFinder} that consider the nodes rotation.
    * Wraps the default implementations in a special wrapper which supports rotation.
    */
-  lookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
     if (type === ILabelModelParameterProvider.$class) {
-      const provider = this.wrapped.lookup(
-        ILabelModelParameterProvider.$class
-      ) as ILabelModelParameterProvider
+      const provider = this.wrapped.lookup(ILabelModelParameterProvider.$class)
       if (provider) {
-        return new RotatedNodeLabelModelParameterProvider(provider)
+        return new RotatedNodeLabelModelParameterProvider(provider) as T
       }
     }
     if (type === ILabelModelParameterFinder.$class) {
-      const finder = this.wrapped.lookup(
-        ILabelModelParameterFinder.$class
-      ) as ILabelModelParameterFinder
+      const finder = this.wrapped.lookup(ILabelModelParameterFinder.$class)
       if (finder) {
-        return new RotatedNodeLabelModelParameterFinder(finder)
+        return new RotatedNodeLabelModelParameterFinder(finder) as T
       }
     }
     return null

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -175,7 +175,7 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
   }
 
   /**
-   * Gets the bounds of a layer by index as specified by {@link LayerVisual#getLayer}.
+   * Gets the bounds of a layer by index as specified by {@link LayerVisual.getLayer}.
    * @param {number} layerIndex Index of the layer.
    * @returns {!Rect} The bounds of the layer
    */
@@ -215,7 +215,7 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Creates a new visual that emphasizes the hierarchic layers in the graph layout.
-   * @see overrides {@link IVisualCreator#createVisual}
+   * @see overrides {@link IVisualCreator.createVisual}
    * @param {!IRenderContext} context
    * @returns {!Visual}
    */
@@ -228,7 +228,7 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the visual that emphasizes the hierarchic layers in the graph layout.
-   * @see overrides {@link IVisualCreator#updateVisual}
+   * @see overrides {@link IVisualCreator.updateVisual}
    * @param {!IRenderContext} context
    * @param {!Visual} oldVisual
    * @returns {!Visual}

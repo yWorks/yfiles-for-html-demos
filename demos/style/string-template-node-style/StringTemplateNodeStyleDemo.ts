@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,10 +45,8 @@ import {
 
 import SampleData from './resources/SampleData'
 import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-/* global CodeMirror */
-// import CodeMirror typings
-import CodeMirror, { EditorConfiguration, EditorFromTextArea } from 'codemirror'
+import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let templateEditor: EditorFromTextArea
 
@@ -56,8 +54,8 @@ let tagEditor: EditorFromTextArea
 
 let graphMLSupport: GraphMLSupport
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
@@ -100,7 +98,7 @@ function initializeEditors(graphComponent: GraphComponent): void {
   graphComponent.focusIndicatorManager.enabled = false
 
   graphComponent.selection.addItemSelectionChangedListener(sender => {
-    const selectedNode = sender.selectedNodes.firstOrDefault()
+    const selectedNode = sender.selectedNodes.at(0)
     if (selectedNode) {
       if (selectedNode.style instanceof StringTemplateNodeStyle) {
         templateEditor.setOption('readOnly', false)
@@ -326,7 +324,7 @@ function applyTag(graphComponent: GraphComponent): void {
 async function openFile(graphComponent: GraphComponent): Promise<void> {
   try {
     await graphMLSupport.openFile(graphComponent.graph)
-    await graphComponent.fitGraphBounds()
+    graphComponent.fitGraphBounds()
   } catch (ignored) {
     alert('The graph contains styles that are not supported by this demo.')
     graphComponent.graph.clear()
@@ -358,4 +356,5 @@ function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T
 }
 
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

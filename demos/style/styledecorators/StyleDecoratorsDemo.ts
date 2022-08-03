@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,17 +44,18 @@ import {
   SmartEdgeLabelModel
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import LabelStyleDecorator from './LabelStyleDecorator'
 import EdgeStyleDecorator from './EdgeStyleDecorator'
 import NodeStyleDecorator from './NodeStyleDecorator'
-import { initDemoStyles } from '../../resources/demo-styles'
-import loadJson from '../../resources/load-json'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = createInputMode()
 
@@ -223,5 +224,5 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -37,7 +37,6 @@
     <title>Vite Loading Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="/src/style.css" />
-
   </head>
   <body class="demo-has-left demo-hide-left-when-small loaded">
     <aside class="demo-sidebar demo-left">
@@ -70,7 +69,8 @@
           The demo code uses
           <a href="https://web.dev/module-workers/" target="_blank">module workers</a>. Vite's
           development build relies on browser native support and therefore currently only works in
-          some browser (e.g. Chrome). These browsers only support this demo in production mode.
+          some browser (e.g. Chrome). For unsupported browsers, client-sided layout calculation is
+          used as fallback.
         </p>
       </div>
     </aside>

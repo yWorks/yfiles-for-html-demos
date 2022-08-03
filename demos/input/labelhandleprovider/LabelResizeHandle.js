@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,6 +29,7 @@
 import {
   BaseClass,
   CanvasComponent,
+  ClickEventArgs,
   Cursor,
   HandleTypes,
   ICanvasObject,
@@ -48,7 +49,7 @@ import {
  */
 export default class LabelResizeHandle extends BaseClass(IHandle) {
   /**
-   * Creates a new instance of <code>LabelResizeHandle</code>.
+   * Creates a new instance of {@link LabelResizeHandle}.
    * @param {!ILabel} label The label this handle is for
    * @param {boolean} symmetricResize A value indicating whether resizing should be symmetric
    */
@@ -216,6 +217,12 @@ export default class LabelResizeHandle extends BaseClass(IHandle) {
       labelLayout.upY
     )
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 }
 
 /**

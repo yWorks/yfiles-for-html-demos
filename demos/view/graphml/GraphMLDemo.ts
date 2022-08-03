@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,12 +55,12 @@ import {
 
 import SimpleOutputHandler from './SimpleOutputHandler'
 import SimpleInputHandler from './SimpleInputHandler'
-import { bindAction, bindCommand, checkLicense, readGraph, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app'
 import { PropertiesPanel } from './PropertiesPanel'
-import DemoStyles, { DemoSerializationListener, initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import EditorSync from './EditorSync'
-import loadJson from '../../resources/load-json'
 import GraphMLProperty from './GraphMLProperty'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -90,10 +90,11 @@ let graphmlSupport: GraphMLSupport
  */
 let graphModifiedListener: (args: { graphml: string; selectedItem: IModelItem | null }) => void
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   editorSync = new EditorSync()
 
   registerCommands()
@@ -121,7 +122,7 @@ async function run(licenseData: object): Promise<void> {
   Table.installStaticUndoSupport(manager.masterGraph)
 
   // Assign the default demo styles
-  initDemoStyles(graph)
+  initDemoStyles(graph, { theme: 'demo-lightblue' })
 
   // Set the default node label position to centered below the node with the FreeNodeLabelModel that supports
   // label snapping
@@ -162,7 +163,7 @@ async function run(licenseData: object): Promise<void> {
 
 /**
  * Creates the editor input mode for the graph component with support for table nodes.
- * @return A new <code>GraphEditorInputMode</code> instance
+ * @return A new {@link GraphEditorInputMode} instance
  */
 function createEditorMode(): IInputMode {
   const inputMode = new GraphEditorInputMode({
@@ -285,13 +286,6 @@ function createGraphMLIOHandler(): GraphMLIOHandler {
   ioHandler.addParsedListener((sender, args) => {
     propertiesPanel.showGraphProperties()
   })
-
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  ioHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  ioHandler.addHandleSerializationListener(DemoSerializationListener)
 
   graphmlSupport.graphMLIOHandler = ioHandler
 
@@ -569,4 +563,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

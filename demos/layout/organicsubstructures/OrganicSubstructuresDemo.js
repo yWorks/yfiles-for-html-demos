@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,11 +39,19 @@ import {
   IGraph,
   ImageNodeStyle,
   INode,
+  INodeInsetsProvider,
+  Insets,
   License,
   OrganicLayout,
   OrganicLayoutData,
+  OrganicLayoutGroupSubstructureScope,
+  OrganicLayoutTreeSubstructureStyle,
   ParallelSubstructureStyle,
-  StarSubstructureStyle
+  RadialLayout,
+  ShapeNodeStyle,
+  Size,
+  StarSubstructureStyle,
+  TreeLayout
 } from 'yfiles'
 import NodeTypePanel from '../../utils/NodeTypePanel.js'
 import {
@@ -51,20 +59,37 @@ import {
   addOptions,
   bindAction,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import DemoStyles, {
-  DemoEdgeStyle,
-  DemoNodeStyle,
-  DemoSerializationListener,
+import {
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoNodeStyle,
+  createDemoShapeNodeStyle,
   initDemoStyles
 } from '../../resources/demo-styles.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // We need to load the 'styles-other' module explicitly to prevent tree-shaking
 // tools it from removing this dependency which is needed for loading all library styles.
 Class.ensure(ImageNodeStyle)
+// For the tree substructures we also need modules 'layout-tree' and 'layout-radial'
+Class.ensure(TreeLayout)
+Class.ensure(RadialLayout)
+
+/**
+ * The color sets for the eight different node types.
+ */
+const nodeTypeColors = [
+  'demo-palette-21',
+  'demo-palette-22',
+  'demo-palette-23',
+  'demo-palette-15',
+  'demo-palette-25',
+  'demo-palette-11',
+  'demo-palette-12',
+  'demo-palette-14'
+]
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -73,15 +98,16 @@ let graphComponent
 let layoutRunning = false
 
 /** @type {boolean} */
-let alterTypeOrStructure = true
+let allowNodeTypeChange = true
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode({
@@ -145,16 +171,20 @@ async function runLayoutCore(animate) {
   // configure the organic layout algorithm
   const algorithm = new OrganicLayout()
 
+  const currentSample = getElementById('sample-combo-box').value
+
   //configure some basic settings
   algorithm.deterministic = true
-  algorithm.minimumNodeDistance = 20
+  algorithm.minimumNodeDistance = currentSample === 'groups' ? 0 : 20
   algorithm.preferredEdgeLength = 60
 
-  // configure substructure styles (cycles, chains, parallel structures, star)
+  // configure substructure styles (cycles, chains, parallel structures, star, tree)
   algorithm.cycleSubstructureStyle = getCycleStyle()
   algorithm.chainSubstructureStyle = getChainStyle()
   algorithm.parallelSubstructureStyle = getParallelStyle()
   algorithm.starSubstructureStyle = getStarStyle()
+  algorithm.treeSubstructureStyle = getTreeStyle()
+  algorithm.groupSubstructureScope = getGroupSubstructureScope()
 
   //configure type separation for parallel and star substructures
   const separateParallel = getElementById('separate-parallel')
@@ -220,6 +250,8 @@ function getChainStyle() {
       return ChainSubstructureStyle.RECTANGULAR
     case 'STRAIGHT_LINE':
       return ChainSubstructureStyle.STRAIGHT_LINE
+    case 'DISK':
+      return ChainSubstructureStyle.DISK
     default:
       return ChainSubstructureStyle.NONE
   }
@@ -259,21 +291,56 @@ function getStarStyle() {
 }
 
 /**
+ * Determines the desired tree substructure style for layout calculations from the settings UI.
+ * @returns {!OrganicLayoutTreeSubstructureStyle}
+ */
+function getTreeStyle() {
+  switch (getSelectedValue('treeStyle')) {
+    case 'BALLOON':
+      return OrganicLayoutTreeSubstructureStyle.BALLOON
+    case 'RADIAL':
+      return OrganicLayoutTreeSubstructureStyle.RADIAL
+    case 'ORIENTED':
+      return OrganicLayoutTreeSubstructureStyle.ORIENTED
+    default:
+      return OrganicLayoutTreeSubstructureStyle.NONE
+  }
+}
+
+/**
+ * Determines the desired group substructure scope for layout calculations from the settings UI.
+ * @returns {!OrganicLayoutGroupSubstructureScope}
+ */
+function getGroupSubstructureScope() {
+  switch (getSelectedValue('groupScope')) {
+    case 'ALL':
+      return OrganicLayoutGroupSubstructureScope.ALL_GROUPS
+    case 'WITHOUT_EDGES':
+      return OrganicLayoutGroupSubstructureScope.GROUPS_WITHOUT_EDGES
+    case 'WITHOUT_INTER_EDGES':
+      return OrganicLayoutGroupSubstructureScope.GROUPS_WITHOUT_INTER_EDGES
+    default:
+      return OrganicLayoutGroupSubstructureScope.NO_GROUPS
+  }
+}
+
+/**
  * Configures default visualizations for the given graph.
  * @param {!IGraph} graph The demo's graph.
  */
 function configureGraph(graph) {
   initDemoStyles(graph)
 
-  const nodeStyle = new DemoNodeStyle()
-  // use 'type 0' for all interactively created nodes
-  nodeStyle.cssClass = 'type-0'
-  graph.nodeDefaults.style = nodeStyle
+  // use first type color for all interactively created nodes
+  graph.nodeDefaults.style = createDemoNodeStyle(nodeTypeColors[0])
   graph.nodeDefaults.shareStyleInstance = false
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
+    node => graph.isGroupNode(node),
+    INodeInsetsProvider.create(() => new Insets(40))
+  )
 
-  const edgeStyle = new DemoEdgeStyle()
-  edgeStyle.showTargetArrows = false
-  graph.edgeDefaults.style = edgeStyle
+  graph.edgeDefaults.style = createDemoEdgeStyle({ showTargetArrow: false })
 }
 
 /**
@@ -281,7 +348,7 @@ function configureGraph(graph) {
  * @param {!GraphComponent} graphComponent
  */
 function initializeTypePanel(graphComponent) {
-  const typePanel = new NodeTypePanel(graphComponent)
+  const typePanel = new NodeTypePanel(graphComponent, nodeTypeColors)
   typePanel.nodeTypeChanged = (item, newType) => setNodeType(item, newType)
 
   typePanel.typeChanged = () => runLayout(true)
@@ -289,8 +356,10 @@ function initializeTypePanel(graphComponent) {
   // update the nodes whose types will be changed on selection change events
   graphComponent.selection.addItemSelectionChangedListener(
     () =>
-      (typePanel.currentItems = alterTypeOrStructure
-        ? graphComponent.selection.selectedNodes.toArray()
+      (typePanel.currentItems = allowNodeTypeChange
+        ? graphComponent.selection.selectedNodes
+            .filter(n => !graphComponent.graph.isGroupNode(n))
+            .toArray()
         : null)
   )
 }
@@ -304,9 +373,12 @@ function initializeTypePanel(graphComponent) {
 function setNodeType(node, type) {
   // set a new tag and style so that this change is easily undo-able
   node.tag = { type: type }
-  const newStyle = node.style.clone()
-  newStyle.cssClass = `type-${type}`
-  graphComponent.graph.setStyle(node, newStyle)
+  const graph = graphComponent.graph
+  if (node.style instanceof ShapeNodeStyle) {
+    graph.setStyle(node, createDemoShapeNodeStyle(node.style.shape, nodeTypeColors[type]))
+  } else {
+    graph.setStyle(node, createDemoNodeStyle(nodeTypeColors[type]))
+  }
 }
 
 /**
@@ -318,27 +390,50 @@ function setNodeType(node, type) {
 async function loadSample(sample) {
   disableUI(true)
   try {
-    // load sample data
     const newGraph = new DefaultGraph()
-    await updateGraph(newGraph, `resources/${sample}.graphml`)
+    // configures default styles for newly created graph elements
+    configureGraph(newGraph)
+
+    // load sample data
+    await new GraphMLIOHandler().readFromURL(newGraph, `resources/${sample}.graphml`)
 
     // update the settings UI to match the sample's default layout settings
     const data = await loadSampleData(`resources/${sample}.json`)
     updateLayoutSettings(data)
 
-    // update input mode setting depending on whether we are allowed to change the graph structure
-    alterTypeOrStructure = data.settings ? data.settings.alterTypesAndStructure : true
-    const inputMode = graphComponent.inputMode
-    inputMode.allowCreateNode = alterTypeOrStructure
-    inputMode.allowCreateEdge = alterTypeOrStructure
-    inputMode.allowDuplicate = alterTypeOrStructure
-    inputMode.deletableItems = alterTypeOrStructure ? GraphItemTypes.ALL : GraphItemTypes.NONE
+    const { overrideStyles, allowItemCreation, allowItemModification, allowTypeChanges } =
+      data.settings
 
-    // center new sample graph in current view
+    // enable/disable node type changes depending on the sample
+    allowNodeTypeChange = allowTypeChanges
+
+    // if required for the sample, override and set the node styles
+    if (overrideStyles) {
+      updateNodeStyles(newGraph)
+    }
+
+    // update input mode setting depending on whether we are allowed to change the graph structure
+    const inputMode = graphComponent.inputMode
+    inputMode.allowCreateNode = allowItemCreation
+    inputMode.allowCreateEdge = allowItemCreation
+    inputMode.allowDuplicate = allowItemCreation
+    inputMode.allowClipboardOperations = allowItemCreation
+    inputMode.moveInputMode.enabled = allowItemModification
+    inputMode.deletableItems = allowItemCreation ? GraphItemTypes.ALL : GraphItemTypes.NONE
+    inputMode.showHandleItems = allowItemModification ? GraphItemTypes.ALL : GraphItemTypes.NONE
+
+    if (allowItemCreation) {
+      // update the default node style depending on the style of the first node
+      const refStyle = newGraph.nodes.first().style
+      if (refStyle instanceof ShapeNodeStyle) {
+        newGraph.nodeDefaults.style = createDemoShapeNodeStyle(refStyle.shape, nodeTypeColors[0])
+      }
+    }
+
+    // replace the old graph with the new sample
     graphComponent.graph = newGraph
 
-    // configures default styles for newly created graph elements
-    configureGraph(graphComponent.graph)
+    // calculate an initial arrangement for the new sample
     await runLayout(false)
 
     // enable undo/redo
@@ -353,6 +448,18 @@ async function loadSample(sample) {
 }
 
 /**
+ * Updates the node styles in the given graph depending on the type of each node.
+ * @param {!IGraph} graph the graph to update.
+ */
+function updateNodeStyles(graph) {
+  for (const node of graph.nodes) {
+    if (node.tag && node.tag.type > -1) {
+      graph.setStyle(node, createDemoNodeStyle(nodeTypeColors[node.tag.type]))
+    }
+  }
+}
+
+/**
  * Loads sample data from the file identified by the given sample path.
  * @param {!string} samplePath the path to the sample data file.
  * @returns {!Promise}
@@ -360,23 +467,6 @@ async function loadSample(sample) {
 async function loadSampleData(samplePath) {
   const response = await fetch(samplePath)
   return await response.json()
-}
-
-/**
- * Rebuilds the demo's graph from the given sample data.
- * @param {!IGraph} graph The demo's graph.
- * @param {!string} samplePath The path to the sample data representing the desired graph structure.
- * @returns {!Promise}
- */
-async function updateGraph(graph, samplePath) {
-  const reader = new GraphMLIOHandler()
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  reader.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  reader.addHandleSerializationListener(DemoSerializationListener)
-  await reader.readFromURL(graph, samplePath)
 }
 
 /**
@@ -391,6 +481,8 @@ function updateLayoutSettings(data) {
     updateSelectedIndex('chainStyle', settings.chainSubstructureStyle)
     updateSelectedIndex('starStyle', settings.starSubstructureStyle)
     updateSelectedIndex('parallelStyle', settings.parallelSubstructureStyle)
+    updateSelectedIndex('treeStyle', settings.treeSubstructureStyle)
+    updateSelectedIndex('groupScope', settings.groupSubstructures)
     updateState('use-edge-grouping', settings.useEdgeGrouping, false)
     updateState('consider-node-types', settings.considerNodeTypes, true)
     updateState('separate-parallel', settings.parallelSubstructureTypeSeparation, false)
@@ -400,6 +492,8 @@ function updateLayoutSettings(data) {
     getElementById('chainStyle').selectedIndex = 0
     getElementById('starStyle').selectedIndex = 0
     getElementById('parallelStyle').selectedIndex = 0
+    getElementById('treeStyle').selectedIndex = 0
+    getElementById('groupScope').selectedIndex = 0
     getElementById('use-edge-grouping').checked = false
     getElementById('consider-node-types').checked = true
     getElementById('separate-parallel').checked = false
@@ -489,6 +583,7 @@ function initializeUI() {
     { text: 'Simple Mixed, Small', value: 'mixed_small' },
     { text: 'Simple Parallel', value: 'parallel' },
     { text: 'Simple Star', value: 'star' },
+    { text: 'Simple Groups', value: 'groups' },
     { text: 'Computer Network', value: 'computer_network' }
   )
   addNavigationButtons(sampleSelect, true, 'sidebar-button')
@@ -521,5 +616,5 @@ function getElementById(id) {
   return document.getElementById(id)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

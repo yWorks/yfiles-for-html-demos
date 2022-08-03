@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -132,25 +132,29 @@ const ButtonTrigger = {
 
 /**
  * An {@link IInputMode} that can be used to display several {@link Button buttons} at an owning
- * {@link IModelItem} that trigger different actions for this owner.<br/>
+ * {@link IModelItem} that trigger different actions for this owner.
+ *
  * The kind of model items this input mode should consider as owners is specified by the
- * {@link validOwnerTypes valid owner types}.<br/>
+ * {@link validOwnerTypes valid owner types}.
+ *
  * Different {@link ButtonTrigger} can be used to trigger that buttons for an item are
  * {@link addQueryButtonsListener queried} and all buttons that were
  * {@link QueryButtonsEvent.addButton added} to the {@link QueryButtonsEvent} are displayed using
- * the provided location and styling.<br/>
+ * the provided location and styling.
+ *
  * The {@link Button.onHoverOver onHoverOver} and {@link Button.onHoverOut onHoverOut} listener
  * are called when hovering over or out of the button while {@link Button.onAction onAction} is
- * called when clicking or touch-clicking the button or starting a mouse-drag.<br/>
+ * called when clicking or touch-clicking the button or starting a mouse-drag.
+ *
  * When the {@link GraphComponent} is focused, the {@link Key.TAB} can be used to set a focus
  * the the first button and cycle through all buttons. A focused button can be triggered using
  * {@link Key.ENTER} or {@link Key.SPACE}.
  */
 export class ButtonInputMode extends InputModeBase {
   /**
-   * The cursor displayed when hovering over a {@link Button} when {@link Button#cursor} is not set.<br/>
+   * The cursor displayed when hovering over a {@link Button} when {@link Button.cursor} is not set.
    *
-   * The <code>default</code> is {@link Cursor.POINTER}.
+   * The `default` is {@link Cursor.POINTER}.
    * @type {?Cursor}
    */
   get cursor() {
@@ -165,9 +169,9 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   /**
-   * The size used for a {@link Button} when no custom size is specified.<br/>
+   * The size used for a {@link Button} when no custom size is specified.
    *
-   * The <code>default</code> is <code>(25, 25)</code>.
+   * The `default` is `(25, 25)`.
    * @type {!Size}
    */
   get buttonSize() {
@@ -183,11 +187,11 @@ export class ButtonInputMode extends InputModeBase {
 
   /**
    * The time an {@link IModelItem} has to be hovered before {@link Button}s are
-   * {@link addQueryButtonsListener queried} for it.<br/>
+   * {@link addQueryButtonsListener queried} for it.
    *
-   * This property is only used when {@link buttonTrigger} is {@link ButtonTrigger#HOVER}.<br/>
+   * This property is only used when {@link buttonTrigger} is {@link ButtonTrigger.HOVER}.
    *
-   * The <code>default</code> is <code>750</code>.
+   * The `default` is `750`.
    * @type {number}
    */
   get hoverTime() {
@@ -202,11 +206,11 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   /**
-   * The time before {@link Button}s for a hovered item are hidden again.<br/>
+   * The time before {@link Button}s for a hovered item are hidden again.
    *
-   * This property is only used when {@link buttonTrigger} is {@link ButtonTrigger#HOVER}.<br/>
+   * This property is only used when {@link buttonTrigger} is {@link ButtonTrigger.HOVER}.
    *
-   * The <code>default</code> is <code>2000</code>.
+   * The `default` is `2000`.
    * @type {number}
    */
   get hideTime() {
@@ -222,9 +226,9 @@ export class ButtonInputMode extends InputModeBase {
 
   /**
    * The time a {@link Button} has to be hovered before its {@link Button.tooltip tooltip} is
-   * displayed.<br/>
+   * displayed.
    *
-   * The <code>default</code> is <code>750</code>.
+   * The `default` is `750`.
    * @type {number}
    */
   get hoverTooltipTime() {
@@ -240,9 +244,9 @@ export class ButtonInputMode extends InputModeBase {
 
   /**
    * The gesture or state that is used to decide for which {@link IModelItem}
-   * {@link Button}s should be displayed.<br/>
+   * {@link Button}s should be displayed.
    *
-   * The <code>default</code> ist {@link ButtonTrigger.HOVER}.
+   * The `default` ist {@link ButtonTrigger.HOVER}.
    * @type {!ButtonTrigger}
    */
   get buttonTrigger() {
@@ -258,8 +262,9 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   /**
-   * The graph items that are considered by this input mode.<br/>
-   * The <code>default</code> is {@link GraphItemTypes#ALL}.
+   * The graph items that are considered by this input mode.
+   *
+   * The `default` is {@link GraphItemTypes.ALL}.
    * @type {!GraphItemTypes}
    */
   get validOwnerTypes() {
@@ -344,7 +349,8 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   /**
-   * Determines if buttons should be {@link QueryButtonsEvent queried} for a model item.<br/>
+   * Determines if buttons should be {@link QueryButtonsEvent queried} for a model item.
+   *
    * The implementation verifies an {@link IModelItem} if its type is included in {@link validOwnerTypes}.
    * @param {!IModelItem} item The item to verify.
    * @protected
@@ -357,9 +363,9 @@ export class ButtonInputMode extends InputModeBase {
 
   /**
    * {@link hideButtons Hides} the current buttons and {@link addQueryButtonsListener queries} and
-   * displays new {@link Button}s for the given item.<br/>
+   * displays new {@link Button}s for the given item.
    *
-   * When {@link buttonTrigger} is set to {@link ButtonTrigger#NONE}, calling this method is the
+   * When {@link buttonTrigger} is set to {@link ButtonTrigger.NONE}, calling this method is the
    * only way to show buttons.
    *
    * @param {!IModelItem} item The item to show buttons for.
@@ -423,7 +429,8 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   /**
-   * Returns the {@link Button buttons} that shall be displayed for the item.<br/>
+   * Returns the {@link Button buttons} that shall be displayed for the item.
+   *
    * This implementation {@link QueryButtonsEvent queries} all {@link addQueryButtonsListener added}
    * listeners and returns the buttons {@link QueryButtonsEvent.addButton added} by them.
    * @param {!IModelItem} item The item to provide buttons for.
@@ -464,6 +471,14 @@ export class ButtonInputMode extends InputModeBase {
     return context.canvasComponent
       .hitElementsAt(context, location, this.buttonLabelManager.canvasObjectGroup)
       .map(canvasObject => canvasObject.userObject)
+  }
+
+  /**
+   * @param {!Point} location
+   * @returns {?Button}
+   */
+  getFirstHitButton(location) {
+    return this.getHitButtons(this.inputModeContext, location).at(0) ?? null
   }
 
   /**
@@ -539,9 +554,9 @@ export class ButtonInputMode extends InputModeBase {
    * @param {!MouseEventArgs} evt
    */
   onMouseMove(sender, evt) {
-    const newButton = this.getHitButtons(this.inputModeContext, evt.location).firstOrDefault()
+    const newButton = this.getFirstHitButton(evt.location)
     this.updateHoveredButton(newButton)
-    if (newButton == null && this.buttonTrigger === ButtonTrigger.HOVER) {
+    if (!newButton && this.buttonTrigger === ButtonTrigger.HOVER) {
       this.updateHoveredItem(evt.location)
     }
   }
@@ -551,7 +566,7 @@ export class ButtonInputMode extends InputModeBase {
    * @param {!MouseEventArgs} evt
    */
   onMouseDown(sender, evt) {
-    this.mouseDownButton = this.getHitButtons(this.inputModeContext, evt.location).firstOrDefault()
+    this.mouseDownButton = this.getFirstHitButton(evt.location)
   }
 
   /**
@@ -559,8 +574,8 @@ export class ButtonInputMode extends InputModeBase {
    * @param {!MouseEventArgs} evt
    */
   onMouseDrag(sender, evt) {
-    const draggedButton = this.getHitButtons(this.inputModeContext, evt.location).firstOrDefault()
-    if (draggedButton != null && this.mouseDownButton === draggedButton) {
+    const draggedButton = this.getFirstHitButton(evt.location)
+    if (draggedButton && this.mouseDownButton === draggedButton) {
       this.triggerAction(draggedButton)
     }
     this.mouseDownButton = null
@@ -715,7 +730,7 @@ export class ButtonInputMode extends InputModeBase {
 
   /**
    * The button that is focused and can be triggered via {@link Key.ENTER} or {@link Key.SPACE}.
-   * @param focusedButton The button to focus or <code>null</code> if no button shall be focused.
+   * @param focusedButton The button to focus or `null` if no button shall be focused.
    * @type {?Button}
    */
   set focusedButton(focusedButton) {
@@ -742,7 +757,7 @@ export class ButtonInputMode extends InputModeBase {
     const leftClick = (evt.changedButtons & MouseButtons.LEFT) !== 0
     const rightClick = (evt.changedButtons & MouseButtons.RIGHT) !== 0
     if (leftClick) {
-      const hitButton = this.getHitButtons(this.inputModeContext, evt.location).firstOrDefault()
+      const hitButton = this.getFirstHitButton(evt.location)
       if (hitButton && !evt.defaultPrevented) {
         evt.preventDefault()
         this.triggerAction(hitButton)
@@ -762,7 +777,7 @@ export class ButtonInputMode extends InputModeBase {
    * @param {!TouchEventArgs} evt
    */
   onTouchClicked(sender, evt) {
-    const hitButton = this.getHitButtons(this.inputModeContext, evt.location).firstOrDefault()
+    const hitButton = this.getFirstHitButton(evt.location)
     if (hitButton && !evt.defaultPrevented) {
       evt.preventDefault()
       this.triggerAction(hitButton)
@@ -822,7 +837,7 @@ export class ButtonInputMode extends InputModeBase {
     const context = this.inputModeContext
     const hitTester = context.lookup(IHitTester.$class)
     let hitItem = hitTester
-      ? hitTester.enumerateHits(context, location).firstOrDefault(this.isValidItem.bind(this))
+      ? hitTester.enumerateHits(context, location).find(this.isValidItem.bind(this))
       : null
 
     // as bends don't have their own visualization, bend hit testing has to be explicitly checked
@@ -904,23 +919,21 @@ export class QueryButtonsEvent {
   /**
    * Creates and adds a new button for the {@link owner}.
    *
-   * @param {!object} options A map of options to configure the button.<br/>
-   * <ul>
-   *   <li>onAction: {@link ButtonActionListener} - An action that shall be triggered when clicking or dragging the button.</li>
-   *   <li>layoutParameter: {@link ILabelModelParameter} - A layout parameter to place the button relative to the owner.
-   *   If the owner is of type {@link IBend} or {@link ILabel}, the model of the parameter should support nodes as owner.
-   *   </li>
-   *   <li>style?: {@link ILabelStyle} - The style for the button. This parameter can be omitted if an icon or text is specified.</li>
-   *   <li>text?: string - The text used to style the button. If a text is set, the style parameter should be omitted or has to consider the {@link ILabel.text}.</li>
-   *   <li>icon?: string - The url of the icon to use for the button. If an icon is set, the style parameter should be omitted.</li>
-   *   <li>size?: {@link Size} - The size of the button. If no size is specified, the {@link ButtonInputMode#buttonSize} is used.</li>
-   *   <li>onHoverOver?: {@link ButtonHoverListener} - An action that is triggered when starting hovering over the button.</li>
-   *   <li>onHoverOut?: {@link ButtonHoverListener} - An action that is triggered when ending hovering over the button.</li>
-   *   <li>cursor?: {@link Cursor} - The cursor displayed when hovering over the button. If no cursor is specified, the {@link ButtonInputMode#cursor} is used.</li>
-   *   <li>tag?: any - Optional custom data that can be used in the style or layoutParameter or to identify the button.</li>
-   *   <li>tooltip?: string - An optional text that describes the action triggered by the button.</li>
-   *   <li>ignoreFocus?: boolean - An optional flag that describes whether the button can be focused using the <em>Tab</em> key.</li>
-   *   </ul>
+   * @param {!object} options A map of options to configure the button.
+   *
+   *   - onAction: {@link ButtonActionListener} - An action that shall be triggered when clicking or dragging the button.
+   *   - layoutParameter: {@link ILabelModelParameter} - A layout parameter to place the button relative to the owner.
+   *     If the owner is of type {@link IBend} or {@link ILabel}, the model of the parameter should support nodes as owner.
+   *   - style?: {@link ILabelStyle} - The style for the button. This parameter can be omitted if an icon or text is specified.
+   *   - text?: string - The text used to style the button. If a text is set, the style parameter should be omitted or has to consider the {@link ILabel.text}.
+   *   - icon?: string - The url of the icon to use for the button. If an icon is set, the style parameter should be omitted.
+   *   - size?: {@link Size} - The size of the button. If no size is specified, the {@link ButtonInputMode.buttonSize} is used.
+   *   - onHoverOver?: {@link ButtonHoverListener} - An action that is triggered when starting hovering over the button.
+   *   - onHoverOut?: {@link ButtonHoverListener} - An action that is triggered when ending hovering over the button.
+   *   - cursor?: {@link Cursor} - The cursor displayed when hovering over the button. If no cursor is specified, the {@link ButtonInputMode.cursor} is used.
+   *   - tag?: any - Optional custom data that can be used in the style or layoutParameter or to identify the button.
+   *   - tooltip?: string - An optional text that describes the action triggered by the button.
+   *   - ignoreFocus?: boolean - An optional flag that describes whether the button can be focused using the `Tab` key.
    * @returns {!Button}
    */
   addButton(options) {
@@ -980,23 +993,21 @@ export class Button extends YObject {
   /**
    * Creates a new button for the {@link item}.
    *
-   * @param {!object} options A map of options to configure the button.<br/>
-   * <ul>
-   *   <li>owner: {@link IModelItem} - The model item this button belongs to.</li>
-   *   <li>onAction: {@link ButtonActionListener} - An action that is triggered when clicking or dragging the button.</li>
-   *   <li>layoutParameter: {@link ILabelModelParameter} - A layout parameter to place the button relative to the owner.
-   *   If the owner is of type {@link IBend} or {@link ILabel}, the model of the parameter should support nodes as owner.
-   *   </li>
-   *   <li>style: {@link ILabelStyle} - The style used for the button.</li>
-   *   <li>text?: string - The text used to style the button. If a text is set, the style parameter has to consider the {@link ILabel.text}.</li>
-   *   <li>size: {@link Size} - The size of the button. If {@link Size.isEmpty} and a text is set, the preferred style for the text is used.</li>
-   *   <li>onHoverOver?: {@link ButtonHoverListener} - An action that shall be triggered when starting hovering over the button.</li>
-   *   <li>onHoverOut?: {@link ButtonHoverListener} - An action that shall be triggered when ending hovering over the button.</li>
-   *   <li>cursor?: {@link Cursor} - The cursor displayed when hovering over the button. If no cursor is specified, the {@link ButtonInputMode#cursor} is used.</li>
-   *   <li>tag?: any - Optional custom data that can be used to identify the button or used in the style or layoutParameter.</li>
-   *   <li>tooltip?: string - An optional text that describes the action triggered by the button.</li>
-   *   <li>focusable?: boolean - An optional flag that describes whether the button can be focused using the <em>Tab</em> key.</li>
-   *   </ul>
+   * @param {!object} options A map of options to configure the button.
+   *
+   *   - owner: {@link IModelItem} - The model item this button belongs to.
+   *   - onAction: {@link ButtonActionListener} - An action that is triggered when clicking or dragging the button.
+   *   - layoutParameter: {@link ILabelModelParameter} - A layout parameter to place the button relative to the owner.
+   *       If the owner is of type {@link IBend} or {@link ILabel}, the model of the parameter should support nodes as owner.
+   *   - style: {@link ILabelStyle} - The style used for the button.
+   *   - text?: string - The text used to style the button. If a text is set, the style parameter has to consider the {@link ILabel.text}.
+   *   - size: {@link Size} - The size of the button. If {@link Size.isEmpty} and a text is set, the preferred style for the text is used.
+   *   - onHoverOver?: {@link ButtonHoverListener} - An action that shall be triggered when starting hovering over the button.
+   *   - onHoverOut?: {@link ButtonHoverListener} - An action that shall be triggered when ending hovering over the button.
+   *   - cursor?: {@link Cursor} - The cursor displayed when hovering over the button. If no cursor is specified, the {@link ButtonInputMode.cursor} is used.
+   *   - tag?: any - Optional custom data that can be used to identify the button or used in the style or layoutParameter.
+   *   - tooltip?: string - An optional text that describes the action triggered by the button.
+   *   - focusable?: boolean - An optional flag that describes whether the button can be focused using the `Tab` key.
    */
   constructor(options) {
     super()
@@ -1116,7 +1127,7 @@ export class Button extends YObject {
 
   /**
    * An optional tag that can be used to identify the button.
-   * This tag is also set as {@link ILabel#tag} of the dummy label used to position and render the
+   * This tag is also set as {@link ILabel.tag} of the dummy label used to position and render the
    * button so it can be used by the {@link layoutParameter} and {@link style}.
    * @type {*}
    */
@@ -1142,7 +1153,7 @@ export class Button extends YObject {
 
   /**
    * The cursor used when hovering over this button.
-   * When set to <code>null</code> (default), the {@link ButtonInputMode#cursor} is used instead.
+   * When set to `null` (default), the {@link ButtonInputMode.cursor} is used instead.
    * @type {?Cursor}
    */
   get cursor() {

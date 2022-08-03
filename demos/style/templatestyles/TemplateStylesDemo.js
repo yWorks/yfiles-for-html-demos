@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -61,8 +61,8 @@ import {
 
 import PropertiesView from './PropertiesView.js'
 import OrgChartData from './resources/OrgChartData.js'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Specifies the properties of an employee, i.e. the business data associated to each node
@@ -81,10 +81,10 @@ import loadJson from '../../resources/load-json.js'
  */
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // setup the binding converters for the TemplateNodeStyle used to visualize the demo's nodes
   initConverters()
@@ -102,7 +102,7 @@ function run(licenseData) {
 /**
  * Configures default styles for nodes, edges, labels, and ports.
  * Even though it is not possible to create new items in this demo, the default styles are
- * nevertheless used for the graph items created in method {@link #createGraph} below.
+ * nevertheless used for the graph items created in method {@link createGraph} below.
  * @param {!IGraph} graph
  */
 function configureStyles(graph) {
@@ -343,7 +343,7 @@ function runLayout(graphComponent) {
   graphComponent.graph.applyLayout(layout)
   // move the ports from the node center to outside the node
   adjustPorts(graphComponent.graph)
-  graphComponent.currentItem = graphComponent.graph.nodes.first()
+  graphComponent.currentItem = graphComponent.graph.nodes.at(0) ?? null
   limitViewport(graphComponent)
   graphComponent.fitGraphBounds()
 }
@@ -414,5 +414,5 @@ function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

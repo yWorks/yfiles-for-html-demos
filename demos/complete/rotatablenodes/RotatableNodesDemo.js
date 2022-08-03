@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BalloonLayout,
-  BevelNodeStyle,
   CircularLayout,
   Class,
   DefaultPortCandidate,
@@ -44,8 +43,11 @@ import {
   GraphSnapContext,
   HierarchicLayout,
   ICommand,
+  ILayoutAlgorithm,
   INode,
+  INodeStyle,
   InteriorLabelModel,
+  IOrientedRectangle,
   IPortCandidateProvider,
   LabelSnapContext,
   LayoutExecutor,
@@ -59,18 +61,15 @@ import {
   Point,
   RadialLayout,
   Rect,
+  RectangleNodeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
-  ShinyPlateNodeStyle,
   SimpleNode,
   Size,
   StorageLocation,
   TreeLayout,
   TreeReductionStage,
-  YObject,
-  ILayoutAlgorithm,
-  INodeStyle,
-  IOrientedRectangle
+  YObject
 } from 'yfiles'
 
 import RotatedNodeLayoutStage from './RotatedNodeLayoutStage.js'
@@ -79,12 +78,6 @@ import RotationAwareGroupBoundsCalculator from './RotationAwareGroupBoundsCalcul
 import AdjustOutlinePortInsidenessEdgePathCropper from './AdjustOutlinePortInsidenessEdgePathCropper.js'
 import * as RotatableNodeLabels from './RotatableNodeLabels.js'
 import * as RotatablePorts from './RotatablePorts.js'
-import DemoStyles, {
-  DemoEdgeStyle,
-  DemoGroupStyle,
-  DemoNodeStyle,
-  DemoSerializationListener
-} from '../../resources/demo-styles.js'
 import * as RotatableNodes from './RotatableNodes.js'
 import {
   RotatableNodesSerializationListener,
@@ -95,10 +88,16 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import {
+  createDemoEdgeLabelStyle,
+  createDemoEdgeStyle,
+  createDemoGroupStyle,
+  createDemoNodeLabelStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -110,10 +109,10 @@ const selectLayout = document.querySelector("select[data-command='SelectLayout']
 const selectSample = document.querySelector("select[data-command='SelectSample']")
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
 
   initializeInputMode()
@@ -181,11 +180,9 @@ function initializeGraphML() {
 
   // enable serialization of the required classes - without a namespace mapping, serialization will fail
   const xmlNamespace = 'http://www.yworks.com/yFilesHTML/demos/RotatableNodes/1.0'
-  graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, DemoStyles)
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodes)
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatablePorts)
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodeLabels)
-  graphmlSupport.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
   graphmlSupport.graphMLIOHandler.addHandleSerializationListener(
     RotatableNodesSerializationListener
   )
@@ -214,11 +211,12 @@ function initializeGraph() {
     new RotationAwareGroupBoundsCalculator()
   )
 
-  graph.nodeDefaults.style = new RotatableNodes.RotatableNodeStyleDecorator(new DemoNodeStyle())
+  graph.nodeDefaults.style = new RotatableNodes.RotatableNodeStyleDecorator(createDemoNodeStyle())
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.size = new Size(100, 50)
 
   const coreLabelModel = new InteriorLabelModel()
+  graph.nodeDefaults.labels.style = createDemoNodeLabelStyle()
   graph.nodeDefaults.labels.layoutParameter =
     new RotatableNodeLabels.RotatableNodeLabelModelDecorator(
       coreLabelModel
@@ -238,11 +236,10 @@ function initializeGraph() {
       FreeNodePortLocationModel.NODE_TOP_ANCHORED
     )
 
-  const groupStyle = new DemoGroupStyle()
-  groupStyle.isCollapsible = true
-  graph.groupNodeDefaults.style = groupStyle
+  graph.groupNodeDefaults.style = createDemoGroupStyle({ foldingEnabled: true })
 
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  graph.edgeDefaults.style = createDemoEdgeStyle()
+  graph.edgeDefaults.labels.style = createDemoEdgeLabelStyle()
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 10
   }).createDefaultParameter()
@@ -263,11 +260,7 @@ function createPortCandidateProvider(node) {
   const rnsd = node.style
   const wrapped = rnsd.wrapped
 
-  if (
-    wrapped instanceof ShinyPlateNodeStyle ||
-    wrapped instanceof BevelNodeStyle ||
-    (wrapped instanceof ShapeNodeStyle && wrapped.shape === ShapeNodeShape.ROUND_RECTANGLE)
-  ) {
+  if (isRoundRectangle(wrapped)) {
     return IPortCandidateProvider.combine(
       // Take all existing ports - these are assumed to have the correct port location model
       IPortCandidateProvider.fromUnoccupiedPorts(node),
@@ -322,10 +315,7 @@ function createPortCandidateProvider(node) {
       )
     )
   }
-  if (
-    wrapped instanceof DemoNodeStyle ||
-    (wrapped instanceof ShapeNodeStyle && wrapped.shape === ShapeNodeShape.RECTANGLE)
-  ) {
+  if (isRectangle(wrapped)) {
     return IPortCandidateProvider.combine(
       IPortCandidateProvider.fromUnoccupiedPorts(node),
       IPortCandidateProvider.fromCandidates(
@@ -396,6 +386,30 @@ function createPortCandidateProvider(node) {
     )
   }
   return null
+}
+
+/**
+ * Determines if the given style visualizes nodes with a rounded rectangle shape.
+ * @param {!INodeStyle} style the style instance to check.
+ * @returns {boolean}
+ */
+function isRoundRectangle(style) {
+  return (
+    (style instanceof ShapeNodeStyle && style.shape === ShapeNodeShape.ROUND_RECTANGLE) ||
+    (style instanceof RectangleNodeStyle && style.cornerSize > 0)
+  )
+}
+
+/**
+ * Determines if the given style visualizes nodes with a rectangle shape.
+ * @param {!INodeStyle} style the style instance to check.
+ * @returns {boolean}
+ */
+function isRectangle(style) {
+  return (
+    (style instanceof ShapeNodeStyle && style.shape === ShapeNodeShape.RECTANGLE) ||
+    (style instanceof RectangleNodeStyle && style.cornerSize === 0)
+  )
 }
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
@@ -672,5 +686,5 @@ function addRotatedStyles() {
   })
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

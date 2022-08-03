@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -79,8 +79,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Determines the color to use for filling the node.
-   * This implementation uses the {@link #nodeColor} property unless
-   * the {@link ITagOwner#tag} of the {@link INode} is of type {@link string},
+   * This implementation uses the {@link nodeColor} property unless
+   * the {@link ITagOwner.tag} of the {@link INode} is of type `string`,
    * in which case that color overrides this style's setting.
    * @param {!INode} node The node to determine the color for.
    * @returns {!string} The color for filling the node.
@@ -95,7 +95,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual for a node.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!INode} node
    * @returns {!SvgVisual}
@@ -111,10 +111,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Actually creates the visual appearance of a node given the values provided by
-   * {@link MySimpleNodeStyle#createRenderDataCache}. This renders the node and the edges to the labels and adds the
-   * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
-   * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
+   * Actually creates the visual appearance of a node given the color provided by
+   * {@link getNodeColor}. This renders the node and adds the
+   * elements to the `container`. All items are arranged as if the node was located at (0,0).
+   * {@link MySimpleNodeStyle.createVisual} finally arranges the container
    * so that the drawing is translated into the final position.
    * @param {!IRenderContext} context
    * @param {!INode} node

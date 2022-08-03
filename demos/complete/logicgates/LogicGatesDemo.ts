@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,18 +67,21 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
+  configureTwoPointerPanning,
   removeClass,
   showApp
 } from '../../resources/demo-app'
 import { pointerEventsSupported } from '../../utils/Workarounds'
-import loadJson from '../../resources/load-json'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the drag and drop panel
   initializeDnDPanel()
@@ -257,6 +260,9 @@ function createInputMode(): void {
   }
 
   graphComponent.inputMode = mode
+
+  // use two finger panning to allow easier editing with touch gestures
+  configureTwoPointerPanning(graphComponent)
 }
 
 /**
@@ -429,5 +435,5 @@ function createPortDescriptors(nodes: INode[], graph?: IGraph): void {
   })
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

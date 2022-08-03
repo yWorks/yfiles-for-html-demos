@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -93,42 +93,41 @@ import { isWebGlSupported } from '../../utils/Workarounds'
  * The performance gain that can be achieved depends mainly on the configuration of
  * this class. Not all options are suited for all types of graphs and item styles. The
  * main optimization strategy can be configured using the
- * {@link FastGraphModelManager#graphOptimizationMode} property. This determines how the graph is rendered
- * when zoomed out below the threshold defined in {@link FastGraphModelManager#intermediateZoomThreshold}. For
+ * {@link FastGraphModelManager.graphOptimizationMode} property. This determines how the graph is rendered
+ * when zoomed out below the threshold defined in {@link FastGraphModelManager.intermediateZoomThreshold}. For
  * zoom levels above the threshold, this implementation falls back to default rendering.
  * Most graph item styles show good performance in scenarios where only a few elements
  * are rendered, which is the case for high zoom levels. The graph items outside the
- * {@link CanvasComponent#viewport viewport} are not rendered at all due to a
+ * {@link CanvasComponent.viewport viewport} are not rendered at all due to a
  * feature called 'virtualization'. Thus, the optimization strategy only has to be
  * applied when the graph is zoomed out.
  *
- * <ul>
- * <li>{@link OptimizationMode.DEFAULT} uses the default rendering that would also be
- * used by the default {@link GraphModelManager}.</li>
- * <li>{@link OptimizationMode.STATIC} creates the graph visualization using the default
- * code. However, subsequent updates are ignored.</li>
- * <li>{@link OptimizationMode.LEVEL_OF_DETAIL} uses the graph item styles set in
- * {@link FastGraphModelManager#overviewNodeStyle}, {@link FastGraphModelManager#overviewEdgeStyle},
- * {@link FastGraphModelManager#overviewLabelStyle} and {@link FastGraphModelManager#overviewPortStyle}</li> to render
- * the graph.
- * <li>{@link OptimizationMode.SVG_IMAGE} exports the complete graph to a static SVG image,
- * which is displayed instead of the default visualizations.</li>
- * <li>{@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK} uses
- * {@link FastGraphModelManager#drawNodeCallback callbacks} to draw the currently visible part of the graph
- * into a canvas. When the bounds of the pre-rendered image are left, or the zoom level changes
- * above a certain factor, the image is re-created. Use {@link FastGraphModelManager#imageSizeFactor} and
- * {@link FastGraphModelManager#refreshImageZoomFactor} to configure the size of the pre-rendered image and the
- * factor by which the zoom has to change to trigger re-creation of the image.</li>
- * <li>{@link OptimizationMode.DYNAMIC_CANVAS_WITH_ITEM_STYLES} draws the currently visible part
- * of the graph into a canvas using the original item styles. When the bounds of the pre-rendered
- * image are left, or the zoom level changes above a certain factor, the image is re-created.
- * Use {@link FastGraphModelManager#imageSizeFactor} and {@link FastGraphModelManager#refreshImageZoomFactor} to
- * configure the size of the pre-rendered image and the factor by which the zoom has to change to trigger re-creation
- * of the image.</li>
- * <li>{@link OptimizationMode.STATIC_CANVAS} creates a static image of the complete graph in a
- * canvas which is scaled based on the zoom level.</li>
- * <li>{@link OptimizationMode.WEBGL} renders a static image of the complete graph in a WebGL canvas.</li>
- * </ul>
+ * - {@link OptimizationMode.DEFAULT} uses the default rendering that would also be
+ *   used by the default {@link GraphModelManager}.
+ * - {@link OptimizationMode.STATIC} creates the graph visualization using the default
+ *   code. However, subsequent updates are ignored.
+ * - {@link OptimizationMode.LEVEL_OF_DETAIL} uses the graph item styles set in
+ *   {@link FastGraphModelManager.overviewNodeStyle}, {@link FastGraphModelManager.overviewEdgeStyle},
+ *   {@link FastGraphModelManager.overviewLabelStyle} and {@link FastGraphModelManager.overviewPortStyle}
+ *   to render the graph.
+ * - {@link OptimizationMode.SVG_IMAGE} exports the complete graph to a static SVG image,
+ *   which is displayed instead of the default visualizations.
+ * - {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK} uses
+ *   {@link FastGraphModelManager.drawNodeCallback callbacks} to draw the currently visible part of the graph
+ *   into a canvas. When the bounds of the pre-rendered image are left, or the zoom level changes
+ *   above a certain factor, the image is re-created. Use {@link FastGraphModelManager.imageSizeFactor} and
+ *   {@link FastGraphModelManager.refreshImageZoomFactor} to configure the size of the pre-rendered image and the
+ *   factor by which the zoom has to change to trigger re-creation of the image.
+ * - {@link OptimizationMode.DYNAMIC_CANVAS_WITH_ITEM_STYLES} draws the currently visible part
+ *   of the graph into a canvas using the original item styles. When the bounds of the pre-rendered
+ *   image are left, or the zoom level changes above a certain factor, the image is re-created.
+ *   Use {@link FastGraphModelManager.imageSizeFactor} and {@link FastGraphModelManager.refreshImageZoomFactor} to
+ *   configure the size of the pre-rendered image and the factor by which the zoom has to change to trigger re-creation
+ *   of the image.
+ * - {@link OptimizationMode.STATIC_CANVAS} creates a static image of the complete graph in a
+ *   canvas which is scaled based on the zoom level.
+ * - {@link OptimizationMode.WEBGL} renders a static image of the complete graph in a WebGL canvas.
+ *
  * @see {@link OptimizationMode}
  */
 export class FastGraphModelManager extends GraphModelManager {
@@ -273,7 +272,7 @@ export class FastGraphModelManager extends GraphModelManager {
 
   /**
    * Gets the optimization mode used to render the graph
-   * if the zoom level is below {@link FastGraphModelManager#zoomThreshold}.
+   * if the zoom level is below {@link FastGraphModelManager.zoomThreshold}.
    */
   set graphOptimizationMode(value: number) {
     this._graphOptimizationMode = value
@@ -285,7 +284,7 @@ export class FastGraphModelManager extends GraphModelManager {
 
   /**
    * Sets the optimization mode used to render the graph
-   * if the zoom level is below {@link FastGraphModelManager#zoomThreshold}.
+   * if the zoom level is below {@link FastGraphModelManager.zoomThreshold}.
    */
   get graphOptimizationMode(): number {
     return this._graphOptimizationMode
@@ -348,7 +347,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Sets the overview edge styl.
+   * Sets the overview edge style.
    */
   set overviewEdgeStyle(value: IEdgeStyle) {
     this.fastEdgeDescriptor.overviewStyle = value
@@ -369,7 +368,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Gets the overview label styl.
+   * Gets the overview label style.
    */
   get overviewLabelStyle(): ILabelStyle {
     return this.fastLabelDescriptor.overviewStyle as ILabelStyle
@@ -445,7 +444,7 @@ export class FastGraphModelManager extends GraphModelManager {
 
   /**
    * Sets the factor that is used to calculate the size of
-   * the pre-rendered image, if {@link FastGraphModelManager#graphOptimizationMode}
+   * the pre-rendered image, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}
    * or {@link OptimizationMode.DYNAMIC_CANVAS_WITH_ITEM_STYLES}.
    */
@@ -455,7 +454,7 @@ export class FastGraphModelManager extends GraphModelManager {
 
   /**
    * Gets the factor that is used to calculate the size of
-   * the pre-rendered image, if {@link FastGraphModelManager#graphOptimizationMode}
+   * the pre-rendered image, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}
    * or {@link OptimizationMode.DYNAMIC_CANVAS_WITH_ITEM_STYLES}.
    */
@@ -465,7 +464,7 @@ export class FastGraphModelManager extends GraphModelManager {
 
   /**
    * Sets the maximum size of the canvas if
-   * {@link FastGraphModelManager#graphOptimizationMode} is set to
+   * {@link FastGraphModelManager.graphOptimizationMode} is set to
    * {@link OptimizationMode.STATIC_CANVAS}. The
    * default is 3000, 2000.
    *
@@ -480,7 +479,7 @@ export class FastGraphModelManager extends GraphModelManager {
 
   /**
    * Gets the maximum size of the canvas if
-   * {@link FastGraphModelManager#graphOptimizationMode} is set to
+   * {@link FastGraphModelManager.graphOptimizationMode} is set to
    * {@link OptimizationMode.STATIC_CANVAS}. The
    * default is 3000, 2000.
    *
@@ -494,7 +493,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Sets the callback to draw a node, if {@link FastGraphModelManager#graphOptimizationMode}
+   * Sets the callback to draw a node, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
    *
    * The node must be drawn in the world coordinate system.
@@ -508,7 +507,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Gets the callback to draw a node, if {@link FastGraphModelManager#graphOptimizationMode}
+   * Gets the callback to draw a node, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
    *
    * The node must be drawn in the world coordinate system.
@@ -520,7 +519,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Sets the callback to draw an edge, if {@link FastGraphModelManager#graphOptimizationMode}
+   * Sets the callback to draw an edge, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
    *
    * The edge must be drawn in the world coordinate system.
@@ -534,7 +533,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Gets the callback to draw an edge, if {@link FastGraphModelManager#graphOptimizationMode}
+   * Gets the callback to draw an edge, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
    *
    * The edge must be drawn in the world coordinate system.
@@ -546,10 +545,9 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Sets the callback to draw a node label, if {@link FastGraphModelManager#graphOptimizationMode}
+   * Sets the callback to draw a node label, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
    * The label must be drawn in the world coordinate system.
-   * @param {function} value
    */
   set drawNodeLabelCallback(
     value: ((label: ILabel, canvasContext: CanvasRenderingContext2D) => void) | null
@@ -558,7 +556,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Gets the callback to draw a node label, if {@link FastGraphModelManager#graphOptimizationMode}
+   * Gets the callback to draw a node label, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
    * The label must be drawn in the world coordinate system.
    */
@@ -569,10 +567,11 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Sets the callback to draw an edge label, if {@link FastGraphModelManager#graphOptimizationMode}
+   * Sets the callback to draw an edge label, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
    * The label must be drawn in the world coordinate system.
-   * @param {function(ILabel, Object)} value
+   *
+   * The callback is of type `function(ILabel, Object)`
    */
   set drawEdgeLabelCallback(
     value: ((label: ILabel, canvasContext: CanvasRenderingContext2D) => void) | null
@@ -581,10 +580,11 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Gets the callback to draw an edge label, if {@link FastGraphModelManager#graphOptimizationMode}
+   * Gets the callback to draw an edge label, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
    * The label must be drawn in the world coordinate system.
-   * @type {function(ILabel, Object)}
+   *
+   * The callback is of type `function(ILabel, Object)`
    */
   get drawEdgeLabelCallback():
     | ((label: ILabel, canvasContext: CanvasRenderingContext2D) => void)
@@ -593,18 +593,18 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Sets wheter or tno to re-create the graph visualization the next time the
-   * {@link FastGraphModelManager#graphComponent} is rendered.
-   * @see {@link CanvasComponent#invalidate}
+   * Sets whether or tno to re-create the graph visualization the next time the
+   * {@link FastGraphModelManager.graphComponent} is rendered.
+   * @see {@link CanvasComponent.invalidate}
    */
   set dirty(value: boolean) {
     this._dirty = value
   }
 
   /**
-   * Gets wheter or tno to re-create the graph visualization the next time the
-   * {@link FastGraphModelManager#graphComponent} is rendered.
-   * @see {@link CanvasComponent#invalidate}
+   * Gets whether or tno to re-create the graph visualization the next time the
+   * {@link FastGraphModelManager.graphComponent} is rendered.
+   * @see {@link CanvasComponent.invalidate}
    */
   get dirty(): boolean {
     return this._dirty
@@ -612,8 +612,8 @@ export class FastGraphModelManager extends GraphModelManager {
 
   /**
    * Tells the descriptors whether an image is used or default rendering.
-   * true, if the image renderer should be used to render the graph.
-   * False if the default rendering code should be used.
+   * `true`, if the image renderer should be used to render the graph.
+   * `false` if the default rendering code should be used.
    */
   updateShouldUseImage(): boolean {
     if (this.graphComponent == null) {
@@ -648,10 +648,10 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Sets either an empty graph or {@link GraphComponent#graph this.graphComponent.graph}
+   * Sets either an empty graph or {@link GraphComponent.graph this.graphComponent.graph}
    * as the graph to display in this instance.
    *
-   * If {@link FastGraphModelManager#shouldUseImage} is true, an empty graph instance is assigned.
+   * If {@link FastGraphModelManager.shouldUseImage} is true, an empty graph instance is assigned.
    *
    * This is an optimization to disable expensive graph traversal code if only a static image is
    * rendered.
@@ -688,7 +688,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Called when the {@link FastGraphModelManager#graphComponent}'s zoom factor changes.
+   * Called when the {@link FastGraphModelManager.graphComponent}'s zoom factor changes.
    */
   onGraphComponentZoomChanged() {
     this.updateImageRenderer()
@@ -698,7 +698,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Called when the {@link FastGraphModelManager#graphComponent}'s graph instance changes.
+   * Called when the {@link FastGraphModelManager.graphComponent}'s graph instance changes.
    */
   onGraphComponentGraphChanged() {
     this.updateImageRenderer()
@@ -750,10 +750,10 @@ export const OptimizationMode = {
    *
    * This approach can be applied for dynamic editor scenarios where the graph structure or
    * the item visualizations have to be changed often.
-   * @see {@link FastGraphModelManager#overviewNodeStyle}
-   * @see {@link FastGraphModelManager#overviewEdgeStyle}
-   * @see {@link FastGraphModelManager#overviewLabelStyle}
-   * @see {@link FastGraphModelManager#overviewPortStyle}
+   * @see {@link FastGraphModelManager.overviewNodeStyle}
+   * @see {@link FastGraphModelManager.overviewEdgeStyle}
+   * @see {@link FastGraphModelManager.overviewLabelStyle}
+   * @see {@link FastGraphModelManager.overviewPortStyle}
    */
   LEVEL_OF_DETAIL: 2,
 
@@ -773,24 +773,24 @@ export const OptimizationMode = {
    * This option creates a static image of the currently visible part of the graph, using HTML canvas.
    *
    * The size of the pre-rendered image can be specified relative to the viewport size
-   * using {@link FastGraphModelManager#imageSizeFactor}.
+   * using {@link FastGraphModelManager.imageSizeFactor}.
    * The image is re-created for quality if the bounds of the image are reached through panning,
-   * or if the zoom level changes by a factor greater than {@link FastGraphModelManager#refreshImageZoomFactor}.
+   * or if the zoom level changes by a factor greater than {@link FastGraphModelManager.refreshImageZoomFactor}.
    *
-   * The items in the graph are drawn using {@link FastGraphModelManager#drawNodeCallback},
-   * {@link FastGraphModelManager#drawEdgeCallback} etc.
+   * The items in the graph are drawn using {@link FastGraphModelManager.drawNodeCallback},
+   * {@link FastGraphModelManager.drawEdgeCallback} etc.
    *
    * This option is suited for scenarios with a large graph where the zoom level changes frequently.
    * Since the items are drawn with a (simple) canvas paint callback, the visualization can
    * be created very quickly, while still remaining a high-quality image. However, the item visualizations
    * are simplified compared to the actual item styles. A short freeze can occur when the
    * image is re-created.
-   * @see {@link FastGraphModelManager#imageSizeFactor}
-   * @see {@link FastGraphModelManager#refreshImageZoomFactor}
-   * @see {@link FastGraphModelManager#drawNodeCallback}
-   * @see {@link FastGraphModelManager#drawEdgeCallback}
-   * @see {@link FastGraphModelManager#drawNodeLabelCallback}
-   * @see {@link FastGraphModelManager#drawEdgeLabelCallback}
+   * @see {@link FastGraphModelManager.imageSizeFactor}
+   * @see {@link FastGraphModelManager.refreshImageZoomFactor}
+   * @see {@link FastGraphModelManager.drawNodeCallback}
+   * @see {@link FastGraphModelManager.drawEdgeCallback}
+   * @see {@link FastGraphModelManager.drawNodeLabelCallback}
+   * @see {@link FastGraphModelManager.drawEdgeLabelCallback}
    */
   DYNAMIC_CANVAS_WITH_DRAW_CALLBACK: 4,
 
@@ -799,20 +799,20 @@ export const OptimizationMode = {
    * The items are drawn using the item styles.
    *
    * The size of the pre-rendered image can be specified relative to the viewport size
-   * using {@link FastGraphModelManager#imageSizeFactor}.
+   * using {@link FastGraphModelManager.imageSizeFactor}.
    * The image is re-created for better quality if the bounds of the image are reached through panning,
-   * or if the zoom level changes by a factor greater than {@link FastGraphModelManager#refreshImageZoomFactor}.
+   * or if the zoom level changes by a factor greater than {@link FastGraphModelManager.refreshImageZoomFactor}.
    *
    * This option is suited for scenarios with a large graph where the zoom level changes frequently.
    * In contrast to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}, the actual item styles are used
    * to draw the graph. Based on the style, this can be quite expensive and thus can result in
    * worse image creation performance. Thus, the hiccups during zooming and panning can be longer.
-   * @see {@link FastGraphModelManager#imageSizeFactor}
-   * @see {@link FastGraphModelManager#refreshImageZoomFactor}
-   * @see {@link FastGraphModelManager#drawNodeCallback}
-   * @see {@link FastGraphModelManager#drawEdgeCallback}
-   * @see {@link FastGraphModelManager#drawNodeLabelCallback}
-   * @see {@link FastGraphModelManager#drawEdgeLabelCallback}
+   * @see {@link FastGraphModelManager.imageSizeFactor}
+   * @see {@link FastGraphModelManager.refreshImageZoomFactor}
+   * @see {@link FastGraphModelManager.drawNodeCallback}
+   * @see {@link FastGraphModelManager.drawEdgeCallback}
+   * @see {@link FastGraphModelManager.drawNodeLabelCallback}
+   * @see {@link FastGraphModelManager.drawEdgeLabelCallback}
    */
   DYNAMIC_CANVAS_WITH_ITEM_STYLES: 5,
 
@@ -1012,7 +1012,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
    * Custom bounds calculation for image object.
    * This is necessary because the default bounds calculation is
    * disabled by assigning an empty graph.
-   * @see Specified by {@link IBoundsProvider#getBounds}.
+   * @see Specified by {@link IBoundsProvider.getBounds}.
    */
   getBounds(context: ICanvasContext): Rect {
     const graph = this.graph
@@ -1368,9 +1368,9 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
   }
 
   /**
-   * Calculates a suitable scale for the given area, respecting {@link FastGraphModelManager#maximumCanvasSize}.
+   * Calculates a suitable scale for the given area, respecting {@link FastGraphModelManager.maximumCanvasSize}.
    * @param exportRect The area to be exported
-   * @see {@link ImageGraphRenderer#exportRectToSvg}
+   * @see {@link ImageGraphRenderer.exportRectToSvg}
    */
   getSuitableScale(exportRect: Rect): number {
     const maxSize = this.outer.maximumCanvasSize
@@ -1425,8 +1425,8 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
 
   /**
    * Returns whether the visual needs an update because the zoom level or the viewport has
-   * changed beyond the thresholds defined in {@link FastGraphModelManager#refreshImageZoomFactor}
-   * and {@link FastGraphModelManager#imageSizeFactor}.
+   * changed beyond the thresholds defined in {@link FastGraphModelManager.refreshImageZoomFactor}
+   * and {@link FastGraphModelManager.imageSizeFactor}.
    * @param zoom The current zoom level.
    * @param viewport The current viewport.
    * @param contentRect The current graphComponent's content rectangle.

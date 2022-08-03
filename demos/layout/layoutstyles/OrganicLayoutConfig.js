@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,7 +45,9 @@ import {
   OrganicLayout,
   OrganicLayoutClusteringPolicy,
   OrganicLayoutData,
+  OrganicLayoutGroupSubstructureScope,
   OrganicLayoutScope,
+  OrganicLayoutTreeSubstructureStyle,
   OutputRestriction,
   ParallelSubstructureStyle,
   PolylineEdgeStyle,
@@ -71,7 +73,6 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '../../resources/demo-option-editor.js'
-import { DemoEdgeStyle } from '../../resources/demo-styles.js'
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -119,6 +120,11 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     this.starSubstructureSizeItem = layout.starSubstructureSize
     this.parallelSubstructureItem = ParallelSubstructureStyle.NONE
     this.parallelSubstructureSizeItem = layout.parallelSubstructureSize
+    this.treeSubstructureItem = OrganicLayoutTreeSubstructureStyle.NONE
+    this.treeSubstructureSizeItem = layout.treeSubstructureSize
+    this.groupSubstructureScopeItem = OrganicLayoutGroupSubstructureScope.NO_GROUPS
+    this.groupSubstructureSizeItem = layout.groupSubstructureSize
+    this.clusterAsGroupSubstructureItem = false
 
     this.considerNodeLabelsItem = layout.considerNodeLabels
     this.edgeLabelingItem = false
@@ -136,7 +142,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /**
    * Creates and configures a layout.
-   * @param graphComponent The <code>GraphComponent</code> to apply the configuration on.
+   * @param graphComponent The {@link GraphComponent} to apply the configuration on.
    * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
@@ -175,6 +181,11 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     layout.starSubstructureSize = this.starSubstructureSizeItem
     layout.parallelSubstructureStyle = this.parallelSubstructureItem
     layout.parallelSubstructureSize = this.parallelSubstructureSizeItem
+    layout.treeSubstructureStyle = this.treeSubstructureItem
+    layout.treeSubstructureSize = this.treeSubstructureSizeItem
+    layout.groupSubstructureScope = this.groupSubstructureScopeItem
+    layout.groupSubstructureSize = this.groupSubstructureSizeItem
+    layout.clusterAsGroupSubstructureAllowed = this.clusterAsGroupSubstructureItem
 
     return layout
   },
@@ -219,10 +230,9 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     if (this.edgeDirectednessItem) {
       layoutData.edgeDirectedness.delegate = edge => {
         if (
-          (edge.style instanceof DemoEdgeStyle && edge.style.showTargetArrows) ||
-          (edge.style instanceof PolylineEdgeStyle &&
-            edge.style.targetArrow &&
-            edge.style.targetArrow !== IArrow.NONE)
+          edge.style instanceof PolylineEdgeStyle &&
+          edge.style.targetArrow &&
+          edge.style.targetArrow !== IArrow.NONE
         ) {
           return 1
         }
@@ -983,7 +993,9 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
             [
               'Straight-Line, also within other structures',
               ChainSubstructureStyle.STRAIGHT_LINE_NESTED
-            ]
+            ],
+            ['Disk', ChainSubstructureStyle.DISK],
+            ['Disk, also within other structures', ChainSubstructureStyle.DISK_NESTED]
           ]
         }),
         TypeAttribute(ChainSubstructureStyle.$class)
@@ -1121,6 +1133,139 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     }
   },
 
+  /** @type {OrganicLayoutTreeSubstructureStyle} */
+  treeSubstructureItem: {
+    $meta: function () {
+      return [
+        LabelAttribute('Tree', '#/api/OrganicLayout#OrganicLayout-property-treeSubstructureStyle'),
+        OptionGroupAttribute('SubstructureLayoutGroup', 50),
+        EnumValuesAttribute().init({
+          values: [
+            ['Ignore', OrganicLayoutTreeSubstructureStyle.NONE],
+            ['Radial', OrganicLayoutTreeSubstructureStyle.RADIAL],
+            ['Balloon', OrganicLayoutTreeSubstructureStyle.BALLOON],
+            ['Oriented', OrganicLayoutTreeSubstructureStyle.ORIENTED]
+          ]
+        }),
+        TypeAttribute(OrganicLayoutTreeSubstructureStyle.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {number} */
+  treeSubstructureSizeItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Minimum size for tree structures',
+          '#/api/OrganicLayout#OrganicLayout-property-treeSubstructureSize'
+        ),
+        OptionGroupAttribute('SubstructureLayoutGroup', 55),
+        MinMaxAttribute().init({
+          min: 3,
+          max: 20
+        }),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    value: 4
+  },
+
+  shouldDisableTreeSubstructureSizeItem: {
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function () {
+      return this.treeSubstructureItem === OrganicLayoutTreeSubstructureStyle.NONE
+    }
+  },
+
+  /** @type {OrganicLayoutGroupSubstructureScope} */
+  groupSubstructureScopeItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Group Substructures',
+          '#/api/OrganicLayout#OrganicLayout-property-groupSubstructureScope'
+        ),
+        OptionGroupAttribute('SubstructureLayoutGroup', 60),
+        EnumValuesAttribute().init({
+          values: [
+            ['Ignore', OrganicLayoutGroupSubstructureScope.NO_GROUPS],
+            ['All Groups', OrganicLayoutGroupSubstructureScope.ALL_GROUPS],
+            [
+              'Groups Without Intra-Edges',
+              OrganicLayoutGroupSubstructureScope.GROUPS_WITHOUT_EDGES
+            ],
+            [
+              'Groups Without Inter-Edges',
+              OrganicLayoutGroupSubstructureScope.GROUPS_WITHOUT_INTER_EDGES
+            ]
+          ]
+        }),
+        TypeAttribute(OrganicLayoutGroupSubstructureScope.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {number} */
+  groupSubstructureSizeItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Minimum size for group structures',
+          '#/api/OrganicLayout#OrganicLayout-property-groupSubstructureSize'
+        ),
+        OptionGroupAttribute('SubstructureLayoutGroup', 65),
+        MinMaxAttribute().init({
+          min: 2,
+          max: 20
+        }),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    value: 4
+  },
+
+  shouldDisableGroupSubstructureSizeItem: {
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function () {
+      return this.groupSubstructureScopeItem === OrganicLayoutGroupSubstructureScope.NO_GROUPS
+    }
+  },
+
+  /** @type {boolean} */
+  clusterAsGroupSubstructureItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Clusters With Group Substructures',
+          '#/api/OrganicLayout#OrganicLayout-property-clusterAsGroupSubstructure'
+        ),
+        OptionGroupAttribute('SubstructureLayoutGroup', 70),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    value: false
+  },
+
+  shouldDisableClusterAsGroupSubstructureItem: {
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function () {
+      return (
+        this.groupSubstructureScopeItem !== OrganicLayoutGroupSubstructureScope.ALL_GROUPS &&
+        this.groupSubstructureScopeItem !==
+          OrganicLayoutGroupSubstructureScope.GROUPS_WITHOUT_INTER_EDGES
+      )
+    }
+  },
+
   /** @type {boolean} */
   edgeDirectednessItem: {
     $meta: function () {
@@ -1129,7 +1274,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
           'Arrows Define Edge Direction',
           '#/api/OrganicLayoutData#OrganicLayoutData-property-edgeDirectedness'
         ),
-        OptionGroupAttribute('SubstructureLayoutGroup', 50),
+        OptionGroupAttribute('SubstructureLayoutGroup', 80),
         TypeAttribute(YBoolean.$class)
       ]
     },
@@ -1144,7 +1289,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
           'Use Edge Grouping',
           '#/api/OrganicLayoutData#OrganicLayoutData-property-sourceGroupIds'
         ),
-        OptionGroupAttribute('SubstructureLayoutGroup', 60),
+        OptionGroupAttribute('SubstructureLayoutGroup', 90),
         TypeAttribute(YBoolean.$class)
       ]
     },

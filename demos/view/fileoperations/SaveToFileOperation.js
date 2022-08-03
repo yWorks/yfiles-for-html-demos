@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -120,10 +120,9 @@ export default class SaveToFileOperation {
    * Internet Explorer nor Safari (OS X and iOS).
    *
    * For techniques that support older browsers, see for example the following web pages
-   * <ul>
-   * <li>FileSaver.js: https://github.com/eligrey/FileSaver.js </li>
-   * <li>saveAs.js: https://gist.github.com/phanect/46b692241c6bbe456994 </li>
-   * </ul>
+   *
+   * - FileSaver.js: https://github.com/eligrey/FileSaver.js
+   * - saveAs.js: https://gist.github.com/phanect/46b692241c6bbe456994
    * @returns {boolean}
    */
   static isFileConstructorAvailable() {

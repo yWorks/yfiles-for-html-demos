@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,7 +36,6 @@ import {
   Point,
   Visual
 } from 'yfiles'
-import type { NodeData } from './MindmapUtil'
 
 /**
  * An edge style that draws a smooth bezier curve with color- and thickness-interpolation between start- and endpoint.
@@ -55,7 +54,7 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
    * Creates the visual.
    * @param context The render context.
    * @param edge The edge to which this style instance is assigned.
-   * @see Overrides {@link EdgeStyleBase#createVisual}
+   * @see Overrides {@link EdgeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, edge: IEdge): Visual {
     return new MindmapCanvasVisual(edge, this.thicknessStart, this.thicknessEnd)
@@ -66,7 +65,7 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
    * @param context The render context.
    * @param oldVisual The old visual.
    * @param edge The edge to which this style instance is assigned.
-   * @see Overrides {@link EdgeStyleBase#updateVisual}
+   * @see Overrides {@link EdgeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, edge: IEdge): Visual {
     // old state of edge
@@ -85,7 +84,7 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
    * @param canvasContext The canvas context.
    * @param p The point to test.
    * @param edge The given edge.
-   * @see Overrides {@link EdgeStyleBase#isHit}
+   * @see Overrides {@link EdgeStyleBase.isHit}
    */
   isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
     return false
@@ -130,7 +129,7 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
    * Renders the edge.
    * @param renderContext The render context.
    * @param ctx The HTML5 Canvas context.
-   * @see Overrides {@link HtmlCanvasVisual#paint}
+   * @see Overrides {@link HtmlCanvasVisual.paint}
    */
   paint(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
     ctx.save()

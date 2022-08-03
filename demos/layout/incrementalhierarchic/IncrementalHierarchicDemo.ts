@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,6 +39,7 @@ import {
   IEdge,
   IGraph,
   IHandle,
+  IInputMode,
   INode,
   LayoutMode,
   License,
@@ -46,17 +47,16 @@ import {
   Mapper,
   MinimumNodeSizeStage,
   PortConstraint,
-  Size,
-  IInputMode
+  Size
 } from 'yfiles'
 
 import PortConstraintBendHandle from './PortConstraintBendHandle'
 import LayerPositionHandler from './LayerPositionHandler'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import ContextMenu from '../../utils/ContextMenu'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import { bindCommand, showApp } from '../../resources/demo-app'
 import LayerVisual from './LayerVisual'
-import loadJson from '../../resources/load-json'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Sample that interactively demonstrates the usage of {@link HierarchicLayout}.
@@ -66,9 +66,10 @@ import loadJson from '../../resources/load-json'
  * Drag the first and last bend of an edge to interactively assign or reset port constraints.
  * Use the context menu to reroute selected edges or optimize selected nodes locations.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   graph = graphComponent.graph
 
   layerVisual = new LayerVisual()
@@ -97,7 +98,7 @@ function registerCommands(): void {
 }
 
 /**
- * Calls {@link #createEditorMode} and registers the result as the {@link CanvasComponent#inputMode}.
+ * Calls {@link createEditorMode} and registers the result as the {@link CanvasComponent.inputMode}.
  */
 function initializeInputModes(): void {
   // create the interaction mode
@@ -307,7 +308,7 @@ function initializeGraph(): void {
   graph.nodeDefaults.size = new Size(60, 30)
 
   // set some nice defaults
-  initDemoStyles(graph, 'demo-palette-21')
+  initDemoStyles(graph, { theme: 'demo-palette-21' })
 
   // create mappers for the layers
   layerMapper = new Mapper<INode, number>()
@@ -457,5 +458,5 @@ let incrementalNodes: List<INode>
  */
 let incrementalEdges: List<IEdge>
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

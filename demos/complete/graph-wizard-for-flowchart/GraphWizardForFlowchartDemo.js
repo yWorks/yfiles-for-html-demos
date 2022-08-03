@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,10 +36,12 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp, toggleClass } from '../../resources/demo-app.js'
 import FlowchartConfiguration from './FlowchartConfiguration.js'
 import FlowchartStyle, { FlowchartSerializationListener } from '../flowchart/FlowchartStyle.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -57,12 +59,13 @@ const layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   legendDiv = document.getElementById('legend')
   configuration = new FlowchartConfiguration(layoutOrientation)
 
@@ -75,7 +78,12 @@ function run(licenseData) {
   // setup a new flowchart diagram
   setUpNewDiagram()
 
-  showApp(graphComponent, { div: document.getElementById('overviewComponent') })
+  showApp(graphComponent)
+  const overviewContainer = document.getElementById('overviewComponent').parentElement
+  const overviewHeader = overviewContainer.querySelector('.demo-overview-header')
+  overviewHeader.addEventListener('click', () => {
+    toggleClass(overviewContainer, 'collapsed')
+  })
 
   graphComponent.focus()
 }
@@ -132,5 +140,5 @@ function registerCommands() {
   bindCommand("button[data-command='NewLayout']", configuration.LayoutCommand, graphComponent)
 }
 
-// Start the demo
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

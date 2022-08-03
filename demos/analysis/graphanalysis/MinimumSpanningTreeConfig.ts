@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,7 @@ import { MultiColorNodeStyle } from './DemoStyles'
  */
 export default class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
    * @param graph The graph on which the minimum spanning tree algorithm is executed.
    */
   runAlgorithm(graph: IGraph) {

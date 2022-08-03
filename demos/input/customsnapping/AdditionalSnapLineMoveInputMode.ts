@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,8 +47,7 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   private handler: AdditionalSnapLinePositionHandler | null = null
 
   /**
-   * Creates a new instance of <code>AdditionalSnapLineMoveInputMode</code>
-   * @param snapLineCreators {List.<AdditionalSnapLineVisualCreator>}
+   * Creates a new instance of {@link AdditionalSnapLineMoveInputMode}
    */
   constructor(snapLineCreators: List<AdditionalSnapLineVisualCreator>) {
     super()
@@ -81,8 +80,8 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   }
 
   /**
-   * Sets the {@link MoveInputMode#positionHandler} property.
-   * @see Overrides {@link MoveInputMode#onDragStarting}
+   * Sets the {@link MoveInputMode.positionHandler} property.
+   * @see Overrides {@link MoveInputMode.onDragStarting}
    */
   onDragStarting(inputModeEventArgs: InputModeEventArgs): void {
     this.positionHandler = this.handler
@@ -90,8 +89,8 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   }
 
   /**
-   * Clears the {@link MoveInputMode#positionHandler} property.
-   * @see Overrides {@link MoveInputMode#onDragCanceled}
+   * Clears the {@link MoveInputMode.positionHandler} property.
+   * @see Overrides {@link MoveInputMode.onDragCanceled}
    */
   onDragCanceled(inputModeEventArgs: InputModeEventArgs): void {
     super.onDragCanceled(inputModeEventArgs)
@@ -99,8 +98,8 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   }
 
   /**
-   * Clears the {@link MoveInputMode#positionHandler} property.
-   * @see Overrides {@link MoveInputMode#onDragFinished}
+   * Clears the {@link MoveInputMode.positionHandler} property.
+   * @see Overrides {@link MoveInputMode.onDragFinished}
    */
   onDragFinished(inputModeEventArgs: InputModeEventArgs): void {
     super.onDragFinished(inputModeEventArgs)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,7 @@ import {
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeStyle,
   ICommand,
   IGraph,
   IHitTestable,
@@ -41,27 +42,20 @@ import {
   IModelItem,
   INode,
   INodeInsetsProvider,
+  Insets,
   InteriorLabelModel,
   KeyEventRecognizers,
   License,
   MoveInputMode,
-  PanelNodeStyle,
   Point,
   Rect,
   ShowPortCandidates,
   Size
 } from 'yfiles'
 
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { colorSets } from '../../resources/basic-demo-styles.js'
-import { DemoEdgeStyle } from '../../resources/demo-styles.js'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, colorSets, createDemoEdgeStyle } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -70,10 +64,10 @@ let graphComponent
 let moveUnselectedInputMode
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   initializeGraph()
 
@@ -94,21 +88,20 @@ function run(licenseData) {
  */
 function initializeGraph() {
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   const graph = graphComponent.graph
 
   // set the default node style
-  const nodeStyle = new PanelNodeStyle({
-    color: colorSets['demo-orange'].fill,
-    labelInsetsColor: colorSets['demo-orange'].fill,
-    insets: [20, 5, 5, 5]
+  graph.nodeDefaults.style = new GroupNodeStyle({
+    tabFill: colorSets['demo-orange'].fill,
+    contentAreaInsets: Insets.EMPTY
   })
-  graph.nodeDefaults.style = nodeStyle
   graph.nodeDefaults.size = new Size(60, 80)
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.NORTH
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({ textFill: 'white' })
 
-  graph.edgeDefaults.style = new DemoEdgeStyle('demo-orange')
+  graph.edgeDefaults.style = createDemoEdgeStyle()
 
   // Create a sample node
   graph.addLabel(graph.createNode(), 'Node')
@@ -242,7 +235,7 @@ function registerCommands() {
  */
 class TopInsetsHitTestable extends BaseClass(IHitTestable) {
   /**
-   * Creates a new instance of <code>TopInsetsHitTestable</code>.
+   * Creates a new instance of {@link TopInsetsHitTestable}.
    * @param {!IHitTestable} original
    * @param {!GraphEditorInputMode} inputMode
    */
@@ -292,5 +285,5 @@ class TopInsetsHitTestable extends BaseClass(IHitTestable) {
   }
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

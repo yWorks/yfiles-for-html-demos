@@ -13,5 +13,5 @@ The type is generally treated as a secondary, subordinate optimization criterion
 ## Things to Try
 
 - Use the combo box to choose a specific layout algorithm. This automatically loads a suitable example graph.
-- Compare the results with and without considering node types. Use the 'Consider Types' checkbox to change the setting.
+- Compare the results with and without considering node types. Use the 'Consider Types' toggle button to change the setting.
 - Modify the graph by adding new elements or changing the type of existing nodes via the context menu and observe the effect on the layout. The context menu can be accessed by clicking on a node.

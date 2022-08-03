@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,7 +52,7 @@ export default class SimpleInputHandler extends InputHandlerBase {
    * Simple data types are parsed as such, for complex data types, the
    * plain string representation of the xml data is returned.
    *
-   * @see Overrides {@link InputHandlerBase#parseDataCore}
+   * @see Overrides {@link InputHandlerBase.parseDataCore}
    * @param {!IParseContext} context
    * @param {!Node} xmlNode
    * @returns {*}
@@ -81,7 +81,7 @@ export default class SimpleInputHandler extends InputHandlerBase {
 
   /**
    * Sets the parsed value.
-   * @see Overrides {@link InputHandlerBase#setValue}
+   * @see Overrides {@link InputHandlerBase.setValue}
    * @param {!IParseContext} context
    * @param {*} key
    * @param {*} data
@@ -98,7 +98,7 @@ export default class SimpleInputHandler extends InputHandlerBase {
 
   /**
    * Initializes this instance from the GraphML key definition.
-   * @see overrides {@link InputHandlerBase#initializeFromKeyDefinition}
+   * @see overrides {@link InputHandlerBase.initializeFromKeyDefinition}
    * @param {!IParseContext} context
    * @param {!Element} definition
    */

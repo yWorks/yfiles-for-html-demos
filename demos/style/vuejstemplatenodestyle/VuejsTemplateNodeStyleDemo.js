@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global CodeMirror */
 import {
   GraphBuilder,
   GraphComponent,
@@ -50,11 +49,10 @@ import {
   addClass,
   bindAction,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -70,10 +68,11 @@ let graphMLSupport
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @param licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
 
@@ -110,7 +109,7 @@ function initializeTextAreas() {
   graphComponent.focusIndicatorManager.enabled = false
 
   graphComponent.selection.addItemSelectionChangedListener(() => {
-    const selectedNode = graphComponent.selection.selectedNodes.firstOrDefault()
+    const selectedNode = graphComponent.selection.selectedNodes.at(0)
     if (selectedNode) {
       if (VuejsNodeStyle.isInstance(selectedNode.style)) {
         templateTextArea.setOption('readOnly', false)
@@ -318,4 +317,5 @@ function registerCommands() {
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,30 +43,27 @@ import {
   Size,
   StorageLocation
 } from 'yfiles'
-
-import DemoStyles, {
-  DemoSerializationListener,
-  initDemoStyles
-} from '../../resources/demo-styles.js'
 import {
   CustomNodePortLocationModel,
   CustomNodePortLocationModelParameter,
   PortLocation
 } from './CustomNodePortLocationModel.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
 
 /**
  * This demo shows how to create and use a custom port model.
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode()
 
@@ -96,7 +93,7 @@ function run(licenseData) {
 }
 
 /**
- * Callback used by the decorator in <see cref="CreateEditorMode"/>
+ * Callback used by the decorator in {@link CreateEditorMode}.
  * @param {!INode} forNode
  * @returns {!IPortCandidateProvider}
  */
@@ -123,12 +120,6 @@ function enableGraphML() {
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
-  // enable serialization of demo styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
   gs.graphMLIOHandler.addHandleSerializationListener(
     CustomNodePortLocationModelParameter.serializationHandler
   )
@@ -194,4 +185,5 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

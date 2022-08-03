@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,8 +44,9 @@ const {
   ShapeNodeStyle
 } = yfiles
 
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  const response = await fetch('../../../lib/license.json')
+  License.value = await response.json()
 
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
@@ -109,7 +110,5 @@ function setUIDisabled(disabled) {
   document.querySelector("button[data-command='Layout']").disabled = disabled
 }
 
-// start demo
-fetch('../../../lib/license.json')
-  .then(response => response.json())
-  .then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

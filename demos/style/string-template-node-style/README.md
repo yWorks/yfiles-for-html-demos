@@ -19,7 +19,7 @@ Change the template of one or more nodes. Bind colors or text to properties in t
 ## Related Documentation
 
 - [Using Vue.js Templates in Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
-  [](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)- [Using SVG Templates in Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
+- [Using SVG Templates in Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles)
 
 ## Related Demos
 

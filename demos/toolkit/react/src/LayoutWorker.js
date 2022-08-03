@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import licenseData from './license.json'
-import { LayoutExecutorAsyncWorker, License, HierarchicLayout } from 'yfiles'
+import { HierarchicLayout, LayoutExecutorAsyncWorker, License } from 'yfiles'
 
 function applyLayout(graph) {
   return new HierarchicLayout().applyLayout(graph)
@@ -35,6 +35,7 @@ function applyLayout(graph) {
 
 License.value = licenseData
 
+// eslint-disable-next-line no-restricted-globals
 self.addEventListener(
   'message',
   e => {

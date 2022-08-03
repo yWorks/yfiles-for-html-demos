@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,30 +27,30 @@
  **
  ***************************************************************************/
 import {
-  CreateEdgeInputMode,
-  ICanvasObject,
-  OrthogonalEdgeEditingPolicy,
-  IEdge,
-  SimpleEdge,
-  BezierEdgeStyle,
-  DefaultBendCreator,
-  IBendCreator,
-  InputModeEventArgs,
-  IInputModeContext,
-  IGraph,
   BendEventArgs,
+  BezierEdgeStyle,
+  CreateEdgeInputMode,
+  DefaultBendCreator,
   IBend,
-  ItemEventArgs,
-  IPortCandidate,
-  Point,
+  IBendCreator,
+  ICanvasObject,
+  IEdge,
+  IGraph,
   IHitTestable,
-  ILookup
+  IInputModeContext,
+  ILookup,
+  InputModeEventArgs,
+  IPortCandidate,
+  ItemEventArgs,
+  OrthogonalEdgeEditingPolicy,
+  Point,
+  SimpleEdge
 } from 'yfiles'
 
 /**
  * Custom create edge input mode for bezier edges.
  * This mode can operate in two different ways:
- * If {@link BezierCreateEdgeInputMode#createSmoothSplines} is <code>true</code>, you create only
+ * If {@link BezierCreateEdgeInputMode.createSmoothSplines} is `true`, you create only
  * the exterior control points and the mode interpolates the missing middle control point for each
  * triple.
  * Otherwise, you specify each control point exactly as intended.
@@ -111,7 +111,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
         ) {
           return true
         }
-        const lastBend = this.dummyEdge.bends.lastOrDefault()
+        const lastBend = this.dummyEdge.bends.at(-1)
         if (!lastBend) {
           return true
         }
@@ -222,7 +222,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
     graph: IGraph,
     sourcePortCandidate: IPortCandidate,
     targetPortCandidate: IPortCandidate
-  ): IEdge | null {
+  ): IEdge | Promise<IEdge | null> | null {
     if (this.createSmoothSplines && this.dummyEdge.style instanceof BezierEdgeStyle) {
       if (this.dummyEdge.bends.size > 0) {
         this.augmenting = true

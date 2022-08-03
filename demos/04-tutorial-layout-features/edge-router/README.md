@@ -10,7 +10,7 @@ Layout Features Tutorial
 
 This demo shows common configuration options for the (polyline) [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter).
 
-- Basic distance settings like the [minimum node-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#inimumNodeToEdgeDistance) and the minimum edge-edge distance.
+- Basic distance settings like the [minimum node-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#inimumNodeToEdgeDistance) and the [minimum edge-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#minimumEdgeToEdgeDistance).
 - [Scope](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope): the orange edges are _not_ routed by the algorithm, they are so-called _fixed_ edges. All other edges are routed, thus, called _affected_ edges.
 - [Routing Style](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#routingStyle): the default style in this example is orthogonal, but the blue edges are routed using the octilinear style.
 - Grouping of edges: the pink edges are grouped at their target side.

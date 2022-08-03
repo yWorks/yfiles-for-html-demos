@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -61,7 +61,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual for a node.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -74,10 +74,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Actually creates the visual appearance of a node given the values provided by
-   * {@link MySimpleNodeStyle#createRenderDataCache}. This renders the node and the edges to the labels and adds the
-   * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
-   * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
+   * Actually creates the visual appearance of a node. This renders the node and adds the
+   * elements to the `container`. All items are arranged as if the node was located at (0,0).
+   * {@link MySimpleNodeStyle.createVisual} finally arranges the container
    * so that the drawing is translated into the final position.
    */
   render(context: IRenderContext, node: INode, container: Element): void {

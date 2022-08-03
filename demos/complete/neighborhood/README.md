@@ -12,7 +12,8 @@ The following neighborhood types are available:
 
 - Predecessors
 - Successors
-- Neighbors (predecessors and successors)
+- Both (predecessors and successors)
+- Neighbors (independent of the edge direction)
 - Folder (content of a folder node, independently from its collapse/expand state)
 
 ## Things to Try

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,10 +31,12 @@ import {
   Class,
   EdgeBundleDescriptor,
   Enum,
+  FreeNodeLabelModel,
   GenericLabeling,
   GraphComponent,
   ILayoutAlgorithm,
   LayoutData,
+  NodeLabelingPolicy,
   RadialLayout,
   RadialLayoutData,
   RadialLayoutEdgeRoutingStrategy,
@@ -47,7 +49,8 @@ import {
 import LayoutConfiguration, {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  NodeLabelingPolicies
 } from './LayoutConfiguration.js'
 import {
   ComponentAttribute,
@@ -101,17 +104,18 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
     this.edgeBundlingStrengthItem = 0.95
 
     this.edgeLabelingItem = false
-    this.considerNodeLabelsItem = layout.considerNodeLabels
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
     this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10
     this.title = 'Radial Layout'
+
+    this.nodeLabelingStyleItem = NodeLabelingPolicies.CONSIDER_CURRENT_POSITION
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return The configured layout algorithm.
    */
@@ -128,7 +132,6 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
     layout.maximumChildSectorAngle = this.maximumChildSectorSizeItem
     layout.centerNodesPolicy = this.centerStrategyItem
     layout.layeringStrategy = this.layeringStrategyItem
-    layout.considerNodeLabels = this.considerNodeLabelsItem
 
     const ebc = layout.edgeBundling
     ebc.bundlingStrength = this.edgeBundlingStrengthItem
@@ -143,6 +146,47 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
       labeling.reduceAmbiguity = this.reduceAmbiguityItem
       layout.labelingEnabled = true
       layout.labeling = labeling
+    }
+
+    switch (this.nodeLabelingStyleItem) {
+      case NodeLabelingPolicies.NONE:
+        layout.considerNodeLabels = false
+        break
+      case NodeLabelingPolicies.RAYLIKE_LEAVES:
+        layout.integratedNodeLabeling = true
+        layout.nodeLabelingPolicy = NodeLabelingPolicy.RAY_LIKE_LEAVES
+        break
+      case NodeLabelingPolicies.RAYLIKE:
+        layout.integratedNodeLabeling = true
+        layout.nodeLabelingPolicy = NodeLabelingPolicy.RAY_LIKE
+        break
+      case NodeLabelingPolicies.CONSIDER_CURRENT_POSITION:
+        layout.considerNodeLabels = true
+        break
+      case NodeLabelingPolicies.HORIZONTAL:
+        layout.integratedNodeLabeling = true
+        layout.nodeLabelingPolicy = NodeLabelingPolicy.HORIZONTAL
+        break
+      default:
+        layout.considerNodeLabels = false
+        break
+    }
+
+    if (
+      this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
+      this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE ||
+      this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
+    ) {
+      graphComponent.graph.nodeLabels.forEach(label => {
+        graphComponent.graph.setLabelLayoutParameter(
+          label,
+          FreeNodeLabelModel.INSTANCE.findBestParameter(
+            label,
+            FreeNodeLabelModel.INSTANCE,
+            label.layout
+          )
+        )
+      })
     }
 
     return layout
@@ -323,6 +367,8 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
           values: [
             ['Straight', EdgeRoutingStrategies.POLYLINE],
             ['Arc', EdgeRoutingStrategies.ARC],
+            ['Curved', EdgeRoutingStrategies.CURVED],
+            ['Radial Polyline', EdgeRoutingStrategies.RADIAL_POLYLINE],
             ['Bundled', EdgeRoutingStrategies.BUNDLED]
           ]
         }),
@@ -428,7 +474,8 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         EnumValuesAttribute().init({
           values: [
             ['Distance From Center', RadialLayoutLayeringStrategy.BFS],
-            ['Hierarchic', RadialLayoutLayeringStrategy.HIERARCHICAL]
+            ['Hierarchic', RadialLayoutLayeringStrategy.HIERARCHICAL],
+            ['Dendrogram', RadialLayoutLayeringStrategy.DENDROGRAM]
           ]
         }),
         TypeAttribute(RadialLayoutLayeringStrategy.$class)
@@ -437,19 +484,28 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
     value: null
   },
 
-  /** @type {boolean} */
-  considerNodeLabelsItem: {
+  /** @type {NodeLabelingPolicies} */
+  nodeLabelingStyleItem: {
     $meta: function () {
       return [
         LabelAttribute(
-          'Consider Node Labels',
-          '#/api/RadialLayout#RadialLayout-property-considerNodeLabels'
+          'Node Labeling',
+          '#/api/RadialLayout#RadialLayout-property-nodeLabelingPolicy'
         ),
         OptionGroupAttribute('NodePropertiesGroup', 10),
-        TypeAttribute(YBoolean.$class)
+        EnumValuesAttribute().init({
+          values: [
+            ['Ignore Labels', NodeLabelingPolicies.NONE],
+            ['Consider Labels', NodeLabelingPolicies.CONSIDER_CURRENT_POSITION],
+            ['Horizontal', NodeLabelingPolicies.HORIZONTAL],
+            ['Ray-like at Leaves', NodeLabelingPolicies.RAYLIKE_LEAVES],
+            ['Ray-like', NodeLabelingPolicies.RAYLIKE]
+          ]
+        }),
+        TypeAttribute(Enum.$class)
       ]
     },
-    value: false
+    value: null
   },
 
   /** @type {boolean} */
@@ -636,5 +692,7 @@ export default RadialLayoutConfig
 const EdgeRoutingStrategies = {
   ARC: RadialLayoutEdgeRoutingStrategy.ARC,
   POLYLINE: RadialLayoutEdgeRoutingStrategy.POLYLINE,
-  BUNDLED: 2
+  CURVED: RadialLayoutEdgeRoutingStrategy.CURVED,
+  RADIAL_POLYLINE: RadialLayoutEdgeRoutingStrategy.RADIAL_POLYLINE,
+  BUNDLED: 4
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,21 +31,21 @@ import {
   DefaultPortCandidate,
   EdgeEventArgs,
   FreeNodePortLocationModel,
+  ICanvasObject,
   ICanvasObjectDescriptor,
+  IEdge,
   IHighlightIndicatorInstaller,
   IHitTestable,
   IInputMode,
   ILookup,
+  INode,
   NodeStyleDecorationInstaller,
   Point,
   Rect,
   ShapeNodeStyle,
   SimpleNode,
   Size,
-  VoidNodeStyle,
-  IEdge,
-  INode,
-  ICanvasObject
+  VoidNodeStyle
 } from 'yfiles'
 
 import { LayerColors } from './NodePlacerPanel.js'
@@ -151,7 +151,7 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
 
   /**
    * Creates the actual edge and target node after edge creation is finished.
-   * @returns {?IEdge}
+   * @returns {?(IEdge|Promise.<IEdge>)}
    */
   createEdge() {
     if (this.targetNode === null) {
@@ -181,9 +181,15 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
       new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
     )
 
-    if (edge) {
+    if (edge instanceof IEdge) {
       // fire edge created event
       this.onEdgeCreated(new EdgeEventArgs(edge))
+    } else if (edge instanceof Promise) {
+      edge.then(e => {
+        if (e) {
+          this.onEdgeCreated(new EdgeEventArgs(e))
+        }
+      })
     }
     return edge
   }

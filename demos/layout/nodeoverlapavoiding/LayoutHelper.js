@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -175,7 +175,7 @@ export class LayoutHelper {
   }
 
   /**
-   * Creates a layout algorithm suiting the <code>resizeState</code>.
+   * Creates a layout algorithm suiting the `resizeState`.
    * @param {!ResizeState} resizeState
    * @returns {!ILayoutAlgorithm}
    */
@@ -216,7 +216,7 @@ export class LayoutHelper {
   }
 
   /**
-   * Creates a layout data suiting the <code>resizeState</code>.
+   * Creates a layout data suiting the `resizeState`.
    * @param {!ResizeState} resizeState
    * @returns {!LayoutData}
    */
@@ -321,7 +321,7 @@ export class LayoutHelper {
   }
 
   /**
-   * Determines whether source or target node of the given edge is part of {@link LayoutHelper#nodes}.
+   * Determines whether source or target node of the given edge is part of {@link LayoutHelper.nodes}.
    * @param {!IEdge} edge
    * @returns {boolean}
    */
@@ -332,7 +332,7 @@ export class LayoutHelper {
   }
 
   /**
-   * Determines whether both source and target node of the given edge is part of {@link LayoutHelper#nodes}.
+   * Determines whether both source and target node of the given edge is part of {@link LayoutHelper.nodes}.
    * @param {!IEdge} edge
    * @returns {boolean}
    */

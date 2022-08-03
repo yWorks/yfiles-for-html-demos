@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,16 +47,15 @@ import {
 
 import PriorityPanel from './PriorityPanel'
 import * as SampleData from './resources/SampleData'
-import { DemoNodeStyle } from '../../resources/demo-styles'
+import { applyDemoTheme, createDemoNodeStyle } from '../../resources/demo-styles'
 import {
   addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The graph component in which the graph is displayed.
@@ -78,9 +77,10 @@ let layoutRunning = false
  */
 let layoutStyle: 'hierarchic' | 'tree' = 'hierarchic'
 
-function run(licenseData: any): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputMode()
   initializePriorityPanel()
@@ -96,7 +96,7 @@ function run(licenseData: any): void {
 function loadGraph(sample: 'hierarchic' | 'tree'): void {
   const graph = graphComponent.graph
   graph.clear()
-  graph.nodeDefaults.style = new DemoNodeStyle('demo-palette-44')
+  graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-44')
   graph.edgeDefaults.style = new PolylineEdgeStyle()
   graph.edgeDefaults.shareStyleInstance = false
 
@@ -235,7 +235,7 @@ function markRandomPredecessorsPaths(): void {
     randomNodeCount--
     const rndNodeIdx = Math.floor(Math.random() * leaves.size)
     const rndPriority = Math.floor(Math.random() * 5) + 1
-    markPredecessorsPath(leaves.elementAt(rndNodeIdx), rndPriority)
+    markPredecessorsPath(leaves.at(rndNodeIdx)!, rndPriority)
   }
 
   runLayout()
@@ -333,4 +333,5 @@ function registerCommands(): void {
   addNavigationButtons(samples)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

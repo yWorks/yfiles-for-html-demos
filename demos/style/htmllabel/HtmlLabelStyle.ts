@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,7 +54,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
 
   /**
    * Creates a visual that uses a foreignObject-element to display a HTML formatted text.
-   * @see Overrides {@link LabelStyleBase#createVisual}
+   * @see Overrides {@link LabelStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, label: ILabel): SvgVisual {
     const labelLayout = label.layout
@@ -88,7 +88,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
 
   /**
    * Updates the visual that uses a foreignObject-element to display a HTML formatted text.
-   * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @see Overrides {@link LabelStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): SvgVisual {
     const element = oldVisual.svgElement
@@ -137,7 +137,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
 
   /**
    * Returns the preferred size of the label.
-   * @see Overrides {@link LabelStyleBase#getPreferredSize}
+   * @see Overrides {@link LabelStyleBase.getPreferredSize}
    * @param label The label to which this style instance is assigned.
    * @return The preferred size.
    */

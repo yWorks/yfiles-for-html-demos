@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -178,7 +178,7 @@ export default class ButtonVisualCreator
   /**
    * @param ctx The context that describes where the visual will be used in.
    * @param oldVisual The visual instance that had been returned the last time the
-   *   {@link IVisualCreator#createVisual} method was called on this instance.
+   *   {@link IVisualCreator.createVisual} method was called on this instance.
    */
   updateVisual(ctx: IRenderContext, oldVisual: SvgVisual): Visual {
     const layout = this.node.layout

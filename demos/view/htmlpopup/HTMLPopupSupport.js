@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,7 +41,7 @@ import {
  * This class adds an HTML panel on top of the contents of the GraphComponent that can
  * display arbitrary information about a {@link INode node} or an {@link IEdge edge}.
  * In order to not interfere with the positioning of the pop-up, HTML content should be added as
- * ancestor of the {@link HTMLPopupSupport#div div element}, and use relative positioning.
+ * ancestor of the {@link HTMLPopupSupport.div div element}, and use relative positioning.
  * This implementation uses a {@link ILabelModelParameter label model parameter} to determine the
  * position of the pop-up.
  */
@@ -154,7 +154,7 @@ export default class HTMLPopupSupport {
 
   /**
    * Changes the location of this pop-up to the location calculated by the
-   * {@link HTMLPopupSupport#labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
+   * {@link HTMLPopupSupport.labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
    */
   updateLocation() {
     if (!this.currentItem && !this.labelModelParameter) {

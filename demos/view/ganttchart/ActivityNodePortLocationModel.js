@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,7 +56,7 @@ export default class ActivityNodePortLocationModel extends BaseClass(IPortLocati
    * Calculates the port location for a parameter. Places the port at the right or left side of a node.
    * @param {!IPort} port The port to determine the location for.
    * @param {!IPortLocationModelParameter} locationParameter The parameter to use. The parameter can be expected to be created by
-   * this instance having the {@link IPortLocationModelParameter#model} property set to this
+   * this instance having the {@link IPortLocationModelParameter.model} property set to this
    * instance.
    * @returns {!Point}
    */

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,7 +43,7 @@ import { addClass, removeClass } from '../../resources/demo-app.js'
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can display arbitrary information
  * about a {@link IModelItem graph item}. In order to not interfere with the positioning of the pop-up,
- * HTML content should be added as ancestor of the {@link PriorityPanel#div div element}, and use relative
+ * HTML content should be added as ancestor of the {@link PriorityPanel.div div element}, and use relative
  * positioning. This implementation uses an {@link ILabelModelParameter} to determine the position of
  * the pop-up.
  */
@@ -68,8 +68,8 @@ export default class PriorityPanel {
 
   /**
    * Sets the {@link IModelItem item} to display information for.
-   * Setting this property to a value other than <code>null</code> shows the pop-up.
-   * Setting the property to <code>null</code> hides the pop-up.
+   * Setting this property to a value other than `null` shows the pop-up.
+   * Setting the property to `null` hides the pop-up.
    * @type {?Array.<IModelItem>}
    */
   set currentItems(items) {
@@ -125,8 +125,8 @@ export default class PriorityPanel {
   }
 
   /**
-   * Registers a click listener to given element which will invoke the callback {@link #itemPriorityChanged} and
-   * {@link #priorityChanged} in case the priority of the current item changed.
+   * Registers a click listener to given element which will invoke the callback {@link itemPriorityChanged} and
+   * {@link priorityChanged} in case the priority of the current item changed.
    * @param {!HTMLElement} element
    * @param {number} priority
    */
@@ -175,7 +175,7 @@ export default class PriorityPanel {
 
   /**
    * Changes the location of this pop-up to the location calculated by the
-   * {@link PriorityPanel#labelModelParameter}.
+   * {@link PriorityPanel.labelModelParameter}.
    */
   updateLocation() {
     if (!this.currentItems || this.currentItems.length === 0) {
@@ -187,14 +187,15 @@ export default class PriorityPanel {
 
     let dummyLabel = null
     let labelModelParameter = null
-    if (this.currentItems[0] instanceof IEdge) {
+    const firstItem = this.currentItems[0]
+    if (firstItem instanceof IEdge) {
       labelModelParameter = new EdgePathLabelModel({
         autoRotation: false
       }).createDefaultParameter()
-      dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParameter)
-    } else if (this.currentItems[0] instanceof INode) {
+      dummyLabel = new SimpleLabel(firstItem, '', labelModelParameter)
+    } else if (firstItem instanceof INode) {
       labelModelParameter = ExteriorLabelModel.NORTH
-      dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParameter)
+      dummyLabel = new SimpleLabel(firstItem, '', labelModelParameter)
     }
     if (labelModelParameter && dummyLabel && labelModelParameter.supports(dummyLabel)) {
       dummyLabel.preferredSize = new Size(width / zoom, height / zoom)

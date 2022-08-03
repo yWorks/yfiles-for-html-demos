@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,10 +28,10 @@
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, IGraph, License, Point, Rect, Size } from 'yfiles'
 
-import { bindChangeListener, checkLicense, showApp } from '../../resources/demo-app.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
-import loadJson from '../../resources/load-json.js'
+import { bindChangeListener, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { disableSingleSelection, enableSingleSelection } from './SingleSelectionHelper.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Changes the selection mode.
@@ -47,12 +47,13 @@ function toggleSingleSelection(graphComponent, singleSelectionEnabled = true) {
 }
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   graphComponent.inputMode = new GraphEditorInputMode()
@@ -118,4 +119,5 @@ function createSampleGraph(graph) {
   graph.undoEngine.clear()
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

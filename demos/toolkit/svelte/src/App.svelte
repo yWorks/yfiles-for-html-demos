@@ -18,7 +18,7 @@
 <div class="app">
   <aside class="demo-sidebar demo-left">
       <h1 class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo">&nbsp;</a>
       </h1>
       <div class="demo-sidebar-content">
         <h1>Svelte Integration Demo</h1>
@@ -27,7 +27,7 @@
           href="https://svelte.dev/"
           rel="noopener"
           target="_blank">Svelte</a
-        > framework, using Snowpack for development and deployment.
+        > framework, using Vite for development and deployment.
       </p>
       <p>The main features shown here are</p>
       <ul>
@@ -38,7 +38,7 @@
         </li>
         <li>
           A custom SVG-based node style with the help of a <a
-            href="https://svelte.dev/docs#Component_format"
+            href="https://svelte.dev/docs#component-format"
             rel="noopener"
             target="_blank">Svelte single file component</a
           >
@@ -46,10 +46,13 @@
         </li>
         <li>
           A layout algorithm in a Web Worker without blocking the UI is loaded using <a
-            href="https://www.snowpack.dev/guides/web-worker/"
+            href="https://vitejs.dev/guide/features.html#web-workers"
             rel="noopener"
-            target="_blank">Snowpack's support for Web Workers</a
-          >.
+            target="_blank">Vite's support for Web Workers</a
+          >.  Vite's development build relies on native browser support for
+          <a href="https://web.dev/module-workers/" target="_blank">module workers</a>
+          and therefore currently only works in some browsers (e.g. Chrome).
+          For unsupported browsers, client-sided layout calculation is used as fallback.
         </li>
       </ul>
       <h2>Things to try</h2>
@@ -78,24 +81,20 @@
       <button
         title="Zoom in"
         class="demo-icon-yIconZoomIn demo-toolbar-button"
-        on:click={graphComponentMethods.zoomIn}
-      />
+        on:click={graphComponentMethods.zoomIn}></button>
       <button
         title="Zoom to original size"
         class="demo-icon-yIconZoomOriginal demo-toolbar-button"
-        on:click={() => graphComponentMethods.setZoom(1)}
-      />
+        on:click={() => graphComponentMethods.setZoom(1)}></button>
       <button
         title="Zoom out"
         class="demo-icon-yIconZoomOut demo-toolbar-button"
-        on:click={graphComponentMethods.zoomOut}
-      />
+        on:click={graphComponentMethods.zoomOut}></button>
       <button
         title="Fit content"
         class="demo-icon-yIconZoomFit demo-toolbar-button"
-        on:click={graphComponentMethods.fitContent}
-      />
-      <span class="demo-separator" />
+        on:click={graphComponentMethods.fitContent}></button>
+      <span class="demo-separator"></span>
       <input class="search" bind:value={search} placeholder="Search names" />
     </div>
     <div class="main-panel">

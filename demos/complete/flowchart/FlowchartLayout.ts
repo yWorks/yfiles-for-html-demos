@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -168,9 +168,9 @@ export default class FlowchartLayout
 
   /**
    * Gets the layout orientation.
-   * Defaults to {@link LayoutOrientation#TOP_TO_BOTTOM}.
-   * @throws {Error} if the specified orientation is not {@link LayoutOrientation#TOP_TO_BOTTOM} or
-   * {@link LayoutOrientation#LEFT_TO_RIGHT}.
+   * Defaults to {@link LayoutOrientation.TOP_TO_BOTTOM}.
+   * @throws {Error} if the specified orientation is not {@link LayoutOrientation.TOP_TO_BOTTOM} or
+   * {@link LayoutOrientation.LEFT_TO_RIGHT}.
    */
   get layoutOrientation(): LayoutOrientation {
     return this.$layoutOrientation
@@ -178,9 +178,9 @@ export default class FlowchartLayout
 
   /**
    * Sets the layout orientation.
-   * Defaults to {@link LayoutOrientation#TOP_TO_BOTTOM}.
-   * @throws {Error} if the specified orientation is not {@link LayoutOrientation#TOP_TO_BOTTOM} or
-   * {@link LayoutOrientation#LEFT_TO_RIGHT}.
+   * Defaults to {@link LayoutOrientation.TOP_TO_BOTTOM}.
+   * @throws {Error} if the specified orientation is not {@link LayoutOrientation.TOP_TO_BOTTOM} or
+   * {@link LayoutOrientation.LEFT_TO_RIGHT}.
    */
   set layoutOrientation(value: LayoutOrientation) {
     switch (value) {
@@ -350,7 +350,7 @@ export default class FlowchartLayout
   /**
    * {@link IDataProvider} key used to specify the node and edge labels that
    * may be placed by the algorithm.
-   * The data provider's {@link IDataProvider#getBoolean getBoolean} method has to return
+   * The data provider's {@link IDataProvider.getBoolean getBoolean} method has to return
    * true for labels that should be placed and false
    * for all other labels. If no data provider is registered for this key, all
    * labels are placed by the algorithm.
@@ -690,7 +690,7 @@ class FlowchartTransformerStage extends LayoutStageBase {
   /**
    * Creates the configuration for the preferred edge directions.
    * This method creates source port candidates according
-   * to the directions defined by the data provider for the key {@link FlowchartLayout#PREFERRED_DIRECTION_DP_KEY}.
+   * to the directions defined by the data provider for the key {@link FlowchartLayout.PREFERRED_DIRECTION_DP_KEY}.
    */
   configurePreferredEdgeDirections(graph: LayoutGraph): void {
     const directions = graph.getDataProvider(FlowchartLayout.PREFERRED_DIRECTION_DP_KEY)
@@ -768,7 +768,7 @@ class FlowchartTransformerStage extends LayoutStageBase {
 
   /**
    * Returns a collection of port candidate for the given direction.
-   * one of hte direction constants in <FlowchartLayout/>.
+   * one of the direction constants in {@link FlowchartLayout}.
    * @return a collection of port candidate for the given direction.
    */
   getPortCandidateCollection(direction: number): ICollection<PortCandidate | null> {
@@ -961,8 +961,8 @@ class InEdgeGroupingConfigurator {
 
   /**
    * Creates the complete grouping dummy structure.
-   * @see {@link InEdgeGroupingConfigurator#createBus}
-   * @see {@link InEdgeGroupingConfigurator#createGrouping}
+   * @see {@link InEdgeGroupingConfigurator.createBus}
+   * @see {@link InEdgeGroupingConfigurator.createGrouping}
    */
   applyGrouping(layers: EdgeList[], graph: LayoutGraph): void {
     if (layers.length > 0) {
@@ -978,7 +978,7 @@ class InEdgeGroupingConfigurator {
 
   /**
    * Returns the grouping type of this class.
-   * {@link FlowchartTransformerStage#NODE_TYPE_PRECEDING_LAYER}.
+   * {@link FlowchartTransformerStage.NODE_TYPE_PRECEDING_LAYER}.
    */
   getGroupingType(): number {
     return FlowchartTransformerStage.NODE_TYPE_PRECEDING_LAYER
@@ -1163,9 +1163,9 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
    * Creates the complete grouping dummy structure.
    * This class stores all edges that must be reversed after the
    * creation of all dummy structures in the given list.
-   * Use this method instead of {@link SucceedingLayersInEdgeGroupingConfigurator#applyGrouping}.
-   * @see {@link InEdgeGroupingConfigurator#createBus}
-   * @see {@link SucceedingLayersInEdgeGroupingConfigurator#createGrouping}
+   * Use this method instead of {@link SucceedingLayersInEdgeGroupingConfigurator.applyGrouping}.
+   * @see {@link InEdgeGroupingConfigurator.createBus}
+   * @see {@link SucceedingLayersInEdgeGroupingConfigurator.createGrouping}
    */
   applyGroupingWithReversedEdges(layers: EdgeList[], graph: LayoutGraph, edgesToReverse: EdgeList) {
     try {
@@ -1178,7 +1178,7 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
 
   /**
    * This method must not be called directly since it omits the required list for edges to reverse.
-   * @see Overrides {@link InEdgeGroupingConfigurator#applyGrouping}
+   * @see Overrides {@link InEdgeGroupingConfigurator.applyGrouping}
    */
   applyGrouping(layers: EdgeList[], graph: LayoutGraph) {
     if (!this.edgesToReverse) {
@@ -1189,8 +1189,8 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
 
   /**
    * Returns the grouping type of this class.
-   * {@link FlowchartTransformerStage#NODE_TYPE_SUCCEEDING_LAYER}.
-   * @see Overrides {@link InEdgeGroupingConfigurator#getGroupingType}
+   * {@link FlowchartTransformerStage.NODE_TYPE_SUCCEEDING_LAYER}.
+   * @see Overrides {@link InEdgeGroupingConfigurator.getGroupingType}
    */
   getGroupingType(): number {
     return FlowchartTransformerStage.NODE_TYPE_SUCCEEDING_LAYER
@@ -1198,7 +1198,7 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
 
   /**
    * Changes the given edge to the given nodes and reverses its direction.
-   * @see Overrides {@link InEdgeGroupingConfigurator#changeEdge}
+   * @see Overrides {@link InEdgeGroupingConfigurator.changeEdge}
    */
   changeEdge(graph: LayoutGraph, edge: Edge, source: YNode, target: YNode) {
     super.changeEdge(graph, edge, source, target)
@@ -1208,7 +1208,7 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
   /**
    * Sets the grouping Id of the given edge to the appropriate grouping Id data acceptor.
    * This are source group Ids.
-   * @see Overrides {@link InEdgeGroupingConfigurator#setGroupId}
+   * @see Overrides {@link InEdgeGroupingConfigurator.setGroupId}
    */
   setGroupId(edge: Edge, id: any): void {
     this.enclosing.sourceGroupIds.set(edge, id)
@@ -1216,7 +1216,7 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
 
   /**
    * Creates a port candidate for an edge connecting two bus dummy nodes.
-   * @see Overrides {@link InEdgeGroupingConfigurator#createBusPortCandidate}
+   * @see Overrides {@link InEdgeGroupingConfigurator.createBusPortCandidate}
    */
   createBusPortCandidate(edge: Edge, graph: LayoutGraph): void {
     this.enclosing.targetCandidates.set(
@@ -1227,7 +1227,7 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
 
   /**
    * Creates a strong North candidate and reverses the edge if it comes from a dummy.
-   * @see Overrides {@link InEdgeGroupingConfigurator#handleSingleEdgeGrouping}
+   * @see Overrides {@link InEdgeGroupingConfigurator.handleSingleEdgeGrouping}
    */
   handleSingleEdgeGrouping(edge: Edge, graph: LayoutGraph): void {
     if (this.enclosing.groupingDummiesMap.getInt(edge.source) > 0) {
@@ -1244,7 +1244,7 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
    * Since grouping works best if the sources of all
    * nonBusEdges are in the neighboring layer, this method splits edges from more distant layers by adding dummy nodes
    * in the neighboring layer.
-   * @see Overrides {@link InEdgeGroupingConfigurator#createGrouping}
+   * @see Overrides {@link InEdgeGroupingConfigurator.createGrouping}
    */
   createGrouping(nonBusEdges: EdgeList, neighborLayerNode: YNode, graph: LayoutGraph): void {
     this.prepareForGrouping(nonBusEdges, graph)
@@ -1305,7 +1305,7 @@ class HashedDataProviderWrapper
   /**
    * Returns an object value associated with the given data holder.
    * This method may throw an Error.
-   * @see Specified by {@link IDataProvider#get}.
+   * @see Specified by {@link IDataProvider.get}.
    */
   get(dataHolder: any): object {
     return this.map.has(dataHolder) ? this.map.get(dataHolder) : this.fallback.get(dataHolder)
@@ -1314,7 +1314,7 @@ class HashedDataProviderWrapper
   /**
    * Returns an integer value associated with the given data holder.
    * This method may throw an Error.
-   * @see Specified by {@link IDataProvider#getInt}.
+   * @see Specified by {@link IDataProvider.getInt}.
    */
   getInt(dataHolder: any): number {
     return this.map.has(dataHolder)
@@ -1325,7 +1325,7 @@ class HashedDataProviderWrapper
   /**
    * Returns a double value associated with the given data holder.
    * This method may throw an Error.
-   * @see Specified by {@link IDataProvider#getNumber}.
+   * @see Specified by {@link IDataProvider.getNumber}.
    */
   getNumber(dataHolder: any): number {
     return this.map.has(dataHolder)
@@ -1336,7 +1336,7 @@ class HashedDataProviderWrapper
   /**
    * Returns a boolean value associated with the given data holder.
    * This method may throw an Error.
-   * @see Specified by {@link IDataProvider#getBoolean}.
+   * @see Specified by {@link IDataProvider.getBoolean}.
    */
   getBoolean(dataHolder: any): boolean {
     return this.map.has(dataHolder)
@@ -1520,8 +1520,8 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
    * @param layers Holds the current layering information
    * @param ldp Provides layout related meta data for nodes and edges
    * @param itemFactory Factory for temporary port constraints
-   * @see {@link IItemFactory#setTemporaryPortConstraint}
-   * @see Specified by {@link IPortConstraintOptimizer#optimizeAfterLayering}.
+   * @see {@link IItemFactory.setTemporaryPortConstraint}
+   * @see Specified by {@link IPortConstraintOptimizer.optimizeAfterLayering}.
    */
   optimizeAfterLayering(
     graph: LayoutGraph,
@@ -1541,8 +1541,8 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
    * @param layers Holds the current layering information
    * @param ldp Provides layout related meta data for nodes and edges
    * @param itemFactory Factory for temporary port constraints
-   * @see {@link IItemFactory#setTemporaryPortConstraint}
-   * @see Specified by {@link IPortConstraintOptimizer#optimizeAfterSequencing}.
+   * @see {@link IItemFactory.setTemporaryPortConstraint}
+   * @see Specified by {@link IPortConstraintOptimizer.optimizeAfterSequencing}.
    */
   optimizeAfterSequencing(
     graph: LayoutGraph,
@@ -1567,7 +1567,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
    * Incoming and outgoing edges are sorted using {@link IComparer} instances which
    * define the preferred ordering of the incoming and outgoing edges from left to right.
    *
-   * <b>Note:</b> In this phase, it is not allowed to create back-loops, i.e., incoming edges must not connect to the
+   * __Note:__ In this phase, it is not allowed to create back-loops, i.e., incoming edges must not connect to the
    * south
    * (i.e., bottom) side and outgoing edges must not connect to the north (i.e., top) side of a node.
    * @param node the original node to set temporary port constraints
@@ -1576,7 +1576,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
    * @param graph the input graph
    * @param ldp Provides layout related meta data for nodes and edges
    * @param itemFactory Factory for temporary port constraints
-   * @see {@link PortConstraintOptimizerBase#optimizeAfterSequencing}
+   * @see {@link PortConstraintOptimizerBase.optimizeAfterSequencing}
    */
   optimizeAfterSequencingForSingleNode(
     node: YNode,

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -93,7 +93,7 @@ export class EdgesSourceDefinition extends SourceDefinition {
 }
 
 /**
- * Abstract base class for a SourceDefinition <-> GraphBuilder connector
+ * Abstract base class for a SourceDefinition to GraphBuilder connector
  */
 export abstract class SourceDefinitionBuilderConnector<TSourceDefinition extends SourceDefinition> {
   abstract sourceDefinition: TSourceDefinition

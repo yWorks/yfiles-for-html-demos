@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,18 +45,17 @@ import {
  * This stage temporarily removes edges that are incident to group nodes.
  *
  * The stage must be prepended to the layout algorithm and applies the following three steps:
- * <ul>
- *   <li>Removes edges from the graph that are incident to group nodes.</li>
- *   <li>Invokes the core layout algorithm on the reduced graph.</li>
- *   <li>Re-inserts all previously removed edges and optionally places their labels.</li>
- * </ul>
+ *
+ *   - Removes edges from the graph that are incident to group nodes.
+ *   - Invokes the core layout algorithm on the reduced graph.
+ *   - Re-inserts all previously removed edges and optionally places their labels.
  *
  * This stage can be useful for layout algorithms or stages that cannot handle edges between group nodes, e.g.,
  * {@link TreeReductionStage}. Optionally, {@link HandleEdgesBetweenGroupsStage} can also place the labels of
  * the edges that were temporarily removed right after they are restored back to the graph.
  *
  * The routing of the temporarily hidden edges can be customized by specifying an
- * {@link #markedEdgeRouter edge routing algorithm} for those edges.
+ * {@link markedEdgeRouter edge routing algorithm} for those edges.
  */
 export default class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
   /**
@@ -191,10 +190,10 @@ export default class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
    * core layout algorithm. It may be overridden to apply custom edge routes.
    *
    * Note that, this method will do nothing if no edge routing algorithm was specified (i.e., if
-   * it is <code>null</code>).
+   * it is `null`).
    *
    * @param {!LayoutGraph} graph the graph that contains the hidden edges
-   * @param {!IEdgeMap} markedEdgesMap a map that returns <code>true</code> for all hidden by the stage edges of
+   * @param {!IEdgeMap} markedEdgesMap a map that returns `true` for all hidden by the stage edges of
    *        the graph
    */
   routeMarkedEdges(graph, markedEdgesMap) {

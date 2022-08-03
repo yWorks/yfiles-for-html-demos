@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,10 +27,13 @@
  **
  ***************************************************************************/
 import {
+  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICommand,
   IEdge,
   IGraph,
@@ -50,9 +53,9 @@ import {
   ToolTipQueryEventArgs
 } from 'yfiles'
 
-import { addClass, bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { addClass, bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -60,10 +63,11 @@ let graphComponent: GraphComponent = null
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true,
     focusableItems: 'all'
@@ -91,7 +95,7 @@ function run(licenseData: object): void {
 
 /**
  * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
- * the {@link MouseHoverInputMode#addQueryToolTipListener QueryToolTip} event of the
+ * the {@link MouseHoverInputMode.addQueryToolTipListener QueryToolTip} event of the
  * GraphEditorInputMode using the
  * {@link ToolTipQueryEventArgs} parameter.
  * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
@@ -141,7 +145,7 @@ function initializeLiveRegion(): void {
   graphComponent.addCurrentItemChangedListener((): void => {
     const currentItem = graphComponent.currentItem
     if (ILabelOwner.isInstance(currentItem)) {
-      const label = currentItem.labels.firstOrDefault()
+      const label = currentItem.labels.at(0)
       if (label) {
         // Update the live region
         const currentItemElement = selectedLiveElement.querySelector('.current-item')
@@ -212,7 +216,20 @@ function createTooltipContent(item: IModelItem | null): HTMLDivElement {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
+
+  // set the style, label and label parameter for group nodes
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: '#ff6c00',
+    stroke: '2px solid #662b00',
+    tabPosition: 'left-leading'
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'left',
+    textFill: '#662b00'
+  })
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -301,5 +318,5 @@ function registerCommands(): void {
   })
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

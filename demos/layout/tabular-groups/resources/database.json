@@ -1,0 +1,588 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "layout": { "x": 459, "y": -374.3031746031746, "width": 150, "height": 142.1515873015873 },
+      "labels": [
+        {
+          "text": "Manufacturer",
+          "anchorX": 479,
+          "anchorY": -360.3031746031746,
+          "upX": 0,
+          "upY": -1,
+          "width": 130,
+          "height": 14
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 1,
+      "layout": { "x": 459, "y": -263.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "contactName",
+          "anchorX": 498.650390625,
+          "anchorY": -238.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 80,
+          "height": 17
+        }
+      ],
+      "parent": 0
+    },
+    {
+      "id": 2,
+      "layout": { "x": 459, "y": -293.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "address",
+          "anchorX": 512.654296875,
+          "anchorY": -268.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 51,
+          "height": 17
+        }
+      ],
+      "parent": 0
+    },
+    {
+      "id": 3,
+      "layout": { "x": 459, "y": -323.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "* manufacturerId",
+          "anchorX": 489.64453125,
+          "anchorY": -298.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 98,
+          "height": 17
+        }
+      ],
+      "parent": 0
+    },
+    {
+      "id": 4,
+      "layout": { "x": 459, "y": -353.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "email",
+          "anchorX": 519.662109375,
+          "anchorY": -328.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 38,
+          "height": 17
+        }
+      ],
+      "parent": 0
+    },
+    {
+      "id": 5,
+      "layout": { "x": 459, "y": -202.1515873015873, "width": 150, "height": 202.1515873015873 },
+      "labels": [
+        {
+          "text": "Products",
+          "anchorX": 479,
+          "anchorY": -188.1515873015873,
+          "upX": 0,
+          "upY": -1,
+          "width": 130,
+          "height": 14
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 6,
+      "layout": { "x": 459, "y": -91, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "name",
+          "anchorX": 518.9912109375,
+          "anchorY": -66.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 39,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 7,
+      "layout": { "x": 459, "y": -121, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "description",
+          "anchorX": 504.984375,
+          "anchorY": -96.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 67,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 8,
+      "layout": { "x": 459, "y": -31, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "price",
+          "anchorX": 520.9951171875,
+          "anchorY": -6.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 35,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 9,
+      "layout": { "x": 459, "y": -151, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "quantityInStock",
+          "anchorX": 492.9755859375,
+          "anchorY": -126.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 92,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 10,
+      "layout": { "x": 459, "y": -61, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "* productNumber",
+          "anchorX": 488.6455078125,
+          "anchorY": -36.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 100,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 11,
+      "layout": { "x": 459, "y": -181, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "manufacturerId",
+          "anchorX": 493.646484375,
+          "anchorY": -156.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 90,
+          "height": 17
+        }
+      ],
+      "parent": 5
+    },
+    {
+      "id": 12,
+      "layout": { "x": 0, "y": -374.3031746031746, "width": 150, "height": 202.1515873015873 },
+      "labels": [
+        {
+          "text": "Customers",
+          "anchorX": 20,
+          "anchorY": -360.3031746031746,
+          "upX": 0,
+          "upY": -1,
+          "width": 130,
+          "height": 14
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 13,
+      "layout": { "x": 0, "y": -203.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "email",
+          "anchorX": 60.662109375,
+          "anchorY": -178.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 38,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 14,
+      "layout": { "x": 0, "y": -233.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "name",
+          "anchorX": 59.9912109375,
+          "anchorY": -208.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 39,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 15,
+      "layout": { "x": 0, "y": -263.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "phone",
+          "anchorX": 58.3154296875,
+          "anchorY": -238.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 42,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 16,
+      "layout": { "x": 0, "y": -293.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "address",
+          "anchorX": 53.654296875,
+          "anchorY": -268.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 51,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 17,
+      "layout": { "x": 0, "y": -353.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "* customerId",
+          "anchorX": 41.3203125,
+          "anchorY": -328.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 76,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 18,
+      "layout": { "x": 0, "y": -323.1515873015873, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "support contact",
+          "anchorX": 33.9755859375,
+          "anchorY": -298.5021732390873,
+          "upX": 0,
+          "upY": -1,
+          "width": 91,
+          "height": 17
+        }
+      ],
+      "parent": 12
+    },
+    {
+      "id": 19,
+      "layout": { "x": 0, "y": -142.1515873015873, "width": 150, "height": 142.1515873015873 },
+      "labels": [
+        {
+          "text": "Service Employees",
+          "anchorX": 20,
+          "anchorY": -128.1515873015873,
+          "upX": 0,
+          "upY": -1,
+          "width": 130,
+          "height": 14
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 20,
+      "layout": { "x": 0, "y": -61, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "role",
+          "anchorX": 64.9951171875,
+          "anchorY": -36.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 29,
+          "height": 17
+        }
+      ],
+      "parent": 19
+    },
+    {
+      "id": 21,
+      "layout": { "x": 0, "y": -91, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "email",
+          "anchorX": 60.662109375,
+          "anchorY": -66.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 38,
+          "height": 17
+        }
+      ],
+      "parent": 19
+    },
+    {
+      "id": 22,
+      "layout": { "x": 0, "y": -121, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "name",
+          "anchorX": 59.9912109375,
+          "anchorY": -96.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 39,
+          "height": 17
+        }
+      ],
+      "parent": 19
+    },
+    {
+      "id": 23,
+      "layout": { "x": 0, "y": -31, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "* employeeId",
+          "anchorX": 39.978515625,
+          "anchorY": -6.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 79,
+          "height": 17
+        }
+      ],
+      "parent": 19
+    },
+    {
+      "id": 24,
+      "layout": { "x": 249, "y": -172.1515873015873, "width": 150, "height": 172.1515873015873 },
+      "labels": [
+        {
+          "text": "Orders",
+          "anchorX": 269,
+          "anchorY": -158.1515873015873,
+          "upX": 0,
+          "upY": -1,
+          "width": 130,
+          "height": 14
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 25,
+      "layout": { "x": 249, "y": -151, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "* orderNumber",
+          "anchorX": 284.6513671875,
+          "anchorY": -126.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 88,
+          "height": 17
+        }
+      ],
+      "parent": 24
+    },
+    {
+      "id": 26,
+      "layout": { "x": 249, "y": -31, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "totalPrice",
+          "anchorX": 298.9892578125,
+          "anchorY": -6.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 60,
+          "height": 17
+        }
+      ],
+      "parent": 24
+    },
+    {
+      "id": 27,
+      "layout": { "x": 249, "y": -61, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "productNumber",
+          "anchorX": 282.6474609375,
+          "anchorY": -36.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 92,
+          "height": 17
+        }
+      ],
+      "parent": 24
+    },
+    {
+      "id": 28,
+      "layout": { "x": 249, "y": -121, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "customerId",
+          "anchorX": 294.322265625,
+          "anchorY": -96.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 68,
+          "height": 17
+        }
+      ],
+      "parent": 24
+    },
+    {
+      "id": 29,
+      "layout": { "x": 249, "y": -91, "width": 150, "height": 30 },
+      "labels": [
+        {
+          "text": "employeeId",
+          "anchorX": 292.98046875,
+          "anchorY": -66.3505859375,
+          "upX": 0,
+          "upY": -1,
+          "width": 71,
+          "height": 17
+        }
+      ],
+      "parent": 24
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 17,
+      "target": 28,
+      "sourcePort": { "x": 150, "y": -338.1515873015873 },
+      "targetPort": { "x": 249, "y": -106 },
+      "bends": [
+        { "x": 208, "y": -338.1515873015873 },
+        { "x": 208, "y": -106 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 1,
+      "source": 10,
+      "target": 27,
+      "sourcePort": { "x": 459, "y": -46 },
+      "targetPort": { "x": 399, "y": -46 },
+      "bends": [],
+      "labels": []
+    },
+    {
+      "id": 2,
+      "source": 23,
+      "target": 29,
+      "sourcePort": { "x": 150, "y": -16 },
+      "targetPort": { "x": 249, "y": -76 },
+      "bends": [
+        { "x": 191, "y": -16 },
+        { "x": 191, "y": -76 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 3,
+      "source": 26,
+      "target": 8,
+      "sourcePort": { "x": 399, "y": -16 },
+      "targetPort": { "x": 459, "y": -16 },
+      "bends": [],
+      "labels": []
+    },
+    {
+      "id": 4,
+      "source": 11,
+      "target": 3,
+      "sourcePort": { "x": 609, "y": -166 },
+      "targetPort": { "x": 609, "y": -308.1515873015873 },
+      "bends": [
+        { "x": 650, "y": -166 },
+        { "x": 650, "y": -308.1515873015873 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 5,
+      "source": 18,
+      "target": 23,
+      "sourcePort": { "x": 0, "y": -308.1515873015873 },
+      "targetPort": { "x": 0, "y": -16 },
+      "bends": [
+        { "x": -41, "y": -308.1515873015873 },
+        { "x": -41, "y": -16 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 6,
+      "source": 18,
+      "target": 15,
+      "sourcePort": { "x": 75, "y": -308.1515873015873 },
+      "targetPort": { "x": 75, "y": -248.1515873015873 },
+      "bends": [
+        { "x": 172.5, "y": -307.75 },
+        { "x": 166.5, "y": -243.75 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 7,
+      "source": 2,
+      "target": 1,
+      "sourcePort": { "x": 534, "y": -278.1515873015873 },
+      "targetPort": { "x": 534, "y": -248.1515873015873 },
+      "bends": [
+        { "x": 413.5, "y": -278.75 },
+        { "x": 433.5, "y": -244.75 }
+      ],
+      "labels": []
+    },
+    {
+      "id": 8,
+      "source": 22,
+      "target": 23,
+      "sourcePort": { "x": 75, "y": -106 },
+      "targetPort": { "x": 75, "y": -16 },
+      "bends": [
+        { "x": 181.5, "y": -111.75 },
+        { "x": 168.5, "y": -6.75 }
+      ],
+      "labels": []
+    }
+  ]
+}

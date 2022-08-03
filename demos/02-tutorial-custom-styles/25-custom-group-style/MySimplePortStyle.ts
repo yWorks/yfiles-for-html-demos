@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -68,7 +68,7 @@ export default class MySimplePortStyle extends PortStyleBase {
   /**
    * Calculates the bounds of this port.
    * These are also used for arranging the visual, hit testing, visibility testing, and marquee box tests.
-   * @see Overrides {@link PortStyleBase#getBounds}
+   * @see Overrides {@link PortStyleBase.getBounds}
    */
   getBounds(canvasContext: ICanvasContext, port: IPort): Rect {
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)

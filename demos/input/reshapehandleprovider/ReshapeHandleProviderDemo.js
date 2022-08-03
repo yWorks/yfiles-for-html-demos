@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,9 +43,11 @@ import {
   Size
 } from 'yfiles'
 
-import { checkLicense, readGraph, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { readGraph, showApp } from '../../resources/demo-app.js'
 import { PortReshapeHandleProvider } from './PortReshapeHandlerProvider.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -62,7 +64,7 @@ let ctrlPressed = false
  * Registers a callback function as a decorator that provides a customized
  * {@link IReshapeHandleProvider} for each port with a {@link NodeStylePortStyleAdapter}.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>IReshapeHandleProvider</code>. In this case, the 'port'
+ * for its {@link IReshapeHandleProvider}. In this case, the 'port'
  * parameter will be set to that port.
  * @param {!IGraph} graph
  */
@@ -77,14 +79,14 @@ function registerReshapeHandleProvider(graph) {
 }
 
 /**
- * @param {*} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize graph defaults
   initializeGraphDefaults(graphComponent.graph)
@@ -192,4 +194,5 @@ function onBlur() {
   graphEditorInputMode.requeryHandles()
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

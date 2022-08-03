@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,6 +29,7 @@
 import {
   DefaultLabelStyle,
   ExteriorLabelModel,
+  Fill,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -45,21 +46,22 @@ import {
   LabelSnapContext,
   License,
   Point,
+  Stroke,
   TimeSpan,
   Visualization
 } from 'yfiles'
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
@@ -148,12 +150,12 @@ function createTooltipContent(item) {
  * highlighted and edited.
  */
 function createSampleGraph() {
-  const demoNodeStyle = new DemoNodeStyle()
-  demoNodeStyle.cssClass = 'demo-node-style'
+  const demoNodeStyle = createDemoNodeStyle()
+  demoNodeStyle.stroke = Stroke.from('1.5px #3c4253')
+  demoNodeStyle.fill = Fill.from('white')
 
-  const demoEdgeStyle = new DemoEdgeStyle()
-  demoEdgeStyle.showTargetArrows = false
-  demoEdgeStyle.cssClass = 'demo-edge-style'
+  const demoEdgeStyle = createDemoEdgeStyle({ showTargetArrow: false })
+  demoEdgeStyle.stroke = Stroke.from('1.5px white')
 
   const demoLabelStyle = new DefaultLabelStyle({
     textFill: 'white',
@@ -249,5 +251,5 @@ class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
   }
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

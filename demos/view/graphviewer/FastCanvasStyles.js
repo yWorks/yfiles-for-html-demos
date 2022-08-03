@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -85,7 +85,7 @@ class NodeCanvasVisual extends HtmlCanvasVisual {
 
   /**
    * Draw a rectangle with a solid orange fill.
-   * @see Overrides {@link HtmlCanvasVisual#paint}
+   * @see Overrides {@link HtmlCanvasVisual.paint}
    * @param {!IRenderContext} renderContext
    * @param {!CanvasRenderingContext2D} ctx
    */

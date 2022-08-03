@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,6 +36,7 @@ import {
   GraphItemTypes,
   HierarchicLayout,
   HierarchicLayoutData,
+  HierarchicLayoutSubcomponentDescriptor,
   ICommand,
   IEnumerable,
   IGraph,
@@ -54,64 +55,54 @@ import {
   TreeReductionStage
 } from 'yfiles'
 
-import SampleData from './resources/SampleData'
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
 import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // We need to load the 'router-polyline' module explicitly to prevent tree-shaking
 // tools it from removing this dependency which is needed for subcomponents layout.
 Class.ensure(EdgeRouter)
 
-type SubComponent = {
+type Subcomponent = {
   nodes: INode[]
   layout: ILayoutAlgorithm
 }
 
+type PlacementPolicyvalue = 'automatic' | 'isolated' | 'always-integrated'
+
 /**
  * The collection of subcomponents contains all currently assigned subcomponents.
  */
-const subcomponents: SubComponent[] = []
+const subcomponents: Subcomponent[] = []
 
 /**
- * The collection of colors (named like the according css-classes) that are assigned to the
- * subcomponents.
+ * The collection of node styles that are assigned to nodes that are members of the subcomponents.
  */
-const colors = [
-  'demo-palette-11',
-  'demo-palette-12',
-  'demo-palette-13',
-  'demo-palette-14',
-  'demo-palette-15',
-  'demo-palette-21',
-  'demo-palette-22',
-  'demo-palette-24',
-  'demo-palette-25',
-  'demo-palette-31',
-  'demo-palette-31',
-  'demo-palette-33',
-  'demo-palette-34',
-  'demo-palette-35'
+const nodeStyles = [
+  createDemoNodeStyle('demo-blue'),
+  createDemoNodeStyle('demo-red'),
+  createDemoNodeStyle('demo-purple'),
+  createDemoNodeStyle('demo-green'),
+  createDemoNodeStyle('demo-lightblue')
 ]
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureUserInteraction(graphComponent)
 
   initializeGraph(graphComponent.graph)
 
-  createSampleGraph(graphComponent.graph)
+  await createSampleGraph(graphComponent.graph)
 
-  initializeSubComponents(graphComponent)
+  initializeSubcomponents(graphComponent)
 
   runLayout(graphComponent)
 
@@ -125,19 +116,29 @@ function run(licenseData: object): void {
 /**
  * Arranges the graph in the given graph component.
  */
-function runLayout(graphComponent: GraphComponent): void {
+function runLayout(graphComponent: GraphComponent): Promise<void> {
   // initialize a hierarchic layout
   const hierarchicLayout = new HierarchicLayout({
     orthogonalRouting: true
   })
 
-  // assign subcomponents with their own layout algorithm
+  // assign subcomponents with their own layout algorithm and placement policy
   const hierarchicLayoutData = new HierarchicLayoutData()
   for (const component of subcomponents) {
-    hierarchicLayoutData.subComponents.add(component.layout).items = IList.from(component.nodes)
+    // create a subcomponent descriptor that specifies the layout algorithm
+    // and placement policy for the subcomponent
+    const descriptor = new HierarchicLayoutSubcomponentDescriptor({
+      layoutAlgorithm: component.layout,
+      placementPolicy: document.querySelector<HTMLSelectElement>('#subcomponent-policy-select')!
+        .value as PlacementPolicyvalue
+    })
+    // specify a subcomponent with the descriptor
+    const subcomponent = hierarchicLayoutData.subcomponents.add(descriptor)
+    // and assign the nodes to this subcomponent
+    subcomponent.items = IList.from(component.nodes)
   }
 
-  graphComponent.morphLayout(
+  return graphComponent.morphLayout(
     new MinimumNodeSizeStage(hierarchicLayout),
     '700ms',
     hierarchicLayoutData
@@ -147,10 +148,14 @@ function runLayout(graphComponent: GraphComponent): void {
 /**
  * Creates a new subcomponent that gets a specific layout from the given nodes.
  */
-function createSubcomponent(nodes: IEnumerable<INode>, layout: ILayoutAlgorithm): void {
+function createSubcomponent(
+  graph: IGraph,
+  nodes: IEnumerable<INode>,
+  layout: ILayoutAlgorithm
+): void {
   if (nodes.size > 0) {
     // find the next free subcomponent index
-    let newSubcomponent: SubComponent
+    let newSubcomponent: Subcomponent
     let newSubcomponentIndex: number = subcomponents.findIndex(
       component =>
         component.nodes.length === 0 || component.nodes.every(node => nodes.includes(node))
@@ -181,7 +186,7 @@ function createSubcomponent(nodes: IEnumerable<INode>, layout: ILayoutAlgorithm)
       }
       newSubcomponent.nodes.push(node)
       node.tag = newSubcomponentIndex
-      setStyleClass(node, colors[newSubcomponentIndex % colors.length])
+      graph.setStyle(node, nodeStyles[newSubcomponentIndex % nodeStyles.length])
     }
   }
 }
@@ -189,13 +194,13 @@ function createSubcomponent(nodes: IEnumerable<INode>, layout: ILayoutAlgorithm)
 /**
  * Removes the given nodes from every subcomponent.
  */
-function removeSubcomponent(nodes: IEnumerable<INode>): void {
+function removeSubcomponent(graph: IGraph, nodes: IEnumerable<INode>): void {
   for (const node of nodes) {
     if (node.tag !== null) {
       const subcomponentNodes = subcomponents[node.tag].nodes
       subcomponentNodes.splice(subcomponentNodes.indexOf(node), 1)
       node.tag = null
-      setStyleClass(node, '')
+      graph.setStyle(node, graph.nodeDefaults.style.clone())
     }
   }
 }
@@ -214,22 +219,24 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
  * Sets default styles for nodes and edges.
  */
 function initializeGraph(graph: IGraph): void {
-  graph.nodeDefaults.style = new DemoNodeStyle()
+  graph.nodeDefaults.style = createDemoNodeStyle()
   graph.nodeDefaults.shareStyleInstance = false
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  graph.edgeDefaults.style = createDemoEdgeStyle()
 }
 
 /**
  * Creates a sample graph.
+ * @yjs:keep=nodes,edges
  */
-function createSampleGraph(graph: IGraph): void {
-  const data = SampleData
+async function createSampleGraph(graph: IGraph): Promise<void> {
+  const response = await fetch('./resources/sample.json')
+  const data = await response.json()
 
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
     data: data.nodes,
     id: 'id',
-    tag: data => (typeof data.tag !== 'undefined' ? data.tag : null)
+    tag: (data: Record<string, any>) => (data.tag != null ? data.tag : null)
   })
   builder.createEdgesSource(data.edges, 'source', 'target')
 
@@ -237,34 +244,42 @@ function createSampleGraph(graph: IGraph): void {
 }
 
 /**
- * Creates initial sub-components in the demo's sample graph.
+ * Creates initial subcomponents in the demo's sample graph.
  */
-function initializeSubComponents(graphComponent: GraphComponent): void {
+function initializeSubcomponents(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
 
   const hierarchicLayout = new HierarchicLayout()
   hierarchicLayout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
   createSubcomponent(
+    graph,
     graph.nodes.filter(node => node.tag === 0),
     hierarchicLayout
   )
-  const treeLayout = newTreeLayout()
+  const treeLayout = createTreeLayout()
   createSubcomponent(
+    graph,
     graph.nodes.filter(node => node.tag === 1),
     treeLayout
   )
-  const organicLayout = newOrganicLayout()
+  const organicLayout = createOrganicLayout()
   createSubcomponent(
+    graph,
     graph.nodes.filter(node => node.tag === 2),
     organicLayout
   )
-}
-
-/**
- * Sets the CSS class that determines the given node's styling.
- */
-function setStyleClass(node: INode, cssClassName: string): void {
-  ;(node.style as DemoNodeStyle).cssClass = cssClassName
+  createSubcomponent(
+    graph,
+    graph.nodes.filter(node => node.tag === 3),
+    hierarchicLayout
+  )
+  const treeLayout2 = createTreeLayout()
+  treeLayout2.layoutOrientation = LayoutOrientation.RIGHT_TO_LEFT
+  createSubcomponent(
+    graph,
+    graph.nodes.filter(node => node.tag === 4),
+    treeLayout2
+  )
 }
 
 /**
@@ -272,12 +287,13 @@ function setStyleClass(node: INode, cssClassName: string): void {
  * combo box.
  */
 function getLayoutAlgorithm(): MultiStageLayout {
-  switch ((document.getElementById('layout-select') as HTMLSelectElement).value) {
+  const layout = document.querySelector<HTMLSelectElement>('#layout-select')!.value
+  switch (layout) {
     default:
     case 'tree':
-      return newTreeLayout()
+      return createTreeLayout()
     case 'organic':
-      return newOrganicLayout()
+      return createOrganicLayout()
     case 'orthogonal':
       return new OrthogonalLayout()
     case 'hierarchic':
@@ -288,7 +304,7 @@ function getLayoutAlgorithm(): MultiStageLayout {
 /**
  * Returns a new tree layout algorithm instance.
  */
-function newTreeLayout(): TreeLayout {
+function createTreeLayout(): TreeLayout {
   const treeReductionStage = new TreeReductionStage()
   treeReductionStage.nonTreeEdgeRouter = new StraightLineEdgeRouter()
 
@@ -301,7 +317,7 @@ function newTreeLayout(): TreeLayout {
 /**
  * Returns a new organic layout algorithm instance.
  */
-function newOrganicLayout(): OrganicLayout {
+function createOrganicLayout(): OrganicLayout {
   const organic = new OrganicLayout()
   organic.deterministic = true
   organic.preferredEdgeLength = 70
@@ -312,8 +328,7 @@ function newOrganicLayout(): OrganicLayout {
  * Returns the layout orientation that is specified in the combo-box.
  */
 function getLayoutOrientation(): LayoutOrientation {
-  const orientation: string = (document.getElementById('orientation-select') as HTMLSelectElement)
-    .value
+  const orientation = document.querySelector<HTMLSelectElement>('#orientation-select')!.value
   switch (orientation) {
     default:
     case 'top-to-bottom':
@@ -359,7 +374,7 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
 
-  const selectOrientation = document.getElementById('orientation-select') as HTMLSelectElement
+  const selectOrientation = document.querySelector<HTMLSelectElement>('#orientation-select')!
   bindChangeListener("select[data-command='SelectLayout']", value => {
     selectOrientation.disabled = value !== 'tree' && value !== 'hierarchic'
   })
@@ -375,7 +390,7 @@ function registerCommands(graphComponent: GraphComponent): void {
     layout.layoutOrientation = getLayoutOrientation()
 
     // create the subcomponent from all selected nodes with the chosen layout algorithm.
-    createSubcomponent(selectedNodes, layout)
+    createSubcomponent(graphComponent.graph, selectedNodes, layout)
 
     runLayout(graphComponent)
   })
@@ -384,12 +399,12 @@ function registerCommands(graphComponent: GraphComponent): void {
     if (selectedNodes.size === 0) {
       return
     }
-    removeSubcomponent(selectedNodes)
+    removeSubcomponent(graphComponent.graph, selectedNodes)
     runLayout(graphComponent)
   })
 
   bindAction("button[data-command='Layout']", () => runLayout(graphComponent))
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

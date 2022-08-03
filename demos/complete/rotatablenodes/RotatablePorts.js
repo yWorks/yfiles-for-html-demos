@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -73,13 +73,15 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
     super()
 
     // The wrapped location model.
-    // It is only used when new parameters are created via {@link #createParameter}.
+    // It is only used when new parameters are created via {@link createParameter}.
     this.wrapped = new FreeNodePortLocationModel()
   }
 
   /**
    * Delegates to the wrapped location model's lookup.
-   * @param {!Class} type
+   * @template T
+   * @param {!Class.<T>} type
+   * @returns {?T}
    */
   lookup(type) {
     return this.wrapped.lookup(type)

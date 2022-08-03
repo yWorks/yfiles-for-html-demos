@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,38 +56,41 @@ import {
   YDimension
 } from 'yfiles'
 
-import DemoStyles, {
+import {
+  applyDemoTheme,
+  createDemoEdgeStyle,
   createDemoNodeLabelStyle,
-  DemoEdgeStyle,
-  DemoNodeStyle,
-  DemoSerializationListener
+  createDemoNodeStyle,
+  initDemoStyles
 } from '../../resources/demo-styles.js'
 import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   readGraph,
   showApp,
   showLoadingIndicator
 } from '../../resources/demo-app.js'
 import { passiveSupported } from '../../utils/Workarounds.js'
-import loadJson from '../../resources/load-json.js'
 import MultiPageIGraphBuilder from './MultiPageIGraphBuilder.js'
 import PageBoundsVisualCreator from './PageBoundsVisualCreator.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
  * can be displayed in a graph component.
  * A multi-page layout splits a large graph into multiple pages with a fixed maximum width and height.
  * Each of these pages is displayed by a different graph.
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize both graph components
   graphComponent = new GraphComponent('graphComponent')
   modelGraphComponent = new GraphComponent('modelGraphComponent')
+  applyDemoTheme(graphComponent)
+  applyDemoTheme(modelGraphComponent)
+  initDemoStyles(modelGraphComponent.graph, { theme: 'demo-palette-21' })
 
   registerCommands()
   initializeCoreLayouts()
@@ -208,24 +211,29 @@ function runMultiPageLayout() {
 async function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
   // use the MultiPageGraphBuilder to create a list of IGraph instances that represent the single pages
   const builder = new MultiPageIGraphBuilder(multiPageLayoutResult)
-  builder.normalNodeDefaults.style = new DemoNodeStyle('demo-palette-21')
+  builder.normalNodeDefaults.style = createDemoNodeStyle('demo-palette-21')
   builder.normalNodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-21')
-  builder.connectorNodeDefaults.style = new DemoNodeStyle('demo-palette-23')
+  builder.connectorNodeDefaults.style = createDemoNodeStyle('demo-palette-23')
   builder.connectorNodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-23')
-  builder.proxyNodeDefaults.style = new DemoNodeStyle('demo-palette-25')
+  builder.proxyNodeDefaults.style = createDemoNodeStyle('demo-palette-25')
   builder.proxyNodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-25')
-  builder.proxyReferenceNodeDefaults.style = new DemoNodeStyle('demo-palette-14')
+  builder.proxyReferenceNodeDefaults.style = createDemoNodeStyle('demo-palette-14')
   builder.proxyReferenceNodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-14')
-  const normalEdgeStyle = new DemoEdgeStyle('demo-palette-21')
-  normalEdgeStyle.showTargetArrows = false
-  builder.normalEdgeDefaults.style = normalEdgeStyle
-  const connectorEdgeStyle = new DemoEdgeStyle('demo-palette-23')
-  connectorEdgeStyle.showTargetArrows = false
-  builder.connectorEdgeDefaults.style = connectorEdgeStyle
-  const proxyEdgeStyle = new DemoEdgeStyle('demo-palette-25')
-  proxyEdgeStyle.showTargetArrows = false
-  builder.proxyEdgeDefaults.style = proxyEdgeStyle
-  builder.proxyReferenceEdgeDefaults.style = new DemoEdgeStyle('demo-palette-14')
+  builder.normalEdgeDefaults.style = createDemoEdgeStyle({
+    colorSetName: 'demo-palette-21',
+    showTargetArrow: false
+  })
+  builder.connectorEdgeDefaults.style = createDemoEdgeStyle({
+    colorSetName: 'demo-palette-23',
+    showTargetArrow: false
+  })
+  builder.proxyEdgeDefaults.style = createDemoEdgeStyle({
+    colorSetName: 'demo-palette-25',
+    showTargetArrow: false
+  })
+  builder.proxyReferenceEdgeDefaults.style = createDemoEdgeStyle({
+    colorSetName: 'demo-palette-14'
+  })
 
   // create the graphs
   viewGraphs = builder.createViewGraphs()
@@ -487,15 +495,7 @@ async function loadModelGraph(graphId) {
       ? 'resources/pop-artists-small.graphml'
       : 'resources/yfiles-layout-namespaces.graphml'
 
-  const graphMLIOHandler = new GraphMLIOHandler()
-
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
-  await readGraph(graphMLIOHandler, modelGraphComponent.graph, filename)
+  await readGraph(new GraphMLIOHandler(), modelGraphComponent.graph, filename)
   // fit model graph to the component
   modelGraphComponent.fitGraphBounds()
 
@@ -506,4 +506,5 @@ async function loadModelGraph(graphId) {
   runMultiPageLayout()
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

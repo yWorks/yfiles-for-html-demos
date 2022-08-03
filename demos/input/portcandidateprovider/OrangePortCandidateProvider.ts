@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,7 +45,7 @@ export default class OrangePortCandidateProvider extends PortCandidateProviderBa
   private readonly node: INode
 
   /**
-   * Creates a new instance of <code>OrangePortCandidateProvider</code>.
+   * Creates a new instance of {@link OrangePortCandidateProvider}.
    * @param node The given node.
    */
   constructor(node: INode) {
@@ -60,7 +60,7 @@ export default class OrangePortCandidateProvider extends PortCandidateProviderBa
    * {@link PortCandidateProviderBase} delegate to this method. This can be
    * used to provide the same candidates for all use-cases.
    * @param context The context for which the candidates should be provided
-   * @see Overrides {@link PortCandidateProviderBase#getPortCandidates}
+   * @see Overrides {@link PortCandidateProviderBase.getPortCandidates}
    */
   getPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const list = new List<IPortCandidate>()

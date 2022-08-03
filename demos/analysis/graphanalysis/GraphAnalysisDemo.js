@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -77,11 +77,12 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // This demo showcases a selection of algorithms to analyse the structure of a graph.
 
@@ -168,10 +169,10 @@ const validationPattern = new RegExp('^(0*[1-9][0-9]*(\\.[0-9]+)?|0+\\.[0-9]*[1-
 
 /**
  * Main function for running the Graph Analysis demo.
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   init()
 
   graphComponent.inputMode = createEditorMode()
@@ -270,6 +271,7 @@ async function run(licenseData) {
  */
 function init() {
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   algorithmComboBox = document.getElementById('algorithm-select-box')
   addNavigationButtons(algorithmComboBox)
   sampleComboBox = document.getElementById('sampleComboBox')
@@ -463,7 +465,7 @@ function initializeAlgorithms() {
 
 /**
  * Creates the default input mode for the graph component, a {@link GraphEditorInputMode}.
- * @returns {!GraphEditorInputMode} a new <code>GraphEditorInputMode</code> instance and configures snapping and orthogonal edge editing
+ * @returns {!GraphEditorInputMode} a new {@link GraphEditorInputMode} instance and configures snapping and orthogonal edge editing
  */
 function createEditorMode() {
   incrementalElements = new Mapper()
@@ -1133,7 +1135,7 @@ function getEdgeWeight(edge) {
   // if edge has at least one label...
   if (edge.labels.size > 0) {
     // ..try to return it's value
-    const edgeWeight = parseFloat(edge.labels.elementAt(0).text)
+    const edgeWeight = parseFloat(edge.labels.first().text)
     if (!isNaN(edgeWeight)) {
       return edgeWeight > 0 ? edgeWeight : 0
     }
@@ -1425,5 +1427,5 @@ function handleError(error) {
   }
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

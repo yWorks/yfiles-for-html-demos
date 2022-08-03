@@ -35,4 +35,4 @@ You can also take a look at more extensive demos that take advantage of this fea
 
 ### Documentation
 
-The Developer's Guide has detailed information about the [hierarchic layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and about how to run the algorithm on a subset of nodes specifically.
+The Developer's Guide has detailed information about the [hierarchic layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and about [how to run the algorithm on a subset of nodes](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-incremental_layout) specifically.

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -65,16 +65,15 @@ import {
 
 import ContextMenu from '../../utils/ContextMenu.js'
 import SampleData from './resources/SampleData.js'
-import { DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import {
   addClass,
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -83,11 +82,12 @@ let graphComponent
 let portGroupMode = false
 
 /**
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   configureInteraction()
   createSampleGraph()
   registerCommands()
@@ -124,8 +124,8 @@ async function runEdgeRouter() {
 function createSampleGraph() {
   const graph = graphComponent.graph
   graph.clear()
-  initDemoStyles(graph)
-  graph.nodeDefaults.style.cssClass = 'node-color'
+  initDemoStyles(graph, { extraCropLength: 0 })
+  graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-44')
   graph.nodeDefaults.size = Size.from([50, 30])
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #BBBBBB',
@@ -531,4 +531,5 @@ class HighlightEdgeStyle extends EdgeStyleBase {
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

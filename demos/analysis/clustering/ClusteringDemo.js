@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,7 +41,6 @@ import {
   GraphItemTypes,
   HierarchicalClustering,
   HierarchicalClusteringResult,
-  IArrow,
   ICanvasObject,
   ICanvasObjectDescriptor,
   ICommand,
@@ -76,11 +75,14 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { createBasicEdgeStyle, createBasicNodeStyle } from '../../resources/basic-demo-styles.js'
+import {
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoShapeNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * The {@link GraphComponent} which contains the {@link IGraph}.
@@ -141,12 +143,13 @@ function getElementById(id) {
 }
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the default styles
   configureGraph(graphComponent.graph)
@@ -174,17 +177,16 @@ function run(licenseData) {
  * @param {!IGraph} graph
  */
 function configureGraph(graph) {
-  const defaultNodeStyle = createBasicNodeStyle('demo-palette-401')
-  defaultNodeStyle.shape = ShapeNodeShape.ELLIPSE
-  graph.nodeDefaults.style = defaultNodeStyle
+  graph.nodeDefaults.style = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE, 'demo-palette-401')
 
   // sets the default edge style as 'undirected'
-  const basicEdgeStyle = createBasicEdgeStyle('demo-palette-401')
-  basicEdgeStyle.targetArrow = IArrow.NONE
-  graph.edgeDefaults.style = basicEdgeStyle
+  graph.edgeDefaults.style = createDemoEdgeStyle({
+    colorSetName: 'demo-palette-401',
+    showTargetArrow: false
+  })
 
   // sets the edge style of the algorithms that support edge direction
-  directedEdgeStyle = createBasicEdgeStyle('demo-palette-401')
+  directedEdgeStyle = createDemoEdgeStyle({ colorSetName: 'demo-palette-401' })
 
   // set the default style for node labels
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
@@ -208,7 +210,7 @@ function configureGraph(graph) {
 
   // highlight node style
   const nodeHighlight = new NodeStyleDecorationInstaller({
-    nodeStyle: createBasicNodeStyle('demo-palette-23'),
+    nodeStyle: createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE, 'demo-palette-23'),
     zoomPolicy: 'mixed',
     margins: 3
   })
@@ -773,7 +775,7 @@ function getEdgeWeight(edge) {
   // if edge has at least one label...
   if (edge.labels.size > 0) {
     // ..try to return it's value
-    const edgeWeight = parseFloat(edge.labels.elementAt(0).text)
+    const edgeWeight = parseFloat(edge.labels.first().text)
     if (!isNaN(edgeWeight)) {
       return edgeWeight > 0 ? edgeWeight : 1
     }
@@ -820,5 +822,5 @@ const ClusteringAlgorithm = {
   LABEL_PROPAGATION: 5
 }
 
-// Run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -94,7 +94,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /**
    * Creates and configures a layout.
-   * @param graphComponent The <code>GraphComponent</code> to apply the configuration on.
+   * @param graphComponent The {@link GraphComponent} to apply the configuration on.
    * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
@@ -482,7 +482,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
   getBusId: function (edge, busType) {
     switch (busType) {
       case BusType.LABEL:
-        return edge.labels.size > 0 ? edge.labels.elementAt(0).text : ''
+        return edge.labels.at(0)?.text ?? ''
       case BusType.TAG:
         return edge.tag
       default:

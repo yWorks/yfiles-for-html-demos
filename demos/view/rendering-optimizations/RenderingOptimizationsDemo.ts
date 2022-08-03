@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,6 +29,7 @@
 import {
   Animator,
   BaseClass,
+  ClickEventArgs,
   Color,
   Cursor,
   EdgePathLabelModel,
@@ -92,17 +93,16 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp,
   showLoadingIndicator
 } from '../../resources/demo-app'
 import PreConfigurator from './resources/PreConfigurator'
 import samples from './resources/samples'
-import loadJson from '../../resources/load-json'
 import { isWebGl2Supported, isWebGlSupported } from '../../utils/Workarounds'
 import { createUrlIcon } from '../../utils/IconCreation'
 import { FPSMeter } from './FPSMeter'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -198,8 +198,8 @@ const disabledButtonsDuringAnimation: HTMLButtonElement[] = [
 /**
  * Runs the demo.
  */
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -208,7 +208,7 @@ async function run(licenseData: object): Promise<void> {
 
   // assign the custom GraphModelManager
   fastGraphModelManager = createFastGraphModelManager(graphComponent)
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager(graphComponent)
+  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
 
   await prepareWebGL2Rendering()
 
@@ -344,7 +344,7 @@ function hideTooltip(): void {
 
 /**
  * Sets the custom {@link FastGraphModelManager} as the graphComponent's
- * {@link GraphComponent#graphModelManager}.
+ * {@link GraphComponent.graphModelManager}.
  */
 function createFastGraphModelManager(graphComponent: GraphComponent): FastGraphModelManager {
   const fastGraphModelManager = new FastGraphModelManager(
@@ -1447,8 +1447,8 @@ function querySelector<T extends HTMLElement>(selector: string): T {
   return document.querySelector(selector) as T
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()
 
 class StyledWebGL2GraphModelManager extends WebGL2GraphModelManager {
   private _defaultStyles: WebGLStyles | null = null
@@ -1543,6 +1543,10 @@ class InvisibleHandleWrapper extends BaseClass(IHandle) {
 
   get type(): HandleTypes {
     return HandleTypes.INVISIBLE
+  }
+
+  handleClick(evt: ClickEventArgs): void {
+    this._coreHandle.handleClick(evt)
   }
 }
 

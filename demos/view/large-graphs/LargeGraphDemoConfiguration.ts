@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   DefaultLabelStyle,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
+  GeneralPath,
   IEdge,
   IEdgeStyle,
   IGraph,
@@ -37,18 +38,18 @@ import {
   ImageNodeStyle,
   INode,
   INodeStyle,
-  PanelNodeStyle,
   Point,
   Rect,
   Size,
+  WebGL2Effect,
   WebGL2IconNodeStyle,
-  WebGL2NodeEffect,
   WebGL2PolylineEdgeStyle,
   WebGL2ShapeNodeShape,
   WebGL2ShapeNodeStyle
 } from 'yfiles'
 import getSVGDataURL from './SVGDataURLFetch'
 import { DemoConfiguration } from './DemoConfiguration'
+import { createDemoGroupStyle } from '../../resources/demo-styles'
 
 abstract class LargeGraphDemoConfiguration extends DemoConfiguration {
   svgThreshold = 0.5
@@ -120,7 +121,7 @@ abstract class LargeGraphDemoConfiguration extends DemoConfiguration {
       backgroundFill: '#dfff'
     })
 
-    graph.groupNodeDefaults.style = new PanelNodeStyle({ color: '#bbb', insets: 5 })
+    graph.groupNodeDefaults.style = createDemoGroupStyle({})
   }
 
   protected createNode(graph: IGraph, id: any, layout: Rect, nodeData: any) {
@@ -163,9 +164,9 @@ abstract class LargeGraphDemoConfiguration extends DemoConfiguration {
     return new WebGL2IconNodeStyle({
       icon: imageData,
       shape: WebGL2ShapeNodeShape.ELLIPSE,
-      fill: null,
-      stroke: null,
-      effect: WebGL2NodeEffect.NONE
+      fill: 'white',
+      stroke: 'none',
+      effect: WebGL2Effect.NONE
     })
   }
 
@@ -182,7 +183,12 @@ abstract class LargeGraphDemoConfiguration extends DemoConfiguration {
     for (const gender of ['female', 'male']) {
       for (let i = 0; i < 5; i++) {
         const dataURL = await getSVGDataURL(`resources/icons/usericon_${gender}${i + 1}.svg`)
-        this.imageNodeStyles[count] = new ImageNodeStyle(dataURL)
+        const circlePath = new GeneralPath()
+        circlePath.appendEllipse(new Rect(0, 0, 1, 1), false)
+        this.imageNodeStyles[count] = new ImageNodeStyle({
+          image: dataURL,
+          normalizedOutline: circlePath
+        })
         this.webGL2NodeStyles[count] = await this.createWebGL2NodeStyle(dataURL, ctx, image)
         count++
       }

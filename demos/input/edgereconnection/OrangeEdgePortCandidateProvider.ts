@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,7 +50,7 @@ export default class OrangeEdgePortCandidateProvider
   edge: IEdge
 
   /**
-   * Creates a new instance of <code>OrangeEdgePortCandidateProvider</code>.
+   * Creates a new instance of {@link OrangeEdgePortCandidateProvider}.
    * @param edge The given edge
    */
   constructor(edge: IEdge) {
@@ -62,7 +62,7 @@ export default class OrangeEdgePortCandidateProvider
    * Returns candidates for all ports at orange nodes in the graph, except
    * for the current target node to avoid the creation of selfloops.
    * @param context The context for which the candidates should be provided
-   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getSourcePortCandidates}.
+   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getSourcePortCandidates}.
    */
   getSourcePortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const result = new List<IPortCandidate>()
@@ -91,7 +91,7 @@ export default class OrangeEdgePortCandidateProvider
    * Returns candidates for all ports at orange nodes in the graph, except
    * for the current source node to avoid the creation of selfloops.
    * @param context The context for which the candidates should be provided
-   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
+   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getTargetPortCandidates}.
    */
   getTargetPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const result = new List<IPortCandidate>()

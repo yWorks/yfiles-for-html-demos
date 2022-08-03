@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,16 +55,11 @@ import {
 } from 'yfiles'
 import { GraphDropInputMode } from '../../input/graph-drag-and-drop/GraphDropInputMode'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
-import {
-  addClass,
-  bindAction,
-  bindCommand,
-  checkLicense,
-  removeClass,
-  showApp
-} from '../../resources/demo-app'
+import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
 import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
-import loadJson from '../../resources/load-json'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -85,10 +80,11 @@ let keepComponents = false
  */
 let componentCount = 0
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputModes()
   initializeGraph()
@@ -101,7 +97,7 @@ async function run(licenseData: object): Promise<void> {
 }
 
 /**
- * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent#inputMode}
+ * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and initializes the input mode for dropping components.
  */
 function initializeInputModes(): void {
@@ -461,4 +457,5 @@ function registerCommands(): void {
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

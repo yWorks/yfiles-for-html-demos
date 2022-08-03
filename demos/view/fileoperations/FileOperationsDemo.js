@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,12 +44,9 @@ import SaveToFileOperation from './SaveToFileOperation.js'
 import SaveToNewWindowOperation from './SaveToNewWindowOperation.js'
 import SaveToWebStorageOperation from './SaveToWebStorageOperation.js'
 import SaveViaServerOperation from './SaveViaServerOperation.js'
-import { bindAction, checkLicense, showApp } from '../../resources/demo-app.js'
-import DemoStyles, {
-  DemoSerializationListener,
-  initDemoStyles
-} from '../../resources/demo-styles.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 const STORAGE_LOCATION = StorageLocation.LOCAL_STORAGE
 const STORAGE_URI = 'www.yworks.com/yFilesHTML/GraphML/'
@@ -77,12 +74,13 @@ let saveViaServerOperation
 let ioh
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.graph = createConfiguredGraph()
 
   // configure user interaction
@@ -90,7 +88,8 @@ function run(licenseData) {
     allowGroupingOperations: true
   })
 
-  ioh = createIoHandler()
+  // create an io handler for reading and writing graphs
+  ioh = new GraphMLIOHandler()
 
   // initialize open and save operations
   initializeOperations()
@@ -121,25 +120,9 @@ function createConfiguredGraph() {
   const graph = foldingView.graph
 
   // initialize default style for nodes and edges
-  initDemoStyles(graph)
+  initDemoStyles(graph, { foldingEnabled: true })
 
   return graph
-}
-
-/**
- * Creates a new GraphMLIOHandler instance that supports readng and writing demo styles.
- * @returns {!GraphMLIOHandler}
- */
-function createIoHandler() {
-  const handler = new GraphMLIOHandler()
-
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  handler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  handler.addHandleSerializationListener(DemoSerializationListener)
-  return handler
 }
 
 /**
@@ -302,5 +285,5 @@ function querySelector(selector) {
   return document.querySelector(selector)
 }
 
-// Runs the demo.
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

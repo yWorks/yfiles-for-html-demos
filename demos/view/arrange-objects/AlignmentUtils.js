@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -65,7 +65,7 @@ export function alignLeft(graph, nodes) {
 }
 
 /**
- * Aligns the given nodes such that <code>y + height</code> is the same value for all nodes.
+ * Aligns the given nodes such that `y + height` is the same value for all nodes.
  * @param {!IGraph} graph the graph that contains the given nodes.
  * @param {!IEnumerable.<INode>} nodes the nodes to be repositioned.
  */
@@ -76,7 +76,7 @@ export function alignBottom(graph, nodes) {
 }
 
 /**
- * Aligns the given nodes such that <code>x + width</code> is the same value for all nodes.
+ * Aligns the given nodes such that `x + width` is the same value for all nodes.
  * @param {!IGraph} graph the graph that contains the given nodes.
  * @param {!IEnumerable.<INode>} nodes the nodes to be repositioned.
  */
@@ -116,6 +116,10 @@ export function alignVertically(graph, nodes) {
  * @param {!('x'|'y')} coordinate the coordinate property to use for positioning the nodes.
  */
 function alignMinCoordImpl(graph, nodes, coordinate) {
+  if (nodes.size == 0) {
+    return
+  }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
 
   const min = nodes.reduce(
@@ -138,6 +142,10 @@ function alignMinCoordImpl(graph, nodes, coordinate) {
  * @param {!('width'|'height')} size the size property to use for positioning the nodes.
  */
 function alignMaxCoordImpl(graph, nodes, coordinate, size) {
+  if (nodes.size == 0) {
+    return
+  }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
 
   const max = nodes.reduce(
@@ -145,7 +153,7 @@ function alignMaxCoordImpl(graph, nodes, coordinate, size) {
     nodes.first().layout[coordinate]
   )
   // technically, the initial value should be
-  //   nodes.first().layout[coordinate] + nodes.first().layout[size]
+  //   nodes.at(0).layout[coordinate] + nodes.at(0).layout[size]
   // but since the reduction calculates a maximum and nodes must have non-negative width and height,
   // it does not matter for the result
   for (const node of nodes) {
@@ -164,6 +172,10 @@ function alignMaxCoordImpl(graph, nodes, coordinate, size) {
  * @param {!('width'|'height')} size the size property to use for positioning the nodes.
  */
 function alignCenterCoordImpl(graph, nodes, coordinate, size) {
+  if (nodes.size == 0) {
+    return
+  }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
 
   const node = nodes.reduce(
@@ -215,6 +227,10 @@ export function distributeVertically(graph, nodes, minimumSpacing = 0) {
  * @param {!('width'|'height')} size the size property to use for positioning the nodes.
  */
 function distributeImpl(graph, nodes, minimumSpacing, coordinate, size) {
+  if (nodes.size == 0) {
+    return
+  }
+
   const edit = graph.beginEdit('Distribute Nodes', 'Distribute Nodes')
 
   const fnl = nodes.first().layout

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,13 +36,12 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphOverviewComponent,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   HierarchicLayout,
   ICommand,
   IModelItem,
   INode,
-  INodeInsetsProvider,
-  Insets,
-  InteriorStretchLabelModel,
   ItemEventArgs,
   LayoutExecutor,
   License,
@@ -59,9 +58,9 @@ import {
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import GraphBuilderData from './resources/graph.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -70,11 +69,10 @@ let graphComponent = null
 let dateMapper = null
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
-
+async function run() {
+  License.value = await fetchLicense()
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -217,7 +215,7 @@ function enableDataBinding() {
 /**
  * Setup tooltips that return the value that is stored in the mapper.
  * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
- * the {@link MouseHoverInputMode#addQueryToolTipListener QueryToolTip} event of the
+ * the {@link MouseHoverInputMode.addQueryToolTipListener QueryToolTip} event of the
  * GraphEditorInputMode using the
  * {@link ToolTipQueryEventArgs} parameter.
  * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
@@ -317,33 +315,24 @@ function enableUndo() {
  */
 function configureGroupNodeStyles() {
   const graph = graphComponent.graph
-  // Creates a rectangular shape with a white background
-  graph.groupNodeDefaults.style = new ShapeNodeStyle({
-    fill: 'white',
-    stroke: '2px #0b7189'
+
+  // set the style, label and label parameter for group nodes
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: '#0b7189',
+    tabPosition: 'left',
+    contentAreaFill: '#9dc6d0'
   })
 
-  // Sets a label style with right-aligned text
+  // Sets a label style with left-aligned text
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
-    horizontalTextAlignment: 'right',
-    textFill: 'white',
-    backgroundFill: '#0b7189',
-    insets: [2, 5]
+    horizontalTextAlignment: 'center',
+    textFill: 'white'
   })
 
-  // Places the label at the top inside of the panel.
-  // For group nodes, InteriorStretchLabelModel is usually the most appropriate label model
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
-
-  // reserve space for the label by setting larger top insets
-  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementationWrapper(
-    (node, provider) => {
-      if (graph.isGroupNode(node)) {
-        return INodeInsetsProvider.create(() => new Insets(10, 25, 10, 10))
-      }
-      return provider
-    }
-  )
+  // Places the label inside the tab area of the group node.
+  // For the GroupNodeStyle, GroupNodeLabelModel is usually the most appropriate label model.
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 }
 
 /**
@@ -419,8 +408,8 @@ function setDefaultStyles() {
 /**
  * Updates the content rectangle to encompass all existing graph elements.
  * If you create your graph elements programmatically, the content rectangle
- * (i.e. the rectangle in <b>world coordinates</b>
- * that encloses the graph) is <b>not</b> updated automatically to enclose these elements.
+ * (i.e. the rectangle in __world coordinates__
+ * that encloses the graph) is __not__ updated automatically to enclose these elements.
  * Typically, this manifests in wrong/missing scrollbars, incorrect {@link GraphOverviewComponent}
  * behavior and the like.
  *
@@ -480,5 +469,5 @@ function registerCommands() {
   // ////////////////////////////////////////////////////
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

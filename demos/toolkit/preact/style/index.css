@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -88,10 +88,20 @@
   justify-content: space-between;
 }
 .item-list {
-  width: 200px;
-  padding: 10px;
+  width: 320px;
+  padding: 0 15px 0.83em 20px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: #ebeef0;
 }
 
 .item-list > * {
   margin-bottom: 10px;
+}
+
+.add-button {
+  width: 7.5em;
+  margin: 10px 0;
+  padding: 3px;
+  border: 1px solid #888;
 }

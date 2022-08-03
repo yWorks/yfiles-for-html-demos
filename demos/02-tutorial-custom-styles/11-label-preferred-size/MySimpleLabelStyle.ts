@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -66,7 +66,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
-   * @see Overrides {@link LabelStyleBase#getPreferredSize}
+   * @see Overrides {@link LabelStyleBase.getPreferredSize}
    */
   getPreferredSize(label: ILabel): Size {
     // first measure
@@ -150,7 +150,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates the visual for a label to be drawn.
-   * @see Overrides {@link LabelStyleBase#createVisual}
+   * @see Overrides {@link LabelStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, label: ILabel): SvgVisual {
     // This implementation creates a 'g' element and uses it for the rendering of the label.

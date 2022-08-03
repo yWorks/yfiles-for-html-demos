@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -136,7 +136,7 @@ export default class ActivityNodeStyle extends NodeStyleBase {
    * Updates the visual element for the node with the current data.
    * @param context - The render context.
    * @param oldVisual - The visual that has been created in the call to
-   *   {@link NodeStyleBase#createVisual}.
+   *   {@link NodeStyleBase.createVisual}.
    * @param node - The node to which this style instance is assigned.
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): SvgVisual {

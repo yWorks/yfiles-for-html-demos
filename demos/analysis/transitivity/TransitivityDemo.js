@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -88,13 +88,12 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp,
   showLoadingIndicator
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { createBasicNodeStyle } from '../../resources/basic-demo-styles.js'
+import { createDemoNodeStyle } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * @typedef {Object} NpmPackageInfo
@@ -166,7 +165,7 @@ let layoutInProgress = false
  */
 function setLayoutInProgress(inProgress) {
   if (!busy) {
-    // only change toolbar-state when not busy loading npm-packages
+    // only change toolbar-state when not busy loading npm packages
     // since there are layout calculations during loading
     setUIDisabled(inProgress)
   }
@@ -174,14 +173,14 @@ function setLayoutInProgress(inProgress) {
 }
 
 /**
- * Marks whether or not the demo is currently loading npm-packages.
+ * Marks whether or not the demo is currently loading npm packages.
  * When busy, the mouse cursor is changed and the toolbar as well as the input modes are disabled.
  * @type {boolean}
  */
 let busy = false
 
 /**
- * Updates the UI according to whether the demo is busy loading npm-packages.
+ * Updates the UI according to whether the demo is busy loading npm packages.
  * @param {boolean} isBusy
  */
 function setBusy(isBusy) {
@@ -199,16 +198,16 @@ function setBusy(isBusy) {
 let algorithmComboBox
 
 /**
- * Text box to request the dependency graph for a certain npm-package.
- * It is only available if npm-packages are browsed.
+ * Text box to request the dependency graph for a certain npm package.
+ * It is only available if npm packages are browsed.
  * @type {HTMLInputElement}
  */
 let packageTextBox
 
 /**
  * Combo box to select one of the two samples.
- * There is an dependency graph of the <em>yFiles for HTML</em> modules as well as the possibility
- * to browse npm-packages with their dependencies.
+ * There is an dependency graph of the __yFiles for HTML__ modules as well as the possibility
+ * to browse npm packages with their dependencies.
  * @type {HTMLSelectElement}
  */
 let samplesComboBox
@@ -221,7 +220,7 @@ let samplesComboBox
 let addedEdges = []
 
 /**
- * Holds all nodes that are added when loading npm-packages and are not part of the layout, yet.
+ * Holds all nodes that are added when loading npm packages and are not part of the layout, yet.
  * If the number of these nodes reaches a certain limit, they are inserted in the layout
  * incrementally.
  * @type {Array}
@@ -275,8 +274,8 @@ let incrementalEdges = []
 let showTransitiveEdges = true
 
 /**
- * Stores all npm-packages that have been visited to be able to reuse those nodes instead of
- * reloading them. This mapper will be cleared when switching samples or loading a new npm-package
+ * Stores all npm packages that have been visited to be able to reuse those nodes instead of
+ * reloading them. This mapper will be cleared when switching samples or loading a new npm package
  * graph.
  * @type {IMap.<string,INode>}
  */
@@ -284,7 +283,7 @@ let visitedPackages
 
 /**
  * The node whose dependencies are currently shown.
- * This is used for determining if it is necessary to reload the npm-package graph.
+ * This is used for determining if it is necessary to reload the npm package graph.
  * @type {INode}
  */
 let startNode = null
@@ -303,10 +302,10 @@ let dependenciesNo = 0
 
 /**
  * Starts a demo that shows how to use the yFiles transitivity algorithms.
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
 
   samplesComboBox = document.getElementById('samplesComboBox')
@@ -607,7 +606,7 @@ function initializeStyles() {
  */
 function initializeGraph() {
   const graph = filteredGraph
-  graph.nodeDefaults.style = new PackageNodeStyleDecorator(createBasicNodeStyle('demo-palette-56'))
+  graph.nodeDefaults.style = new PackageNodeStyleDecorator(createDemoNodeStyle('demo-palette-56'))
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     textFill: 'white'
   })
@@ -702,10 +701,10 @@ async function loadGraph() {
 }
 
 /**
- * Updates the graph by filling it with nodes that represent npm-packages.
+ * Updates the graph by filling it with nodes that represent npm packages.
  * The packages are loaded asynchronously from the internet.
  * @param {!NpmPackageInfo} pckg - the start package info
- * @param {boolean} incremental <code>true</code> if the layouts should be incremental
+ * @param {boolean} incremental `true` if the layouts should be incremental
  * @returns {!Promise}
  */
 async function updateGraph(pckg, incremental) {
@@ -838,7 +837,7 @@ async function addDependencies(pred, predDependencies, incremental) {
 }
 
 /**
- * Returns the edge between the two given nodes in the graph or <code>null</code> if there is none.
+ * Returns the edge between the two given nodes in the graph or `null` if there is none.
  * @param {!IGraph} graph the graph to which the edge belongs
  * @param {!INode} node1 one incident node to the edge
  * @param {!INode} node2 another incident node to the edge
@@ -855,7 +854,7 @@ function getEdge(graph, node1, node2) {
 }
 
 /**
- * Unfolds dependencies in the npm-graph that were not loaded because the graph was already large,
+ * Unfolds dependencies in the npm graph that were not loaded because the graph was already large,
  * asynchronously. This function is called when the plus-sign on the right of the node is clicked.
  * @param {!INode} pred the node that represents the predecessor
  * @param {boolean} incremental whether or not the layout should be incremental
@@ -919,22 +918,21 @@ async function onAddDependencies(pred, incremental) {
  * @returns {!Promise}
  */
 async function tryLayout(incremental) {
-  // this method should return a promise so that resolve in method addDependencies is called
-  // only if layout is done
-  if (!layoutInProgress && addedNodes.length > 5) {
-    for (let i = 5; i > 0; --i) {
-      const node = addedNodes.shift()
-      filteredNodes.add(node)
-      incrementalNodes.push(node)
-      filteredGraph.nodePredicateChanged(node)
-    }
-    await applyLayout(incremental)
+  if (layoutInProgress || addedNodes.length <= 5) {
+    return
   }
+  for (let i = 5; i > 0; --i) {
+    const node = addedNodes.shift()
+    filteredNodes.add(node)
+    incrementalNodes.push(node)
+    filteredGraph.nodePredicateChanged(node)
+  }
+  await applyLayout(incremental)
 }
 
 /**
- * Send a query for the given url that requests data about npm-packages.
- * @param {!string} url The url that is used to request data about npm-packages.
+ * Send a query for the given url that requests data about npm packages.
+ * @param {!string} url The url that is used to request data about npm packages.
  * @returns {!Promise}
  */
 async function requestData(url) {
@@ -980,16 +978,16 @@ async function fetchDependencies(pckg) {
  * @returns {!Promise}
  */
 async function onAlgorithmChanged() {
-  if (!algorithmComboBox) {
+  const transitiveEdgesLabel = document.querySelector('#showTransitiveEdgesLabel')
+  if (algorithmComboBox == null || transitiveEdgesLabel == null) {
     return
   }
 
   // only show button to toggle transitive edges when 'Transitive Reduction' is selected
-  const transitiveEdgesLabel = document.getElementById('showTransitiveEdgesLabel')
   transitiveEdgesLabel.style.display =
     algorithmComboBox.selectedIndex === 2 ? 'inline-block' : 'none'
 
-  if (incrementalNodes) {
+  if (incrementalNodes != null) {
     incrementalNodes = []
   }
 
@@ -1003,19 +1001,20 @@ async function onAlgorithmChanged() {
  * Loads the selected sample when the samples are switched in the combo box.
  */
 function onSampleGraphChanged() {
-  // only show npm-toolbar when 'NPM Graph' is selected
-  const npmToolbar = document.getElementById('npm-toolbar')
-  npmToolbar.style.display =
-    samplesComboBox.selectedIndex === SampleName.NPM_PACKAGES_SAMPLE ? 'inline' : 'none'
-
-  // update graph information
-  if (samplesComboBox.selectedIndex === SampleName.YFILES_MODULES_SAMPLE) {
-    resetTable('yfiles')
-  } else {
-    resetTable(packageTextBox.value)
+  // only show npm toolbar when 'NPM Graph' is selected
+  const npmToolbar = document.querySelector('#npm-toolbar')
+  if (npmToolbar != null) {
+    npmToolbar.style.display =
+      samplesComboBox.selectedIndex === SampleName.NPM_PACKAGES_SAMPLE ? 'inline' : 'none'
   }
 
-  // load the selected sample graph
+  // update graph information
+  resetTable(
+    samplesComboBox.selectedIndex === SampleName.YFILES_MODULES_SAMPLE
+      ? 'yfiles'
+      : packageTextBox.value
+  )
+
   loadGraph()
 }
 
@@ -1253,8 +1252,8 @@ function resetGraph() {
 
 /**
  * Applies the layout to the current graph.
- * @param {boolean} incremental <code>true</code> if an incremental layout is desired,
- *   <code>false</code> otherwise
+ * @param {boolean} incremental `true` if an incremental layout is desired,
+ *   `false` otherwise
  * @returns {!Promise}
  */
 async function applyLayout(incremental) {
@@ -1412,11 +1411,11 @@ function existPendingRelations(packageNode) {
 
 /**
  * Updates the table when dependencies are loaded.
- * @param {!INode} packageNode the start node
+ * @param {?INode} packageNode the start node
  */
 function updateGraphInformation(packageNode) {
   const table = document.getElementById('graph-information')
-  table.rows[0].cells[1].innerHTML = packageNode.labels.get(0).text
+  table.rows[0].cells[1].innerHTML = packageNode?.labels.at(0)?.text || ''
 
   // remove the dependents row if the graph is not module
   if (samplesComboBox.selectedIndex === SampleName.YFILES_MODULES_SAMPLE) {
@@ -1427,13 +1426,12 @@ function updateGraphInformation(packageNode) {
   }
 
   // take packageText's dependencies and check if there exist pending dependencies
-  const dependencies = dependenciesNo
   // if the graph is modules there exist no pending dependencies
   const existPendingDependencies =
-    samplesComboBox.selectedIndex === SampleName.NPM_PACKAGES_SAMPLE
+    samplesComboBox.selectedIndex === SampleName.NPM_PACKAGES_SAMPLE && packageNode != null
       ? existPendingRelations(packageNode)
       : false
-  table.rows[2].cells[1].innerHTML = `${dependencies}${
+  table.rows[2].cells[1].innerHTML = `${dependenciesNo}${
     existPendingDependencies ? '<sup>+</sup>' : ''
   }`
 
@@ -1447,7 +1445,10 @@ function updateGraphInformation(packageNode) {
  * @param {!string} packageName the name of the start package
  */
 function resetTable(packageName) {
-  const table = document.getElementById('graph-information')
+  const table = document.querySelector('#graph-information')
+  if (table == null) {
+    return
+  }
   table.rows[0].cells[1].innerHTML = packageName
   table.rows[1].cells[1].innerHTML = ''
   table.rows[2].cells[1].innerHTML = ''
@@ -1601,5 +1602,5 @@ class TagMementoSupport extends BaseClass(IMementoSupport) {
   }
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -93,8 +93,8 @@ function run() {
 
 /**
  * Runs the web worker layout task.
- * @param {boolean} clearUndo Specifies whether the undo queue should be cleared after the layout
- * calculation. This is set to <code>true</code> if this method is called directly after
+ * @param clearUndo Specifies whether the undo queue should be cleared after the layout
+ * calculation. This is set to `true` if this method is called directly after
  * loading a new sample graph.
  */
 async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
@@ -307,7 +307,7 @@ function initializeGraph() {
 
 /**
  * Creates the sample graph for this demo.
- * @param {IGraph} graph The input graph to be filled.
+ * @param graph The input graph to be filled.
  */
 function createSampleGraph(graph: IGraph) {
   graph.clear()
@@ -379,7 +379,7 @@ function createSampleGraph(graph: IGraph) {
 /**
  * Generate and add random labels for a collection of ModelItems.
  * Existing items will be deleted before adding the new items.
- * @param {IList.<ILabelOwner>} items the collection of items the labels are
+ * @param items the collection of items the labels are
  *   generated for
  */
 function generateItemLabels(items: IList<ILabelOwner>) {
@@ -914,5 +914,5 @@ function getLoremIpsum() {
   ]
 }
 
-// start demo
+// noinspection JSIgnoredPromiseFromCall
 run()

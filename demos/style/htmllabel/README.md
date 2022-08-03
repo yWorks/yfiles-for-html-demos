@@ -20,3 +20,10 @@ Note that the visualizations in this demo do not work in Internet Explorer due t
 #### Styling Labels with CSS
 
 The stylesheet for labels _html-label.css_ shows how the label texts are styled.
+
+## Related Demos
+
+- [Default Label Style](../default-label-style/index.html)
+- [Markdown Label](../markdownlabel/index.html)
+- [Rich Text Label](../richtextlabel/index.html)
+- [Tutorial: Custom Label Style](../../02-tutorial-custom-styles/10-custom-label-style/index.html)

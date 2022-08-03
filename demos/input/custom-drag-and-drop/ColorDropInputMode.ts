@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -123,7 +123,7 @@ export class ColorDropInputMode extends DropInputMode {
 
   /**
    * Return an {@link INode} or an {@link IEdge} at the given location, when its color can be changed.
-   * If there is no such item, <code>null</code> will be returned.
+   * If there is no such item, `null` will be returned.
    */
   private getDropTarget(dragLocation: Point): INode | IEdge | null {
     const validDrag =
@@ -148,10 +148,9 @@ export class ColorDropInputMode extends DropInputMode {
     if (hitTester) {
       // hit testing needs to be done with a context whose parent input mode is this mode,
       // because hit testables may behave differently depending on context
-      // this is e.g. the case for DemoGroupStyle, see DemoGroupStyle#isHit in
-      // ../../resources/demo-styles.ts
+      // this is e.g. the case for GroupNodeStyle
       const childContext = IInputModeContext.createInputModeContext(this, context)
-      return hitTester.enumerateHits(childContext, location).firstOrDefault(isEdgeOrNode) as
+      return hitTester.enumerateHits(childContext, location).find(isEdgeOrNode) as
         | IEdge
         | INode
         | null
@@ -225,11 +224,10 @@ export class ColorDropInputMode extends DropInputMode {
   /**
    * Sets the {@link DragEventArgs.dropEffect drop effect} to {@link DragDropEffects.COPY copy} if
    * the current drop target is valid or to {@link DragDropEffects.NONE none} otherwise.
-   * <p>
-   * Depending on the current drop effect the CSS class <code>yfiles-cursor-dragdrop-copy</code> or
-   * <code>yfiles-cursor-dragdrop-no-drop</code> is assigned to the element hovered during the drag
+   *
+   * Depending on the current drop effect the CSS class `yfiles-cursor-dragdrop-copy` or
+   * `yfiles-cursor-dragdrop-no-drop` is assigned to the element hovered during the drag
    * operation. This allows for updating the mouse cursor using CSS classes.
-   * </p>
    */
   protected adjustEffect(evt: DragEventArgs): boolean {
     if (super.adjustEffect(evt)) {

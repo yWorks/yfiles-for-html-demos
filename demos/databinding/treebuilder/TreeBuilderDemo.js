@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,12 +50,13 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
 import { SchemaComponent } from './SchemaComponent.js'
 import samples from './samples.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 const samplesComboBox = document.getElementById('samplesComboBox')
 
@@ -83,12 +84,13 @@ let existingNodes
  * In order to visualize the nodes, {@link TemplateNodeStyle} is used. The style's
  * node template can also be changed interactively in order to display arbitrary data
  * of the business data associated with the node.
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   schemaComponent = new SchemaComponent('schemaGraphComponent', graphComponent.graph, () => {
     // noinspection JSIgnoredPromiseFromCall
@@ -147,7 +149,7 @@ function registerCommands() {
 
 /**
  * Builds the graph from data.
- * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
+ * @param {boolean} update `true` when the following layout should be incremental, `false`
  *   otherwise
  * @returns {!Promise}
  */
@@ -179,7 +181,7 @@ async function buildGraphFromData(update) {
 
 /**
  * Applies the layout.
- * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
+ * @param {boolean} update `true` when the following layout should be incremental, `false`
  *   otherwise
  * @returns {!Promise}
  */
@@ -266,5 +268,5 @@ function initializeLayout() {
   })
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -53,11 +53,13 @@ import GraphSearch from '../../utils/GraphSearch.js'
 import ClickablePortsSupport from './ClickablePortsSupport.js'
 import PrintingSupport from '../../utils/PrintingSupport.js'
 import OrgChartPropertiesView from './OrgChartPropertiesView.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import OrgChartData from './resources/OrgChartData.js'
 import OrgChartGraph from './OrgChartGraph.js'
-import loadJson from '../../resources/load-json.js'
 import VuejsNodeStyle from '../../utils/VuejsNodeStyle.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * @typedef {Object} Employee
@@ -92,15 +94,15 @@ let graphSearch = null
 let clickablePortsSupport = null
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.focusIndicatorManager.showFocusPolicy = ShowFocusPolicy.ALWAYS
   graphComponent.selectionIndicatorManager.enabled = false
-  graphComponent.focusIndicatorManager.enabled = false
 
   overviewComponent = new GraphOverviewComponent('overviewComponent')
   overviewComponent.graphComponent = graphComponent
@@ -553,4 +555,5 @@ class OrgChartGraphSearch extends GraphSearch {
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

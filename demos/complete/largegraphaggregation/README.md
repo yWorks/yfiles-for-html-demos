@@ -18,8 +18,9 @@ The _Aggregation Mode_ determines if nodes are combined in clusters based on the
 
 ## Things to Try
 
+- Switch between the **two layout styles** offered for visualizing the aggregated graph (i.e. [BalloonLayout](https://docs.yworks.com/yfileshtml/#/api/BalloonLayout) and [CactusGroupLayout](https://docs.yworks.com/yfileshtml/#/api/CactusGroupLayout)). This re-runs the aggregation as well.
 - Click on an aggregated node to **show** its children in the aggregation hierarchy.
-- Click on an separated node to **hide** its children in the aggregation hierarchy.
+- Click on a separated node to **hide** its children in the aggregation hierarchy.
 - Explore the **configuration options** of the aggregation algorithm.
 - Run the aggregation algorithm with the selected settings by pressing the **Run** button.
 - Click **Switch To Filtered View** to hide the aggregation nodes and only show the actual nodes of the graph that are currently explored.

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,7 @@ const OK_STATE = 'OK'
 const ERROR_STATE = 'Error!'
 
 /**
- * Set to <code>true</code> when the dialog is open. Prevents opening of multiple error dialogs.
+ * Set to `true` when the dialog is open. Prevents opening of multiple error dialogs.
  * @type {boolean}
  */
 let errorDialogOpen = false
@@ -130,8 +130,8 @@ export function registerErrorDialog() {
 }
 
 function getInnermostMessage(error) {
-  if (error.innerException) {
-    return getInnermostMessage(error.innerException)
+  if (error.cause) {
+    return getInnermostMessage(error.cause)
   }
   return typeof error.name !== 'undefined' ? `${error.name}: ${error.message}` : error.message
 }
@@ -141,16 +141,18 @@ function unwindStack(error) {
   if (!stack || stack.length === 0) {
     stack = '<no stack available>'
   }
-  if (error.innerException) {
-    return `${stack}\nCaused by:\n${unwindStack(error.innerException)}`
+  if (error.cause) {
+    return `${stack}\nCaused by:\n${unwindStack(error.cause)}`
   }
   return stack
 }
 
 /**
- * Opens an error dialog that shows information about an error and allows sending of an error report to yWorks.
+ * Opens an error dialog that shows information about an error and allows sending of an error
+ * report to yWorks.
  *
- * @param {string|null} errorMessage An optional error massage in case no Error instance is available.
+ * @param {string|null} errorMessage An optional error massage in case no Error instance is
+ *   available.
  * @param {string|null} url The optional URL of the script where the error was raised.
  * @param {number} lineNumber The line number where the error occurred.
  * @param {number} columnNumber The line number where the error occurred.
@@ -192,7 +194,8 @@ function openErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
 /**
  * Creates a simplified error dialog that shows information about an error.
  *
- * @param {string|null} errorMessage An optional error massage in case no Error instance is available.
+ * @param {string|null} errorMessage An optional error massage in case no Error instance is
+ *   available.
  * @param {string} url The URL of the script where the error was raised.
  * @param {number} lineNumber The line number where the error occurred.
  * @param {number} columnNumber The line number where the error occurred.
@@ -240,9 +243,11 @@ function createSimpleErrorDialog(errorMessage, url, lineNumber, columnNumber, er
 }
 
 /**
- * Creates an error dialog that shows information about an error and allows sending of an error report to yWorks.
+ * Creates an error dialog that shows information about an error and allows sending of an error
+ * report to yWorks.
  *
- * @param {string|null} errorMessage An optional error massage in case no Error instance is available.
+ * @param {string|null} errorMessage An optional error massage in case no Error instance is
+ *   available.
  * @param {string} url The URL of the script where the error was raised.
  * @param {number} lineNumber The line number where the error occurred.
  * @param {number} columnNumber The line number where the error occurred.
@@ -251,10 +256,16 @@ function createSimpleErrorDialog(errorMessage, url, lineNumber, columnNumber, er
  */
 function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
   const actionUrl = 'https://www.yworks.com/actions/errorReportHtmlDemos'
-  const { dialogAnchor, dialogPanel, contentPanel } = createPlainDialog('Report Error to yWorks')
+  const { dialogAnchor, dialogPanel, contentPanel } = createPlainDialog('Report an error to yWorks')
   const parent = document.body
 
   addClass(dialogPanel, 'demo-error-dialog')
+
+  const messageElement = document.createElement('div')
+  messageElement.innerHTML =
+    '<p style="border-top: 0">An error occurred. If you think the cause is a problem in the yFiles for HTML library, you can use this dialog to send a bug report to yWorks.</p>' +
+    '<p>We may not respond to other reports. If there is a problem in your implementation or if you have a question regarding the usage of yFiles, please contact yWorks support via the <a href="https://my.yworks.com" target="_blank">yWorks Customer Center</a>.</p>'
+  contentPanel.appendChild(messageElement)
 
   const form = document.createElement('form')
   addClass(form, 'demo-properties')
@@ -276,7 +287,7 @@ function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
   const inputEmail = addFormRow(
     form,
     'email',
-    "E-Mail <span class='optional'>In case we need to contact you</span>",
+    "Email <span class='optional'>Optional, just in case we need to contact you</span>",
     'text',
     '',
     true
@@ -284,7 +295,7 @@ function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
   const systemInfo = addFormRow(
     form,
     'system',
-    'System Info',
+    'System info',
     'textarea',
     `appVersion: ${window.navigator.appVersion}\nVendor: ${window.navigator.vendor}\nOS: ${window.navigator.platform}\nuserAgent: ${window.navigator.userAgent}`
   )
@@ -300,7 +311,7 @@ function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
     tryAddFormRow(
       form,
       'error_message',
-      'Original Error Message',
+      'Original error message',
       'text',
       getInnermostMessage(error)
     )
@@ -308,7 +319,7 @@ function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
     tryAddFormRow(
       form,
       'error_line',
-      'Error Line',
+      'Error line',
       'text',
       typeof error.line !== 'undefined' ? error.line : error.lineNumber
     )
@@ -316,7 +327,7 @@ function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
     tryAddFormRow(form, 'error_source', 'Error Source', 'text', error.sourceURL)
   }
 
-  const inputComment = addFormRow(form, 'comment', 'Additional Comments', 'textarea', '', true)
+  const inputComment = addFormRow(form, 'comment', 'Additional comments', 'textarea', '', true)
 
   // if yFiles for HTML require.js was used to load modules, also add information about the loaded modules
   const require = window.require

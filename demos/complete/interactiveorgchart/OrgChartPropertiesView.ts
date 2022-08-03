@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -145,11 +145,11 @@ export default class OrgChartPropertiesView {
     }
   }
 
-  // Creates an SVG element that references the provided SVG icon, e.g.:
-  // <svg width="50" height="50"><use xlink:href="#usericon_male1"></use></svg>
   /**
    * Creates an SVG element that references the provided SVG icon, e.g.:
+   * ```
    * <svg width="50" height="50"><use xlink:href="#usericon_male1"></use></svg>
+   * ```
    */
   createSVGIcon(iconRef: string, width: number, height: number, viewBox: string): SVGElement {
     const svgNS = 'http://www.w3.org/2000/svg'

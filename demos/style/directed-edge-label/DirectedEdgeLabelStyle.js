@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,7 +39,7 @@ import {
   TextRenderSupport,
   TextWrapping
 } from 'yfiles'
-import { colorSets } from '../../resources/basic-demo-styles.js'
+import { colorSets } from '../../resources/demo-styles.js'
 
 const HORIZONTAL_INSET = 3
 const VERTICAL_INSET = 2
@@ -147,7 +147,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
 
   /**
    * Re-renders the label using the old visual for performance reasons.
-   * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @see Overrides {@link LabelStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
    * @param {!ILabel} label
@@ -289,7 +289,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
   /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
-   * @see Overrides {@link LabelStyleBase#getPreferredSize}
+   * @see Overrides {@link LabelStyleBase.getPreferredSize}
    * @param {!ILabel} label
    * @returns {!Size}
    */

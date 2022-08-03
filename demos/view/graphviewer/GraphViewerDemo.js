@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,20 +67,16 @@ import {
 import GraphSearch from '../../utils/GraphSearch.js'
 import FastCanvasStyles from './FastCanvasStyles.js'
 import ContextMenu from '../../utils/ContextMenu.js'
-import DemoStyles, {
-  DemoSerializationListener,
-  DemoStyleOverviewPaintable
-} from '../../resources/demo-styles.js'
 import {
   addClass,
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   readGraph,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { applyDemoTheme, DemoStyleOverviewPaintable } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -106,13 +102,14 @@ const nodeInfoUrl = document.getElementById('nodeInfoUrl')
 const searchBox = document.getElementById('searchBox')
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
 
   // bind toolbar commands
@@ -454,7 +451,7 @@ function onCurrentItemChanged() {
   if (currentItem instanceof INode) {
     // for nodes display the label and the values of the mappers for description and URLs..
     const node = currentItem
-    nodeInfo.innerHTML = node.labels.size > 0 ? node.labels.elementAt(0).text : 'Empty'
+    nodeInfo.innerHTML = node.labels.size > 0 ? node.labels.first().text : 'Empty'
     const content = getDescription(node)
     nodeInfoDescription.innerHTML = content ? content : 'Empty'
     const url = getUrl(node)
@@ -585,12 +582,6 @@ function getUrl(node) {
  */
 function createGraphMLIOHandler() {
   const ioHandler = new GraphMLIOHandler()
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  ioHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  ioHandler.addHandleSerializationListener(DemoSerializationListener)
   // enable support for fast style implementations
   ioHandler.addXamlNamespaceMapping('http://www.yworks.com/yfilesHTML/demos/', FastCanvasStyles)
   // we also want to populate the mappers for "Description", "ToolTip", and "Url"
@@ -714,5 +705,5 @@ class CustomGraphSearch extends GraphSearch {
   }
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

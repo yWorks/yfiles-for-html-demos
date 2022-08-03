@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,21 +55,12 @@ import {
 
 import SimpleOutputHandler from './SimpleOutputHandler.js'
 import SimpleInputHandler from './SimpleInputHandler.js'
-import {
-  bindAction,
-  bindCommand,
-  checkLicense,
-  readGraph,
-  showApp
-} from '../../resources/demo-app.js'
+import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
 import { PropertiesPanel } from './PropertiesPanel.js'
-import DemoStyles, {
-  DemoSerializationListener,
-  initDemoStyles
-} from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import EditorSync from './EditorSync.js'
-import loadJson from '../../resources/load-json.js'
 import GraphMLProperty from './GraphMLProperty.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -106,13 +97,13 @@ let graphmlSupport
 let graphModifiedListener
 
 /**
- * @param {!object} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   editorSync = new EditorSync()
 
   registerCommands()
@@ -140,7 +131,7 @@ async function run(licenseData) {
   Table.installStaticUndoSupport(manager.masterGraph)
 
   // Assign the default demo styles
-  initDemoStyles(graph)
+  initDemoStyles(graph, { theme: 'demo-lightblue' })
 
   // Set the default node label position to centered below the node with the FreeNodeLabelModel that supports
   // label snapping
@@ -181,7 +172,7 @@ async function run(licenseData) {
 
 /**
  * Creates the editor input mode for the graph component with support for table nodes.
- * @returns {!IInputMode} A new <code>GraphEditorInputMode</code> instance
+ * @returns {!IInputMode} A new {@link GraphEditorInputMode} instance
  */
 function createEditorMode() {
   const inputMode = new GraphEditorInputMode({
@@ -305,13 +296,6 @@ function createGraphMLIOHandler() {
   ioHandler.addParsedListener((sender, args) => {
     propertiesPanel.showGraphProperties()
   })
-
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  ioHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  ioHandler.addHandleSerializationListener(DemoSerializationListener)
 
   graphmlSupport.graphMLIOHandler = ioHandler
 
@@ -599,4 +583,5 @@ function registerCommands() {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

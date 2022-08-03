@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -82,7 +82,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
    * Value: Always returns 7
-   * @see Specified by {@link IArrow#length}.
+   * @see Specified by {@link IArrow.length}.
    * @type {number}
    */
   get length() {
@@ -94,7 +94,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * Value: Always returns 1
    * This value is used by {@link IEdgeStyle}s to let the
    * edge appear to end shortly before its actual target.
-   * @see Specified by {@link IArrow#cropLength}.
+   * @see Specified by {@link IArrow.cropLength}.
    * @type {number}
    */
   get cropLength() {
@@ -126,7 +126,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * @param {!Point} anchor the anchor point for the tip of the arrow
    * @param {!Point} direction the direction the arrow is pointing in
    * Itself as a flyweight.
-   * @see Specified by {@link IArrow#getVisualCreator}.
+   * @see Specified by {@link IArrow.getVisualCreator}.
    * @returns {!IVisualCreator}
    */
   getVisualCreator(edge, atSource, anchor, direction) {
@@ -148,7 +148,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * subsequently be used to query the bounds. Clients will always call
    * this method before using the implementation and may not cache the instance returned.
    * This allows for applying the flyweight design pattern to implementations.
-   * @see Specified by {@link IArrow#getBoundsProvider}.
+   * @see Specified by {@link IArrow.getBoundsProvider}.
    * @returns {!IBoundsProvider}
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
@@ -177,7 +177,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * @param {!IRenderContext} context The context that contains the information needed to create the
    *   visual.
    * The arrow visual.
-   * @see Specified by {@link IVisualCreator#createVisual}.
+   * @see Specified by {@link IVisualCreator.createVisual}.
    * @returns {!SvgVisual}
    */
   createVisual(context) {
@@ -234,17 +234,17 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * This method updates or replaces a previously created {@link Visual}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link MySimpleArrow#createVisual}. Implementations may update the <code>oldVisual</code>
-   * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
+   * to {@link MySimpleArrow.createVisual}. Implementations may update the `oldVisual`
+   * and return that same reference, or create a new visual and return the new instance or `null`.
    * @param {!IRenderContext} context The context that contains the information needed to create the
    *   visual.
    * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
-   *   {@link MySimpleArrow#createVisual} method was called.
+   *   {@link MySimpleArrow.createVisual} method was called.
    * The updated visual.
-   * @see {@link MySimpleArrow#createVisual}
+   * @see {@link MySimpleArrow.createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
-   * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @see Specified by {@link IVisualCreator.updateVisual}.
    * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual) {
@@ -279,7 +279,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
 
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
-   * @see Specified by {@link IBoundsProvider#getBounds}.
+   * @see Specified by {@link IBoundsProvider.getBounds}.
    * @param {!ICanvasContext} context
    * @returns {!Rect}
    */

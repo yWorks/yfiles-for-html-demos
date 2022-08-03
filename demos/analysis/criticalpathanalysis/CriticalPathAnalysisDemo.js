@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   EdgePathLabelModel,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
+  Fill,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
@@ -37,26 +38,24 @@ import {
   Insets,
   InteriorLabelModel,
   License,
-  PolylineEdgeStyle
+  PolylineEdgeStyle,
+  Stroke
 } from 'yfiles'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 import GraphData from './resources/GraphData.js'
-import {
-  createDemoEdgeLabelStyle,
-  createDemoNodeLabelStyle,
-  DemoNodeStyle
-} from '../../resources/demo-styles.js'
 import { calculateCriticalPathEdges, runLayout } from './CriticalPathHelper.js'
+import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Runs this demo.
- * @param {!object} licenseData The yFiles license information.
+ * @param licenseData The yFiles license information.
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode()
 
   initializeGraph(graphComponent)
@@ -104,9 +103,11 @@ function showResult(graphComponent) {
     stroke: '2px #6C4F77',
     targetArrow: '#6C4F77 small triangle'
   })
-  const criticalNodeStyle = new DemoNodeStyle('critical-node-style')
-  const startNodeStyle = new DemoNodeStyle('demo-palette-402')
-  const finishNodeStyle = new DemoNodeStyle('demo-palette-403')
+  const criticalNodeStyle = createDemoNodeStyle()
+  criticalNodeStyle.fill = Fill.from('#C1C1C1')
+  criticalNodeStyle.stroke = Stroke.from('2px #F26419')
+  const startNodeStyle = createDemoNodeStyle('demo-palette-402')
+  const finishNodeStyle = createDemoNodeStyle('demo-palette-403')
 
   graph.edges.forEach(edge => {
     const sourceNode = edge.sourceNode
@@ -149,15 +150,12 @@ function showResult(graphComponent) {
  */
 function initializeGraph(graphComponent) {
   const graph = graphComponent.graph
-  // configure node defaults
-  graph.nodeDefaults.style = new DemoNodeStyle('demo-palette-58')
-  graph.nodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-58')
+
+  // configure node/edge style defaults
+  initDemoStyles(graph, { theme: 'demo-palette-58' })
   graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
     insets: new Insets(5)
   }).createParameter(ExteriorLabelModelPosition.SOUTH)
-
-  // configure edge defaults
-  graph.edgeDefaults.labels.style = createDemoEdgeLabelStyle('demo-palette-58')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 3
   }).createDefaultParameter()
@@ -209,5 +207,5 @@ function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

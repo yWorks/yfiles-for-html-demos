@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,23 +57,19 @@ import {
 import DecisionTree from './DecisionTree.js'
 import ContextMenu from '../../utils/ContextMenu.js'
 import GroupNodePortCandidateProvider from './GroupNodePortCandidateProvider.js'
-import DemoStyles, {
-  DemoSerializationListener,
-  initDemoStyles
-} from '../../resources/demo-styles.js'
 import {
   addClass,
   addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   hasClass,
   readGraph,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Displays the demo's model graph.
@@ -85,19 +81,21 @@ let graphComponent
 let highlightManager
 
 /**
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the input mode
   initializeInputModes()
 
   // configures a green outline as custom highlight for the root node of the decision tree
   // see also setAsRootNode action
-  highlightManager = new HighlightIndicatorManager(graphComponent)
+  highlightManager = new HighlightIndicatorManager()
+  highlightManager.install(graphComponent)
   const startNodeHighlightInstaller = new NodeStyleDecorationInstaller({
     nodeStyle: new ShapeNodeStyle({
       fill: null,
@@ -165,7 +163,7 @@ function initializeGraph(graph) {
   // set up the default demo styles
   initDemoStyles(graph)
 
-  // create a new style that uses the specified svg snippet as a template for the node.
+  // set a default size for nodes
   graph.nodeDefaults.size = new Size(146, 35)
   graph.nodeDefaults.shareStyleInstance = false
 
@@ -271,7 +269,7 @@ function setAsRootNode(node) {
 
 /**
  * Updates the node selection state when the context menu is opened for a node.
- * @param {!INode} node The node or <code>null</code>.
+ * @param {!INode} node The node or `null`.
  */
 function updateSelection(node) {
   if (node === null) {
@@ -509,18 +507,12 @@ function enableGraphML() {
     storageLocation: 'file-system'
   })
 
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
-    DemoStyles
-  )
-  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
   gs.graphMLIOHandler.addParsedListener(() => updateShowDecisionTreeButton())
   graphMLSupport = gs
 }
 
 /**
- * Updates the demo's UI depending on wheter or not a layout is currently calculated.
+ * Updates the demo's UI depending on whether a layout is currently calculated.
  * @param {boolean} running true indicates that a layout is currently calculated
  */
 function setRunningLayout(running) {
@@ -568,5 +560,5 @@ async function readSampleGraph() {
   return graph
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

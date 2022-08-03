@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,9 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import loadJson from '../../resources/load-json'
 import { GraphComponent, GraphViewerInputMode, ICommand, License } from 'yfiles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 
 import { loadLayoutSampleGraph } from '../../utils/LoadTutorialLayoutSampleGraph'
 import {
@@ -36,9 +35,13 @@ import {
   createFeatureLayoutConfiguration
 } from './HierarchicLayerConstraints'
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
+
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // load the graph and run the layout
@@ -68,4 +71,5 @@ function registerCommands(graphComponent: GraphComponent): void {
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -110,7 +110,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
     this.clearTimeout()
     this.handler!.cancelDrag(context, originalLocation)
 
-    const waitInputMode = context.lookup(WaitInputMode.$class) as WaitInputMode | null
+    const waitInputMode = context.lookup(WaitInputMode.$class)
     if (waitInputMode) {
       // disable user interaction while the cancel layout is running
       waitInputMode.waiting = true
@@ -134,7 +134,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
     this.clearTimeout()
     this.handler!.dragFinished(context, originalLocation, newLocation)
 
-    const waitInputMode = context.lookup(WaitInputMode.$class) as WaitInputMode | null
+    const waitInputMode = context.lookup(WaitInputMode.$class)
     if (waitInputMode) {
       // disable user interaction while the finish layout is running
       waitInputMode.waiting = true

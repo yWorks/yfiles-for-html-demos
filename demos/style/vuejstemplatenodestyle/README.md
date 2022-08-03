@@ -10,9 +10,7 @@ This demo presents the Vue.js template node style that leverages the powerful da
 
 With this style, node visualizations are defined by SVG templates, similar to the template styles that are included in the library. However, since the templates of this style can use the powerful data binding of Vue.js, complex requirements are more easy to realize.
 
-The section [Using Vue.js Templates in Node Styles in the Developer's Guide elaborates on how to create template strings and which properties are available for data binding.](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
-
-[
+The section [Using Vue.js Templates in Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles) in the Developer's Guide elaborates on how to create template strings and which properties are available for data binding.
 
 ## Things to Try
 
@@ -20,14 +18,13 @@ Change the template of one or more nodes. Bind colors or text to properties in t
 
 ## Related Documentation
 
-](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
-
-[- Using Vue.js Templates in Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)- [Using SVG Templates in Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
+- [Using Vue.js Templates in Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
+- [Using SVG Templates in Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles)
 
 ## Related Demos
 
-- [Template Styles Demo](../../style/templatestyles/index.html)
-- [Vue.js Template Node Style Demo](../../style/vuejstemplatenodestyle/index.html)
+- [Template Styles Demo](../templatestyles/index.html)
+- [String Template Node Style Demo](../string-template-node-style/index.html)
 
 ## Additional Tools
 

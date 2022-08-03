@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,16 +29,32 @@
 import { getLayoutExecutorAsyncMessageHandler } from './web-worker-client-message-handler'
 import licenseValue from '../../../../lib/license.json'
 import type { LayoutDescriptor } from 'yfiles'
-import { GraphComponent, HierarchicLayoutData, LayoutExecutorAsync } from 'yfiles'
+import { GraphComponent, HierarchicLayout, LayoutExecutor, LayoutExecutorAsync } from 'yfiles'
+import { isModuleSupportedInWorker } from '../../../utils/Workarounds'
 
 let listener: () => void
 let layoutButton: HTMLButtonElement
+
+// Vite supports Web Worker out-of-the-box but relies on the browser's native Web Worker support when served in DEV mode.
+// Thus, during development, fall back to client-sided layout calculation if module workers are not supported.
+// In the production build, Web Workers are supported because the build creates cross-browser compatible workers.
+// @ts-ignore
+const useWorkerLayout = isModuleSupportedInWorker() || import.meta.env.PROD
 
 export function addLayoutButton(button: HTMLButtonElement, graphComponent: GraphComponent) {
   listener = runLayout
   layoutButton = button
   button.addEventListener('click', listener)
-  getLayoutExecutorAsyncMessageHandler(licenseValue).then(() => button.removeAttribute('disabled'))
+
+  if (useWorkerLayout) {
+    // wait for the worker to be ready before enabling the button
+    getLayoutExecutorAsyncMessageHandler(licenseValue).then(() =>
+      button.removeAttribute('disabled')
+    )
+  } else {
+    // client-sided layout calculation, activate the button immediately
+    button.removeAttribute('disabled')
+  }
 
   async function runLayout() {
     button.setAttribute('disabled', 'disabled')
@@ -48,22 +64,27 @@ export function addLayoutButton(button: HTMLButtonElement, graphComponent: Graph
       properties: { nodeToNodeDistance: 20, orthogonalRouting: true }
     }
 
-    const layoutData = new HierarchicLayoutData()
-    // configure graph specific options ...
+    if (useWorkerLayout) {
+      // create an asynchronous layout executor that calculates a layout on the worker
+      await new LayoutExecutorAsync({
+        messageHandler: await getLayoutExecutorAsyncMessageHandler(licenseValue),
+        graphComponent: graphComponent,
+        layoutDescriptor: layoutDescriptor,
+        animateViewport: true,
+        easedAnimation: true,
+        duration: '1s'
+      }).start()
+    } else {
+      // client-sided fallback
+      await new LayoutExecutor({
+        graphComponent,
+        layout: new HierarchicLayout(layoutDescriptor.properties),
+        duration: '1s',
+        animateViewport: true,
+        easedAnimation: true
+      }).start()
+    }
 
-    // create an asynchronous layout executor that calculates a layout on the worker
-    const executor = new LayoutExecutorAsync({
-      messageHandler: await getLayoutExecutorAsyncMessageHandler(licenseValue),
-      graphComponent: graphComponent,
-      layoutDescriptor: layoutDescriptor,
-      layoutData: layoutData,
-      animateViewport: true,
-      easedAnimation: true,
-      duration: '1s'
-    })
-
-    // run the layout
-    await executor.start()
     button.removeAttribute('disabled')
   }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,10 +37,10 @@ export default class OrangeOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    * Enables moving the source and target of the edge to other ports.
    * @param {!IInputModeContext} inputModeContext The input mode context in which the segment is edited
    * @param {!IEdge} edge The edge to inspect
-   * @param {boolean} sourceEnd <code>True</code> if the source end of the edge is queried, <code>false</code> false
+   * @param {boolean} sourceEnd `true` if the source end of the edge is queried, `false` false
    * for the target end
-   * @see Overrides {@link OrthogonalEdgeHelper#shouldMoveEndImplicitly}
-   * @see Specified by {@link IOrthogonalEdgeHelper#shouldMoveEndImplicitly}.
+   * @see Overrides {@link OrthogonalEdgeHelper.shouldMoveEndImplicitly}
+   * @see Specified by {@link IOrthogonalEdgeHelper.shouldMoveEndImplicitly}.
    * @returns {boolean}
    */
   shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {

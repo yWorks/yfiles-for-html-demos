@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.5.
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Rectangle Node Style Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .option-element {
+        width: 47%;
+      }
+
+      .yfiles-handle-template.yfiles-handle-rotate-template {
+        transform: scale(2, 2);
+      }
+
+      input[type='range'] {
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+      }
+
+      .demo-properties label.option-label {
+        width: 50%;
+      }
+
+      .demo-properties .demo-form-block input[type='range'] {
+        width: 37%;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Rectangle Node Style Demo</h1>
+
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle" target="_blank">RectangleNodeStyle</a> class can display a variety of shapes including
+          rectangles with rounded and cut corners, hexagons, octagons, pills, half-circles, and
+          more.
+        </p>
+        <p>
+          This is made possible by numerous configuration options for the representation of the node
+          corners. This demo allows you to interactively explore those options. The current
+          configuration of each node is shown as label.
+        </p>
+
+        <h2>Things to Try</h2>
+
+        <ul>
+          <li>
+            Change some of the settings in the property panel on the right-hand side while a node is
+            selected and see how it affects the selected node.
+          </li>
+          <li>
+            Resize a selected node via its round handles and see how the shape changes based on the
+            value of
+            <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle#scaleCornerSize" target="_blank">Scale Corner Size</a>.
+          </li>
+          <li>
+            Drag the rectangular handle of a selected node to change its
+            <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle#cornerSize" target="_blank">Corner Size</a> interactively. A blue
+            rectangle will be displayed during the drag that visualizes the top-left corner using
+            the current corner size.
+          </li>
+        </ul>
+
+        <h2>Related Demos</h2>
+        <ul>
+          <li>
+            <a href="../shape-node-style/index.html">Shape Node Style</a>
+          </li>
+          <li>
+            <a href="../group-node-style/index.html">Group Node Style</a>
+          </li>
+          <li>
+            <a href="../arrow-node-style/index.html">Arrow Node Style</a>
+          </li>
+          <li>
+            <a href="../../02-tutorial-custom-styles/01-custom-node-style/index.html"
+              >Tutorial: Custom Node Style</a
+            >
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Style Properties</h2>
+
+        <div class="demo-properties">
+          <div class="demo-form-block">
+            <label for="corner-style" class="option-label">Corner Style</label>
+            <select id="corner-style" class="option-element" disabled>
+              <option value="rounded">Rounded</option>
+              <option value="cut">Cut</option>
+            </select>
+
+            <label for="corner-size-scaling" class="option-label">Corner Size Scaling</label>
+            <select id="corner-size-scaling" class="option-element" disabled>
+              <option value="absolute">Absolute</option>
+              <option value="relative">Relative</option>
+            </select>
+
+            <h3>Affected Corners</h3>
+
+            <label for="corner-top-left" class="option-label">Top-left</label>
+            <input type="checkbox" id="corner-top-left" class="option-element" disabled />
+
+            <label for="corner-top-right" class="option-label">Top-right</label>
+            <input type="checkbox" id="corner-top-right" class="option-element" disabled />
+
+            <label for="corner-bottom-left" class="option-label">Bottom-left</label>
+            <input type="checkbox" id="corner-bottom-left" class="option-element" disabled />
+
+            <label for="corner-bottom-right" class="option-label">Bottom-right</label>
+            <input type="checkbox" id="corner-bottom-right" class="option-element" disabled />
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="RectangleNodeStyleDemo.js"></script>
+  </body>
+</html>

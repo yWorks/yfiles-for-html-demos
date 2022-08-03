@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,6 +38,7 @@ import {
   GenericLabeling,
   GraphComponent,
   ILayoutAlgorithm,
+  LayoutData,
   LayoutOrientation,
   LeafPlacement,
   OrganicEdgeRouter,
@@ -45,9 +46,7 @@ import {
   TreeReductionStage,
   YBoolean,
   YNumber,
-  YString,
-  LayoutData,
-  GenericLayoutData
+  YString
 } from 'yfiles'
 
 import {
@@ -63,8 +62,8 @@ import {
 import LayoutConfiguration, {
   EdgeLabeling,
   LabelPlacementAlongEdge,
-  LabelPlacementSideOfEdge,
-  LabelPlacementOrientation
+  LabelPlacementOrientation,
+  LabelPlacementSideOfEdge
 } from './LayoutConfiguration'
 import HandleEdgesBetweenGroupsStage from './HandleEdgesBetweenGroupsStage'
 
@@ -114,8 +113,8 @@ const ClassicTreeLayoutConfig = (Class as any)('ClassicTreeLayoutConfig', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return The configured layout algorithm.
    */

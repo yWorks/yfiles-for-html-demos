@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -60,20 +60,24 @@ import {
 } from 'yfiles'
 
 import ContextMenuSupport from './ContextMenuSupport.js'
-import { DemoGroupStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  applyDemoTheme,
+  createDemoGroupStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
 
 /**
- * @param {!object} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureInteraction()
   await createSampleGraph()
@@ -228,15 +232,11 @@ async function createSampleGraph() {
  */
 function initializeDefaults() {
   const graph = graphComponent.graph
-  const nodeStyle = new DemoNodeStyle()
-  graph.nodeDefaults.style = nodeStyle
-  nodeStyle.cssClass = 'node-color'
-  graph.nodeDefaults.style = nodeStyle
+
+  graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-58')
   graph.nodeDefaults.size = new Size(50, 30)
 
-  const groupNodeStyle = new DemoGroupStyle()
-  groupNodeStyle.cssClass = 'group-border'
-  graph.groupNodeDefaults.style = groupNodeStyle
+  graph.groupNodeDefaults.style = createDemoGroupStyle({ colorSetName: 'demo-palette-58' })
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #4E4E4E',
@@ -343,4 +343,5 @@ class HighlightEdgeStyle extends EdgeStyleBase {
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

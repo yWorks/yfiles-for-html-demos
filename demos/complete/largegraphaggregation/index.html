@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -125,10 +125,15 @@
         <h2>Things to Try</h2>
         <ul>
           <li>
+            Switch between the <b>two layout styles</b> offered for visualizing the aggregated graph
+            (i.e. <a href="https://docs.yworks.com/yfileshtml/#/api/BalloonLayout" target="_blank">BalloonLayout</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/CactusGroupLayout" target="_blank">CactusGroupLayout</a>). This re-runs the
+            aggregation as well.
+          </li>
+          <li>
             Click on an aggregated node to <b>show</b> its children in the aggregation hierarchy.
           </li>
           <li>
-            Click on an separated node to <b>hide</b> its children in the aggregation hierarchy.
+            Click on a separated node to <b>hide</b> its children in the aggregation hierarchy.
           </li>
           <li>Explore the <b>configuration options</b> of the aggregation algorithm.</li>
           <li>
@@ -149,6 +154,17 @@
 
     <aside class="demo-sidebar demo-right">
       <div class="demo-sidebar-content">
+        <h2>Layout Properties</h2>
+        <div class="demo-properties">
+          <div class="demo-form-block">
+            <label for="layout-style-select" class="option-label">Layout Style</label>
+            <select id="layout-style-select" class="option-element">
+              <option value="balloon">Balloon</option>
+              <option value="cactus">Cactus</option>
+            </select>
+          </div>
+        </div>
+
         <h2>Aggregation Properties</h2>
         <div class="demo-properties">
           <div class="demo-form-block">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -28,7 +28,7 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml">
 	<key id="d0" for="node" attr.type="string" attr.name="Url"/>
 	<key id="d1" for="node" attr.type="string" attr.name="ToolTip"/>
 	<key id="d2" for="node" attr.type="string" attr.name="Description"/>
@@ -60,14 +60,26 @@
 	<data key="d12">
 		<y:SharedData>
 			<yjs:DefaultLabelStyle x:Key="1" textFill="#ff323232" clipText="false"/>
-			<demostyle:DemoNodeStyle x:Key="2" cssClass="male"/>
-			<demostyle:DemoNodeStyle x:Key="3"/>
+      <yjs:ShapeNodeStyle x:Key="2" fill="#68b0e3" shape="ROUND_RECTANGLE">
+        <yjs:ShapeNodeStyle.stroke>
+          <yjs:Stroke fill="#662b00" thickness="1.5"/>
+        </yjs:ShapeNodeStyle.stroke>
+      </yjs:ShapeNodeStyle>
+      <yjs:ShapeNodeStyle x:Key="3" fill="#ff6c00" shape="ROUND_RECTANGLE">
+        <yjs:ShapeNodeStyle.stroke>
+          <yjs:Stroke fill="#662b00" thickness="1.5"/>
+        </yjs:ShapeNodeStyle.stroke>
+      </yjs:ShapeNodeStyle>
 			<yjs:ShapeNodeStyle x:Key="4" shape="ELLIPSE" fill="#ff662b00">
 				<yjs:ShapeNodeStyle.stroke>
 					<yjs:Stroke lineJoin="ROUND" lineCap="SQUARE" fill="#ff662b00"/>
 				</yjs:ShapeNodeStyle.stroke>
 			</yjs:ShapeNodeStyle>
-			<demostyle:DemoEdgeStyle x:Key="5" showTargetArrows="false"/>
+      <yjs:PolylineEdgeStyle x:Key="5">
+        <yjs:PolylineEdgeStyle.stroke>
+          <yjs:Stroke fill="#662b00" lineCap="SQUARE" thickness="1.5"/>
+        </yjs:PolylineEdgeStyle.stroke>
+      </yjs:PolylineEdgeStyle>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">

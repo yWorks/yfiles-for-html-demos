@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,38 +27,39 @@
  **
  ***************************************************************************/
 import {
-  CollapsibleNodeStyleDecorator,
   DefaultGraph,
+  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
   FoldingManager,
-  FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICommand,
   IFoldingView,
   IGraph,
   License,
-  PanelNodeStyle,
   Point,
   Size
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
@@ -96,37 +97,11 @@ function enableFolding() {
   // set default styles for newly created graph elements
   initializeTutorialDefaults(masterGraph)
 
-  // add a collapse/expand button to the group node style
-  wrapGroupNodeStyle(masterGraph)
-
   // Creates the folding manager
   const manager = new FoldingManager(masterGraph)
 
   // Creates a folding view that manages the folded graph
   return manager.createFoldingView()
-}
-
-/**
- * Changes the default style for group nodes.
- * We use {@link CollapsibleNodeStyleDecorator} to wrap the
- * {@link PanelNodeStyle} from the last demo, since we want to have nice
- * +/- buttons for collapse/expand. Note that if you haven't defined
- * a custom group node style, you don't have to do anything at all, since
- * {@link FoldingManager} already
- * provides such a decorated group node style by default.
- * Although this demo does not use a custom group node style, we still wrap it for demonstration purpose.
- *
- * @param {!IGraph} graph The graph.
- */
-function wrapGroupNodeStyle(graph) {
-  graph.groupNodeDefaults.style = new CollapsibleNodeStyleDecorator({
-    wrapped: graph.groupNodeDefaults.style,
-    buttonPlacement: FreeNodeLabelModel.INSTANCE.createParameter({
-      layoutRatio: [0, 0],
-      layoutOffset: [2.5, 2.5],
-      labelRatio: [0, 0]
-    })
-  })
 }
 
 /**
@@ -136,7 +111,28 @@ function wrapGroupNodeStyle(graph) {
  */
 function initializeTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph, { foldingEnabled: true })
+
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    groupIcon: 'chevron-down',
+    folderIcon: 'chevron-up',
+    iconSize: 14,
+    iconBackgroundShape: 'circle',
+    iconForegroundFill: '#fff',
+    tabFill: '#242265',
+    tabPosition: 'top-trailing',
+    stroke: '2px solid #242265',
+    cornerRadius: 8,
+    tabWidth: 70,
+    contentAreaInsets: 8,
+    hitTransparentContentArea: true
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'right',
+    textFill: '#fff'
+  })
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -206,5 +202,5 @@ function registerCommands() {
   bindCommand("button[data-command='ExitGroup']", ICommand.EXIT_GROUP, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

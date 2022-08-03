@@ -41,3 +41,10 @@ The stylesheet for labels _markdown-label.css_ shows how the label texts are sty
 #### Text Wrapping
 
 Markdown labels can use line wrapping. In this demo application, the labels use word wrapping with ellipsis. Select and resize a node to observe the interactive text wrapping. Markdown labels can also be wrapped at character boundaries.
+
+## Related Demos
+
+- [Default Label Style](../default-label-style/index.html)
+- [HTML Label](../htmllabel/index.html)
+- [Rich Text Label](../richtextlabel/index.html)
+- [Tutorial: Custom Label Style](../../02-tutorial-custom-styles/10-custom-label-style/index.html)

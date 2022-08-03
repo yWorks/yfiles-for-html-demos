@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,12 +41,11 @@ import {
 } from 'yfiles'
 
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * Support three styles for different zoom level.
@@ -59,10 +58,11 @@ let levelOfDetailNodeStyle: LevelOfDetailNodeStyle = null
  */
 const detailLevelPopup = document.querySelector('#detailLevelPopup') as HTMLDivElement
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize input Mode
   graphComponent.inputMode = new GraphViewerInputMode()
@@ -93,7 +93,7 @@ function run(licenseData: object): void {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 
   // set styles, sizes and locations specific for this tutorial
   levelOfDetailNodeStyle = new LevelOfDetailNodeStyle(
@@ -212,4 +212,5 @@ function createGraph(): void {
   graphComponent.fitGraphBounds()
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

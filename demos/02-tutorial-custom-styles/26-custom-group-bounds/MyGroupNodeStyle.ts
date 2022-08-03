@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -168,7 +168,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Overridden to customize the behavior of this style with respect to certain user interaction.
-   * @see Overrides {@link NodeStyleBase#lookup}
+   * @see Overrides {@link NodeStyleBase.lookup}
    */
   lookup(node: INode, type: Class): object {
     // //////////////////////////////////////////////////
@@ -192,7 +192,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
         const insetsProvider = groupNode.lookup(INodeInsetsProvider.$class)
         return insetsProvider === null
           ? bounds
-          : bounds.getEnlarged((insetsProvider as INodeInsetsProvider).getInsets(groupNode))
+          : bounds.getEnlarged(insetsProvider.getInsets(groupNode))
       })
     }
 
@@ -229,9 +229,9 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
   /**
    * Returns whether or not the given point hits the visualization of the
    * given node. This implementation is strict, it returns
-   * <code>true</code> for the main rectangle and the tab area, but not
+   * `true` for the main rectangle and the tab area, but not
    * for the empty space to the left of the tab.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(canvasContext: IInputModeContext, p: Point, node: INode): boolean {
     const rect = new Rect(
@@ -255,7 +255,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
   /**
    * Returns the exact outline for the given node. This information is used
    * to clip the node's edges correctly.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    */
   getOutline(node: INode): GeneralPath {
     const path = createOuterPath(node.layout.width, node.layout.height)
@@ -279,8 +279,8 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Determines the color to use for filling the node.
-   * This implementation uses the {@link MyGroupNodeStyle#nodeColor} property unless
-   * the {@link ITagOwner#tag} of the {@link INode} is of type {@link Color},
+   * This implementation uses the {@link MyGroupNodeStyle.nodeColor} property unless
+   * the {@link ITagOwner.tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
    * @param node The node to determine the color for.
    * @return The color for filling the node.

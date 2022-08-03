@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,9 +45,11 @@ import {
 } from 'yfiles'
 
 import MySimpleNodeStyle from './MySimpleNodeStyle'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import { bindCommand, showApp } from '../../resources/demo-app'
 import { BusinessObject, MySimpleLabelStyle } from './MySimpleLabelStyle'
-import loadJson from '../../resources/load-json'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 // //////////////////////////////////////////////////
 // ////////////// New in this sample ////////////////
 // //////////////////////////////////////////////////
@@ -64,10 +66,11 @@ function createLabelTags(label0: ILabel, label1: ILabel): void {
 // @ts-ignore
 let graphComponent: GraphComponent = null
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the graph component
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the graph
   initializeGraph()
@@ -164,5 +167,5 @@ function createSampleGraph(): void {
   createLabelTags(label0, label1)
 }
 
-// Start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,9 +67,9 @@ import {
   TreeNodesSourceDefinitionBuilderConnector
 } from './ModelClasses'
 import { EditTreeNodesSourceDialog } from './EditTreeNodeSourceDialog'
-import { DemoEdgeStyle } from '../../resources/demo-styles'
 import { ContentRectViewportLimiter } from './ContentRectViewportLimiter'
 import { addClass } from '../../resources/demo-app'
+import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles'
 
 type SchemaEdge = { parentSource: string; childSource: string; childBinding: string }
 
@@ -101,6 +101,7 @@ export class SchemaComponent {
 
     this.schemaGraphComponent = new GraphComponent(selector)
     this.configureSchemaStyles()
+    applyDemoTheme(this.schemaGraphComponent)
 
     this.schemaGraphComponent.inputMode = this.configureInputMode(this.schemaGraphComponent.graph)
     this.schemaGraphComponent.viewportLimiter = new ContentRectViewportLimiter()
@@ -419,7 +420,7 @@ export class SchemaComponent {
       nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       evt.graph.setStyle(evt.item, nodeCreator.defaults.style)
     })
-    nodesSource.parentEdgeCreator.defaults.style = new DemoEdgeStyle()
+    nodesSource.parentEdgeCreator.defaults.style = createDemoEdgeStyle()
 
     return new TreeNodesSourceDefinitionBuilderConnector(
       sourceDefinition,
@@ -472,7 +473,7 @@ export class SchemaComponent {
   /**
    * Configures the given {@link CreateEdgeInputMode} to be able to finish the gesture on an empty
    * canvas with a newly created node.
-   * @param {CreateEdgeInputMode} createEdgeInputMode
+   * @param createEdgeInputMode
    */
   private enableTargetNodeCreation(createEdgeInputMode: CreateEdgeInputMode): void {
     createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size =

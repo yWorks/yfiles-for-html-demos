@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,8 +51,8 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * Creates the visual representation for the given node.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link ComplexCanvasNodeStyle#updateVisual}
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link ComplexCanvasNodeStyle.updateVisual}
    */
   createVisual(context: IRenderContext, node: INode): Visual {
     const type = typeof node.tag === 'number' ? node.tag : 0
@@ -63,10 +63,10 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * Updates the visual representation for the given node.
    * @param context The render context.
    * @param oldVisual The visual that has been created in the call to
-   * {@link ComplexCanvasNodeStyle#createVisual}.
+   * {@link ComplexCanvasNodeStyle.createVisual}.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator#createVisual} interface.
-   * @see {@link ComplexCanvasNodeStyle#createVisual}
+   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @see {@link ComplexCanvasNodeStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual {
     return oldVisual
@@ -75,7 +75,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows correct edge path intersection calculation, among others.
-   * @see Overrides {@link NodeStyleBase#getOutline}
+   * @see Overrides {@link NodeStyleBase.getOutline}
    */
   getOutline(node: INode): GeneralPath {
     const rect = this.getEllipseBounds(node.layout)
@@ -88,7 +88,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * Get the bounding box of the node.
    * @param context The canvas context.
    * @param node The node whose bounds are returned.
-   * @see Overrides {@link NodeStyleBase#getBounds}
+   * @see Overrides {@link NodeStyleBase.getBounds}
    */
   getBounds(context: ICanvasContext, node: INode): Rect {
     return node.layout.toRect()
@@ -100,7 +100,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * @param p The location to be checked.
    * @param node The node that may be hit.
    * @return True if p is inside node.
-   * @see Overrides {@link NodeStyleBase#isHit}
+   * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(context: IInputModeContext, p: Point, node: INode): boolean {
     if (!super.isHit(context, p, node)) {
@@ -117,7 +117,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * @param node The node that may be in the rectangle.
    * @return True if the box intersects the elliptical shape of the node. Also true if box lies
    * completely inside node.
-   * @see Overrides {@link NodeStyleBase#isInBox}
+   * @see Overrides {@link NodeStyleBase.isInBox}
    */
   isInBox(context: IInputModeContext, rectangle: Rect, node: INode): boolean {
     // early exit if not even the bounds are contained in the box
@@ -150,7 +150,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for
    * e.g. intersection calculation.
-   * @see Overrides {@link NodeStyleBase#isInside}
+   * @see Overrides {@link NodeStyleBase.isInside}
    * @param node The node.
    * @param p The point to be checked.
    */
@@ -165,7 +165,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
   /**
    * Calculates the intersection point of the node's outline with a line between
    * an inner and an outer point.
-   * @see Overrides {@link NodeStyleBase#getIntersection}
+   * @see Overrides {@link NodeStyleBase.getIntersection}
    * @param node The node.
    * @param inner The inner point of the line.
    * @param outer The outer point of the line.
@@ -270,7 +270,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
   /**
    * Draws a complex node style. The visual complexity is comparable to the complex SVG node style, since
    * it is a converted SVG but with a rectangular shape.
-   * @see Overrides {@link HtmlCanvasVisual#paint}
+   * @see Overrides {@link HtmlCanvasVisual.paint}
    */
   paint(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
     const l = this.layout

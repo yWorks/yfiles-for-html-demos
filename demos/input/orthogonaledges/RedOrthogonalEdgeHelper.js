@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,7 +45,7 @@ export default class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHe
    * @param {!IInputModeContext} inputModeContext The input mode context in which the segment is edited
    * @param {!IEdge} edge The edge to inspect
    * @param {number} segmentIndex The index of the segment
-   * @see Specified by {@link IOrthogonalEdgeHelper#getSegmentOrientation}.
+   * @see Specified by {@link IOrthogonalEdgeHelper.getSegmentOrientation}.
    * @returns {!SegmentOrientation}
    */
   getSegmentOrientation(inputModeContext, edge, segmentIndex) {
@@ -53,12 +53,12 @@ export default class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHe
   }
 
   /**
-   * Returns <code>false</code>.
+   * Returns `false`.
    * @param {!IInputModeContext} inputModeContext The input mode context in which the segment is edited
    * @param {!IEdge} edge The edge to inspect
-   * @param {boolean} sourceEnd <code>True</code> if the source end of the edge is queried, <code>false</code> for
+   * @param {boolean} sourceEnd `true` if the source end of the edge is queried, `false` for
    * the target end
-   * @see Specified by {@link IOrthogonalEdgeHelper#shouldMoveEndImplicitly}.
+   * @see Specified by {@link IOrthogonalEdgeHelper.shouldMoveEndImplicitly}.
    * @returns {boolean}
    */
   shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {
@@ -66,8 +66,8 @@ export default class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHe
   }
 
   /**
-   * Returns <code>false</code>.
-   * @see Specified by {@link IOrthogonalEdgeHelper#shouldEditOrthogonally}.
+   * Returns `false`.
+   * @see Specified by {@link IOrthogonalEdgeHelper.shouldEditOrthogonally}.
    * @param {!IInputModeContext} inputModeContext The input mode context in which the segment is edited
    * @param {!IEdge} edge The edge to inspect
    * @returns {boolean}
@@ -81,7 +81,7 @@ export default class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHe
    * @param {!IInputModeContext} inputModeContext The input mode context which edited the edge
    * @param {!IGraph} graph The graph to use for modifying the edge instance
    * @param {!IEdge} edge The edge to clean up the path
-   * @see Specified by {@link IOrthogonalEdgeHelper#cleanUpEdge}.
+   * @see Specified by {@link IOrthogonalEdgeHelper.cleanUpEdge}.
    */
   cleanUpEdge(inputModeContext, graph, edge) {}
 }

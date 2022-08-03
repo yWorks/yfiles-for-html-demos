@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,17 +27,17 @@
  **
  ***************************************************************************/
 import {
-  IBendCreator,
   BaseClass,
   DefaultBendCreator,
-  IInputModeContext,
+  GeneralPath,
+  IBend,
+  IBendCreator,
   IEdge,
   IGraph,
-  Point,
-  GeneralPath,
-  IPoint,
+  IInputModeContext,
   IListEnumerable,
-  IBend,
+  IPoint,
+  Point,
   UndoUnitBase
 } from 'yfiles'
 
@@ -261,10 +261,10 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
   }
 
   /**
-   * For an array of <code>controlPoints</code> defining a cubic segment
-   * and a given <code>ratio</code> on the segment, populate the <code>left</code>
-   * and <code>right</code> arrays with new control points so that the cubic can be
-   * split smoothly at the <code>ratio<code/>
+   * For an array of `controlPoints` defining a cubic segment
+   * and a given `ratio` on the segment, populate the `left`
+   * and `right` arrays with new control points so that the cubic can be
+   * split smoothly at the `ratio`.
    * @param {number} ratio
    * @param {!Array.<Point>} controlPoints
    * @param {!Array.<Point>} left

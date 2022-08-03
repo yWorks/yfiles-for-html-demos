@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,15 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import loadLicenseJSON from '../../resources/load-json'
-import {
-  LayoutExecutorAsyncWorker,
-  HierarchicLayout,
-  License,
-  MinimumNodeSizeStage,
-  LayoutGraph
-} from 'yfiles'
 import type { LayoutDescriptor } from 'yfiles'
+import {
+  HierarchicLayout,
+  LayoutExecutorAsyncWorker,
+  LayoutGraph,
+  License,
+  MinimumNodeSizeStage
+} from 'yfiles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 function applyLayout(graph: LayoutGraph, layoutDescriptor: LayoutDescriptor): void {
   if (layoutDescriptor.name === 'HierarchicLayout') {
@@ -45,11 +45,14 @@ function applyLayout(graph: LayoutGraph, layoutDescriptor: LayoutDescriptor): vo
   }
 }
 
-loadLicenseJSON().then(licenseData => {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // signal that the webworker thread is ready to execute
   ;(self as unknown as Worker).postMessage('ready')
-})
+}
+
+// noinspection JSIgnoredPromiseFromCall
+run()
 
 self.addEventListener(
   'message',

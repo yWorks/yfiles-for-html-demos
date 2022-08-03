@@ -24,3 +24,4 @@ This is done with custom configurations of the default [IReshapeHandleProvider](
 - _Purple nodes_ show four handles at the corners and four different handles at the sides. During resizing, the corner handles always maintain the aspect ratio of the node while the border handles don't.
 - _Orange nodes_ cannot extend beyond the black rectangle. Note that orange nodes can only be resized so that the new bounding box stays withing the bounding black rectangle.
 - _Light blue nodes_ combine the behavior of the orange and green nodes.
+- _Golden nodes_ maintain their aspect ratio depending on some application state. This state can be toggled by clicking one of the handles of a golden node.

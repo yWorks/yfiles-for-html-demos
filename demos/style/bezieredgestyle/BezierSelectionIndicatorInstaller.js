@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,16 +28,16 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ISelectionIndicatorInstaller,
-  PolylineEdgeStyle,
+  EdgeStyleDecorationInstaller,
+  GeneralPath,
+  ICanvasContext,
   ICanvasObject,
   ICanvasObjectGroup,
-  ICanvasContext,
+  IEdge,
+  ISelectionIndicatorInstaller,
+  PolylineEdgeStyle,
   PolylineEdgeStyleRenderer,
-  GeneralPath,
-  EdgeStyleDecorationInstaller,
-  StyleDecorationZoomPolicy,
-  IEdge
+  StyleDecorationZoomPolicy
 } from 'yfiles'
 
 /**
@@ -92,7 +92,7 @@ export class BezierSelectionIndicatorInstaller extends BaseClass(ISelectionIndic
   }
 
   /**
-   * Create a new instance that decorates the <code>coreImpl</code>
+   * Create a new instance that decorates the `coreImpl`
    * @param {?ISelectionIndicatorInstaller} coreImpl The core indicator that is again decorated by this instance
    */
   constructor(coreImpl) {

@@ -1,6 +1,6 @@
 <template>
-  <div className="overview-container">
-    <div className="title">Overview</div>
+  <div class="overview-container">
+    <div class="title">Overview</div>
     <div id="graph-overview-component"></div>
   </div>
 </template>

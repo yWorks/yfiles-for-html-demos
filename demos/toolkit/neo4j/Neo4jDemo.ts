@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -61,18 +61,16 @@ import {
   VoidLabelStyle
 } from 'yfiles'
 
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
 import {
-  bindAction,
-  bindCommand,
-  checkLicense,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles'
+import { bindAction, bindCommand, showApp, showLoadingIndicator } from '../../resources/demo-app'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
-import type { Node, Record, Relationship, Result } from './Neo4jUtil'
+import type { Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 
@@ -97,17 +95,18 @@ const queryErrorContainer = document.getElementById('queryError') as HTMLPreElem
 /**
  * Runs the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   if (!('WebSocket' in window)) {
     // early exit the application if WebSockets are not supported
     document.getElementById('login')!.hidden = true
     document.getElementById('noWebSocketAPI')!.hidden = false
-    showApp(graphComponent)
+    showApp()
     return
   }
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraphDefaults()
   initializeHighlighting()
@@ -122,7 +121,7 @@ function run(licenseData: object): void {
 function initializeGraphDefaults(): void {
   const graph = graphComponent.graph
 
-  graph.nodeDefaults.style = new DemoNodeStyle()
+  graph.nodeDefaults.style = createDemoNodeStyle()
   graph.nodeDefaults.size = new Size(30, 30)
 
   graph.edgeDefaults.labels.style = new DefaultLabelStyle({
@@ -135,7 +134,7 @@ function initializeGraphDefaults(): void {
     ExteriorLabelModelPosition.SOUTH
   )
 
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  graph.edgeDefaults.style = createDemoEdgeStyle()
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createDefaultParameter()
 }
 
@@ -299,7 +298,7 @@ async function loadGraph(): Promise<void> {
       UNWIND nodes AS node
       RETURN DISTINCT node`)
   // extract the nodes from the query result
-  nodes = nodeResult.records.map((record: Record) => record.get('node'))
+  nodes = nodeResult.records.map((record: Neo4jRecord) => record.get('node'))
   // obtain an array of all node ids
   const nodeIds = nodes.map(node => node.identity)
   // get all edges between all nodes that we have, omitting self loops and limiting the overall number of
@@ -313,7 +312,7 @@ async function loadGraph(): Promise<void> {
     { nodeIds }
   )
   // extract the edges from the query result
-  edges = edgeResult.records.map((record: Record) => record.get('edge'))
+  edges = edgeResult.records.map((record: Neo4jRecord) => record.get('edge'))
   // custom GraphBuilder that assigns nodes different styles based on their labels
   graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
 
@@ -510,5 +509,5 @@ function registerCommands(): void {
   })
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

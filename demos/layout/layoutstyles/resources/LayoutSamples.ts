@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,27 +30,31 @@ import {
   ChainLayoutStyle,
   ChainSubstructureStyle,
   CircularLayoutStyle,
-  OrganicLayoutClusteringPolicy,
   ComponentAssignmentStrategy,
   CycleLayoutStyle,
   CycleSubstructureStyle,
   EdgeRouterEdgeRoutingStyle,
   HierarchicLayoutEdgeRoutingStyle,
   OperationType,
+  OrganicLayoutClusteringPolicy,
+  OrganicLayoutGroupSubstructureScope,
+  OrganicLayoutTreeSubstructureStyle,
   ParallelSubstructureStyle,
   PartialLayoutEdgeRoutingStrategy,
   PartialLayoutOrientation,
+  RadialLayoutEdgeRoutingStrategy,
+  RadialLayoutLayeringStrategy,
   StarSubstructureStyle,
   SubgraphPlacement,
   SubstructureOrientation,
   TreeLayoutStyle
 } from 'yfiles'
-import { NodeLabelingPolicies } from '../BalloonLayoutConfig'
 import {
   EdgeLabeling,
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  NodeLabelingPolicies
 } from '../LayoutConfiguration'
 import { SubgraphLayouts } from '../PartialLayoutConfig'
 import { BusMembership, PortSides } from '../PolylineEdgeRouterConfig'
@@ -140,7 +144,12 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
   },
   {
     layout: 'Organic',
-    presets: ['default', 'organic-with-substructures', 'organic-clustered'],
+    presets: [
+      'default',
+      'organic-with-substructures',
+      'organic-group-substructures',
+      'organic-clustered'
+    ],
     samples: [
       {
         sample: 'generic-organic',
@@ -156,6 +165,11 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
       {
         sample: 'organic-with-substructures',
         label: 'Substructures',
+        defaultPreset: 'organic-with-substructures'
+      },
+      {
+        sample: 'organic-disk-substructures',
+        label: 'Disk Substructures',
         defaultPreset: 'organic-with-substructures'
       },
       {
@@ -241,12 +255,44 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
   },
   {
     layout: 'Radial',
-    presets: ['default'],
+    presets: ['default', 'dendrogram'],
     samples: [
       { sample: 'airports', label: 'Airports', defaultPreset: 'default' },
       { sample: 'blossom', label: 'Blossom', defaultPreset: 'default' },
       { sample: 'generic-radial', label: 'Generic', defaultPreset: 'default' },
-      { sample: 'mindmap', label: 'Mindmap', defaultPreset: 'default' }
+      { sample: 'mindmap', label: 'Mindmap', defaultPreset: 'default' },
+      { sample: 'viruses', label: 'Viruses (Phylogenetic tree)', defaultPreset: 'dendrogram' }
+    ]
+  },
+  {
+    layout: 'Compact Disk',
+    presets: [
+      'default',
+      'compact-disk-edges',
+      'compact-disk-with-rays',
+      'compact-disk-recursive-groups'
+    ],
+    samples: [
+      {
+        sample: 'compact-disk',
+        label: 'Default',
+        defaultPreset: 'default'
+      },
+      {
+        sample: 'compact-disk-with-edges',
+        label: 'With Edges',
+        defaultPreset: 'compact-disk-edges'
+      },
+      {
+        sample: 'compact-disk-ray-labels',
+        label: 'Ray-like Labels',
+        defaultPreset: 'compact-disk-with-rays'
+      },
+      {
+        sample: 'compact-disk-groups',
+        label: 'Groups',
+        defaultPreset: 'compact-disk-recursive-groups'
+      }
     ]
   },
   {
@@ -480,9 +526,22 @@ export const Presets: Record<string, Preset> = {
     label: 'Substructures',
     settings: {
       cycleSubstructureItem: CycleSubstructureStyle.CIRCULAR,
-      chainSubstructureItem: ChainSubstructureStyle.STRAIGHT_LINE,
+      chainSubstructureItem: ChainSubstructureStyle.DISK,
       starSubstructureItem: StarSubstructureStyle.CIRCULAR,
-      parallelSubstructureItem: ParallelSubstructureStyle.STRAIGHT_LINE
+      parallelSubstructureItem: ParallelSubstructureStyle.STRAIGHT_LINE,
+      treeSubstructureItem: OrganicLayoutTreeSubstructureStyle.ORIENTED
+    }
+  },
+
+  'organic-group-substructures': {
+    description:
+      '<p>Preconfigures the group substructure feature. Clusters are interpreted as groups that are' +
+      ' arranged with the specified group substructure style.</p>',
+    label: 'Clustered Substructures',
+    settings: {
+      clusteringPolicyItem: OrganicLayoutClusteringPolicy.LOUVAIN_MODULARITY,
+      groupSubstructureScopeItem: OrganicLayoutGroupSubstructureScope.ALL_GROUPS,
+      clusterAsGroupSubstructureItem: true
     }
   },
 
@@ -754,10 +813,55 @@ export const Presets: Record<string, Preset> = {
 
   compact: {
     description:
-      '<p>This preset utilizes the compact node placer and places all nodes that are marked with <code>assistant</code> in their tag alongside the main branch as <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#TreeLayoutData-property-assistantNodes" target="_blank">assistantNodes</a>.</p>',
+      '<p>This preset utilizes the compact node placer and places all nodes that are marked with <code>assistant</code> in their tag alongside the main branch as assistantNodes.</p>',
     label: 'Compact',
     settings: {
       nodePlacerItem: TreeNodePlacer.COMPACT
+    }
+  },
+
+  dendrogram: {
+    description:
+      '<p>This preset utilizes the dendrogram layout style that is most suitable for displaying ' +
+      'phylogenetic tree. </p>' +
+      '<p>It utilizes the dendrogram layering strategy with an edge routing strategy ' +
+      'that will route edges as a series of straight and arc segments.</p>',
+    label: 'Dendrogram',
+    settings: {
+      edgeRoutingStrategyItem: RadialLayoutEdgeRoutingStrategy.RADIAL_POLYLINE,
+      layeringStrategyItem: RadialLayoutLayeringStrategy.DENDROGRAM,
+      nodeLabelingStyleItem: NodeLabelingPolicies.RAYLIKE,
+      maximumChildSectorSizeItem: 360,
+      minimumNodeToNodeDistanceItem: 5
+    }
+  },
+
+  'compact-disk-edges': {
+    description:
+      '<p>This preset utilizes the minimum node distance ' +
+      'to make space between nodes and, thus, make the edges visible.</p>',
+    label: 'With Edges',
+    settings: {
+      minimumNodeDistanceItem: 30
+    }
+  },
+
+  'compact-disk-with-rays': {
+    description: '<p>Places node labels in a ray-like fashion pointing away from the disk.</p>',
+    label: 'Ray-like label placement',
+    settings: {
+      nodeLabelingStyleItem: NodeLabelingPolicies.RAYLIKE_LEAVES
+    }
+  },
+
+  'compact-disk-recursive-groups': {
+    description:
+      '<p>Uses RecursiveGroupLayout to run the compact disk layout algorithm for each group node ' +
+      'separately. The topmost level of the hierarchy is arranged with OrganicLayout.</p>',
+    label: 'Recursive Groups',
+    settings: {
+      layoutGroupsItem: 1,
+      minimumNodeDistanceItem: 15
     }
   },
 

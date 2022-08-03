@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,12 +56,12 @@ export default class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(IS
   }
 
   /**
-   * Calls {@link ISnapLineProvider#addSnapLines} of the wrapped provider and adds custom
-   * {@link OrthogonalSnapLine}s for the given <code>item</code>.
+   * Calls {@link ISnapLineProvider.addSnapLines} of the wrapped provider and adds custom
+   * {@link OrthogonalSnapLine}s for the given `item`.
    * @param {!GraphSnapContext} context The context which holds the settings for the snap lines.
    * @param {!CollectGraphSnapLinesEventArgs} args The argument to use for adding snap lines.
    * @param {!IModelItem} item The item to add snap lines for.
-   * @see Specified by {@link ISnapLineProvider#addSnapLines}.
+   * @see Specified by {@link ISnapLineProvider.addSnapLines}.
    */
   addSnapLines(context, args, item) {
     this.wrapped.addSnapLines(context, args, item)

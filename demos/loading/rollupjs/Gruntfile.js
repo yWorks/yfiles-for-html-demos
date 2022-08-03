@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -95,8 +95,15 @@ module.exports = function (grunt) {
       .rollup({
         input: path.join(build, 'src/RollupJsDemo.js'),
         plugins: [
-          webWorkerLoader({ inline: false, pattern: /.*LayoutWorker\.js$/, loadPath: 'dist' }),
-          replace({ 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) }),
+          webWorkerLoader({
+            inline: false,
+            pattern: /.*LayoutWorker\.js$/,
+            loadPath: 'dist'
+          }),
+          replace({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+            preventAssignment: true
+          }),
           nodeResolve(),
           json(),
           babel({

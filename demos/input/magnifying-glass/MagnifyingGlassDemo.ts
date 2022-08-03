@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,18 +42,17 @@ import {
   Stroke
 } from 'yfiles'
 
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindCommand, showApp } from '../../resources/demo-app'
 import { LensInputMode } from './LensInputMode'
-import { initDemoStyles } from '../../resources/demo-styles'
-import { colorSets } from '../../resources/basic-demo-styles'
+import { colorSets, initDemoStyles } from '../../resources/demo-styles'
 import { deviceIcons, networkData } from './resources/network-sample'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent = null!
 let lensInputMode: LensInputMode = null!
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -76,7 +75,7 @@ async function run(licenseData: object): Promise<void> {
 
   initDemoStyles(graphComponent.graph)
   populateGraph(graphComponent.graph)
-  await graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 
   initializeUI()
 
@@ -150,5 +149,5 @@ function initializeUI(): void {
   })
 }
 
-// Runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

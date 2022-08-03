@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,6 +29,7 @@
 /* eslint-disable no-dupe-else-if */
 import {
   BaseClass,
+  ClickEventArgs,
   Cursor,
   Fill,
   GeneralPath,
@@ -254,7 +255,7 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
 
   /**
    * Returns whether or not the given point is inside of the current path considering the
-   * {@link ICanvasContext#hitTestRadius}.
+   * {@link ICanvasContext.hitTestRadius}.
    * @param {!IInputModeContext} canvasContext
    * @param {!Point} point
    * @param {!INode} node
@@ -292,7 +293,7 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
 
   /**
    * Returns the intersection point of the line from inner to outer point with the nodes shape or
-   * <code>null</code> if there is no intersection.
+   * `null` if there is no intersection.
    * @param {!INode} node
    * @param {!Point} inner
    * @param {!Point} outer
@@ -779,6 +780,12 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
     }
     context.parentInputMode.addDragFinishedListener(finishHandler)
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   * @param {!ClickEventArgs} evt
+   */
+  handleClick(evt) {}
 }
 
 /**

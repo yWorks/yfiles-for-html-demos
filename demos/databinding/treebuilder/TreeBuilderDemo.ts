@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,12 +50,13 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
 import { SchemaComponent } from './SchemaComponent'
 import samples from './samples'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 const samplesComboBox = document.getElementById('samplesComboBox') as HTMLSelectElement
 
@@ -79,10 +80,11 @@ let existingNodes: IList<INode>
  * of the business data associated with the node.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function run(licenseData: any): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   schemaComponent = new SchemaComponent('schemaGraphComponent', graphComponent.graph, () => {
     // noinspection JSIgnoredPromiseFromCall
@@ -141,7 +143,7 @@ function registerCommands(): void {
 
 /**
  * Builds the graph from data.
- * @param update <code>true</code> when the following layout should be incremental, <code>false</code>
+ * @param update `true` when the following layout should be incremental, `false`
  *   otherwise
  */
 async function buildGraphFromData(update: boolean): Promise<void> {
@@ -172,7 +174,7 @@ async function buildGraphFromData(update: boolean): Promise<void> {
 
 /**
  * Applies the layout.
- * @param update <code>true</code> when the following layout should be incremental, <code>false</code>
+ * @param update `true` when the following layout should be incremental, `false`
  *   otherwise
  */
 async function applyLayout(update: boolean): Promise<void> {
@@ -258,5 +260,5 @@ function initializeLayout() {
   })
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

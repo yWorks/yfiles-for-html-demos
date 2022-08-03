@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,7 @@ import { ClipboardBusinessObject } from './ClipboardBusinessObject'
  */
 export class TagCopyItem {
   /**
-   * Creates a new instance of <code>TagCopyItem</code>.
+   * Creates a new instance of {@link TagCopyItem}.
    * @param tag The tag of the copied item
    */
   constructor(public tag: ClipboardBusinessObject) {}
@@ -66,7 +66,7 @@ export class TaggedNodeClipboardHelper
    * Nodes can be copied unconditionally.
    * @param context The context in which this interface is used, can be null
    * @param item The item to be copied
-   * @see Specified by {@link IClipboardHelper#shouldCopy}.
+   * @see Specified by {@link IClipboardHelper.shouldCopy}.
    */
   shouldCopy(context: IGraphClipboardContext | null, item: IModelItem): boolean {
     return true
@@ -76,7 +76,7 @@ export class TaggedNodeClipboardHelper
    * Nodes can be cut unconditionally.
    * @param context The context in which this interface is used, can be null
    * @param item The item to be cut
-   * @see Specified by {@link IClipboardHelper#shouldCut}.
+   * @see Specified by {@link IClipboardHelper.shouldCut}.
    */
   shouldCut(context: IGraphClipboardContext | null, item: IModelItem): boolean {
     return true
@@ -87,7 +87,7 @@ export class TaggedNodeClipboardHelper
    * @param context The context in which this interface is used, can be null
    * @param item The item to be pasted
    * @param userData The state memento that had been created during cut or copy
-   * @see Specified by {@link IClipboardHelper#shouldPaste}.
+   * @see Specified by {@link IClipboardHelper.shouldPaste}.
    */
   shouldPaste(context: IGraphClipboardContext | null, item: IModelItem, userData: any): boolean {
     return true
@@ -98,7 +98,7 @@ export class TaggedNodeClipboardHelper
    * (see {@link CopyItem} implementation).
    * @param context The context in which this interface is used, can be null
    * @param item The item to be copied
-   * @see Specified by {@link IClipboardHelper#copy}.
+   * @see Specified by {@link IClipboardHelper.copy}.
    */
   copy(context: IGraphClipboardContext | null, item: IModelItem): any | null {
     return item instanceof INode && item.labels.size > 0
@@ -111,7 +111,7 @@ export class TaggedNodeClipboardHelper
    * (see {@link CopyItem} implementation).
    * @param context The context in which this interface is used, can be null
    * @param item The item to be cut
-   * @see Specified by {@link IClipboardHelper#cut}.
+   * @see Specified by {@link IClipboardHelper.cut}.
    */
   cut(context: IGraphClipboardContext | null, item: IModelItem): any | null {
     return item instanceof INode && item.labels.size > 0
@@ -121,11 +121,11 @@ export class TaggedNodeClipboardHelper
 
   /**
    * If the pasted node has at least one label, we change the text using the one that is provided
-   * by <code>userData</code>.
+   * by `userData`.
    * @param context The context in which this interface is used, can be null
    * @param item The copied item The item to be pasted
    * @param userData The state memento that had been created during cut or copy
-   * @see Specified by {@link IClipboardHelper#paste}.
+   * @see Specified by {@link IClipboardHelper.paste}.
    */
   paste(context: IGraphClipboardContext | null, item: IModelItem, userData: any): void {
     if (item instanceof INode && item.labels.size > 0 && userData instanceof CopyItem) {
@@ -140,7 +140,7 @@ export class TaggedNodeClipboardHelper
  */
 class CopyItem {
   /**
-   * Creates a new instance of <code>CopyItem</code>.
+   * Creates a new instance of {@link CopyItem}.
    */
   constructor(public text: string) {}
 

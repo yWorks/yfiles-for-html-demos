@@ -1,6 +1,6 @@
 # Export custom data in GraphML - Application Features Tutorial
 
-<img src="../../resources/image/tutorial3step1.png" alt="demo-thumbnail" height="320"/>
+<img src="../../resources/image/tutorial3custom-graphml.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/03-tutorial-application-features/custom-graphml/index.html).
 

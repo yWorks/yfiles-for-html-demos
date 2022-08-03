@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -121,7 +121,7 @@ export class AndGateNodeStyle extends GateNodeStyle {
    * Creates the visual for a node.
    * @param {!IRenderContext} context The render context.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @returns {!SvgVisual}
    */
   createVisual(context, node) {
@@ -140,7 +140,7 @@ export class AndGateNodeStyle extends GateNodeStyle {
    * @param {!IRenderContext} context The render context
    * @param {!Visual} oldVisual The old visual
    * @param {!INode} node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @returns {!Visual}
    */
   updateVisual(context, oldVisual, node) {
@@ -265,7 +265,7 @@ export class NotNodeStyle extends GateNodeStyle {
    * Creates the visual for a node.
    * @param {!IRenderContext} context The render context.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @returns {!SvgVisual}
    */
   createVisual(context, node) {
@@ -285,7 +285,7 @@ export class NotNodeStyle extends GateNodeStyle {
    * @param {!IRenderContext} context The render context
    * @param {!SvgVisual} oldVisual The old visual
    * @param {!INode} node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
@@ -403,7 +403,7 @@ export class OrNodeStyle extends GateNodeStyle {
    * Creates the visual for a node.
    * @param {!IRenderContext} context The render context.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @returns {!SvgVisual}
    */
   createVisual(context, node) {
@@ -423,7 +423,7 @@ export class OrNodeStyle extends GateNodeStyle {
    * @param {!IRenderContext} context The render context
    * @param {!Visual} oldVisual The old visual
    * @param {!INode} node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
@@ -573,7 +573,7 @@ export class XOrNodeStyle extends GateNodeStyle {
    * Creates the visual for a node.
    * @param {!IRenderContext} context The render context.
    * @param {!INode} node The node to which this style instance is assigned.
-   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @see Overrides {@link NodeStyleBase.createVisual}
    * @returns {!SvgVisual}
    */
   createVisual(context, node) {
@@ -593,7 +593,7 @@ export class XOrNodeStyle extends GateNodeStyle {
    * @param {!IRenderContext} context The render context
    * @param {!Visual} oldVisual The old visual
    * @param {!INode} node The node to which this style instance is assigned
-   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {

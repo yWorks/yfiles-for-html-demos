@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,14 +50,18 @@ import {
   SimplexNodePlacer
 } from 'yfiles'
 
-import { DemoGroupStyle, DemoNodeStyle } from '../../resources/demo-styles'
-import { colorSets } from '../../resources/basic-demo-styles'
+import {
+  applyDemoTheme,
+  colorSets,
+  createDemoGroupStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles'
 
-const pathNodeStyle = new DemoNodeStyle('demo-palette-403')
-const sideNodeStyle = new DemoNodeStyle('demo-palette-44')
-const clickableNodeStyle = new DemoNodeStyle('demo-palette-13')
-const endNodeStyle = new DemoNodeStyle('demo-palette-402')
-const groupNodeStyle = new DemoGroupStyle('demo-palette-42')
+const pathNodeStyle = createDemoNodeStyle('demo-palette-403')
+const sideNodeStyle = createDemoNodeStyle('demo-palette-44')
+const clickableNodeStyle = createDemoNodeStyle('demo-palette-13')
+const endNodeStyle = createDemoNodeStyle('demo-palette-402')
+const groupNodeStyle = createDemoGroupStyle({ colorSetName: 'demo-palette-42' })
 const edgeStyle = new PolylineEdgeStyle({
   smoothingLength: 30,
   targetArrow: new Arrow({
@@ -108,6 +112,7 @@ export default class DecisionTree {
   ) {
     // initialize the GraphComponent
     const graphComponent = new GraphComponent(containerElement)
+    applyDemoTheme(graphComponent)
     this.graph = graphComponent.graph
     this.graphComponent = graphComponent
 

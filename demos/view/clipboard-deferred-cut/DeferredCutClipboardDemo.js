@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,30 +43,30 @@ import {
 } from 'yfiles'
 
 import { bindCommand, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
 import { setClipboardStyles } from './ClipboardStyles.js'
 import { DeferredCutClipboard } from './DeferredCutClipboard.js'
 import ContextMenu from '../../utils/ContextMenu.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
- * @param {!object} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // add the graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // set the styles and create a sample graph
   initDemoStyles(graphComponent.graph)
   setClipboardStyles(graphComponent.graph)
   createSampleGraph(graphComponent.graph)
-  await graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 
   // configure the clipboard itself
   const clipboard = new DeferredCutClipboard()
@@ -96,7 +96,7 @@ async function run(licenseData) {
  * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
-  graph.nodeDefaults.size = new Size(40, 40)
+  graph.nodeDefaults.size = new Size(50, 50)
   const edgeLabelModel = new EdgePathLabelModel({
     autoRotation: true,
     distance: 10,
@@ -198,5 +198,5 @@ function registerCommands() {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 }
 
-// start the application
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

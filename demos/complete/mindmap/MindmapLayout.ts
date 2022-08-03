@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,7 +52,7 @@ import {
   TreeReductionStage,
   TreeReductionStageData
 } from 'yfiles'
-import { getSubtree, isCrossReference, isLeft, isRoot } from './MindmapUtil'
+import { isCrossReference, isLeft, isRoot } from './MindmapUtil'
 
 /**
  * This class contains methods that deal with the mindmap graph layout.

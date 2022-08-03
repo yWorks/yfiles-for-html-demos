@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,8 @@ import {
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeStyle,
+  GroupNodeStyleTabPosition,
   ICommand,
   IEdge,
   IGraph,
@@ -44,33 +46,27 @@ import {
   MouseHoverInputMode,
   Point,
   QueryItemToolTipEventArgs,
-  Rect,
   Size,
   TimeSpan,
   ToolTipQueryEventArgs
 } from 'yfiles'
 
-import {
-  addClass,
-  bindAction,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import { addClass, bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -94,7 +90,7 @@ function run(licenseData) {
 
 /**
  * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
- * the {@link MouseHoverInputMode#addQueryToolTipListener QueryToolTip} event of the
+ * the {@link MouseHoverInputMode.addQueryToolTipListener QueryToolTip} event of the
  * GraphEditorInputMode using the
  * {@link ToolTipQueryEventArgs} parameter.
  * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
@@ -175,7 +171,11 @@ function createTooltipContent(item) {
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
+
+  const groupNodeStyle = graph.groupNodeDefaults.style
+  groupNodeStyle.tabPosition = GroupNodeStyleTabPosition.RIGHT
+  groupNodeStyle.cornerRadius = 8
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -263,5 +263,5 @@ function registerCommands() {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

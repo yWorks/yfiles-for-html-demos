@@ -1,16 +1,18 @@
 {
   "compilerOptions": {
+    "noEmit": true,
+    "lib": ["es2021", "dom", "dom.iterable", "ScriptHost", "WebWorker"],
+    "module": "es2020",
+    "target": "es2021",
     "strict": true,
-    "target": "es6",
-    "module": "es6",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "removeComments": false,
     "noImplicitAny": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": ["DOM", "ES6", "DOM.Iterable", "ScriptHost", "WebWorker"]
+    "resolveJsonModule": true
   }
 }

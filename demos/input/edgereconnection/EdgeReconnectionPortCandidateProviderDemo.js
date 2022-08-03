@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,19 +41,23 @@ import {
   Rect,
   ShapeNodeStyle
 } from 'yfiles'
-
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { checkLicense, showApp } from '../../resources/demo-app.js'
+import {
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { showApp } from '../../resources/demo-app.js'
 import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider.js'
 import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider.js'
 import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider.js'
 import RedEdgePortCandidateProvider from './RedEdgePortCandidateProvider.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
+
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IEdgeReconnectionPortCandidateProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>IEdgePortCandidateProvider</code>. In this case, the 'node'
+ * for its {@link IEdgePortCandidateProvider}. In this case, the 'node'
  * parameter will be set to that node.
  * @param {!IGraph} graph The given graph
  */
@@ -82,12 +86,13 @@ function registerEdgePortCandidateProvider(graph) {
 
 /**
  * Called after this application has been set up by the demo framework.
- * @param {*} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
@@ -163,25 +168,24 @@ function createSampleGraph(graphComponent) {
 }
 
 /**
- * Creates the sample graph of the given css class for different colored graphs.
- * @param {!IGraph} graph The given graph
- * @param {!ColorSetName} cssClass The given cssClass
- * @param {!string} tag
- * @param {number} yOffset An y-offset
+ * Creates new graph items in the given graph using the given color set.
+ * @param {!IGraph} graph The graph instance in which to create sample items.
+ * @param {!ColorSetName} colorSet The color set to use for the new sample items.
+ * @param {!string} tag The tag for new nodes created by this method.
+ * @param {number} yOffset An y-coordinate offset for new nodes created by this method.
  * @returns {!Array.<INode>}
  */
-function createSubgraph(graph, cssClass, tag, yOffset) {
-  const nodeStyle = new DemoNodeStyle(cssClass)
+function createSubgraph(graph, colorSet, tag, yOffset) {
+  const nodeStyle = createDemoNodeStyle(colorSet)
 
   const n1 = graph.createNode(new Rect(100, 100 + yOffset, 60, 60), nodeStyle, tag)
   const n2 = graph.createNode(new Rect(500, 100 + yOffset, 60, 60), nodeStyle, tag)
   const n3 = graph.createNode(new Rect(300, 160 + yOffset, 60, 60), nodeStyle, tag)
 
-  const edgeStyle = new DemoEdgeStyle(cssClass)
-  edgeStyle.showTargetArrows = false
+  const edgeStyle = createDemoEdgeStyle({ colorSetName: colorSet, showTargetArrow: false })
   graph.createEdge(n1, n2, edgeStyle, tag)
   return [n1, n2, n3]
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

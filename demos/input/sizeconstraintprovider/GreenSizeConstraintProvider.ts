@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,7 +46,7 @@ export default class GreenSizeConstraintProvider
   /**
    * Returns the label size to prevent the shrinking of nodes beyond their
    * label's size.
-   * @see Specified by {@link INodeSizeConstraintProvider#getMinimumSize}.
+   * @see Specified by {@link INodeSizeConstraintProvider.getMinimumSize}.
    */
   getMinimumSize(node: INode): Size {
     for (const label of node.labels) {
@@ -64,7 +64,7 @@ export default class GreenSizeConstraintProvider
 
   /**
    * Returns the infinite size since the maximum size is not limited.
-   * @see Specified by {@link INodeSizeConstraintProvider#getMaximumSize}.
+   * @see Specified by {@link INodeSizeConstraintProvider.getMaximumSize}.
    */
   getMaximumSize(node: INode): Size {
     return Size.INFINITE
@@ -72,7 +72,7 @@ export default class GreenSizeConstraintProvider
 
   /**
    * Returns an empty rectangle since this area is not constraint.
-   * @see Specified by {@link INodeSizeConstraintProvider#getMinimumEnclosedArea}.
+   * @see Specified by {@link INodeSizeConstraintProvider.getMinimumEnclosedArea}.
    */
   getMinimumEnclosedArea(node: INode): Rect {
     return Rect.EMPTY

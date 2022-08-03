@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, Point, TimeSpan } from 'yfiles'
-import { detectSafariVersion, detectiOSVersion } from './Workarounds.js'
+import { GraphComponent, MultiplexingInputMode, Point, TimeSpan } from 'yfiles'
+import { detectiOSVersion, detectSafariVersion } from './Workarounds.js'
 
 /**
  * A demo implementation of a context menu that is used in various yFiles demos.
@@ -46,8 +46,7 @@ export default class ContextMenu {
   /**
    * Creates a new empty menu.
    *
-   * @param {GraphComponent} graphComponent The graph component of this context menu.
-   * @param {!GraphComponent} graphComponent
+   * @param {!GraphComponent} graphComponent The graph component of this context menu.
    */
   constructor(graphComponent) {
     const contextMenu = document.createElement('div')
@@ -132,9 +131,8 @@ export default class ContextMenu {
    *
    * This menu only shows if it has at least one menu item.
    *
-   * @param {Point} location The location of the menu relative to the left edge of the entire
+   * @param {!Point} location The location of the menu relative to the left edge of the entire
    *   document. This are typically the pageX and pageY coordinates of the contextmenu event.
-   * @param {!Point} location
    */
   show(location) {
     if (this.element.childElementCount <= 0) {
@@ -208,7 +206,7 @@ export default class ContextMenu {
    * Sets a callback function that is invoked if the context menu closed itself, for example because a
    * menu item was clicked.
    *
-   * Typically, the provided callback informs the <code>ContextMenuInputMode</code> that this menu is
+   * Typically, the provided callback informs the {@link ContextMenuInputMode} that this menu is
    * closed.
    */
   get onClosedCallback() {
@@ -229,20 +227,18 @@ export default class ContextMenu {
    * Adds event listeners for events that should show the context menu. These listeners then call the provided
    * openingCallback function.
    *
-   * Besides the obvious <code>contextmenu</code> event, we listen for long presses and the Context Menu key.
+   * Besides the obvious `contextmenu` event, we listen for long presses and the Context Menu key.
    *
-   * A long touch press doesn't trigger a <code>contextmenu</code> event on all platforms therefore we listen to the
+   * A long touch press doesn't trigger a `contextmenu` event on all platforms therefore we listen to the
    * GraphComponent's TouchLongPress event
    *
    * The Context Menu key is not handled correctly in Chrome. In other browsers, when the Context Menu key is
-   * pressed, the correct <code>contextmenu</code> event is fired but the event location is not meaningful.
+   * pressed, the correct `contextmenu` event is fired but the event location is not meaningful.
    * In this case, we set a better location, centered on the given element.
    *
-   * @param {GraphComponent} graphComponent The graph component of this context menu.
-   * @param {function(Point)} openingCallback This function is called when an event that should
+   * @param {!GraphComponent} graphComponent The graph component of this context menu.
+   * @param {!function} openingCallback This function is called when an event that should
    *   open the context menu occurred. It gets the location of the event.
-   * @param {!GraphComponent} graphComponent
-   * @param {!function} openingCallback
    */
   addOpeningEventListeners(graphComponent, openingCallback) {
     const componentDiv = graphComponent.div
@@ -277,6 +273,11 @@ export default class ContextMenu {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer
       graphComponent.addTouchDownListener((sender, args) => {
+        if (!args.device.isPrimaryDevice) {
+          // a second pointer is down, so just dismiss the context-menu event
+          clearTimeout(contextMenuTimer)
+          return
+        }
         contextMenuTimer = setTimeout(() => {
           openingCallback(
             graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location))
@@ -300,10 +301,9 @@ export default class ContextMenu {
   /**
    * Closes the context menu when it lost the focus.
    *
-   * @param {HTMLElement} relatedTarget The related target of the focus event.
+   * @param {!HTMLElement} relatedTarget The related target of the focus event.
    *
    * @private
-   * @param {!HTMLElement} relatedTarget
    */
   onFocusOut(relatedTarget) {
     // focusout can also occur when the focus shifts between the buttons in this context menu.
@@ -325,11 +325,10 @@ export default class ContextMenu {
   /**
    * Calculates the location of the center of the given element in absolute coordinates relative to the body element.
    *
-   * @param {HTMLElement} element
+   * @param {!HTMLElement} element
    * @returns {!Point} {Point}
    *
    * @private
-   * @param {!HTMLElement} element
    */
   static getCenterInPage(element) {
     let left = element.clientWidth / 2.0

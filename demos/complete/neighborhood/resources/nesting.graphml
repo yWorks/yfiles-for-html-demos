@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -28,390 +28,266 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0">
-	<key id="d0" for="node" attr.type="string" attr.name="Url"/>
-	<key id="d1" for="node" attr.type="string" attr.name="ToolTip"/>
-	<key id="d2" for="node" attr.type="string" attr.name="Description"/>
-	<key id="d3" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
-	<key id="d4" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
-	<key id="d5" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
-	<key id="d6" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
-		<default>true</default>
-	</key>
-	<key id="d7" for="node" attr.name="NodeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
-	<key id="d8" for="graph" attr.type="string" attr.name="GraphDescription"/>
-	<key id="d9" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
-		<default>
-			<x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored" />
-		</default>
-	</key>
-	<key id="d10" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
-		<default>
-			<x:Static Member="y:VoidPortStyle.Instance"/>
-		</default>
-	</key>
-	<key id="d11" for="port" attr.name="PortViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
-	<key id="d12" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
-	<key id="d13" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
-	<key id="d14" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
-	<key id="d15" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
-	<key id="d16" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
-	<key id="d17" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
-	<data key="d12">
-		<y:SharedData>
-			<yjs:Color x:Key="1" r="135" g="206" a="255" b="250"/>
-			<y:GenericLabelModelParameter x:Key="2">
-				<y:GenericLabelModelParameter.Model>
-					<y:GenericLabelModel>
-						<y:GenericLabelModel.Parameters>
-							<x:Static Member="y:InteriorLabelModel.Center"/>
-							<x:Static Member="y:ExteriorLabelModel.North"/>
-							<x:Static Member="y:ExteriorLabelModel.South"/>
-							<x:Static Member="y:InteriorStretchLabelModel.East"/>
-							<x:Static Member="y:InteriorStretchLabelModel.West"/>
-						</y:GenericLabelModel.Parameters>
-					</y:GenericLabelModel>
-				</y:GenericLabelModelParameter.Model>
-			</y:GenericLabelModelParameter>
-			<yjs:DefaultLabelStyle x:Key="3" verticalTextAlignment="CENTER" textFill="#ff323232" horizontalTextAlignment="CENTER" clipText="false">
-				<yjs:DefaultLabelStyle.font>
-					<yjs:Font fontSize="10" fontStyle="NORMAL" fontFamily="Arial" fontWeight="NORMAL"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
-			<demostyle:DemoNodeStyle x:Key="4"/>
-			<demostyle:DemoEdgeStyle x:Key="5"/>
-			<y:InteriorStretchLabelModel x:Key="6" Insets="4, 4, 18, 4"/>
-			<yjs:DefaultLabelStyle x:Key="7" textFill="#ffffffff"/>
-			<demostyle:DemoGroupStyle x:Key="8" isCollapsible="true"/>
-		</y:SharedData>
-	</data>
-	<graph id="G" edgedefault="directed">
-		<data key="d8"><![CDATA[A graph with group nodes. Click on the +/- icons for opening/closing groups. Use CTRL-SHIFT-Click on a group node to enter the group. Use CTRL-SHIFT-Click on the background to exit the group.]]></data>
-		<node id="n0">
-			<data key="d3">
-				<x:List>
-                    <y:Label Style="{y:GraphMLReference 7}" PreferredSize="29,14">
-                        <y:Label.Text>Group</y:Label.Text>
-                        <y:Label.LayoutParameter>
-                            <y:InteriorStretchLabelModelParameter Model="{y:GraphMLReference 6}" Position="North"/>
-                        </y:Label.LayoutParameter>
-                    </y:Label>
-				</x:List>
-			</data>
-			<data key="d4">
-				<y:RectD Height="167" X="449" Width="136" Y="461.82"/>
-			</data>
-			<data key="d5">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
-			<graph id="n0:" edgedefault="directed">
-				<data key="d8"><![CDATA[A graph with group nodes. Click on the +/- icons for opening/closing groups. Use CTRL-SHIFT-Click on a group node to enter the group. Use CTRL-SHIFT-Click on the background to exit the group.]]></data>
-				<node id="n0::n0">
-					<data key="d3">
-						<x:List>
-                            <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                <y:Label.Text>4</y:Label.Text>
-                            </y:Label>
-						</x:List>
-					</data>
-					<data key="d4">
-						<y:RectD Height="30" X="467.38" Width="30" Y="491.82"/>
-					</data>
-					<data key="d5">
-						<y:GraphMLReference ResourceKey="4"/>
-					</data>
-					<port name="p0"/>
-					<port name="p1"/>
-				</node>
-				<node id="n0::n1">
-					<data key="d3">
-						<x:List>
-                            <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                <y:Label.Text>5</y:Label.Text>
-                            </y:Label>
-						</x:List>
-					</data>
-					<data key="d4">
-						<y:RectD Height="30" X="458.048387096774" Width="30" Y="589.621700879765"/>
-					</data>
-					<data key="d5">
-						<y:GraphMLReference ResourceKey="4"/>
-					</data>
-					<port name="p0"/>
-					<port name="p1"/>
-				</node>
-				<node id="n0::n2">
-					<data key="d3">
-						<x:List>
-                            <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                <y:Label.Text>6</y:Label.Text>
-                            </y:Label>
-						</x:List>
-					</data>
-					<data key="d4">
-						<y:RectD Height="30" X="545.359237536657" Width="30" Y="496.982404692082"/>
-					</data>
-					<data key="d5">
-						<y:GraphMLReference ResourceKey="4"/>
-					</data>
-					<port name="p0"/>
-					<port name="p1"/>
-					<port name="p2"/>
-				</node>
-				<edge id="n0::e0" source="n0::n0" target="n0::n2" sourceport="p0" targetport="p0">
-					<data key="d16">
-						<y:GraphMLReference ResourceKey="5"/>
-					</data>
-				</edge>
-				<edge id="n0::e1" source="n0::n0" target="n0::n1" sourceport="p1" targetport="p0">
-					<data key="d16">
-						<y:GraphMLReference ResourceKey="5"/>
-					</data>
-				</edge>
-				<edge id="n0::e2" source="n0::n2" target="n0::n1" sourceport="p1" targetport="p1">
-					<data key="d16">
-						<y:GraphMLReference ResourceKey="5"/>
-					</data>
-				</edge>
-			</graph>
-			<port name="p0"/>
-		</node>
-		<node id="n1">
-			<data key="d3">
-				<x:List>
-                    <y:Label Style="{y:GraphMLReference 7}" PreferredSize="29,14">
-                        <y:Label.Text>Group</y:Label.Text>
-                        <y:Label.LayoutParameter>
-                            <y:InteriorStretchLabelModelParameter Model="{y:GraphMLReference 6}" Position="North"/>
-                        </y:Label.LayoutParameter>
-                    </y:Label>
-				</x:List>
-			</data>
-			<data key="d4">
-				<y:RectD Height="154" X="412" Width="199" Y="205.06"/>
-			</data>
-			<data key="d5">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
-			<graph id="n1:" edgedefault="directed">
-				<data key="d8"><![CDATA[A graph with group nodes. Click on the +/- icons for opening/closing groups. Use CTRL-SHIFT-Click on a group node to enter the group. Use CTRL-SHIFT-Click on the background to exit the group.]]></data>
-				<node id="n1::n0">
-					<data key="d3">
-						<x:List>
-                            <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                <y:Label.Text>8</y:Label.Text>
-                            </y:Label>
-						</x:List>
-					</data>
-					<data key="d4">
-						<y:RectD Height="30" X="493.872434017595" Width="30" Y="320.032258064516"/>
-					</data>
-					<data key="d5">
-						<y:GraphMLReference ResourceKey="4"/>
-					</data>
-					<port name="p0"/>
-					<port name="p1"/>
-					<port name="p2"/>
-				</node>
-				<node id="n1::n1">
-					<data key="d3">
-						<x:List>
-                            <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                <y:Label.Text>9</y:Label.Text>
-                            </y:Label>
-						</x:List>
-					</data>
-					<data key="d4">
-						<y:RectD Height="30" X="571.85" Width="30" Y="234.06"/>
-					</data>
-					<data key="d5">
-						<y:GraphMLReference ResourceKey="4"/>
-					</data>
-					<port name="p0"/>
-					<port name="p1"/>
-				</node>
-				<node id="n1::n2">
-					<data key="d3">
-						<x:List>
-                            <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                <y:Label.Text>10</y:Label.Text>
-                            </y:Label>
-						</x:List>
-					</data>
-					<data key="d4">
-						<y:RectD Height="30" X="421.558651026393" Width="30" Y="234.724340175953"/>
-					</data>
-					<data key="d5">
-						<y:GraphMLReference ResourceKey="4"/>
-					</data>
-					<port name="p0"/>
-					<port name="p1"/>
-					<port name="p2"/>
-				</node>
-				<edge id="n1::e0" source="n1::n1" target="n1::n0" sourceport="p0" targetport="p0">
-					<data key="d16">
-						<y:GraphMLReference ResourceKey="5"/>
-					</data>
-				</edge>
-				<edge id="n1::e1" source="n1::n0" target="n1::n2" sourceport="p1" targetport="p0">
-					<data key="d16">
-						<y:GraphMLReference ResourceKey="5"/>
-					</data>
-				</edge>
-				<edge id="n1::e2" source="n1::n2" target="n1::n1" sourceport="p1" targetport="p1">
-					<data key="d16">
-						<y:GraphMLReference ResourceKey="5"/>
-					</data>
-				</edge>
-			</graph>
-		</node>
-		<node id="n2">
-			<data key="d3">
-				<x:List>
-                    <y:Label Style="{y:GraphMLReference 7}" PreferredSize="29,14">
-                        <y:Label.Text>Group</y:Label.Text>
-                            <y:Label.LayoutParameter>
-                                <y:InteriorStretchLabelModelParameter Model="{y:GraphMLReference 6}" Position="North"/>
-                            </y:Label.LayoutParameter>
-                    </y:Label>
-				</x:List>
-			</data>
-			<data key="d4">
-				<y:RectD Height="240" X="19" Width="285" Y="268.54"/>
-			</data>
-			<data key="d5">
-				<y:GraphMLReference ResourceKey="8"/>
-			</data>
-			<graph id="n2:" edgedefault="directed">
-				<data key="d8"><![CDATA[A graph with group nodes. Click on the +/- icons for opening/closing groups. Use CTRL-SHIFT-Click on a group node to enter the group. Use CTRL-SHIFT-Click on the background to exit the group.]]></data>
-				<node id="n2::n0">
-					<data key="d3">
-						<x:List>
-                            <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                <y:Label.Text>7</y:Label.Text>
-                            </y:Label>
-						</x:List>
-					</data>
-					<data key="d4">
-						<y:RectD Height="30" X="264.763929618768" Width="30" Y="296.879765395894"/>
-					</data>
-					<data key="d5">
-						<y:GraphMLReference ResourceKey="4"/>
-					</data>
-					<port name="p0"/>
-					<port name="p1"/>
-				</node>
-				<node id="n2::n1">
-					<data key="d3">
-						<x:List>
-                            <y:Label Style="{y:GraphMLReference 7}" PreferredSize="29,14">
-                                <y:Label.Text>Group</y:Label.Text>
-                                <y:Label.LayoutParameter>
-                                    <y:InteriorStretchLabelModelParameter Model="{y:GraphMLReference 6}" Position="North"/>
-                                </y:Label.LayoutParameter>
-                            </y:Label>
-						</x:List>
-					</data>
-					<data key="d4">
-						<y:RectD Height="198" X="30" Width="200" Y="299.54"/>
-					</data>
-					<data key="d5">
-						<y:GraphMLReference ResourceKey="8"/>
-					</data>
-					<graph id="n2::n1:" edgedefault="directed">
-						<data key="d8"><![CDATA[A graph with group nodes. Click on the +/- icons for opening/closing groups. Use CTRL-SHIFT-Click on a group node to enter the group. Use CTRL-SHIFT-Click on the background to exit the group.]]></data>
-						<node id="n2::n1::n0">
-							<data key="d3">
-								<x:List>
-                                    <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                        <y:Label.Text>1</y:Label.Text>
-                                    </y:Label>
-								</x:List>
-							</data>
-							<data key="d4">
-								<y:RectD Height="30" X="39.9926686217009" Width="30" Y="329.542521994135"/>
-							</data>
-							<data key="d5">
-								<y:GraphMLReference ResourceKey="4"/>
-							</data>
-							<port name="p0"/>
-							<port name="p1"/>
-						</node>
-						<node id="n2::n1::n1">
-							<data key="d3">
-								<x:List>
-                                    <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                        <y:Label.Text>2</y:Label.Text>
-                                    </y:Label>
-								</x:List>
-							</data>
-							<data key="d4">
-								<y:RectD Height="30" X="97.4765395894431" Width="30" Y="458.504398826979"/>
-							</data>
-							<data key="d5">
-								<y:GraphMLReference ResourceKey="4"/>
-							</data>
-							<port name="p0"/>
-							<port name="p1"/>
-						</node>
-						<node id="n2::n1::n2">
-							<data key="d3">
-								<x:List>
-                                    <y:Label LayoutParameter="{y:GraphMLReference 2}" Style="{y:GraphMLReference 3}">
-                                        <y:Label.Text>3</y:Label.Text>
-                                    </y:Label>
-								</x:List>
-							</data>
-							<data key="d4">
-								<y:RectD Height="30" X="190.951612903226" Width="30" Y="374.193548387097"/>
-							</data>
-							<data key="d5">
-								<y:GraphMLReference ResourceKey="4"/>
-							</data>
-							<port name="p0"/>
-							<port name="p1"/>
-						</node>
-						<edge id="n2::n1::e0" source="n2::n1::n0" target="n2::n1::n1" sourceport="p0" targetport="p0">
-							<data key="d16">
-								<y:GraphMLReference ResourceKey="5"/>
-							</data>
-						</edge>
-						<edge id="n2::n1::e1" source="n2::n1::n0" target="n2::n1::n2" sourceport="p1" targetport="p0">
-							<data key="d16">
-								<y:GraphMLReference ResourceKey="5"/>
-							</data>
-						</edge>
-						<edge id="n2::n1::e2" source="n2::n1::n1" target="n2::n1::n2" sourceport="p1" targetport="p1">
-							<data key="d16">
-								<y:GraphMLReference ResourceKey="5"/>
-							</data>
-						</edge>
-					</graph>
-					<port name="p0"/>
-					<port name="p1"/>
-				</node>
-				<edge id="n2::e0" source="n2::n0" target="n2::n1" sourceport="p1" targetport="p0">
-					<data key="d16">
-						<y:GraphMLReference ResourceKey="5"/>
-					</data>
-				</edge>
-			</graph>
-		</node>
-		<edge id="e0" source="n2::n0" target="n1::n2" sourceport="p0" targetport="p2">
-			<data key="d16">
-				<y:GraphMLReference ResourceKey="5"/>
-			</data>
-		</edge>
-		<edge id="e1" source="n2::n1" target="n0" sourceport="p1" targetport="p0">
-			<data key="d16">
-				<y:GraphMLReference ResourceKey="5"/>
-			</data>
-		</edge>
-		<edge id="e2" source="n0::n2" target="n1::n0" sourceport="p2" targetport="p2">
-			<data key="d16">
-				<y:GraphMLReference ResourceKey="5"/>
-			</data>
-		</edge>
-	</graph>
+<graphml
+  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd "
+  xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0"
+  xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <key id="d0" for="node" attr.type="boolean" attr.name="Expanded"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+    <default>true</default>
+  </key>
+  <key id="d1" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+  <key id="d2" for="node" attr.name="NodeGeometry"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+  <key id="d3" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+  <key id="d4" for="node" attr.name="NodeViewState"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
+  <key id="d5" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+  <key id="d6" for="edge" attr.name="EdgeGeometry"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+  <key id="d7" for="edge" attr.name="EdgeViewState"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
+  <key id="d8" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
+  <key id="d9" for="port" attr.name="PortLocationParameter"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+    <default>
+      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
+    </default>
+  </key>
+  <key id="d10" for="port" attr.name="PortViewState"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
+  <key id="d11" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+  <data key="d11">
+    <y:SharedData>
+      <y:GroupNodeLabelModelParameter x:Key="1" PlaceOnTab="false">
+        <y:GroupNodeLabelModelParameter.Model>
+          <y:GroupNodeLabelModel/>
+        </y:GroupNodeLabelModelParameter.Model>
+      </y:GroupNodeLabelModelParameter>
+    </y:SharedData>
+  </data>
+  <graph id="G" edgedefault="directed">
+    <node id="n0">
+      <data key="d1">
+        <x:List>
+          <y:Label LayoutParameter="{y:GraphMLReference 1}">
+            <y:Label.Text>Group</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <data key="d2">
+        <y:RectD X="449" Y="461.82" Width="136" Height="167"/>
+      </data>
+      <graph id="n0:" edgedefault="directed">
+        <node id="n0::n0">
+          <data key="d1">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                <y:Label.Text>4</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <data key="d2">
+            <y:RectD X="467.38" Y="491.82" Width="30" Height="30"/>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n0::n1">
+          <data key="d1">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                <y:Label.Text>5</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <data key="d2">
+            <y:RectD X="458.048387096774" Y="589.621700879765" Width="30" Height="30"/>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n0::n2">
+          <data key="d1">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                <y:Label.Text>6</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <data key="d2">
+            <y:RectD X="545.359237536657" Y="496.982404692082" Width="30" Height="30"/>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+          <port name="p2"/>
+        </node>
+        <edge id="n0::e0" source="n0::n0" target="n0::n2" sourceport="p0" targetport="p0"/>
+        <edge id="n0::e1" source="n0::n0" target="n0::n1" sourceport="p1" targetport="p0"/>
+        <edge id="n0::e2" source="n0::n2" target="n0::n1" sourceport="p1" targetport="p1"/>
+      </graph>
+      <port name="p0"/>
+    </node>
+    <node id="n1">
+      <data key="d1">
+        <x:List>
+          <y:Label>
+            <y:Label.Text>Group</y:Label.Text>
+            <y:Label.LayoutParameter>
+              <y:InteriorStretchLabelModelParameter>
+                <y:InteriorStretchLabelModelParameter.Model>
+                  <y:InteriorStretchLabelModel Insets="4,4,18,4"/>
+                </y:InteriorStretchLabelModelParameter.Model>
+              </y:InteriorStretchLabelModelParameter>
+            </y:Label.LayoutParameter>
+          </y:Label>
+        </x:List>
+      </data>
+      <data key="d2">
+        <y:RectD X="412" Y="205.06" Width="199" Height="154"/>
+      </data>
+      <graph id="n1:" edgedefault="directed">
+        <node id="n1::n0">
+          <data key="d1">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                <y:Label.Text>8</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <data key="d2">
+            <y:RectD X="493.872434017595" Y="320.032258064516" Width="30" Height="30"/>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+          <port name="p2"/>
+        </node>
+        <node id="n1::n1">
+          <data key="d1">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                <y:Label.Text>9</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <data key="d2">
+            <y:RectD X="571.85" Y="234.06" Width="30" Height="30"/>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n1::n2">
+          <data key="d1">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                <y:Label.Text>10</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <data key="d2">
+            <y:RectD X="421.558651026393" Y="234.724340175953" Width="30" Height="30"/>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+          <port name="p2"/>
+        </node>
+        <edge id="n1::e0" source="n1::n1" target="n1::n0" sourceport="p0" targetport="p0"/>
+        <edge id="n1::e1" source="n1::n0" target="n1::n2" sourceport="p1" targetport="p0"/>
+        <edge id="n1::e2" source="n1::n2" target="n1::n1" sourceport="p1" targetport="p1"/>
+      </graph>
+    </node>
+    <node id="n2">
+      <data key="d1">
+        <x:List>
+          <y:Label LayoutParameter="{y:GraphMLReference 1}">
+            <y:Label.Text>Group</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <data key="d2">
+        <y:RectD X="19" Y="268.54" Width="285" Height="240"/>
+      </data>
+      <graph id="n2:" edgedefault="directed">
+        <node id="n2::n0">
+          <data key="d1">
+            <x:List>
+              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                <y:Label.Text>7</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <data key="d2">
+            <y:RectD X="264.763929618768" Y="296.879765395894" Width="30" Height="30"/>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n2::n1">
+          <data key="d1">
+            <x:List>
+              <y:Label LayoutParameter="{y:GraphMLReference 1}">
+                <y:Label.Text>Group</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <data key="d2">
+            <y:RectD X="30" Y="299.54" Width="200" Height="198"/>
+          </data>
+          <graph id="n2::n1:" edgedefault="directed">
+            <node id="n2::n1::n0">
+              <data key="d1">
+                <x:List>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                    <y:Label.Text>1</y:Label.Text>
+                  </y:Label>
+                </x:List>
+              </data>
+              <data key="d2">
+                <y:RectD X="39.9926686217009" Y="329.542521994135" Width="30" Height="30"/>
+              </data>
+              <port name="p0"/>
+              <port name="p1"/>
+            </node>
+            <node id="n2::n1::n1">
+              <data key="d1">
+                <x:List>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                    <y:Label.Text>2</y:Label.Text>
+                  </y:Label>
+                </x:List>
+              </data>
+              <data key="d2">
+                <y:RectD X="97.4765395894431" Y="458.504398826979" Width="30" Height="30"/>
+              </data>
+              <port name="p0"/>
+              <port name="p1"/>
+            </node>
+            <node id="n2::n1::n2">
+              <data key="d1">
+                <x:List>
+                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                    <y:Label.Text>3</y:Label.Text>
+                  </y:Label>
+                </x:List>
+              </data>
+              <data key="d2">
+                <y:RectD X="190.951612903226" Y="374.193548387097" Width="30" Height="30"/>
+              </data>
+              <port name="p0"/>
+              <port name="p1"/>
+            </node>
+            <edge id="n2::n1::e0" source="n2::n1::n0" target="n2::n1::n1" sourceport="p0" targetport="p0"/>
+            <edge id="n2::n1::e1" source="n2::n1::n0" target="n2::n1::n2" sourceport="p1" targetport="p0"/>
+            <edge id="n2::n1::e2" source="n2::n1::n1" target="n2::n1::n2" sourceport="p1" targetport="p1"/>
+          </graph>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <edge id="n2::e0" source="n2::n0" target="n2::n1" sourceport="p1" targetport="p0"/>
+      </graph>
+    </node>
+    <edge id="e0" source="n2::n0" target="n1::n2" sourceport="p0" targetport="p2"/>
+    <edge id="e1" source="n2::n1" target="n0" sourceport="p1" targetport="p0"/>
+    <edge id="e2" source="n0::n2" target="n1::n0" sourceport="p2" targetport="p2"/>
+  </graph>
 </graphml>
-

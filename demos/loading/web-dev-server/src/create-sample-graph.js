@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,8 +29,8 @@
 import {
   DefaultLabelStyle,
   ExteriorLabelModel,
-  InteriorStretchLabelModel,
-  PanelNodeStyle,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   Point,
   PolylineEdgeStyle,
   ShapeNodeStyle,
@@ -59,19 +59,15 @@ function initTutorialDefaults(graph) {
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
   // configure defaults for group nodes and their labels
-  graph.groupNodeDefaults.style = new PanelNodeStyle({
-    color: '#ffffff',
-    insets: [30, 5, 5, 5],
-    labelInsetsColor: '#0b7189'
-  })
+  graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: '#0b7189' })
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'right',
     wrapping: 'character-ellipsis',
-    textFill: '#9dc6d0',
-    insets: [4, 5, 2, 5]
+    textFill: '#9dc6d0'
   })
-  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createTabBackgroundParameter()
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1.5px #662b00',

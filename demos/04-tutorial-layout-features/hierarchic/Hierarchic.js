@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -115,12 +115,12 @@ export function createFeatureLayoutConfiguration(graph) {
 
   // force the edge from node 20 to node 21 to leave its source node on the right side
   layoutData.sourcePortConstraints.mapper.set(
-    graph.edges.first(edge => edge.tag === 12),
+    graph.edges.find(edge => edge.tag === 12),
     PortConstraint.create(PortSide.EAST)
   )
   // force the edge from node 9 to node 7 to enter its target node on the right side
   layoutData.targetPortConstraints.mapper.set(
-    graph.edges.first(edge => edge.tag === 32),
+    graph.edges.find(edge => edge.tag === 32),
     PortConstraint.create(PortSide.EAST)
   )
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,7 +50,7 @@ export default class WebglBlobVisual extends WebGLVisual {
    * @yjs:keep=enable
    */
   render(renderContext: IRenderContext, gl: WebGLRenderingContext): void {
-    if (!this.buffer) {
+    if (!this.buffer || !gl.isBuffer(this.buffer)) {
       // initialize and cache all the data that we need for the first time
       const maxUniformVectors = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)
       const blobCount = (this.maxBlobCount = Math.min(this.maxBlobCount, maxUniformVectors - 10))

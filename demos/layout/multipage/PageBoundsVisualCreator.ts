@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,7 +54,7 @@ export default class PageBoundsVisualCreator
 
   /**
    * Creates a visual for a rectangular page.
-   * @see Overrides {@link IVisualCreator#createVisual}.
+   * @see Overrides {@link IVisualCreator.createVisual}.
    */
   createVisual(context: IRenderContext): Visual | null {
     const rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -69,7 +69,7 @@ export default class PageBoundsVisualCreator
 
   /**
    * Updates the size of the visual for a rectangular page.
-   * @see Overrides {@link IVisualCreator#updateVisual}.
+   * @see Overrides {@link IVisualCreator.updateVisual}.
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): Visual | null {
     if (this.pageWidth === 0 || this.pageHeight === 0) {

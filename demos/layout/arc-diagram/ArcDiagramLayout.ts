@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,20 +41,20 @@ import {
 
 /**
  * Arranges graphs in a manner that is suitable for arc diagrams.
- * <p>
+ *
  * I.e. nodes are placed from left to right on a horizontal line and edges are routed as "arcs"
  * from source node center to target node center.
- * </p><p>
- * The actual left-to-right order of nodes may be {@link NodeOrder#AS_IS as is}, in
- * {@link NodeOrder#TOPOLOGICAL topological sort order}, or such that
- * {@link NodeOrder#MINIMIZE_CROSSINGS the number of edge crossings is minimized}.
- * </p><p>
+ *
+ * The actual left-to-right order of nodes may be {@link NodeOrder.AS_IS as is}, in
+ * {@link NodeOrder.TOPOLOGICAL topological sort order}, or such that
+ * {@link NodeOrder.MINIMIZE_CROSSINGS the number of edge crossings is minimized}.
+ *
  * Edges may be routed such that their bends are control points for cubic bezier curves that
  * approximate semi circles. Alternatively, edges may be routed with a single bend such that
  * source node center, target node center, and bend location define a unique semi circle.
- * </p>
- * @see #nodeOrder
- * @see #createBezierControlPoints
+ *
+ * @see {@link nodeOrder}
+ * @see {@link createBezierControlPoints}
  */
 export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
   /**
@@ -63,15 +63,15 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
   public minimumNodeDistance = 30
   /**
    * Specifies if edge path bends should be calculated as cubic bezier control points.
-   * If this property is set to <code>true</code>, edges are routed in such a way that their
+   * If this property is set to `true`, edges are routed in such a way that their
    * bends are control points for cubic bezier curves that approximate semi circles.
-   * If this property is set to <code>false</code>, edges are routed with a single bend such that
+   * If this property is set to `false`, edges are routed with a single bend such that
    * source node center, target node center, and bend location define a unique semi circle.
    */
   public createBezierControlPoints = true
   /**
    * Specifies the left-to-right order of nodes.
-   * @see NodeOrder
+   * @see {@link NodeOrder}
    */
   public nodeOrder: NodeOrder = NodeOrder.AS_IS
 
@@ -91,7 +91,7 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
 
   /**
    * Places the nodes of the given graph on a horizontal line from left to right.
-   * The order in which the nodes are placed is determined by property {@link #nodeOrder}.
+   * The order in which the nodes are placed is determined by property {@link nodeOrder}.
    * @param graph the graph to be arranged.
    */
   private placeNodes(graph: LayoutGraph): void {
@@ -176,7 +176,7 @@ function calculateNodeOrder(graph: LayoutGraph, nodeOrderPolicy: NodeOrder): num
 }
 
 /**
- * Fills the given array with numbers from <code>0</code> to <code>array.length - 1</code>
+ * Fills the given array with numbers from `0` to `array.length - 1`
  * in ascending order.
  * @param order the array to fill.
  */

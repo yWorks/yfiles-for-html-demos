@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,22 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, IGraph, License, Rect, INode } from 'yfiles'
-import { checkLicense, showApp } from '../../resources/demo-app'
-import { initDemoStyles, DemoNodeStyle, DemoGroupStyle } from '../../resources/demo-styles'
+import { GraphComponent, GraphEditorInputMode, IGraph, INode, License, Rect } from 'yfiles'
+import { showApp } from '../../resources/demo-app'
 import DemoReparentNodeHandler from './DemoReparentNodeHandler'
-import loadJson from '../../resources/load-json'
-import type { ColorSetName } from '../../resources/basic-demo-styles'
+import type { ColorSetName } from '../../resources/demo-styles'
+import {
+  applyDemoTheme,
+  createDemoGroupLabelStyle,
+  createDemoGroupStyle,
+  createDemoNodeStyle,
+  initDemoStyles
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Runs the demo.
  * @param licenseData The yFiles license information.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // create a default editor input mode and configure it
@@ -85,9 +92,9 @@ function createSampleGraph(graph: IGraph): void {
   createGroupNode(graph, 400, 350, 'demo-green', 'green', 'Only Green Children')
 
   // ... and some regular nodes
-  const blueNodeStyle = new DemoNodeStyle('demo-lightblue')
-  const greenNodeStyle = new DemoNodeStyle('demo-green')
-  const redNodeStyle = new DemoNodeStyle('demo-red')
+  const blueNodeStyle = createDemoNodeStyle('demo-lightblue')
+  const greenNodeStyle = createDemoNodeStyle('demo-green')
+  const redNodeStyle = createDemoNodeStyle('demo-red')
 
   const blueNode = graph.createNode(new Rect(110, 130, 30, 30), blueNodeStyle, 'blue')
   const greenNode = graph.createNode(new Rect(130, 380, 30, 30), greenNodeStyle, 'green')
@@ -113,7 +120,7 @@ function createSampleGraph(graph: IGraph): void {
  * @param graph The given graph
  * @param x The node's x-coordinate
  * @param y The node's y-coordinate
- * @param cssClass The CSS class that determines the node's styling
+ * @param colorSet The color set that defines the node's styling
  * @param tag The tag to identify the reparent handler
  * @param labelText The node's label text
  */
@@ -121,19 +128,19 @@ function createGroupNode(
   graph: IGraph,
   x: number,
   y: number,
-  cssClass: ColorSetName,
+  colorSet: ColorSetName,
   tag: string,
   labelText: string
 ): INode {
   const groupNode = graph.createGroupNode({
     layout: new Rect(x, y, 130, 100),
-    style: new DemoGroupStyle(cssClass),
+    style: createDemoGroupStyle({ colorSetName: colorSet }),
     tag: tag
   })
-  graph.addLabel({ owner: groupNode, text: labelText })
+  graph.addLabel({ owner: groupNode, text: labelText, style: createDemoGroupLabelStyle(colorSet) })
 
   return groupNode
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

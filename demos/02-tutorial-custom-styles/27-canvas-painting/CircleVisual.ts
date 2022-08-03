@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,7 +51,7 @@ export default class CircleVisual extends HtmlCanvasVisual {
    * Paints a simple filled ellipse with the layout and color.
    * @param context The render context of the {@link CanvasComponent}
    * @param canvas2d The HTML5 Canvas context to use for rendering.
-   * @see Overrides {@link HtmlCanvasVisual#paint}
+   * @see Overrides {@link HtmlCanvasVisual.paint}
    */
   paint(context: IRenderContext, canvas2d: CanvasRenderingContext2D): void {
     // always save the context and restore it after finishing the rendering

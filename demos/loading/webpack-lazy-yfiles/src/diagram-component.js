@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,19 +28,19 @@
  ***************************************************************************/
 import licenseData from '../../../../lib/license.json'
 import {
-  License,
-  GraphComponent,
-  ShapeNodeStyle,
   DefaultLabelStyle,
   ExteriorLabelModel,
-  ICommand,
-  InteriorStretchLabelModel,
-  Point,
-  Size,
+  GraphComponent,
   GraphEditorInputMode,
-  PanelNodeStyle,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   HierarchicLayout,
-  LayoutExecutor
+  ICommand,
+  LayoutExecutor,
+  License,
+  Point,
+  ShapeNodeStyle,
+  Size
 } from 'yfiles'
 
 License.value = licenseData
@@ -87,15 +87,12 @@ export class DiagramComponent {
     graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
     // configure defaults for group nodes and their labels
-    graph.groupNodeDefaults.style = new PanelNodeStyle({
-      color: 'rgb(214, 229, 248)',
-      insets: [18, 5, 5, 5],
-      labelInsetsColor: 'rgb(214, 229, 248)'
-    })
+    graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: 'rgb(214, 229, 248)' })
     graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
       horizontalTextAlignment: 'right'
     })
-    graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+    graph.groupNodeDefaults.labels.layoutParameter =
+      new GroupNodeLabelModel().createTabBackgroundParameter()
   }
 
   /**
@@ -148,7 +145,8 @@ export class DiagramComponent {
   }
 
   /**
-   * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
+   * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's
+   * toolbar.
    */
   registerCommands() {
     // enable the buttons of the toolbar

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,12 +27,15 @@
  **
  ***************************************************************************/
 import {
+  DefaultLabelStyle,
   DragDropEffects,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   ICommand,
   IGraph,
   INode,
@@ -40,39 +43,34 @@ import {
   Insets,
   License,
   NodeDropInputMode,
-  PanelNodeStyle,
   Point,
   QueryContinueDragEventArgs,
   Rect,
   ShapeNodeShape,
-  ShapeNodeStyle,
   SimpleNode,
   Size,
   SvgExport
 } from 'yfiles'
 
-import {
-  addClass,
-  bindAction,
-  bindCommand,
-  checkLicense,
-  removeClass,
-  showApp
-} from '../../resources/demo-app'
+import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
 import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
-import loadJson from '../../resources/load-json'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import {
+  applyDemoTheme,
+  createDemoShapeNodeStyle,
+  initDemoStyles
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -104,7 +102,7 @@ function configureDragAndDrop(): void {
   nodeDropInputMode.enabled = true
   // Certain nodes should be created as group nodes. In this case we distinguish them by their style.
   nodeDropInputMode.isGroupNodePredicate = (draggedNode: INode): boolean =>
-    draggedNode.style instanceof PanelNodeStyle
+    draggedNode.style instanceof GroupNodeStyle
   // When dragging the node within the GraphComponent, we want to show a preview of that node.
   nodeDropInputMode.showPreview = true
 
@@ -120,8 +118,7 @@ function initializeDragAndDropPanel(): void {
 
   // prepare node styles for the palette
   const defaultNodeStyle = graphComponent.graph.nodeDefaults.style
-  const otherNodeStyle = graphComponent.graph.nodeDefaults.style.clone() as ShapeNodeStyle
-  otherNodeStyle.shape = ShapeNodeShape.ELLIPSE
+  const otherNodeStyle = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE)
 
   const defaultGroupNodeStyle = graphComponent.graph.groupNodeDefaults.style
   const nodeStyles = [defaultNodeStyle, otherNodeStyle, defaultGroupNodeStyle]
@@ -225,7 +222,20 @@ function createNodeVisual(style: INodeStyle): string {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
+
+  // set the style, label and label parameter for group nodes
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: '#46a8d5',
+    tabPosition: 'top-leading',
+    contentAreaFill: '#b5dcee'
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'left',
+    textFill: '#eee'
+  })
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -295,5 +305,5 @@ function registerCommands(): void {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

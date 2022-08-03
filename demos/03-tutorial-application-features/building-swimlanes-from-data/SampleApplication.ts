@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -53,6 +53,7 @@ import {
   OrthogonalEdgeEditingContext,
   ParentNodeDetectionModes,
   Rect,
+  RectangleNodeStyle,
   ReparentStripeHandler,
   ShapeNodeStyle,
   SimplexNodePlacer,
@@ -66,19 +67,19 @@ import {
 } from 'yfiles'
 
 import FileSaveSupport from '../../utils/FileSaveSupport'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent
 
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true,
@@ -244,9 +245,9 @@ function buildGraph(graph: IGraph, graphData: any): void {
     })
     if (nodeData.fill) {
       // If the node data specifies an individual fill color, adjust the style.
-      const shapeNodeStyle = graph.nodeDefaults.style.clone() as ShapeNodeStyle
-      shapeNodeStyle.fill = nodeData.fill
-      graph.setStyle(node, shapeNodeStyle)
+      const nodeStyle = graph.nodeDefaults.style.clone() as RectangleNodeStyle
+      nodeStyle.fill = nodeData.fill
+      graph.setStyle(node, nodeStyle)
     }
     nodes[nodeData.id] = node
 
@@ -259,8 +260,8 @@ function buildGraph(graph: IGraph, graphData: any): void {
         graph,
         node,
         tableGroupNode,
-        table.columns.elementAt(lanes[nodeData.lane]),
-        table.rows.elementAt(0)
+        table.columns.at(lanes[nodeData.lane])!,
+        table.rows.first()
       )
     }
   })
@@ -308,7 +309,7 @@ function writeToJSON(graph: IGraph): any {
     const jsonNode = {
       id: i,
       size: [node.layout.width, node.layout.height],
-      fill: colorToHex(((node.style as ShapeNodeStyle).fill! as SolidColorFill).color)
+      fill: colorToHex(((node.style as RectangleNodeStyle).fill! as SolidColorFill).color)
     }
     if (node.labels.size > 0) {
       ;(jsonNode as any).label = node.labels.first().text
@@ -401,7 +402,7 @@ function runLayout(duration: TimeSpan | string): Promise<any> {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -452,5 +453,5 @@ async function loadJSON(url: string): Promise<JSON> {
   return response.json()
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

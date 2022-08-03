@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,14 +30,18 @@ import {
   CircularLayout,
   CircularLayoutData,
   CircularLayoutEdgeRoutingPolicy,
+  CircularLayoutOnCircleRoutingStyle,
+  CircularLayoutRoutingStyle,
   CircularLayoutStyle,
   Class,
   EdgeBundleDescriptor,
   Enum,
+  FreeNodeLabelModel,
   GenericLabeling,
   GraphComponent,
   ILayoutAlgorithm,
   LayoutData,
+  NodeLabelingPolicy,
   PartitionStyle,
   YBoolean,
   YNumber,
@@ -46,8 +50,9 @@ import {
 
 import LayoutConfiguration, {
   LabelPlacementAlongEdge,
+  LabelPlacementOrientation,
   LabelPlacementSideOfEdge,
-  LabelPlacementOrientation
+  NodeLabelingPolicies
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -87,6 +92,10 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
     this.chooseRadiusAutomaticallyItem = true
     this.fixedRadiusItem = 200
 
+    this.defaultBetweenCirclesRoutingItem = CircularLayoutRoutingStyle.STRAIGHT
+    this.defaultInCircleRoutingStyleItem = CircularLayoutRoutingStyle.STRAIGHT
+    this.defaultOnCircleRoutingStyleItem = CircularLayoutOnCircleRoutingStyle.STRAIGHT
+
     this.edgeRoutingItem = CircularLayoutEdgeRoutingPolicy.INTERIOR
     this.exteriorEdgeToCircleDistanceItem = 20
     this.exteriorEdgeToEdgeDistanceItem = 10
@@ -111,11 +120,13 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Circular Layout'
+
+    this.nodeLabelingStyleItem = NodeLabelingPolicies.CONSIDER_CURRENT_POSITION
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @return The configured layout algorithm.
    */
@@ -151,6 +162,11 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
       layout.labeling = genericLabeling
     }
 
+    layout.defaultEdgeLayoutDescriptor.betweenCirclesRoutingStyle =
+      this.defaultBetweenCirclesRoutingItem
+    layout.defaultEdgeLayoutDescriptor.inCircleRoutingStyle = this.defaultInCircleRoutingStyleItem
+    layout.defaultEdgeLayoutDescriptor.onCircleRoutingStyle = this.defaultOnCircleRoutingStyleItem
+
     layout.edgeRoutingPolicy = this.edgeRoutingItem
     layout.exteriorEdgeLayoutDescriptor.circleDistance = this.exteriorEdgeToCircleDistanceItem
     layout.exteriorEdgeLayoutDescriptor.edgeToEdgeDistance = this.exteriorEdgeToEdgeDistanceItem
@@ -163,6 +179,42 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
     ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({
       bundled: this.edgeBundlingItem
     })
+
+    switch (this.nodeLabelingStyleItem) {
+      case NodeLabelingPolicies.NONE:
+        layout.considerNodeLabels = false
+        break
+      case NodeLabelingPolicies.RAYLIKE_LEAVES:
+        layout.integratedNodeLabeling = true
+        layout.nodeLabelingPolicy = NodeLabelingPolicy.RAY_LIKE_LEAVES
+        break
+      case NodeLabelingPolicies.CONSIDER_CURRENT_POSITION:
+        layout.considerNodeLabels = true
+        break
+      case NodeLabelingPolicies.HORIZONTAL:
+        layout.integratedNodeLabeling = true
+        layout.nodeLabelingPolicy = NodeLabelingPolicy.HORIZONTAL
+        break
+      default:
+        layout.considerNodeLabels = false
+        break
+    }
+
+    if (
+      this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
+      this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
+    ) {
+      graphComponent.graph.nodeLabels.forEach(label => {
+        graphComponent.graph.setLabelLayoutParameter(
+          label,
+          FreeNodeLabelModel.INSTANCE.findBestParameter(
+            label,
+            FreeNodeLabelModel.INSTANCE,
+            label.layout
+          )
+        )
+      })
+    }
 
     return layout
   },
@@ -233,11 +285,23 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
   },
 
   /** @type {OptionGroup} */
+  DefaultEdgesGroup: {
+    $meta: function () {
+      return [
+        LabelAttribute('Default Edges'),
+        OptionGroupAttribute('EdgesGroup', 40),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {OptionGroup} */
   ExteriorEdgesGroup: {
     $meta: function () {
       return [
         LabelAttribute('Exterior Edges'),
-        OptionGroupAttribute('EdgesGroup', 20),
+        OptionGroupAttribute('EdgesGroup', 50),
         TypeAttribute(OptionGroup.$class)
       ]
     },
@@ -381,7 +445,8 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
           values: [
             ['Circle', PartitionStyle.CYCLE],
             ['Disk', PartitionStyle.DISK],
-            ['Organic Disk', PartitionStyle.ORGANIC]
+            ['Compact Disk', PartitionStyle.COMPACT_DISK],
+            ['Organic', PartitionStyle.ORGANIC]
           ]
         }),
         TypeAttribute(PartitionStyle.$class)
@@ -473,7 +538,7 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
           'Enable Edge Bundling',
           '#/api/EdgeBundling#EdgeBundling-property-defaultBundleDescriptor'
         ),
-        OptionGroupAttribute('EdgesGroup', 40),
+        OptionGroupAttribute('EdgesGroup', 10),
         TypeAttribute(YBoolean.$class)
       ]
     },
@@ -501,7 +566,7 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
           'Edge Routing Style',
           '#/api/CircularLayout#CircularLayout-property-edgeRoutingPolicy'
         ),
-        OptionGroupAttribute('EdgesGroup', 10),
+        OptionGroupAttribute('EdgesGroup', 30),
         EnumValuesAttribute().init({
           values: [
             ['Inside', CircularLayoutEdgeRoutingPolicy.INTERIOR],
@@ -514,6 +579,100 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
       ]
     },
     value: CircularLayoutEdgeRoutingPolicy.INTERIOR
+  },
+
+  /** @type {CircularLayoutRoutingStyle} */
+  defaultBetweenCirclesRoutingItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Routing Style Between Circles',
+          '#/api/CircularLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-betweenCirclesRoutingStyle'
+        ),
+        OptionGroupAttribute('DefaultEdgesGroup', 10),
+        EnumValuesAttribute().init({
+          values: [
+            ['Straight', CircularLayoutRoutingStyle.STRAIGHT],
+            ['Curved', CircularLayoutRoutingStyle.CURVED]
+          ]
+        }),
+        TypeAttribute(CircularLayoutRoutingStyle.$class)
+      ]
+    },
+    value: CircularLayoutRoutingStyle.STRAIGHT
+  },
+
+  /** @type {boolean} */
+  shouldDisableDefaultBetweenCirclesRoutingItem: <any>{
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function (): boolean {
+      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
+    }
+  },
+
+  /** @type {CircularLayoutRoutingStyle} */
+  defaultInCircleRoutingStyleItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Routing Style Within Partitions',
+          '#/api/CircularLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-inCircleRoutingStyle'
+        ),
+        OptionGroupAttribute('DefaultEdgesGroup', 20),
+        EnumValuesAttribute().init({
+          values: [
+            ['Straight', CircularLayoutRoutingStyle.STRAIGHT],
+            ['Curved', CircularLayoutRoutingStyle.CURVED]
+          ]
+        }),
+        TypeAttribute(CircularLayoutRoutingStyle.$class)
+      ]
+    },
+    value: CircularLayoutRoutingStyle.STRAIGHT
+  },
+
+  /** @type {boolean} */
+  shouldDisableDefaultInCircleRoutingStyleItem: <any>{
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function (): boolean {
+      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
+    }
+  },
+
+  /** @type {CircularLayoutOnCircleRoutingStyle} */
+  defaultOnCircleRoutingStyleItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Routing Style Between Neighbors',
+          '#/api/CircularLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-onCircleRoutingStyle'
+        ),
+        OptionGroupAttribute('DefaultEdgesGroup', 30),
+        EnumValuesAttribute().init({
+          values: [
+            ['Straight', CircularLayoutOnCircleRoutingStyle.STRAIGHT],
+            ['Curved', CircularLayoutOnCircleRoutingStyle.CURVED],
+            ['On Circle', CircularLayoutOnCircleRoutingStyle.ON_CIRCLE]
+          ]
+        }),
+        TypeAttribute(CircularLayoutOnCircleRoutingStyle.$class)
+      ]
+    },
+    value: CircularLayoutOnCircleRoutingStyle.STRAIGHT
+  },
+
+  /** @type {boolean} */
+  shouldDisableDefaultOnCircleRoutingStyleItem: <any>{
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function (): boolean {
+      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
+    }
   },
 
   /** @type {number} */
@@ -679,7 +838,7 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
           'Bundling Strength',
           '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
         ),
-        OptionGroupAttribute('EdgesGroup', 50),
+        OptionGroupAttribute('EdgesGroup', 20),
         MinMaxAttribute().init({
           min: 0,
           max: 1.0,
@@ -846,19 +1005,27 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
     }
   },
 
-  /** @type {boolean} */
-  handleNodeLabelsItem: {
+  /** @type {NodeLabelingPolicies} */
+  nodeLabelingStyleItem: {
     $meta: function () {
       return [
         LabelAttribute(
-          'Consider Node Labels',
-          '#/api/CircularLayout#CircularLayout-property-considerNodeLabels'
+          'Node Labeling',
+          '#/api/CircularLayout#CircularLayout-property-nodeLabelingPolicy'
         ),
         OptionGroupAttribute('NodePropertiesGroup', 10),
-        TypeAttribute(YBoolean.$class)
+        EnumValuesAttribute().init({
+          values: [
+            ['Ignore Labels', NodeLabelingPolicies.NONE],
+            ['Consider Labels', NodeLabelingPolicies.CONSIDER_CURRENT_POSITION],
+            ['Horizontal', NodeLabelingPolicies.HORIZONTAL],
+            ['Ray-like at Leaves', NodeLabelingPolicies.RAYLIKE_LEAVES]
+          ]
+        }),
+        TypeAttribute(Enum.$class)
       ]
     },
-    value: false
+    value: null
   },
 
   /** @type {boolean} */

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, Cursor, HandleTypes, IHandle, IInputModeContext, INode, Point } from 'yfiles'
+import {
+  BaseClass,
+  ClickEventArgs,
+  Cursor,
+  HandleTypes,
+  IHandle,
+  IInputModeContext,
+  INode,
+  Point
+} from 'yfiles'
 
 /**
  * An {@link IHandle} implementation that changes the height in a node's tag.
@@ -107,4 +116,9 @@ export default class HeightHandle extends BaseClass(IHandle) {
     const newHeight = this.originalHeight - delta
     this.node.tag.height = Math.max(this.minimumHeight, newHeight)
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   */
+  handleClick(evt: ClickEventArgs): void {}
 }

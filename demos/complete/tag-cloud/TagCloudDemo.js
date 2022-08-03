@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,7 +40,6 @@ import {
   YDimension
 } from 'yfiles'
 import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
 import TextData from './TextData.js'
 import {
   AssignNodeSizesStage,
@@ -48,6 +47,7 @@ import {
   createAssignNodeSizeStageLayoutData,
   updateTagCloud
 } from './TagCloudHelper.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 // The minimum frequency of the words to be shown in the tag cloud visualization
 /** @type {number} */
@@ -55,11 +55,10 @@ let minFrequency = 80
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
  * @returns {!Promise}
  */
-async function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
 
@@ -183,12 +182,11 @@ function getMinFrequencyValue() {
 /**
  * Helper function to disable UI during layout animation.
  * @param {boolean} disable
- * @param {boolean} disable
  */
 function disableUI(disable) {
   document.querySelector('#layoutStyle').disabled = disable
   document.querySelector('#frequencySlider').disabled = disable
 }
 
-// Loads the app.
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

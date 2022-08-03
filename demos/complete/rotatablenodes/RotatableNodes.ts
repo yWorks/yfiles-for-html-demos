@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   BaseClass,
   CanvasComponent,
   Class,
+  ClickEventArgs,
   Cursor,
   GeneralPath,
   GraphComponent,
@@ -49,6 +50,7 @@ import {
   IHighlightIndicatorInstaller,
   IInputMode,
   IInputModeContext,
+  ILookup,
   IMarkupExtensionConverter,
   IModelItem,
   IModelItemCollector,
@@ -87,8 +89,7 @@ import {
   UndoEngine,
   UndoUnitBase,
   Visual,
-  YNumber,
-  ILookup
+  YNumber
 } from 'yfiles'
 
 /**
@@ -433,7 +434,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
 }
 
 /**
- * An extension of {OrientedRectangleIndicatorInstaller} that uses the rotated layout of nodes
+ * An extension of {@link OrientedRectangleIndicatorInstaller} that uses the rotated layout of nodes
  * using a
  * {@link RotatableNodeStyleDecorator}. The indicator will be rotated to fit the rotated bounds of
  * the node.
@@ -452,7 +453,8 @@ class RotatableNodeIndicatorInstaller extends OrientedRectangleIndicatorInstalle
           rect.setAttribute('y', bounds.y.toString())
           rect.setAttribute('width', bounds.width.toString())
           rect.setAttribute('height', bounds.height.toString())
-          rect.setAttribute('stroke', 'black')
+          rect.setAttribute('stroke', '#e8cb87')
+          rect.setAttribute('stroke-width', '2')
           rect.setAttribute('stroke-dasharray', '2, 2')
           rect.setAttribute('stroke-dashoffset', '1.5')
           rect.setAttribute('stroke-linecap', 'butt')
@@ -889,6 +891,11 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
         throw new Error()
     }
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   */
+  handleClick(evt: ClickEventArgs): void {}
 }
 
 /**
@@ -944,14 +951,14 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
 
   /**
    * Specifies the angular step size to which rotation should snap (in degrees).
-   * Default is 45. Setting this to zero will disable snapping to predefined steps.
+   * Default is `45`. Setting this to `0` will disable snapping to predefined steps.
    */
   snapStep: number
 
   /**
    * Specifies the snapping distance when rotation should snap (in degrees).
-   * The rotation will snap if the angle is less than this distance from a <see
-   * cref="SnapStep">snapping angle</see>. Default is 10. Setting this to a non-positive value will
+   * The rotation will snap if the angle is less than this distance from a {@link snapStep snapping angle}.
+   * Default is `10`. Setting this to a non-positive value will
    * disable snapping to predefined steps.
    */
   snapDelta: number
@@ -959,7 +966,7 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
   /**
    * Specifies the snapping distance (in degrees) for snapping to the same angle as other visible
    * nodes. Rotation will snap to another node's rotation angle if the current angle differs from
-   * the other one by less than this. The default is 5. Setting this to a non-positive value will
+   * the other one by less than this. The default is `5`. Setting this to a non-positive value will
    * disable same angle snapping.
    */
   snapToSameAngleDelta: number
@@ -1018,7 +1025,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   /**
    * Specifies the threshold value the specifies whether the angle should snap to the next multiple
    * of
-   * {@link #snapStep} in degrees. Set a value less than or equal to zero to disable this feature.
+   * {@link snapStep} in degrees. Set a value less than or equal to zero to disable this feature.
    */
   snapDelta: number
 
@@ -1061,7 +1068,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
    * Initializes the drag.
    */
   initializeDrag(inputModeContext: IInputModeContext): void {
-    const imc = inputModeContext.lookup(IModelItemCollector.$class) as IModelItemCollector | null
+    const imc = inputModeContext.lookup(IModelItemCollector.$class)
     if (imc) {
       imc.add(this.node)
     }
@@ -1291,7 +1298,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   setAngle(context: IInputModeContext, angle: number): void {
     const wrapper = this.node.style
     if (wrapper instanceof RotatableNodeStyleDecorator) {
-      const undoEngine = context.lookup(UndoEngine.$class) as UndoEngine | null
+      const undoEngine = context.lookup(UndoEngine.$class)
       if (undoEngine) {
         const undoUnit = new AngleChangeUndoUnit(wrapper)
         undoEngine.addUnit(undoUnit)
@@ -1351,6 +1358,11 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       .add(up.multiply(size.height + offset))
       .add(new Point(-up.y, up.x).multiply(size.width * 0.5))
   }
+
+  /**
+   * This implementation does nothing special when clicked.
+   */
+  handleClick(evt: ClickEventArgs): void {}
 }
 
 /**
@@ -1607,7 +1619,8 @@ class DelegatingContext extends BaseClass(IInputModeContext) {
   /**
    * Delegates to the wrapped context's lookup but cancels the snap context.
    */
-  lookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
     return type === SnapContext.$class ? null : this.context.lookup(type)
   }
 

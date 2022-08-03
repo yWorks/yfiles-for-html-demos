@@ -9,7 +9,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -59,12 +59,6 @@
         <p>
           The default AMD Loader in use by this demo is the
           <a href="https://requirejs.org/" target="_blank">RequireJS</a> loader.
-        </p>
-        <p>
-          Different AMD Loader implementations should work, too. E.g. in the sources of this page
-          below you can find the configuration code for the loader included in the
-          <a href="https://dojotoolkit.org/" target="_blank">dojo Toolkit</a>. This can easily be
-          tested by commenting out the current loader and uncommenting the other loader.
         </p>
         <p>
           Resources that have a <em>.js</em> ending are loaded as JavaScript files. Loading a
@@ -136,21 +130,14 @@
             <img src="../../resources/icons/ylogo.svg" class="demo-y-logo" />
           </a>
           <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
-          <a href="../../README.html" style="cursor: pointer;" target="_blank" class="demo-title">Demos</a>
+          <a href="../../README.html" style="cursor: pointer" target="_blank" class="demo-title"
+            >Demos</a
+          >
           <span class="demo-title">AMD Loading Demo</span>
         </div>
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <!-- USING the DOJO AMD Loader implementation -->
-    <!--<script
-    data-dojo-config="async:true, parseOnLoad:true,
-     baseUrl: location.pathname.replace(/\/[^/]+$/, '/'),
-     packages: [
-       { name: 'yfiles-umd', location: '../../../lib-dev/umd' }
-     ]"
-    src="https://cdnjs.cloudflare.com/ajax/libs/dojo/1.10.4/dojo.js"></script>-->
 
     <!-- USING RequireJS as the AMD Loader implementation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>

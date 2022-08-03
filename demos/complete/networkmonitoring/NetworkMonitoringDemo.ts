@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,14 +55,14 @@ import Connection from './Connection'
 import Device from './Device'
 import ConnectionStyle from './ConnectionStyle'
 import DeviceStyle from './DeviceStyle'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import D3BarChart from './D3BarChart'
 import HTMLPopupSupport from './HTMLPopupSupport'
-import loadJson from '../../resources/load-json'
 import { passiveSupported } from '../../utils/Workarounds'
 import Network from './Network'
-import { networkData } from './resources/network-sample'
 import type { NetworkSample } from './resources/network-sample'
+import { networkData } from './resources/network-sample'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // This demo creates a network monitoring tool for dynamic data.
 // The mock-up model is created and updated by class Simulator.
@@ -114,8 +114,8 @@ let d3Loaded = false
  */
 let edgeAnimator: Animator
 
-async function run(licenseData: object): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
 
@@ -521,4 +521,5 @@ function registerCommands(): void {
   })
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.4.
+     // This demo file is part of yFiles for HTML 2.5.
      // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -39,18 +39,30 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
     <script src="../../resources/filesystem-warning.js"></script>
+
     <!-- load neo4j driver -->
-    <script src="https://unpkg.com/neo4j-driver@4.2.1/lib/browser/neo4j-web.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/codemirror@5.58.3/lib/codemirror.css" />
+    <script src="https://cdn.jsdelivr.net/npm/neo4j-driver@4.2.1/lib/browser/neo4j-web.min.js"></script>
+
     <link
       rel="stylesheet"
-      href="https://unpkg.com/cypher-codemirror/dist/cypher-codemirror-syntax.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
-    <script src="https://unpkg.com/codemirror@5.58.3/lib/codemirror.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/cypher-codemirror@1.1.7/dist/cypher-codemirror-syntax.min.css"
+    />
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script>
       window.codemirror = window.CodeMirror
     </script>
-    <script src="https://unpkg.com/cypher-codemirror@1.1.7/dist/cypher-codemirror.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cypher-codemirror@1.1.7/dist/cypher-codemirror.min.js"></script>
 
     <style>
       #propertyTable {
@@ -173,12 +185,10 @@
           <li>Toggle the display of edge labels using the "Show Edge Labels" checkbox.</li>
           <li>
             Move the sliders for the maximum node count and label diversity and then click the
-            <em>Reload Data</em> button to query the database for a new set of data.
-            <br />
+            <em>Reload Data</em> button to query the database for a new set of data. <br />
             <strong>Warning:</strong> Retrieving data with the sliders set to <em>high</em> might
-            take a <em>really</em>
-            long time (2 minutes and more) or might yield no results at all, depending on the
-            database.
+            take a <em>really</em> long time (2 minutes and more) or might yield no results at all,
+            depending on the database.
           </li>
           <li>
             Enter a custom Cypher query into the editor in the right, then click the "Run Cypher
@@ -239,7 +249,13 @@
             </div>
             <div class="login-form-row">
               <label for="passwordInput">Password</label>
-              <input type="password" id="passwordInput" value="movies" autofocus="" autocomplete="current-password" />
+              <input
+                type="password"
+                id="passwordInput"
+                value="movies"
+                autofocus=""
+                autocomplete="current-password"
+              />
             </div>
             <div class="login-form-row">
               <input type="submit" value="Connect" />
@@ -300,8 +316,7 @@
             step="50"
             class="custom-slider"
           />
-          <span id="numNodesLabel">50</span>
-          <span class="demo-separator"></span>
+          <span id="numNodesLabel">50</span> <span class="demo-separator"></span>
           <span style="margin: 0 10px 0 10px">Label Diversity: </span>
           <input type="range" id="numLabels" value="2" min="2" max="5" class="custom-slider" />
           <span id="numLabelsLabel">2</span>
@@ -323,9 +338,7 @@
 
         <div>
           <div id="graphComponent" class="left">
-            <div id="loadingIndicator" hidden="">
-              <p>Retrieving data from the Neo4j database...</p>
-            </div>
+            <div id="loadingIndicator">Retrieving data from the Neo4j database...</div>
           </div>
           <div class="right">
             <div style="padding: 10px 29px">

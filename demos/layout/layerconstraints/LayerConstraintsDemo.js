@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,16 +50,19 @@ import {
 } from 'yfiles'
 
 import RandomGraphGenerator from '../../utils/RandomGraphGenerator.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+
+import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputMode(graphComponent)
   initializeGraph(graphComponent.graph)
@@ -403,7 +406,7 @@ class LayerConstraintsData extends BaseClass(IPropertyObservable) {
   }
 
   /**
-   * Describes whether or not the constraint is active. If <code>true</code>, the constraint will be taken into
+   * Describes whether or not the constraint is active. If `true`, the constraint will be taken into
    * account by the layout algorithm.
    * @type {boolean}
    */
@@ -412,7 +415,7 @@ class LayerConstraintsData extends BaseClass(IPropertyObservable) {
   }
 
   /**
-   * Describes whether or not the constraint is active. If <code>true</code>, the constraint will be taken into
+   * Describes whether or not the constraint is active. If `true`, the constraint will be taken into
    * account by the layout algorithm.
    * @type {boolean}
    */
@@ -455,5 +458,5 @@ class LayerConstraintsData extends BaseClass(IPropertyObservable) {
   }
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

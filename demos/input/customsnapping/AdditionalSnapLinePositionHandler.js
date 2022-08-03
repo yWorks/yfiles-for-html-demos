@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IInputModeContext, IPositionHandler, Point, IPoint } from 'yfiles'
+import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from 'yfiles'
 import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.js'
 
 /**
@@ -34,7 +34,7 @@ import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.j
  */
 export default class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandler) {
   /**
-   * Creates a new handler for the given <code>line</code>.
+   * Creates a new handler for the given `line`.
    * @param {!AdditionalSnapLineVisualCreator} line The additional snap line to move.
    * @param {!Point} mouseLocation The mouse location at the beginning of a move gesture.
    */
@@ -50,9 +50,9 @@ export default class AdditionalSnapLinePositionHandler extends BaseClass(IPositi
 
   /**
    * Returns a view of the location of the item.
-   * The point describes the current world coordinate of the {@link AdditionalSnapLineVisualCreator#from} property
+   * The point describes the current world coordinate of the {@link AdditionalSnapLineVisualCreator.from} property
    * of the moved {@link AdditionalSnapLineVisualCreator}.
-   * @see Specified by {@link IPositionHandler#location}.
+   * @see Specified by {@link IPositionHandler.location}.
    * @type {!IPoint}
    */
   get location() {
@@ -61,10 +61,10 @@ export default class AdditionalSnapLinePositionHandler extends BaseClass(IPositi
 
   /**
    * Called by clients to indicate that the element is going to be dragged.
-   * This call will be followed by one or more calls to {@link IPositionHandler#handleMove},
-   * and a final {@link IPositionHandler#dragFinished} or {@link IPositionHandler#cancelDrag}.
+   * This call will be followed by one or more calls to {@link IPositionHandler.handleMove},
+   * and a final {@link IPositionHandler.dragFinished} or {@link IPositionHandler.cancelDrag}.
    * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from.
-   * @see Specified by {@link IPositionHandler#initializeDrag}.
+   * @see Specified by {@link IPositionHandler.initializeDrag}.
    */
   initializeDrag(inputModeContext) {
     this.startFrom = this.line.from
@@ -73,18 +73,18 @@ export default class AdditionalSnapLinePositionHandler extends BaseClass(IPositi
   /**
    * Called by clients to indicate that the element has been dragged and its position
    * should be updated.
-   * This method may be called more than once after an initial {@link IPositionHandler#initializeDrag}.
+   * This method may be called more than once after an initial {@link IPositionHandler.initializeDrag}.
    * The final call will be followed by either one
-   * {@link IPositionHandler#dragFinished} or one {@link IPositionHandler#cancelDrag} call.
+   * {@link IPositionHandler.dragFinished} or one {@link IPositionHandler.cancelDrag} call.
    * @param {!IInputModeContext} inputModeContext The context providing information about the drag.
    * @param {!Point} originalLocation The value of the
-   *   {@link AdditionalSnapLinePositionHandler#location} property at the time of
-   *   {@link AdditionalSnapLinePositionHandler#initializeDrag}.
+   *   {@link AdditionalSnapLinePositionHandler.location} property at the time of
+   *   {@link AdditionalSnapLinePositionHandler.initializeDrag}.
    * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
-   *   Depending on the implementation the {@link AdditionalSnapLinePositionHandler#location} may or may not be
+   *   Depending on the implementation the {@link AdditionalSnapLinePositionHandler.location} may or may not be
    *   modified to reflect the new value.
    * @returns {boolean} Whether the move had any visual effect. This is a hint to the engine to optimize invalidation.
-   * @see Specified by {@link IPositionHandler#handleMove}.
+   * @see Specified by {@link IPositionHandler.handleMove}.
    */
   handleMove(inputModeContext, originalLocation, newLocation) {
     this.setPosition(
@@ -96,14 +96,14 @@ export default class AdditionalSnapLinePositionHandler extends BaseClass(IPositi
 
   /**
    * Called by clients to indicate that the drag gesture has been canceled by the user.
-   * This method may be called after the initial {@link AdditionalSnapLinePositionHandler#initializeDrag} and zero or
-   * more invocations of {@link AdditionalSnapLinePositionHandler#handleMove}.
-   * Alternatively to this method, the {@link AdditionalSnapLinePositionHandler#dragFinished} method might be called.
+   * This method may be called after the initial {@link AdditionalSnapLinePositionHandler.initializeDrag} and zero or
+   * more invocations of {@link AdditionalSnapLinePositionHandler.handleMove}.
+   * Alternatively to this method, the {@link AdditionalSnapLinePositionHandler.dragFinished} method might be called.
    * @param {!IInputModeContext} inputModeContext The context providing information about the drag.
    * @param {!Point} originalLocation The value of the coordinate of the
-   * {@link AdditionalSnapLinePositionHandler#location} property at the time of
-   * {@link AdditionalSnapLinePositionHandler#initializeDrag}.
-   * @see Specified by {@link IPositionHandler#cancelDrag}.
+   * {@link AdditionalSnapLinePositionHandler.location} property at the time of
+   * {@link AdditionalSnapLinePositionHandler.initializeDrag}.
+   * @see Specified by {@link IPositionHandler.cancelDrag}.
    */
   cancelDrag(inputModeContext, originalLocation) {
     this.setPosition(this.startFrom.x, this.startFrom.y)
@@ -111,16 +111,16 @@ export default class AdditionalSnapLinePositionHandler extends BaseClass(IPositi
 
   /**
    * Called by clients to indicate that the repositioning has just been finished.
-   * This method may be called after the initial {@link AdditionalSnapLinePositionHandler#initializeDrag} and zero or
-   * more invocations of {@link IPositionHandler#handleMove}.
-   * Alternatively to this method, the {@link IPositionHandler#cancelDrag} method might be called.
+   * This method may be called after the initial {@link AdditionalSnapLinePositionHandler.initializeDrag} and zero or
+   * more invocations of {@link IPositionHandler.handleMove}.
+   * Alternatively to this method, the {@link IPositionHandler.cancelDrag} method might be called.
    * @param {!IInputModeContext} inputModeContext The context providing information about the drag.
    * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
-   *   This is the same value as delivered in the last invocation of {@link AdditionalSnapLinePositionHandler#handleMove}.
+   *   This is the same value as delivered in the last invocation of {@link AdditionalSnapLinePositionHandler.handleMove}.
    * @param {!Point} originalLocation The value of the
-   *   {@link AdditionalSnapLinePositionHandler#location} property at the time of
-   *   {@link AdditionalSnapLinePositionHandler#initializeDrag}.
-   * @see Specified by {@link IPositionHandler#dragFinished}.
+   *   {@link AdditionalSnapLinePositionHandler.location} property at the time of
+   *   {@link AdditionalSnapLinePositionHandler.initializeDrag}.
+   * @see Specified by {@link IPositionHandler.dragFinished}.
    */
   dragFinished(inputModeContext, originalLocation, newLocation) {
     this.setPosition(
@@ -131,11 +131,11 @@ export default class AdditionalSnapLinePositionHandler extends BaseClass(IPositi
 
   /**
    * Called by clients to set the position to the given coordinates.
-   * The given coordinates are interpreted to be the new position of the {@link AdditionalSnapLineVisualCreator#from}
+   * The given coordinates are interpreted to be the new position of the {@link AdditionalSnapLineVisualCreator.from}
    * property of the moved {@link AdditionalSnapLineVisualCreator}.
-   * @param {number} x The new x-coordinate for the {@link AdditionalSnapLineVisualCreator#from} property.
-   * @param {number} y The new y-coordinate for the {@link AdditionalSnapLineVisualCreator#from} property.
-   * @see {@link IPositionHandler#location}
+   * @param {number} x The new x-coordinate for the {@link AdditionalSnapLineVisualCreator.from} property.
+   * @param {number} y The new y-coordinate for the {@link AdditionalSnapLineVisualCreator.from} property.
+   * @see {@link IPositionHandler.location}
    */
   setPosition(x, y) {
     // ensure the line stays an orthogonal line by moving its end point in the same way as its start point

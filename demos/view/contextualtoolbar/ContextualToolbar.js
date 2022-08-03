@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -69,7 +69,7 @@ import {
  * Adds a HTML panel on top of the contents of the GraphComponent that is used as a container for the contextual
  * toolbar.
  * In order to not interfere with the positioning of the pop-up, HTML content
- * should be added as ancestor of the {@link ContextualToolbar#div div element}, and
+ * should be added as ancestor of the {@link ContextualToolbar.div div element}, and
  * use relative positioning. This implementation uses a
  * {@link ILabelModelParameter label model parameter} to determine the position of the pop-up.
  * Additionally, this implementation expects the node, edge and label styles to be of

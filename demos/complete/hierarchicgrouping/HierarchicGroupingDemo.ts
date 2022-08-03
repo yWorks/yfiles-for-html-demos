@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,22 +47,27 @@ import {
   Size
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import { DemoStyleOverviewPaintable, initDemoStyles } from '../../resources/demo-styles'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 
 import GraphData from './sample-graph'
 import HierarchicGrouping from './HierarchicGrouping'
+import {
+  applyDemoTheme,
+  DemoStyleOverviewPaintable,
+  initDemoStyles
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent = null!
 
 /**
  * This demo shows how to nicely expand and collapse sub-graphs organized in groups.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   const overviewComponent = new GraphOverviewComponent('overviewComponent')
   overviewComponent.graphComponent = graphComponent
@@ -82,7 +87,7 @@ function run(licenseData: object): void {
   overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graphComponent.graph)
 
   // Assign the default demo styles
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, { foldingEnabled: true })
 
   // managing the appearance of folder nodes
   const defaultFolderNodeConverter = new DefaultFolderNodeConverter()
@@ -201,5 +206,5 @@ function registerCommands(): void {
   bindAction("button[data-command='FitContent']", centerAtTop)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

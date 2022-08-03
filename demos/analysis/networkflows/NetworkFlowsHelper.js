@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -122,7 +122,7 @@ export class EmptyReshapeHandleProvider extends BaseClass(IReshapeHandleProvider
   /**
    * Returns the indicator for no valid position.
    * @param {!IInputModeContext} inputModeContext The context for which the handles are queried
-   * @see Specified by {@link IReshapeHandleProvider#getAvailableHandles}.
+   * @see Specified by {@link IReshapeHandleProvider.getAvailableHandles}.
    * @returns {!HandlePositions} The indicator for no valid position
    */
   getAvailableHandles(inputModeContext) {
@@ -152,7 +152,7 @@ export class NetworkFlowInputMode extends InputModeBase {
     super()
     this.graphComponent = null
     this.state = ''
-    this.hitItem = null
+    this.hitItem = undefined
     this.initialLocation = Point.ORIGIN
     this.initialCapacity = 0
     this.initialSupply = 0
@@ -209,7 +209,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       location
     )
 
-    this.hitItem = hits.firstOrDefault()
+    this.hitItem = hits.at(0)
 
     if (this.hitItem instanceof INode) {
       if (this.hitItem.tag.adjustable) {
@@ -223,7 +223,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       return true
     }
     // reset the hitItem if the position is not valid
-    this.hitItem = null
+    this.hitItem = undefined
     return false
   }
 
@@ -306,7 +306,7 @@ export class NetworkFlowInputMode extends InputModeBase {
         this.initialLocation = Point.ORIGIN
         this.initialSupply = 0
         this.initialCapacity = 0
-        this.hitItem = null
+        this.hitItem = undefined
       }
     }
   }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -66,7 +66,7 @@ export default class RotationAwareGroupBoundsCalculator extends BaseClass(IGroup
  * Returns insets to add to apply to the given groupNode.
  */
 function getInsets(groupNode: INode): Insets {
-  const provider = groupNode.lookup(INodeInsetsProvider.$class) as INodeInsetsProvider
+  const provider = groupNode.lookup(INodeInsetsProvider.$class)
   if (provider) {
     // get the insets from the node's insets provider if there is one
     return provider.getInsets(groupNode)

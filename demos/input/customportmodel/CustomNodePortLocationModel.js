@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,8 +29,8 @@
 import {
   BaseClass,
   Class,
-  HandleSerializationEventArgs,
   HandleDeserializationEventArgs,
+  HandleSerializationEventArgs,
   ILookup,
   INode,
   IPort,
@@ -61,7 +61,7 @@ const PortLocation = {
  */
 export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
   /**
-   * Creates a new instance of <code>CustomNodePortLocationModel</code>.
+   * Creates a new instance of {@link CustomNodePortLocationModel}.
    * @param inset The inset for port locations NORTH, WEST, SOUTH, and EAST.
    * @param {number} [inset=0]
    */
@@ -72,8 +72,9 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
 
   /**
    * Returns an instance that implements the given type or null.
-   * @param {!Class} type The type for which an instance shall be returned
-   * @returns {?Object}
+   * @param {!Class.<T>} type The type for which an instance shall be returned
+   * @template {*} T
+   * @returns {?T}
    */
   lookup(type) {
     return null

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.5.
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Intersection Detection Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .demo-properties .option-element {
+        width: 20%;
+      }
+
+      .demo-properties label.option-label {
+        width: 75%;
+      }
+
+      #graphComponent {
+        height: auto;
+        border-bottom: 4px solid #f7f7f7;
+      }
+    </style>
+  </head>
+  <body class="demo-has-left demo-has-right">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Intersection Detection</h1>
+
+        <p>
+          This demo showcases how to find and highlight intersections and overlaps between graph
+          items.
+        </p>
+
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/Intersections" target="_blank">Intersections</a> algorithm calculates all geometric intersections between
+          nodes, edges, and labels in a diagram. Checking whether items overlap can be helpful in
+          various scenarios. For example, you could check if a newly inserted or moved graph item
+          intersects other items. Or, more generally, if there are overlaps, a layout algorithm
+          could be applied to re-arrange the graph and resolve the overlaps.
+        </p>
+
+        <p>
+          The result of the algorithm is provided as a list of <a href="https://docs.yworks.com/yfileshtml/#/api/Intersection" target="_blank">Intersection</a> objects,
+          where each one represents the intersection between exactly two elements and additionally
+          provides the exact points describing the shape of the intersection. The shapes of the
+          intersections are visualized in this demo using different colors for different kind of
+          intersections (see right-hand panel).
+        </p>
+
+        <h3>Things to Try</h3>
+        <ul>
+          <li>
+            <b>Observe the intersections</b> in the provided initial sample graph. They are
+            highlighted using different colors, while the actual graph items are painted in gray.
+          </li>
+          <li>
+            <b>Move a graph item</b> to see how the result of the intersection algorithm changes.
+            The result is re-computed on the fly when modifying the graph.
+          </li>
+          <li>
+            <b>Explore the settings</b> of the intersection algorithm in the right-hand sidebar.
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal"
+          title="Zoom In"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+
+        <span class="demo-separator"></span>
+
+        <input type="checkbox" id="snapping-button" class="demo-toggle-button" checked /><label
+          for="snapping-button"
+          class="demo-icon-yIconSnapping"
+          title="Snapping"
+        ></label>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <aside class="demo-sidebar demo-right">
+      <div class="demo-sidebar-content">
+        <h2>Algorithm Properties</h2>
+        <div class="demo-properties">
+          <div class="demo-form-block">
+            <label for="considered-items-select" class="option-label">Considered Item Types</label>
+            <select id="considered-items-select" class="option-element">
+              <option value="all">All</option>
+              <option value="nodes">Nodes</option>
+              <option value="edges">Edges</option>
+              <option value="labels">Labels</option>
+              <option value="nodes-and-edges">Nodes and Edges</option>
+              <option value="nodes-and-labels">Nodes and Labels</option>
+            </select>
+          </div>
+          <div class="demo-form-block">
+            <label for="consider-item-geometry" class="option-label">Consider Item Geometry</label>
+            <input
+              class="option-element"
+              id="consider-item-geometry"
+              type="checkbox"
+              value="false"
+              data-command="ConsiderItemGeometry"
+              checked
+            />
+          </div>
+          <div class="demo-form-block">
+            <label for="consider-source-target-node-intersections" class="option-label"
+              >Source/Target Node Intersections</label
+            >
+            <input
+              class="option-element"
+              id="consider-source-target-node-intersections"
+              type="checkbox"
+              value="false"
+              data-command="ConsiderSourceTargetNodeIntersections"
+            />
+          </div>
+          <div class="demo-form-block">
+            <label for="consider-group-content-intersections" class="option-label"
+              >Content With Group Intersections</label
+            >
+            <input
+              class="option-element"
+              id="consider-group-content-intersections"
+              type="checkbox"
+              value="false"
+              data-command="ConsiderGroupContentIntersections"
+            />
+          </div>
+          <div class="demo-form-block">
+            <label for="consider-label-owner-intersections" class="option-label"
+              >Label With Owner Intersections</label
+            >
+            <input
+              class="option-element"
+              id="consider-label-owner-intersections"
+              type="checkbox"
+              value="false"
+              data-command="ConsiderLabelOwnerIntersections"
+            />
+          </div>
+        </div>
+        <h2>Found Intersections</h2>
+        <div class="demo-properties">
+          <div class="demo-form-block">
+            <label class="option-label" style="font-weight: bold">Total intersection count:</label>
+            <label class="option-element" id="intersection-count">0</label>
+          </div>
+          <div class="demo-form-block">
+            <label class="option-label"
+              >Node-Node <span style="color: #ffc914; font-weight: bold">(yellow)</span>:
+            </label>
+            <label class="option-element" id="node-node-count">5</label>
+          </div>
+          <div class="demo-form-block">
+            <label class="option-label"
+              >Node-Edge <span style="color: #ca0c3b; font-weight: bold">(red)</span>:</label
+            >
+            <label class="option-element" id="node-edge-count">5</label>
+          </div>
+          <div class="demo-form-block">
+            <label class="option-label"
+              >Edge-Edge <span style="color: #ff6c00; font-weight: bold">(orange)</span>:</label
+            >
+            <label class="option-element" id="edge-edge-count">3</label>
+          </div>
+          <div class="demo-form-block">
+            <label class="option-label"
+              >Label <span style="color: #61a044; font-weight: bold">(green)</span>:</label
+            >
+            <label class="option-element" id="label-count">0</label>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <script type="module" crossorigin="anonymous" src="IntersectionDetectionDemo.js"></script>
+  </body>
+</html>

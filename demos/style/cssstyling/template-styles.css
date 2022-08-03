@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -133,22 +133,27 @@
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal,
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal div,
 .yfiles-canvascomponent
-  .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal
-  .yfiles-scrollbar-slider,
-.yfiles-canvascomponent
   .yfiles-scrollbar
   .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal {
   height: 10px;
 }
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical,
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical div,
-.yfiles-canvascomponent
-  .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical
-  .yfiles-scrollbar-slider,
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
   width: 10px;
 }
 
+.yfiles-canvascomponent
+  .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical
+  .yfiles-scrollbar-slider {
+  width: 8px;
+}
+
+.yfiles-canvascomponent
+  .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal
+  .yfiles-scrollbar-slider {
+  height: 8px;
+}
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
   top: 10px;
   bottom: 10px;
@@ -161,23 +166,31 @@
   right: 10px;
 }
 
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal,
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical {
-  background-color: transparent;
-}
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal:hover,
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical:hover,
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal:active,
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical:active {
-  background-color: #282e4044;
-}
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-slider-content {
   background-color: #282e40;
   opacity: 1;
 }
+.yfiles-canvascomponent
+  .yfiles-scrollbar.yfiles-scrollbar-dynamic.yfiles-scrollbar-horizontal:hover
+  .yfiles-scrollbar-slider,
+.yfiles-canvascomponent
+  .yfiles-scrollbar.yfiles-scrollbar-dynamic.yfiles-scrollbar-horizontal:active
+  .yfiles-scrollbar-slider {
+  bottom: 1px;
+}
+
+.yfiles-canvascomponent
+  .yfiles-scrollbar.yfiles-scrollbar-dynamic.yfiles-scrollbar-vertical:hover
+  .yfiles-scrollbar-slider,
+.yfiles-canvascomponent
+  .yfiles-scrollbar.yfiles-scrollbar-dynamic.yfiles-scrollbar-vertical:active
+  .yfiles-scrollbar-slider {
+  right: 1px;
+}
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button {
   width: 10px;
   height: 10px;
+  background-size: contain;
 }
 
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-left {

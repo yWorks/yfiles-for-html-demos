@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,12 +47,13 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   readGraph,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
 import { isWebGlSupported } from '../../utils/Workarounds'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The GraphComponent
@@ -75,9 +76,10 @@ const overViewStyleBox = document.getElementById('graphChooserBox') as HTMLSelec
 /**
  * Runs the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   graphComponent.focusIndicatorManager.showFocusPolicy = ShowFocusPolicy.ALWAYS
   graphComponent.selectionIndicatorManager.enabled = false
@@ -93,6 +95,7 @@ function run(licenseData: object): void {
   // initialize the overview graph that use the same GraphComponent styles.
   // If you want the overview to use the same styles as the GraphComponent, you can use a GraphComponent to display the overview.
   overviewGraphComponent = new GraphComponent('overviewGraphComponent')
+  applyDemoTheme(overviewGraphComponent)
   overviewGraphComponent.inputMode = new OverviewInputMode({
     canvasComponent: graphComponent
   })
@@ -261,4 +264,5 @@ function initializeConverters(): void {
   }
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

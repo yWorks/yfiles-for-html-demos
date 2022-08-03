@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -59,7 +59,7 @@ import {
 } from 'yfiles'
 
 import { setComboboxValue } from '../../resources/demo-app.js'
-import { DemoEdgeStyle } from '../../resources/demo-styles.js'
+import { createDemoEdgeStyle } from '../../resources/demo-styles.js'
 
 /**
  * @typedef {Object} LayerColor
@@ -461,7 +461,9 @@ function createPreviewGraph(graphComponent) {
     })
   })
 
-  graphComponent.graph.edgeDefaults.style = new DemoEdgeStyle('demo-palette-22')
+  graphComponent.graph.edgeDefaults.style = createDemoEdgeStyle({
+    colorSetName: 'demo-palette-22'
+  })
   for (let i = 0; i < 5; i++) {
     if (i > 0) {
       graph.createEdge(
@@ -583,7 +585,7 @@ class NodePlacerConfiguration {
 
   /**
    * Updates the UI after the configuration changed.
-   * @see {@link NodePlacerConfiguration#adoptSettings}
+   * @see {@link NodePlacerConfiguration.adoptSettings}
    */
   updatePanel() {}
 

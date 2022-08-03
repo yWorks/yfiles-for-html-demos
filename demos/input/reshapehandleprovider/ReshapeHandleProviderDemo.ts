@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,9 +43,11 @@ import {
   Size
 } from 'yfiles'
 
-import { checkLicense, readGraph, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { readGraph, showApp } from '../../resources/demo-app'
 import { PortReshapeHandleProvider } from './PortReshapeHandlerProvider'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 let graphComponent: GraphComponent
 let graphEditorInputMode: GraphEditorInputMode
@@ -59,7 +61,7 @@ let ctrlPressed = false
  * Registers a callback function as a decorator that provides a customized
  * {@link IReshapeHandleProvider} for each port with a {@link NodeStylePortStyleAdapter}.
  * This callback function is called whenever a node in the graph is queried
- * for its <code>IReshapeHandleProvider</code>. In this case, the 'port'
+ * for its {@link IReshapeHandleProvider}. In this case, the 'port'
  * parameter will be set to that port.
  */
 function registerReshapeHandleProvider(graph: IGraph): void {
@@ -76,11 +78,12 @@ function registerReshapeHandleProvider(graph: IGraph): void {
   )
 }
 
-async function run(licenseData: any): Promise<void> {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize graph defaults
   initializeGraphDefaults(graphComponent.graph)
@@ -183,4 +186,5 @@ function onBlur(): void {
   graphEditorInputMode.requeryHandles()
 }
 
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

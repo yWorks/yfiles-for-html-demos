@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
@@ -34,29 +35,34 @@ import {
   GraphEditorInputMode,
   GraphInputMode,
   GraphItemTypes,
+  GroupNodeStyle,
   ICommand,
   IGraph,
   License,
   Point,
   ShapeNodeShape,
-  ShapeNodeStyle,
   Size
 } from 'yfiles'
 
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import { NodeHighlightManager } from './NodeHighlightManager.js'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles.js'
+import {
+  applyDemoTheme,
+  createDemoShapeNodeStyle,
+  initDemoStyles
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // create graph component
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -103,7 +109,7 @@ function configureHoverHighlight(graphComponent) {
     }
   })
 
-  graphComponent.highlightIndicatorManager = new NodeHighlightManager(graphComponent)
+  graphComponent.highlightIndicatorManager = new NodeHighlightManager()
 }
 
 /**
@@ -113,7 +119,18 @@ function configureHoverHighlight(graphComponent) {
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
+
+  // set the style, label and label parameter for group nodes
+  graph.groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: '#46a8d5',
+    stroke: '2px solid #b5dcee',
+    contentAreaFill: '#b5dcee'
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'left',
+    textFill: '#eee'
+  })
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -132,10 +149,8 @@ function initTutorialDefaults(graph) {
  * @param {!IGraph} graph The graph.
  */
 function createGraph(graph) {
-  const ellipseStyle = graph.nodeDefaults.style.clone()
-  ellipseStyle.shape = ShapeNodeShape.ELLIPSE
-  const triangleStyle = graph.nodeDefaults.style.clone()
-  triangleStyle.shape = ShapeNodeShape.TRIANGLE
+  const ellipseStyle = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE)
+  const triangleStyle = createDemoShapeNodeStyle(ShapeNodeShape.TRIANGLE)
 
   const node1 = graph.createNodeAt({ location: [110, 20], tag: 'rect' })
   const node2 = graph.createNodeAt({
@@ -190,5 +205,5 @@ function registerCommands(graphComponent) {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

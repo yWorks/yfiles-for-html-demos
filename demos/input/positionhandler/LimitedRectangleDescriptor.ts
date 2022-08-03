@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,14 +51,14 @@ export default class LimitingRectangleDescriptor extends BaseClass(
   private rectangle: MutableRectangle = null!
 
   /**
-   * Creates a new instance of <code>LimitingRectangleDescriptor</code>.
+   * Creates a new instance of {@link LimitingRectangleDescriptor}.
    */
   constructor() {
     super()
   }
 
   /**
-   * Gets the <code>IVisualCreator</code> for a given <code>ICanvasObject</code>.
+   * Gets the {@link IVisualCreator} for a given {@link ICanvasObject}.
    */
   getVisualCreator(forUserObject: object): IVisualCreator {
     this.rectangle = forUserObject as MutableRectangle

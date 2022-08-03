@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -196,7 +196,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
    * Determines the index of the row that contains the given y-coordinate.
    * @param {!ListNodeStyle} style the style to query.
    * @param {number} y the y-coordinate to check.
-   * @returns {number} the index of the row that contains the given y-coordinate or <code>-1</code> if there
+   * @returns {number} the index of the row that contains the given y-coordinate or `-1` if there
    * is no such row.
    */
   getRowIndex(style, y) {
@@ -212,14 +212,14 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
  * @returns {!IPort}
  */
 export function getPortForData(node, rowInfo) {
-  return node.ports.first(p => p.tag === rowInfo)
+  return node.ports.find(p => p.tag === rowInfo)
 }
 
 /**
  * Creates a port location parameter for the row with the given index that is anchored at the
  * owner nodes top left or top right corner.
  * @param {number} rowIndex the index of the row to which the port belongs.
- * @param {boolean} incoming if <code>true</code> the port will be anchored that the owner node's top left
+ * @param {boolean} incoming if `true` the port will be anchored that the owner node's top left
  * corner; otherwise it will be anchored at the top right corner.
  * @param {!ListNodeStyle} style the owner node's node style.
  */

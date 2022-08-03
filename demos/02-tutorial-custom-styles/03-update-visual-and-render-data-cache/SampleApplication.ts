@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,16 +46,19 @@ import {
 } from 'yfiles'
 
 import MySimpleNodeStyle from './MySimpleNodeStyle'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+
+import { applyDemoTheme } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
 
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the graph component
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the graph
   initializeGraph()
@@ -109,17 +112,14 @@ function onStartAnimation(): void {
 function startAnimation(): void {
   // animates the nodes in random fashion
   const animator = new Animator(graphComponent)
-  const graphAnimation = IAnimation.createGraphAnimation(
-    graphComponent.graph,
-    IMapper.fromDelegate(
+  const graphAnimation = IAnimation.createGraphAnimation({
+    graph: graphComponent.graph,
+    targetNodeLayouts: IMapper.fromDelegate(
       (node: INode): Rect =>
         new Rect(Math.random() * 800, Math.random() * 800, node.layout.width, node.layout.height)
     ),
-    null,
-    null,
-    null,
-    '5s'
-  )
+    preferredDuration: '5s'
+  })
   animator.animate(graphAnimation)
 }
 
@@ -191,5 +191,5 @@ function createSampleGraph(): void {
   }
 }
 
-// Start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

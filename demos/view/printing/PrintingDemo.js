@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,9 +45,9 @@ import {
 
 import PrintingSupport from '../../utils/PrintingSupport.js'
 import PositionHandler from './PositionHandler.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindAction, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -78,10 +78,10 @@ let useTileHeight = null
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   init()
 
   initializeInputModes()
@@ -98,6 +98,7 @@ function run(licenseData) {
  */
 function init() {
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   scale = document.getElementById('scale')
   margin = document.getElementById('margin')
   useRect = document.getElementById('useRect')
@@ -235,5 +236,5 @@ function isValidInput(input, text) {
   return true
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

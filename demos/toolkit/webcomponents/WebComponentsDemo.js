@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,14 +28,14 @@
  ***************************************************************************/
 import { GraphEditorInputMode, IGraph, IInputMode, License, Rect } from 'yfiles'
 import { enableWorkarounds } from '../../utils/Workarounds.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 import './GraphComponentElement.js'
-import { createBasicEdgeStyle, createBasicNodeStyle } from '../../resources/basic-demo-styles.js'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '../../resources/demo-styles.js'
 
 // wait for the custom graph-component element to be defined
 if (window.customElements) {
-  window.customElements.whenDefined('graph-component').then(loadJson).then(run)
+  window.customElements.whenDefined('graph-component').then(run)
 } else {
   const warningDiv = document.createElement('div')
   document.querySelector('.demo-content').appendChild(warningDiv)
@@ -54,10 +54,10 @@ if (window.customElements) {
  */
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   enableWorkarounds()
 
@@ -85,8 +85,8 @@ function run(licenseData) {
  */
 function initializeGraph(graph) {
   // initialize default styles
-  graph.nodeDefaults.style = createBasicNodeStyle()
-  graph.edgeDefaults.style = createBasicEdgeStyle()
+  graph.nodeDefaults.style = createDemoNodeStyle()
+  graph.edgeDefaults.style = createDemoEdgeStyle()
 
   // create small sample graph
   const node1 = graph.createNode(new Rect(50, 50, 30, 30))

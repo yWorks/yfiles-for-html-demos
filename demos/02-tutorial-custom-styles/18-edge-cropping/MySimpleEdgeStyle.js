@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -97,7 +97,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param {!IEdge} edge The edge to create the path for.
    * @returns {!GeneralPath} A {@link GeneralPath} following the edge
-   * @see Overrides {@link EdgeStyleBase#getPath}
+   * @see Overrides {@link EdgeStyleBase.getPath}
    */
   getPath(edge) {
     // Create a general path from the locations of the ports and the bends of the edge.
@@ -118,7 +118,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates the visual for an edge.
-   * @see Overrides {@link EdgeStyleBase#createVisual}
+   * @see Overrides {@link EdgeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!IEdge} edge
    * @returns {!SvgVisual}
@@ -135,7 +135,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Re-renders the edge using the old visual for performance reasons.
-   * @see Overrides {@link EdgeStyleBase#updateVisual}
+   * @see Overrides {@link EdgeStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
    * @param {!IEdge} edge
@@ -221,9 +221,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * Overridden method to include the {@link MySimpleEdgeStyle#pathThickness} and the HitTestRadius specified in the
+   * Overridden method to include the {@link MySimpleEdgeStyle.pathThickness} and the HitTestRadius specified in the
    * context in the calculation.
-   * @see Overrides {@link EdgeStyleBase#isHit}
+   * @see Overrides {@link EdgeStyleBase.isHit}
    * @param {!IInputModeContext} canvasContext
    * @param {!Point} p
    * @param {!IEdge} edge
@@ -240,7 +240,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Determines whether the edge is visible in the given rectangle.
    * Overridden method to improve performance of the super implementation
-   * @see Overrides {@link EdgeStyleBase#isVisible}
+   * @see Overrides {@link EdgeStyleBase.isVisible}
    * @param {!ICanvasContext} context
    * @param {!Rect} rectangle
    * @param {!IEdge} edge
@@ -258,7 +258,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * This implementation of the look up provides a custom implementation of the
    * {@link ISelectionIndicatorInstaller} interface that better suits to this style.
-   * @see Overrides {@link EdgeStyleBase#lookup}
+   * @see Overrides {@link EdgeStyleBase.lookup}
    * @param {!IEdge} edge
    * @param {!Class} type
    * @returns {!object}
@@ -279,7 +279,7 @@ const helperEdgeStyle = new PolylineEdgeStyle({
 
 /**
  * This customized {@link EdgeSelectionIndicatorInstaller} overrides the
- * getStroke method to return <code>null</code>, so that no edge path is rendered if the edge is selected.
+ * getStroke method to return `null`, so that no edge path is rendered if the edge is selected.
  */
 class MySelectionInstaller extends EdgeSelectionIndicatorInstaller {
   /**

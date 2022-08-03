@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -62,8 +62,8 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
     this.collapsedButtonStyle = new ImageNodeStyle('resources/expand.svg')
     // A dummy node that is used internally for the rendering of the button. This is a class field
     // since we want to reuse the same instance for each call to
-    // {@link MyCollapsibleNodeStyleDecoratorRenderer#createButton} and
-    // {@link MyCollapsibleNodeStyleDecoratorRenderer#updateButton} (for performance reasons).
+    // {@link MyCollapsibleNodeStyleDecoratorRenderer.createButton} and
+    // {@link MyCollapsibleNodeStyleDecoratorRenderer.updateButton} (for performance reasons).
     this.dummyNode = new SimpleNode()
   }
 
@@ -110,10 +110,11 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
 
   /**
    * This is implemented to override the base insets provider, which would add insets for the label.
-   * @see Overrides {@link CollapsibleNodeStyleDecoratorRenderer#lookup}
-   * @see Specified by {@link ILookup#lookup}.
+   * @see Overrides {@link CollapsibleNodeStyleDecoratorRenderer.lookup}
+   * @see Specified by {@link ILookup.lookup}.
    */
-  lookup(type: Class): object | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+  lookup<T extends any>(type: Class<T>): T | null {
     if (type === INodeInsetsProvider.$class) {
       // Return the implementation of the wrapped style directly
       const wrappedStyle = this.getWrappedStyle()

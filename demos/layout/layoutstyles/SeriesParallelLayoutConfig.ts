@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -96,7 +96,7 @@ const SeriesParallelLayoutConfig = (Class as any)('SeriesParallelLayoutConfig', 
 
   /**
    * Creates and configures a layout.
-   * @param graphComponent The <code>GraphComponent</code> to apply the configuration on.
+   * @param graphComponent The {@link GraphComponent} to apply the configuration on.
    * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {

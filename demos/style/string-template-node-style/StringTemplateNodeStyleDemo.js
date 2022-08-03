@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global CodeMirror */
 import {
   GraphBuilder,
   GraphComponent,
@@ -52,7 +51,7 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {EditorFromTextArea} */
 let templateEditor
@@ -64,10 +63,10 @@ let tagEditor
 let graphMLSupport
 
 /**
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
@@ -108,7 +107,7 @@ function initializeEditors(graphComponent) {
   graphComponent.focusIndicatorManager.enabled = false
 
   graphComponent.selection.addItemSelectionChangedListener(sender => {
-    const selectedNode = sender.selectedNodes.firstOrDefault()
+    const selectedNode = sender.selectedNodes.at(0)
     if (selectedNode) {
       if (selectedNode.style instanceof StringTemplateNodeStyle) {
         templateEditor.setOption('readOnly', false)
@@ -342,7 +341,7 @@ function applyTag(graphComponent) {
 async function openFile(graphComponent) {
   try {
     await graphMLSupport.openFile(graphComponent.graph)
-    await graphComponent.fitGraphBounds()
+    graphComponent.fitGraphBounds()
   } catch (ignored) {
     alert('The graph contains styles that are not supported by this demo.')
     graphComponent.graph.clear()
@@ -377,4 +376,5 @@ function getElementById(id) {
   return document.getElementById(id)
 }
 
-loadJson().then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

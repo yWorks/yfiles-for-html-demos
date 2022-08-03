@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IDragHandler, IInputModeContext, IPositionHandler, Point, IPoint } from 'yfiles'
+import { BaseClass, IDragHandler, IInputModeContext, IPoint, IPositionHandler, Point } from 'yfiles'
 
 /**
  * A position handler that prevents node movements. This implementation is
@@ -44,19 +44,19 @@ export default class RedPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Stores the initial location of the movement for reference, and calls the base method.
    * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from
-   * @see Specified by {@link IDragHandler#initializeDrag}.
+   * @see Specified by {@link IDragHandler.initializeDrag}.
    */
   initializeDrag(inputModeContext) {}
 
   /**
    * Prevents node movements.
    * @param {!IInputModeContext} context The context to retrieve information about the drag from
-   * @param {!Point} originalLocation The value of the {@link IDragHandler#location}
-   * property at the time of {@link IDragHandler#initializeDrag}
+   * @param {!Point} originalLocation The value of the {@link IDragHandler.location}
+   * property at the time of {@link IDragHandler.initializeDrag}
    * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants
-   * the handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * the handle to be at. Depending on the implementation the {@link IDragHandler.location} may or may
    * not be modified to reflect the new value.
-   * @see Specified by {@link IDragHandler#handleMove}.
+   * @see Specified by {@link IDragHandler.handleMove}.
    */
   handleMove(context, originalLocation, newLocation) {}
 
@@ -64,20 +64,20 @@ export default class RedPositionHandler extends BaseClass(IPositionHandler) {
    * Called when dragging has been canceled by the user.
    * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from
    * @param {!Point} originalLocation The value of the coordinate of the
-   * {@link IDragHandler#location} property at the time of
-   *   {@link IDragHandler#initializeDrag}.
+   * {@link IDragHandler.location} property at the time of
+   *   {@link IDragHandler.initializeDrag}.
    */
   cancelDrag(inputModeContext, originalLocation) {}
 
   /**
    * Called when dragging has finished.
    * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from
-   * @param {!Point} originalLocation The value of the {@link IDragHandler#location}
-   * property at the time of {@link IDragHandler#initializeDrag}
+   * @param {!Point} originalLocation The value of the {@link IDragHandler.location}
+   * property at the time of {@link IDragHandler.initializeDrag}
    * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants
-   * the handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * the handle to be at. Depending on the implementation the {@link IDragHandler.location} may or may
    * not be modified to reflect the new value. This is the same value as delivered in the last invocation of
-   * {@link IDragHandler#handleMove}
+   * {@link IDragHandler.handleMove}
    */
   dragFinished(inputModeContext, originalLocation, newLocation) {}
 }

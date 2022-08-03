@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import loadLicenseJSON from '../../resources/load-json.js'
 import {
-  LayoutExecutorAsyncWorker,
   HierarchicLayout,
+  LayoutExecutorAsyncWorker,
+  LayoutGraph,
   License,
-  MinimumNodeSizeStage,
-  LayoutGraph
+  MinimumNodeSizeStage
 } from 'yfiles'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * @param {!LayoutGraph} graph
@@ -48,11 +48,17 @@ function applyLayout(graph, layoutDescriptor) {
   }
 }
 
-loadLicenseJSON().then(licenseData => {
-  License.value = licenseData
+/**
+ * @returns {!Promise}
+ */
+async function run() {
+  License.value = await fetchLicense()
   // signal that the webworker thread is ready to execute
   self.postMessage('ready')
-})
+}
+
+// noinspection JSIgnoredPromiseFromCall
+run()
 
 self.addEventListener(
   'message',

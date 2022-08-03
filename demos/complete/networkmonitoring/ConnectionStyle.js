@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -64,7 +64,7 @@ export default class ConnectionStyle extends EdgeStyleBase {
   }
 
   /**
-   * @see Overrides {@link EdgeStyleBase#createVisual}
+   * @see Overrides {@link EdgeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!IEdge} edge
    * @returns {!SvgVisual}
@@ -118,7 +118,7 @@ export default class ConnectionStyle extends EdgeStyleBase {
   }
 
   /**
-   * @see Overrides {@link EdgeStyleBase#updateVisual}
+   * @see Overrides {@link EdgeStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!Visual} oldVisual
    * @param {!IEdge} edge
@@ -195,7 +195,7 @@ export default class ConnectionStyle extends EdgeStyleBase {
   /**
    * Determines whether the visualization for the specified edge is visible in the context.
    * This method is implemented explicitly for improved performance.
-   * @see Overrides {@link EdgeStyleBase#isVisible}
+   * @see Overrides {@link EdgeStyleBase.isVisible}
    * @param {!ICanvasContext} canvasContext
    * @param {!Rect} clip
    * @param {!IEdge} edge
@@ -215,7 +215,7 @@ export default class ConnectionStyle extends EdgeStyleBase {
    * Creates the edge path.
    * This is an optimized implementation to reduce the amount of calculation
    * that needs to be done for edge cropping. Bends are not considered.
-   * @see Overrides {@link EdgeStyleBase#getPath}
+   * @see Overrides {@link EdgeStyleBase.getPath}
    * @param {!IEdge} edge
    * @returns {!GeneralPath}
    */
@@ -313,7 +313,7 @@ class PacketAnimation extends BaseClass(IAnimation) {
 
   /**
    * Initializes the packet loaction and starts the animation.
-   * @see Specified by {@link IAnimation#initialize}.
+   * @see Specified by {@link IAnimation.initialize}.
    */
   initialize() {
     this.packet['data-animation-running'] = true
@@ -337,7 +337,7 @@ class PacketAnimation extends BaseClass(IAnimation) {
 
   /**
    * One update step. Updates the current packet location.
-   * @see Specified by {@link IAnimation#animate}.
+   * @see Specified by {@link IAnimation.animate}.
    * @param {number} time
    */
   animate(time) {
@@ -356,7 +356,7 @@ class PacketAnimation extends BaseClass(IAnimation) {
 
   /**
    * Hides the packet Element.
-   * @see Specified by {@link IAnimation#cleanup}.
+   * @see Specified by {@link IAnimation.cleanup}.
    */
   cleanUp() {
     // hide the packet element

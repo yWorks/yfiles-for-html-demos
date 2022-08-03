@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -103,7 +103,7 @@ export default class ContextMenu {
     const hits = this.graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
 
     // Check whether a node was it. If it was, we prefer it over edges
-    const hit = hits.find(item => INode.isInstance(item)) || hits.firstOrDefault()
+    const hit = hits.find(item => INode.isInstance(item)) || hits.at(0)
 
     const graphSelection = this.graphComponent.selection
     if (INode.isInstance(hit)) {

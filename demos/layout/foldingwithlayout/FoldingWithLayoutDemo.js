@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,10 +46,10 @@ import {
 } from 'yfiles'
 
 import GraphData from './resources/SampleData.js'
-import loadJson from '../../resources/load-json.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { ExpandCollapseNavigationHelper } from './ExpandCollapseNavigationHandler.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -60,12 +60,13 @@ let helper = null
 /**
  * A demo that demonstrates how to automatically trigger a layout that clears or fills the space
  * when opening or closing groups.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraph()
 
@@ -90,7 +91,7 @@ function initializeGraph() {
   helper = new ExpandCollapseNavigationHelper(navigationInputMode)
 
   // Assign the default demo styles
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, { foldingEnabled: true })
 
   // managing the appearance of folder nodes
   const defaultFolderNodeConverter = new DefaultFolderNodeConverter()
@@ -113,9 +114,8 @@ function registerCommands() {
 
 /**
  * Creates and configures the {@link GraphBuilder}.
- * @param {IGraph} masterGraph The master graph of the {@link GraphComponent}
+ * @param {!IGraph} masterGraph The master graph of the {@link GraphComponent}
  * @returns {!GraphBuilder} {GraphBuilder}
- * @param {!IGraph} masterGraph
  */
 function createGraphBuilder(masterGraph) {
   const graphBuilder = new GraphBuilder(masterGraph)
@@ -181,5 +181,5 @@ function buildGraph(graph) {
   graph.applyLayout(hierarchicLayout)
 }
 
-// run the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

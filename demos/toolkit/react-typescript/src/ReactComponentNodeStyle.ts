@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,7 +57,7 @@ declare type Cache<TTag> = { cache: ReactComponentNodeStyleProps<TTag> }
  * A simple INodeStyle implementation that uses React Components/render functions
  * for rendering the node visualizations
  * Use it like this:
- * <code>
+ * ```
  *  declare type TagType = { name: string }
  *
  *  const MyNodeTemplate = ({ width, height, tag }: ReactComponentNodeStyleProps<TagType>) => (
@@ -71,7 +71,7 @@ declare type Cache<TTag> = { cache: ReactComponentNodeStyleProps<TTag> }
  *
  *  const tag: TagType = { name: 'yFiles' }
  *  graph.createNode({ style, tag })
- * </code>
+ * ```
  */
 export default class ReactComponentNodeStyle<TTag> extends NodeStyleBase {
   constructor(private readonly type: RenderType<TTag>) {

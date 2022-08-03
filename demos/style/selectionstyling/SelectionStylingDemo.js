@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,9 +48,13 @@ import {
   VoidLabelStyle
 } from 'yfiles'
 
-import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  applyDemoTheme,
+  createDemoEdgeStyle,
+  createDemoNodeStyle
+} from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -78,10 +82,10 @@ let labelsSelected = true
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize UI's elements
   init()
 
@@ -104,6 +108,7 @@ function run(licenseData) {
  */
 function init() {
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   zoomModeComboBox = document.getElementById('zoomModeComboBox')
 
   // initialize the helper UI
@@ -123,7 +128,7 @@ function init() {
 function initializeGraph() {
   const graph = graphComponent.graph
 
-  graph.nodeDefaults.style = new DemoNodeStyle()
+  graph.nodeDefaults.style = createDemoNodeStyle()
   graph.nodeDefaults.size = new Size(50, 30)
 
   // defaults for labels
@@ -138,7 +143,7 @@ function initializeGraph() {
   const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
   graph.nodeDefaults.labels.layoutParameter = exteriorLabelModel.createParameter('north')
 
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  graph.edgeDefaults.style = createDemoEdgeStyle()
   graph.edgeDefaults.labels.style = simpleLabelStyle
 
   // labels
@@ -221,6 +226,9 @@ function initializeDecoration() {
 
   const labelSelection = decorator.labelDecorator.selectionDecorator
   labelSelection.setImplementation(() => labelsSelected, labelDecorationInstaller)
+
+  // hide focus indication
+  decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
 }
 
 /**
@@ -324,5 +332,5 @@ function zoomModeChanged() {
   graphComponent.invalidate()
 }
 
-// start demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

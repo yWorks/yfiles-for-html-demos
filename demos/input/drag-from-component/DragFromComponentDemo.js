@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,26 +43,28 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { DraggableGraphComponent, NodeDragInputMode } from './NodeDragInputMode.js'
 import {
+  applyDemoTheme,
   createDemoNodeLabelStyle,
-  DemoNodeStyle,
+  createDemoNodeStyle,
   initDemoStyles
 } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new DraggableGraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the input modes and the Drag and Drop
   configureInputModes(graphComponent)
@@ -154,8 +156,10 @@ function addDroppedItemToList(node, list) {
  */
 function initDefaultStyles(graph) {
   initDemoStyles(graph, {
-    node: 'demo-orange',
-    edge: 'demo-orange'
+    theme: {
+      node: 'demo-orange',
+      edge: 'demo-orange'
+    }
   })
 
   graph.nodeDefaults.size = new Size(70, 50)
@@ -166,11 +170,11 @@ function initDefaultStyles(graph) {
  * @param {!IGraph} graph
  */
 function createGraph(graph) {
-  const orange = new DemoNodeStyle('demo-orange')
+  const orange = createDemoNodeStyle('demo-orange')
   const orangeLabel = createDemoNodeLabelStyle('demo-orange')
-  const red = new DemoNodeStyle('demo-red')
+  const red = createDemoNodeStyle('demo-red')
   const redLabel = createDemoNodeLabelStyle('demo-red')
-  const blue = new DemoNodeStyle('demo-blue')
+  const blue = createDemoNodeStyle('demo-blue')
   const blueLabel = createDemoNodeLabelStyle('demo-blue')
 
   const n1 = graph.createNodeAt({
@@ -242,5 +246,5 @@ function registerCommands() {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

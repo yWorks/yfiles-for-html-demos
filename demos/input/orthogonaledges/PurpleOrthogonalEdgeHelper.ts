@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,10 +45,10 @@ export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    * Enables moving the source and target of the edge to other ports.
    * @param inputModeContext The input mode context in which the segment is edited
    * @param edge The edge to inspect
-   * @param sourceEnd <code>True</code> if the source end of the edge is queried, <code>false</code> for
+   * @param sourceEnd `true` if the source end of the edge is queried, `false` for
    * the target end
-   * @see Overrides {@link OrthogonalEdgeHelper#shouldMoveEndImplicitly}
-   * @see Specified by {@link IOrthogonalEdgeHelper#shouldMoveEndImplicitly}.
+   * @see Overrides {@link OrthogonalEdgeHelper.shouldMoveEndImplicitly}
+   * @see Specified by {@link IOrthogonalEdgeHelper.shouldMoveEndImplicitly}.
    */
   shouldMoveEndImplicitly(
     inputModeContext: IInputModeContext,
@@ -64,8 +64,8 @@ export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    * @param inputModeContext The input mode context which edited the edge
    * @param graph The graph to use for modifying the edge instance
    * @param edge The edge to clean up the path
-   * @see Overrides {@link OrthogonalEdgeHelper#cleanUpEdge}
-   * @see Specified by {@link IOrthogonalEdgeHelper#cleanUpEdge}.
+   * @see Overrides {@link OrthogonalEdgeHelper.cleanUpEdge}
+   * @see Specified by {@link IOrthogonalEdgeHelper.cleanUpEdge}.
    */
   cleanUpEdge(inputModeContext: IInputModeContext, graph: IGraph, edge: IEdge): void {
     super.cleanUpEdge(inputModeContext, graph, edge)

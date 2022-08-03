@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -101,7 +101,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates the visual for an edge.
-   * @see Overrides {@link EdgeStyleBase#createVisual}
+   * @see Overrides {@link EdgeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, edge: IEdge): SvgVisual {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
@@ -115,7 +115,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Re-renders the edge using the old visual for performance reasons.
-   * @see Overrides {@link EdgeStyleBase#updateVisual}
+   * @see Overrides {@link EdgeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): SvgVisual {
     const container = oldVisual.svgElement as SVGGElement
@@ -210,7 +210,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * Updates the edge path data as well as the arrow positions of the visuals stored in <param name="container" />.
+   * Updates the edge path data as well as the arrow positions of the visuals stored in `container`.
    * @param context {IRenderContext}
    * @param edge {IEdge}
    * @param container {SVGElement}
@@ -251,7 +251,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
    * @return A {@link GeneralPath} following the edge
-   * @see Overrides {@link EdgeStyleBase#getPath}
+   * @see Overrides {@link EdgeStyleBase.getPath}
    */
   getPath(edge: IEdge): GeneralPath {
     // ////////////// New in this sample ////////////////
@@ -297,9 +297,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * Overridden method to include the {@link MySimpleEdgeStyle#pathThickness} and the HitTestRadius specified in the
+   * Overridden method to include the {@link MySimpleEdgeStyle.pathThickness} and the HitTestRadius specified in the
    * context in the calculation.
-   * @see Overrides {@link EdgeStyleBase#isHit}
+   * @see Overrides {@link EdgeStyleBase.isHit}
    */
   isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
     // Use the convenience method in GeneralPath
@@ -312,7 +312,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Determines whether the edge is visible in the given rectangle.
    * Overridden method to improve performance of the super implementation
-   * @see Overrides {@link EdgeStyleBase#isVisible}
+   * @see Overrides {@link EdgeStyleBase.isVisible}
    */
   isVisible(context: ICanvasContext, rectangle: Rect, edge: IEdge): boolean {
     // enlarge the test rectangle to include the path thickness
@@ -326,7 +326,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * This implementation of the look up provides a custom implementation of the
    * {@link ISelectionIndicatorInstaller} interface that better suits to this style.
-   * @see Overrides {@link EdgeStyleBase#lookup}
+   * @see Overrides {@link EdgeStyleBase.lookup}
    */
   lookup(edge: IEdge, type: Class): object {
     if (type === ISelectionIndicatorInstaller.$class) {
@@ -341,7 +341,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
       // //////////////////////////////////////////////////
     }
-    return super.lookup.call(this, edge, type)
+    return super.lookup(edge, type)
   }
 
   // ////////////// New in this sample ////////////////
@@ -369,7 +369,7 @@ const helperEdgeStyle = new PolylineEdgeStyle({
 
 /**
  * This customized {@link EdgeSelectionIndicatorInstaller} overrides the
- * getStroke method to return <code>null</code>, so that no edge path is rendered if the edge is selected.
+ * getStroke method to return `null`, so that no edge path is rendered if the edge is selected.
  */
 class MySelectionInstaller extends EdgeSelectionIndicatorInstaller {
   getStroke(canvas: CanvasComponent, edge: IEdge): Stroke | null {
@@ -459,7 +459,7 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
    * Generally spoken, an obstacle is a path for which other edges
    * might have to draw bridges when crossing it.
    * @return The edge's path.
-   * @see Specified by {@link IObstacleProvider#getObstacles}.
+   * @see Specified by {@link IObstacleProvider.getObstacles}.
    */
   getObstacles(canvasContext: IRenderContext): GeneralPath {
     // simply delegate to CreatePath
@@ -474,8 +474,7 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
  */
 function getBridgeManager(context: IRenderContext): BridgeManager | null {
   if (context) {
-    const tmp = context.lookup(BridgeManager.$class)
-    return tmp instanceof BridgeManager ? tmp : null
+    return context.lookup(BridgeManager.$class)
   }
   return null
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -64,7 +64,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param {!IRenderContext} context The render context.
    * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {!Visual} The created visual.
-   * @see LabelStyleBase#createVisual
+   * @see {@link LabelStyleBase.createVisual}
    */
   createVisual(context, label) {
     const group = new SvgVisualGroup()
@@ -85,10 +85,10 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * Updates the provided visual.
    * @param {!IRenderContext} context The render context.
    * @param {!Visual} oldVisual The visual that has been created in the call to
-   *        {@link LabelStyleBase#createVisual}.
+   *        {@link LabelStyleBase.createVisual}.
    * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {!Visual} The updated visual.
-   * @see LabelStyleBase#updateVisual
+   * @see {@link LabelStyleBase.updateVisual}
    */
   updateVisual(context, oldVisual, label) {
     // check whether the elements are as expected
@@ -173,7 +173,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * Returns the preferred {@link Size size} of the base style for the provided label.
    * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {!Size} The preferred size.
-   * @see LabelStyleBase#getPreferredSize
+   * @see {@link LabelStyleBase.getPreferredSize}
    */
   getPreferredSize(label) {
     return this.baseStyle.renderer.getPreferredSize(label, this.baseStyle)
@@ -186,7 +186,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {!Rect} The visual bounds.
    * @override
-   * @see LabelStyleBase#getBounds
+   * @see {@link LabelStyleBase.getBounds}
    */
   getBounds(context, label) {
     return this.baseStyle.renderer.getBoundsProvider(label, this.baseStyle).getBounds(context)
@@ -197,9 +197,9 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param {!ICanvasContext} context The canvas context.
    * @param {!Rect} rectangle The clipping rectangle.
    * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {boolean} <code>true</code> if either the base visualization or the decoration is
+   * @returns {boolean} `true` if either the base visualization or the decoration is
    *   visible.
-   * @see LabelStyleBase#isVisible
+   * @see {@link LabelStyleBase.isVisible}
    */
   isVisible(context, rectangle, label) {
     return this.baseStyle.renderer
@@ -213,9 +213,9 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param {!IInputModeContext} context The context.
    * @param {!Point} location The point to test.
    * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {boolean} <code>true</code> if the base visualization is hit.
+   * @returns {boolean} `true` if the base visualization is hit.
    * @override
-   * @see LabelStyleBase#isHit
+   * @see {@link LabelStyleBase.isHit}
    */
   isHit(context, location, label) {
     return this.baseStyle.renderer.getHitTestable(label, this.baseStyle).isHit(context, location)
@@ -227,9 +227,9 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param {!IInputModeContext} context The input mode context.
    * @param {!Rect} rectangle The marquee selection box.
    * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {boolean} <code>true</code> if the base visualization is hit.
+   * @returns {boolean} `true` if the base visualization is hit.
    * @override
-   * @see LabelStyleBase#isInBox
+   * @see {@link LabelStyleBase.isInBox}
    */
   isInBox(context, rectangle, label) {
     // return only box containment test of baseStyle - we don't want the decoration to be marquee selectable
@@ -243,7 +243,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    *
    * @param {!ILabel} label The label to use for the context lookup.
    * @param {!Class} type The type to query.
-   * @returns {?object} An implementation of the <code>type</code> or <code>null</code>.
+   * @returns {?object} An implementation of the `type` or `null`.
    * @see EdgeStyleBase#lookup
    */
   lookup(label, type) {

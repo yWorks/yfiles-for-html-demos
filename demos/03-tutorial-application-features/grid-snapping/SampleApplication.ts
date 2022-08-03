@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -58,41 +58,28 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
 import { isWebGlSupported } from '../../utils/Workarounds'
-import { initBasicDemoStyles } from '../../resources/basic-demo-styles'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
-
-/**
- * Holds information about the grid spacing.
- */
-// @ts-ignore
-let gridInfo: GridInfo = null
+let graphComponent: GraphComponent
 
 /**
  * Visualizes the grid.
  */
-// @ts-ignore
-let grid: GridVisualCreator = null
+let grid: GridVisualCreator = null!
 
-const gridSnapTypeRadioGroup = document.getElementById('gridSnapTypeRadioGroup') as HTMLInputElement
-const gridStyleRadioGroup = document.getElementById('gridStyleRadioGroup')
-const gridRenderModeRadioGroup = document.getElementById('gridRenderModeRadioGroup')
-const gridColorPicker = document.getElementById('gridColorPicker')
-const thicknessSlider = document.getElementById('thickness') as HTMLInputElement
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -126,7 +113,7 @@ function initializeSnapping(): void {
   const geim = graphComponent.inputMode as GraphEditorInputMode
   const graphSnapContext = new GraphSnapContext({
     enabled: true,
-    // disable some of the default snapping behavior such that the graph items only snap to the grid and nowhere else
+    // disable some default snapping behavior such that the graph items only snap to the grid and nowhere else
     snapBendAdjacentSegments: false,
     snapBendsToSnapLines: false,
     snapNodesToSnapLines: false,
@@ -161,74 +148,59 @@ function initializeGrid(): void {
   gridStyles.set('Vertical Lines', GridStyle.VERTICAL_LINES)
   gridStyles.set('Crosses', GridStyle.CROSSES)
 
-  const gridColors = new HashMap<string, Fill>()
-
   // Adds the grid colors to a dictionary
-  const sortedGridColors = [
+  const gridColors = [
     'Black',
     'Gray',
     'Light Gray',
-    'Pink',
-    'Orange',
-    'Yellow',
-    'Green',
-    'Blue',
-    'Violet'
+    'Dark Orchid',
+    'Navy',
+    'Teal',
+    'Forest Green',
+    'Firebrick',
+    'Sienna'
   ]
-  gridColors.set('Black', Fill.BLACK)
-  gridColors.set('Gray', Fill.GRAY)
-  gridColors.set('Light Gray', Fill.LIGHT_GRAY)
-  gridColors.set('Pink', Fill.PINK)
-  gridColors.set('Orange', Fill.ORANGE)
-  gridColors.set('Yellow', Fill.YELLOW)
-  gridColors.set('Green', Fill.LIGHT_GREEN)
-  gridColors.set('Blue', Fill.LIGHT_BLUE)
-  gridColors.set('Violet', Fill.VIOLET)
-
-  const gridRenderModes = new HashMap<string, RenderModes>()
 
   // Adds the grid render modes to a dictionary
+  const gridRenderModes = new HashMap<string, RenderModes>()
   gridRenderModes.set('Canvas', RenderModes.CANVAS)
   gridRenderModes.set('Svg', RenderModes.SVG)
   // add WebGL only if the browser supports WebGL rendering
   if (isWebGlSupported()) {
-    gridRenderModes.set('Web GL', RenderModes.WEB_GL)
+    gridRenderModes.set('WebGL', RenderModes.WEB_GL)
   }
 
-  // creates a radio group for the snap types
-  if (gridSnapTypeRadioGroup !== null) {
-    createRadioGroup(
-      gridSnapTypeRadioGroup,
-      'gridSnapType',
-      gridSnapTypes,
-      'Points',
-      updateSnapType
-    )
-  }
+  // Creates a radio group for the snap types
+  createRadioGroup(
+    document.querySelector<HTMLInputElement>('#gridSnapTypeRadioGroup')!,
+    'gridSnapType',
+    gridSnapTypes,
+    'Points',
+    updateSnapType
+  )
 
-  if (gridStyleRadioGroup !== null) {
-    createRadioGroup(gridStyleRadioGroup, 'gridStyle', gridStyles, 'Dots', updateGridStyle)
-  }
+  createRadioGroup(
+    document.getElementById('gridStyleRadioGroup')!,
+    'gridStyle',
+    gridStyles,
+    'Dots',
+    updateGridStyle
+  )
 
-  // populates the color picker
-  if (gridColorPicker !== null) {
-    createColorPicker(sortedGridColors, gridColors)
-  }
+  createColorPicker(gridColors)
 
-  // creates a radio group for the render mode
-  if (gridRenderModeRadioGroup !== null) {
-    createRadioGroup(
-      gridRenderModeRadioGroup,
-      'gridRenderMode',
-      gridRenderModes,
-      'Canvas',
-      updateRenderMode
-    )
-  }
+  // Creates a radio group for the render mode
+  createRadioGroup(
+    document.getElementById('gridRenderModeRadioGroup')!,
+    'gridRenderMode',
+    gridRenderModes,
+    'Canvas',
+    updateRenderMode
+  )
 
   // Initializes GridInfo which holds the basic information about the grid
   // Sets horizontal and vertical space between grid lines
-  gridInfo = new GridInfo()
+  const gridInfo = new GridInfo()
   gridInfo.horizontalSpacing = 50
   gridInfo.verticalSpacing = 50
 
@@ -287,36 +259,37 @@ function createRadioGroup(
 /**
  * Populates the grid color picker with colors from the passed array/map.
  */
-function createColorPicker(
-  sortedGridColors: Array<string>,
-  gridColors: HashMap<string, Fill>
-): void {
+function createColorPicker(sortedGridColors: Array<string>): void {
+  const gridColorPicker = document.getElementById('gridColorPicker')
+
   let xOffset = 0
   const size = 25
-  for (const color of sortedGridColors) {
+  for (const colorName of sortedGridColors) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('x', `${xOffset}px`)
     rect.setAttribute('width', `${size}px`)
     rect.setAttribute('height', `${size}px`)
 
     const title = document.createElementNS('http://www.w3.org/2000/svg', 'title')
-    title.textContent = color
+    title.textContent = colorName
     rect.appendChild(title)
 
-    if (color === 'Gray') {
+    if (colorName === 'Gray') {
       addClass(rect, 'selectedColor')
     }
 
-    gridColors.get(color)!.applyTo(rect, ICanvasContext.DEFAULT)
+    Fill.from(colorName.replace(' ', '-')).applyTo(rect, ICanvasContext.DEFAULT)
 
     rect.addEventListener(
       'click',
       function (fill: Fill, rect: SVGElement): void {
-        const selectedColors = Array.from(gridColorPicker!.querySelectorAll('.selectedColor'))
-        selectedColors.forEach((rect: Element): Element => removeClass(rect, 'selectedColor'))
+        // Remove styling from previous selection
+        gridColorPicker!
+          .querySelectorAll('.selectedColor')
+          .forEach((rect: Element): Element => removeClass(rect, 'selectedColor'))
         addClass(rect, 'selectedColor')
         updateGridColor(fill)
-      }.bind(null, gridColors.get(color)!, rect)
+      }.bind(null, Fill.from(colorName.replace(' ', '-')), rect)
     )
 
     gridColorPicker!.appendChild(rect)
@@ -371,16 +344,16 @@ function updateGridColor(fill: Fill): void {
  * Sets the chosen thickness to the grid.
  */
 function updateGridThickness(): void {
-  let thickness: number = parseInt(thicknessSlider.value)
-
-  if (grid.gridStyle === GridStyle.DOTS) {
-    // make sure the grid is at least 2 pixels thick when 'Dots' is selected
-    thickness = Math.max(2, thickness)
+  const thicknessSlider = document.querySelector<HTMLInputElement>('#thickness')
+  if (thicknessSlider == null) {
+    return
   }
 
-  ;(document.getElementById('thickness-label') as HTMLInputElement).textContent =
-    thicknessSlider.value
-  grid.stroke.thickness = thickness
+  document.querySelector<HTMLInputElement>('#thicknessLabel')!.textContent = thicknessSlider.value
+  // make sure the grid is at least 2 pixels thick when 'Dots' is selected
+  const thickness: number = parseInt(thicknessSlider.value)
+  grid.stroke.thickness = grid.gridStyle === GridStyle.DOTS ? Math.max(2, thickness) : thickness
+
   updateSvgTemplate()
   graphComponent.invalidate()
 }
@@ -392,7 +365,7 @@ function updateGridThickness(): void {
  */
 function initTutorialDefaults(graph: IGraph): void {
   // set styles that are the same for all tutorials
-  initBasicDemoStyles(graph)
+  initDemoStyles(graph)
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
@@ -472,5 +445,5 @@ function registerCommands(): void {
   bindChangeListener('#thickness', updateGridThickness)
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

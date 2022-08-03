@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -417,9 +417,9 @@ export default class DialContextMenu {
 
   /**
    * Adds event listeners for events that should show a context menu.
-   * Besides the obvious <code>contextmenu</code> event, we listen for the Context Menu key since it is
+   * Besides the obvious `contextmenu` event, we listen for the Context Menu key since it is
    * not handled correctly in Chrome. In other browsers, when the Context Menu key is pressed,
-   * the correct <code>contextmenu</code> event is fired but the event location is not meaningful.
+   * the correct `contextmenu` event is fired but the event location is not meaningful.
    * In this case, we set a better location, centered on the given element.
    */
   addEventListeners(graphComponent: GraphComponent, openCallback: (location: Point) => void): void {

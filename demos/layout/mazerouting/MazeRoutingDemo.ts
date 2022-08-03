@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,11 +51,11 @@ import {
 } from 'yfiles'
 
 import MazeData from './resources/maze'
-import { initDemoStyles } from '../../resources/demo-styles'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import { OptionEditor } from '../../resources/demo-option-editor'
-import loadJson from '../../resources/load-json'
 import PolylineEdgeRouterConfig from './PolylineEdgeRouterConfig'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The graph component that displays the demo's graph.
@@ -82,16 +82,17 @@ let filteredGraph: FilteredGraphWrapper
 /**
  * Starts the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the option editor
   initializeOptionEditor()
 
   // set some default styles
-  initDemoStyles(graphComponent.graph, 'demo-palette-31')
+  initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31' })
 
   // create the input mode
   createEditorInputMode()
@@ -441,5 +442,5 @@ class MazeVisual extends BaseClass<IVisualCreator>(IVisualCreator) implements IV
   }
 }
 
-// runs the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -94,14 +94,17 @@ import {
 } from './Actions'
 
 /**
- * Utility class that configures a GraphComponent to support fast creation of flowchart diagrams.<br/>
+ * Utility class that configures a GraphComponent to support fast creation of flowchart diagrams.
+ *
  * In {@link FlowchartConfiguration.initializeGraphDefaults initializeGraphDefaults} the default
- * item styles and focus visualization is set.<br/>
+ * item styles and focus visualization is set.
+ *
  * In {@link FlowchartConfiguration.initializeDiagram initializeDiagram} the graph is initialized
- * with a 'Start' node from where the flowchart creation can start.<br/>
+ * with a 'Start' node from where the flowchart creation can start.
+ *
  * In {@link FlowchartConfiguration.createInputMode createInputMode} a
  * {@link GraphEditorInputMode} is created and adjusted to replace most default creation gestures
- * by a {@link GraphWizardInputMode} that is configured to support creating flowchart diagrams.<br/>
+ * by a {@link GraphWizardInputMode} that is configured to support creating flowchart diagrams.
  */
 export default class FlowchartConfiguration {
   private readonly flowchartTypes = [
@@ -322,8 +325,7 @@ export default class FlowchartConfiguration {
   }
 
   /**
-   * Binds the {@link LayoutCommand} to the {@link runFromScratchLayout} method and the shortcut
-   * <em>L</em>.
+   * Binds the {@link LayoutCommand} to the {@link runFromScratchLayout} method and the shortcut `L`.
    * @param keyboardInputMode The mode to add the command binding to.
    * @private
    */
@@ -614,7 +616,7 @@ export default class FlowchartConfiguration {
         let newCurrentItem: INode | null = null
         if (mode.currentItem instanceof INode) {
           const node = mode.currentItem
-          newCurrentItem = graph.neighbors(node).firstOrDefault()
+          newCurrentItem = graph.neighbors(node).at(0) ?? null
         } else if (mode.currentItem instanceof IEdge) {
           newCurrentItem = mode.currentItem.sourceNode
         }
@@ -652,7 +654,8 @@ export default class FlowchartConfiguration {
 
   /**
    * Creates the steps to create a new node connected to the given parent node by a new edge and
-   * {@link runLayout runs} a new layout calculation.<br/>
+   * {@link runLayout runs} a new layout calculation.
+   *
    * The layout of the new node is calculated by translating the layout of the parent by the childOffset.
    * After applying the new layout, the {@link createChangeFlowchartType} action is triggered for
    * the new node.
@@ -732,7 +735,7 @@ export default class FlowchartConfiguration {
             this.createSelectEdgeLabelTextAction(edge, parentInputMode),
             edge
           )
-          const newLabel = labelPicked && edge.labels.size > 0 ? edge.labels.first() : null
+          const newLabel = labelPicked && edge.labels.size > 0 ? edge.labels.at(0) : null
           return {
             success: labelPicked,
             undoData: newLabel,
@@ -802,7 +805,7 @@ export default class FlowchartConfiguration {
   /**
    * Creates a {@link WizardAction} for an edge that provides picker buttons for the edge label text.
    *
-   * Besides <em>yes</em> and <em>no</em> options, a third option is provided that opens interactive
+   * Besides __yes__ and __no__ options, a third option is provided that opens interactive
    * text editing for the new label text.
    * @param edge The edge the label text is provided for.
    * @param geim The input mode to trigger interactive text editing.

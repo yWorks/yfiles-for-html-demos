@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,18 +44,16 @@ import {
   Size
 } from 'yfiles'
 
-import {
-  bindAction,
-  bindActions,
-  bindCommand,
-  checkLicense,
-  showApp
-} from '../../resources/demo-app'
-import loadJson from '../../resources/load-json'
+import { bindAction, bindActions, bindCommand, showApp } from '../../resources/demo-app'
 import MoveNodesAsideStage from './MoveNodesAsideStage'
 import AlignmentStage from './AlignmentStage'
 import ZigZagEdgesStage from './ZigZagEdgesStage'
-import { createDemoNodeLabelStyle, DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
+import {
+  applyDemoTheme,
+  createDemoNodeLabelStyle,
+  initDemoStyles
+} from '../../resources/demo-styles'
+import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * The graph component in which the graph is displayed.
@@ -65,9 +63,10 @@ let graphComponent: GraphComponent
 /**
  * Bootstraps the demo.
  */
-function run(licenseData: object): void {
-  License.value = licenseData
+async function run(): Promise<void> {
+  License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode()
 
   // Create the sample graph
@@ -213,8 +212,7 @@ function createCoreLayout(): HierarchicLayout {
  */
 function createGraph(graph: IGraph): void {
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.style = new DemoNodeStyle()
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  initDemoStyles(graph, { shape: ShapeNodeShape.ROUND_RECTANGLE })
   graph.edgeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-21')
 
@@ -295,5 +293,5 @@ function registerCommands(): void {
   bindAction("button[data-command='RunAllStages']", () => runAllLayouts())
 }
 
-// start tutorial
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()

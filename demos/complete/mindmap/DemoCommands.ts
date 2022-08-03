@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,17 +30,16 @@ import {
   FilteredGraphWrapper,
   GraphComponent,
   GraphEditorInputMode,
-  IEdge,
   IEdgeStyle,
   IGraph,
   ILabelStyle,
   INode,
   INodeStyle,
   Insets,
-  List,
   Rect
 } from 'yfiles'
 import MindmapLayout from './MindmapLayout'
+import type { NodeData } from './MindmapUtil'
 import {
   createChild,
   createSibling,
@@ -51,7 +50,6 @@ import {
   removeSubtree,
   TagChangeUndoUnit
 } from './MindmapUtil'
-import type { NodeData } from './MindmapUtil'
 
 /**
  * This class holds the commands and interactions supported by the Mindmap demo.
@@ -70,7 +68,7 @@ export default class DemoCommands {
    */
   executeToggleCollapseState(node: INode | null): boolean {
     if (node === null || typeof node === 'undefined') {
-      node = this.graphComponent.selection.selectedNodes.firstOrDefault()
+      node = this.graphComponent.selection.selectedNodes.first()
     }
     if (INode.isInstance(node)) {
       this.collapseNode(node, !isCollapsed(node))
@@ -242,12 +240,12 @@ export default class DemoCommands {
    * @return True if the command can be executed, false otherwise.
    */
   canExecuteDeleteItem(): boolean {
-    const edge = this.graphComponent.selection.selectedEdges.firstOrDefault()
-    const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
+    const edge = this.graphComponent.selection.selectedEdges.at(0)
+    const node = this.graphComponent.selection.selectedNodes.at(0)
 
     return (
-      (edge !== null && !MindmapLayout.instance.inLayout && isCrossReference(edge)) ||
-      (node !== null && !MindmapLayout.instance.inLayout && !isRoot(node))
+      (edge != null && !MindmapLayout.instance.inLayout && isCrossReference(edge)) ||
+      (node != null && !MindmapLayout.instance.inLayout && !isRoot(node))
     )
   }
 
@@ -256,17 +254,17 @@ export default class DemoCommands {
    * @return True if the command is executed, false otherwise.
    */
   async executeDeleteItem(): Promise<boolean> {
-    const edge = this.graphComponent.selection.selectedEdges.firstOrDefault()
+    const edge = this.graphComponent.selection.selectedEdges.at(0)
     const compoundEdit = this.graphComponent.graph.beginEdit('DeleteItem', 'DeleteItem')
-    if (edge !== null) {
+    if (edge) {
       this.graphComponent.graph.remove(edge)
       await MindmapLayout.instance.layout(this.graphComponent)
       this.limitViewport()
       compoundEdit.commit()
     }
 
-    const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
-    if (node !== null) {
+    const node = this.graphComponent.selection.selectedNodes.at(0)
+    if (node) {
       removeSubtree(this.graphComponent.graph, node)
       await MindmapLayout.instance.layout(this.graphComponent)
       this.limitViewport()
@@ -280,8 +278,8 @@ export default class DemoCommands {
    * @return True if the command can be executed, false otherwise.
    */
   canExecuteExpandNode(): boolean {
-    const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
-    return node !== null && isCollapsed(node) && !MindmapLayout.instance.inLayout
+    const node = this.graphComponent.selection.selectedNodes.at(0)
+    return node != null && isCollapsed(node) && !MindmapLayout.instance.inLayout
   }
 
   /**
@@ -289,8 +287,8 @@ export default class DemoCommands {
    * @return True if the command is executed, false otherwise.
    */
   executeExpandNode(): boolean {
-    const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
-    if (node !== null) {
+    const node = this.graphComponent.selection.selectedNodes.at(0)
+    if (node) {
       this.collapseNode(node, false)
       return true
     }
@@ -302,8 +300,8 @@ export default class DemoCommands {
    * @return True if the command can be executed, false otherwise.
    */
   canExecuteCollapseNode(): boolean {
-    const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
-    return node !== null && !isCollapsed(node) && !MindmapLayout.instance.inLayout
+    const node = this.graphComponent.selection.selectedNodes.at(0)
+    return node != null && !isCollapsed(node) && !MindmapLayout.instance.inLayout
   }
 
   /**
@@ -311,8 +309,8 @@ export default class DemoCommands {
    * @return True if the command is executed, false otherwise.
    */
   executeCollapseNode(): boolean {
-    const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
-    if (node !== null) {
+    const node = this.graphComponent.selection.selectedNodes.at(0)
+    if (node) {
       this.collapseNode(node, true)
       return true
     }
@@ -324,8 +322,8 @@ export default class DemoCommands {
    * @return True if the command can be executed, false otherwise.
    */
   canExecuteCreateSibling(): boolean {
-    const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
-    return node !== null && !isRoot(node) && !MindmapLayout.instance.inLayout
+    const node = this.graphComponent.selection.selectedNodes.at(0)
+    return node != null && !isRoot(node) && !MindmapLayout.instance.inLayout
   }
 
   /**
@@ -362,7 +360,7 @@ export default class DemoCommands {
 
   /**
    * The click handler for a click on a state label in the state label popup menu.
-   * @param stateLabelIndex The index into the icon list {@link StateLabelDecorator#STATE_ICONS}.
+   * @param stateLabelIndex The index into the icon list {@link StateLabelDecorator.STATE_ICONS}.
    */
   async onStateLabelClicked(stateLabelIndex: number) {
     const node = this.graphComponent.currentItem as INode
@@ -382,7 +380,7 @@ export default class DemoCommands {
   /**
    * Sets the state label for a node.
    * @param node The node to set the state label for.
-   * @param stateIconIndex The index into the icon list {@link StateLabelDecorator#STATE_ICONS}.
+   * @param stateIconIndex The index into the icon list {@link StateLabelDecorator.STATE_ICONS}.
    */
   setStateLabel(node: INode, stateIconIndex: number) {
     const oldData = node.tag as NodeData

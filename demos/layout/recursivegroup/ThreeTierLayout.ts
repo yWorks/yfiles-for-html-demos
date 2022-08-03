@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   CompositeLayoutData,
+  DefaultNodePlacer,
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutNodeLayoutDescriptor,
@@ -54,7 +55,8 @@ enum TierType {
  * Demonstrates how to use the recursive group layout to realize different layouts of elements assigned
  * to different tiers.
  *
- * Each group node can be assigned to the left, right or middle tier.
+ * Each group node can be assigned to the left, right or middle tier. As core layout, the
+ * {@link HierarchicLayout} is specified.
  *
  * All group nodes mapped to {@link LEFT_TREE_GROUP_NODE} are placed on the left side. Their content is
  * drawn using a {@link TreeLayout} with layout orientation left-to-right.
@@ -96,6 +98,10 @@ export function createThreeTierLayoutData(graph: IGraph, fromSketch: boolean): L
   // configure the different sub group layout settings
   const leftToRightTreeLayout = new TreeReductionStage({
     coreLayout: new TreeLayout({
+      defaultNodePlacer: new DefaultNodePlacer({
+        minimumFirstSegmentLength: 15,
+        minimumLastSegmentLength: 15
+      }),
       layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT
     })
   })
@@ -103,6 +109,10 @@ export function createThreeTierLayoutData(graph: IGraph, fromSketch: boolean): L
 
   const rightToLeftTreeLayout = new TreeReductionStage({
     coreLayout: new TreeLayout({
+      defaultNodePlacer: new DefaultNodePlacer({
+        minimumFirstSegmentLength: 15,
+        minimumLastSegmentLength: 15
+      }),
       layoutOrientation: LayoutOrientation.RIGHT_TO_LEFT
     })
   })

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,20 +26,33 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INVALID_LICENSE_MESSAGE, registerErrorDialog } from './demo-error'
+import { registerErrorDialog } from './demo-error'
 import {
   detectInternetExplorerVersion,
   detectiOSVersion,
   detectSafariVersion,
   enableWorkarounds
 } from '../utils/Workarounds'
-import { DefaultGraph, GraphComponent, GraphMLIOHandler, License } from 'yfiles'
+import {
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphMLIOHandler,
+  GraphOverviewComponent,
+  MouseWheelBehaviors,
+  MoveViewportInputMode,
+  ScrollBarVisibility,
+  Size,
+  TouchEventRecognizers
+} from 'yfiles'
 
 export type OptionData = { value: string; text: string }
 
 // match CSS media query
 const SIDEBAR_WIDTH = 320
 const SMALL_WIDTH = SIDEBAR_WIDTH * 3
+
+const ieVersion = detectInternetExplorerVersion()
+const isIE = ieVersion > -1 && ieVersion <= 11
 
 /**
  * Initializes polyfills that are used by some demos.
@@ -96,6 +109,7 @@ function initializeDemoUI(): void {
 
   const yFilesHTMLLink = document.createElement('a')
   yFilesHTMLLink.setAttribute('href', 'https://www.yworks.com/products/yfiles')
+  yFilesHTMLLink.setAttribute('class', 'demo-yfiles-link')
   yFilesHTMLLink.textContent = 'yFiles for HTML'
   header.appendChild(yFilesHTMLLink)
 
@@ -167,8 +181,7 @@ function initializeDemoUI(): void {
     ;(() => {
       const isLeft = hasClass(sidebar, 'demo-left')
       button.setAttribute('class', `demo-${isLeft ? 'left' : 'right'}-sidebar-toggle-button`)
-      if (isLeft) button.setAttribute('title', `Toggle description`)
-      else button.setAttribute('title', `Toggle right sidebar`)
+      button.setAttribute('title', isLeft ? `Toggle description` : `Toggle right sidebar`)
       button.addEventListener('click', () => {
         toggleClass(body, isLeft ? 'demo-left-hidden' : 'demo-right-hidden')
       })
@@ -301,85 +314,103 @@ function initResponsiveToolbar(toolbar: Element): void {
     toggleClass(overflowContainerWrapper, 'open')
     if (hasClass(overflowContainerWrapper, 'open')) {
       document.addEventListener('click', closeContainerHandler)
-      if (e.currentTarget) overflowContainerWrapper.style.right = overflowButton.style.right
+      if (e.currentTarget) {
+        overflowContainerWrapper.style.right = overflowButton.style.right
+      }
     }
   })
   toolbar.insertBefore(overflowButton, toolbar.firstChild)
   toolbar.insertBefore(overflowContainerWrapper, toolbar.firstChild)
   let toolbarWidth = 0
   const resizeHandler = () => {
-    // only update if clientWidth is > 0 - this allows to temporarily hide the toolbar with "display:'none'"
+    const toolbarComputedStyle = window.getComputedStyle(toolbar, null)
     const toolbarPadding = parseInt(
-      window.getComputedStyle(toolbar, null).getPropertyValue('padding-right').match(/(\d+)/)![0]
+      toolbarComputedStyle.getPropertyValue('padding-right').match(/(\d+)/)![0]
     )
+    // only update if clientWidth is > 0 - this allows to temporarily hide the toolbar with "display:'none'"
     if (toolbarWidth !== toolbar.clientWidth - toolbarPadding && toolbar.clientWidth > 0) {
-      toolbarWidth = toolbar.clientWidth - toolbarPadding
-      const toolbarBox = toolbar.getBoundingClientRect()
-      let toolbarItem: any = toolbar.lastElementChild
-      let toolbarItemBox: any = toolbarItem.getBoundingClientRect()
-      // move overflowing toolbar items to overflow container
-      while (
-        toolbarItem &&
-        toolbar.children.length > 3 &&
-        (toolbarItemBox.top >= toolbarBox.bottom ||
-          toolbarItemBox.right >= toolbarBox.right - 45 - toolbarPadding ||
-          toolbarItemBox.width === 0)
-      ) {
-        overflowContainer.insertBefore(toolbarItem, overflowContainer.firstChild)
-        if (toolbarItem.hasAttribute('for')) {
-          overflowContainer.insertBefore(
-            document.getElementById(toolbarItem.getAttribute('for')!)!,
-            overflowContainer.firstChild
-          )
-        }
-        toolbarItem = toolbar.lastElementChild
-        toolbarItemBox = toolbarItem.getBoundingClientRect()
-      }
-
-      // move overflowing toolbar items back to the toolbar if there is enough space
-      let overflowItem: Element = overflowContainer.firstElementChild!
-      while (
-        overflowItem &&
-        (overflowItem.clientWidth === 0 || hasClass(overflowItem, 'demo-separator'))
-      ) {
-        overflowItem = overflowItem.nextElementSibling!
-      }
-
-      let space: number =
-        toolbarBox.right -
-        toolbarPadding -
-        toolbar.lastElementChild!.getBoundingClientRect().right -
-        45
-      // eslint-disable-next-line no-cond-assign
-      while (overflowItem && overflowItem.clientWidth < space) {
-        while (overflowItem.previousElementSibling) {
-          toolbar.appendChild(overflowItem.previousElementSibling)
-        }
-        toolbar.appendChild(overflowItem)
-        space =
-          toolbarBox.right -
-          toolbarPadding -
-          toolbar.lastElementChild!.getBoundingClientRect().right -
-          45
-        overflowItem = overflowContainer.firstElementChild!
-        while (
-          overflowItem &&
-          (overflowItem.clientWidth === 0 || hasClass(overflowItem, 'demo-separator'))
-        ) {
-          overflowItem = overflowItem.nextElementSibling!
-        }
-      }
-      if (overflowContainer.children.length === 0) {
-        addClass(overflowButton, 'hidden')
-        removeClass(overflowContainerWrapper, 'open')
-      } else {
-        removeClass(overflowButton, 'hidden')
-        overflowButton.style.right = `${toolbarPadding}px`
-      }
+      toolbarWidth = wrapToolbar(toolbar)
     }
     setTimeout(resizeHandler, 1000)
   }
   setTimeout(resizeHandler, 1000)
+}
+
+function wrapToolbar(toolbar: Element): number {
+  const toolbarComputedStyle = window.getComputedStyle(toolbar, null)
+  const toolbarPadding = parseInt(
+    toolbarComputedStyle.getPropertyValue('padding-right').match(/(\d+)/)![0]
+  )
+
+  const overflowContainerWrapper = toolbar.querySelector(
+    '.overflow-container-wrapper'
+  ) as HTMLElement
+  const overflowContainer = overflowContainerWrapper.querySelector(
+    '.overflow-container'
+  ) as HTMLElement
+  const overflowButton = toolbar.querySelector('.overflow-button') as HTMLSpanElement
+
+  const toolbarBox = toolbar.getBoundingClientRect()
+  let toolbarItem: any = toolbar.lastElementChild
+  let toolbarItemBox: any = toolbarItem.getBoundingClientRect()
+  // move overflowing toolbar items to overflow container
+  while (
+    toolbarItem &&
+    toolbar.children.length > 3 &&
+    (toolbarItemBox.top >= toolbarBox.bottom ||
+      toolbarItemBox.right >= toolbarBox.right - 45 - toolbarPadding ||
+      toolbarItemBox.width === 0)
+  ) {
+    overflowContainer.insertBefore(toolbarItem, overflowContainer.firstChild)
+    if (toolbarItem.hasAttribute('for')) {
+      overflowContainer.insertBefore(
+        document.getElementById(toolbarItem.getAttribute('for')!)!,
+        overflowContainer.firstChild
+      )
+    }
+    toolbarItem = toolbar.lastElementChild
+    toolbarItemBox = toolbarItem.getBoundingClientRect()
+  }
+
+  // move overflowing toolbar items back to the toolbar if there is enough space
+  let overflowItem: Element = overflowContainer.firstElementChild!
+  while (
+    overflowItem &&
+    (overflowItem.clientWidth === 0 || hasClass(overflowItem, 'demo-separator'))
+  ) {
+    overflowItem = overflowItem.nextElementSibling!
+  }
+
+  let space: number =
+    toolbarBox.right - toolbarPadding - toolbar.lastElementChild!.getBoundingClientRect().right - 45
+  // eslint-disable-next-line no-cond-assign
+  while (overflowItem && overflowItem.clientWidth < space) {
+    while (overflowItem.previousElementSibling) {
+      toolbar.appendChild(overflowItem.previousElementSibling)
+    }
+    toolbar.appendChild(overflowItem)
+    space =
+      toolbarBox.right -
+      toolbarPadding -
+      toolbar.lastElementChild!.getBoundingClientRect().right -
+      45
+    overflowItem = overflowContainer.firstElementChild!
+    while (
+      overflowItem &&
+      (overflowItem.clientWidth === 0 || hasClass(overflowItem, 'demo-separator'))
+    ) {
+      overflowItem = overflowItem.nextElementSibling!
+    }
+  }
+  if (overflowContainer.children.length === 0) {
+    addClass(overflowButton, 'hidden')
+    removeClass(overflowContainerWrapper, 'open')
+  } else {
+    removeClass(overflowButton, 'hidden')
+    overflowButton.style.right = `${toolbarPadding}px`
+  }
+
+  return toolbar.clientWidth - toolbarPadding
 }
 
 function hideRightResponsive(body: any): void {
@@ -403,23 +434,40 @@ function getTutorialName(): string {
   return demoName.substr(demoName.indexOf(' - ') + 3)
 }
 
-export function showApp(graphComponent: any, overviewComponent?: any): void {
+export function showApp(
+  graphComponent?: GraphComponent,
+  overviewComponent?: GraphOverviewComponent
+): void {
   // Finished loading
   addClass(document.body, 'loaded')
   // @ts-ignore
   window['data-demo-status'] = 'OK'
-  if (graphComponent != null) {
+
+  if (graphComponent) {
     graphComponent.devicePixelRatio = window.devicePixelRatio || 1
+    graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
+    graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
   }
-  if (overviewComponent == null) {
-    return
+  if (overviewComponent) {
+    overviewComponent.devicePixelRatio = window.devicePixelRatio || 1
+    const overviewContainer = overviewComponent.div.parentElement
+    if (overviewContainer) {
+      const overviewHeader = overviewContainer.querySelector('.demo-overview-header')
+      if (overviewHeader) {
+        overviewHeader.addEventListener('click', () => {
+          toggleClass(overviewContainer, 'collapsed')
+        })
+      }
+    }
   }
-  overviewComponent.devicePixelRatio = window.devicePixelRatio || 1
-  const overviewContainer = overviewComponent.div.parentElement
-  const overviewHeader = overviewContainer.querySelector('.demo-overview-header')
-  overviewHeader.addEventListener('click', () => {
-    toggleClass(overviewContainer, 'collapsed')
-  })
+
+  const toolbars = document.querySelectorAll('.demo-toolbar')
+  for (let i = 0; i < toolbars.length; i++) {
+    const toolbar = toolbars[i]
+    if (!hasClass(toolbar, 'no-overflow')) {
+      wrapToolbar(toolbar)
+    }
+  }
 }
 
 /**
@@ -478,24 +526,41 @@ export function bindChangeListener(selector: string, action: (arg0: any) => any)
   if (!element) {
     return
   }
-  element.addEventListener('change', (e: Event) => {
-    const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    if (target instanceof HTMLInputElement && target.type === 'checkbox') {
-      action(target.checked)
-    } else {
-      action(target.value)
+
+  const isRange = element.getAttribute('type') === 'range'
+  if (isRange && isIE) {
+    const fireChangeIE = () => {
+      action((element as HTMLInputElement).value)
     }
-  })
+    element.addEventListener('change', () => {
+      document.removeEventListener('pointerup', fireChangeIE)
+      document.addEventListener('pointerup', fireChangeIE)
+    })
+  } else {
+    element.addEventListener('change', (e: Event) => {
+      const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      if (target instanceof HTMLInputElement && target.type === 'checkbox') {
+        action(target.checked)
+      } else {
+        action(target.value)
+      }
+    })
+  }
 }
 
-export function bindInputListener(selector: string, action: (arg0: any) => any): void {
-  const element = document.querySelector(selector)
+export function bindInputListener(
+  selectorOrElement: string | HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
+  action: (value: string) => void
+): void {
+  const element =
+    typeof selectorOrElement === 'string'
+      ? document.querySelector(selectorOrElement)
+      : selectorOrElement
   if (!element) {
-    return
+    throw new Error('No element to bind to')
   }
 
-  const ieVersion = detectInternetExplorerVersion()
-  const eventKind = ieVersion > -1 && ieVersion <= 11 ? 'change' : 'input'
+  const eventKind = isIE ? 'change' : 'input'
   element.addEventListener(eventKind, (e: Event) => {
     const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     action(target.value)
@@ -592,6 +657,13 @@ export function addNavigationButtons(
 ) {
   if (selectElement.parentElement == null) {
     throw new Error('The element must have a parent')
+  }
+
+  // Don't add the buttons for IE 9–10
+  // We can't observe the disabled-ness there, and demos may rely on the state not changing
+  // when the element should be disabled.
+  if (!window.MutationObserver) {
+    return
   }
 
   const prevButton = document.createElement('button')
@@ -737,26 +809,6 @@ export function readGraph(
 }
 
 /**
- * Checks whether the license is a valid yfiles license.
- * @param licenseData The license data to be checked
- */
-export function checkLicense(licenseData: object) {
-  License.value = licenseData
-  const g = new DefaultGraph()
-  g.createNode()
-  if (g.nodes.size === 1) {
-    return licenseData
-  }
-  window.setTimeout(() => {
-    document.body.innerHTML =
-      '<div id="errorComponent" style="margin:auto; width:40em; height: 100%;"></div>'
-    new GraphComponent('errorComponent')
-  }, 200)
-
-  return Promise.reject(new Error(INVALID_LICENSE_MESSAGE))
-}
-
-/**
  * Displays or hides the loading indicator which is a div element with id 'loadingIndicator'.
  * @param visible Whether to show or hide the loading indicator.
  * @param message A text on the loading indicator.
@@ -768,6 +820,56 @@ export async function showLoadingIndicator(visible: boolean, message?: string): 
     loadingIndicator.innerText = message
   }
   return new Promise(resolve => setTimeout(resolve, 0))
+}
+
+/**
+ * Configures two-finger panning on the given input mode by disabling
+ * {@link MoveViewportInputMode.allowSinglePointerMovement} and additionally re-configures
+ * gestures to immediately act upon touch-down instead of waiting for a long-press.
+ */
+export function configureTwoPointerPanning(graphComponent: GraphComponent): void {
+  const inputMode = graphComponent.inputMode
+  if (inputMode instanceof GraphEditorInputMode) {
+    // disable single pointer movement to allow other gestures to start on a simple single press
+    inputMode.moveViewportInputMode.allowSinglePointerMovement = false
+    // set gestures to an immediate touch-down recognizer instead of the long-press recognizer
+    inputMode.moveInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+    inputMode.createEdgeInputMode.prepareRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+    inputMode.createBendInputMode.prepareRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+    inputMode.handleInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+    inputMode.marqueeSelectionInputMode.pressedRecognizerTouch =
+      TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+    inputMode.moveUnselectedInputMode.pressedRecognizerTouch =
+      TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+    inputMode.moveLabelInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+  }
+
+  // prevent accidental start of edit gesture for now immediate touchdown gestures
+  graphComponent.dragSizeTouch = new Size(40, 40)
+
+  // iOS fires bogus mousewheel events during pinch zooming, so disable mousewheel behavior while
+  // two pointers are pressed.
+  if (detectiOSVersion() !== -1) {
+    let previousWheelBehavior: MouseWheelBehaviors | null = null
+    graphComponent.addTouchDownListener((sender, args) => {
+      if (!args.device.isPrimaryDevice) {
+        // a second pointer is down, disable wheel behavior
+        previousWheelBehavior = graphComponent.mouseWheelBehavior
+        graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
+      }
+    })
+
+    const resetWheelBehavior = () => {
+      if (previousWheelBehavior !== null) {
+        graphComponent.mouseWheelBehavior = previousWheelBehavior
+        previousWheelBehavior = null
+      }
+    }
+    // reset mousewheel behavior in case the application is used with touch and mouse interaction
+    graphComponent.addTouchUpListener(resetWheelBehavior)
+    graphComponent.addTouchLeaveListener(resetWheelBehavior)
+    graphComponent.addTouchLostCaptureListener(resetWheelBehavior)
+  }
 }
 
 /**

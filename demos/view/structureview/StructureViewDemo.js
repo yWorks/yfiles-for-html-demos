@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.4.
+ ** This demo file is part of yFiles for HTML 2.5.
  ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,16 +36,16 @@ import {
   Rect
 } from 'yfiles'
 import StructureView from './StructureView.js'
-import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
-import loadJson from '../../resources/load-json.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Runs the demo.
- * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
-  License.value = licenseData
+async function run() {
+  License.value = await fetchLicense()
 
   // setup support for folding
   const foldingManager = new FoldingManager()
@@ -53,11 +53,12 @@ function run(licenseData) {
   foldingView.enqueueNavigationalUndoUnits = true
 
   // configure default styles ...
-  initDemoStyles(foldingView.graph)
+  initDemoStyles(foldingView.graph, { foldingEnabled: true })
   // ... and build an initial sample graph
   createGraph(foldingView.graph)
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   graphComponent.graph = foldingView.graph
 
   // enable interactive editing
@@ -244,5 +245,5 @@ function registerCommands(graphComponent, structureView) {
   bindAction('#sync-folding-state', e => (structureView.syncFoldingState = e.target.checked))
 }
 
-// Start the demo
-loadJson().then(checkLicense).then(run)
+// noinspection JSIgnoredPromiseFromCall
+run()
