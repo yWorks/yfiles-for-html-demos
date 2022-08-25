@@ -67,7 +67,7 @@ import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * @typedef {Object} Employee
- * @property {string} position
+ * @property {string} [position]
  * @property {string} name
  * @property {string} email
  * @property {string} phone

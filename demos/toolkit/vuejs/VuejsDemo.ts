@@ -74,7 +74,7 @@ const statusColors = {
 }
 
 type Employee = {
-  position: string
+  position?: string
   name: string
   email: string
   phone: string

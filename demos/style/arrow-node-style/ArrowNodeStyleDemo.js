@@ -35,7 +35,6 @@ import {
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   FreeNodeLabelModel,
-  Geom,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -242,7 +241,7 @@ function initializeUI(graphComponent) {
 
   bindInputListener(angleRange, value => {
     const angle = parseFloat(value)
-    applyStyleSetting(graphComponent, style => (style.angle = Geom.toRadians(angle)))
+    applyStyleSetting(graphComponent, style => (style.angle = toRadians(angle)))
     angleLabel.innerText = value
   })
 
@@ -339,9 +338,27 @@ function getStyleValues(style) {
   return {
     shape: Enum.getName(ArrowStyleShape.$class, style.shape),
     direction: Enum.getName(ArrowNodeDirection.$class, style.direction),
-    angle: String(Geom.toDegrees(style.angle).toFixed(0)),
+    angle: String(toDegrees(style.angle).toFixed(0)),
     shaftRatio: String(style.shaftRatio.toFixed(1))
   }
+}
+
+/**
+ * Returns the given angle in degrees.
+ * @param {number} radians
+ * @returns {number}
+ */
+function toDegrees(radians) {
+  return (radians * 180) / Math.PI
+}
+
+/**
+ * Returns the given angle in radians.
+ * @param {number} degrees
+ * @returns {number}
+ */
+function toRadians(degrees) {
+  return (degrees / 180) * Math.PI
 }
 
 // noinspection JSIgnoredPromiseFromCall

@@ -9,6 +9,6 @@
   "dependencies": {
     "express": "4.18.1",
     "body-parser": "1.20.0",
-    "yfiles-umd": "../../../../lib-dev/yfiles-umd-25.0.0+dev.tgz"
+    "yfiles-umd": "../../../../lib-dev/yfiles-umd-25.0.1+dev.tgz"
   }
 }

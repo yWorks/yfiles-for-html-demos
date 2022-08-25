@@ -43,9 +43,6 @@
     <link rel="stylesheet" href="TouchEditor.css" />
   </head>
   <body>
-    <!--
-  The sidebar for the description text
-  -->
     <aside class="demo-sidebar demo-left">
       <div class="demo-sidebar-header">
         <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
@@ -109,35 +106,36 @@
     <div class="demo-content">
       <header class="demo-header"></header>
 
-      <div id="dndPanelContainer">
-        <div id="panningOptionsDiv">
-          <p class="panningLabel">Snap Touch Panning</p>
+      <div class="demo-content-dynamic">
+        <div id="dndPanelContainer">
+          <div id="panningOptionsDiv">
+            <p class="panningLabel">Snap Touch Panning</p>
 
-          <div id="snapPanningBox" class="panningOptionsBox">
-            <select>
-              <option value="none">None</option>
-              <option value="horizontal">Horizontal</option>
-              <option value="vertical">Vertical</option>
-              <option value="both">Both</option>
-            </select>
+            <div id="snapPanningBox" class="panningOptionsBox">
+              <select>
+                <option value="none">None</option>
+                <option value="horizontal">Horizontal</option>
+                <option value="vertical">Vertical</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+
+            <p class="panningLabel">Start Touch Panning</p>
+
+            <div id="startPanningBox" class="panningOptionsBox">
+              <select>
+                <option value="one">One Finger</option>
+                <option value="two" selected>Two Fingers</option>
+              </select>
+            </div>
           </div>
 
-          <p class="panningLabel">Start Touch Panning</p>
-
-          <div id="startPanningBox" class="panningOptionsBox">
-            <select>
-              <option value="one">One Finger</option>
-              <option value="two" selected>Two Fingers</option>
-            </select>
-          </div>
+          <div id="dndPanel"></div>
         </div>
 
-        <div id="dndPanel"></div>
-      </div>
-
-      <!--The GraphComponent-->
-      <div id="graphComponent">
-        <button id="cancelButton" class="demo-button-invisible"></button>
+        <div id="graphComponent">
+          <button id="cancelButton" class="demo-button-invisible"></button>
+        </div>
       </div>
     </div>
 

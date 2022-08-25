@@ -124,7 +124,9 @@ async function updateGraph(graphComponent: GraphComponent, nodesSource: any[]): 
  * Arranges the graph of the given graph component and applies the new layout in an animated
  * fashion.
  */
-async function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
+function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
+  document.querySelector<HTMLButtonElement>("button[data-command='UpdateBuilder']")!.disabled = true
+
   const algorithm = new TreeLayout({
     defaultNodePlacer: new DefaultNodePlacer({
       minimumFirstSegmentLength: 20,
@@ -133,14 +135,19 @@ async function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
   })
 
   // arrange the graph with the chosen layout algorithm
-  await new LayoutExecutor({
+  return new LayoutExecutor({
     graphComponent: graphComponent,
     graph: graphComponent.graph,
     layout: algorithm,
     fixPorts: true,
     animateViewport: true,
     duration: '0.5s'
-  }).start()
+  })
+    .start()
+    .finally(() => {
+      document.querySelector<HTMLButtonElement>("button[data-command='UpdateBuilder']")!.disabled =
+        false
+    })
 }
 
 /**

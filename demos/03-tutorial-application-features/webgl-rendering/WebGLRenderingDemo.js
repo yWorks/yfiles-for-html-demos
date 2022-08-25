@@ -44,7 +44,8 @@ import {
   Size,
   WebGL2FocusIndicatorManager,
   WebGL2GraphModelManager,
-  WebGL2SelectionIndicatorManager
+  WebGL2SelectionIndicatorManager,
+  Workarounds
 } from 'yfiles'
 
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
@@ -101,6 +102,11 @@ function enableWebGLRendering(graphComponent) {
   graphComponent.graphModelManager = new WebGL2GraphModelManager()
   graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
   graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager()
+
+  // Optional: precompile the selection shaders
+  // This has the effect that the selection is not rendered with a simple fallback style
+  // the first time an element is selected, at the cost of initial load time
+  Workarounds.precompileWebGLSelectionShaders = true
 }
 
 /**

@@ -68,7 +68,7 @@ import { fetchLicense } from '../../resources/fetch-license.js'
  * Specifies the properties of an employee, i.e. the business data associated to each node
  * in the demo's graph.
  * @typedef {Object} Employee
- * @property {string} position
+ * @property {string} [position]
  * @property {string} name
  * @property {string} email
  * @property {string} phone

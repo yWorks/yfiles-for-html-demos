@@ -144,7 +144,7 @@ function initializeStyles() {
 <rect v-if="tag.status === 'present'" :width="layout.width" height="2" fill="#55B757"></rect>
 <rect v-else-if="tag.status === 'busy'" :width="layout.width" height="2" fill="#E7527C"></rect>
 <rect v-else-if="tag.status === 'travel'" :width="layout.width" height="2" fill="#9945E9"></rect>
-<rect v-else-if="tag.status === 'unavailable'" :width="layout.width" height="2" fill="#8D8F91"></rect>
+<rect v-else-if="tag.status === 'unavailable' || tag.status == null" :width="layout.width" height="2" fill="#8D8F91"></rect>
 <rect fill="transparent" :stroke="selected ? '#FF6C00' : 'transparent'" stroke-width="3" :width="layout.width-3" :height="layout.height-3" x="1.5" y="1.5"></rect>
 <template v-if="zoom >= 0.7">
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="10" width="63.75" height="63.75"></image>
@@ -161,7 +161,7 @@ function initializeStyles() {
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"></image>
   <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444" width="185">
     <text transform="translate(85 40)" style="font-size: 26px; fill: #336699">{{tag.name}}</text>
-    <svg-text :content="tag.position.toUpperCase()" x="85" y="50" :width="layout.width - 100" :height="50" :wrapping="4" font-family="sans-serif" :font-size="14" :font-style="0" :font-weight="0" :text-decoration="0" fill="black" :opacity="1" :visible="true" :clipped="true" align="start" transform=""></svg-text>
+    <svg-text :content="tag.position?.toUpperCase()" x="85" y="50" :width="layout.width - 100" :height="50" :wrapping="4" font-family="sans-serif" :font-size="14" :font-style="0" :font-weight="0" :text-decoration="0" fill="black" :opacity="1" :visible="true" :clipped="true" align="start" transform=""></svg-text>
   </g>
 </template>
 <defs>
@@ -169,7 +169,7 @@ function initializeStyles() {
     <stop offset="0%" v-if="tag.status === 'present'" style="stop-color:#76b041;stop-opacity:1"/>
     <stop offset="0%" v-else-if="tag.status === 'busy'" style="stop-color:#ab2346;stop-opacity:1"/>
     <stop offset="0%" v-else-if="tag.status === 'travel'" style="stop-color:#a367dc;stop-opacity:1"/>
-    <stop offset="0%" v-else-if="tag.status === 'unavailable'" style="stop-color:#c1c1c1;stop-opacity:1"/>
+    <stop offset="0%" v-else-if="tag.status === 'unavailable' || tag.status == null" style="stop-color:#c1c1c1;stop-opacity:1"/>
     <stop offset="5%" style="stop-color:white;stop-opacity:1" />
   </linearGradient>
 </defs>

@@ -69,7 +69,7 @@ import { fetchLicense } from '../../resources/fetch-license'
  * in the demo's graph.
  */
 export type Employee = {
-  position: string
+  position?: string
   name: string
   email: string
   phone: string

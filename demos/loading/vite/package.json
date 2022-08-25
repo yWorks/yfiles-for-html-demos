@@ -12,6 +12,6 @@
   "devDependencies": {
     "typescript": "^4.3.5",
     "vite": "^2.9.12",
-    "yfiles": "../../../lib-dev/yfiles-25.0.0+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.1+dev.tgz"
   }
 }

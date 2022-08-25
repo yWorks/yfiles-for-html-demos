@@ -158,8 +158,8 @@ function createGraph(graph: IGraph): void {
       '<p><strong><code>&lt;u&gt;</code></strong>: <u>Underline text</u></p>\n' +
       '<p><strong><code>&lt;h1&gt;-&lt;h6&gt;</code></strong>: Heading 1-6</p>\n' +
       '<p><strong><code>&lt;p&gt;</code></strong>: A paragraph element.</p>\n' +
-      '<p><strong><code>&lt;pre&gt;</code></strong>: A preformatted element which preserves newlines.</p>\n' +
-      '<p><strong><code>&lt;code&gt;</code></strong>: A code element.</p>\n' +
+      '<p><strong><code>&lt;pre&gt;</code></strong>:</p><pre>A preformatted element\n    which preserves newlines and whitespaces.</pre>\n' +
+      '<p><strong><code>&lt;code&gt;</code></strong>: <code>A code element</code></p>\n' +
       '<p><strong><code>&lt;small&gt;</code></strong>: <small>Small font-size</small></p>\n' +
       '<p><strong><code>&lt;large&gt;</code></strong>: <large>Large font-size</large></p>\n' +
       '<p><strong><code>&lt;[html color name]&gt;</code></strong>: Colored text, e.g. <blue>&lt;blue&gt;</blue></p>'

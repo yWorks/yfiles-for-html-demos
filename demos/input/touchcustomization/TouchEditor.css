@@ -232,3 +232,9 @@
   text-align: center;
   color: #333333;
 }
+
+@media screen and (max-height: 500px) {
+  #dndPanelContainer {
+    top: 30px;
+  }
+}

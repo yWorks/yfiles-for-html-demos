@@ -78,15 +78,11 @@ export default class DemoCommands {
   }
 
   /**
-   * Gets the full graph from the context.
+   * Gets the full graph from the graph in the graph component.
    * @returns {!IGraph}
    */
   getFullGraph() {
-    let graph = this.graphComponent.graph
-    if (graph instanceof FilteredGraphWrapper) {
-      graph = graph.wrappedGraph
-    }
-    return graph
+    return this.graphComponent.graph.wrappedGraph
   }
 
   /**
@@ -265,7 +261,7 @@ export default class DemoCommands {
 
     const node = this.graphComponent.selection.selectedNodes.at(0)
     if (node) {
-      removeSubtree(this.graphComponent.graph, node)
+      removeSubtree(this.getFullGraph(), node)
       await MindmapLayout.instance.layout(this.graphComponent)
       this.limitViewport()
       compoundEdit.commit()

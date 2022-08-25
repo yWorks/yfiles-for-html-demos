@@ -47,7 +47,7 @@ import VuejsNodeStyle from '../../utils/VuejsNodeStyle.js'
 
 /**
  * @typedef {Object} Employee
- * @property {string} position
+ * @property {string} [position]
  * @property {string} name
  * @property {string} email
  * @property {string} phone
@@ -98,7 +98,7 @@ export default class OrgChartDemoConfiguration extends DemoConfiguration {
   <rect v-if="tag.status === 'present'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#55B757" class="node-background"></rect>
   <rect v-else-if="tag.status === 'busy'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#E7527C" class="node-background"></rect>
   <rect v-else-if="tag.status === 'travel'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#9945E9" class="node-background"></rect>
-  <rect v-else-if="tag.status === 'unavailable'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#8D8F91" class="node-background"></rect>
+  <rect v-else-if="tag.status === 'unavailable' || tag.status == null" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#8D8F91" class="node-background"></rect>
   <rect v-if="highlighted || selected" fill="transparent" :stroke="selected ? '#FFBB33' : '#249ae7'" stroke-width="3"
     :width="layout.width-3" :height="layout.height-3" x="1.5" y="1.5"></rect>
   <!--the template for detailNodeStyle-->
@@ -108,7 +108,7 @@ export default class OrgChartDemoConfiguration extends DemoConfiguration {
     <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
       <text transform="translate(100 25)" style="font-size:16px; fill:#336699">{{tag.name}}</text>
       <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
-      <svg-text x="100" y="35" :width="layout.width - 140" :content="tag.position.toUpperCase()" :line-spacing="0.2" font-size="10" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>
+      <svg-text x="100" y="35" :width="layout.width - 140" :content="tag.position?.toUpperCase()" :line-spacing="0.2" font-size="10" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>
       <text transform="translate(100 72)" >{{tag.email}}</text>
       <text transform="translate(100 88)" >{{tag.phone}}</text>
       <text transform="translate(170 88)" >{{tag.fax}}</text>
@@ -120,7 +120,7 @@ export default class OrgChartDemoConfiguration extends DemoConfiguration {
     <g style="font-size:15px; font-family:Roboto,sans-serif; fill:#444" width="185">
       <text transform="translate(75 40)" style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699">{{tag.name}}</text>
       <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
-      <svg-text x="75" y="50" :width="layout.width - 85" :content="tag.position.toUpperCase()" :line-spacing="0.2" font-size="15" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>
+      <svg-text x="75" y="50" :width="layout.width - 85" :content="tag.position?.toUpperCase()" :line-spacing="0.2" font-size="15" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>
     </g>
   </template>
   <!--the template for overviewNodeStyle-->

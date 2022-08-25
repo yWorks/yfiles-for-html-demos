@@ -183,16 +183,15 @@ export function createCrossReferenceEdge(
  * @param {!INode} subtreeRoot The root node of the subtree.
  */
 export function removeSubtree(graph, subtreeRoot) {
-  const edges = []
-  graph.edges.toList().copyTo(edges, 0)
-  for (let i = 0; i < edges.length; i++) {
-    const edge = edges[i]
-    // call this method recursively for all child nodes
-    if (graph.contains(edge) && edge.sourceNode === subtreeRoot && !isCrossReference(edge)) {
-      removeSubtree(graph, edge.targetNode)
+  const nodesToCheck = [subtreeRoot]
+
+  while (nodesToCheck.length > 0) {
+    const node = nodesToCheck.pop()
+    for (const outEdge of graph.outEdgesAt(node).filter(edge => !isCrossReference(edge))) {
+      nodesToCheck.push(outEdge.targetNode)
     }
+    graph.remove(node)
   }
-  graph.remove(subtreeRoot)
 }
 
 /**

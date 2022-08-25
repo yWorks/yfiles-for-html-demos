@@ -66,7 +66,12 @@ import {
   WebGL2TextureRendering
 } from 'yfiles'
 
-import { bindCommand, configureTwoPointerPanning, showApp } from '../../resources/demo-app'
+import {
+  bindChangeListener,
+  bindCommand,
+  configureTwoPointerPanning,
+  showApp
+} from '../../resources/demo-app'
 import { isWebGl2Supported } from '../../utils/Workarounds'
 import { createFontAwesomeIcon } from '../../utils/IconCreation'
 import { fetchLicense } from '../../resources/fetch-license'
@@ -435,28 +440,25 @@ function getConfiguredEdgeStyle() {
         sourceArrow: getConfiguredArrowType('sourceArrow'),
         targetArrow: getConfiguredArrowType('targetArrow'),
         effect: getConfiguredEffect('edge'),
-        smoothingLength: getConfiguredSmoothingLength(),
-        selfLoopDistance: getConfiguredSelfloopDistance()
+        smoothingLength: getConfiguredSmoothingLength()
       })
     case 'Arc':
       return new WebGL2ArcEdgeStyle({
-        height: 60,
+        height: getConfiguredHeight(),
         fixedHeight: true,
         stroke: getConfiguredStroke('edge'),
         sourceArrow: getConfiguredArrowType('sourceArrow'),
         targetArrow: getConfiguredArrowType('targetArrow'),
-        effect: getConfiguredEffect('edge'),
-        selfLoopDistance: getConfiguredSelfloopDistance()
+        effect: getConfiguredEffect('edge')
       })
     case 'Bridge':
       return new WebGL2BridgeEdgeStyle({
-        height: 60,
-        fanLength: 40,
+        height: getConfiguredHeight(),
+        fanLength: 65,
         stroke: getConfiguredStroke('edge'),
         sourceArrow: getConfiguredArrowType('sourceArrow'),
         targetArrow: getConfiguredArrowType('targetArrow'),
-        effect: getConfiguredEffect('edge'),
-        selfLoopDistance: getConfiguredSelfloopDistance()
+        effect: getConfiguredEffect('edge')
       })
   }
 }
@@ -470,8 +472,8 @@ function getConfiguredSmoothingLength(): number {
   return getNumber('bendSmoothing')
 }
 
-function getConfiguredSelfloopDistance(): number {
-  return getNumber('selfloopDistance')
+function getConfiguredHeight(): number {
+  return getNumber('height')
 }
 
 /**
@@ -822,6 +824,12 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, null)
 
   configureEditor(type => updateSelectedItems(graphComponent, type))
+
+  // enable height property only when the edge style supports it
+  const height = document.getElementById('height') as HTMLInputElement
+  bindChangeListener('#edgeStyle', value => {
+    height.disabled = value === 'Default'
+  })
 }
 
 // noinspection JSIgnoredPromiseFromCall

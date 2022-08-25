@@ -8,7 +8,7 @@
     "build": "browserify ./src/browserify-demo.js -o ./dist/bundle.js"
   },
   "dependencies": {
-    "yfiles-umd": "../../../lib-dev/yfiles-umd-25.0.0+dev.tgz",
+    "yfiles-umd": "../../../lib-dev/yfiles-umd-25.0.1+dev.tgz",
     "color": "4.2.3"
   },
   "devDependencies": {

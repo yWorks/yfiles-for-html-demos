@@ -10744,12 +10744,11 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    */
   constructor() {
     super()
-    this._nodeStyle = new EventNodeStyle()
-    this._nodeStyle.characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
-    this._nodeStyle.type = EventType.COMPENSATION
-    const nodeStylePortStyleAdapter = new NodeStylePortStyleAdapter(this._nodeStyle)
-    nodeStylePortStyleAdapter.renderSize = BPMN_CONSTANTS_SIZES_EVENT_PORT
-    this._adapter = nodeStylePortStyleAdapter
+    const eventNodeStyle = new EventNodeStyle()
+    eventNodeStyle.characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
+    eventNodeStyle.type = EventType.COMPENSATION
+    this._nodeStyle = eventNodeStyle
+    this._renderSize = BPMN_CONSTANTS_SIZES_EVENT_PORT
   }
 
   /**
@@ -10757,7 +10756,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {number}
    */
   get type() {
-    return this.eventNodeStyle.type
+    return this._nodeStyle.type
   }
 
   /**
@@ -10765,7 +10764,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {number}
    */
   set type(value) {
-    this.eventNodeStyle.type = value
+    this._nodeStyle.type = value
   }
 
   /**
@@ -10773,7 +10772,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {number}
    */
   get characteristic() {
-    return this.eventNodeStyle.characteristic
+    return this._nodeStyle.characteristic
   }
 
   /**
@@ -10781,7 +10780,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {number}
    */
   set characteristic(value) {
-    this.eventNodeStyle.characteristic = value
+    this._nodeStyle.characteristic = value
   }
 
   /**
@@ -10789,7 +10788,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {!Size}
    */
   get renderSize() {
-    return this._adapter.renderSize
+    return this._renderSize
   }
 
   /**
@@ -10797,7 +10796,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {!Size}
    */
   set renderSize(value) {
-    this._adapter.renderSize = value
+    this._renderSize = value
   }
 
   /**
@@ -10860,14 +10859,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {!EventNodeStyle}
    */
   get eventNodeStyle() {
-    return this._adapter.nodeStyle
-  }
-
-  /**
-   * @type {!NodeStylePortStyleAdapter}
-   */
-  get adapter() {
-    return this._adapter
+    return this._nodeStyle
   }
 
   /**
@@ -10876,7 +10868,9 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @see Specified by {@link ICloneable.clone}.
    */
   clone() {
-    return this.memberwiseClone()
+    const clone = this.memberwiseClone()
+    clone._nodeStyle = this._nodeStyle.clone()
+    return clone
   }
 
   /**
@@ -10898,6 +10892,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   constructor() {
     super()
     this.fallbackLookup = null
+    this._adapter = new NodeStylePortStyleAdapter()
   }
 
   /**
@@ -10914,7 +10909,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @see Specified by {@link IPortStyleRenderer.getVisualCreator}.
    */
   getVisualCreator(port, style) {
-    const adapter = style.adapter
+    const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getVisualCreator(port, adapter)
   }
 
@@ -10930,7 +10925,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @see Specified by {@link IPortStyleRenderer.getBoundsProvider}.
    */
   getBoundsProvider(port, style) {
-    const adapter = style.adapter
+    const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getBoundsProvider(port, adapter)
   }
 
@@ -10946,7 +10941,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @see Specified by {@link IPortStyleRenderer.getVisibilityTestable}.
    */
   getVisibilityTestable(port, style) {
-    const adapter = style.adapter
+    const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getVisibilityTestable(port, adapter)
   }
 
@@ -10963,7 +10958,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @see Specified by {@link IPortStyleRenderer.getHitTestable}.
    */
   getHitTestable(port, style) {
-    const adapter = style.adapter
+    const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getHitTestable(port, adapter)
   }
 
@@ -10979,7 +10974,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @see Specified by {@link IPortStyleRenderer.getMarqueeTestable}.
    */
   getMarqueeTestable(port, style) {
-    const adapter = style.adapter
+    const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getMarqueeTestable(port, adapter)
   }
 
@@ -10994,7 +10989,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @see Specified by {@link IPortStyleRenderer.getContext}.
    */
   getContext(port, style) {
-    const adapter = style.adapter
+    const adapter = this.getConfiguredAdapter(style)
     this.fallbackLookup = adapter.renderer.getContext(port, adapter)
     return this
   }
@@ -11019,6 +11014,17 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
       return EventPortEdgeIntersectionCalculator.CalculatorInstance
     }
     return this.fallbackLookup ? this.fallbackLookup.lookup(type) : null
+  }
+
+  /**
+   * @param {!EventPortStyle} style
+   * @returns {!IPortStyle}
+   */
+  getConfiguredAdapter(style) {
+    const adapter = this._adapter
+    adapter.nodeStyle = style.eventNodeStyle
+    adapter.renderSize = style.renderSize
+    return adapter
   }
 
   /**

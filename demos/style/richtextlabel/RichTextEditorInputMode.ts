@@ -72,7 +72,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
             [{ size: ['normal', 'small', 'large'] }],
             [{ color: [] }],
             ['bold', 'italic', 'underline', 'strike'],
-            ['code-block', 'clean']
+            ['clean']
           ],
           handlers: {
             // a custom Quill handler that utilizes <small> and <large> tags for the size dropdown

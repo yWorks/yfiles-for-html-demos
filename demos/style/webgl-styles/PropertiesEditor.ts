@@ -114,7 +114,7 @@ function updateGroupNodeSection(style: WebGL2GroupNodeStyle): void {
     GroupNodeStyleTabPosition.$class,
     style.tabPosition
   )
-  getInput('groupNodeTabBackgroundFill').value = colorToHexString(style.tabBackgroundFill!)
+  getInput('groupNodeTabBackgroundFill').value = colorToHexString(style.tabBackgroundFill)
   getInput('groupNodeTabHeight').value = `${style.tabHeight}`
   getInput('groupNodeTabWidth').value = `${style.tabWidth}`
   getInput('groupNodeTabSlope').value = `${style.tabSlope}`
@@ -194,7 +194,9 @@ function updateEdgeSectionImpl(
   getSelect('targetArrow').value = Enum.getName(WebGL2ArrowType.$class, style.targetArrow)
   getSelect('edgeEffect').value = Enum.getName(WebGL2Effect.$class, style.effect)
   getInput('bendSmoothing').value = `${getSmoothingLength(style, type)}`
-  getInput('selfloopDistance').value = `${style.selfLoopDistance}`
+  if (style instanceof WebGL2ArcEdgeStyle || style instanceof WebGL2BridgeEdgeStyle) {
+    getInput('height').value = `${style.height}`
+  }
 
   setStroke(style.stroke, 'edge')
 }

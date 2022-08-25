@@ -59,7 +59,7 @@ export default class OrgChartPropertiesView {
     this.element.appendChild(heading)
     // The employee name
     heading.appendChild(createElement('h2', employee.name))
-    heading.appendChild(createElement('div', employee.position))
+    heading.appendChild(createElement('div', employee.position || ''))
 
     const svgIcon = this.createSVGIcon(employee.icon, 50, 50, '0 0 75 75')
     if (svgIcon !== null) {

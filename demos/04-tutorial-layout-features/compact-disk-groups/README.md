@@ -18,7 +18,7 @@ The content of each group is arranged in a compact, circular way by [CompactDisk
 
 ### Code Snippet
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/compact-disk/CompactDiskGroups.ts).
+You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/04-tutorial-layout-features/compact-disk-groups/CompactDiskGroups.ts).
 
 ### Documentation
 

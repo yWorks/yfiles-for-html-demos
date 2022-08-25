@@ -73,7 +73,7 @@ const statusColors = {
 
 /**
  * @typedef {Object} Employee
- * @property {string} position
+ * @property {string} [position]
  * @property {string} name
  * @property {string} email
  * @property {string} phone

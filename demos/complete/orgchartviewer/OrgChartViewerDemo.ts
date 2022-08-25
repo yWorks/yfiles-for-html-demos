@@ -66,7 +66,7 @@ import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
 
 export type Employee = {
-  position: string
+  position?: string
   name: string
   email: string
   phone: string

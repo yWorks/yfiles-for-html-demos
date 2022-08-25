@@ -19,7 +19,3 @@ In this demo, all groups are unconditionally treated as tabular groups. Nested t
 - Browse the provided **sample graphs**.
 - **Enable and disable** the tabular groups feature using the toolbar button and observe the difference to the default hierarchic arrangement.
 - See the effect of the **sorting** and **child distance** options. Note that if sorting by label text is enabled, the result may contain more edge crossings, because the order cannot be freely optimized.
-
-### Code Snippet
-
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout/tabulargroups/HierarchicLayoutTabularGroups.ts).

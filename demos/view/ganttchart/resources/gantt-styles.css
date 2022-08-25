@@ -90,3 +90,9 @@
   background-color: rgb(51, 102, 255);
   opacity: 0.5;
 }
+
+@media screen and (max-height: 500px) {
+  #graphComponentContainer {
+    top: 30px;
+  }
+}

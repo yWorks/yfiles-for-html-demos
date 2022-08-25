@@ -131,7 +131,9 @@ async function updateGraph(graphComponent: GraphComponent, nodesSource: any[]): 
  * Arranges the graph of the given graph component and applies the new layout in an animated
  * fashion.
  */
-async function arrangeGraph(graphComponent: GraphComponent, newNodes: INode[]): Promise<void> {
+function arrangeGraph(graphComponent: GraphComponent, newNodes: INode[]): Promise<void> {
+  document.querySelector<HTMLButtonElement>("button[data-command='UpdateBuilder']")!.disabled = true
+
   const graph = graphComponent.graph
   // if there are less new nodes than there are nodes in total, calculate an incremental layout
   // i.e. try to keep the positions of the "old" nodes while finding good positions for new nodes
@@ -156,7 +158,7 @@ async function arrangeGraph(graphComponent: GraphComponent, newNodes: INode[]): 
   }
 
   // arrange the graph with the chosen layout algorithm
-  await new LayoutExecutor({
+  return new LayoutExecutor({
     graphComponent: graphComponent,
     graph: graph,
     layout: algorithm,
@@ -164,7 +166,12 @@ async function arrangeGraph(graphComponent: GraphComponent, newNodes: INode[]): 
     fixPorts: true,
     animateViewport: true,
     duration: '0.5s'
-  }).start()
+  })
+    .start()
+    .finally(() => {
+      document.querySelector<HTMLButtonElement>("button[data-command='UpdateBuilder']")!.disabled =
+        false
+    })
 }
 
 /**

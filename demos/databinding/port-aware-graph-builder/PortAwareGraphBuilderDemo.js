@@ -133,21 +133,27 @@ async function updateGraph(graphComponent, nodesSource, edgesSource) {
  * @param {!GraphComponent} graphComponent
  * @returns {!Promise}
  */
-async function arrangeGraph(graphComponent) {
+function arrangeGraph(graphComponent) {
+  document.querySelector("button[data-command='UpdateBuilder']").disabled = true
+
   const algorithm = new HierarchicLayout({
     layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
     orthogonalRouting: true
   })
 
   // arrange the graph with the chosen layout algorithm
-  await new LayoutExecutor({
+  return new LayoutExecutor({
     graphComponent: graphComponent,
     graph: graphComponent.graph,
     layout: algorithm,
     fixPorts: true,
     animateViewport: true,
     duration: '0.5s'
-  }).start()
+  })
+    .start()
+    .finally(() => {
+      document.querySelector("button[data-command='UpdateBuilder']").disabled = false
+    })
 }
 
 /**
