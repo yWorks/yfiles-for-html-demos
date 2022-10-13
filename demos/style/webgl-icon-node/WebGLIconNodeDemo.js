@@ -51,14 +51,16 @@ import {
   addNavigationButtons,
   addOptions,
   bindCommand,
+  checkWebGL2Support,
   showApp,
   showLoadingIndicator
 } from '../../resources/demo-app.js'
-import { createFontAwesomeIcon, createUrlIcon } from '../../utils/IconCreation.js'
-import { isWebGl2Supported } from '../../utils/Workarounds.js'
+import {
+  createCanvasContext,
+  createFontAwesomeIcon,
+  createUrlIcon
+} from '../../utils/IconCreation.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
-
-const iconSize = new Size(128, 128)
 
 // Some selected colors to colorize the icons
 const iconColors = [
@@ -88,9 +90,7 @@ const faClasses = [
  * @returns {!Promise}
  */
 async function run() {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support').removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }
@@ -125,36 +125,25 @@ async function createSmallSampleGraph(graphComponent) {
   graphComponent.graph = graph
 
   const webGL2GraphModelManager = graphComponent.graphModelManager
-  const ctx = createCanvasContext(iconSize)
+  const ctx = createCanvasContext(128, 128)
 
   // Pre-created icons because they are shared between several nodes and have to be created in
   // asynchronous code
 
   // Create icon from SVG file
-  const svgFileIcon = await createUrlIcon(
-    ctx,
-    './resources/play-16.svg',
-    new Size(16, 16),
-    iconSize
-  )
+  const svgFileIcon = await createUrlIcon(ctx, './resources/play-16.svg', new Size(16, 16))
   // Create icon from SVG data URI
   const svgDataURIIcon = await createUrlIcon(
     ctx,
     'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHdpZHRoPSIxNnB4IiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAuNSAxNi41IDE2IDE2IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAuNSAxNi41IDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPiAgICANCiAgICA8cG9seWdvbiBmaWxsPSIjZmZmZmZmIiBwb2ludHM9IjMuNSwyNS41IDcuNSwyOS41IDE0LjUsMjEuNSAxNC41LDE4LjUgNy41LDI2LjUgMy41LDIyLjUgICIvPg0KPC9nPg0KPC9zdmc+DQo=',
-    new Size(16, 16),
-    iconSize
+    new Size(16, 16)
   )
   // Create Font Awesome icon
-  const fontAwesomeIcon = createFontAwesomeIcon(ctx, 'fas fa-anchor', iconSize)
+  const fontAwesomeIcon = createFontAwesomeIcon(ctx, 'fas fa-anchor')
   // Create icon from PNG file
-  const pngIcon = await createUrlIcon(ctx, './resources/usericon.png', new Size(256, 256), iconSize)
+  const pngIcon = await createUrlIcon(ctx, './resources/usericon.png', new Size(256, 256))
   // Create another icon from SVG file
-  const svgFileIconGear = await createUrlIcon(
-    ctx,
-    './resources/settings-16.svg',
-    new Size(16, 16),
-    iconSize
-  )
+  const svgFileIconGear = await createUrlIcon(ctx, './resources/settings-16.svg', new Size(16, 16))
 
   for (let i = 0; i < iconColors.length; i++) {
     const color = iconColors[i]
@@ -265,10 +254,10 @@ function createLargeSampleGraph(graphComponent) {
   const graph = new DefaultGraph()
   graphComponent.graph = graph
 
-  const ctx = createCanvasContext(iconSize)
+  const ctx = createCanvasContext(128, 128)
   const webGL2GraphModelManager = graphComponent.graphModelManager
 
-  const fontAwesomeIcons = faClasses.map(faClass => createFontAwesomeIcon(ctx, faClass, iconSize))
+  const fontAwesomeIcons = faClasses.map(faClass => createFontAwesomeIcon(ctx, faClass))
 
   for (let i = 0; i < 400; i++) {
     for (let k = 0; k < 250; k++) {
@@ -320,18 +309,6 @@ function initializeFastRendering(graphComponent) {
 }
 
 /**
- * Creates a canvas for rendering and returns its context.
- * @param {!Size} iconSize
- */
-function createCanvasContext(iconSize) {
-  // canvas used to pre-render the icons
-  const canvas = document.createElement('canvas')
-  canvas.setAttribute('width', `${iconSize.width}`)
-  canvas.setAttribute('height', `${iconSize.height}`)
-  return canvas.getContext('2d')
-}
-
-/**
  * Configures the interaction behaviour
  * @param {!GraphComponent} graphComponent
  */
@@ -352,8 +329,8 @@ function configureInteraction(graphComponent) {
   graphEditorInputMode.addNodeCreatedListener((sender, evt) => {
     const node = evt.item
     const faClass = faClasses[Math.floor(Math.random() * faClasses.length)]
-    const ctx = createCanvasContext(iconSize)
-    const icon = createFontAwesomeIcon(ctx, faClass, iconSize)
+    const ctx = createCanvasContext(128, 128)
+    const icon = createFontAwesomeIcon(ctx, faClass)
     // select a random color for the node
     const colorIndex = Math.floor(Math.random() * iconColors.length)
     let iconColorIndex = colorIndex
@@ -387,7 +364,8 @@ function initializeUI(graphComponent) {
 
   const sampleSelectElement = document.querySelector('#graphChooserBox')
   addNavigationButtons(sampleSelectElement)
-  sampleSelectElement.addEventListener('change', async evt => {
+  sampleSelectElement.addEventListener('change', async () => {
+    sampleSelectElement.disabled = true
     switch (sampleSelectElement.options[sampleSelectElement.selectedIndex].value) {
       default:
       case 'Different icon types':
@@ -400,6 +378,7 @@ function initializeUI(graphComponent) {
         break
     }
     graphComponent.fitGraphBounds()
+    sampleSelectElement.disabled = false
   })
   addOptions(sampleSelectElement, 'Different icon types', 'Large graph')
 }

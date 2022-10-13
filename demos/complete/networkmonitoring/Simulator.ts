@@ -26,9 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import Device, { DeviceKind } from './Device'
-import Network from './Network'
-import Connection from './Connection'
+import type { Device } from './Device'
+import { DeviceKind } from './Device'
+import type { Network } from './Network'
+import type { Connection } from './Connection'
 
 /**
  * A simple simulator that sends packets through the network.

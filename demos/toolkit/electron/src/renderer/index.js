@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import '../static/styles.css'
-import licenseData from '../../../../../lib/license.json'
 import {
   DefaultLabelStyle,
   ExteriorLabelModel,
@@ -48,6 +47,8 @@ import {
 import ContextMenu from './context-menu'
 import { ipcRenderer, remote } from 'electron'
 import fs from 'fs' // Use Node's system natives for I/O operations
+
+import licenseData from '../../../../../lib/license.json'
 
 /**
  * Use Electrons open/save dialog

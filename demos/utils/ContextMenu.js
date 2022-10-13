@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, MultiplexingInputMode, Point, TimeSpan } from 'yfiles'
-import { detectiOSVersion, detectSafariVersion } from './Workarounds.js'
+import { GraphComponent, Point, TimeSpan } from 'yfiles'
+import { BrowserDetection } from './BrowserDetection.js'
 
 /**
  * A demo implementation of a context menu that is used in various yFiles demos.
@@ -42,7 +42,7 @@ import { detectiOSVersion, detectSafariVersion } from './Workarounds.js'
  * You shouldn't create a new instance of this menu for each 'show'. Instead, clear its menu items and add new ones
  * for the new show location.
  */
-export default class ContextMenu {
+export class ContextMenu {
   /**
    * Creates a new empty menu.
    *
@@ -269,7 +269,7 @@ export default class ContextMenu {
     // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
     componentDiv.addEventListener('contextmenu', contextMenuListener, false)
 
-    if (detectSafariVersion() > 0 || detectiOSVersion() > 0) {
+    if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer
       graphComponent.addTouchDownListener((sender, args) => {

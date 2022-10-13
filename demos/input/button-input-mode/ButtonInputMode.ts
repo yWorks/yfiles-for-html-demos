@@ -80,15 +80,12 @@ import {
   MouseEventArgs,
   MouseHoverInputMode,
   NodeEventArgs,
-  NodeStyleLabelStyleAdapter,
   ObservableCollection,
   OrientedRectangle,
   Point,
   PortEventArgs,
   PropertyChangedEventArgs,
   Rect,
-  ShapeNodeShape,
-  ShapeNodeStyle,
   SimpleBend,
   SimpleEdge,
   SimpleLabel,
@@ -100,7 +97,6 @@ import {
   TimeSpan,
   TouchEventArgs,
   Visual,
-  VoidLabelStyle,
   WebGLSupport,
   YObject
 } from 'yfiles'
@@ -870,13 +866,11 @@ export class QueryButtonsEvent {
         })
         _size = options.size || Size.EMPTY
       } else {
-        _style = new NodeStyleLabelStyleAdapter({
+        _style = new DefaultLabelStyle({
           autoFlip: false,
-          nodeStyle: new ShapeNodeStyle({
-            fill: 'lightgray',
-            stroke: 'darkgray',
-            shape: ShapeNodeShape.ELLIPSE
-          })
+          backgroundFill: 'lightgray',
+          backgroundStroke: 'darkgray',
+          shape: 'pill'
         })
       }
     }
@@ -1137,9 +1131,8 @@ class ButtonDescriptor extends BaseClass(
     this.dummyBendsBackup = []
     this.dummyEdge.bends = new ListEnumerable(IEnumerable.from(this.dummyBends))
 
-    this.focusedButtonStyle = new NodeStyleLabelStyleAdapter({
-      nodeStyle: new ShapeNodeStyle({ fill: 'transparent', stroke: '3px #FFCF00' }),
-      labelStyle: VoidLabelStyle.INSTANCE
+    this.focusedButtonStyle = new DefaultLabelStyle({
+      backgroundStroke: '3px #FFCF00'
     })
   }
 

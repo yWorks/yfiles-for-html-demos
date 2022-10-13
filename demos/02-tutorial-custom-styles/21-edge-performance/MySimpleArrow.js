@@ -48,7 +48,7 @@ import {
 /**
  * A simple IArrow implementation that renders the arrow as a custom filled shape.
  */
-export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+export class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   /**
    * Initializes a new instance of the {@link MySimpleArrow} class.
    */

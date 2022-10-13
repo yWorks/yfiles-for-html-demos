@@ -35,6 +35,8 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GroupNodeLabelModel,
+  GroupNodeStyle,
   GroupNodeStyleIconBackgroundShape,
   GroupNodeStyleIconPosition,
   GroupNodeStyleIconType,
@@ -69,11 +71,11 @@ import {
 import {
   bindChangeListener,
   bindCommand,
+  checkWebGL2Support,
   configureTwoPointerPanning,
   showApp
 } from '../../resources/demo-app'
-import { isWebGl2Supported } from '../../utils/Workarounds'
-import { createFontAwesomeIcon } from '../../utils/IconCreation'
+import { createCanvasContext, createFontAwesomeIcon } from '../../utils/IconCreation'
 import { fetchLicense } from '../../resources/fetch-license'
 import { configureEditor, getNumber, getStroke, getValue, updateEditor } from './PropertiesEditor'
 
@@ -81,9 +83,7 @@ let fontAwesomeIcons: ImageData[]
 let foldingManager: FoldingManager
 
 async function run(): Promise<void> {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support')!.removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }
@@ -93,12 +93,12 @@ async function run(): Promise<void> {
 
   enableWebGLRendering(graphComponent)
   configureDefaultStyles(graphComponent.graph)
+  // enables group nodes to be collapsed - optional
+  enableFolding(graphComponent)
   configureInteraction(graphComponent)
 
   fontAwesomeIcons = createFontAwesomeIcons()
 
-  // enables group nodes to be collapsed - optional
-  enableFolding(graphComponent)
   // create an initial sample graph
   createGraph(graphComponent)
 
@@ -129,6 +129,10 @@ function configureDefaultStyles(graph: IGraph) {
   })
   graph.nodeDefaults.labels.style = defaultLabelStyle
   graph.edgeDefaults.labels.style = defaultLabelStyle
+
+  graph.groupNodeDefaults.style = new GroupNodeStyle()
+  graph.groupNodeDefaults.labels.layoutParameter =
+    new GroupNodeLabelModel().createDefaultParameter()
 }
 
 /**
@@ -150,16 +154,6 @@ function enableFolding(graphComponent: GraphComponent) {
   folderNodeConverter.folderNodeSize = new Size(100, 24)
   // Copy the first label to keep the collapse/expand button
   folderNodeConverter.copyFirstLabel = true
-
-  // configure expand/collapse behaviour
-  const geim = graphComponent.inputMode as GraphEditorInputMode
-  geim.navigationInputMode.allowExpandGroup = true
-  geim.navigationInputMode.allowCollapseGroup = true
-  geim.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
-
-  // ensure that labels are hit-tested before nodes, so that the image label used for expanding/collapsing has precedence
-  geim.clickHitTestOrder = [GraphItemTypes.LABEL, GraphItemTypes.EDGE, GraphItemTypes.NODE]
-  geim.allowEditLabelOnDoubleClick = false
 }
 
 /**
@@ -179,6 +173,11 @@ function configureInteraction(graphComponent: GraphComponent) {
     //Completely disable handles for ports and edges
     showHandleItems: GraphItemTypes.ALL & ~GraphItemTypes.PORT & ~GraphItemTypes.EDGE
   })
+
+  // Configure expand/collapse behavior
+  geim.navigationInputMode.allowExpandGroup = true
+  geim.navigationInputMode.allowCollapseGroup = true
+  geim.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
 
   // Disable moving of individual edge segments
   graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
@@ -291,9 +290,8 @@ function createFontAwesomeIcons(): ImageData[] {
     'fas fa-bug',
     'fas fa-camera-retro'
   ]
-  const iconSize = new Size(128, 128)
-  const ctx = createCanvasContext(iconSize)
-  return faClasses.map(faClass => createFontAwesomeIcon(ctx, faClass, iconSize))
+  const ctx = createCanvasContext(128, 128)
+  return faClasses.map(faClass => createFontAwesomeIcon(ctx, faClass))
 }
 
 /**
@@ -574,17 +572,6 @@ function addLabel(graphComponent: GraphComponent, node: INode) {
   const label = graph.addLabel(node, `Node ${graph.nodes.size}`)
   const gmm = getModelManager(graphComponent)
   gmm.setStyle(label, getConfiguredLabelStyle())
-}
-
-/**
- * Creates a canvas for rendering and returns its context.
- */
-function createCanvasContext(iconSize: Size) {
-  // canvas used to pre-render the icons
-  const canvas = document.createElement('canvas')
-  canvas.setAttribute('width', `${iconSize.width}`)
-  canvas.setAttribute('height', `${iconSize.height}`)
-  return canvas.getContext('2d')!
 }
 
 /**

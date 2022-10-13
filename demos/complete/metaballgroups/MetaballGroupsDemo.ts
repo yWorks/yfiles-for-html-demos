@@ -46,8 +46,7 @@ import {
   SolidColorFill
 } from 'yfiles'
 import WebglBlobVisual from './WebglBlobVisual'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
-import { isWebGlSupported } from '../../utils/Workarounds'
+import { bindAction, bindCommand, checkWebGLSupport, showApp } from '../../resources/demo-app'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
@@ -60,8 +59,7 @@ const greyColor = Color.from('#767586')
 const purpleColor = Color.from('#aa4586')
 
 async function run(): Promise<void> {
-  if (!isWebGlSupported()) {
-    ;(document.getElementById('no-webgl-support') as HTMLDivElement).removeAttribute('style')
+  if (!checkWebGLSupport()) {
     showApp()
     return
   }

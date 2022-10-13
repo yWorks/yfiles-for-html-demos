@@ -45,13 +45,13 @@ import {
   ResultItemMapping,
   WeightCentrality
 } from 'yfiles'
-import AlgorithmConfiguration from './AlgorithmConfiguration.js'
-import CentralityStage from './CentralityStage.js'
+import { AlgorithmConfiguration } from './AlgorithmConfiguration.js'
+import { CentralityStage } from './CentralityStage.js'
 
 /**
  * Configuration options for the Centrality Algorithms.
  */
-export default class CentralityConfig extends AlgorithmConfiguration {
+export class CentralityConfig extends AlgorithmConfiguration {
   /**
    * @param {number} algorithmType
    */

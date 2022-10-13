@@ -42,13 +42,12 @@ import {
   SvgVisual,
   Visual
 } from 'yfiles'
-import LayerVisual from './LayerVisual.js'
 
 /**
  * Helper class that moves a node and uses the location of the mouse
  * to determine the layer where the nodes should be moved to.
  */
-export default class LayerPositionHandler extends ConstrainedPositionHandler {
+export class LayerPositionHandler extends ConstrainedPositionHandler {
   /**
    * Creates a new instance that wraps the base handler
    * @param {!IPositionHandler} baseHandler

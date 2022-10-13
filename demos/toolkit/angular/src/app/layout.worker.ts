@@ -28,7 +28,6 @@
  ***************************************************************************/
 /// <reference lib="webworker" />
 
-import licenseData from '../../../../../lib/license.json'
 import {
   LayoutExecutorAsyncWorker,
   LayoutGraph,
@@ -38,6 +37,7 @@ import {
   TreeReductionStage
 } from 'yfiles'
 
+import licenseData from '../../../../../lib/license.json'
 License.value = licenseData
 
 function applyLayout(graph: LayoutGraph) {

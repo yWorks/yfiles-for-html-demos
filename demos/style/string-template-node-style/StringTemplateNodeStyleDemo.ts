@@ -135,7 +135,7 @@ function initializeStyles(graph: IGraph): void {
   <use xlink:href="{Binding status, Converter=demoConverters.addHashConverter, Parameter=_icon}" transform="translate(26 84)"/>
   <g style="font-family: Roboto,sans-serif; fill: #444">
     <text transform="translate(90 25)" style="font-size: 16px; fill: #336699" data-content="{Binding name}"></text>
-    <text transform="translate(90 45)" style="text-transform: uppercase" data-content="{Binding position}"></text>
+    <text transform="translate(90 45)" style="font-size: 9px; text-transform: uppercase" data-content="{Binding position}"></text>
     <text transform="translate(90 72)" data-content="{Binding email}"></text>
     <text transform="translate(90 88)" data-content="{Binding phone}"></text>
     <text transform="translate(170 88)" data-content="{Binding fax}"></text>

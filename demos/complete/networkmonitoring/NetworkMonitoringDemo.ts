@@ -51,18 +51,18 @@ import {
 } from 'yfiles'
 
 import Simulator from './Simulator'
-import Connection from './Connection'
-import Device from './Device'
+import { Connection } from './Connection'
+import { Device } from './Device'
 import ConnectionStyle from './ConnectionStyle'
 import DeviceStyle from './DeviceStyle'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import D3BarChart from './D3BarChart'
 import HTMLPopupSupport from './HTMLPopupSupport'
-import { passiveSupported } from '../../utils/Workarounds'
-import Network from './Network'
+import { Network } from './Network'
 import type { NetworkSample } from './resources/network-sample'
 import { networkData } from './resources/network-sample'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 // This demo creates a network monitoring tool for dynamic data.
 // The mock-up model is created and updated by class Simulator.
@@ -169,7 +169,7 @@ function setDefaultStyles(): void {
   const graph = graphComponent.graph
 
   // set the default node style
-  graph.nodeDefaults.style = new DeviceStyle(passiveSupported)
+  graph.nodeDefaults.style = new DeviceStyle(BrowserDetection.passiveEventListeners)
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createParameter(
     [0.5, 1],
     [0, -15],
@@ -188,7 +188,10 @@ function setDefaultStyles(): void {
   edgeAnimator.allowUserInteraction = true
   edgeAnimator.autoInvalidation = false
 
-  graph.edgeDefaults.style = new ConnectionStyle(edgeAnimator, passiveSupported)
+  graph.edgeDefaults.style = new ConnectionStyle(
+    edgeAnimator,
+    BrowserDetection.passiveEventListeners
+  )
   graphComponent.graph = graph
 }
 

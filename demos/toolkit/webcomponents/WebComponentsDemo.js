@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { GraphEditorInputMode, IGraph, IInputMode, License, Rect } from 'yfiles'
-import { enableWorkarounds } from '../../utils/Workarounds.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 
 import './GraphComponentElement.js'
@@ -58,8 +57,6 @@ if (window.customElements) {
  */
 async function run() {
   License.value = await fetchLicense()
-
-  enableWorkarounds()
 
   // create a custom graph component element
   const graphComponent = document.createElement('graph-component')

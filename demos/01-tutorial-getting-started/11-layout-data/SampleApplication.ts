@@ -55,7 +55,7 @@ import {
   Size
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, reportDemoError, showApp } from '../../resources/demo-app'
 import GraphBuilderData from './resources/graph'
 import { fetchLicense } from '../../resources/fetch-license'
 
@@ -134,14 +134,7 @@ async function runLayout(): Promise<void> {
       easedAnimation: true
     })
   } catch (error) {
-    // this is just for the purpose of the demo - usually you would employ your own
-    // logging or error handling logic, here
-    if (typeof (window as any).reportError === 'function') {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      ;(window as any).reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layoutButton.disabled = false
   }

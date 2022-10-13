@@ -50,10 +50,10 @@ import {
   readGraph,
   showApp
 } from '../../resources/demo-app.js'
-import { isWebGlSupported } from '../../utils/Workarounds.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /**
  * The GraphComponent
@@ -113,7 +113,7 @@ async function run() {
 
   registerCommands()
 
-  if (!isWebGlSupported()) {
+  if (!BrowserDetection.webGL) {
     // remove WebGL option if not supported by client
     document.getElementById('no-webgl-support').style.display = 'block'
     const webGLOption = overViewStyleBox.querySelector(

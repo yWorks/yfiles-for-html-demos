@@ -26,13 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import Device from './Device'
-import Connection from './Connection'
+import type { Device } from './Device'
+import type { Connection } from './Connection'
 
 /**
  * Class modeling the network as a separate graph.
  */
-export default class Network {
+export class Network {
   /**
    * The devices in the model.
    */

@@ -27,3 +27,5 @@ The binding context gives you information about the current state, e.g. the zoom
 
 - [String Template Node Style Demo](../../style/string-template-node-style/index.html)
 - [Vue.js Template Node Style Demo](../../style/vuejstemplatenodestyle/index.html)
+- [React JSX Component Node Style Demo](../react-template-node-style/index.html)
+- [Lit Template Node Style Demo](../lit-template-node-style/index.html)

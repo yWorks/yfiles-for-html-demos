@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import GraphMLProperty from './GraphMLProperty'
+import type { GraphMLProperty } from './GraphMLProperty'
 
 /**
  * Properties Panel.

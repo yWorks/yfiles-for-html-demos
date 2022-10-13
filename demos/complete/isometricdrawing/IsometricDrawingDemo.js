@@ -66,7 +66,6 @@ import {
   PreferredPlacementDescriptor,
   Rect,
   RenderModes,
-  ScrollBarVisibility,
   SerializationProperties,
   Size,
   StorageLocation,
@@ -77,12 +76,13 @@ import IsometricData from './resources/IsometricData.js'
 import {
   bindAction,
   bindInputListener,
+  checkWebGLSupport,
   configureTwoPointerPanning,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app.js'
 import IsometricWebGLNodeStyle from './IsometricWebGLNodeStyle.js'
 import HeightHandleProvider from './HeightHandleProvider.js'
-import { isWebGlSupported } from '../../utils/Workarounds.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
@@ -108,8 +108,7 @@ let gridVisualCreator = null
  * @returns {!Promise}
  */
 async function run() {
-  if (!isWebGlSupported()) {
-    document.getElementById('no-webgl-support').removeAttribute('style')
+  if (!checkWebGLSupport()) {
     showApp()
     return
   }
@@ -394,11 +393,7 @@ function registerCommands() {
       setUIDisabled(true)
       await runHierarchicLayout()
     } catch (error) {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
+      reportDemoError(error)
     } finally {
       setUIDisabled(false)
     }

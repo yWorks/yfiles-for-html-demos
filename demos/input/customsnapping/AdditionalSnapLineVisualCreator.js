@@ -44,7 +44,7 @@ import {
 /**
  * A visual creator for orthogonal snap lines.
  */
-export default class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
+export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates a new instance of {@link AdditionalSnapLineVisualCreator}.
    * @param {!Point} from The start point

@@ -56,6 +56,7 @@ import {
   createDemoGroupStyle,
   createDemoNodeStyle
 } from '../../resources/demo-styles.js'
+import { reportDemoError } from '../../resources/demo-app.js'
 
 const pathNodeStyle = createDemoNodeStyle('demo-palette-403')
 const sideNodeStyle = createDemoNodeStyle('demo-palette-44')
@@ -520,12 +521,7 @@ export default class DecisionTree {
       try {
         await layoutExecutor.start()
       } catch (error) {
-        const reporter = window.reportError
-        if (typeof reporter === 'function') {
-          reporter(error)
-        } else {
-          throw error
-        }
+        reportDemoError(error)
       } finally {
         this.runningLayout = false
       }

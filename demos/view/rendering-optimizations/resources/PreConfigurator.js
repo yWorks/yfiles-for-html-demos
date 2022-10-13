@@ -26,11 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * This class manages pre configurations based on node counts.
- */
-import { GraphComponent } from 'yfiles'
-
 export default class PreConfigurator {
   /**
    * These limits define up to which node count the specific setting is considered as practical.

@@ -48,8 +48,7 @@ import {
   Workarounds
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
-import { isWebGl2Supported } from '../../utils/Workarounds'
+import { bindAction, bindCommand, checkWebGL2Support, showApp } from '../../resources/demo-app'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
 
@@ -59,9 +58,7 @@ let graphComponent: GraphComponent
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support')!.removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }

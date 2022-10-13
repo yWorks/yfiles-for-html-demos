@@ -269,7 +269,7 @@ function updateGapRatio(graphComponent: GraphComponent, gapRatio: number) {
 function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindChangeListener("input[data-command='ToggleShowActualGraph']", enabled =>
-    showGraph(graphComponent, enabled)
+    showGraph(graphComponent, enabled as boolean)
   )
   // when the slider is moved, increase/decrease the weight of the edge and update the chord layout
   bindInputListener('#thickness', value => updateDiagram(graphComponent, parseFloat(value)))

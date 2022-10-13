@@ -28,9 +28,5 @@
  ***************************************************************************/
 import { createApp } from 'vue'
 import App from './App.vue'
-import { enableWorkarounds } from '@/utils/Workarounds'
-
-// enable browser-bug workarounds
-enableWorkarounds()
 
 createApp(App).mount('#app')

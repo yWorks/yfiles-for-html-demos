@@ -52,7 +52,7 @@ import {
   Visual
 } from 'yfiles'
 
-import CircleVisual from './CircleVisual.js'
+import { CircleVisual } from './CircleVisual.js'
 
 const ZOOM_THRESHOLD = 0.8
 
@@ -61,7 +61,7 @@ const ZOOM_THRESHOLD = 0.8
  * that uses the convenience class {@link NodeStyleBase}
  * as the base class.
  */
-export default class MySimpleNodeStyle extends NodeStyleBase {
+export class MySimpleNodeStyle extends NodeStyleBase {
   constructor() {
     super()
     this.$nodeColor = 'rgba(0,130,180,1)'

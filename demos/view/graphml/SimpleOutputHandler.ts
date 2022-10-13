@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase, YObject } from 'yfiles'
-import GraphMLProperty from './GraphMLProperty'
-import { PropertiesPanel } from './PropertiesPanel'
+import type { GraphMLProperty } from './GraphMLProperty'
+import type { PropertiesPanel } from './PropertiesPanel'
 
 /**
  * An output handler that writes primitive data types and ignores complex types.
  */
-export default class SimpleOutputHandler extends OutputHandlerBase<any, any> {
+export class SimpleOutputHandler extends OutputHandlerBase<any, any> {
   constructor(private property: GraphMLProperty, private propertiesPanel: PropertiesPanel) {
     super(YObject.$class, YObject.$class, property.keyScope, property.name, property.type)
     this.defaultExists = property.defaultExists

@@ -135,14 +135,14 @@ export function createConfiguredGraphMLIOHandler(
     if (evt.xmlNode instanceof Element) {
       const element = evt.xmlNode
       if (
-        element.localName == 'Label' &&
+        element.localName === 'Label' &&
         element.hasAttribute('LayoutParameter') &&
         element.getAttribute('LayoutParameter')!.toString().includes('PoolHeaderLabelModel')
       ) {
         evt.result = null
-      } else if (element.localName == 'PoolNodeStyle') {
+      } else if (element.localName === 'PoolNodeStyle') {
         evt.result = new ShapeNodeStyle()
-      } else if (element.localName == 'AnnotationLabelStyle') {
+      } else if (element.localName === 'AnnotationLabelStyle') {
         evt.result = new DefaultLabelStyle()
       }
     }

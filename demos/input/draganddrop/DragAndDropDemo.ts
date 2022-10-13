@@ -79,7 +79,6 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app'
-import { nativeDragAndDropSupported } from '../../utils/Workarounds'
 import EdgeDropInputMode from './EdgeDropInputMode'
 import {
   applyDemoTheme,
@@ -88,6 +87,7 @@ import {
   initDemoStyles
 } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 Class.ensure(Arrow)
 
@@ -516,13 +516,13 @@ function onFeaturesChanged(graphComponent: GraphComponent): void {
       break
   }
 
-  if (!nativeDragAndDropSupported) {
+  if (!BrowserDetection.nativeDragAndDrop) {
     disabledIndicator.style.display = 'block'
   }
 }
 
 function updateDisabledIndicator(): void {
-  if (!nativeDragAndDropSupported) {
+  if (!BrowserDetection.nativeDragAndDrop) {
     const disabledIndicator = document.getElementById('disabled-indicator') as HTMLDivElement
     disabledIndicator.style.display = 'block'
     const disabledMessage = document.getElementById('disabled-message') as HTMLDivElement

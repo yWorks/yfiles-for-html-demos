@@ -26,13 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { ILayoutAlgorithm, LayoutData } from 'yfiles'
 import {
   CactusGroupLayout,
   CactusGroupLayoutData,
   CactusGroupLayoutGroupSizingPolicy,
   IGraph,
-  ILayoutAlgorithm,
-  LayoutData,
   NodeLabelingPolicy
 } from 'yfiles'
 

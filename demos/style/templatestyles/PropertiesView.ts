@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode } from 'yfiles'
+import type { INode } from 'yfiles'
 import { addClass } from '../../resources/demo-app'
 import type { Employee } from './TemplateStylesDemo'
 

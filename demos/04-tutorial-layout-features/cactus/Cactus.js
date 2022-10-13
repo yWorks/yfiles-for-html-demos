@@ -31,8 +31,6 @@ import {
   CactusGroupLayoutData,
   CactusGroupLayoutGroupSizingPolicy,
   IGraph,
-  ILayoutAlgorithm,
-  LayoutData,
   NodeLabelingPolicy
 } from 'yfiles'
 

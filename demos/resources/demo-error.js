@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Exception, yfiles } from 'yfiles'
+import { BrowserDetection } from '../utils/BrowserDetection.js'
 
 export const INVALID_LICENSE_MESSAGE =
   'This is an expected error caused by invalid or missing license data.'
@@ -34,14 +35,14 @@ export const INVALID_LICENSE_MESSAGE =
 const OK_STATE = 'OK'
 const ERROR_STATE = 'Error!'
 
+// Chromium and Gecko nicely log errors to the console, but Webkit does not (as of v15.0).
+const needsAdditionalLogging = BrowserDetection.safariVersion > 0
+
 /**
  * Set to `true` when the dialog is open. Prevents opening of multiple error dialogs.
  * @type {boolean}
  */
 let errorDialogOpen = false
-
-// configuration
-const catchErrors = true
 
 /**
  * Helper function for logging something to the console.
@@ -64,17 +65,14 @@ function logError(message) {
  *   <li>Exception.handler</li>
  *   <li>require.onError if 'require' is defined</li>
  *   <li>window.onerror</li>
+ *   <li>window.onunhandledrejection</li>
  * </ul>
  */
 export function registerErrorDialog() {
-  if (!catchErrors) {
-    return
-  }
-
   try {
     // try to increase the stacktrace limit
     window.Error.stackTraceLimit = 35
-  } catch (e) {
+  } catch (ignored) {
     // do nothing if it didn't work
   }
 
@@ -85,15 +83,9 @@ export function registerErrorDialog() {
       : openErrorDialog(null, null, 0, 0, error)
   }
 
-  window.reportError = error => {
-    logError(unwindStack(error))
-    openErrorDialog(null, null, 0, 0, error)
-  }
-
   if (typeof require !== 'undefined') {
     require.onError = error => {
-      logError(unwindStack(error))
-      openErrorDialog(null, null, 0, 0, error)
+      reportDemoError(error)
     }
   }
 
@@ -108,25 +100,49 @@ export function registerErrorDialog() {
   window.onerror = (message, url, lineNumber, columnNumber, error) => {
     const cl = typeof columnNumber === 'number' ? columnNumber : 0
     const err = typeof error !== 'undefined' ? error : null
-    logError(err != null ? unwindStack(err) : message)
-    return openErrorDialog(message, url, lineNumber, cl, err)
+    if (needsAdditionalLogging) {
+      logError(err != null ? unwindStack(err) : message)
+    }
+    openErrorDialog(message, url, lineNumber, cl, err)
   }
 
   window.onunhandledrejection = e => {
     if (e.reason instanceof Error) {
       if (e.reason.message !== INVALID_LICENSE_MESSAGE) {
-        logError(unwindStack(e.reason))
+        if (needsAdditionalLogging) {
+          logError(unwindStack(e.reason))
+        }
         openErrorDialog(null, null, 0, 0, e.reason)
       }
     } else if (typeof e.reason === 'string') {
-      logError(e.reason)
+      if (needsAdditionalLogging) {
+        logError(e.reason)
+      }
       openErrorDialog(e.reason, null, 0, 0, null)
     } else {
       const message = 'Unhandled promise rejection'
-      logError(message)
-      openErrorDialog(message, null, null, 0, 0, null)
+      if (needsAdditionalLogging) {
+        logError(message)
+      }
+      openErrorDialog(message, null, 0, 0, null)
     }
   }
+}
+
+/**
+ * Reports the provided error to the console and opens the error reporting dialog.
+ * @param {Error} error
+ */
+export function reportDemoError(error) {
+  if (typeof window.reportError === 'function') {
+    // In modern browsers, the default error handling works better than our own logging.
+    // Thus, we use the onerror and onunhandledrejection event handlers there.
+    reportError(error)
+    return
+  }
+  // For old browser, explicitly log the error stacktrace and open the demo error dialog.
+  logError(unwindStack(error))
+  openErrorDialog(null, null, 0, 0, error)
 }
 
 function getInnermostMessage(error) {

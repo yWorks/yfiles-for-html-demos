@@ -47,9 +47,9 @@ import {
 } from 'yfiles'
 import { GraphDropInputMode } from './GraphDropInputMode'
 import { addClass, bindCommand, removeClass, showApp } from '../../resources/demo-app'
-import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 let graphComponent: GraphComponent
 
@@ -150,7 +150,7 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
       graph,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+      BrowserDetection.pointerEvents ? dragPreview : null
     )
 
     dragSource.addQueryContinueDragListener((src, args) => {
@@ -180,7 +180,7 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
       startDrag()
       event.preventDefault()
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
 
   return paletteEntry

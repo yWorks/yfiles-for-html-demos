@@ -51,7 +51,6 @@ import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
  * Bootstraps this demo.
- * @param licenseData The yFiles license information.
  * @returns {!Promise}
  */
 async function run() {

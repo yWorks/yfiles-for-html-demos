@@ -28,12 +28,10 @@
  ***************************************************************************/
 import {
   GraphBuilder,
-  GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
   HierarchicLayout,
   ICommand,
-  INode,
   LayoutExecutor,
   LayoutOrientation,
   License

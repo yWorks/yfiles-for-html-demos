@@ -37,13 +37,13 @@ import {
   SubstructureItems,
   TreeSubstructures
 } from 'yfiles'
-import AlgorithmConfiguration from './AlgorithmConfiguration'
+import { AlgorithmConfiguration } from './AlgorithmConfiguration'
 import { MultiColorNodeStyle } from './DemoStyles'
 
 /**
  * Configuration options for the substructures algorithms.
  */
-export default class SubstructuresConfig extends AlgorithmConfiguration {
+export class SubstructuresConfig extends AlgorithmConfiguration {
   /**
    * Creates an instance of Substructures with default settings.
    */

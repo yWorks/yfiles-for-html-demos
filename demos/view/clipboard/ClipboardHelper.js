@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { BaseClass, IClipboardHelper, IGraphClipboardContext, IModelItem, INode } from 'yfiles'
-import { ClipboardBusinessObject } from './ClipboardBusinessObject.js'
 
 /**
  * Holds the tag of the item that has been copied.

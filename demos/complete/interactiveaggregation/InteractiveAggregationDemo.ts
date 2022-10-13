@@ -60,7 +60,7 @@ import {
 } from 'yfiles'
 
 import { AggregationGraphWrapper, EdgeReplacementPolicy } from '../../utils/AggregationGraphWrapper'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import { bindCommand, showApp } from '../../resources/demo-app'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'

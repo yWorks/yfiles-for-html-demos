@@ -147,7 +147,10 @@ function initializeUI(graphComponent) {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   bindChangeListener('#basic-shape', value => {
-    const shape = Enum.parse(ArrowStyleShape.$class, value, true)
+    const shaftRatioElement = document.querySelector('#shaft-ratio')
+    shaftRatioElement.disabled = value === 'PARALLELOGRAM' || value === 'TRAPEZOID'
+
+    const shape = ArrowStyleShape.from(value)
     graphComponent.selection.selectedEdges
       .filter(item => item.style instanceof ArrowEdgeStyle)
       .forEach(item => (item.style.shape = shape))

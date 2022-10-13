@@ -50,12 +50,12 @@ import {
   SingleColorNodeStyle,
   SourceTargetNodeStyle
 } from './DemoStyles'
-import ContextMenu from '../../utils/ContextMenu'
+import type { ContextMenu } from '../../utils/ContextMenu'
 
 /**
  * Abstract base class for the different algorithm configurations that can be displayed in the demo.
  */
-export default abstract class AlgorithmConfiguration {
+export abstract class AlgorithmConfiguration {
   /**
    * Whether or not the edges should be considered as directed.
    */

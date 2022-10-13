@@ -42,18 +42,6 @@
     <script src="../../resources/filesystem-warning.js"></script>
     <script src="https://unpkg.com/vue@2.6.11"></script>
 
-    <style>
-      #no-webgl-support {
-        text-align: center;
-        font-size: 24px;
-        position: absolute;
-        top: 100px;
-        padding: 2em;
-        left: 0;
-        right: 0;
-        line-height: 2;
-      }
-    </style>
   </head>
   <body class="demo-has-left">
     <aside class="demo-sidebar demo-left">
@@ -195,13 +183,6 @@
         <div id="graphComponent"></div>
         <div id="renderingInfoPopup" style="pointer-events: none"></div>
         <div id="loadingPopup" style="pointer-events: none">Loading graph...</div>
-        <div id="no-webgl-support" style="display: none">
-          Your browser or device does not support WebGL2.<br />
-          This demo only works if WebGL2 is available.<br />
-          Please use a modern browser like Chrome, Edge, Firefox, or Opera.<br />
-          In older versions of Safari and older Apple devices, WebGL2 is an experimental feature
-          that needs to be activated explicitly.
-        </div>
       </div>
     </div>
 

@@ -29,12 +29,7 @@
 /* global canvg */
 
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
-import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
-
-/**
- * The detected IE version for x-browser compatibility.
- */
-const ieVersion = detectInternetExplorerVersion()
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /**
  * A class that provides PNG image export in the client's browser. The {@link SvgExport} exports an
@@ -137,7 +132,7 @@ function renderSvgToPng(svgElement, size, margins) {
             resolve(exportImageWithCanvg(svgElement))
           }
         },
-        ieVersion > -1 ? 100 : 0
+        BrowserDetection.ieVersion > 0 ? 100 : 0
       )
     }
     svgImage.src = svgUrl

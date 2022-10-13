@@ -55,7 +55,7 @@ import {
 } from 'yfiles'
 
 import DecisionTree from './DecisionTree'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import GroupNodePortCandidateProvider from './GroupNodePortCandidateProvider'
 import {
   addClass,
@@ -66,6 +66,7 @@ import {
   hasClass,
   readGraph,
   removeClass,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
@@ -313,12 +314,7 @@ async function runLayout(animated: boolean) {
   try {
     await layoutExecutor.start()
   } catch (error) {
-    const reporter = (window as any).reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setRunningLayout(false)
   }
@@ -355,12 +351,7 @@ async function runIncrementalLayout(incrementalNodes: List<INode>) {
   try {
     await layoutExecutor.start()
   } catch (error) {
-    const reporter = (window as any).reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setRunningLayout(false)
   }

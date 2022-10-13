@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { ArrowStyleShapeStringValues } from 'yfiles'
 import {
   ArrowEdgeStyle,
   ArrowStyleShape,
@@ -158,7 +159,10 @@ function initializeUI(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   bindChangeListener('#basic-shape', value => {
-    const shape = Enum.parse(ArrowStyleShape.$class, value, true)
+    const shaftRatioElement = document.querySelector<HTMLInputElement>('#shaft-ratio')!
+    shaftRatioElement.disabled = value === 'PARALLELOGRAM' || value === 'TRAPEZOID'
+
+    const shape = ArrowStyleShape.from(value as ArrowStyleShapeStringValues)
     graphComponent.selection.selectedEdges
       .filter(item => item.style instanceof ArrowEdgeStyle)
       .forEach(item => ((item.style as ArrowEdgeStyle).shape = shape))

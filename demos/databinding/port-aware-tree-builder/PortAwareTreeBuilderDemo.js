@@ -28,12 +28,10 @@
  ***************************************************************************/
 import {
   DefaultNodePlacer,
-  GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
   ICommand,
   IGraph,
-  INode,
   InsideOutsidePortLabelModel,
   LayoutExecutor,
   License,

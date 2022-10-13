@@ -27,12 +27,12 @@
  **
  ***************************************************************************/
 import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from 'yfiles'
-import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator'
+import type { AdditionalSnapLineVisualCreator } from './AdditionalSnapLineVisualCreator'
 
 /**
  * An {@link IPositionHandler} used to move {@link AdditionalSnapLineVisualCreator} instances.
  */
-export default class AdditionalSnapLinePositionHandler
+export class AdditionalSnapLinePositionHandler
   extends BaseClass(IPositionHandler)
   implements IPositionHandler
 {

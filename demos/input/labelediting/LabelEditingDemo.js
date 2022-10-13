@@ -218,17 +218,17 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindChangeListener('#labelCreation', val => {
-    graphEditorInputMode.allowAddLabel = val
+  bindChangeListener('#labelCreation', checked => {
+    graphEditorInputMode.allowAddLabel = checked
   })
-  bindChangeListener('#labelEditing', val => {
-    graphEditorInputMode.allowEditLabel = val
+  bindChangeListener('#labelEditing', checked => {
+    graphEditorInputMode.allowEditLabel = checked
   })
-  bindChangeListener('#hideLabel', val => {
-    graphEditorInputMode.hideLabelDuringEditing = val
+  bindChangeListener('#hideLabel', checked => {
+    graphEditorInputMode.hideLabelDuringEditing = checked
   })
-  bindChangeListener('#instantTyping', val => (instantTypingEnabled = val))
-  bindChangeListener('#customLabelHelper', val => (customHelperEnabled = val))
+  bindChangeListener('#instantTyping', checked => (instantTypingEnabled = checked))
+  bindChangeListener('#customLabelHelper', checked => (customHelperEnabled = checked))
 
   bindChangeListener('#nodesEnabled', val => {
     if (val) {
@@ -249,9 +249,9 @@ function registerCommands() {
     }
   })
 
-  bindChangeListener('#validationEnabled', val => {
-    validationEnabled = val
-    document.querySelector('#validationPattern').disabled = !val
+  bindChangeListener('#validationEnabled', checked => {
+    validationEnabled = checked
+    document.querySelector('#validationPattern').disabled = !checked
   })
   document.querySelector('#validationPattern').addEventListener('input', e => {
     try {

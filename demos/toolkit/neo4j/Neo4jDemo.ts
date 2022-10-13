@@ -66,7 +66,13 @@ import {
   createDemoEdgeStyle,
   createDemoNodeStyle
 } from '../../resources/demo-styles'
-import { bindAction, bindCommand, showApp, showLoadingIndicator } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindCommand,
+  reportDemoError,
+  showApp,
+  showLoadingIndicator
+} from '../../resources/demo-app'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
 import type { Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
@@ -143,8 +149,7 @@ function initializeGraphDefaults(): void {
  */
 function initializeHighlighting(): void {
   const orangeRed = Color.ORANGE_RED
-  const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3)
-  orangeStroke.freeze()
+  const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
 
   const decorator = graphComponent.graph.decorator
 
@@ -379,11 +384,7 @@ async function doLayout(): Promise<void> {
       animateViewport: true
     }).start()
   } catch (error) {
-    if (typeof (window as any).reportError === 'function') {
-      ;(window as any).reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setUIDisabled(false)
   }

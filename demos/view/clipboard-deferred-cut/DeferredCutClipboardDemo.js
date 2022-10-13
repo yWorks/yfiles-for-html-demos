@@ -45,7 +45,7 @@ import {
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { setClipboardStyles } from './ClipboardStyles.js'
 import { DeferredCutClipboard } from './DeferredCutClipboard.js'
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 

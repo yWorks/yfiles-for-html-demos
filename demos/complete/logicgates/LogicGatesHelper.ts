@@ -37,7 +37,7 @@ import {
   List,
   PortCandidateValidity
 } from 'yfiles'
-import { GateNodeStyle } from './DemoStyles'
+import type { GateNodeStyle } from './DemoStyles'
 
 export enum LogicGateType {
   AND = 0,

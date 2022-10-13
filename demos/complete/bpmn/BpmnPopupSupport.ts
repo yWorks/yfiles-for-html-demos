@@ -81,7 +81,7 @@ import {
   SubState,
   TaskType
 } from './bpmn-view'
-import ContextMenu from '../../utils/ContextMenu'
+import type { ContextMenu } from '../../utils/ContextMenu'
 
 class BpmnPopup {
   graphComponent: GraphComponent

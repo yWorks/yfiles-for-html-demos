@@ -39,14 +39,13 @@ import {
   ShortestPath,
   SingleSourceShortestPaths
 } from 'yfiles'
-import AlgorithmConfiguration from './AlgorithmConfiguration.js'
+import { AlgorithmConfiguration } from './AlgorithmConfiguration.js'
 import { MultiColorNodeStyle } from './DemoStyles.js'
-import ContextMenu from '../../utils/ContextMenu.js'
 
 /**
  * Configuration options for the path algorithms.
  */
-export default class PathsConfig extends AlgorithmConfiguration {
+export class PathsConfig extends AlgorithmConfiguration {
   /**
    * Creates an instance of PathsConfig with default settings.
    * @param {number} algorithmType

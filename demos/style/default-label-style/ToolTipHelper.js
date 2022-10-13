@@ -28,17 +28,13 @@
  ***************************************************************************/
 import {
   Color,
-  DefaultLabelStyle,
   Enum,
   Fill,
-  GraphEditorInputMode,
+  GraphInputMode,
   HorizontalTextAlignment,
   ILabel,
-  IModelItem,
   LabelShape,
   Point,
-  QueryItemToolTipEventArgs,
-  SolidColorFill,
   TextWrapping,
   TimeSpan,
   VerticalTextAlignment
@@ -48,7 +44,7 @@ import { addClass } from '../../resources/demo-app.js'
 /**
  * Configures the given input mode to show tool tips for labels.
  * The tool tips show a description of the corresponding label's configuration.
- * @param {!GraphEditorInputMode} inputMode
+ * @param {!GraphInputMode} inputMode
  */
 export function configureToolTips(inputMode) {
   // Customize the tool tip's behavior to our liking.

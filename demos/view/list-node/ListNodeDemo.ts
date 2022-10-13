@@ -56,7 +56,7 @@ import {
 } from 'yfiles'
 import { bindCommand, showApp } from '../../resources/demo-app'
 import { ListNodeStyle } from './ListNodeStyle'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import {
   createPortLocationParameter,
   getPortForData,
@@ -236,23 +236,45 @@ function addRow(graph: IGraph, node: INode, rowInfo: RowInfo): void {
   )
 
   const nodeInfo = node.tag as NodeInfo
-  // the row is represented as a port with a label
-  const port = graph.addPort({
-    owner: node,
-    style: portStyle,
-    locationParameter: createPortLocationParameter(
-      nodeInfo.rows.length,
-      rowInfo.incoming,
-      node.style as ListNodeStyle
-    ),
-    tag: rowInfo
-  })
-  graph.addLabel(
-    port,
-    rowInfo.name,
-    new InsideOutsidePortLabelModel().createInsideParameter(),
-    labelStyle
-  )
+  if (rowInfo.in) {
+    // the row is represented as a port with a label
+    const port = graph.addPort({
+      owner: node,
+      style: portStyle,
+      locationParameter: createPortLocationParameter(
+        nodeInfo.rows.length,
+        true,
+        node.style as ListNodeStyle
+      ),
+      tag: { rowInfo: rowInfo, incoming: true }
+    })
+    graph.addLabel(
+      port,
+      rowInfo.in,
+      new InsideOutsidePortLabelModel().createInsideParameter(),
+      labelStyle
+    )
+  }
+  if (rowInfo.out) {
+    // the row is represented as a port with a label
+    const port = graph.addPort({
+      owner: node,
+      style: portStyle,
+      locationParameter: createPortLocationParameter(
+        nodeInfo.rows.length,
+        false,
+        node.style as ListNodeStyle
+      ),
+      tag: { rowInfo: rowInfo, incoming: false }
+    })
+    graph.addLabel(
+      port,
+      rowInfo.out,
+      new InsideOutsidePortLabelModel().createInsideParameter(),
+      labelStyle
+    )
+  }
+
 
   // register the row
   nodeInfo.rows.push(rowInfo)
@@ -275,31 +297,38 @@ function addRow(graph: IGraph, node: INode, rowInfo: RowInfo): void {
 function removeRow(graph: IGraph, node: INode, rowIndex: number): void {
   // remove port and row info
   const nodeInfo = node.tag as NodeInfo
-  graph.remove(getPortForData(node, nodeInfo.rows[rowIndex]))
+
+  const portForData = getPortForData(node, nodeInfo.rows[rowIndex])
+  portForData.toArray().forEach(port => {
+    graph.remove(port)
+  })
   nodeInfo.rows.splice(rowIndex, 1)
 
   // update subsequent rows
   for (let i = rowIndex; i < nodeInfo.rows.length; i++) {
     const ri = nodeInfo.rows[i]
-    const port = getPortForData(node, ri)
-    graph.setPortLocationParameter(
-      port,
-      createPortLocationParameter(i, ri.incoming, node.style as ListNodeStyle)
-    )
-    // keep adjacent edges orthogonal
-    const edge = graph.edgesAt(port).at(0)
-    if (edge) {
-      const bend = ri.incoming ? edge.bends.at(-1) : edge.bends.at(0)
-      if (bend) {
-        graph.setBendLocation(bend, new Point(bend.location.x, port.location.y))
-      } else {
-        const sourceLocation = edge.sourcePort!.location
-        const targetLocation = edge.targetPort!.location
-        const x = sourceLocation.x + (targetLocation.x - sourceLocation.x) / 2
-        graph.addBend(edge, new Point(x, sourceLocation.y))
-        graph.addBend(edge, new Point(x, targetLocation.y))
+    const portForData = getPortForData(node, ri)
+    portForData.forEach(port => {
+      const incoming = port.tag.incoming
+      graph.setPortLocationParameter(
+        port,
+        createPortLocationParameter(i, incoming, node.style as ListNodeStyle)
+      )
+      // keep adjacent edges orthogonal
+      const edge = graph.edgesAt(port).at(0)
+      if (edge) {
+        const bend = incoming ? edge.bends.at(-1) : edge.bends.at(0)
+        if (bend) {
+          graph.setBendLocation(bend, new Point(bend.location.x, port.location.y))
+        } else {
+          const sourceLocation = edge.sourcePort!.location
+          const targetLocation = edge.targetPort!.location
+          const x = sourceLocation.x + (targetLocation.x - sourceLocation.x) / 2
+          graph.addBend(edge, new Point(x, sourceLocation.y))
+          graph.addBend(edge, new Point(x, targetLocation.y))
+        }
       }
-    }
+    })
   }
 }
 
@@ -334,20 +363,17 @@ function configureGraph(graph: IGraph): void {
 function createSampleGraph(graph: IGraph): void {
   // create the sample graph
   const n1 = createNode(graph, new Point(0, 0), 'Node 1', [
-    { name: 'in 0', incoming: true },
-    { name: 'out 0', incoming: false },
-    { name: 'out 1', incoming: false },
-    { name: 'in 1', incoming: true },
-    { name: 'out 2', incoming: false }
+    { in: 'in 0', out: 'out 0' },
+    { out: 'out 1' },
+    { in: 'in 2', out: 'out 2'},
+    { out: 'out 3' }
   ])
 
   const n2 = createNode(graph, new Point(400, 0), 'Node 2', [
-    { name: 'in 0', incoming: true },
-    { name: 'in 1', incoming: true },
-    { name: 'out 0', incoming: false },
-    { name: 'out 1', incoming: false },
-    { name: 'in 2', incoming: true },
-    { name: 'out 2', incoming: false }
+    { in: 'in 0', },
+    { in: 'in 1', out: 'out 1' },
+    { in: 'in 2' },
+    { in: 'in 3', out: 'out 3'}
   ])
 
   const out0 = n1.ports.get(1)
@@ -401,10 +427,14 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
 
       // add menu entries for adding input and output rows
       contextMenu.addMenuItem('Add input', () =>
-        addRow(graph, node, { name: `in ${node.ports.size}`, incoming: true })
+        addRow(graph, node, { in: `in ${node.ports.size}` })
       )
       contextMenu.addMenuItem('Add output', () =>
-        addRow(graph, node, { name: `out ${node.ports.size}`, incoming: false })
+        addRow(graph, node, { out: `out ${node.ports.size}` })
+      )
+
+      contextMenu.addMenuItem('Add input/output', () =>
+        addRow(graph, node, { in: `in ${node.ports.size}`, out: `out ${node.ports.size}` })
       )
 
       // if we are over a row add an entry for removing that row
@@ -412,9 +442,18 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
       if (portInfoIndex > -1) {
         const nodeInfo = node.tag as NodeInfo
         const rowInfo = nodeInfo.rows[portInfoIndex]
-        contextMenu.addMenuItem('Remove  ' + rowInfo.name, () =>
-          removeRow(graph, node, portInfoIndex)
-        )
+        let text
+        if (rowInfo.in) {
+          text = rowInfo.in + ' '
+        }
+        if (rowInfo.out) {
+          text = rowInfo.out
+        }
+        if (rowInfo.in || rowInfo.out) {
+          contextMenu.addMenuItem('Remove  ' + text, () =>
+            removeRow(graph, node, portInfoIndex)
+          )
+        }
       }
     }
   })
@@ -438,8 +477,8 @@ export type NodeInfo = {
 }
 // model data for a row: the name and whether it is for incoming or outgoing edges
 export type RowInfo = {
-  name: string
-  incoming: boolean
+  in?: string
+  out?: string
 }
 
 // noinspection JSIgnoredPromiseFromCall

@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import { ConnectedComponents, CycleEdges, IEdge, IGraph, IModelItem, INode, Mapper } from 'yfiles'
-import AlgorithmConfiguration from './AlgorithmConfiguration'
+import { AlgorithmConfiguration } from './AlgorithmConfiguration'
 import { MultiColorNodeStyle } from './DemoStyles'
 
 /**
  * Configuration options for the cycles algorithm.
  */
-export default class CyclesConfig extends AlgorithmConfiguration {
+export class CyclesConfig extends AlgorithmConfiguration {
   private cycleEdges: IEdge[] | null = null
   incrementalElements: Mapper<INode, boolean> | null = null
   edgeRemoved = false

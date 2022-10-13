@@ -124,12 +124,12 @@ require(['yfiles-umd/view-component'], /** @param {yfiles} yfiles */ yfiles => {
         .morphLayout(layout, '1s')
         .catch(error => {
           if (typeof window.reportError === 'function') {
-            window.reportError(error)
+            reportError(error)
           } else {
             throw error
           }
         })
-        .then(() => {
+        .finally(() => {
           layoutButton.disabled = false
         })
     })

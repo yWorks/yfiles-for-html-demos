@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IRenderContext } from 'yfiles'
-
 export class WebGLBufferData {
   /**
    * @param {number} entryCount

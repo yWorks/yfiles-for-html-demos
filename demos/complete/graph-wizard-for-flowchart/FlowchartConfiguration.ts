@@ -73,7 +73,7 @@ import type { ActionStep, ButtonOptions, Handler, PreCondition } from './WizardA
 import WizardAction, { handleMultipleSteps, PickerLayout } from './WizardAction'
 import FlowchartLayout from '../flowchart/FlowchartLayout'
 import FlowchartLayoutData from '../flowchart/FlowchartLayoutData'
-import GraphWizardInputMode from './GraphWizardInputMode'
+import { GraphWizardInputMode } from './GraphWizardInputMode'
 import {
   checkAnd,
   checkForEdge,

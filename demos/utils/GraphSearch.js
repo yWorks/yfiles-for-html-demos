@@ -47,16 +47,50 @@ export default class GraphSearch {
    *
    * @param {!HTMLElement} searchBox The search box element.
    * @param {!GraphSearch} graphSearch The GraphSearch instance.
+   * @param autoCompleteSuggestions A list of possible auto-complete suggestion strings. If omitted, no auto-complete will be available
+   * @param {!Array.<string>} [autoCompleteSuggestions]
    */
-  static registerEventListener(searchBox, graphSearch) {
+  static registerEventListener(searchBox, graphSearch, autoCompleteSuggestions) {
+    if (autoCompleteSuggestions && searchBox instanceof HTMLInputElement) {
+      const datalist = document.createElement('datalist')
+      datalist.id = searchBox.id + '-autocomplete'
+      searchBox.setAttribute('list', datalist.id)
+      if (searchBox.parentElement) {
+        searchBox.parentElement.insertBefore(datalist, searchBox)
+      }
+      graphSearch.updateAutoCompleteSuggestions(searchBox, autoCompleteSuggestions)
+    }
+
     searchBox.addEventListener('input', e => {
-      graphSearch.updateSearch(e.target.value)
+      const input = e.target
+      const searchText = input.value
+      graphSearch.updateSearch(searchText)
+
+      // Zoom to search result if an element from the auto-completion list has been selected
+      // How to detect this varies between browsers, sadly
+      if (
+        !(e instanceof InputEvent) /* Chrome */ ||
+        e.inputType === 'insertReplacementText' /* Firefox */
+      ) {
+        // Determine whether we actually selected an element from the list
+        if (hasSelectedElementFromDatalist(input, searchText, graphSearch)) {
+          graphSearch.zoomToSearchResult()
+        }
+      }
     })
 
     // adds the listener that will focus to the result of the search
     searchBox.addEventListener('keypress', e => {
       if (e.key === 'Enter') {
+        e.preventDefault()
         graphSearch.zoomToSearchResult()
+      }
+    })
+
+    // adds the listener to enable auto-completion
+    searchBox.addEventListener('keyup', e => {
+      if (e.key === 'Enter') {
+        return
       }
     })
   }
@@ -108,6 +142,31 @@ export default class GraphSearch {
           manager.addHighlight(node)
           this.matchingNodes.push(node)
         })
+    }
+  }
+
+  /**
+   * Updates the auto-complete list for the given search field with
+   * the given new suggestions.
+   *
+   * This will do nothing, unless auto-complete has been configured with initial suggestions
+   * in the {@link registerEventListener} call.
+   *
+   * @param {!HTMLInputElement} input An HTML `input` element that is used as a search input.
+   * @param {!Array.<string>} autoCompleteSuggestions A list of possible auto-complete suggestion strings.
+   */
+  updateAutoCompleteSuggestions(input, autoCompleteSuggestions) {
+    const datalist = input.list
+    if (!datalist) {
+      return
+    }
+    while (datalist.firstChild) {
+      datalist.firstChild.remove()
+    }
+    for (const item of autoCompleteSuggestions) {
+      const option = document.createElement('option')
+      option.value = item
+      datalist.appendChild(option)
     }
   }
 
@@ -197,4 +256,20 @@ class SearchHighlightIndicatorManager extends HighlightIndicatorManager {
   getInstaller(item) {
     return this.$decorationInstaller
   }
+}
+
+/**
+ * @param {!HTMLInputElement} input
+ * @param {!string} searchText
+ * @param {!GraphSearch} graphSearch
+ */
+function hasSelectedElementFromDatalist(input, searchText, graphSearch) {
+  if (input.list) {
+    for (const option of Array.from(input.list.children)) {
+      if (option instanceof HTMLOptionElement && option.value === searchText) {
+        return true
+      }
+    }
+  }
+  return false
 }

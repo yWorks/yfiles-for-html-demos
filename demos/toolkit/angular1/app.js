@@ -65,7 +65,7 @@ import {
 import { detailTemplate, intermediateTemplate, overviewTemplate } from './resources/templates.js'
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle.js'
 import GraphData from './resources/data.js'
-import { showApp } from '../../resources/demo-app.js'
+import { reportDemoError, showApp } from '../../resources/demo-app.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 
 /* global angular */
@@ -184,12 +184,7 @@ module.directive('graphComponent', [
                 // refresh layout
                 await Layout.morphLayout(graphComponent)
               } catch (error) {
-                if (typeof window.reportError === 'function') {
-                  window.reportError(error)
-                  return
-                } else {
-                  throw error
-                }
+                reportDemoError(error)
               } finally {
                 inLayout = false
               }
@@ -404,11 +399,7 @@ module.factory('Layout', () => {
         const layoutData = this.createTreeLayoutData(graphComponent.graph)
         await graphComponent.morphLayout(this.treeLayout, '0.5s', layoutData)
       } catch (error) {
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
+        reportDemoError(error)
       }
     }
   }

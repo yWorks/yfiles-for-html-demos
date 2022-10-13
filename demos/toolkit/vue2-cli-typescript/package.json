@@ -5,7 +5,7 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.ts', './src/utils/Workarounds.ts'); require('fs-extra').copySync('../../utils/GraphSearch.ts', './src/utils/GraphSearch.ts');\"",
+    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/BrowserDetection.ts', './src/utils/BrowserDetection.ts'); require('fs-extra').copySync('../../utils/GraphSearch.ts', './src/utils/GraphSearch.ts');\"",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
@@ -14,7 +14,7 @@
     "vue": "^2.6.14",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
-    "yfiles": "../../../lib-dev/yfiles-25.0.1+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.2+dev.tgz"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.6",

@@ -31,7 +31,6 @@ import {
   ClickEventArgs,
   Cursor,
   HandleTypes,
-  ICanvasObject,
   IEnumerable,
   IHandle,
   IHandleProvider,

@@ -59,7 +59,7 @@ import {
   ToolTipQueryEventArgs
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import GraphBuilderData from './resources/graph.js'
 import { fetchLicense } from '../../resources/fetch-license.js'

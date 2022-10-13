@@ -334,7 +334,7 @@ class TypeAwareNodeCreator extends NodeCreator<NodeData> {
   private getParameter(pin: PortData): ILabelModelParameter {
     return new FreePortLabelModel().createParameter(
       new Point(0, -5),
-      new Point(pin.rightSide ? 0.8 : 0.2, 1)
+      new Point(pin.rightSide ? 0.8 : 0.5, 1)
     )
   }
 

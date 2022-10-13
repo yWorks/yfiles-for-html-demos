@@ -43,6 +43,7 @@ import {
   PreferredPlacementDescriptor,
   TimeSpan
 } from 'yfiles'
+import { reportDemoError } from '../../resources/demo-app'
 
 export type LayoutConfigurationType = {
   collapsedInitialization: boolean
@@ -129,10 +130,7 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
           'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
         )
       } else {
-        const reporter = (window as any).reportError
-        if (typeof reporter === 'function') {
-          reporter(err)
-        }
+        reportDemoError(err)
       }
     } finally {
       this.$layoutRunning = false

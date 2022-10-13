@@ -85,6 +85,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app'
 import {
@@ -508,11 +509,7 @@ async function applyLayout() {
     // clean up mapper registry
     graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
   } catch (error) {
-    if (typeof (window as any).reportError === 'function') {
-      ;(window as any).reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     selectSample.disabled = false
     selectLayout.disabled = false
@@ -616,7 +613,9 @@ function registerCommands(): void {
     ).checked
   })
 
-  bindChangeListener("select[data-command='SelectSample']", value => loadGraph(value))
+  bindChangeListener("select[data-command='SelectSample']", value =>
+    loadGraph(value as 'sine' | 'circle')
+  )
   addNavigationButtons(selectSample)
 
   bindChangeListener("select[data-command='SelectLayout']", applyLayout)

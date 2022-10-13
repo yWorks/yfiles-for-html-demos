@@ -337,9 +337,7 @@ function initializeHighlightStyles(): void {
   const orangePen = new Stroke(
     new SolidColorFill(Color.fromArgb(220, orangeRed.r, orangeRed.g, orangeRed.b)),
     3
-  )
-  // freeze it for slightly improved performance
-  orangePen.freeze()
+  ).freeze()
 
   // now decorate the nodes and edges with custom hover highlight styles
   const decorator = graphComponent.graph.decorator
@@ -1011,19 +1009,19 @@ function registerCommands(): void {
   bindChangeListener("input[data-command='MaximumDuration']", value => {
     const maximumDurationLabel =
       document.querySelector<HTMLLabelElement>('#maximum-duration-label')!
-    maximumDurationLabel.innerText = value
+    maximumDurationLabel.innerText = value as string
   })
   bindChangeListener("input[data-command='MinimumClusterSize']", value => {
     const minimumClusterSizeLabel = document.querySelector<HTMLLabelElement>(
       '#minimum-cluster-size-label'
     )!
-    minimumClusterSizeLabel.innerText = value
+    minimumClusterSizeLabel.innerText = value as string
   })
   bindChangeListener("input[data-command='MaximumClusterSize']", value => {
     const maximumClusterSizeLabel = document.querySelector<HTMLLabelElement>(
       '#maximum-cluster-size-label'
     )!
-    maximumClusterSizeLabel.innerText = value
+    maximumClusterSizeLabel.innerText = value as string
   })
 
   bindAction("button[data-command='RunAggregation']", runAggregation)

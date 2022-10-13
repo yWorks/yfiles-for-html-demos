@@ -44,7 +44,7 @@ import {
 /**
  * Manages and renders the layers.
  */
-export default class LayerVisual
+export class LayerVisual
   extends BaseClass<IVisualCreator>(IVisualCreator)
   implements IVisualCreator
 {

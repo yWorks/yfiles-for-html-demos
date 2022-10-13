@@ -29,7 +29,7 @@
 import React, { Component } from 'react'
 import './ContextMenu.css'
 import PropTypes from 'prop-types'
-import { detectiOSVersion, detectSafariVersion } from '../utils/Workarounds'
+import { BrowserDetection } from '../utils/BrowserDetection'
 
 export class ContextMenu extends Component {
   /**
@@ -75,7 +75,7 @@ export class ContextMenu extends Component {
     // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
     componentDiv.addEventListener('contextmenu', contextMenuListener, false)
 
-    if (detectSafariVersion() > 0 || detectiOSVersion() > 0) {
+    if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer
       graphComponent.addTouchDownListener((sender, args) => {

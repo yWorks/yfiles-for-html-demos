@@ -48,7 +48,7 @@ import {
   TreeBuilder
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import GraphSearch from '../../utils/GraphSearch'
 import ClickablePortsSupport from './ClickablePortsSupport'
 import PrintingSupport from '../../utils/PrintingSupport'

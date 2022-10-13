@@ -58,12 +58,14 @@
       }
     }
 
-    loadLicense().then(licenseData => {
-      yfiles.License.value = licenseData
+    fetch('../../../lib/license.json')
+      .then(response => response.json())
+      .then(licenseData => {
+        yfiles.License.value = licenseData
 
-      // signal that the webworker thread is ready to execute
-      postMessage('ready')
-    })
+        // signal that the webworker thread is ready to execute
+        postMessage('ready')
+      })
 
     self.addEventListener(
       'message',
@@ -74,10 +76,5 @@
       },
       false
     )
-
-    async function loadLicense() {
-      const response = await fetch('../../../lib/license.json')
-      return response.json()
-    }
   })
 })()

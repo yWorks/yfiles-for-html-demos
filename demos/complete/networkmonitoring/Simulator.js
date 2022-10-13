@@ -26,9 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import Device, { DeviceKind } from './Device.js'
-import Network from './Network.js'
-import Connection from './Connection.js'
+import { DeviceKind } from './Device.js'
 
 /**
  * A simple simulator that sends packets through the network.

@@ -53,7 +53,7 @@ import {
  * This class is built upon the concepts of triangulations, planar embedding, and faces and assumes
  * that the user is familiar with these concepts.
  */
-export default class VoronoiDiagram {
+export class VoronoiDiagram {
   centroids: IEnumerable<Point>
   boundingBox: YRectangle
   voronoiFaces: GeneralPath[]
@@ -899,7 +899,7 @@ class VoronoiFace {
 
   /**
    * Calculates the center of the circle that is defined by the three vertices of this face.
-   * May only be called only for triangular faces.
+   * May only be called for triangular faces.
    */
   private calculateCircumcenterImpl(): void {
     if (this.edges.length > 3 || this.vertices.length < 3) {
@@ -909,17 +909,15 @@ class VoronoiFace {
     const p1 = this.nodeCoordinates.get(this.vertices[0]) as YPoint
     const p2 = this.nodeCoordinates.get(this.vertices[1]) as YPoint
     const p3 = this.nodeCoordinates.get(this.vertices[2]) as YPoint
-    const midPoint1 = new YPoint((p1.x + p2.x) / 2, (p1.y + p2.y) / 2)
-    const midPoint2 = new YPoint((p2.x + p3.x) / 2, (p2.y + p3.y) / 2)
 
-    const slope1 = -(p2.x - p1.x) / (p2.y - p1.y)
-    const slope2 = -(p3.x - p2.x) / (p3.y - p2.y)
-
-    const b1 = midPoint1.y - slope1 * midPoint1.x
-    const b2 = midPoint2.y - slope2 * midPoint2.x
-    const x = (b1 - b2) / (slope2 - slope1)
-
-    this.circumcenter = new YPoint(x, slope1 * x + b1)
+    const det =
+      2 * (p1.x * p2.y - p2.x * p1.y - p1.x * p3.y + p3.x * p1.y + p2.x * p3.y - p3.x * p2.y)
+    const a = p1.x * p1.x + p1.y * p1.y
+    const b = p2.x * p2.x + p2.y * p2.y
+    const c = p3.x * p3.x + p3.y * p3.y
+    const centerX = (a * (p2.y - p3.y) + b * (p3.y - p1.y) + c * (p1.y - p2.y)) / det
+    const centerY = (a * (p3.x - p2.x) + b * (p1.x - p3.x) + c * (p2.x - p1.x)) / det
+    this.circumcenter = new YPoint(centerX, centerY)
   }
 
   /**

@@ -39,7 +39,7 @@ import { SingleColorEdgeStyle, SingleColorNodeStyle } from './DemoStyles'
 /**
  * Input mode that highlights the shortest path to the single source when hovering over a marked node or edge.
  */
-export default class HighlightHoverInputMode extends ItemHoverInputMode {
+export class HighlightHoverInputMode extends ItemHoverInputMode {
   /**
    * Changes the node/edge styles when the hovered item changes.
    * @param hoveredItemChangedEventArgs The current event.

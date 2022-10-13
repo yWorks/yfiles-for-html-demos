@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import licenseData from '../../../../lib/license.json'
 import {
   DefaultLabelStyle,
   ExteriorLabelModel,
@@ -43,6 +42,7 @@ import {
   Size
 } from 'yfiles'
 
+import licenseData from '../../../../lib/license.json'
 License.value = licenseData
 
 /**

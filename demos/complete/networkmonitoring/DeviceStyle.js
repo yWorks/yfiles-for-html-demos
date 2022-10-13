@@ -37,7 +37,7 @@ import {
   SvgVisual,
   Visual
 } from 'yfiles'
-import Device, { DeviceKind } from './Device.js'
+import { Device, DeviceKind } from './Device.js'
 
 /**
  * A node style that visualizes the devices of a network.

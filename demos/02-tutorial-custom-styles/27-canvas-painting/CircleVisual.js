@@ -31,7 +31,7 @@ import { CanvasComponent, HtmlCanvasVisual, IRectangle, IRenderContext } from 'y
 /**
  * Renders a circle with the given layout and color on a HTML5 Canvas.
  */
-export default class CircleVisual extends HtmlCanvasVisual {
+export class CircleVisual extends HtmlCanvasVisual {
   /**
    * Creates a new instance.
    * @param {!IRectangle} layout The layout of the node to render.

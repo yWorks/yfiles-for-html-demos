@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import GraphWizardInputMode from './GraphWizardInputMode'
+import type { GraphWizardInputMode } from './GraphWizardInputMode'
 import { CreateEdgeInputMode, IEdge, INode } from 'yfiles'
 
 export type PreCondition = (mode: GraphWizardInputMode) => boolean

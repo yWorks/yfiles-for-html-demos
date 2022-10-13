@@ -52,14 +52,14 @@ import {
   SvgVisual
 } from 'yfiles'
 
-import MySimpleEdgeStyle from './MySimpleEdgeStyle'
+import { MySimpleEdgeStyle } from './MySimpleEdgeStyle'
 
 /**
  * A very simple implementation of an {@link INodeStyle}
  * that uses the convenience class {@link NodeStyleBase}
  * as the base class.
  */
-export default class MySimpleNodeStyle extends NodeStyleBase {
+export class MySimpleNodeStyle extends NodeStyleBase {
   private static $fillCounter: number
 
   private $nodeColor: string

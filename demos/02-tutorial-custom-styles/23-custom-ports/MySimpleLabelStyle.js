@@ -52,7 +52,7 @@ const BUTTON_SIZE = 16
  * Also there is a customized button displayed in the label at certain zoom levels that enables editing of the label
  * text.
  */
-export default class MySimpleLabelStyle extends LabelStyleBase {
+export class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Initializes a new instance of the {@link MySimpleLabelStyle} class using the "Arial" font.
    */

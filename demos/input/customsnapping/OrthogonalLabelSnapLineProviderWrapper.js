@@ -45,7 +45,7 @@ import {
  * for orthogonal labels of an {@link IModelItem}. For each orthogonal label there are
  * {@link OrthogonalSnapLine}s added for its top, bottom, left, and right side.
  */
-export default class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapLineProvider) {
+export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapLineProvider) {
   /**
    * Creates a new instance that wraps the given snap line provider.
    * @param {!ISnapLineProvider} wrapped The snap line provider that will be wrapped.

@@ -71,7 +71,7 @@ import { FlowchartNodeStyle, FlowchartNodeType } from '../flowchart/FlowchartSty
 import WizardAction, { handleMultipleSteps, PickerLayout } from './WizardAction.js'
 import FlowchartLayout from '../flowchart/FlowchartLayout.js'
 import FlowchartLayoutData from '../flowchart/FlowchartLayoutData.js'
-import GraphWizardInputMode from './GraphWizardInputMode.js'
+import { GraphWizardInputMode } from './GraphWizardInputMode.js'
 import {
   checkAnd,
   checkForEdge,

@@ -39,7 +39,7 @@ import {
   PopulateItemContextMenuEventArgs,
   Rect
 } from 'yfiles'
-import { detectiOSVersion, detectSafariVersion } from '@/utils/Workarounds'
+import { BrowserDetection } from '@/utils/BrowserDetection'
 
 export type MenuItem = { title: string; action: () => void }
 export type Location = { x: number; y: number }
@@ -171,7 +171,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
     // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
     componentDiv.addEventListener('contextmenu', contextMenuListener, false)
 
-    if (detectSafariVersion() > 0 || detectiOSVersion() > 0) {
+    if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer: number
       graphComponent.addTouchDownListener((sender, args) => {

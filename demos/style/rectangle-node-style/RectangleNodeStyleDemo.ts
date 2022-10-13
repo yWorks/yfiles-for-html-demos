@@ -50,8 +50,8 @@ import { enableSingleSelection } from '../../input/singleselection/SingleSelecti
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
-import { colorSets } from '../../resources/demo-colors'
 import type { ColorSet } from '../../resources/demo-colors'
+import { colorSets } from '../../resources/demo-colors'
 
 const [yellow, orange, green, blue, gray] = [
   colorSets['demo-palette-71'],

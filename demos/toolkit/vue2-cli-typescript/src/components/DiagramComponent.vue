@@ -26,7 +26,6 @@
 </template>
 
 <script lang="ts">
-import licenseData from '../../../../../lib/license.json'
 import {
   Arrow,
   DefaultLabelStyle,
@@ -59,6 +58,7 @@ import GraphSearch from '../utils/GraphSearch'
 import { Component, Inject, Ref, Vue } from 'vue-property-decorator'
 // @ts-ignore
 import LayoutWorker from './layout.worker'
+import licenseData from '../../../../../lib/license.json'
 
 License.value = licenseData
 

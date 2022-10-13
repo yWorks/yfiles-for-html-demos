@@ -46,7 +46,7 @@ import {
 import { bindCommand, showApp } from '../../resources/demo-app'
 import { setClipboardStyles } from './ClipboardStyles'
 import { DeferredCutClipboard } from './DeferredCutClipboard'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
 

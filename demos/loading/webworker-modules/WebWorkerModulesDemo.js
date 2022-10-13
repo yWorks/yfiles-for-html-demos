@@ -47,7 +47,7 @@ import {
 } from 'yfiles'
 
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
-import { isModuleSupportedInWorker } from '../../utils/Workarounds.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 
@@ -60,8 +60,9 @@ let executor = null
 let worker
 
 const layoutButton = document.getElementById('layoutBtn')
+const modulesWorkersSupported = BrowserDetection.modulesSupportedInWorker
 
-if (isModuleSupportedInWorker()) {
+if (modulesWorkersSupported) {
   // create a new module web worker
   worker = new Worker('./WorkerLayout.js', {
     type: 'module'

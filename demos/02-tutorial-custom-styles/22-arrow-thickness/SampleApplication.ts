@@ -38,9 +38,9 @@ import {
   Size
 } from 'yfiles'
 
-import MySimpleEdgeStyle from './MySimpleEdgeStyle'
-import MySimpleLabelStyle from './MySimpleLabelStyle'
-import MySimpleNodeStyle from './MySimpleNodeStyle'
+import { MySimpleEdgeStyle } from './MySimpleEdgeStyle'
+import { MySimpleLabelStyle } from './MySimpleLabelStyle'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle'
 import { bindCommand, showApp } from '../../resources/demo-app'
 
 import { applyDemoTheme } from '../../resources/demo-styles'

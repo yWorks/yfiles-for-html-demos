@@ -21,14 +21,14 @@
   import SvgNodeComponent from './SvgNodeComponent.svelte'
   import type { Person } from './types'
   import { getLayoutExecutorAsyncMessageHandler } from './web-worker-client-message-handler'
-  import { isModuleSupportedInWorker } from '../../../utils/Workarounds'
+  import { BrowserDetection } from '../../../utils/BrowserDetection'
 
   License.value = licenseValue
 
   // Vite supports Web Worker out-of-the-box but relies on the browser's native Web Worker support when served in DEV mode.
   // Thus, during development, fall back to client-sided layout calculation if module workers are not supported.
   // In the production build, Web Workers are supported because the build creates cross-browser compatible workers.
-  const useWorkerLayout = isModuleSupportedInWorker() || import.meta.env.PROD
+  const useWorkerLayout = BrowserDetection.modulesSupportedInWorker || import.meta.env.PROD
   const messageHandlerPromise = useWorkerLayout ? getLayoutExecutorAsyncMessageHandler(licenseValue) : Promise.resolve(null)
 
   export let width = '100%'

@@ -33,7 +33,6 @@ import {
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
-  GraphItemTypes,
   HorizontalTextAlignment,
   ICommand,
   IGraph,
@@ -48,7 +47,13 @@ import {
 
 import { configureToolTips } from './ToolTipHelper.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles.js'
+import {
+  applyDemoTheme,
+  colorSets,
+  createDemoEdgeStyle,
+  createDemoNodeStyle,
+  initDemoStyles
+} from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
@@ -87,70 +92,72 @@ function createSampleNodeLabels(graph) {
   graph.addLabel({
     owner: n1,
     text: 'Rectangle Node Label',
-    layoutParameter: createNodeLabelParameter([1, 0.2], [75, 0]),
+    layoutParameter: createNodeLabelParameter([1, 0.2], [100, 0]),
     style: createNodeLabelStyle({ shape: LabelShape.RECTANGLE })
   })
   graph.addLabel({
     owner: n1,
     text: 'Rounded Node Label',
-    layoutParameter: createNodeLabelParameter([1, 0.4], [75, 0]),
-    style: createNodeLabelStyle({ shape: LabelShape.ROUND_RECTANGLE })
+    layoutParameter: createNodeLabelParameter([1, 0.4], [100, 0]),
+    style: createNodeLabelStyle({ shape: LabelShape.ROUND_RECTANGLE, insets: new Insets(2) })
   })
   graph.addLabel({
     owner: n1,
     text: 'Hexagon Node Label',
-    layoutParameter: createNodeLabelParameter([1, 0.6], [75, 0]),
+    layoutParameter: createNodeLabelParameter([1, 0.6], [100, 0]),
     //The hexagon background needs slightly larger insets at the sides
-    style: createNodeLabelStyle({ shape: LabelShape.HEXAGON, insets: new Insets(8, 4, 8, 4) })
+    style: createNodeLabelStyle({ shape: LabelShape.HEXAGON })
   })
   graph.addLabel({
     owner: n1,
     text: 'Pill Node Label',
-    layoutParameter: createNodeLabelParameter([1, 0.8], [75, 0]),
+    layoutParameter: createNodeLabelParameter([1, 0.8], [100, 0]),
     style: createNodeLabelStyle({ shape: LabelShape.PILL })
   })
 
   // Create two more nodes, the bottom one and the right one
-  graph.createNode({ layout: [275, 600, 50, 50] })
+  const n2 = graph.createNode({ layout: [275, 600, 50, 50] })
+  graph.setStyle(n2, createDemoNodeStyle('demo-palette-14'))
   const n3 = graph.createNode({ layout: [525, -100, 50, 200] })
+  graph.setStyle(n3, createDemoNodeStyle('demo-palette-12'))
 
   // Add three node labels to the right node showing different text clipping and text wrapping options
   graph.addLabel({
     owner: n3,
     text: `Wrapped and clipped label text`,
-    layoutParameter: createNodeLabelParameter([1, 0.2], [110, 0]),
+    layoutParameter: createNodeLabelParameter([1, 0.2], [120, 0]),
     style: createNodeLabelStyle({
       theme: 'demo-palette-12',
       shape: LabelShape.PILL,
       wrapping: TextWrapping.WORD_ELLIPSIS
     }),
-    preferredSize: [100, 25]
+    preferredSize: [140, 25]
   })
 
   graph.addLabel({
     owner: n3,
     text: `Un-wrapped but clipped label text`,
-    layoutParameter: createNodeLabelParameter([1, 0.5], [110, 0]),
+    layoutParameter: createNodeLabelParameter([1, 0.5], [120, 0]),
     style: createNodeLabelStyle({
       theme: 'demo-palette-12',
       shape: LabelShape.PILL,
       wrapping: TextWrapping.NONE
     }),
-    preferredSize: [100, 25]
+    preferredSize: [140, 25]
   })
 
   // For the last label, disable text clipping
   graph.addLabel({
     owner: n3,
     text: 'Un-wrapped and un-clipped label text',
-    layoutParameter: createNodeLabelParameter([1, 0.8], [110, 0]),
+    layoutParameter: createNodeLabelParameter([1, 0.8], [120, 0]),
     style: createNodeLabelStyle({
       theme: 'demo-palette-12',
       shape: LabelShape.PILL,
       wrapping: TextWrapping.NONE,
       clipText: false
     }),
-    preferredSize: [100, 25]
+    preferredSize: [140, 25]
   })
 }
 
@@ -180,21 +187,23 @@ function createSampleEdgeLabels(graph) {
     owner: edge1,
     text: 'Rounded Edge Label\n' + 'A second line of sample text.',
     layoutParameter: edgeLabelModel.createParameterFromSource(0, 0, 0.4),
-    style: createEdgeLabelStyle({ shape: LabelShape.ROUND_RECTANGLE })
+    // For the round rectangle, we can manually increase the padding around the text
+    // using the insets property. By default, this would be just as tight as for
+    // LabelShape.RECTANGLE, but in order to make sure that text is less likely to touch
+    // the stroke of the round rectangle, we add 2 extra pixels.
+    style: createEdgeLabelStyle({ shape: LabelShape.ROUND_RECTANGLE, insets: new Insets(2) })
   })
   graph.addLabel({
     owner: edge1,
     text: 'Hexagon Edge Label\n' + 'A second line of sample text.',
     layoutParameter: edgeLabelModel.createParameterFromSource(0, 0, 0.6),
-    //The hexagon background needs slightly larger insets at the sides
-    style: createEdgeLabelStyle({ shape: LabelShape.HEXAGON, insets: new Insets(16, 4, 16, 4) })
+    style: createEdgeLabelStyle({ shape: LabelShape.HEXAGON })
   })
   graph.addLabel({
     owner: edge1,
     text: 'Pill Edge Label\n' + 'A second line of sample text.',
     layoutParameter: edgeLabelModel.createParameterFromSource(0, 0, 0.8),
-    //The pill background needs slightly larger insets at the sides
-    style: createEdgeLabelStyle({ shape: LabelShape.PILL, insets: new Insets(8, 4, 8, 4) })
+    style: createEdgeLabelStyle({ shape: LabelShape.PILL })
   })
 
   //Add rotated edge labels on the second edge segment, distributed evenly and with different
@@ -204,9 +213,9 @@ function createSampleEdgeLabels(graph) {
     text: 'Rotated Rectangle',
     layoutParameter: edgeLabelModel.createParameterFromSource(1, 0, 0.2),
     style: createEdgeLabelStyle({
-      theme: 'demo-palette-12',
+      theme: 'demo-palette-15',
       shape: LabelShape.RECTANGLE,
-      font: new Font('Monospace', 13)
+      font: new Font('Monospace', 16)
     })
   })
   graph.addLabel({
@@ -214,21 +223,24 @@ function createSampleEdgeLabels(graph) {
     text: 'Rotated Rounded Rectangle',
     layoutParameter: edgeLabelModel.createParameterFromSource(1, 0, 0.4),
     style: createEdgeLabelStyle({
-      theme: 'demo-palette-12',
+      theme: 'demo-palette-15',
       shape: LabelShape.ROUND_RECTANGLE,
-      font: new Font('Monospace', 13)
+      // For the round rectangle, we can manually increase the padding around the text
+      // using the insets property. By default, this would be just as tight as for
+      // LabelShape.RECTANGLE, but in order to make sure that text is less likely to touch
+      // the stroke of the round rectangle, we add 2 extra pixels.
+      insets: new Insets(2),
+      font: new Font('Monospace', 16)
     })
   })
   graph.addLabel({
     owner: edge1,
     text: 'Rotated Hexagon',
     layoutParameter: edgeLabelModel.createParameterFromSource(1, 0, 0.6),
-    //The hexagon background needs slightly larger insets at the sides
     style: createEdgeLabelStyle({
-      theme: 'demo-palette-12',
+      theme: 'demo-palette-15',
       shape: LabelShape.HEXAGON,
-      insets: new Insets(8, 4, 8, 4),
-      font: new Font('Monospace', 13)
+      font: new Font('Monospace', 16)
     })
   })
   graph.addLabel({
@@ -236,14 +248,15 @@ function createSampleEdgeLabels(graph) {
     text: 'Rotated Pill',
     layoutParameter: edgeLabelModel.createParameterFromSource(1, 0, 0.8),
     style: createEdgeLabelStyle({
-      theme: 'demo-palette-12',
+      theme: 'demo-palette-15',
       shape: LabelShape.PILL,
-      font: new Font('Monospace', 13)
+      font: new Font('Monospace', 16)
     })
   })
 
   const edge2 = graph.createEdge(graph.nodes.get(2), graph.nodes.get(1))
   graph.addBend(edge2, [550, 625])
+  graph.setStyle(edge2, createDemoEdgeStyle({ colorSetName: 'demo-palette-12' }))
 
   // Add larger edge labels with different vertical and horizontal text alignment settings to the second edge
   graph.addLabel({
@@ -251,9 +264,10 @@ function createSampleEdgeLabels(graph) {
     text: 'Edge Label\nwith vertical text\nalignment at bottom',
     layoutParameter: edgeLabelModel.createParameterFromSource(0, -20, 0.4),
     style: createEdgeLabelStyle({
-      theme: 'demo-palette-14',
+      theme: 'demo-palette-12',
       shape: LabelShape.ROUND_RECTANGLE,
-      font: new Font('sans-serif', 13, null, FontWeight.BOLD),
+      insets: new Insets(2),
+      font: new Font('sans-serif', 14, null, FontWeight.BOLD),
       verticalTextAlignment: VerticalTextAlignment.BOTTOM
     }),
     // Explicitly specify a preferred size for the label that is much larger than needed for the label's text
@@ -264,9 +278,10 @@ function createSampleEdgeLabels(graph) {
     text: 'Edge Label\nwith vertical text\nalignment at top',
     layoutParameter: edgeLabelModel.createParameterFromSource(0, 20, 0.4),
     style: createEdgeLabelStyle({
-      theme: 'demo-palette-14',
+      theme: 'demo-palette-12',
       shape: LabelShape.ROUND_RECTANGLE,
-      font: new Font('sans-serif', 13, null, FontWeight.BOLD),
+      insets: new Insets(2),
+      font: new Font('sans-serif', 14, null, FontWeight.BOLD),
       verticalTextAlignment: VerticalTextAlignment.TOP
     }),
     // Explicitly specify a preferred size for the label that is much larger than needed for the label's text
@@ -277,9 +292,10 @@ function createSampleEdgeLabels(graph) {
     text: 'Edge Label\nwith vertical center\nand horizontal left\ntext alignment',
     layoutParameter: edgeLabelModel.createParameterFromSource(0, 20, 0.7),
     style: createEdgeLabelStyle({
-      theme: 'demo-palette-14',
+      theme: 'demo-palette-12',
       shape: LabelShape.ROUND_RECTANGLE,
-      font: new Font('sans-serif', 13, null, FontWeight.BOLD),
+      insets: new Insets(2),
+      font: new Font('sans-serif', 14, null, FontWeight.BOLD),
       verticalTextAlignment: VerticalTextAlignment.CENTER,
       horizontalTextAlignment: HorizontalTextAlignment.LEFT
     }),
@@ -291,9 +307,10 @@ function createSampleEdgeLabels(graph) {
     text: 'Edge Label\nwith vertical bottom\nand horizontal right\ntext alignment',
     layoutParameter: edgeLabelModel.createParameterFromSource(0, -20, 0.7),
     style: createEdgeLabelStyle({
-      theme: 'demo-palette-14',
+      theme: 'demo-palette-12',
       shape: LabelShape.ROUND_RECTANGLE,
-      font: new Font('sans-serif', 13, null, FontWeight.BOLD),
+      insets: new Insets(2),
+      font: new Font('sans-serif', 14, null, FontWeight.BOLD),
       verticalTextAlignment: VerticalTextAlignment.BOTTOM,
       horizontalTextAlignment: HorizontalTextAlignment.RIGHT
     }),
@@ -316,10 +333,10 @@ function createSampleEdgeLabels(graph) {
  * @returns {!DefaultLabelStyle}
  */
 function createNodeLabelStyle({
-  theme = 'demo-orange',
+  theme = 'demo-palette-13',
   shape = LabelShape.RECTANGLE,
-  font = new Font('Arial', 12),
-  insets = new Insets(4),
+  font = new Font('Arial', 14),
+  insets = new Insets(0),
   wrapping = TextWrapping.NONE,
   verticalTextAlignment = VerticalTextAlignment.CENTER,
   horizontalTextAlignment = HorizontalTextAlignment.CENTER,
@@ -328,7 +345,7 @@ function createNodeLabelStyle({
   return new DefaultLabelStyle({
     shape,
     backgroundFill: colorSets[theme].nodeLabelFill,
-    backgroundStroke: colorSets[theme].stroke,
+    backgroundStroke: 'none',
     font,
     textFill: colorSets[theme].text,
     insets,
@@ -352,10 +369,10 @@ function createNodeLabelStyle({
  * @returns {!DefaultLabelStyle}
  */
 function createEdgeLabelStyle({
-  theme = 'demo-orange',
+  theme = 'demo-palette-13',
   shape = LabelShape.RECTANGLE,
-  font = new Font('Arial', 12),
-  insets = new Insets(4),
+  font = new Font('Arial', 14),
+  insets = new Insets(0),
   wrapping = TextWrapping.NONE,
   verticalTextAlignment = VerticalTextAlignment.CENTER,
   horizontalTextAlignment = HorizontalTextAlignment.CENTER
@@ -363,7 +380,7 @@ function createEdgeLabelStyle({
   return new DefaultLabelStyle({
     shape,
     backgroundFill: colorSets[theme].edgeLabelFill,
-    backgroundStroke: colorSets[theme].stroke,
+    backgroundStroke: 'none',
     font,
     textFill: colorSets[theme].text,
     insets,
@@ -388,18 +405,25 @@ function createNodeLabelParameter(layoutRatio, layoutOffset) {
 }
 
 /**
- * Configures the interaction behavior to allow only some graph modifications and configures
- * the tool tips.
+ * Configures the interaction behavior and the tooltips.
+ *
+ * Since this demo is about the styles of the labels, not their placement, only interaction with
+ * them is allowed.
  * @param {!GraphComponent} graphComponent
  */
 function configureInteraction(graphComponent) {
   const inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: false,
-    marqueeSelectableItems: GraphItemTypes.LABEL
+    allowCreateNode: false,
+    allowCreateEdge: false,
+    allowCreateBend: false,
+    showHandleItems: 'none',
+    selectableItems: 'label',
+    movableItems: 'label',
+    deletableItems: 'none'
   })
-  graphComponent.inputMode = inputMode
-
   configureToolTips(inputMode)
+
+  graphComponent.inputMode = inputMode
 }
 
 /**

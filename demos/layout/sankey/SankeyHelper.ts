@@ -30,6 +30,7 @@ import {
   BaseClass,
   BezierEdgeStyle,
   CanvasComponent,
+  DefaultLabelStyle,
   EdgeStyleDecorationInstaller,
   Exception,
   GraphComponent,
@@ -46,17 +47,13 @@ import {
   IPoint,
   IPositionHandler,
   LabelStyleDecorationInstaller,
-  NodeStyleLabelStyleAdapter,
   Point,
-  ShapeNodeShape,
-  ShapeNodeStyle,
   SimpleLabel,
   Size,
   SolidColorFill,
   Stroke,
   StyleDecorationZoomPolicy,
-  UndoUnitBase,
-  VoidLabelStyle
+  UndoUnitBase
 } from 'yfiles'
 
 /**
@@ -426,14 +423,11 @@ export class HighlightManager extends HighlightIndicatorManager<IModelItem> {
       })
     } else if (ILabel.isInstance(item)) {
       return new LabelStyleDecorationInstaller({
-        labelStyle: new NodeStyleLabelStyleAdapter(
-          new ShapeNodeStyle({
-            shape: ShapeNodeShape.ROUND_RECTANGLE,
-            stroke: '2px dodgerblue',
-            fill: 'transparent'
-          }),
-          VoidLabelStyle.INSTANCE
-        ),
+        labelStyle: new DefaultLabelStyle({
+          shape: 'pill',
+          backgroundStroke: '2px dodgerblue',
+          textFill: 'transparent'
+        }),
         margins: 3,
         zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
       })

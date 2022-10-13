@@ -43,14 +43,14 @@ import {
   ResultItemMapping,
   StronglyConnectedComponents
 } from 'yfiles'
-import AlgorithmConfiguration from './AlgorithmConfiguration'
+import { AlgorithmConfiguration } from './AlgorithmConfiguration'
 import { getColorForComponent, MultiColorEdgeStyle, MultiColorNodeStyle } from './DemoStyles'
-import ContextMenu from '../../utils/ContextMenu'
+import type { ContextMenu } from '../../utils/ContextMenu'
 
 /**
  * Configuration options for the Connectivity Algorithms.
  */
-export default class ConnectivityConfig extends AlgorithmConfiguration {
+export class ConnectivityConfig extends AlgorithmConfiguration {
   /**
    * Specifies which connectivity algorithm is used.
    */

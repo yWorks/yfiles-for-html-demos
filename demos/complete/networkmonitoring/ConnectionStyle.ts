@@ -44,7 +44,7 @@ import {
   Visual
 } from 'yfiles'
 import DeviceStyle from './DeviceStyle'
-import Connection from './Connection'
+import type { Connection } from './Connection'
 
 /**
  * An edge style that visualizes the connections of a network.

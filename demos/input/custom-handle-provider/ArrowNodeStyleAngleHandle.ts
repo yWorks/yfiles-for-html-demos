@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { ICanvasObject } from 'yfiles'
 import {
   ArrowNodeDirection,
   ArrowNodeStyle,
@@ -34,7 +35,6 @@ import {
   ClickEventArgs,
   Cursor,
   HandleTypes,
-  ICanvasObject,
   ICanvasObjectDescriptor,
   IHandle,
   IInputModeContext,

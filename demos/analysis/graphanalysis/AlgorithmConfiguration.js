@@ -50,12 +50,11 @@ import {
   SingleColorNodeStyle,
   SourceTargetNodeStyle
 } from './DemoStyles.js'
-import ContextMenu from '../../utils/ContextMenu.js'
 
 /**
  * Abstract base class for the different algorithm configurations that can be displayed in the demo.
  */
-export default class AlgorithmConfiguration {
+export class AlgorithmConfiguration {
   constructor() {
     // Whether or not the edges should be considered as directed.
     this.directed = false

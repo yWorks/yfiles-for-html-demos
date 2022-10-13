@@ -39,7 +39,13 @@ import {
   NodeReshapeHandleProvider
 } from 'yfiles'
 
-import { addNavigationButtons, addOptions, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  addNavigationButtons,
+  addOptions,
+  bindCommand,
+  checkWebGL2Support,
+  showApp
+} from '../../resources/demo-app'
 
 import RenderingTypesManager from './RenderingTypesManager'
 
@@ -49,15 +55,12 @@ import {
   OrganicDemoConfiguration
 } from './LargeGraphDemoConfiguration'
 import OrgChartDemoConfiguration from './OrgChartDemoConfiguration'
-import { isWebGl2Supported } from '../../utils/Workarounds'
 import { fetchLicense } from '../../resources/fetch-license'
 
 let renderingTypesManager: RenderingTypesManager = null!
 
 async function run(): Promise<void> {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support')!.removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }

@@ -45,6 +45,8 @@ import {
   IGraph,
   IMapper,
   INode,
+  INodeInsetsProvider,
+  Insets,
   IPoint,
   IRectangle,
   ISize,
@@ -53,11 +55,13 @@ import {
   List,
   Mapper,
   NodeAlignmentPolicy,
+  NodeInsetsProvider,
   Point,
   Rect,
   RecursiveEdgeStyle,
   Size
 } from 'yfiles'
+import { reportDemoError } from '../../resources/demo-app'
 
 export default class HierarchicGrouping {
   /**
@@ -109,11 +113,11 @@ export default class HierarchicGrouping {
       this.beforeCollapsingGroup(evt.item)
     )
 
-    navigationInputMode.addGroupExpandedListener((sender, evt) =>
-      this.afterGroupStateChanged(evt.item)
+    navigationInputMode.addGroupExpandedListener(async (sender, evt) =>
+      await this.afterGroupStateChanged(evt.item)
     )
-    navigationInputMode.addGroupCollapsedListener((sender, evt) =>
-      this.afterGroupStateChanged(evt.item)
+    navigationInputMode.addGroupCollapsedListener(async (sender, evt) =>
+      await this.afterGroupStateChanged(evt.item)
     )
   }
 
@@ -170,12 +174,22 @@ export default class HierarchicGrouping {
    *
    * @param group The group that was expanded or collapsed.
    */
-  private afterGroupStateChanged(group: INode): void {
+  private async afterGroupStateChanged(group: INode): Promise<void> {
     // store the current locations of nodes and edges to keep them for incremental layout
     const graph = this.graphComponent.graph
     const nodesCoordinates = new Mapper<INode, IPoint>()
     const nodeSizes = new Mapper<INode, ISize>()
     const edgesCoordinates = new Mapper<IEdge, List<IPoint>>()
+
+    // we store the insets for each group node as we will change the size of the nodes to
+    // animate the expand operation
+    const insets = new Mapper<INode, Insets>()
+    for (const node of graph.nodes) {
+      const insetsProvider = node.lookup(INodeInsetsProvider.$class)
+      if (insetsProvider) {
+        insets.set(node, insetsProvider.getInsets(node))
+      }
+    }
 
     const groupingSupport = graph.groupingSupport
     if (graph.isGroupNode(group)) {
@@ -206,7 +220,16 @@ export default class HierarchicGrouping {
       graph.clearBends(edge)
     })
 
-    this.applyIncrementalLayout(nodesCoordinates, nodeSizes, edgesCoordinates)
+    // we register a new insets provider that holds the old insets of the group nodes, before the resizing
+    const chainLink = graph.decorator.nodeDecorator.insetsProviderDecorator.setFactory(
+      node => new NodeInsetsProvider(insets.get(node) ?? new Insets(0))
+    )
+
+    // run the incremental layout
+    await this.applyIncrementalLayout(nodesCoordinates, nodeSizes, edgesCoordinates)
+
+    // remove the insets provider
+    graph.decorator.nodeDecorator.remove(chainLink!)
   }
 
   /**
@@ -272,12 +295,7 @@ export default class HierarchicGrouping {
     try {
       await layoutExecutor.start()
     } catch (error) {
-      const reportError = (window as any).reportError
-      if (typeof reportError === 'function') {
-        reportError(error)
-      } else {
-        throw error
-      }
+      reportDemoError(error)
     }
     this.graphComponent.updateContentRect()
   }

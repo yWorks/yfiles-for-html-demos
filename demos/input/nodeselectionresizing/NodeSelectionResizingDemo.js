@@ -144,9 +144,9 @@ function registerCommands() {
     graphComponent.inputMode.orthogonalEdgeEditingContext.enabled = orthogonalEditingButton.checked
   })
 
-  bindChangeListener("select[data-command='ChangeResizeMode']", mode => {
+  bindChangeListener("select[data-command='ChangeResizeMode']", value => {
     if (nodeSelectionResizingInputMode) {
-      nodeSelectionResizingInputMode.mode = mode
+      nodeSelectionResizingInputMode.mode = value
     }
   })
 }

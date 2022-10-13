@@ -458,11 +458,11 @@ function registerCommands(graphComponent: GraphComponent): void {
   )
 
   bindChangeListener("input[data-command='ToggleTargetNode']", checked =>
-    initializeInputMode(graphComponent, checked)
+    initializeInputMode(graphComponent, checked as boolean)
   )
 
   bindChangeListener("input[data-command='TogglePortVisualization']", checked =>
-    onTogglePortVisualization(graphComponent.graph, checked)
+    onTogglePortVisualization(graphComponent.graph, checked as boolean)
   )
 }
 

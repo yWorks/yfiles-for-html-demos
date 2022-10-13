@@ -590,6 +590,42 @@ function getDemoData() {
     "ts": true
   },
   {
+    "id": "company-ownership",
+    "name": "Company Ownership Chart",
+    "demoPath": "complete/company-ownership/index.html",
+    "summary": "Interactively explore the ownership of companies and their management relationships.",
+    "category": "complete",
+    "type": "use-cases",
+    "thumbnailPath": "resources/image/company-ownership.png",
+    "sourcePath": "complete/company-ownership/CompanyOwnershipDemo.js",
+    "tags": [
+      "style",
+      "layout",
+      "interaction"
+    ],
+    "keywords": [
+      "v2.5.0.2",
+      "ownership",
+      "relationship",
+      "orgchart",
+      "company",
+      "business",
+      "corporation",
+      "investors",
+      "shareholders",
+      "business chart",
+      "filtering",
+      "search",
+      "highlight",
+      "templates",
+      "hide",
+      "detail",
+      "notable style",
+      "data management"
+    ],
+    "ts": true
+  },
+  {
     "id": "gantt-chart",
     "name": "Gantt Chart",
     "demoPath": "view/ganttchart/index.html",
@@ -1194,7 +1230,8 @@ function getDemoData() {
       "large",
       "huge",
       "webgl2",
-      "svg"
+      "svg",
+      "collapse"
     ],
     "ts": true
   },
@@ -1218,7 +1255,8 @@ function getDemoData() {
       "tree",
       "balloon",
       "filtering",
-      "hide"
+      "hide",
+      "collapse"
     ],
     "ts": true
   },
@@ -1809,6 +1847,30 @@ function getDemoData() {
     "ts": true
   },
   {
+    "id": "deep-zoom",
+    "name": "Deep Zoom",
+    "demoPath": "view/deep-zoom/index.html",
+    "summary": "Seamlessly zoom into the contents of deeply nested group nodes, similar to \"deep zoom\" for images",
+    "category": "view",
+    "thumbnailPath": "resources/image/deep-zoom.png",
+    "sourcePath": "view/deep-zoom/DeepZoomDemo.js",
+    "tags": [
+      "view",
+      "styles",
+      "groups"
+    ],
+    "keywords": [
+      "v2.5.0.2",
+      "group",
+      "group style",
+      "viewport",
+      "folding",
+      "zoom",
+      "content"
+    ],
+    "ts": true
+  },
+  {
     "id": "arrange-objects",
     "name": "Arrange Objects",
     "demoPath": "view/arrange-objects/index.html",
@@ -1892,7 +1954,30 @@ function getDemoData() {
     "ts": true
   },
   {
-    "id": "vue.js-template-node-style",
+    "id": "react-template-node-style",
+    "name": "React JSX Component Node Style",
+    "demoPath": "style/react-template-node-style/index.html",
+    "summary": "Presents a versatile and easily customizable template node style based on JSX and React.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/vuejstemplatenodestyle.png",
+    "sourcePath": "style/react-template-node-style/ReactComponentNodeStyleDemo.js",
+    "tags": [
+      "style",
+      "template",
+      "react",
+      "jsx"
+    ],
+    "keywords": [
+      "v2.5.0.2",
+      "data bindings",
+      "data panel",
+      "tree"
+    ],
+    "ts": true
+  },
+  {
+    "id": "vue-template-node-style",
     "name": "Vue Template Node Style",
     "demoPath": "style/vuejstemplatenodestyle/index.html",
     "summary": "Presents a versatile and easily customizable template node style based on Vue.js.",
@@ -1910,6 +1995,29 @@ function getDemoData() {
       "data bindings",
       "data panel",
       "tree"
+    ],
+    "ts": true
+  },
+  {
+    "id": "lit-template-node-style",
+    "name": "Lit Template Node Style",
+    "demoPath": "style/lit-template-node-style/index.html",
+    "summary": "Presents a versatile and easily customizable template node style based on the Lit templating framework.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/lit-template-node-style.png",
+    "sourcePath": "style/lit-template-node-style/LitTemplateNodeStyleDemo.js",
+    "tags": [
+      "style",
+      "template",
+      "lit"
+    ],
+    "keywords": [
+      "v2.5.0.2",
+      "data bindings",
+      "data panel",
+      "conditional",
+      "rendering"
     ],
     "ts": true
   },
@@ -2284,6 +2392,28 @@ function getDemoData() {
     "ts": true
   },
   {
+    "id": "simple-arrow-style",
+    "name": "Simple Arrow Style",
+    "demoPath": "style/simple-arrow-style/index.html",
+    "summary": "Shows how to create a simple custom arrow for edges.",
+    "category": "style",
+    "type": "custom-styles",
+    "thumbnailPath": "resources/image/simple-arrow-style.png",
+    "sourcePath": "style/simple-arrow-style/SimpleArrowStyleDemo.js",
+    "tags": [
+      "style",
+      "arrow"
+    ],
+    "keywords": [
+      "v2.5.0.2",
+      "styling",
+      "arrow",
+      "edge",
+      "custom"
+    ],
+    "ts": true
+  },
+  {
     "id": "selection-styling",
     "name": "Selection Styling",
     "demoPath": "style/selectionstyling/index.html",
@@ -2369,6 +2499,31 @@ function getDemoData() {
       "bezier",
       "curves",
       "notable style"
+    ],
+    "ts": true
+  },
+  {
+    "id": "chord-diagram-non-ribbon",
+    "name": "Non-ribbon Chord Diagram",
+    "demoPath": "complete/chord-diagram-non-ribbon/index.html",
+    "summary": "Shows a non-ribbon chord diagram that emphasizes the traceability of the connections.",
+    "category": "complete",
+    "type": "layout-features",
+    "thumbnailPath": "resources/image/chord-diagram-non-ribbon.png",
+    "sourcePath": "complete/chord-diagram-non-ribbon/NonRibbonChordDiagramDemo.js",
+    "tags": [
+      "style",
+      "layout",
+      "curve"
+    ],
+    "keywords": [
+      "v2.5.0.2",
+      "chords",
+      "arcs",
+      "bezier",
+      "curves",
+      "notable style",
+      "node types"
     ],
     "ts": true
   },
@@ -5331,7 +5486,8 @@ function getDemoData() {
     ],
     "keywords": [
       "CollapsibleNodeStyleDecoratorRenderer",
-      "NodeStyleBase"
+      "NodeStyleBase",
+      "collapse"
     ],
     "sourcePath": "02-tutorial-custom-styles/25-custom-group-style/SampleApplication.js",
     "ts": true
@@ -5630,7 +5786,8 @@ function getDemoData() {
       "collapse",
       "expand",
       "nesting",
-      "hide"
+      "hide",
+      "collapse"
     ],
     "sourcePath": "03-tutorial-application-features/folding/SampleApplication.js",
     "ts": true

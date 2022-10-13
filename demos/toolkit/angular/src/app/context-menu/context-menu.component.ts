@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core'
-import { detectiOSVersion, detectSafariVersion } from '../../utils/Workarounds'
 import { GraphComponent, GraphInputMode } from 'yfiles'
 import { GraphComponentService } from '../services/graph-component.service'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 export type ContextMenuAction = { title: string; action: () => void }
 
@@ -138,7 +138,7 @@ export class ContextMenuComponent implements AfterViewInit {
     // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
     componentDiv.addEventListener('contextmenu', contextMenuListener, false)
 
-    if (detectSafariVersion() > 0 || detectiOSVersion() > 0) {
+    if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer: ReturnType<typeof setTimeout> | undefined
       graphComponent.addTouchDownListener((sender, args) => {

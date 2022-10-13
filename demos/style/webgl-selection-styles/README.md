@@ -18,5 +18,6 @@ In WebGL2, selections can be configured in various ways: There are multiple patt
 - Activate transitions, select and deselect various graph elements.
 - Activate the dash animation and select various graph elements.
 - Observe that only styles with repeating patterns along the selection visualization are animated.
+- Change the zoom policy and observe how the rendering of the selection is modified in the corresponding coordinate system.
 
 In this demo, the same selection style is used for all graph elements. This is only a configuration in the demo, since with the API the styles for the different element types can be configured individually. See the _updateSelectionStyles_ function in the demo source code.

@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import { ConnectedComponents, CycleEdges, IEdge, IGraph, IModelItem, INode, Mapper } from 'yfiles'
-import AlgorithmConfiguration from './AlgorithmConfiguration.js'
+import { AlgorithmConfiguration } from './AlgorithmConfiguration.js'
 import { MultiColorNodeStyle } from './DemoStyles.js'
 
 /**
  * Configuration options for the cycles algorithm.
  */
-export default class CyclesConfig extends AlgorithmConfiguration {
+export class CyclesConfig extends AlgorithmConfiguration {
   /**
    * Creates an instance of CyclesConfig with default settings.
    */

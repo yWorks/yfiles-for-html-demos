@@ -38,6 +38,7 @@ import {
 } from '../../node_modules/yfiles/yfiles.js'
 import NodeStyle from './ESModuleNodeStyle.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { reportDemoError } from '../../resources/demo-app.js'
 
 async function run() {
   License.value = await fetchLicense()
@@ -78,12 +79,7 @@ function applyLayout(graphComponent) {
   graphComponent
     .morphLayout(new MinimumNodeSizeStage(new HierarchicLayout()), '1s')
     .catch(error => {
-      // If present, show the common demo error reporting dialog
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
+      reportDemoError(error)
     })
 }
 

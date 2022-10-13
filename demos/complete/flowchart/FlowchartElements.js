@@ -26,12 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// This file provides type constants and corresponding isXYZType() methods for Flowchart symbols.
-// These constants and methods are used by FlowchartLayout and its associated classes to identify
-// specific types of nodes and handle them appropriately.
-
-import { Edge, Graph, IDataProvider, YNode } from 'yfiles'
-
 /**
  * {@link IDataProvider} key used to specify the flowchart specific type of each node.
  * Valid are all node type constants specified below.

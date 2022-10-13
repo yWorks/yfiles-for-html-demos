@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { SvgVisual } from 'yfiles'
 import {
   BaseClass,
   IBoundsProvider,
@@ -43,7 +44,6 @@ import {
   Point,
   Rect,
   SimpleLabel,
-  SvgVisual,
   SvgVisualGroup,
   Visual,
   VoidVisualCreator

@@ -89,6 +89,7 @@ import {
   bindChangeListener,
   bindCommand,
   removeClass,
+  reportDemoError,
   showApp,
   showLoadingIndicator
 } from '../../resources/demo-app'
@@ -1283,12 +1284,7 @@ async function applyLayout(incremental: boolean): Promise<void> {
     // check where the mouse is located after layout and adjust highlight
     ;(graphComponent.inputMode as GraphViewerInputMode).itemHoverInputMode.updateHover()
   } catch (error) {
-    const reporter = (window as any).reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setLayoutInProgress(false)
   }

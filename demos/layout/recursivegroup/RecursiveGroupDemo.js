@@ -41,7 +41,13 @@ import {
 } from 'yfiles'
 
 import { createThreeTierLayout, createThreeTierLayoutData } from './ThreeTierLayout.js'
-import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindCommand,
+  readGraph,
+  reportDemoError,
+  showApp
+} from '../../resources/demo-app.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 
@@ -85,11 +91,7 @@ async function runLayout() {
     graphComponent.fitGraphBounds()
     await graphComponent.morphLayout(layout, '0.5s', layoutData)
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   }
   setUIDisabled(false)
 }

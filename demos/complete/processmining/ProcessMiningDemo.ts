@@ -40,8 +40,13 @@ import {
   TimeSpan
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
-import { detectInternetExplorerVersion, isWebGlSupported } from '../../utils/Workarounds'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkWebGLSupport,
+  showApp
+} from '../../resources/demo-app'
 
 import { AnimationController } from './AnimationController'
 import { ProcessingStepNodeStyle } from './ProcessingStepNodeStyle'
@@ -51,6 +56,7 @@ import { createSampleGraph } from './SampleGraphCreator'
 import { installProcessItemVisual } from './ProcessItemVisual'
 import { simulateRandomWalks } from './Simulator'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 // We need to load the LayoutExecutor explicitly to prevent the webpack
 // tree shaker from removing this dependency which is needed for 'morphLayout' in this demo.
@@ -60,17 +66,15 @@ Class.ensure(LayoutExecutor)
  * Initializes the graph and wires up the UI
  */
 async function run(): Promise<void> {
-  if (!isWebGlSupported()) {
-    document.getElementById('no-webgl-support')!.removeAttribute('style')
+  if (!checkWebGLSupport()) {
     showApp()
     return
   }
 
-  const internetExplorer = detectInternetExplorerVersion() !== -1
-  if (internetExplorer) {
+  if (BrowserDetection.ieVersion > 0) {
     alert(
       `This browser does not support all modern JavaScript constructs which are required for the process mining visualization demo. Hence, some visual features will be omitted.
-Use a more recent browser like Chrome, Edge, Firefox or Safari to run this demo and explore the complete set of features.`
+Use a more recent browser like Chrome, Edge, or Firefox to run this demo and explore the complete set of features.`
     )
   }
 
@@ -90,7 +94,7 @@ Use a more recent browser like Chrome, Edge, Firefox or Safari to run this demo 
     // we define the heat as the ratio of the current heat value to the items capacity, but not more than 1
     return Math.min(1, item.tag.heat.getValue(processItemVisual.time) / item.tag.capacity)
   }
-  if (!internetExplorer) {
+  if (!BrowserDetection.ieVersion) {
     addHeatMap(graphComponent, getHeat)
   }
 

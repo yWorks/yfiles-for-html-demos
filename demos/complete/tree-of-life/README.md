@@ -16,7 +16,7 @@ For better interaction and rendering performance, WebGL2 is used for the renderi
 
 ## Things to try
 
-- Clicking on a node/species reveals the simpler phylogenetic tree with all the descendants of the selected species. Clicking again on the same node shows also its ancestors.
+- Clicking on a node/species reveals the simpler phylogenetic tree with all the descendants of the selected species. Clicking again on the same node shows also its ancestors. Navigate also to the previous 10 ancestors using the breadcrumb menu in the toolbar.
 - Hovering over a node or an edge of a sub-tree highlights its containing species and the relations among them.
 - Use the combo-box to show the phylogenetic tree of the selected species.
 - Toggle the _Show Extinct_ button to show/hide the extincted species.

@@ -26,12 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { ICanvasObject } from 'yfiles'
 import {
   BaseClass,
   ClickEventArgs,
   Cursor,
   HandleTypes,
-  ICanvasObject,
   IEnumerable,
   IHandle,
   IHandleProvider,

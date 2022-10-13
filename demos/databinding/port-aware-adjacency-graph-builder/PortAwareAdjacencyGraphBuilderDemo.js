@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
-  GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
   HierarchicLayout,

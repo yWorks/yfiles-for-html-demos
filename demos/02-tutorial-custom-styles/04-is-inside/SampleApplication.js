@@ -42,7 +42,7 @@ import {
   Size
 } from 'yfiles'
 
-import MySimpleNodeStyle from './MySimpleNodeStyle.js'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'

@@ -27,13 +27,11 @@
  **
  ***************************************************************************/
 import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase, YObject } from 'yfiles'
-import GraphMLProperty from './GraphMLProperty.js'
-import { PropertiesPanel } from './PropertiesPanel.js'
 
 /**
  * An output handler that writes primitive data types and ignores complex types.
  */
-export default class SimpleOutputHandler extends OutputHandlerBase {
+export class SimpleOutputHandler extends OutputHandlerBase {
   /**
    * @param {!GraphMLProperty} property
    * @param {!PropertiesPanel} propertiesPanel

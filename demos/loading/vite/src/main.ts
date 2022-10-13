@@ -30,7 +30,6 @@ import '../../../resources/style/demo.css'
 import { GraphComponent, GraphEditorInputMode, License } from 'yfiles'
 import licenseValue from '../../../../lib/license.json'
 
-import { enableWorkarounds } from '../../../utils/Workarounds'
 import { addLayoutButton, removeLayoutButton } from './layout-button'
 import { createSampleGraph } from './create-sample-graph'
 
@@ -43,7 +42,6 @@ if (import.meta.hot) {
     graphComponent.graph.clear()
   })
 }
-enableWorkarounds()
 
 const oldGc = (document.getElementById('graphComponent') as any)['data-this']
 let graphComponent: GraphComponent

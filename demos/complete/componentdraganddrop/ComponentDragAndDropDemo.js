@@ -61,10 +61,10 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -282,7 +282,7 @@ function addComponentVisual(component, panel) {
       componentGraph,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+      BrowserDetection.pointerEvents ? dragPreview : null
     )
 
     dragSource.addQueryContinueDragListener((src, args) => {
@@ -308,7 +308,7 @@ function addComponentVisual(component, panel) {
       startDrag()
       event.preventDefault()
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
   div.appendChild(img)
   panel.appendChild(div)

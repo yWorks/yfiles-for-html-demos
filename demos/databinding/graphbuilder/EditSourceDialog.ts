@@ -28,7 +28,7 @@
  ***************************************************************************/
 import type { EditorFromTextArea } from 'codemirror'
 
-import {
+import type {
   EdgesSourceDefinitionBuilderConnector,
   NodesSourceDefinitionBuilderConnector
 } from './ModelClasses'

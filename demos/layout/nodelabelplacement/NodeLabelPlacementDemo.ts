@@ -61,6 +61,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app'
 import {
@@ -271,12 +272,7 @@ async function placeLabels(): Promise<void> {
       easedAnimation: true
     }).start()
   } catch (error) {
-    const reportError = (window as any).reportError
-    if (typeof reportError === 'function') {
-      reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setUIDisabled(false)
   }

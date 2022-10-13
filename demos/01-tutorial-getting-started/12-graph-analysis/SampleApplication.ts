@@ -60,7 +60,7 @@ import {
   ToolTipQueryEventArgs
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import GraphBuilderData from './resources/graph'
 import { fetchLicense } from '../../resources/fetch-license'

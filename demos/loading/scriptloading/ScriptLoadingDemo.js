@@ -89,10 +89,10 @@ async function applyLayout() {
   setUIDisabled(true)
   const layout = new MinimumNodeSizeStage(new HierarchicLayout())
   try {
-    graphComponent.morphLayout(layout, '1s')
+    await graphComponent.morphLayout(layout, '1s')
   } catch (error) {
     if (typeof window.reportError === 'function') {
-      window.reportError(error)
+      reportError(error)
     } else {
       throw error
     }

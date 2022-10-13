@@ -71,14 +71,15 @@ import {
   bindCommand,
   configureTwoPointerPanning,
   removeClass,
+  reportDemoError,
   setComboboxValue,
   showApp
 } from '../../resources/demo-app'
-import { pointerEventsSupported } from '../../utils/Workarounds'
 import { DragAndDropPanel } from '../../utils/DndPanel'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 let graphComponent: GraphComponent = null!
 
@@ -118,12 +119,7 @@ async function runLayout(): Promise<void> {
       flowchartLayoutData.create(graphComponent.graph)
     )
   } catch (error) {
-    const reporter = (window as any).reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setUIDisabled(false)
   }
@@ -206,7 +202,7 @@ function initializeDnDPanel(): void {
       data,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+      BrowserDetection.pointerEvents ? dragPreview : null
     )
     dragSource.addQueryContinueDragListener((src, args) => {
       if (args.dropTarget === null) {

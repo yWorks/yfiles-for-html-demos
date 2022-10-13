@@ -57,6 +57,7 @@ import type { ColorSetName } from '../../resources/demo-styles'
 import { isColorSetName } from '../../resources/demo-styles'
 import { Sample2Arrow } from './Sample2Arrow'
 import { SVGNS } from './Namespaces'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 /**
  * A custom demo edge style whose colors match the given well-known CSS style.
@@ -516,40 +517,4 @@ export class Sample2EdgeStyleExtension extends MarkupExtension {
   }
 }
 
-const isBrowserWithBadMarkerSupport = isMicrosoftBrowser() || detectSafariWebkit()
-
-/**
- * Check if the used browser is IE or Edge.
- */
-function isMicrosoftBrowser(): boolean {
-  return (
-    window.navigator.userAgent.indexOf('MSIE ') > 0 ||
-    /Trident.*rv:11\./.test(window.navigator.userAgent) ||
-    /Edge\/(1[2678])./i.test(window.navigator.userAgent)
-  )
-}
-
-/**
- * Returns version of Safari.
- * @return Version of Safari or -1 if browser is not Safari.
- */
-function detectSafariVersion(): number {
-  const ua = window.navigator.userAgent
-  const isSafari = ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1
-  if (isSafari) {
-    const safariVersionMatch = /Version\/(\d*\.\d*)/.exec(ua)
-    if (safariVersionMatch && safariVersionMatch.length > 1) {
-      return parseInt(safariVersionMatch[1])
-    }
-  }
-  return -1
-}
-
-/**
- * Returns true for browsers that use the Safari 11 Webkit engine.
- *
- * In detail, these are Safari 11 on either macOS or iOS, Chrome on iOS 11, and Firefox on iOS 11.
- */
-function detectSafariWebkit(): boolean {
-  return detectSafariVersion() > -1 || !!/(CriOS|FxiOS)/.exec(window.navigator.userAgent)
-}
+const isBrowserWithBadMarkerSupport = BrowserDetection.ieVersion > 0 || BrowserDetection.safariVersion > 0

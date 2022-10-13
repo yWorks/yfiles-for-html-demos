@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import licenseData from '../../../../../lib/license.json'
 import {
   Arrow,
   DefaultLabelStyle,
@@ -56,6 +55,7 @@ import Tooltip from './Tooltip'
 import LayoutWorker from './LayoutWorker.js'
 import Vue from 'vue'
 import GraphSearch from '../utils/GraphSearch'
+import licenseData from '../../../../../lib/license.json'
 
 License.value = licenseData
 

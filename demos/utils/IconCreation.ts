@@ -33,32 +33,25 @@ import type { Size } from 'yfiles'
  * @param ctx The canvas context in which to render the icon.
  * @param url The image url.
  * @param imageSize The render size of the source image.
- * @param iconSize The size of the created ImageData.
+ * @param iconSize The size of the created ImageData. If not specified, the size will be the one of
+ *   the context's canvas.
  */
 export function createUrlIcon(
   ctx: CanvasRenderingContext2D,
   url: string,
   imageSize: Size,
-  iconSize: Size
+  iconSize: Size | null = null
 ): Promise<ImageData> {
   return new Promise((resolve, reject) => {
+    const iconWidth = iconSize?.width || ctx.canvas.width
+    const iconHeight = iconSize?.height || ctx.canvas.height
     // create an Image from the url
     const image = new Image(imageSize.width, imageSize.height)
     image.onload = () => {
       // render the image into the canvas
-      ctx.clearRect(0, 0, iconSize.width, iconSize.height)
-      ctx.drawImage(
-        image,
-        0,
-        0,
-        imageSize.width,
-        imageSize.height,
-        0,
-        0,
-        iconSize.width,
-        iconSize.height
-      )
-      const imageData = ctx.getImageData(0, 0, iconSize.width, iconSize.height)
+      ctx.clearRect(0, 0, iconWidth, iconHeight)
+      ctx.drawImage(image, 0, 0, imageSize.width, imageSize.height, 0, 0, iconWidth, iconHeight)
+      const imageData = ctx.getImageData(0, 0, iconWidth, iconHeight)
       resolve(imageData)
     }
     image.onerror = () => {
@@ -72,12 +65,13 @@ export function createUrlIcon(
  * Creates an {@link ImageData} icon from a given Font Awesome class.
  * @param ctx The canvas context in which to render the icon.
  * @param fontAwesomeCssClass The name of the Font Awesome icon.
- * @param iconSize The size of the created ImageData.
+ * @param iconSize The size of the created ImageData. If not specified, the size will be the one of
+ *   the context's canvas.
  */
 export function createFontAwesomeIcon(
   ctx: CanvasRenderingContext2D,
   fontAwesomeCssClass: string,
-  iconSize: Size
+  iconSize: Size | null = null
 ): ImageData {
   const faHelperElement = getHelperElement()
   // assign the Font Awesome class
@@ -92,15 +86,18 @@ export function createFontAwesomeIcon(
   // in some browsers, the character is enclosed by quotes
   const text = propertyValue[1] ?? propertyValue[0]
 
+  const iconWidth = iconSize?.width || ctx.canvas.width
+  const iconHeight = iconSize?.height || ctx.canvas.height
+
   // render the text into the canvas
-  ctx.clearRect(0, 0, iconSize.width, iconSize.height)
+  ctx.clearRect(0, 0, iconWidth, iconHeight)
   ctx.font = `${fontWeight} 100px ${fontFamily}`
   ctx.fillStyle = 'white'
   ctx.textBaseline = 'top'
   ctx.textAlign = 'center'
   ctx.fillText(text, 64, 14)
 
-  return ctx.getImageData(0, 0, iconSize.width, iconSize.height)
+  return ctx.getImageData(0, 0, iconWidth, iconHeight)
 }
 
 /**
@@ -116,4 +113,19 @@ function getHelperElement(): HTMLElement {
   newElement.setAttribute('style', 'width: 0; height: 0; visibility: hidden')
   document.body.appendChild(newElement)
   return newElement
+}
+
+/**
+ * Creates a rendering context intended for creating the {@link ImageData} with the createXyzIcon
+ * functions of this file.
+ * The context has its willReadFrequently attribute set to true.
+ */
+export function createCanvasContext(width: number, height: number): CanvasRenderingContext2D {
+  // canvas used to pre-render the icons
+  const canvas = document.createElement('canvas')
+  canvas.setAttribute('width', `${width}`)
+  canvas.setAttribute('height', `${height}`)
+  return canvas.getContext('2d', {
+    willReadFrequently: true
+  }) as CanvasRenderingContext2D
 }

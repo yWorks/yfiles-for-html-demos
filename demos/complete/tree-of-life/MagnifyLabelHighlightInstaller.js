@@ -43,7 +43,6 @@ import {
   Point,
   Rect,
   SimpleLabel,
-  SvgVisual,
   SvgVisualGroup,
   Visual,
   VoidVisualCreator

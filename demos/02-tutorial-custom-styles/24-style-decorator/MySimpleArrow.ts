@@ -45,12 +45,12 @@ import {
   SvgVisual,
   Visual
 } from 'yfiles'
-import MySimpleEdgeStyle from './MySimpleEdgeStyle'
+import type { MySimpleEdgeStyle } from './MySimpleEdgeStyle'
 
 /**
  * A simple IArrow implementation that renders the arrow as a custom filled shape.
  */
-export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+export class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   anchor: Point
   direction: Point
   private $thickness: number

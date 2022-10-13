@@ -45,7 +45,7 @@ import type { Editor, Position, TextMarker } from 'codemirror'
  * This class handles synchronization of the GraphML editor with the view graph.
  * @yjs:keep=setValue,getValue
  */
-export default class EditorSync {
+export class EditorSync {
   private itemToIdMap: HashMap<IModelItem, string> = new HashMap()
   private itemToMarkerMap: HashMap<IModelItem, TextMarker<any>> = new HashMap()
   private markerToItemMap: HashMap<TextMarker<any>, IModelItem> = new HashMap()

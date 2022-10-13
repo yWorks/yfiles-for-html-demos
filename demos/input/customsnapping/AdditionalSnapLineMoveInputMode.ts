@@ -36,13 +36,13 @@ import {
   Rect,
   Size
 } from 'yfiles'
-import AdditionalSnapLinePositionHandler from './AdditionalSnapLinePositionHandler'
-import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator'
+import { AdditionalSnapLinePositionHandler } from './AdditionalSnapLinePositionHandler'
+import type { AdditionalSnapLineVisualCreator } from './AdditionalSnapLineVisualCreator'
 
 /**
  * This input mode allows moving free snaplines using a drag gesture.
  */
-export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
+export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   private readonly snapLineCreators: List<AdditionalSnapLineVisualCreator>
   private handler: AdditionalSnapLinePositionHandler | null = null
 

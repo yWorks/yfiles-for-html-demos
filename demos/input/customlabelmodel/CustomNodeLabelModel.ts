@@ -78,11 +78,11 @@ export default class CustomNodeLabelModel
     if (type === ILabelModelParameterProvider.$class && this.candidateCount > 0) {
       // If we request a ILabelModelParameterProvider AND we use discrete label candidates, we return the label model
       // itself, otherwise, null is returned, which means that continuous label positions are supported.
-      return this as T
+      return this as unknown as T
     } else if (type === ILabelModelParameterFinder.$class) {
       // If we request a ILabelModelParameterProvider, we return the label model itself, so we can always retrieve a
       // matching parameter for a given actual position.
-      return this as T
+      return this as unknown as T
     }
     return null
   }

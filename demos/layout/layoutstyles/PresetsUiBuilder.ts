@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { addClass, hasClass, removeClass } from '../../resources/demo-app'
-import { OptionEditor } from '../../resources/demo-option-editor'
+import type { OptionEditor } from '../../resources/demo-option-editor'
 import { Tooltip } from './Tooltip'
 import type { Preset } from './resources/LayoutSamples'
 

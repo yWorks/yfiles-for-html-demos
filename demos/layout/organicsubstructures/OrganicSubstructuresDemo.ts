@@ -59,6 +59,7 @@ import {
   addOptions,
   bindAction,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app'
 import type { ColorSetName } from '../../resources/demo-styles'
@@ -144,12 +145,7 @@ async function runLayout(animate: boolean): Promise<void> {
     // the actual layout calculation
     await runLayoutCore(animate)
   } catch (error) {
-    const reporter = (window as any).reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layoutRunning = false
     disableUI(false)

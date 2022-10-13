@@ -317,7 +317,7 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
     // whether the port is at the bottom or at the top
     const bottom = this.getPortLocation(portData).y > 0.5
     return new FreePortLabelModel().createParameter({
-      locationOffset: new Point(0, bottom ? -5 : 5),
+      locationOffset: new Point(0, bottom ? -8 : 8),
       labelRatio: new Point(bottom ? 1 : 0, 0.5),
       angle: Math.PI / 2
     })

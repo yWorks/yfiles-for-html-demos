@@ -43,7 +43,6 @@ import {
   TreeLayoutData,
   TreeReductionStage
 } from 'yfiles'
-import NodePlacerPanel from './NodePlacerPanel.js'
 
 /**
  * @typedef {Object} Configuration

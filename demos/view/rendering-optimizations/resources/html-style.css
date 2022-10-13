@@ -336,6 +336,7 @@ legend {
   background-position: 50% 50%;
   border: 1px solid #888;
   background-color: #ddd;
+  color: #343f4a;
 }
 .demo-sidebar button:hover {
   background-color: #bbb !important;

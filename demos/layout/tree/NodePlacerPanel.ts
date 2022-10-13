@@ -92,7 +92,7 @@ function createLayerColor(fillColor: string, strokeColor: string): LayerColor {
 /**
  * A panel that provides access to customize the node placers for each node.
  */
-export default class NodePlacerPanel {
+export class NodePlacerPanel {
   readonly graph: IGraph
 
   // initialize the preview component where the node placer settings are demonstrated on a small graph

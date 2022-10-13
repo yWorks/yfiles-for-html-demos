@@ -47,8 +47,7 @@ import {
   OrganicLayoutData,
   OrganicLayoutScope,
   PlaceNodesAtBarycenterStage,
-  PlaceNodesAtBarycenterStageData,
-  TemplateNodeStyle
+  PlaceNodesAtBarycenterStageData
 } from 'yfiles'
 
 /**
@@ -118,9 +117,6 @@ export default class CollapseAndExpandNodes {
    * otherwise they will be shown.
    */
   private collapseExpandImpl(node: INode, collapse: boolean): void {
-    // Stores the collapsed state of the node in the style tag in order
-    // to be able to bind to it using a template binding.
-    ;(node.style as TemplateNodeStyle).styleTag = { collapsed: collapse }
     this.setCollapsed(node, collapse)
 
     const filteredGraph = this.graphComponent.graph as FilteredGraphWrapper
@@ -210,6 +206,11 @@ export default class CollapseAndExpandNodes {
       const incrementalMap = new HashMap<INode, boolean>()
       incrementalNodes.forEach(node => {
         incrementalMap.set(node, true)
+        const co = this.graphComponent.graphModelManager.getMainCanvasObject(node)
+        const toggledNodeCo = this.graphComponent.graphModelManager.getMainCanvasObject(toggledNode)
+        if (co && toggledNodeCo) {
+          co.below(toggledNodeCo)
+        }
       })
 
       if (expand) {

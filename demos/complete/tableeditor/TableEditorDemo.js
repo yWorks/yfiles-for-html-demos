@@ -62,12 +62,13 @@ import {
 } from './DragAndDropSupport.js'
 import TableStyles from './TableStyles.js'
 import MyReparentHandler from './MyReparentHandler.js'
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import {
   bindAction,
   bindCommand,
   configureTwoPointerPanning,
   readGraph,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
@@ -363,11 +364,7 @@ async function applyLayout() {
     try {
       await layoutExecutor.start()
     } catch (error) {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
+      reportDemoError(error)
     } finally {
       isLayoutRunning = false
       setUIDisabled(false)

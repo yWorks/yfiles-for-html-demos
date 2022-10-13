@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { SourceDialog } from './EditSourceDialog'
-import { SourceDefinition, SourceDefinitionBuilderConnector } from './ModelClasses'
+import type { SourceDialog } from './EditSourceDialog'
+import type { SourceDefinition, SourceDefinitionBuilderConnector } from './ModelClasses'
 import { addClass } from '../../resources/demo-app'
 
 /**

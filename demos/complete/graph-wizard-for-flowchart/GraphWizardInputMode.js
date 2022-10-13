@@ -98,7 +98,7 @@ const PICKER_BUTTON_SPACING = 2
  * When a legend is used, the {@link WizardAction.description descriptions} for
  * all active actions are added to it.
  */
-export default class GraphWizardInputMode extends MultiplexingInputMode {
+export class GraphWizardInputMode extends MultiplexingInputMode {
   /** @type {*} */
   static get DEFAULT_EDGE_BUTTON_LAYOUT() {
     if (typeof GraphWizardInputMode.$DEFAULT_EDGE_BUTTON_LAYOUT === 'undefined') {

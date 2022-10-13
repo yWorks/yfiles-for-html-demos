@@ -88,6 +88,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app.js'
 import {
@@ -526,11 +527,7 @@ async function applyLayout() {
     // clean up mapper registry
     graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     selectSample.disabled = false
     selectLayout.disabled = false

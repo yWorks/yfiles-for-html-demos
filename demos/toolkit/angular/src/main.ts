@@ -33,12 +33,8 @@ import { AppModule } from './app/app.module'
 import { environment } from './environments/environment'
 import { License } from 'yfiles'
 import licenseData from '../../../../lib/license.json'
-import { enableWorkarounds } from './utils/Workarounds'
 
 License.value = licenseData
-
-// enable browser-bug workarounds
-enableWorkarounds()
 
 if (environment.production) {
   enableProdMode()

@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, IListEnumerable, INode, List } from 'yfiles'
-import { ProcessItemVisual } from './ProcessItemVisual'
-import { HeatData } from './HeatData'
+import type { IEdge, IGraph, IListEnumerable, INode, List } from 'yfiles'
+import type { ProcessItemVisual } from './ProcessItemVisual'
+import type { HeatData } from './HeatData'
 
 function getRandomOutEdge(graph: IGraph, startNode: INode): IEdge | null {
   const probabilitySum = graph.outEdgesAt(startNode).sum(edge => edge.tag.probability)

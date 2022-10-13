@@ -43,12 +43,12 @@ import {
   Size
 } from 'yfiles'
 
-import MyCollapsibleNodeStyleDecoratorRenderer from './MyCollapsibleNodeStyleDecoratorRenderer'
-import MyGroupNodeStyle from './MyGroupNodeStyle'
-import MySimpleEdgeStyle from './MySimpleEdgeStyle'
-import MySimpleLabelStyle from './MySimpleLabelStyle'
-import MySimpleNodeStyle from './MySimpleNodeStyle'
-import MySimplePortStyle from './MySimplePortStyle'
+import { MyCollapsibleNodeStyleDecoratorRenderer } from './MyCollapsibleNodeStyleDecoratorRenderer'
+import { MyGroupNodeStyle } from './MyGroupNodeStyle'
+import { MySimpleEdgeStyle } from './MySimpleEdgeStyle'
+import { MySimpleLabelStyle } from './MySimpleLabelStyle'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle'
+import { MySimplePortStyle } from './MySimplePortStyle'
 import { bindCommand, showApp } from '../../resources/demo-app'
 
 import { applyDemoTheme } from '../../resources/demo-styles'

@@ -36,6 +36,7 @@ import {
   ICommand,
   IGraph,
   INode,
+  Insets,
   IReshapeHandler,
   License,
   NodeReshapeHandleProvider,
@@ -76,8 +77,8 @@ async function run(): Promise<void> {
 function initializeGraph(graph: IGraph): void {
   // create a ArrowNodeStyle instance with default angle and shaft ratio pointing to the right
   const arrowStyle = new ArrowNodeStyle({
-    fill: colorSets['demo-orange'].fill,
-    stroke: colorSets['demo-orange'].stroke
+    fill: colorSets['demo-palette-13'].fill,
+    stroke: colorSets['demo-palette-13'].stroke
   })
 
   // initialize the graph defaults
@@ -87,8 +88,9 @@ function initializeGraph(graph: IGraph): void {
     labelRatio: new Point(0.5, 1),
     labelOffset: new Point(0, 0)
   })
-  const defaultLabelStyle = createDemoNodeLabelStyle('demo-green')
+  const defaultLabelStyle = createDemoNodeLabelStyle('demo-palette-13')
   defaultLabelStyle.textSize = 16
+  defaultLabelStyle.insets = new Insets(10, 8, 10, 8)
 
   graph.nodeDefaults.style = arrowStyle
   graph.nodeDefaults.size = new Size(200, 100)

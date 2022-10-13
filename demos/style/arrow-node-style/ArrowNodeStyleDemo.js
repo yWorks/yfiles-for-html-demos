@@ -230,12 +230,12 @@ function initializeUI(graphComponent) {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   basicShape.addEventListener('change', () => {
-    const shape = Enum.parse(ArrowStyleShape.$class, basicShape.value, true)
+    const shape = ArrowStyleShape.from(basicShape.value)
     applyStyleSetting(graphComponent, style => (style.shape = shape))
   })
 
   shapeDirection.addEventListener('change', () => {
-    const direction = Enum.parse(ArrowNodeDirection.$class, shapeDirection.value, true)
+    const direction = ArrowNodeDirection.from(shapeDirection.value)
     applyStyleSetting(graphComponent, style => (style.direction = direction))
   })
 

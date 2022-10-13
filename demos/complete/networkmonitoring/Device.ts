@@ -42,7 +42,7 @@ export enum DeviceKind {
 /**
  * Class representing a device in the network.
  */
-export default class Device {
+export class Device {
   private _load = 0
 
   // Cache size of the workload history.

@@ -65,8 +65,8 @@ async function run(): Promise<void> {
   graphComponent.fitGraphBounds()
 
   // wire up the UI
-  bindChangeListener("input[data-command='ToggleSingleSelection']", (checked: boolean) =>
-    toggleSingleSelection(graphComponent, checked)
+  bindChangeListener("input[data-command='ToggleSingleSelection']", checked =>
+    toggleSingleSelection(graphComponent, checked as boolean)
   )
 
   toggleSingleSelection(graphComponent)

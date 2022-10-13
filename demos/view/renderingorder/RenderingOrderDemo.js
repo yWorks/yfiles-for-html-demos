@@ -365,7 +365,9 @@ function registerCommands() {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
   bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
-  bindChangeListener("select[data-command='SelectRenderingOrder']", selectRenderingOrder)
+  bindChangeListener("select[data-command='SelectRenderingOrder']", value =>
+    selectRenderingOrder(value)
+  )
   addNavigationButtons(document.querySelector("select[data-command='SelectRenderingOrder']"))
 }
 

@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import licenseData from '../../../../../lib/license.json'
 import { HierarchicLayout, LayoutExecutorAsyncWorker, License } from 'yfiles'
+
+import licenseData from '../../../../../lib/license.json'
+License.value = licenseData
 
 function applyLayout(graph) {
   return new HierarchicLayout().applyLayout(graph)
 }
-
-License.value = licenseData
 
 self.addEventListener(
   'message',

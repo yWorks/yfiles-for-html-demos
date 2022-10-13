@@ -50,12 +50,12 @@ import {
   Size
 } from 'yfiles'
 
-import PortConstraintBendHandle from './PortConstraintBendHandle'
-import LayerPositionHandler from './LayerPositionHandler'
+import { PortConstraintBendHandle } from './PortConstraintBendHandle'
+import { LayerPositionHandler } from './LayerPositionHandler'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import ContextMenu from '../../utils/ContextMenu'
-import { bindCommand, showApp } from '../../resources/demo-app'
-import LayerVisual from './LayerVisual'
+import { ContextMenu } from '../../utils/ContextMenu'
+import { bindCommand, reportDemoError, showApp } from '../../resources/demo-app'
+import { LayerVisual } from './LayerVisual'
 import { fetchLicense } from '../../resources/fetch-license'
 
 /**
@@ -261,11 +261,7 @@ async function updateLayout() {
     await graphComponent.morphLayout(new MinimumNodeSizeStage(layout), '1s', layoutData)
     layerVisual.updateLayers(graph, layerMapper)
   } catch (error) {
-    if (typeof (window as any).reportError === 'function') {
-      ;(window as any).reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layouting = false
     ;(graphComponent.inputMode as GraphEditorInputMode).enabled = true

@@ -57,6 +57,7 @@ import {
   YNode,
   YPoint
 } from 'yfiles'
+import { reportDemoError } from '../../resources/demo-app'
 
 export default class OrgChartGraph {
   private readonly hiddenNodesSet: Set<INode> = new Set()
@@ -357,11 +358,7 @@ export default class OrgChartGraph {
       // the commands CanExecute state might have changed - trigger a requery
       ICommand.invalidateRequerySuggested()
     } catch (error) {
-      if (typeof (window as any).reportError === 'function') {
-        ;(window as any).reportError(error)
-      } else {
-        throw error
-      }
+      reportDemoError(error)
     }
     this.doingLayout = false
   }

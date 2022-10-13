@@ -42,7 +42,7 @@ import {
  * Customizes the grid snapping behavior of NodeSnapResultProvider by providing SnapResults for each point of the
  * node's shape path instead of the node's center.
  */
-export default class ShapeBasedGridNodeSnapResultProvider extends NodeSnapResultProvider {
+export class ShapeBasedGridNodeSnapResultProvider extends NodeSnapResultProvider {
   /**
    * Collects snap results that snap the node to a grid and adds them to the argument.
    * @param context The context in which the snapping is performed

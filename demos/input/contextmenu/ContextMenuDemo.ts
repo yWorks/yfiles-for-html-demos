@@ -37,7 +37,7 @@ import {
   Point,
   PopulateItemContextMenuEventArgs
 } from 'yfiles'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import { showApp } from '../../resources/demo-app'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'

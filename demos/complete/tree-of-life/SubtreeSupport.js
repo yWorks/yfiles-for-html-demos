@@ -27,11 +27,9 @@
  **
  ***************************************************************************/
 import {
-  FilteredGraphWrapper,
   GraphComponent,
   IEdge,
   IGraph,
-  ILabel,
   IModelItem,
   INode,
   Subtree,

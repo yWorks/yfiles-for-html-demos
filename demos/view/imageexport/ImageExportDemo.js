@@ -61,10 +61,10 @@ import FileSaveSupport from '../../utils/FileSaveSupport.js'
 import ServerSideImageExport from './ServerSideImageExport.js'
 import ClientSideImageExport from './ClientSideImageExport.js'
 import { addClass, bindAction, removeClass, showApp } from '../../resources/demo-app.js'
-import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /**
  * Server URLs for server-side export.
@@ -89,11 +89,6 @@ const serverSideImageExport = new ServerSideImageExport()
 let exportRect
 
 /**
- * The detected IE version for x-browser compatibility.
- */
-const ieVersion = detectInternetExplorerVersion()
-
-/**
  * @returns {!Promise}
  */
 async function run() {
@@ -116,12 +111,13 @@ async function run() {
   graphComponent.fitGraphBounds()
 
   // disable the client-side save button in IE9
-  if (ieVersion !== -1 && ieVersion <= 9) {
+  const ieVersion = BrowserDetection.ieVersion
+  if (ieVersion > 0 && ieVersion <= 9) {
     disableClientSaveButton()
   }
 
   // enable server-side export in any browser except for IE9 due to limited XHR CORS support
-  if (ieVersion === -1 || (ieVersion !== -1 && ieVersion > 9)) {
+  if (!ieVersion || ieVersion > 9) {
     enableServerSideExportButtons()
   }
 
@@ -410,7 +406,7 @@ function registerCommands(graphComponent) {
     if (checkInputValues(scale, margin)) {
       const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
 
-      if (ieVersion === 9) {
+      if (BrowserDetection.ieVersion === 9) {
         // IE9 requires an older version of canvg, which is not included in this demo anymore.
         // See https://github.com/yWorks/yfiles-for-html-demos/tree/v2.3.0.3/demos/view/imageexport
         // for a compatible version

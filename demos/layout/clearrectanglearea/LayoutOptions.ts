@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ClearAreaStrategy, ComponentAssignmentStrategy } from 'yfiles'
+import type { ClearAreaStrategy, ComponentAssignmentStrategy } from 'yfiles'
 
 /**
  * Options to control the layout behavior.

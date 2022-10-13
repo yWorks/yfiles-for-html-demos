@@ -42,7 +42,7 @@ import {
  * This class is an example for a custom style based on the {@link LabelStyleBase}.
  * The font for the label text can be set. The label text is drawn with black letters inside a blue rounded rectangle.
  */
-export default class MySimpleLabelStyle extends LabelStyleBase {
+export class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Initializes a new instance of the {@link MySimpleLabelStyle} class using the "Arial" font.
    */

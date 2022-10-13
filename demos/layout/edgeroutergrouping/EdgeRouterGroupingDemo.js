@@ -63,7 +63,7 @@ import {
   VoidPortStyle
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import SampleData from './resources/SampleData.js'
 import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import {

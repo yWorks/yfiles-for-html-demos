@@ -66,7 +66,7 @@ import {
 
 import GraphSearch from '../../utils/GraphSearch'
 import FastCanvasStyles from './FastCanvasStyles'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import {
   addClass,
   addNavigationButtons,
@@ -182,9 +182,7 @@ function initializeHighlightStyles(): void {
   // we want to create a non-default nice highlight styling
   // for the hover highlight, create semi transparent orange stroke first
   const orangeRed = Color.ORANGE_RED
-  const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3)
-  // freeze it for slightly improved performance
-  orangeStroke.freeze()
+  const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
 
   // now decorate the nodes and edges with custom hover highlight styles
   const decorator = graphComponent.graph.decorator

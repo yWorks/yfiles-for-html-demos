@@ -49,14 +49,14 @@ import {
   SvgVisual
 } from 'yfiles'
 
-import MySimpleArrow from './MySimpleArrow'
-import MySimpleNodeStyle from './MySimpleNodeStyle'
-import MyNodeStyleDecorator from './MyNodeStyleDecorator'
+import { MySimpleArrow } from './MySimpleArrow'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle'
+import { MyNodeStyleDecorator } from './MyNodeStyleDecorator'
 
 /**
  * This class is an example for a custom edge style based on {@link EdgeStyleBase}.
  */
-export default class MySimpleEdgeStyle extends EdgeStyleBase {
+export class MySimpleEdgeStyle extends EdgeStyleBase {
   private $arrows: MySimpleArrow
   private $pathThickness: number
 

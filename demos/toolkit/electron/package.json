@@ -12,7 +12,7 @@
   "dependencies": {
     "ejs-loader": "^0.4.1",
     "source-map-support": "^0.5.21",
-    "yfiles": "../../../lib-dev/yfiles-25.0.1+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.2+dev.tgz"
   },
   "devDependencies": {
     "@yworks/optimizer": "1.7.3",

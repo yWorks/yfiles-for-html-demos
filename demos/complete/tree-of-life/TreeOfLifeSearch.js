@@ -56,7 +56,7 @@ export function initializeGraphSearch(graphComponent) {
     margins: 5,
     zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
   })
-  GraphSearch.registerEventListener(searchBox, graphSearch)
+  GraphSearch.registerEventListener(searchBox, graphSearch, getNodeLabelsForAutoComplete())
 }
 
 /**
@@ -65,6 +65,14 @@ export function initializeGraphSearch(graphComponent) {
 export function resetGraphSearch() {
   graphSearch.updateSearch('')
   searchBox.value = ''
+  graphSearch.updateAutoCompleteSuggestions(searchBox, getNodeLabelsForAutoComplete())
+}
+
+function getNodeLabelsForAutoComplete() {
+  return graphSearch.graphComponent.graph.nodeLabels
+    .map(l => l.text)
+    .orderBy(s => s)
+    .toArray()
 }
 
 class TreeOfLifeGraphSearch extends GraphSearch {

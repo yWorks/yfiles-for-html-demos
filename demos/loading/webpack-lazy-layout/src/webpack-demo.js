@@ -28,7 +28,6 @@
  ***************************************************************************/
 import '../../../resources/style/demo.css'
 
-import licenseData from '../../../../lib/license.json'
 import {
   DefaultLabelStyle,
   ExteriorLabelModel,
@@ -43,6 +42,7 @@ import {
   Size
 } from 'yfiles'
 
+import licenseData from '../../../../lib/license.json'
 License.value = licenseData
 
 // wire up toolbar buttons

@@ -48,11 +48,11 @@ import {
   SmartEdgeLabelModel
 } from 'yfiles'
 
-import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.js'
-import OrthogonalLabelSnapLineProviderWrapper from './OrthogonalLabelSnapLineProviderWrapper.js'
-import ShapeBasedGridNodeSnapResultProvider from './ShapeBasedGridNodeSnapResultProvider.js'
+import { AdditionalSnapLineVisualCreator } from './AdditionalSnapLineVisualCreator.js'
+import { OrthogonalLabelSnapLineProviderWrapper } from './OrthogonalLabelSnapLineProviderWrapper.js'
+import { ShapeBasedGridNodeSnapResultProvider } from './ShapeBasedGridNodeSnapResultProvider.js'
 import { showApp } from '../../resources/demo-app.js'
-import AdditionalSnapLineMoveInputMode from './AdditionalSnapLineMoveInputMode.js'
+import { AdditionalSnapLineMoveInputMode } from './AdditionalSnapLineMoveInputMode.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 

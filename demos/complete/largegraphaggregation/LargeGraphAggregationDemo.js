@@ -350,9 +350,7 @@ function initializeHighlightStyles() {
   const orangePen = new Stroke(
     new SolidColorFill(Color.fromArgb(220, orangeRed.r, orangeRed.g, orangeRed.b)),
     3
-  )
-  // freeze it for slightly improved performance
-  orangePen.freeze()
+  ).freeze()
 
   // now decorate the nodes and edges with custom hover highlight styles
   const decorator = graphComponent.graph.decorator

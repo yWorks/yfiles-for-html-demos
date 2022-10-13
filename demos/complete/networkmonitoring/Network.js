@@ -26,13 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import Device from './Device.js'
-import Connection from './Connection.js'
-
 /**
  * Class modeling the network as a separate graph.
  */
-export default class Network {
+export class Network {
   /**
    * Initializes a new instance of the {@link Network} class with the given devices and connections.
    * @param {!Array.<Device>} devices The devices in the network.

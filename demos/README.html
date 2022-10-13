@@ -109,7 +109,7 @@
         <div class="content-wide">
           <div id="general-intro">
             <p class="first-paragraph">
-              The <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML 2.5.0.1</a> demo applications are available in
+              The <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML 2.5.0.2</a> demo applications are available in
               both JavaScript and TypeScript, with only a few exceptions.
             </p>
             <div class="js-only">
@@ -273,15 +273,17 @@
     <div id="footer-detailed"></div>
     <template id="grid-item-template">
       <div class="thumbnail">
-        <a href="{{demoPath}}" style="background-image: url({{thumbnailPath}})">{{video}}</a>
-        <div class="actions">
-          <a href="{{demoPath}}" class="action-run"></a>
-        </div>
+        <a href="{{demoPath}}">
+          <img src="{{thumbnailPath}}" loading="lazy" />
+        </a>
       </div>
       <div class="description">
         <h2 class="title"><a href="{{demoPath}}" tabindex="{{index}}">{{name}}</a></h2>
         <p class="details">{{summary}}</p>
         <div class="tags"></div>
+      </div>
+      <div class="actions">
+        <a href="{{demoPath}}" class="action-run"></a>
       </div>
     </template>
     <template id="accordion-template">

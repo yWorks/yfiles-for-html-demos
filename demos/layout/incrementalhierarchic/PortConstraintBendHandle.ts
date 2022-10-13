@@ -51,7 +51,7 @@ import {
  * Helper class that provides a handle for the first and last bend of an edge
  * that interactively determines the port constraint.
  */
-export default class PortConstraintBendHandle
+export class PortConstraintBendHandle
   extends BaseClass<ConstrainedHandle, IVisualCreator>(ConstrainedHandle, IVisualCreator)
   implements ConstrainedHandle, IVisualCreator
 {

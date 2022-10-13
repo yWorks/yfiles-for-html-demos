@@ -57,7 +57,7 @@ import {
   bindCommand,
   showApp
 } from '../../resources/demo-app'
-import NodePlacerPanel, { LayerColors } from './NodePlacerPanel'
+import { LayerColors, NodePlacerPanel } from './NodePlacerPanel'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'

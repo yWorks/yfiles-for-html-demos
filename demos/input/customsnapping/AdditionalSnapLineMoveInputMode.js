@@ -36,13 +36,12 @@ import {
   Rect,
   Size
 } from 'yfiles'
-import AdditionalSnapLinePositionHandler from './AdditionalSnapLinePositionHandler.js'
-import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.js'
+import { AdditionalSnapLinePositionHandler } from './AdditionalSnapLinePositionHandler.js'
 
 /**
  * This input mode allows moving free snaplines using a drag gesture.
  */
-export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
+export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   /**
    * Creates a new instance of {@link AdditionalSnapLineMoveInputMode}
    * @param {!List.<AdditionalSnapLineVisualCreator>} snapLineCreators

@@ -75,9 +75,9 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /**
  * This demo supports specific PDF output sizes.
@@ -118,11 +118,6 @@ const serverSidePdfExport = new ServerSidePdfExport()
 let exportRect
 
 /**
- * The detected IE version for x-browser compatibility.
- */
-const ieVersion = detectInternetExplorerVersion()
-
-/**
  * @returns {!Promise}
  */
 async function run() {
@@ -152,12 +147,13 @@ async function run() {
   graphComponent.fitGraphBounds()
 
   // disable client-side export button in IE9 and hide the save buttons
-  if (ieVersion !== -1 && ieVersion <= 9) {
+  const ieVersion = BrowserDetection.ieVersion
+  if (ieVersion > 0 && ieVersion <= 9) {
     disableClientSaveButton()
   }
 
   // disable server-side export in IE9 due to limited XHR CORS support
-  if (ieVersion === -1 || (ieVersion !== -1 && ieVersion > 9)) {
+  if (!ieVersion || ieVersion > 9) {
     enableServerSideExportButtons()
   }
 
@@ -551,7 +547,7 @@ function registerCommands(graphComponent) {
       clientSidePdfExport.margins = new Insets(margin)
       clientSidePdfExport.paperSize = getPaperSize()
       const { raw, uri } = await clientSidePdfExport.exportPdf(graphComponent.graph, rectangle)
-      if (ieVersion !== -1) {
+      if (BrowserDetection.ieVersion > 0) {
         // disable HTML preview in IE and directly download the file
         FileSaveSupport.save(raw, 'graph.pdf').catch(() => {
           alert(

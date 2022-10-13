@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { addClass, hasClass, removeClass } from '../../resources/demo-app.js'
-import { OptionEditor } from '../../resources/demo-option-editor.js'
 import { Tooltip } from './Tooltip.js'
 
 const CSS_CLASS_BUTTON_GRID = 'option-presets-button-grid'

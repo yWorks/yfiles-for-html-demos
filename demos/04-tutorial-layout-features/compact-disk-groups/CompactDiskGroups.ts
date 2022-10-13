@@ -26,12 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { ILayoutAlgorithm, LayoutData } from 'yfiles'
 import {
   CompactDiskLayout,
   CompactDiskLayoutData,
   IGraph,
-  ILayoutAlgorithm,
-  LayoutData,
   OrganicLayout,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData

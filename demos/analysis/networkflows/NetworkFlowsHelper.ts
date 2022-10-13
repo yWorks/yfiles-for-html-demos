@@ -45,7 +45,7 @@ import {
   Rect,
   UndoUnitBase
 } from 'yfiles'
-import { MinCutLine } from './DemoStyles'
+import type { MinCutLine } from './DemoStyles'
 
 /**
  * This class provides undo/redo for an operation changing tag data.

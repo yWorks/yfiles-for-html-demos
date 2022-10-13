@@ -53,8 +53,13 @@ import {
   WebGL2ShapeNodeStyle
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp, showLoadingIndicator } from '../../resources/demo-app.js'
-import { isWebGl2Supported } from '../../utils/Workarounds.js'
+import {
+  bindAction,
+  bindCommand,
+  checkWebGL2Support,
+  showApp,
+  showLoadingIndicator
+} from '../../resources/demo-app.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 
 /**
@@ -76,9 +81,7 @@ const maxGraphSize = 250_000
  * @returns {!Promise}
  */
 async function run() {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support').removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }

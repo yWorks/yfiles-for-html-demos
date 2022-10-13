@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphComponent, ICanvasObjectInstaller, INode } from 'yfiles'
 import {
   Color,
   HighlightIndicatorManager,
@@ -38,6 +37,7 @@ import {
   Stroke,
   StyleDecorationZoomPolicy
 } from 'yfiles'
+import type { GraphComponent, ICanvasObjectInstaller, INode } from 'yfiles'
 
 export default class GraphSearch {
   graphComponent: GraphComponent
@@ -52,16 +52,53 @@ export default class GraphSearch {
    *
    * @param searchBox The search box element.
    * @param graphSearch The GraphSearch instance.
+   * @param autoCompleteSuggestions A list of possible auto-complete suggestion strings. If omitted, no auto-complete will be available
    */
-  static registerEventListener(searchBox: HTMLElement, graphSearch: GraphSearch): void {
+  static registerEventListener(
+    searchBox: HTMLElement,
+    graphSearch: GraphSearch,
+    autoCompleteSuggestions?: string[]
+  ): void {
+    if (autoCompleteSuggestions && searchBox instanceof HTMLInputElement) {
+      const datalist = document.createElement('datalist')
+      datalist.id = searchBox.id + '-autocomplete'
+      searchBox.setAttribute('list', datalist.id)
+      if (searchBox.parentElement) {
+        searchBox.parentElement.insertBefore(datalist, searchBox)
+      }
+      graphSearch.updateAutoCompleteSuggestions(searchBox, autoCompleteSuggestions)
+    }
+
     searchBox.addEventListener('input', e => {
-      graphSearch.updateSearch((e.target as HTMLInputElement).value)
+      const input = e.target as HTMLInputElement
+      const searchText = input.value
+      graphSearch.updateSearch(searchText)
+
+      // Zoom to search result if an element from the auto-completion list has been selected
+      // How to detect this varies between browsers, sadly
+      if (
+        !(e instanceof InputEvent) /* Chrome */ ||
+        e.inputType === 'insertReplacementText' /* Firefox */
+      ) {
+        // Determine whether we actually selected an element from the list
+        if (hasSelectedElementFromDatalist(input, searchText, graphSearch)) {
+          graphSearch.zoomToSearchResult()
+        }
+      }
     })
 
     // adds the listener that will focus to the result of the search
     searchBox.addEventListener('keypress', e => {
       if (e.key === 'Enter') {
+        e.preventDefault()
         graphSearch.zoomToSearchResult()
+      }
+    })
+
+    // adds the listener to enable auto-completion
+    searchBox.addEventListener('keyup', e => {
+      if (e.key === 'Enter') {
+        return
       }
     })
   }
@@ -110,6 +147,31 @@ export default class GraphSearch {
           manager.addHighlight(node)
           this.matchingNodes.push(node)
         })
+    }
+  }
+
+  /**
+   * Updates the auto-complete list for the given search field with
+   * the given new suggestions.
+   *
+   * This will do nothing, unless auto-complete has been configured with initial suggestions
+   * in the {@link registerEventListener} call.
+   *
+   * @param input An HTML `input` element that is used as a search input.
+   * @param autoCompleteSuggestions A list of possible auto-complete suggestion strings.
+   */
+  updateAutoCompleteSuggestions(input: HTMLInputElement, autoCompleteSuggestions: string[]) {
+    const datalist = input.list
+    if (!datalist) {
+      return
+    }
+    while (datalist.firstChild) {
+      datalist.firstChild.remove()
+    }
+    for (const item of autoCompleteSuggestions) {
+      const option = document.createElement('option')
+      option.value = item
+      datalist.appendChild(option)
     }
   }
 
@@ -197,4 +259,19 @@ class SearchHighlightIndicatorManager extends HighlightIndicatorManager<INode> {
   getInstaller(item: INode): ICanvasObjectInstaller {
     return this.$decorationInstaller
   }
+}
+
+function hasSelectedElementFromDatalist(
+  input: HTMLInputElement,
+  searchText: string,
+  graphSearch: GraphSearch
+) {
+  if (input.list) {
+    for (const option of Array.from(input.list.children)) {
+      if (option instanceof HTMLOptionElement && option.value === searchText) {
+        return true
+      }
+    }
+  }
+  return false
 }

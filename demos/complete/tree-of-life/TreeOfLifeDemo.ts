@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { RadialLayoutNodeInfo } from 'yfiles'
 import {
   Bfs,
   CenterNodesPolicy,
@@ -63,7 +64,6 @@ import {
   RadialLayoutData,
   RadialLayoutEdgeRoutingStrategy,
   RadialLayoutLayeringStrategy,
-  RadialLayoutNodeInfo,
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
@@ -84,7 +84,7 @@ import { getGlobalRoot, getSubtree, highlightSubtree } from './SubtreeSupport'
 import MagnifyLabelHighlightInstaller from './MagnifyLabelHighlightInstaller'
 import { initializeGraphSearch, resetGraphSearch } from './TreeOfLifeSearch'
 import { fetchLicense } from '../../resources/fetch-license'
-import { isWebGl2Supported } from '../../utils/Workarounds'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 type Palette = {
   primary: string
@@ -141,7 +141,7 @@ async function run(): Promise<void> {
 
   graphComponent = new GraphComponent('#graphComponent')
 
-  if (isWebGl2Supported()) {
+  if (BrowserDetection.webGL2) {
     graphComponent.graphModelManager = new WebGL2GraphModelManager()
   }
 
@@ -158,6 +158,9 @@ async function run(): Promise<void> {
   showApp(graphComponent)
 
   await loadAndFilterGraph()
+
+  // Make the breadcrumbs visible
+  document.getElementById('breadcrumbs')!.style.display = 'block'
 }
 
 /**
@@ -249,7 +252,7 @@ function initializeInteraction(): void {
       } else {
         newSubtreeRoot = clickedNode
       }
-      await showSubtree(newSubtreeRoot, graphComponent, true)
+      await showSubtreeForSelectedRoot(newSubtreeRoot, true)
       subtreeUpdateRunning = false
     }
   })
@@ -295,7 +298,7 @@ function initializeInteraction(): void {
       subtreeUpdateRunning = true
       const subtreeRoot = sectorVisual.getSubtreeRoot(evt.location)
       if (subtreeRoot) {
-        await showSubtree(subtreeRoot, graphComponent)
+        await showSubtreeForSelectedRoot(subtreeRoot)
       }
       subtreeUpdateRunning = false
     }
@@ -332,7 +335,7 @@ async function loadAndFilterGraph() {
   // show and layout the first subtree
   subtreeUpdateRunning = true
   const root = graph.nodes.find(node => node.tag.name === 'Life on Earth')!
-  await showSubtree(root, graphComponent)
+  await showSubtree(root)
   subtreeUpdateRunning = false
 
   await showLoadingIndicator(false)
@@ -439,12 +442,7 @@ function getEdgeStyle(extinct: boolean, palette: Palette): IEdgeStyle {
 /**
  * Updates the filtered graph to only show the subtree with the given subtree root.
  */
-async function showSubtree(
-  subtreeRoot: INode,
-  graphComponent: GraphComponent,
-  prepareAnimation?: boolean
-) {
-  resetGraphSearch()
+async function showSubtree(subtreeRoot: INode, prepareAnimation?: boolean) {
   visibleNodes.clear()
 
   const subtree = getSubtree(subtreeRoot, mainGraph())
@@ -471,6 +469,8 @@ async function showSubtree(
 
   await applyNewLayout(graphComponent, prepareAnimation)
 
+  resetGraphSearch()
+
   // highlight the label of the subtree root as a visual orientation
   graphComponent.highlightIndicatorManager.addHighlight(subtreeRoot.labels.first())
 
@@ -483,26 +483,49 @@ async function showSubtree(
 /**
  * Calculate and apply a new layout.
  */
-async function applyNewLayout(graphComponent: GraphComponent, prepareAnimation = true) {
+async function applyNewLayout(
+  graphComponent: GraphComponent,
+  prepareAnimation = true,
+  highlightChanges = false
+) {
   if (layoutCalculationRunning) {
     // ignore concurrent layout calls
     return
   }
-  layoutCalculationRunning = true
-  setUIDisabled(graphComponent, true)
-
-  // prepare the graph for the layout, move nodes at the center and reset the edge paths
-  if (prepareAnimation) {
-    prepareSmoothLayoutAnimation(graphComponent)
-  }
   const graph = graphComponent.graph as FilteredGraphWrapper
+  const oldSize = graph.nodes.size
   // update the filtering of the graph
   graph.nodePredicateChanged()
 
-  // apply a radial dendrogram layout
-  await layoutGraph(graphComponent)
-  setUIDisabled(graphComponent, false)
-  layoutCalculationRunning = false
+  // check whether there is a change in the graph
+  const newSize = graph.nodes.size
+  if (oldSize !== newSize) {
+    layoutCalculationRunning = true
+
+    setUIDisabled(graphComponent, true)
+
+    // prepare the graph for the layout, move nodes at the center and reset the edge paths
+    if (prepareAnimation) {
+      prepareSmoothLayoutAnimation(graphComponent)
+    }
+
+    // apply a radial dendrogram layout
+    await layoutGraph(graphComponent)
+    setUIDisabled(graphComponent, false)
+
+    // highlight the newly inserted extinct nodes
+    if (newSize > oldSize && highlightChanges) {
+      const highlightManager = graphComponent.highlightIndicatorManager
+      highlightManager.clearHighlights()
+
+      graph.nodes.forEach(node => {
+        if (node.tag.EXTINCT !== '0') {
+          highlightManager.addHighlight(node.labels.get(0))
+        }
+      })
+    }
+    layoutCalculationRunning = false
+  }
 }
 
 /**
@@ -587,6 +610,109 @@ function getFocusPosition(edge: IEdge, graphComponent: GraphComponent): Point {
 }
 
 /**
+ * Shows the subtree of the selected root node.
+ * @param selectedRoot The selected root node
+ * @param prepareAnimation True if the graph has to be prepared for the layout, i.e., move nodes at
+ * the center and reset the edge paths, false otherwise
+ */
+async function showSubtreeForSelectedRoot(selectedRoot: INode, prepareAnimation?: boolean) {
+  // update the navigation menu
+  updateNavigationMenuAndCombobox(selectedRoot)
+  // update the layout
+  await showSubtree(selectedRoot, prepareAnimation)
+}
+
+/**
+ * Returns the ancestors of the given node.
+ * @param node The selected node
+ */
+function getAncestors(node: INode): INode[] {
+  let ancestor = node
+  const ancestors: INode[] = [ancestor]
+  while (mainGraph().inDegree(ancestor) !== 0) {
+    ancestor = mainGraph().inEdgesAt(ancestor).first().sourceNode!
+    ancestors.push(ancestor)
+  }
+  return ancestors
+}
+
+/**
+ * Creates the breadcrumb navigation menu.
+ * @param selectedRoot The node that is selected to be the new root node
+ */
+function updateNavigationMenuAndCombobox(selectedRoot: INode) {
+  // get the ancestors of the selected node including the node itself
+  let ancestors = getAncestors(selectedRoot)
+
+  // update sample in combo box based on the subtree in which the node belongs
+  const selectSubtreeCombo = document.getElementById('sample-subtrees') as HTMLSelectElement
+  const subtrees = Array.from(selectSubtreeCombo.options).map(o => o.text)
+  for (const node of ancestors) {
+    if (subtrees.includes(node.tag.name)) {
+      selectSubtreeCombo.value = node.tag.name
+      break
+    }
+  }
+
+  // update the breadcrumb menu
+  const itemsElement = document.querySelector<HTMLButtonElement>('#breadcrumbs .breadcrumbs-items')!
+  // remove previous elements from the div
+  while (itemsElement.lastChild) {
+    itemsElement.removeChild(itemsElement.lastChild)
+  }
+
+  ancestors = ancestors.reverse()
+  // hide some ancestors if they are more than 10
+  const hasManyAncestors = ancestors.length > 10
+
+  let copy = [...ancestors]
+  if (hasManyAncestors) {
+    copy = copy.slice(ancestors.length - 10, ancestors.length)
+    copy.unshift(ancestors[0])
+  }
+
+  copy.forEach((ancestor, index) => {
+    const ancestorDiv = document.createElement('button')
+    const ancestorLabel = ancestor.tag.name
+    ancestorDiv.innerHTML = ancestorLabel
+    ancestorDiv.classList.add('breadcrumbs-item')
+    if (ancestorLabel === selectedRoot.tag.name) {
+      ancestorDiv.classList.add('selected')
+    }
+    ancestorDiv.addEventListener('click', async evt => {
+      if (!subtreeUpdateRunning) {
+        const subtreeRoot = mainGraph().nodes.find(
+          node => node.tag.name === (evt.target as HTMLButtonElement).innerText
+        )!
+        await showSubtreeForSelectedRoot(subtreeRoot)
+      }
+      subtreeUpdateRunning = false
+    })
+    itemsElement.appendChild(ancestorDiv)
+
+    if (index != copy.length - 1) {
+      itemsElement.appendChild(createArrow())
+    }
+
+    if (index == 0 && hasManyAncestors) {
+      const dots = document.createElement('span')
+      dots.innerHTML = '...'
+      itemsElement.appendChild(dots)
+      itemsElement.appendChild(createArrow())
+    }
+  })
+}
+
+/**
+ * Creates an arrow for the navigation menu.
+ */
+function createArrow() {
+  const arrowElement = document.createElement('div')
+  arrowElement.innerHTML = '&#129122;'
+  return arrowElement
+}
+
+/**
  * Initializes the toolbar UI elements.
  */
 function initializeUI(): void {
@@ -603,7 +729,7 @@ function initializeUI(): void {
       if (!subtreeUpdateRunning) {
         subtreeUpdateRunning = true
         const subtreeRoot = mainGraph().nodes.find(node => node.tag.name === value)!
-        await showSubtree(subtreeRoot, graphComponent, true)
+        await showSubtreeForSelectedRoot(subtreeRoot, true)
         subtreeUpdateRunning = false
       }
     })
@@ -612,7 +738,7 @@ function initializeUI(): void {
     .querySelector<HTMLSelectElement>('input[data-command="ToggleExtinct"]')!
     .addEventListener('click', async () => {
       showExtinctSpecies = !showExtinctSpecies
-      await applyNewLayout(graphComponent)
+      await applyNewLayout(graphComponent, false, true)
     })
 }
 
@@ -624,6 +750,7 @@ function setUIDisabled(graphComponent: GraphComponent, disabled: boolean) {
   document.querySelector<HTMLSelectElement>('#sample-subtrees')!.disabled = disabled
   document.querySelector<HTMLButtonElement>('#demo-toggle-extinct-button')!.disabled = disabled
   document.querySelector<HTMLButtonElement>('#searchBox')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#breadcrumbs .breadcrumbs-items')!.disabled = disabled
 }
 
 // noinspection JSIgnoredPromiseFromCall

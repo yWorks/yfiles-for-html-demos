@@ -104,7 +104,7 @@ async function run(): Promise<void> {
   createMazeVisual()
 
   // route all edges
-  routeAll()
+  await routeAll()
 
   // initialize undo and redo for the demo's graph
   initializeUndoEngine(graphComponent.graph)

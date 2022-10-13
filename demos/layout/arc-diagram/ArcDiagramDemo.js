@@ -63,7 +63,6 @@ Class.ensure(LayoutExecutor)
 
 /**
  * Bootstraps this demo.
- * @param licenseData The yFiles license information.
  * @returns {!Promise}
  */
 async function run() {

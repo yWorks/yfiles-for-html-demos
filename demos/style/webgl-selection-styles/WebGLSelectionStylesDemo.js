@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// noinspection JSIgnoredPromiseFromCall
-
 import {
   Color,
   DefaultLabelStyle,
@@ -43,10 +41,8 @@ import {
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size,
-  StyleDecorationZoomPolicy,
   TimeSpan,
   WebGL2AnimationDirection,
-  WebGL2AnimationEasing,
   WebGL2AnimationTiming,
   WebGL2ArcEdgeStyle,
   WebGL2ArrowType,
@@ -54,7 +50,6 @@ import {
   WebGL2DefaultLabelStyle,
   WebGL2EdgeIndicatorStyle,
   WebGL2GraphModelManager,
-  WebGL2IndicatorType,
   WebGL2LabelIndicatorStyle,
   WebGL2LabelShape,
   WebGL2NodeIndicatorStyle,
@@ -65,15 +60,18 @@ import {
   WebGL2Transition
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkWebGL2Support,
+  showApp
+} from '../../resources/demo-app.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
-import { isWebGl2Supported } from '../../utils/Workarounds.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {*} */
-let type = WebGL2IndicatorType.SOLID
 /** @type {'#fc0335'} */
 let primaryColor = '#fc0335'
 /** @type {number} */
@@ -86,10 +84,12 @@ let secondaryTransparency = 0
 let thickness = 3
 /** @type {number} */
 let margins = 3
-/** @type {StyleDecorationZoomPolicy} */
-let zoomPolicy = StyleDecorationZoomPolicy.MIXED
-/** @type {WebGL2AnimationEasing} */
-let easing = WebGL2AnimationEasing.LINEAR
+/** @type {'solid'} */
+let type = 'solid'
+/** @type {'mixed'} */
+let zoomPolicy = 'mixed'
+/** @type {'linear'} */
+let easing = 'linear'
 /** @type {WebGL2Transition} */
 let transition = getTransition(easing)
 /** @type {WebGL2AnimationTiming} */
@@ -100,9 +100,7 @@ let dashStrokeAnimation = null
  * @returns {!Promise}
  */
 async function run() {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support').removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }
@@ -457,8 +455,7 @@ function getColor(color, transparency) {
 
 /**
  * Creates a WebGL2Transition with the given easing and default values.
- * @param {!WebGL2AnimationEasing} easing
- * @returns {!WebGL2Transition}
+ * @param {!WebGL2AnimationEasingStringValues} easing
  */
 function getTransition(easing) {
   return new WebGL2Transition({
@@ -508,7 +505,7 @@ function initUI() {
   })
 
   bindChangeListener("input[data-command='ChangePrimaryColorTransparency']", value => {
-    primaryTransparency = value / 100
+    primaryTransparency = parseFloat(value) / 100
     updateSelectionStyles()
   })
 
@@ -518,7 +515,7 @@ function initUI() {
   })
 
   bindChangeListener("input[data-command='ChangeSecondaryColorTransparency']", value => {
-    secondaryTransparency = value / 100
+    secondaryTransparency = parseFloat(value) / 100
     updateSelectionStyles()
   })
 
@@ -564,12 +561,12 @@ function initUI() {
   })
 
   bindChangeListener("input[data-command='ChangeThickness']", value => {
-    thickness = parseInt(value)
+    thickness = parseFloat(value)
     updateSelectionStyles()
   })
 
   bindChangeListener("input[data-command='ChangeMargins']", value => {
-    margins = parseInt(value)
+    margins = parseFloat(value)
     updateSelectionStyles()
   })
 }

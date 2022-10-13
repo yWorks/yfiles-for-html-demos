@@ -68,7 +68,7 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle, HighlightManager } from './DemoStyles'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import {
   addClass,
   addNavigationButtons,

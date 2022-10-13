@@ -30,8 +30,6 @@ import {
   CompactDiskLayout,
   CompactDiskLayoutData,
   IGraph,
-  ILayoutAlgorithm,
-  LayoutData,
   OrganicLayout,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData

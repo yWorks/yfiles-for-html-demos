@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import licenseData from '../../../../lib/license.json'
 import type { LayoutDescriptor } from 'yfiles'
 import {
   HierarchicLayout,
@@ -36,6 +35,7 @@ import {
   MinimumNodeSizeStage
 } from 'yfiles'
 
+import licenseData from '../../../../lib/license.json'
 License.value = licenseData
 
 function applyLayout(graph: LayoutGraph, layoutDescriptor: LayoutDescriptor): void {

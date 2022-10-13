@@ -30,7 +30,7 @@
 // These constants and methods are used by FlowchartLayout and its associated classes to identify
 // specific types of nodes and handle them appropriately.
 
-import { Edge, Graph, IDataProvider, YNode } from 'yfiles'
+import type { Edge, Graph, IDataProvider, YNode } from 'yfiles'
 
 /**
  * {@link IDataProvider} key used to specify the flowchart specific type of each node.

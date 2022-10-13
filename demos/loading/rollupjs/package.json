@@ -5,7 +5,7 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.js', './src/utils/Workarounds.js'); require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
     "build": "node --max-old-space-size=4096 ./node_modules/grunt/bin/grunt",
     "production": "node --max-old-space-size=4096 ./node_modules/grunt/bin/grunt production"
   },
@@ -29,6 +29,6 @@
     "core-js": "^3.23.1",
     "regenerator-runtime": "^0.13.9",
     "unfetch": "^4.2.0",
-    "yfiles": "../../../lib-dev/yfiles-25.0.1+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.2+dev.tgz"
   }
 }

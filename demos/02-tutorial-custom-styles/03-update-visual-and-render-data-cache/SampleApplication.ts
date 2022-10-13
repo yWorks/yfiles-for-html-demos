@@ -45,7 +45,7 @@ import {
   Size
 } from 'yfiles'
 
-import MySimpleNodeStyle from './MySimpleNodeStyle'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 
 import { applyDemoTheme } from '../../resources/demo-styles'

@@ -50,10 +50,10 @@ import {
   readGraph,
   showApp
 } from '../../resources/demo-app'
-import { isWebGlSupported } from '../../utils/Workarounds'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 /**
  * The GraphComponent
@@ -109,7 +109,7 @@ async function run(): Promise<void> {
 
   registerCommands()
 
-  if (!isWebGlSupported()) {
+  if (!BrowserDetection.webGL) {
     // remove WebGL option if not supported by client
     ;(document.getElementById('no-webgl-support') as HTMLElement).style.display = 'block'
     const webGLOption = overViewStyleBox.querySelector(
@@ -211,7 +211,7 @@ function registerCommands(): void {
   })
 
   bindChangeListener("select[data-command='SelectedStyle']", selectedValue => {
-    overviewStyling(selectedValue)
+    overviewStyling(selectedValue as string)
   })
   addNavigationButtons(overViewStyleBox)
 }

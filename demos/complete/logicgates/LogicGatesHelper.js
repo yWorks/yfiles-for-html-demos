@@ -37,7 +37,6 @@ import {
   List,
   PortCandidateValidity
 } from 'yfiles'
-import { GateNodeStyle } from './DemoStyles.js'
 
 export /**
  * @readonly

@@ -37,7 +37,6 @@
     <title>SVG Export Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="./resources/styles.css" />
 
     <style>
       .demo-exportDialog {
@@ -234,6 +233,11 @@
           title="Fit Content"
           class="demo-icon-yIconZoomFit"
         ></button>
+
+        <span class="demo-separator"></span>
+
+        <input type="checkbox" id="toggleWebGL2Mode" class="demo-toggle-button labeled" disabled />
+        <label for="toggleWebGL2Mode" title="Toggles WebGL2 rendering mode">WebGL2 Rendering</label>
       </div>
 
       <div class="demo-content-dynamic">
@@ -281,14 +285,7 @@
               name="transparent"
               checked="checked"
             />
-            <button
-              class="settings-editor-row4"
-              data-name="ExportButton"
-              data-command="Export"
-              value="Export"
-            >
-              Export
-            </button>
+            <button class="settings-editor-row4" id="exportButton">Export</button>
           </div>
         </div>
         <a

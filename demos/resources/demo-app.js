@@ -26,13 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { registerErrorDialog } from './demo-error.js'
-import {
-  detectInternetExplorerVersion,
-  detectiOSVersion,
-  detectSafariVersion,
-  enableWorkarounds
-} from '../utils/Workarounds.js'
+import { registerErrorDialog, reportDemoError as reportDemoErrorLocal } from './demo-error.js'
+import { enableWorkarounds } from '../utils/Workarounds.js'
 import {
   GraphComponent,
   GraphEditorInputMode,
@@ -44,19 +39,18 @@ import {
   Size,
   TouchEventRecognizers
 } from 'yfiles'
+import { BrowserDetection } from '../utils/BrowserDetection.js'
 
 /**
  * @typedef {Object} OptionData
  * @property {string} value
  * @property {string} text
  */
+export const reportDemoError = reportDemoErrorLocal
 
 // match CSS media query
 const SIDEBAR_WIDTH = 320
 const SMALL_WIDTH = SIDEBAR_WIDTH * 3
-
-const ieVersion = detectInternetExplorerVersion()
-const isIE = ieVersion > -1 && ieVersion <= 11
 
 /**
  * Initializes polyfills that are used by some demos.
@@ -226,7 +220,7 @@ function initializeDemoUI() {
   }
 
   // add fullscreen button but omit iOS since pinch zoom will always exit fullscreen mode.
-  if (detectiOSVersion() === -1 && detectSafariVersion() === -1) {
+  if (!BrowserDetection.iOSVersion && !BrowserDetection.safariVersion) {
     const fullscreenButton = document.createElement('button')
     fullscreenButton.setAttribute('class', 'demo-fullscreen-button')
     fullscreenButton.setAttribute('title', 'Toggle fullscreen mode')
@@ -558,6 +552,7 @@ export function bindChangeListener(selector, action) {
   }
 
   const isRange = element.getAttribute('type') === 'range'
+  const isIE = BrowserDetection.ieVersion > 0 && BrowserDetection.ieVersion <= 11
   if (isRange && isIE) {
     const fireChangeIE = () => {
       action(element.value)
@@ -566,16 +561,16 @@ export function bindChangeListener(selector, action) {
       document.removeEventListener('pointerup', fireChangeIE)
       document.addEventListener('pointerup', fireChangeIE)
     })
-  } else {
-    element.addEventListener('change', e => {
-      const target = e.target
-      if (target instanceof HTMLInputElement && target.type === 'checkbox') {
-        action(target.checked)
-      } else {
-        action(target.value)
-      }
-    })
+    return
   }
+  element.addEventListener('change', e => {
+    if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
+      action(e.target.checked)
+      return
+    }
+    const target = e.target
+    action(target.value)
+  })
 }
 
 /**
@@ -591,6 +586,7 @@ export function bindInputListener(selectorOrElement, action) {
     throw new Error('No element to bind to')
   }
 
+  const isIE = BrowserDetection.ieVersion > 0 && BrowserDetection.ieVersion <= 11
   const eventKind = isIE ? 'change' : 'input'
   element.addEventListener(eventKind, e => {
     const target = e.target
@@ -839,11 +835,7 @@ export function readGraph(graphMLIOHandler, graph, filename) {
       )
       return
     }
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   })
 }
 
@@ -891,7 +883,7 @@ export function configureTwoPointerPanning(graphComponent) {
 
   // iOS fires bogus mousewheel events during pinch zooming, so disable mousewheel behavior while
   // two pointers are pressed.
-  if (detectiOSVersion() !== -1) {
+  if (BrowserDetection.iOSVersion > 0) {
     let previousWheelBehavior = null
     graphComponent.addTouchDownListener((sender, args) => {
       if (!args.device.isPrimaryDevice) {
@@ -911,6 +903,56 @@ export function configureTwoPointerPanning(graphComponent) {
     graphComponent.addTouchUpListener(resetWheelBehavior)
     graphComponent.addTouchLeaveListener(resetWheelBehavior)
     graphComponent.addTouchLostCaptureListener(resetWheelBehavior)
+  }
+}
+
+/**
+ * Checks whether the browser supports WebGL2 and shows a warning message if this is not supported.
+ * @returns {boolean}
+ */
+export function checkWebGL2Support() {
+  if (!BrowserDetection.webGL2) {
+    const message =
+      'Your browser or device does not support WebGL2.<br />\n' +
+      'This demo only works if WebGL2 is available.<br />\n' +
+      'Please use a modern browser like Chrome, Edge, Firefox, or Opera.<br />\n' +
+      'In older versions of Safari and older Apple devices, WebGL2 is an experimental feature\n' +
+      'that needs to be activated explicitly.'
+    createWebGLSupportWarningMessage(message)
+    return false
+  }
+  return true
+}
+
+/**
+ * Checks whether the browser supports WebGL and shows a warning message if this is not supported.
+ * @returns {boolean}
+ */
+export function checkWebGLSupport() {
+  if (!BrowserDetection.webGL) {
+    const message =
+      'Your browser or device does not support WebGL.<br /> \n' +
+      'This demo only works if WebGL is available.'
+    createWebGLSupportWarningMessage(message)
+    return false
+  }
+  return true
+}
+
+/**
+ * Creates a div to display the no-webgl-support warnings.
+ * @param {!string} innerHTML the text to be displayed
+ */
+function createWebGLSupportWarningMessage(innerHTML) {
+  const graphComponentDiv = document.querySelector('#graphComponent')
+  if (graphComponentDiv && graphComponentDiv.parentElement) {
+    const parent = graphComponentDiv.parentElement
+    // show message if the browsers does not support WebGL2
+    const webglDiv = document.createElement('div')
+    webglDiv.setAttribute('style', 'display:block')
+    webglDiv.id = 'no-webgl-support'
+    webglDiv.innerHTML = innerHTML
+    parent.appendChild(webglDiv)
   }
 }
 

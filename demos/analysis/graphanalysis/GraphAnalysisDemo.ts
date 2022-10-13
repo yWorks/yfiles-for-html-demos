@@ -64,22 +64,23 @@ import {
   YNumber
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu'
-import HighlightHoverInputMode from './HighlightHoverInputMode'
-import CentralityConfig from './CentralityConfig'
-import CyclesConfig from './CyclesConfig'
-import PathsConfig from './PathsConfig'
-import ConnectivityConfig from './ConnectivityConfig'
-import MinimumSpanningTreeConfig from './MinimumSpanningTreeConfig'
-import SubstructuresConfig from './SubstructuresConfig'
+import { ContextMenu } from '../../utils/ContextMenu'
+import { HighlightHoverInputMode } from './HighlightHoverInputMode'
+import { CentralityConfig } from './CentralityConfig'
+import { CyclesConfig } from './CyclesConfig'
+import { PathsConfig } from './PathsConfig'
+import { ConnectivityConfig } from './ConnectivityConfig'
+import { MinimumSpanningTreeConfig } from './MinimumSpanningTreeConfig'
+import { SubstructuresConfig } from './SubstructuresConfig'
 import {
   addNavigationButtons,
   bindAction,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app'
-import AlgorithmConfiguration from './AlgorithmConfiguration'
+import type { AlgorithmConfiguration } from './AlgorithmConfiguration'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
@@ -494,7 +495,7 @@ function createEditorMode(): GraphEditorInputMode {
 
   inputMode.addDeletedSelectionListener(() => {
     updateGraphInformation()
-    runLayout(true, false, true).catch(handleError)
+    runLayout(true, false, true).catch(reportDemoError)
   })
 
   // edge creation
@@ -509,7 +510,7 @@ function createEditorMode(): GraphEditorInputMode {
 
     currentConfig.incrementalElements = incrementalElements
 
-    runLayout(true, false, true).catch(handleError)
+    runLayout(true, false, true).catch(reportDemoError)
   })
 
   inputMode.addNodeCreatedListener((sender, args) => {
@@ -525,7 +526,7 @@ function createEditorMode(): GraphEditorInputMode {
   inputMode.moveInputMode.addDragFinishedListener((sender, _) => {
     const affectedNodes = sender.affectedItems.filter(item => item instanceof INode)
     if (affectedNodes.size < graphComponent.graph.nodes.size) {
-      runLayout(true, false, true).catch(handleError)
+      runLayout(true, false, true).catch(reportDemoError)
     }
   })
 
@@ -630,26 +631,26 @@ function registerCommands(): void {
     if (sampleComboBox.selectedIndex > 0) {
       sampleComboBox.selectedIndex--
     }
-    onSampleChanged().catch(handleError)
+    onSampleChanged().catch(reportDemoError)
   })
 
   bindAction("button[data-command='NextFile']", () => {
     if (sampleComboBox.selectedIndex < sampleComboBox.options.length - 1) {
       sampleComboBox.selectedIndex++
     }
-    onSampleChanged().catch(handleError)
+    onSampleChanged().catch(reportDemoError)
   })
 
   bindChangeListener("select[data-command='AlgorithmSelectionChanged']", () => {
-    onAlgorithmChanged().catch(handleError)
+    onAlgorithmChanged().catch(reportDemoError)
   })
 
   bindChangeListener("select[data-command='SampleSelectionChanged']", () => {
-    onSampleChanged().catch(handleError)
+    onSampleChanged().catch(reportDemoError)
   })
 
   bindAction("button[data-command='Layout']", () => {
-    runLayout(false, false, false).catch(handleError)
+    runLayout(false, false, false).catch(reportDemoError)
   })
 
   bindChangeListener("select[data-command='SetDirection']", () => {
@@ -666,7 +667,7 @@ function registerCommands(): void {
 
   bindAction("button[data-command='RemoveEdgeLabels']", () => {
     deleteEdgeLabels()
-    runLayout(true, false, true).catch(handleError)
+    runLayout(true, false, true).catch(reportDemoError)
   })
 }
 
@@ -774,7 +775,7 @@ async function runLayout(
     }
     incrementalNodesMapper.clear()
   } catch (error) {
-    handleError(error)
+    reportDemoError(error)
   } finally {
     releaseLocks()
     setUIDisabled(false)
@@ -833,7 +834,7 @@ async function onSampleChanged(): Promise<void> {
         await applyAlgorithmForKey(sampleSelectedIndex)
         return
       }
-      handleError(error)
+      reportDemoError(error)
     } finally {
       setUIDisabled(false)
       updateUIState()
@@ -921,7 +922,7 @@ function updateDirectionCombobox(): void {
 function onDirectedComboBoxSelectedIndexChanged(): void {
   if (!directionComboBox.disabled) {
     directed = directionComboBox.selectedIndex === 1
-    runLayout(true, false, true).catch(handleError)
+    runLayout(true, false, true).catch(reportDemoError)
   }
 }
 
@@ -1239,7 +1240,7 @@ function onGenerateEdgeLabels(): void {
     })
   })
 
-  runLayout(true, false, true).catch(handleError)
+  runLayout(true, false, true).catch(reportDemoError)
 }
 
 /**
@@ -1403,15 +1404,6 @@ function createSampleGraph(graph: IGraph): void {
   graph.createEdge(nodes[23], nodes[22])
   graph.createEdge(nodes[22], nodes[0])
   graph.createEdge(nodes[23], nodes[0])
-}
-
-function handleError(error: any): void {
-  const reportError = (window as any).reportError
-  if (typeof reportError === 'function') {
-    reportError(error)
-  } else {
-    throw error
-  }
 }
 
 // noinspection JSIgnoredPromiseFromCall

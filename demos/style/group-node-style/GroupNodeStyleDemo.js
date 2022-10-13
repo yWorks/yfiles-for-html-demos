@@ -54,8 +54,8 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import { colorSets, initDemoStyles } from '../../resources/demo-styles.js'
-import { isWebGl2Supported } from '../../utils/Workarounds.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /**
  * @returns {!Promise}
@@ -88,7 +88,7 @@ function createSampleGraph(graph) {
   // for tabs that are placed at the top of the respective node ...
   const stylesWithTabAtTop = []
 
-  // style for red nodes in first and second row
+  // style for red nodes
   const red = colorSets['demo-palette-59']
   stylesWithTabAtTop.push(
     new GroupNodeStyle({
@@ -97,7 +97,7 @@ function createSampleGraph(graph) {
     })
   )
 
-  // style for green nodes in first and second row
+  // style for green nodes
   const green = colorSets['demo-palette-53']
   stylesWithTabAtTop.push(
     new GroupNodeStyle({
@@ -114,7 +114,7 @@ function createSampleGraph(graph) {
     })
   )
 
-  // style for blue nodes in first and second row
+  // style for blue nodes
   const blue = colorSets['demo-palette-56']
   stylesWithTabAtTop.push(
     new GroupNodeStyle({
@@ -132,7 +132,7 @@ function createSampleGraph(graph) {
     })
   )
 
-  // style for orange nodes in first and second row
+  // style for orange nodes
   const orange = colorSets['demo-palette-51']
   stylesWithTabAtTop.push(
     new GroupNodeStyle({
@@ -153,16 +153,18 @@ function createSampleGraph(graph) {
   // ... and for tabs at different sides of the respective nodes
   const stylesWithTabAtMiscPositions = []
 
-  // style for red nodes in third and fourth row
+  // style for gold nodes
+  const gold = colorSets['demo-palette-510']
   stylesWithTabAtMiscPositions.push(
     new GroupNodeStyle({
       groupIcon: 'minus',
-      iconForegroundFill: red.fill,
-      tabFill: red.fill
+      iconForegroundFill: gold.fill,
+      tabFill: gold.fill
     })
   )
 
-  // style for green nodes in third and fourth row
+  // style for gray nodes
+  const gray = colorSets['demo-palette-58']
   stylesWithTabAtMiscPositions.push(
     new GroupNodeStyle({
       cornerRadius: 0.0,
@@ -171,14 +173,15 @@ function createSampleGraph(graph) {
       iconPosition: 'leading',
       iconBackgroundShape: 'square',
       iconForegroundFill: 'white',
-      tabFill: green.fill,
+      tabFill: gray.fill,
       tabSlope: 0.0,
       tabPosition: 'right-leading',
-      stroke: `1px ${green.stroke}`
+      stroke: `1px ${gray.stroke}`
     })
   )
 
-  // style for blue nodes in third and fourth row
+  // style for light-green nodes
+  const lightGreen = colorSets['demo-palette-54']
   stylesWithTabAtMiscPositions.push(
     new GroupNodeStyle({
       drawShadow: true,
@@ -187,30 +190,31 @@ function createSampleGraph(graph) {
       iconForegroundFill: blue.stroke,
       iconPosition: 'leading',
       tabPosition: 'bottom-trailing',
-      tabFill: blue.fill,
-      tabBackgroundFill: blue.stroke,
+      tabFill: lightGreen.fill,
+      tabBackgroundFill: green.stroke,
       tabHeight: 22.0,
       tabSlope: 0.5,
-      stroke: `1px ${blue.stroke}`
+      stroke: `1px ${lightGreen.stroke}`
     })
   )
 
-  // style for orange nodes in third and fourth row
+  // style for purple nodes
+  const purple = colorSets['demo-palette-55']
   stylesWithTabAtMiscPositions.push(
     new GroupNodeStyle({
       cornerRadius: 8,
-      contentAreaFill: orange.nodeLabelFill,
+      contentAreaFill: purple.nodeLabelFill,
       drawShadow: true,
       groupIcon: 'minus',
       iconPosition: 'leading',
-      iconBackgroundFill: orange.nodeLabelFill,
-      iconForegroundFill: orange.stroke,
+      iconBackgroundFill: purple.nodeLabelFill,
+      iconForegroundFill: purple.stroke,
       iconBackgroundShape: 'circle-solid',
       tabPosition: 'left',
-      tabFill: orange.fill,
+      tabFill: purple.fill,
       tabHeight: 22.0,
       tabInset: 8.0,
-      stroke: `1px ${orange.stroke}`
+      stroke: `1px ${purple.stroke}`
     })
   )
 
@@ -255,15 +259,61 @@ function createSampleGraph(graph) {
       verticalTextAlignment: 'center',
       clipText: false,
       wrapping: 'character-ellipsis',
-      textFill: blue.text
+      textFill: orange.nodeLabelFill
+    })
+  )
+
+  const labelStylesWithTabAtMiscPositions = []
+
+  // style for gold nodes
+  labelStylesWithTabAtMiscPositions.push(
+    new DefaultLabelStyle({
+      verticalTextAlignment: 'center',
+      clipText: false,
+      wrapping: 'character-ellipsis',
+      textFill: gold.nodeLabelFill
+    })
+  )
+  // style for gray nodes
+  labelStylesWithTabAtMiscPositions.push(
+    new DefaultLabelStyle({
+      verticalTextAlignment: 'center',
+      clipText: false,
+      wrapping: 'character-ellipsis'
+    })
+  )
+  // style for light-green nodes
+  labelStylesWithTabAtMiscPositions.push(
+    new DefaultLabelStyle({
+      verticalTextAlignment: 'center',
+      clipText: false,
+      wrapping: 'character-ellipsis',
+      textFill: green.nodeLabelFill
+    })
+  )
+  // style for purple nodes
+  labelStylesWithTabAtMiscPositions.push(
+    new DefaultLabelStyle({
+      verticalTextAlignment: 'center',
+      clipText: false,
+      wrapping: 'character-ellipsis',
+      textFill: purple.nodeLabelFill
     })
   )
 
   const labelTexts = ['Red', 'Green', 'Blue', 'Orange']
+  const labelTextsWithTabAtMiscPositions = ['Gold', 'Gray', 'Light green', 'Purple']
 
   // create one group node and one folder node for each of the above GroupNodeStyle instances
   createGroupAndFolderNodes(graph, stylesWithTabAtTop, labelStyles, labelTexts, 0, 0)
-  createGroupAndFolderNodes(graph, stylesWithTabAtMiscPositions, labelStyles, labelTexts, 0, 425)
+  createGroupAndFolderNodes(
+    graph,
+    stylesWithTabAtMiscPositions,
+    labelStylesWithTabAtMiscPositions,
+    labelTextsWithTabAtMiscPositions,
+    0,
+    425
+  )
 
   // create a couple of child nodes for group nodes ...
   const nodes = graph.nodes.toArray()
@@ -342,7 +392,7 @@ function createGroupAndFolderNodes(graph, nodeStyles, labelStyles, labelTexts, x
 
       const node = graph.createGroupNode(null, new Rect(x, y, width, height), nodeStyles[i])
 
-      graph.addLabel(node, `${labelTexts[i]} ${row}`, tabBackgroundParameter, labelStyles[i])
+      graph.addLabel(node, `${labelTexts[i]} ${j + 1}`, tabBackgroundParameter, labelStyles[i])
 
       if (j > 0) {
         collapseLast(graph)
@@ -460,7 +510,7 @@ function initializeUI(graphComponent) {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
 
-  if (isWebGl2Supported()) {
+  if (BrowserDetection.webGL2) {
     addNavigationButtons(document.querySelector('#styleTypeChooser'))
   } else {
     const optionElement = document.querySelector('option[value="webgl"]')

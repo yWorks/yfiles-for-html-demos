@@ -28,8 +28,6 @@
  ***************************************************************************/
 import '../../../resources/style/demo.css'
 
-import licenseData from '../../../../lib/license.json'
-
 import {
   DefaultFolderNodeConverter,
   FoldingManager,
@@ -52,8 +50,9 @@ import {
 } from 'yfiles'
 
 import { initDemoStyles } from './resources/demo-styles'
-import { detectInternetExplorerVersion } from './utils/Workarounds'
+import { BrowserDetection } from './utils/BrowserDetection'
 
+import licenseData from '../../../../lib/license.json'
 License.value = licenseData
 
 let graphComponent: GraphComponent
@@ -63,7 +62,7 @@ let worker: Worker
 const layoutButton = document.getElementById('layoutBtn') as HTMLButtonElement
 
 function run() {
-  if (detectInternetExplorerVersion() !== -1) {
+  if (BrowserDetection.ieVersion > 0) {
     alert(
       'This browser does not support modern JavaScript constructs which are required for the webworker demo. Use a more recent browser like Chrome, Edge, Firefox or Safari to run this demo.'
     )

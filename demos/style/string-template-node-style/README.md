@@ -25,6 +25,8 @@ Change the template of one or more nodes. Bind colors or text to properties in t
 
 - [Template Styles Demo](../../style/templatestyles/index.html)
 - [Vue.js Template Node Style Demo](../../style/vuejstemplatenodestyle/index.html)
+- [React JSX Component Node Style Demo](../react-template-node-style/index.html)
+- [Lit Template Node Style Demo](../lit-template-node-style/index.html)
 
 ## Additional Tools
 

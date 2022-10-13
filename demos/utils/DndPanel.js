@@ -41,7 +41,7 @@ import yfiles, {
   SvgExport,
   VoidNodeStyle
 } from 'yfiles'
-import { passiveSupported } from './Workarounds.js'
+import { BrowserDetection } from './BrowserDetection.js'
 
 /**
  * @typedef {(T|object)} Item
@@ -303,7 +303,7 @@ export class DragAndDropPanel {
       element.addEventListener(
         'touchstart',
         touchStartListener,
-        passiveSupported ? { passive: false } : false
+        BrowserDetection.passiveEventListeners ? { passive: false } : false
       )
     }
   }

@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import DeviceStyle from './DeviceStyle.js'
-import { INode } from 'yfiles'
 
 /**
  * A class for creating a bar chart.

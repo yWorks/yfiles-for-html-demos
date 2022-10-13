@@ -53,9 +53,9 @@ import {
 } from 'yfiles'
 
 import DemoCommands from './DemoCommands'
-import { passiveSupported } from '../../utils/Workarounds'
 import type { NodeData } from './MindmapUtil'
 import { hasChildNodes } from './MindmapUtil'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 /**
  * A node style decorator that adds a collapse button to the node.
@@ -120,7 +120,7 @@ export default class CollapseDecorator extends NodeStyleBase {
         const demoCommand = new DemoCommands(context.canvasComponent as GraphComponent)
         demoCommand.executeToggleCollapseState(node)
       },
-      passiveSupported
+      BrowserDetection.passiveEventListeners
         ? {
             passive: false,
             capture: true

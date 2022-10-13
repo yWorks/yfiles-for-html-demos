@@ -293,30 +293,28 @@ function createCompactDiskSample() {
 /**
  * Applies the current layout style to the current graph.
  * @param {boolean} animate
+ * @param {boolean} considerTypes
  * @returns {!Promise}
  */
-async function applyCurrentLayout(animate) {
-  setUIDisabled(true)
+async function applyCurrentLayout(animate, considerTypes) {
   const sampleComboBox = document.querySelector('#sample-combo-box')
 
   const { layout, layoutData } = samples[sampleComboBox.selectedIndex]
-  const considerTypes = document.getElementById('consider-types').checked
   const data = considerTypes ? layoutData : null
   if (animate) {
-    await graphComponent.morphLayout(layout, '700ms', data)
+    await graphComponent.morphLayout(layout, '1000ms', data)
   } else {
     graphComponent.graph.applyLayout(layout, data)
   }
-
-  setUIDisabled(false)
 }
 
 /**
  * Loads the sample currently selected in the combo box, populates the graph and applies
  * the respective layout algorithm.
+ * @param {boolean} [previewWithoutNodeTypes=false]
  * @returns {!Promise}
  */
-async function loadSample() {
+async function loadSample(previewWithoutNodeTypes = false) {
   const sampleComboBox = document.querySelector('#sample-combo-box')
   const sample = samples[sampleComboBox.selectedIndex]
   graphComponent.graph.clear()
@@ -348,15 +346,40 @@ async function loadSample() {
   edgesSource.edgeCreator.defaults.style = defaultEdgeStyle
   builder.buildGraph()
 
-  // Apply the current layout that is associated with the newly loaded sample
-  await applyCurrentLayout(false)
-
   graphComponent.graph.edgeDefaults.style = defaultEdgeStyle
 
-  graphComponent.fitGraphBounds()
+  await arrangeGraph(false, previewWithoutNodeTypes)
 
   // Make the sample change non-undoable
   graphComponent.graph.undoEngine.clear()
+}
+
+/**
+ * Arranges the graph with an optional preview arrangement that shows the layout result when
+ * ignoring the node types.
+ * @param {boolean} animate whether the layout should be animated
+ * @param {boolean} previewWithoutNodeTypes whether the layout should first run ignoring the node types to make
+ *  the difference easily visible
+ */
+async function arrangeGraph(animate, previewWithoutNodeTypes) {
+  setUIDisabled(true)
+  // Run a layout without considering the node types
+  if (previewWithoutNodeTypes) {
+    updateLayoutPopup(true, 'Node types are <u>not considered</u>')
+    // Apply the current layout that is associated with the newly loaded sample
+    await applyCurrentLayout(animate, false)
+    graphComponent.fitGraphBounds()
+    // Add some delay
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    updateLayoutPopup(true, 'Node types <u>are considered</u>')
+  }
+
+  // Run a layout when considering the node types
+  await applyCurrentLayout(true, true)
+
+  graphComponent.fitGraphBounds()
+  updateLayoutPopup(false)
+  setUIDisabled(false)
 }
 
 /**
@@ -402,11 +425,8 @@ function initializeTypePanel() {
     graphComponent.selection.clear()
   }
 
-  typePanel.typeChanged = () => {
-    const considerTypes = document.getElementById('consider-types').checked
-    if (considerTypes) {
-      applyCurrentLayout(true)
-    }
+  typePanel.typeChanged = async () => {
+    await arrangeGraph(true, false)
   }
 
   graphComponent.selection.addItemSelectionChangedListener(
@@ -438,12 +458,11 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindAction("button[data-command='Layout']", () => applyCurrentLayout(true))
-  bindAction("button[data-command='Reset']", loadSample)
-  bindAction('#consider-types', () => applyCurrentLayout(true))
+  bindAction("button[data-command='Layout']", () => arrangeGraph(true, true))
+  bindAction("button[data-command='Reset']", () => loadSample(true))
 
   const sampleComboBox = document.querySelector('#sample-combo-box')
-  sampleComboBox.addEventListener('change', loadSample)
+  sampleComboBox.addEventListener('change', () => loadSample(true))
   addNavigationButtons(sampleComboBox)
 }
 
@@ -454,9 +473,22 @@ function registerCommands() {
 function setUIDisabled(disabled) {
   document.querySelector("button[data-command='Reset']").disabled = disabled
   document.querySelector("button[data-command='Layout']").disabled = disabled
-  document.querySelector('#consider-types').disabled = disabled
   document.querySelector('#sample-combo-box').disabled = disabled
   graphComponent.inputMode.enabled = !disabled
+}
+
+/**
+ * Updates the layout popup visibility and text.
+ * @param {boolean} visible true if the popup should be visible, false otherwise
+ * @param text the desired text
+ * @param {!string} [text]
+ */
+function updateLayoutPopup(visible, text) {
+  const popup = document.querySelector('#loadingPopup')
+  popup.className = visible ? 'visible' : ''
+  if (text) {
+    popup.innerHTML = text
+  }
 }
 
 // noinspection JSIgnoredPromiseFromCall

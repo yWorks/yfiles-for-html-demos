@@ -169,8 +169,6 @@
           return '../demos-js/' + demo.demoPath
         } else if (propertyName === 'index') {
           return index + 2
-        } else if (propertyName === 'video' && demo.thumbnailPath.indexOf('.mp4') > -1) {
-          return '<video src="' + demo.thumbnailPath + '" loop="true" autoplay="true">'
         } else if (Object.prototype.hasOwnProperty.call(demo, propertyName)) {
           return demo[propertyName]
         } else {
@@ -190,7 +188,7 @@
         tagContainer.appendChild(tagItem)
       })
     }
-    if (demo.ts) {
+    if (!isTsReadme && demo.ts) {
       var tsBadge = document.createElement('span')
       tsBadge.className = 'ts-badge'
       tsBadge.textContent = 'TS'
@@ -261,7 +259,7 @@
     var link = document.createElement('a')
     link.textContent = demo.name
     link.setAttribute('href', demo.demoPath)
-    if (demo.ts) {
+    if (!isTsReadme && demo.ts) {
       var tsBadge = document.createElement('span')
       tsBadge.className = 'ts-badge'
       tsBadge.textContent = 'TS'

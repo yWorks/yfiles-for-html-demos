@@ -69,12 +69,13 @@ import {
   bindCommand,
   configureTwoPointerPanning,
   removeClass,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app'
-import { pointerEventsSupported } from '../../utils/Workarounds'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 let graphComponent: GraphComponent
 
@@ -116,7 +117,7 @@ function initializeDnDPanel(): void {
       data,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+    BrowserDetection.pointerEvents ? dragPreview : null
     )
     dragSource.addQueryContinueDragListener((src, args) => {
       if (args.dropTarget) {
@@ -299,12 +300,7 @@ async function runLayout(clearUndo: boolean): Promise<void> {
     await graphComponent.morphLayout(layout, '1s', layoutData)
     graphComponent.fitGraphBounds()
   } catch (error) {
-    const reportError = (window as any).reportError
-    if (typeof reportError === 'function') {
-      reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setUIDisabled(false)
     if (clearUndo) {
@@ -343,7 +339,9 @@ function registerCommands(): void {
   bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
   bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
 
-  bindChangeListener("select[data-command='AlgorithmSelectionChanged']", runLayout)
+  bindChangeListener("select[data-command='AlgorithmSelectionChanged']", checked =>
+    runLayout(checked as boolean)
+  )
   bindAction("button[data-command='Layout']", _ => runLayout(false))
 }
 

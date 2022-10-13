@@ -53,8 +53,13 @@ import {
   WebGL2ShapeNodeStyle
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp, showLoadingIndicator } from '../../resources/demo-app'
-import { isWebGl2Supported } from '../../utils/Workarounds'
+import {
+  bindAction,
+  bindCommand,
+  checkWebGL2Support,
+  showApp,
+  showLoadingIndicator
+} from '../../resources/demo-app'
 import { fetchLicense } from '../../resources/fetch-license'
 
 /**
@@ -71,9 +76,7 @@ let webGL2EdgeStyle: WebGL2PolylineEdgeStyle
 const maxGraphSize = 250_000
 
 async function run(): Promise<void> {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support')!.removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }

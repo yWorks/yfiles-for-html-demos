@@ -64,7 +64,7 @@ import {
   checkOr
 } from './Preconditions.js'
 
-import GraphWizardInputMode, { WizardEventArgs } from './GraphWizardInputMode.js'
+import { GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode.js'
 
 /**
  * Creates a {@link WizardAction} that navigates to the next {@INode node} in the direction of

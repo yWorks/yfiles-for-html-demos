@@ -26,16 +26,59 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-.node {
-  stroke: darkgray;
+.port {
+  transform: scale(1);
+  transition: 0.2s ease-in-out;
+  fill: #1a3442;
 }
 
-.node.red {
-  fill: #ff6e4e;
+.port:hover {
+  cursor: pointer;
+  transform: scale(1.5);
+  transition: 0.2s ease-in-out;
 }
-.node.green {
-  fill: #83d23a;
+
+.port-icon {
+  stroke: white;
+  stroke-width: 2px;
+  transition: 1s ease-in-out;
 }
-.node.blue {
-  fill: #7184d2;
+
+.port-icon-expand {
+  transform: scaleY(6);
+}
+
+.port-icon-collapse {
+  transform: scaleY(0);
+}
+
+#propertiesView td:first-of-type {
+  text-transform: uppercase;
+  color: #336699;
+  font-weight: bold;
+  padding-right: 1ex;
+  vertical-align: top;
+  margin-bottom: 20px;
+}
+
+#propertiesView td {
+  padding: 3px 0;
+}
+
+#propertiesView {
+  overflow-x: hidden;
+}
+
+#propertiesView .heading,
+#propertiesView .heading-text {
+  margin: 30px 0;
+}
+
+.inline-button {
+  margin: 1px 0;
+}
+
+.inline-img {
+  vertical-align: middle;
+  margin: 0 1px;
 }

@@ -64,6 +64,7 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '../../resources/demo-option-editor.js'
+import { reportDemoError } from '../../resources/demo-app.js'
 
 /**
  * Configuration options for the the polyline edge router.
@@ -153,10 +154,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
           'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
         )
       } else {
-        const reporter = window.reportError
-        if (typeof reporter === 'function') {
-          reporter(err)
-        }
+        reportDemoError(err)
       }
     } finally {
       this.$layoutRunning = false

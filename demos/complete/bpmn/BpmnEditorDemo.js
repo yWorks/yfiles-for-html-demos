@@ -87,7 +87,7 @@ import {
   YObject
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import BpmnLayoutData from './BpmnLayoutData.js'
 import BpmnLayout from './BpmnLayout.js'
 import PopupSupport from './BpmnPopupSupport.js'
@@ -120,13 +120,17 @@ import BpmnView, {
   YFILES_BPMN_PREFIX
 } from './bpmn-view.js'
 import * as DemoApp from '../../resources/demo-app.js'
-import { addNavigationButtons, configureTwoPointerPanning } from '../../resources/demo-app.js'
+import {
+  addNavigationButtons,
+  configureTwoPointerPanning,
+  reportDemoError
+} from '../../resources/demo-app.js'
 import { DragAndDropPanel } from '../../utils/DndPanel.js'
 import { BpmnDiParser } from './bpmn-di.js'
-import { pointerEventsSupported } from '../../utils/Workarounds.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -193,7 +197,7 @@ async function run() {
         data,
         DragDropEffects.ALL,
         true,
-        pointerEventsSupported ? dragPreview : null
+        BrowserDetection.pointerEvents ? dragPreview : null
       )
     } else {
       dragSource = NodeDropInputMode.startDrag(
@@ -201,7 +205,7 @@ async function run() {
         data,
         DragDropEffects.ALL,
         true,
-        pointerEventsSupported ? dragPreview : null
+        BrowserDetection.pointerEvents ? dragPreview : null
       )
     }
     dragSource.addQueryContinueDragListener((src, args) => {
@@ -528,11 +532,7 @@ async function onLayoutButtonClicked() {
   try {
     await layoutExecutor.start()
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layoutIsRunning = false
     setUIDisabled(false)

@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { IModelItem, QueryItemToolTipEventArgs, SolidColorFill } from 'yfiles'
 import {
   Color,
   Enum,
@@ -35,11 +36,8 @@ import {
   GroupNodeStyleIconPosition,
   GroupNodeStyleIconType,
   GroupNodeStyleTabPosition,
-  IModelItem,
   INode,
   Point,
-  QueryItemToolTipEventArgs,
-  SolidColorFill,
   TimeSpan
 } from 'yfiles'
 import { addClass } from '../../resources/demo-app'

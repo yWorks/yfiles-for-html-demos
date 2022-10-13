@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { addClass } from '../../resources/demo-app'
-import { INode } from 'yfiles'
+import type { INode } from 'yfiles'
 import type { Person } from './Person'
 
 export default class PropertiesPanel {

@@ -35,8 +35,9 @@ import {
   GraphViewerInputMode,
   IArrow,
   ICommand,
-  IPoint,
+  IEnumerable,
   License,
+  Point,
   PolylineEdgeStyle,
   Rect,
   Size,
@@ -60,7 +61,6 @@ let graphMLSupport: GraphMLSupport
 
 /**
  * Runs the demo.
- * @param licenseData
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -108,9 +108,9 @@ function initializeTextAreas(): void {
   graphComponent.selection.addItemSelectionChangedListener(() => {
     const selectedNode = graphComponent.selection.selectedNodes.at(0)
     if (selectedNode) {
-      if (VuejsNodeStyle.isInstance(selectedNode.style)) {
+      if (selectedNode.style instanceof VuejsNodeStyle) {
         templateTextArea.setOption('readOnly', false)
-        templateTextArea.setValue((selectedNode.style as VuejsNodeStyle).template)
+        templateTextArea.setValue(selectedNode.style.template)
       } else {
         templateTextArea.setOption('readOnly', true)
         templateTextArea.setValue('Style is not an instance of VuejsNodeStyle.')
@@ -146,9 +146,9 @@ function initializeStyles(): void {
 <template v-if="zoom >= 0.7">
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="10" width="63.75" height="63.75"></image>
   <image :xlink:href="'./resources/' + tag.status + '_icon.svg'" x="25" y="80" height="15" width="60"></image>
-  <g style="font-family: Roboto,sans-serif; fill: #444" width="185">
+  <g style="font-family: Roboto,sans-serif; fill: #444">
     <text transform="translate(90 25)" style="font-size: 16px; fill: #336699">{{tag.name}}</text>
-    <text transform="translate(90 45)" style="text-transform: uppercase">{{tag.position}}</text>
+    <text transform="translate(90 45)" style="font-size: 9px; text-transform: uppercase">{{tag.position}}</text>
     <text transform="translate(90 72)">{{tag.email}}</text>
     <text transform="translate(90 88)">{{tag.phone}}</text>
     <text transform="translate(170 88)">{{tag.fax}}</text>
@@ -156,7 +156,7 @@ function initializeStyles(): void {
 </template>
 <template v-else>
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"></image>
-  <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444" width="185">
+  <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444">
     <text transform="translate(85 40)" style="font-size: 26px; fill: #336699">{{tag.name}}</text>
     <svg-text :content="tag.position?.toUpperCase()" x="85" y="50" :width="layout.width - 100" :height="50" :wrapping="4" font-family="sans-serif" :font-size="14" :font-style="0" :font-weight="0" :text-decoration="0" fill="black" :opacity="1" :visible="true" :clipped="true" align="start" transform=""></svg-text>
   </g>
@@ -233,16 +233,8 @@ function loadSampleGraph(): void {
     layout: (data: SampleDataType): Rect =>
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
-  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt')
-
-  graphBuilder.addEdgeCreatedListener((src, args) => {
-    const edge = args.item
-    if (edge.tag.bends) {
-      edge.tag.bends.forEach((bend: IPoint) => {
-        args.graph.addBend(edge, bend)
-      })
-    }
-  })
+  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = data =>
+    IEnumerable.from((data.bends || []).map(b => new Point(b.x, b.y)))
 
   const graph = graphBuilder.buildGraph()
   graphComponent.fitGraphBounds(30)
@@ -260,7 +252,7 @@ function registerCommands(): void {
       graphComponent.fitGraphBounds()
     } catch (ignored) {
       alert(
-        'The graph contains styles that are not supported by this demo. This demo works best when nodes have VuejsNodeStyle created by this demo or "Node Template Designer".'
+        'The graph contains styles that are not supported by this demo. This demo works best when nodes use VuejsNodeStyle instances created by this demo or "Node Template Designer".'
       )
       graphComponent.graph.clear()
     }

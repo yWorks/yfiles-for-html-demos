@@ -47,7 +47,7 @@ import {
   Rect
 } from 'yfiles'
 
-import { LayoutOptions } from './LayoutOptions'
+import type { LayoutOptions } from './LayoutOptions'
 
 /**
  * Performs layout and animation while dragging the marquee rectangle.

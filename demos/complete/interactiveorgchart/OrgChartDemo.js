@@ -48,7 +48,7 @@ import {
   TreeBuilder
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import GraphSearch from '../../utils/GraphSearch.js'
 import ClickablePortsSupport from './ClickablePortsSupport.js'
 import PrintingSupport from '../../utils/PrintingSupport.js'

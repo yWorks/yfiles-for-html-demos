@@ -71,10 +71,10 @@ import {
   showApp,
   showLoadingIndicator
 } from '../../resources/demo-app.js'
-import { passiveSupported } from '../../utils/Workarounds.js'
 import MultiPageIGraphBuilder from './MultiPageIGraphBuilder.js'
 import PageBoundsVisualCreator from './PageBoundsVisualCreator.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
@@ -410,7 +410,7 @@ function initializeCoreLayouts() {
     () => {
       additionalParentCount.disabled = coreLayoutComboBox.value !== 'Tree'
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
 }
 

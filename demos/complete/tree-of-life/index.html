@@ -39,6 +39,53 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
     <script src="../../resources/filesystem-warning.js"></script>
+    <style>
+      #breadcrumbs {
+        position: absolute;
+        left: 0;
+        top: 100px;
+        right: 0;
+        padding: 4px;
+        overflow: hidden;
+        white-space: nowrap;
+        display: none;
+      }
+
+      #breadcrumbs > * {
+        display: inline-block;
+        background-color: #fff9;
+        padding: 4px;
+      }
+
+      .breadcrumbs-label {
+        font-weight: bold;
+      }
+
+      .breadcrumbs-items > * {
+        display: inline-block;
+      }
+
+      .breadcrumbs-items .breadcrumbs-item {
+        width: 100px;
+        height: 20px;
+        color: #333;
+        background: #ddd;
+        border-radius: 8px;
+        text-align: center;
+        margin: 0 2px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        cursor: pointer;
+        padding: 0 1px;
+      }
+
+      .breadcrumbs-items .breadcrumbs-item.selected,
+      .breadcrumbs-items .breadcrumbs-item.selected:hover,
+      .breadcrumbs-items .breadcrumbs-item:hover {
+        background: #4caf50;
+        color: white;
+      }
+    </style>
   </head>
   <body class="demo-has-left">
     <aside class="demo-sidebar demo-left">
@@ -73,7 +120,8 @@
           <li>
             Clicking on a node/species reveals the simpler phylogenetic tree with all the
             descendants of the selected species. Clicking again on the same node shows also its
-            ancestors.
+            ancestors. Navigate also to the previous 10 ancestors using the breadcrumb menu in the
+            toolbar.
           </li>
           <li>
             Hovering over a node or an edge of a sub-tree highlights its containing species and the
@@ -109,6 +157,7 @@
 
         <select id="sample-subtrees" data-command="sample-subtrees">
           <option value="Life on Earth">Life on Earth</option>
+          <option value="Eukaryotes">Eukaryotes</option>
           <option value="Viruses">Viruses</option>
           <option value="Fungi">Fungi</option>
           <option value="Archaea">Archaea</option>
@@ -125,7 +174,7 @@
             type="checkbox"
             id="demo-toggle-extinct-button"
             data-command="ToggleExtinct"
-            class="demo-toggle-button"
+            class="demo-toggle-button labeled"
             checked
           />
           <label for="demo-toggle-extinct-button" title="Show extinct creatures"
@@ -135,10 +184,21 @@
 
         <span class="demo-separator"></span>
 
-        <span><label for="searchBox">Search: </label><input type="search" id="searchBox" /></span>
+        <label for="searchBox">Search: </label>
+        <form autocomplete="off">
+          <input type="search" id="searchBox" list="searchAutocomplete" />
+          <datalist id="searchAutocomplete"></datalist>
+        </form>
       </div>
 
       <div id="graphComponent"></div>
+
+      <div id="breadcrumbs">
+        <span class="breadcrumbs-label">You are here:</span
+        ><span class="breadcrumbs-items">
+          <button class="breadcrumbs-item selected">Life on Earth</button>
+        </span>
+      </div>
 
       <div id="loadingIndicator"></div>
     </div>

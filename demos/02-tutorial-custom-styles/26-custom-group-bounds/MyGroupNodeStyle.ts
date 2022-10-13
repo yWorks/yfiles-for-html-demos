@@ -68,7 +68,7 @@ const BUTTON_SIZE = 14
  * this makes customizations easy. Additionally, it uses a couple of inner
  * classes to customize certain aspects of the user interaction behavior.
  */
-export default class MyGroupNodeStyle extends NodeStyleBase {
+export class MyGroupNodeStyle extends NodeStyleBase {
   private $nodeColor: string
 
   constructor() {

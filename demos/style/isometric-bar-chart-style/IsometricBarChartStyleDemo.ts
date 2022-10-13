@@ -68,7 +68,6 @@ let barLabelManager: GraphModelManager
  * multiple, already styled nodes which are associated with precomputed centrality values.
  * These values are then used in two additional NodeStyles to display a bar and a label each
  * and added as additional visualization via a custom @link{GraphModelManager}.
- * @param licenseData
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -251,7 +250,9 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   bindChangeListener("select[data-command='BarDataChanged']", onBarDataChanged)
-  bindChangeListener("input[data-command='ToggleShowLabels']", toggleLabels)
+  bindChangeListener("input[data-command='ToggleShowLabels']", checked =>
+    toggleLabels(checked as boolean)
+  )
 }
 
 // noinspection JSIgnoredPromiseFromCall

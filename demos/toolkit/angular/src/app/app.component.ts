@@ -50,12 +50,12 @@ import {
 import { EDGE_DATA, NODE_DATA } from './data'
 import { Person } from './person'
 import { NodeComponentStyle } from './NodeComponentStyle'
-import { detectInternetExplorerVersion } from '../utils/Workarounds'
 import { GraphComponentService } from './services/graph-component.service'
 import GraphSearch from '../utils/GraphSearch'
+import { BrowserDetection } from '../utils/BrowserDetection'
 
-const ieVersion = detectInternetExplorerVersion()
-const useWebWorkerLayout = ieVersion === -1 || ieVersion > 11
+const ieVersion = BrowserDetection.ieVersion
+const useWebWorkerLayout = !ieVersion || ieVersion > 11
 
 // Run layout calculation on a Web Worker
 let layoutWorker: Worker

@@ -49,7 +49,7 @@ const VERTICAL_INSET = 2
  * This implementation returns a fixed desired size without taking the actual text size into account.
  * This is done to showcase the built-in line wrapping (trimming) feature of this style.
  */
-export default class MySimpleLabelStyle extends LabelStyleBase {
+export class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Initializes a new instance of the {@link MySimpleLabelStyle} class using the "Arial" font.
    */

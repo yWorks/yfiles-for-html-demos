@@ -57,6 +57,7 @@ import {
   YNode,
   YPoint
 } from 'yfiles'
+import { reportDemoError } from '../../resources/demo-app.js'
 
 export default class OrgChartGraph {
   /**
@@ -366,11 +367,7 @@ export default class OrgChartGraph {
       // the commands CanExecute state might have changed - trigger a requery
       ICommand.invalidateRequerySuggested()
     } catch (error) {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
+      reportDemoError(error)
     }
     this.doingLayout = false
   }

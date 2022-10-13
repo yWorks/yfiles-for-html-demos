@@ -71,10 +71,10 @@ import {
   showApp,
   showLoadingIndicator
 } from '../../resources/demo-app'
-import { passiveSupported } from '../../utils/Workarounds'
 import MultiPageIGraphBuilder from './MultiPageIGraphBuilder'
 import PageBoundsVisualCreator from './PageBoundsVisualCreator'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
@@ -352,7 +352,7 @@ function registerCommands(): void {
     }
   })
   bindChangeListener("input[data-command='PageNumberTextBox']", page => {
-    const pageNo = parseInt(page) - 1
+    const pageNo = parseInt(page as string) - 1
     if (!isNaN(pageNo) && checkPageNumber(pageNo)) {
       setPageNumber(pageNo)
     }
@@ -405,7 +405,7 @@ function initializeCoreLayouts(): void {
     () => {
       additionalParentCount.disabled = coreLayoutComboBox.value !== 'Tree'
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
 }
 

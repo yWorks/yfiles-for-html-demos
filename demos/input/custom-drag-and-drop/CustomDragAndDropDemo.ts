@@ -40,12 +40,12 @@ import {
   Size
 } from 'yfiles'
 import { bindCommand, showApp } from '../../resources/demo-app'
-import { pointerEventsSupported } from '../../utils/Workarounds'
 import { ColorDropInputMode } from './ColorDropInputMode'
 import SampleData from './resources/SampleData'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 const PALETTE_SIZE = 15
 
@@ -171,7 +171,7 @@ function createPaletteEntry(color: string): HTMLElement {
       color,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+      BrowserDetection.pointerEvents ? dragPreview : null
     )
   }
 

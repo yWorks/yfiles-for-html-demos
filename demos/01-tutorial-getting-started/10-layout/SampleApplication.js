@@ -57,8 +57,8 @@ import {
   ToolTipQueryEventArgs
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
+import { bindAction, bindCommand, reportDemoError, showApp } from '../../resources/demo-app.js'
 import GraphBuilderData from './resources/graph.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 
@@ -140,13 +140,7 @@ async function runLayout() {
       easedAnimation: true
     })
   } catch (error) {
-    // this is just for the purpose of the demo - usually you would employ your own
-    // logging or error handling logic, here
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layoutButton.disabled = false
   }

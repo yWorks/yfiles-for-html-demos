@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.5.
+     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Deep Zoom Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-has-left">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Deep Zoom Demo</h1>
+        <p>
+          This demo allows you to seamlessly zoom into the contents of deeply nested group nodes,
+          similar to that is known as "deep zoom" for images and maps.
+        </p>
+        <p>
+          The graph component does not display the complete graph but only the nesting level that
+          fits the current zoom level. That means that graph items at a higher nesting level are not
+          rendered at all, and the content of group nodes that is too small to provide meaningful
+          interaction is displayed as a static image. When zooming in on such a group node, this
+          image is eventually replaced with real graph elements.
+        </p>
+
+        <h2>Things to try</h2>
+        <ul>
+          <li>
+            <strong>Zoom into</strong> a group node so that its entire contents fill the current
+            viewport, and observe that the displayed graphic is automatically replaced by the
+            contents of the group.
+          </li>
+          <li>
+            <strong>Zoom out</strong> of a group and observe that its previous nesting layer becomes
+            visible and the content of the group becomes an image again.
+          </li>
+
+          <li>
+            <strong>Toggle</strong> the smooth scrolling button in the toolbar to enable or disable
+            smoothly animated viewport changes.
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <header class="demo-header"></header>
+      <div class="demo-toolbar">
+        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <span class="demo-separator"></span>
+
+        <input
+          type="checkbox"
+          id="toggle-smooth-scrolling"
+          class="demo-toggle-button labeled"
+          data-command="ToggleSmoothScrolling"
+          checked
+        />
+        <label for="toggle-smooth-scrolling" title="Toggles Smooth Scrolling"
+          >Smooth Scrolling</label
+        >
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" crossorigin="anonymous" src="DeepZoomDemo.js"></script>
+  </body>
+</html>

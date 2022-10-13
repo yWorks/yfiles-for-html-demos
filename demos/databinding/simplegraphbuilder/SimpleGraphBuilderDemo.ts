@@ -287,7 +287,7 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindChangeListener("select[data-command='SelectBuilder']", async selectedValue => {
     // build graph from new data
     selectBox.disabled = true
-    buildGraph(graphComponent.graph, selectedValue)
+    buildGraph(graphComponent.graph, selectedValue as string)
     await arrangeGraph(graphComponent)
     selectBox.disabled = false
   })

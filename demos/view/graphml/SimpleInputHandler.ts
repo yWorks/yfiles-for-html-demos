@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import { IGraph, IModelItem, InputHandlerBase, IParseContext, KeyType, YObject } from 'yfiles'
-import GraphMLProperty from './GraphMLProperty'
-import { PropertiesPanel } from './PropertiesPanel'
+import type { GraphMLProperty } from './GraphMLProperty'
+import type { PropertiesPanel } from './PropertiesPanel'
 
 /**
  * An input handler that reads arbitrary data.
  * In the case of complex types, the text content of the XML node is stored.
  */
-export default class SimpleInputHandler extends InputHandlerBase<any, any> {
+export class SimpleInputHandler extends InputHandlerBase<any, any> {
   property: any
   panel: any
 

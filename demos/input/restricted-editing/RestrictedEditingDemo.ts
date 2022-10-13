@@ -42,7 +42,6 @@ import { fetchLicense } from '../../resources/fetch-license'
 
 /**
  * Bootstraps this demo.
- * @param licenseData The yFiles license information.
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -203,7 +202,9 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindChangeListener('#allowedEditingOperations', value => configureEditing(graphComponent, value))
+  bindChangeListener('#allowedEditingOperations', value =>
+    configureEditing(graphComponent, value as 'none' | 'moving' | 'all')
+  )
 }
 
 // noinspection JSIgnoredPromiseFromCall

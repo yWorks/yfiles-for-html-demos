@@ -35,11 +35,8 @@ import {
   GroupNodeStyleIconPosition,
   GroupNodeStyleIconType,
   GroupNodeStyleTabPosition,
-  IModelItem,
   INode,
   Point,
-  QueryItemToolTipEventArgs,
-  SolidColorFill,
   TimeSpan
 } from 'yfiles'
 import { addClass } from '../../resources/demo-app.js'

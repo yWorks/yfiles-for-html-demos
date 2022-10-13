@@ -272,15 +272,15 @@ function registerCommands(): void {
     bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('bridgeOrientationComboBox')
     graphComponent.invalidate()
   })
-  bindChangeListener('#bridgeWidthSlider', (value: string) => {
-    bridgeManager.defaultBridgeWidth = parseInt(value)
+  bindChangeListener('#bridgeWidthSlider', value => {
+    bridgeManager.defaultBridgeWidth = parseInt(value as string)
     graphComponent.invalidate()
-    document.getElementById('bridgeWidthLabel')!.textContent = value
+    document.getElementById('bridgeWidthLabel')!.textContent = value as string
   })
-  bindChangeListener('#bridgeHeightSlider', (value: string) => {
-    bridgeManager.defaultBridgeHeight = parseInt(value)
+  bindChangeListener('#bridgeHeightSlider', value => {
+    bridgeManager.defaultBridgeHeight = parseInt(value as string)
     graphComponent.invalidate()
-    document.getElementById('bridgeHeightLabel')!.textContent = value
+    document.getElementById('bridgeHeightLabel')!.textContent = value as string
   })
 }
 

@@ -38,14 +38,12 @@ import {
   LabelStyleDecorationInstaller,
   License,
   NodeStyleDecorationInstaller,
-  NodeStyleLabelStyleAdapter,
   Point,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeStyle,
   Size,
-  StyleDecorationZoomPolicy,
-  VoidLabelStyle
+  StyleDecorationZoomPolicy
 } from 'yfiles'
 
 import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
@@ -192,16 +190,13 @@ function initializeDecoration(): void {
 
   // ... and for labels
   labelDecorationInstaller = new LabelStyleDecorationInstaller({
-    // we use a node style with a rounded rectangle adapted as a label style and we declare a margin for the
+    // we use a node style with a rounded rectangle adapted as a label style, and we declare a margin for the
     // decoration
-    labelStyle: new NodeStyleLabelStyleAdapter(
-      new ShapeNodeStyle({
-        shape: 'rectangle',
-        stroke: '#01BAFF',
-        fill: 'transparent'
-      }),
-      VoidLabelStyle.INSTANCE
-    ),
+    labelStyle: new DefaultLabelStyle({
+      shape: 'rectangle',
+      backgroundStroke: '#01BAFF',
+      textFill: 'transparent'
+    }),
     margins: 5
   })
 
@@ -272,17 +267,14 @@ function registerCommands(): void {
   bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 
-  bindChangeListener(
-    "input[data-command='UpdateNodeDecorationCommand']",
-    customNodeDecorationChanged
+  bindChangeListener("input[data-command='UpdateNodeDecorationCommand']", checked =>
+    customNodeDecorationChanged(checked as boolean)
   )
-  bindChangeListener(
-    "input[data-command='UpdateEdgeDecorationCommand']",
-    customEdgeDecorationChanged
+  bindChangeListener("input[data-command='UpdateEdgeDecorationCommand']", checked =>
+    customEdgeDecorationChanged(checked as boolean)
   )
-  bindChangeListener(
-    "input[data-command='UpdateLabelDecorationCommand']",
-    customLabelDecorationChanged
+  bindChangeListener("input[data-command='UpdateLabelDecorationCommand']", checked =>
+    customLabelDecorationChanged(checked as boolean)
   )
 
   bindChangeListener("select[data-command='ZoomMode']", zoomModeChanged)

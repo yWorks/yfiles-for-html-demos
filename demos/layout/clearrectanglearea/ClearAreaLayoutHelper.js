@@ -47,8 +47,6 @@ import {
   Rect
 } from 'yfiles'
 
-import { LayoutOptions } from './LayoutOptions.js'
-
 /**
  * Performs layout and animation while dragging the marquee rectangle.
  */

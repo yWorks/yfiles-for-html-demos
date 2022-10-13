@@ -12,7 +12,6 @@
 </template>
 
 <script lang="ts">
-import licenseData from '../../../../../lib/license.json'
 import { GraphComponent, GraphEditorInputMode, GraphViewerInputMode, License } from 'yfiles'
 import DemoToolbar from './DemoToolbar.vue'
 import ContextMenu from './ContextMenu.vue'
@@ -22,6 +21,7 @@ import { useTooltips } from '@/composables/useTooltips'
 import { useGraphSearch } from '@/composables/useGraphSearch'
 import { useLayout } from '@/composables/useLayout'
 import { useDefaultGraph } from '@/composables/useDefaultGraph'
+import licenseData from '../../../../../lib/license.json'
 
 License.value = licenseData
 

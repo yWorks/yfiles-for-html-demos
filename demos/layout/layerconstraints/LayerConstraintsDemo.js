@@ -50,7 +50,7 @@ import {
 } from 'yfiles'
 
 import RandomGraphGenerator from '../../utils/RandomGraphGenerator.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, reportDemoError, showApp } from '../../resources/demo-app.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
@@ -117,12 +117,7 @@ async function runLayout(graphComponent) {
   try {
     await graphComponent.morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
   } catch (error) {
-    const reporter = window.reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setUIDisabled(false)
   }

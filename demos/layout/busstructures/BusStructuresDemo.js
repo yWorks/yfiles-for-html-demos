@@ -50,6 +50,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app.js'
 import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles.js'
@@ -94,7 +95,6 @@ const colors = [
 
 /**
  * Bootstraps the demo.
- * @param licenseData The yFiles license information.
  * @returns {!Promise}
  */
 async function run() {
@@ -154,12 +154,7 @@ async function runLayout() {
     // apply the layout
     await graphComponent.morphLayout({ layout, layoutData, morphDuration: '700ms' })
   } catch (error) {
-    const reporter = window.reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layoutRunning = false
     disableUI(false)

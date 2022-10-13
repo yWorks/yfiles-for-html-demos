@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { addClass } from '../../resources/demo-app.js'
-import { INode } from 'yfiles'
 
 export default class PropertiesPanel {
   /**

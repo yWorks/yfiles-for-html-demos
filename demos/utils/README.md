@@ -20,7 +20,7 @@ Contains helper classes that provide methods for JSON I/O of an `IGraph`. This i
 
 #### VuejsNodeStyle.js
 
-A template node style that leverages the powerful data binding and condition rendering features of the [Vue.js framework](https://vuejs.org/v2/guide/index.html). See the corresponding [template styles section in the developer's guide](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles) and the [Vue.js Template Node Style Demo](../style/vuejstemplatenodestyle/index.html) for more details.
+A template node style that leverages the powerful data binding and conditional rendering features of the [Vue.js framework](https://vuejs.org/v2/guide/index.html). See the corresponding [template styles section in the developer's guide](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles) and the [Vue.js Template Node Style Demo](../style/vuejstemplatenodestyle/index.html) for more details.
 
 #### Workarounds.js
 

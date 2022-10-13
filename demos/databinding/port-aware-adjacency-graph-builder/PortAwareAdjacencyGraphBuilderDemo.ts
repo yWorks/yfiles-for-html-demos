@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { GraphBuilderItemEventArgs } from 'yfiles'
 import {
   AdjacencyGraphBuilder,
-  GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
   HierarchicLayout,

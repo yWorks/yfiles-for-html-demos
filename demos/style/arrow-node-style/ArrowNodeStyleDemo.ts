@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { ArrowNodeDirectionStringValues, ArrowStyleShapeStringValues } from 'yfiles'
 import {
   ArrowNodeDirection,
   ArrowNodeStyle,
@@ -231,12 +232,14 @@ function initializeUI(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   basicShape.addEventListener('change', () => {
-    const shape = Enum.parse(ArrowStyleShape.$class, basicShape.value, true)
+    const shape = ArrowStyleShape.from(basicShape.value as ArrowStyleShapeStringValues)
     applyStyleSetting(graphComponent, style => (style.shape = shape))
   })
 
   shapeDirection.addEventListener('change', () => {
-    const direction = Enum.parse(ArrowNodeDirection.$class, shapeDirection.value, true)
+    const direction = ArrowNodeDirection.from(
+      shapeDirection.value as ArrowNodeDirectionStringValues
+    )
     applyStyleSetting(graphComponent, style => (style.direction = direction))
   })
 

@@ -49,13 +49,12 @@ import {
 } from 'yfiles'
 
 import AnimatedLinearGradient from './AnimatedLinearGradient.js'
-import MySimpleArrow from './MySimpleArrow.js'
-import MySimpleNodeStyle from './MySimpleNodeStyle.js'
+import { MySimpleArrow } from './MySimpleArrow.js'
 
 /**
  * This class is an example for a custom edge style based on {@link EdgeStyleBase}.
  */
-export default class MySimpleEdgeStyle extends EdgeStyleBase {
+export class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Initializes a new instance of the {@link MySimpleEdgeStyle} class.
    */

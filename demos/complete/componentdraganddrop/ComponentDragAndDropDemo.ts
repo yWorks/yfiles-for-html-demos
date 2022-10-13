@@ -56,10 +56,10 @@ import {
 import { GraphDropInputMode } from '../../input/graph-drag-and-drop/GraphDropInputMode'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
 import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
-import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -269,7 +269,7 @@ function addComponentVisual(component: any, panel: HTMLElement): void {
       componentGraph,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+      BrowserDetection.pointerEvents ? dragPreview : null
     )
 
     dragSource.addQueryContinueDragListener((src: object, args: QueryContinueDragEventArgs) => {
@@ -295,7 +295,7 @@ function addComponentVisual(component: any, panel: HTMLElement): void {
       startDrag()
       event.preventDefault()
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
   div.appendChild(img)
   panel.appendChild(div)

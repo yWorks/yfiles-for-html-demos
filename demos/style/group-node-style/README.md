@@ -22,6 +22,7 @@ The related [GroupNodeLabelModel](https://docs.yworks.com/yfileshtml/#/api/Group
   This CSS transition effect is specified in the demo's local <style> definition.
 - When using SVG styles, collapse a group or expand a folder with a chevron or triangle icon. The expansion state icon will change in an animated fashion in response to the state change.  
   This CSS transition effect is specified in the demo's local <style> definition.
+- Hover over a group node to get a tool tip that lists the configured properties for each group style.
 
 ## Related Demos
 

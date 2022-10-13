@@ -44,10 +44,8 @@ import {
   ILabel,
   INode,
   License,
-  NodeStyleLabelStyleAdapter,
   Point,
   PolylineEdgeStyle,
-  ShapeNodeShape,
   ShapeNodeStyle,
   Size,
   StringTemplateLabelStyle,
@@ -212,12 +210,10 @@ function addEdgeColorButton(queryEvent: QueryButtonsEvent, fill: string, offset:
   )
 
   const button = queryEvent.addButton({
-    style: new NodeStyleLabelStyleAdapter({
+    style: new DefaultLabelStyle({
       autoFlip: false,
-      nodeStyle: new ShapeNodeStyle({
-        fill: fill,
-        shape: ShapeNodeShape.RECTANGLE
-      })
+      backgroundFill: fill,
+      shape: 'rectangle'
     }),
     onAction: button => {
       const edgeStyle = (queryEvent.owner as IEdge).style as PolylineEdgeStyle

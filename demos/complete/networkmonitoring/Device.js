@@ -46,7 +46,7 @@ const DeviceKind = {
 /**
  * Class representing a device in the network.
  */
-export default class Device {
+export class Device {
   /** 
     Cache size of the workload history.
   * @type {number}

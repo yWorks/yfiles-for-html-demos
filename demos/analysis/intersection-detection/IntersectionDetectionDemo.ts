@@ -29,6 +29,7 @@
 import {
   DefaultEdgePathCropper,
   DefaultLabelStyle,
+  EdgeStyleDecorationInstaller,
   Fill,
   FreeEdgeLabelModel,
   FreeNodeLabelModel,
@@ -42,6 +43,7 @@ import {
   ICommand,
   IEdge,
   IGraph,
+  IModelItem,
   INode,
   Insets,
   Intersection,
@@ -49,11 +51,17 @@ import {
   Intersections,
   LabelPositionHandler,
   LabelSnapContext,
+  LabelStyleDecorationInstaller,
   License,
+  NodeStyleDecorationInstaller,
   OrientedRectangle,
   OrthogonalEdgeEditingContext,
   Point,
+  PolylineEdgeStyle,
+  QueryItemToolTipEventArgs,
   ShapeNodeStyle,
+  StyleDecorationZoomPolicy,
+  TimeSpan,
   VerticalTextAlignment,
   Visualization
 } from 'yfiles'
@@ -62,6 +70,7 @@ import { IntersectionVisualCreator } from './DemoVisuals'
 import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles'
 import GraphData from './resources/GraphData'
 import { fetchLicense } from '../../resources/fetch-license'
+import { createToolTipContent } from './TooltipHelper'
 
 /**
  * The graph component
@@ -85,6 +94,7 @@ const considerLabelOwnerIntersectionsBox = document.getElementById(
 const considerItemGeometryBox = document.getElementById(
   'consider-item-geometry'
 ) as HTMLInputElement
+const considerSelectionBox = document.getElementById('consider-only-selection') as HTMLInputElement
 const intersectionCountLabel = document.getElementById('intersection-count') as HTMLLabelElement
 const nodeNodeCountLabel = document.getElementById('node-node-count') as HTMLLabelElement
 const nodeEdgeCountLabel = document.getElementById('node-edge-count') as HTMLLabelElement
@@ -93,6 +103,7 @@ const labelCountLabel = document.getElementById('label-count') as HTMLLabelEleme
 const consideredItemsSelect = document.getElementById(
   'considered-items-select'
 ) as HTMLSelectElement
+let intersectionInfoArray: Intersection[] = []
 
 /**
  * This demo shows how to find and highlight intersections and overlaps between graph elements.
@@ -106,7 +117,7 @@ async function run(): Promise<void> {
   initializeInputMode()
 
   // initialize the graph and the defaults
-  initializeGraph(graphComponent.graph)
+  initializeGraph(graphComponent)
 
   // bind the buttons to their commands
   registerCommands()
@@ -173,11 +184,16 @@ function runIntersectionAlgorithm(): void {
   // whether to consider the shape geometry of the items
   intersections.considerItemGeometry = considerItemGeometryBox.checked
 
+  // whether to consider only the selected elements
+  if (considerSelectionBox.checked) {
+    intersections.affectedItems.delegate = item => graphComponent.selection.isSelected(item)
+  }
+
   // run the algorithm and obtain the result
   const intersectionsResult = intersections.run(graphComponent.graph)
 
   // store information of results in right side panel
-  const intersectionInfoArray = intersectionsResult.intersections.toArray()
+  intersectionInfoArray = intersectionsResult.intersections.toArray()
   updateIntersectionInfoPanel(intersectionInfoArray)
 
   updateIntersectionVisual(intersectionInfoArray)
@@ -319,7 +335,8 @@ function loadSampleGraph(graph: IGraph): void {
 /**
  * Initializes default styles for the given graph.
  */
-function initializeGraph(graph: IGraph): void {
+function initializeGraph(graphComponent: GraphComponent): void {
+  const graph = graphComponent.graph
   // set style defaults
   const theme = 'demo-palette-75'
   initDemoStyles(graph, { theme })
@@ -355,6 +372,45 @@ function initializeGraph(graph: IGraph): void {
     positionHandler.visualization = Visualization.LIVE
     return positionHandler
   })
+
+  // add some highlighting for the nodes/edges/labels involved in an intersection
+  graph.decorator.nodeDecorator.highlightDecorator.setImplementation(
+    new NodeStyleDecorationInstaller({
+      nodeStyle: new ShapeNodeStyle({
+        shape: 'rectangle',
+        stroke: '2px #f0c808',
+        fill: 'transparent'
+      }),
+      margins: 0,
+      zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
+    })
+  )
+
+  graph.decorator.labelDecorator.highlightDecorator.setImplementation(
+    new LabelStyleDecorationInstaller({
+      labelStyle: new DefaultLabelStyle({
+        shape: 'rectangle',
+        backgroundStroke: '2px #56926e',
+        backgroundFill: 'transparent',
+        textFill: 'transparent'
+      }),
+      margins: 0,
+      zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
+    })
+  )
+
+  graph.decorator.edgeDecorator.highlightDecorator.setImplementation(new EdgeStyleDecorationInstaller({
+    edgeStyle: new PolylineEdgeStyle({
+      stroke: '2px #ff6c00'
+    }),
+    zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
+  }))
+
+  graphComponent.selection.addItemSelectionChangedListener(() => {
+    if (considerSelectionBox.checked) {
+      runIntersectionAlgorithm()
+    }
+  })
 }
 
 /**
@@ -365,6 +421,7 @@ function initializeInputMode(): void {
   const inputMode = new GraphEditorInputMode({
     allowCreateBend: true,
     selectableItems: 'all',
+    marqueeSelectableItems: 'all',
     allowGroupingOperations: true,
     orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
     snapContext: new GraphSnapContext(),
@@ -379,6 +436,23 @@ function initializeInputMode(): void {
   inputMode.moveInputMode.addDraggedListener(runIntersectionAlgorithm)
   inputMode.handleInputMode.addDraggedListener(runIntersectionAlgorithm)
   inputMode.moveLabelInputMode.addDraggedListener(runIntersectionAlgorithm)
+
+  inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
+  inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
+    const item = args.item
+    const highlightIndicatorManager = graphComponent.highlightIndicatorManager
+    highlightIndicatorManager.clearHighlights()
+
+    for (const intersection of intersectionInfoArray) {
+      const item1 = intersection.item1
+      const item2 = intersection.item2
+      if (item === item1 || item === item2) {
+        highlightIndicatorManager.addHighlight(item1)
+        highlightIndicatorManager.addHighlight(item2)
+      }
+    }
+  })
+  configureToolTips(inputMode)
 
   graphComponent.inputMode = inputMode
 }
@@ -412,6 +486,7 @@ function registerCommands(): void {
     runIntersectionAlgorithm
   )
   bindChangeListener("input[data-command='ConsiderItemGeometry']", runIntersectionAlgorithm)
+  bindChangeListener("input[data-command='ConsiderOnlySelection']", runIntersectionAlgorithm)
   consideredItemsSelect.addEventListener('change', runIntersectionAlgorithm)
 
   bindAction('#snapping-button', () => {
@@ -420,6 +495,33 @@ function registerCommands(): void {
     geim.snapContext!.enabled = snappingEnabled
     geim.labelSnapContext!.enabled = snappingEnabled
   })
+}
+
+/**
+ * Configures the given input mode to show tool tips for labels.
+ * The tool tips show a description of the corresponding label's configuration.
+ */
+function configureToolTips(inputMode: GraphEditorInputMode): void {
+  // Customize the tool tip's behavior to our liking.
+  const mouseHoverInputMode = inputMode.mouseHoverInputMode
+  mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
+  mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(50)
+  mouseHoverInputMode.duration = TimeSpan.fromSeconds(10)
+
+  // Register a listener for when a tool tip should be shown.
+  inputMode.addQueryItemToolTipListener(
+    (src: object, eventArgs: QueryItemToolTipEventArgs<IModelItem>): void => {
+      if (eventArgs.handled) {
+        // Tool tip content has already been assigned -> nothing to do.
+        return
+      }
+
+      // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
+      eventArgs.toolTip = createToolTipContent(eventArgs.item!, intersectionInfoArray)
+      // Indicate that the tool tip content has been set.
+      eventArgs.handled = true
+    }
+  )
 }
 
 // noinspection JSIgnoredPromiseFromCall

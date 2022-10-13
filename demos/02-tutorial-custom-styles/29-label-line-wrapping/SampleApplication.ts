@@ -39,9 +39,9 @@ import {
   TextWrapping
 } from 'yfiles'
 
-import MySimpleLabelStyle from './MySimpleLabelStyle'
-import MySimpleEdgeStyle from './MySimpleEdgeStyle'
-import MySimpleNodeStyle from './MySimpleNodeStyle'
+import { MySimpleLabelStyle } from './MySimpleLabelStyle'
+import { MySimpleEdgeStyle } from './MySimpleEdgeStyle'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle'
 import { bindCommand, showApp } from '../../resources/demo-app'
 
 import { applyDemoTheme } from '../../resources/demo-styles'

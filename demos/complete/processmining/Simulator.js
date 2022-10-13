@@ -26,10 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, IListEnumerable, INode, List } from 'yfiles'
-import { ProcessItemVisual } from './ProcessItemVisual.js'
-import { HeatData } from './HeatData.js'
-
 /**
  * @param {!IGraph} graph
  * @param {!INode} startNode

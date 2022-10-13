@@ -224,13 +224,13 @@ function createSampleGraph(graph: IGraph): void {
  */
 function registerCommands(): void {
   bindChangeListener("select[data-command='ChooseSelectionStyle']", value =>
-    setSelectionStyle(value)
+    setSelectionStyle(value as 'free-hand-selection' | 'polyline-selection' | 'marquee-selection')
   )
   bindChangeListener("input[data-command='ChooseFinishRadius']", value =>
-    setFinishRadius(Number.parseFloat(value))
+    setFinishRadius(Number.parseFloat(value as string))
   )
   bindChangeListener("select[data-command='ChooseLassoTestable']", value =>
-    setLassoTestables(value)
+    setLassoTestables(value as 'nodes-complete' | 'nodes-intersected' | 'nodes-center')
   )
 }
 

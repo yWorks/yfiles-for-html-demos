@@ -48,7 +48,7 @@ import {
  * that uses the convenience class {@link NodeStyleBase}
  * as the base class.
  */
-export default class MySimpleNodeStyle extends NodeStyleBase {
+export class MySimpleNodeStyle extends NodeStyleBase {
   private static $fillCounter: number
 
   private $nodeColor: string

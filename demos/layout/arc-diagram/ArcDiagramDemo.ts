@@ -63,7 +63,6 @@ Class.ensure(LayoutExecutor)
 
 /**
  * Bootstraps this demo.
- * @param licenseData The yFiles license information.
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()

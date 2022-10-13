@@ -28,7 +28,6 @@
  ***************************************************************************/
 import '../../../resources/style/demo.css'
 
-import licenseData from '../../../../lib/license.json'
 import Color from 'color' // https://github.com/harthur/color
 import {
   Class,
@@ -42,11 +41,9 @@ import {
   ShapeNodeStyle,
   SolidColorFill
 } from 'yfiles'
-import { enableWorkarounds } from './utils/Workarounds'
 
+import licenseData from '../../../../lib/license.json'
 License.value = licenseData
-
-enableWorkarounds()
 
 const graphComponent = new GraphComponent('graphComponent')
 

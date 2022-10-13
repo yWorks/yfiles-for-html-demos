@@ -29,7 +29,7 @@
 /**
  * This class manages pre configurations based on node counts.
  */
-import { GraphComponent } from 'yfiles'
+import type { GraphComponent } from 'yfiles'
 
 export default class PreConfigurator {
   private graphItemStylesSettings: HTMLElement

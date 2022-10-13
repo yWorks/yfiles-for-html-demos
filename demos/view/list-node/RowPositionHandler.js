@@ -29,6 +29,7 @@
 import {
   BaseClass,
   FreeNodePortLocationModel,
+  IEnumerable,
   IHandle,
   IInputModeContext,
   INode,
@@ -38,8 +39,6 @@ import {
   IPositionHandler,
   Point
 } from 'yfiles'
-
-import { ListNodeStyle } from './ListNodeStyle.js'
 
 /**
  * An {@link IPositionHandler} which lets the user change the order of rows by dragging on them.
@@ -88,23 +87,36 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     const nodeLocationY = this.node.layout.y
     for (let i = 0; i < this.originalState.length; i++) {
       const portMoveInfo = this.originalState[i]
-      const port = getPortForData(this.node, portMoveInfo.info)
-      const portLocation = port.location
-      portMoveInfo.handle.dragFinished(context, portMoveInfo.originalHandleLocation, portLocation)
+      const ports = getPortForData(this.node, portMoveInfo.info)
+      ports.forEach(port => {
+        const portLocation = port.location
+        portMoveInfo.handle.dragFinished(context, portMoveInfo.originalHandleLocation, portLocation)
+        // Moving ports through their handle might result in port location parameters whose anchor
+        // points are no longer the top left or top right corner of the respective owner node
+        // if this is the case, resizing the owner node might move the ports.
+        // To prevent this from happening, the handle generated location parameters are replaced with
+        // parameters that once again are anchored at the owner node's top left or top right corner.
+        const incoming = port.tag.incoming
+        if (incoming) {
+          context.graph.setPortLocationParameter(
+            port,
+            new FreeNodePortLocationModel().createParameterForRatios(
+              [0, 0],
+              [0, portLocation.y - nodeLocationY]
+            )
+          )
+        }
 
-      // Moving ports through their handle might result in port location parameters whose anchor
-      // points are no longer the top left or top right corner of the respective owner node
-      // if this is the case, resizing the owner node might move the ports.
-      // To prevent this from happening, the handle generated location parameters are replaced with
-      // parameters that once again are anchored at the owner node's top left or top right corner.
-      const incoming = portMoveInfo.info.incoming
-      context.graph.setPortLocationParameter(
-        port,
-        new FreeNodePortLocationModel().createParameterForRatios(
-          [incoming ? 0 : 1, 0],
-          [0, portLocation.y - nodeLocationY]
-        )
-      )
+        if (!incoming) {
+          context.graph.setPortLocationParameter(
+            port,
+            new FreeNodePortLocationModel().createParameterForRatios(
+              [1, 0],
+              [0, portLocation.y - nodeLocationY]
+            )
+          )
+        }
+      })
     }
     nodeInfo.draggingIndex = null
   }
@@ -124,32 +136,35 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
 
     const nodeInfo = this.node.tag
     const rowInfo = nodeInfo.rows[this.currentIndex]
-    const port = getPortForData(this.node, rowInfo)
+    const ports = getPortForData(this.node, rowInfo)
     const otherInfo = nodeInfo.rows[newIndex]
-    const otherPort = getPortForData(this.node, otherInfo)
+    const otherPorts = getPortForData(this.node, otherInfo)
 
     nodeInfo.rows[this.currentIndex] = otherInfo
     nodeInfo.rows[newIndex] = rowInfo
 
-    const newMoveInfo = this.portHandle.get(port)
-    newMoveInfo.handle.handleMove(
-      context,
-      newMoveInfo.originalHandleLocation,
-      new Point(
-        newMoveInfo.originalHandleLocation.x,
-        this.node.layout.y + style.getRowCenterY(newIndex)
+    ports.forEach(port => {
+      const newMoveInfo = this.portHandle.get(port)
+      newMoveInfo.handle.handleMove(
+        context,
+        newMoveInfo.originalHandleLocation,
+        new Point(
+          newMoveInfo.originalHandleLocation.x,
+          this.node.layout.y + style.getRowCenterY(newIndex)
+        )
       )
-    )
-
-    const otherMoveInfo = this.portHandle.get(otherPort)
-    otherMoveInfo.handle.handleMove(
-      context,
-      otherMoveInfo.originalHandleLocation,
-      new Point(
-        otherMoveInfo.originalHandleLocation.x,
-        this.node.layout.y + style.getRowCenterY(this.currentIndex)
+    })
+    otherPorts.forEach(port => {
+      const otherMoveInfo = this.portHandle.get(port)
+      otherMoveInfo.handle.handleMove(
+        context,
+        otherMoveInfo.originalHandleLocation,
+        new Point(
+          otherMoveInfo.originalHandleLocation.x,
+          this.node.layout.y + style.getRowCenterY(this.currentIndex)
+        )
       )
-    )
+    })
     this.currentIndex = newIndex
     nodeInfo.draggingIndex = newIndex
   }
@@ -171,17 +186,19 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     // we initialize all ports since we don't know which one will be moved
     // besides the one at the current row
     for (const p of nodeInfo.rows) {
-      const port = getPortForData(this.node, p)
-      const handle = port.lookup(IHandle.$class)
-      const info = {
-        info: p,
-        parameter: port.locationParameter,
-        handle: handle,
-        originalHandleLocation: port.location
-      }
-      this.originalState.push(info)
-      handle.initializeDrag(context)
-      this.portHandle.set(port, info)
+      const ports = getPortForData(this.node, p)
+      ports.forEach(port => {
+        const handle = port.lookup(IHandle.$class)
+        const info = {
+          info: p,
+          parameter: port.locationParameter,
+          handle: handle,
+          originalHandleLocation: port.location
+        }
+        this.originalState.push(info)
+        handle.initializeDrag(context)
+        this.portHandle.set(port, info)
+      })
     }
   }
 
@@ -209,10 +226,10 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
  * Returns the port for the row identified by the given row information.
  * @param {!INode} node the node whose is queried for a port.
  * @param {!RowInfo} rowInfo the row information that identifies the row whose port is returned.
- * @returns {!IPort}
+ * @returns {!IEnumerable.<IPort>}
  */
 export function getPortForData(node, rowInfo) {
-  return node.ports.find(p => p.tag === rowInfo)
+  return node.ports.filter(p => p.tag.rowInfo === rowInfo)
 }
 
 /**

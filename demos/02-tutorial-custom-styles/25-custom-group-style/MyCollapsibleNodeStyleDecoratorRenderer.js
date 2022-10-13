@@ -45,7 +45,7 @@ import {
  * group node. This implementation delegates the actual rendering of each
  * state to a node style.
  */
-export default class MyCollapsibleNodeStyleDecoratorRenderer extends CollapsibleNodeStyleDecoratorRenderer {
+export class MyCollapsibleNodeStyleDecoratorRenderer extends CollapsibleNodeStyleDecoratorRenderer {
   /**
    * @param {!Size} size
    */

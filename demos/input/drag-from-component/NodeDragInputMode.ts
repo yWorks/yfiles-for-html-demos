@@ -41,10 +41,7 @@ import {
   NodeEventArgs,
   SvgExport
 } from 'yfiles'
-
-import { detectSafariVersion } from '../../utils/Workarounds'
-
-const isSafari = detectSafariVersion() > 0
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 /**
  * An input mode which supports dragging nodes from the component to another HTML element.
@@ -97,7 +94,7 @@ export class NodeDragInputMode extends InputModeBase {
    */
   cancel(): void {
     this.node = null
-    if (isSafari && this.img) {
+    if (!!BrowserDetection.safariVersion && this.img) {
       this.img.parentNode?.removeChild(this.img)
     }
     this.img = null
@@ -114,7 +111,7 @@ export class NodeDragInputMode extends InputModeBase {
     if (this.node) {
       event.dataTransfer!.setData('text/plain', this.getId(this.node))
       const layout = this.node.layout
-      if (isSafari && this.img) {
+      if (!!BrowserDetection.safariVersion && this.img) {
         // Safari does not show the generated SVG unless it is added to the DOM
         document.body.appendChild(this.img)
       }

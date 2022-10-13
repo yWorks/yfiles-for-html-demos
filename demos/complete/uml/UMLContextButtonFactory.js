@@ -38,10 +38,6 @@ import {
   SolidColorFill
 } from 'yfiles'
 import {
-  ButtonInputMode,
-  QueryButtonsEvent
-} from '../../input/button-input-mode/ButtonInputMode.js'
-import {
   createAggregationStyle,
   createAssociationStyle,
   createDependencyStyle,
@@ -50,7 +46,6 @@ import {
   createRealizationStyle
 } from './UMLEdgeStyleFactory.js'
 import { ExtensibilityButtonStyle, RelationButtonStyle } from './ButtonStyles.js'
-import { UMLNodeStyle } from './UMLNodeStyle.js'
 
 const DEFAULT_FILL = new SolidColorFill(0x60, 0x7d, 0x8b)
 

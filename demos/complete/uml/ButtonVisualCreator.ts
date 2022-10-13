@@ -59,7 +59,7 @@ import {
   createGeneralizationStyle,
   createRealizationStyle
 } from './UMLEdgeStyleFactory'
-import { UMLNodeStyle } from './UMLNodeStyle'
+import type { UMLNodeStyle } from './UMLNodeStyle'
 
 /**
  * Provides the visuals of the edge creation buttons.

@@ -39,11 +39,11 @@ import {
   Size
 } from 'yfiles'
 
-import MySimpleEdgeStyle from './MySimpleEdgeStyle'
-import MySimpleLabelStyle from './MySimpleLabelStyle'
-import MySimpleNodeStyle from './MySimpleNodeStyle'
-import MyNodeStyleDecorator from './MyNodeStyleDecorator'
-import MySimplePortStyle from './MySimplePortStyle'
+import { MySimpleEdgeStyle } from './MySimpleEdgeStyle'
+import { MySimpleLabelStyle } from './MySimpleLabelStyle'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle'
+import { MyNodeStyleDecorator } from './MyNodeStyleDecorator'
+import { MySimplePortStyle } from './MySimplePortStyle'
 import { bindCommand, showApp } from '../../resources/demo-app'
 
 import { applyDemoTheme } from '../../resources/demo-styles'

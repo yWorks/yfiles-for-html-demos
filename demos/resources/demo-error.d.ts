@@ -28,4 +28,20 @@
  ***************************************************************************/
 export const INVALID_LICENSE_MESSAGE: string
 
+/**
+ * Registers an error dialog that can send error reports to yWorks.
+ *
+ * This function registers error handlers for errors reported to the following properties
+ * <ul>
+ *   <li>Exception.handler</li>
+ *   <li>require.onError if 'require' is defined</li>
+ *   <li>window.onerror</li>
+ *   <li>window.onunhandledrejection</li>
+ * </ul>
+ */
 export function registerErrorDialog(): void
+
+/**
+ * Reports the provided error to the console and opens the error reporting dialog.
+ */
+export function reportDemoError(error: unknown): void

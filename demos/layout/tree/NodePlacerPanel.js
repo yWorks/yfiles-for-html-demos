@@ -98,7 +98,7 @@ function createLayerColor(fillColor, strokeColor) {
 /**
  * A panel that provides access to customize the node placers for each node.
  */
-export default class NodePlacerPanel {
+export class NodePlacerPanel {
   /**
    * Creates a new instance of NodePlacerPanel.
    * @param {!GraphComponent} graphComponent

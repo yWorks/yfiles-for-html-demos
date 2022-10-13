@@ -55,10 +55,12 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app'
 import CollapseAndExpandNodes from './CollapseAndExpandNodes'
 import { fetchLicense } from '../../resources/fetch-license'
+import { createDemoEdgeStyle } from '../../resources/demo-styles'
 
 /**
  * Utilities for collapsing and expanding nodes.
@@ -125,6 +127,9 @@ function createGraph(): FilteredGraphWrapper {
     iconConverter: (data: any) => (data && data.collapsed ? '#expand_icon' : '#collapse_icon')
   }
 
+  // set a default edge style
+  completeGraph.edgeDefaults.style = createDemoEdgeStyle()
+
   buildTree(completeGraph, 5)
 
   for (const node of completeGraph.nodes) {
@@ -170,11 +175,18 @@ function configureUserInteraction(): void {
     if (canExpand) {
       collapseAndExpandNodes.expand(node)
       filteredGraph.nodePredicateChanged()
+      // Stores the collapsed state of the node in the style tag in order to be able to bind to it
+      // using a template binding.
+      ;(node.style as TemplateNodeStyle).styleTag = { collapsed: false }
+
       await runLayout(node, true)
     } else {
       collapseAndExpandNodes.collapse(node)
       await runLayout(node, false)
       filteredGraph.nodePredicateChanged()
+      // Stores the collapsed state of the node in the style tag in order to be able to bind to it
+      // using a template binding.
+      ;(node.style as TemplateNodeStyle).styleTag = { collapsed: true }
     }
   })
 
@@ -282,12 +294,7 @@ async function runLayout(toggledNode: INode | null, expand: boolean): Promise<vo
   try {
     await layoutExecutor.start()
   } catch (error) {
-    const reporter = (window as any).reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     runningLayout = false
     layoutComboBox.disabled = false

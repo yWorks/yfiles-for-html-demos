@@ -26,14 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { IEdgeStyle, ILabelStyle, IModelItem, INodeStyle, IPortStyle } from 'yfiles'
 import {
-  IEdgeStyle,
   IGraph,
-  ILabelStyle,
-  IModelItem,
   INode,
-  INodeStyle,
-  IPortStyle,
   Mapper,
   VoidEdgeStyle,
   VoidLabelStyle,

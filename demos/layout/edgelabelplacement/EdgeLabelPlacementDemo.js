@@ -70,6 +70,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
@@ -185,11 +186,7 @@ async function doLayout(fitViewToContent) {
     try {
       await layoutExecutor.start()
     } catch (error) {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
+      reportDemoError(error)
     } finally {
       layouting = false
       setUIDisabled(false)

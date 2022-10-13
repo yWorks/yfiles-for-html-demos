@@ -43,7 +43,7 @@ import {
   TreeLayoutData,
   TreeReductionStage
 } from 'yfiles'
-import NodePlacerPanel from './NodePlacerPanel'
+import type { NodePlacerPanel } from './NodePlacerPanel'
 
 export type Configuration = { layout: ILayoutAlgorithm; layoutData?: LayoutData }
 

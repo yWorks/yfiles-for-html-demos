@@ -63,7 +63,7 @@ import {
   AggregationGraphWrapper,
   EdgeReplacementPolicy
 } from '../../utils/AggregationGraphWrapper.js'
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'

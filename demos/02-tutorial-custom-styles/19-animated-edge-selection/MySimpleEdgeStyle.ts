@@ -50,12 +50,12 @@ import {
 } from 'yfiles'
 
 import AnimatedLinearGradientFill from './AnimatedLinearGradientFill'
-import MySimpleNodeStyle from './MySimpleNodeStyle'
+import type { MySimpleNodeStyle } from './MySimpleNodeStyle'
 
 /**
  * This class is an example for a custom edge style based on {@link EdgeStyleBase}.
  */
-export default class MySimpleEdgeStyle extends EdgeStyleBase {
+export class MySimpleEdgeStyle extends EdgeStyleBase {
   private $arrows: IArrow
   private $pathThickness: number
 

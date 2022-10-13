@@ -53,7 +53,7 @@ import {
 } from 'yfiles'
 
 import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
-import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 import {
   applyDemoTheme,
   createDemoShapeNodeStyle,
@@ -159,7 +159,7 @@ function addNodeVisual(style: INodeStyle, panel: Element): void {
       simpleNode, // The node that is dragged. This is used to provide a preview within the GC during the drag.
       DragDropEffects.ALL, // The allowed actions for this drag.
       true, // Whether to the cursor during the drag.
-      pointerEventsSupported ? dragPreview : null // The optional preview element that is shown outside of the GC during the drag.
+    BrowserDetection.pointerEvents ? dragPreview : null // The optional preview element that is shown outside of the GC during the drag.
     )
 
     // Within the GraphComponent, it draws its own preview node. Therefore, we need to hide the additional
@@ -190,7 +190,7 @@ function addNodeVisual(style: INodeStyle, panel: Element): void {
       startDrag()
       event.preventDefault()
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
   div.appendChild(img)
   panel.appendChild(div)

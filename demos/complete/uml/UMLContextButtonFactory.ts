@@ -37,7 +37,10 @@ import {
   Point,
   SolidColorFill
 } from 'yfiles'
-import { ButtonInputMode, QueryButtonsEvent } from '../../input/button-input-mode/ButtonInputMode'
+import type {
+  ButtonInputMode,
+  QueryButtonsEvent
+} from '../../input/button-input-mode/ButtonInputMode'
 import {
   createAggregationStyle,
   createAssociationStyle,
@@ -47,7 +50,7 @@ import {
   createRealizationStyle
 } from './UMLEdgeStyleFactory'
 import { ExtensibilityButtonStyle, RelationButtonStyle } from './ButtonStyles'
-import { UMLNodeStyle } from './UMLNodeStyle'
+import type { UMLNodeStyle } from './UMLNodeStyle'
 
 const DEFAULT_FILL = new SolidColorFill(0x60, 0x7d, 0x8b)
 

@@ -30,8 +30,6 @@ import { ExteriorLabelModel, GraphComponent, License } from 'yfiles'
 
 import { fetchLicense } from '../../resources/fetch-license.js'
 
-import { enableWorkarounds } from '../../utils/Workarounds.js'
-
 /**
  * @returns {!Promise}
  */
@@ -47,6 +45,5 @@ async function run() {
   graphComponent.fitGraphBounds()
 }
 
-enableWorkarounds()
 // noinspection JSIgnoredPromiseFromCall
 run()

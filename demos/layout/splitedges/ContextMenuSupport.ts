@@ -42,7 +42,7 @@ import {
   PopulateItemContextMenuEventArgs,
   Stroke
 } from 'yfiles'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 
 export default class ContextMenuSupport {
   constructor(

@@ -39,7 +39,7 @@ import {
 /**
  * A LayoutStage for changing the sizes of the nodes according to their centrality values.
  */
-export default class CentralityStage extends LayoutStageBase {
+export class CentralityStage extends LayoutStageBase {
   /**
    * Specifies the centrality algorithm that will be applied.
    */

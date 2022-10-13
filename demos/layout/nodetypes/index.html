@@ -74,6 +74,29 @@
       .current-type {
         border: thick solid darkseagreen;
       }
+
+      #loadingPopup {
+        position: absolute;
+        bottom: 10%;
+        left: 0;
+        right: 0;
+        height: 80px;
+        margin-top: -40px;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding-top: 10px;
+        text-align: center;
+        font-size: 32pt;
+        opacity: 0;
+        transition: opacity 1s ease-out;
+      }
+
+      #loadingPopup.visible {
+        opacity: 100;
+        transition: opacity 0.3s ease-in;
+      }
     </style>
   </head>
   <body class="demo-has-left">
@@ -102,11 +125,8 @@
         <ul>
           <li>
             Use the combo box to choose a specific layout algorithm. This automatically loads a
-            suitable example graph.
-          </li>
-          <li>
-            Compare the results with and without considering node types. Use the 'Consider Types'
-            toggle button to change the setting.
+            suitable example graph. The graph is arranged twice with and without considering node
+            types to show how different the algorithm behaves when node types are considered.
           </li>
           <li>
             Modify the graph by adding new elements or changing the type of existing nodes via the
@@ -148,9 +168,6 @@
         <button data-command="Layout" title="Run Layout" class="demo-icon-yIconLayout labeled">
           Layout
         </button>
-        <span class="demo-separator"></span>
-        <input type="checkbox" id="consider-types" checked="" class="demo-toggle-button labeled" />
-        <label for="consider-types">Consider Types</label>
       </div>
 
       <div class="demo-content-dynamic">
@@ -161,6 +178,7 @@
             <div class="node-type-button type-1"></div>
             <div class="node-type-button type-2"></div>
           </div>
+          <div id="loadingPopup" style="pointer-events: none">Layout with node types</div>
         </div>
       </div>
     </div>

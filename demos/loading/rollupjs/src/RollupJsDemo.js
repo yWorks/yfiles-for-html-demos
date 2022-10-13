@@ -35,7 +35,6 @@ import {
   ShapeNodeStyle
 } from 'yfiles'
 import license from './license.json'
-import { enableWorkarounds } from './utils/Workarounds'
 import LayoutWorker from './LayoutWorker.js'
 
 const layoutWorker = new LayoutWorker()

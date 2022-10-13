@@ -466,9 +466,7 @@ export default class NeighborhoodView {
   initializeHighlightStyle() {
     // create semi transparent orange pen first
     const orangeRed = Color.ORANGE_RED
-    const orangePen = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3)
-    // freeze it for slightly improved performance
-    orangePen.freeze()
+    const orangePen = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
 
     this.highlightStyle = new ShapeNodeStyle({
       shape: 'round-rectangle',

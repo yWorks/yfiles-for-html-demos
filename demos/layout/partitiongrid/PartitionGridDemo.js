@@ -63,7 +63,7 @@ import {
 
 import PartitionGridVisualCreator, { generateGradientColors } from './PartitionGridVisualCreator.js'
 import GraphData from './resources/GraphData.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, reportDemoError, showApp } from '../../resources/demo-app.js'
 import { applyDemoTheme, createDemoGroupStyle } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 
@@ -471,12 +471,7 @@ async function runLayout(algorithm) {
     executor.animateViewport = true
     await executor.start()
   } catch (error) {
-    const reporter = window.reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     setUIDisabled(false)
     // adjust the bounds of the graph component so that empty rows/columns are also taken under consideration

@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import type { EditorFromTextArea } from 'codemirror'
-import { AdjacencyNodesSourceDefinitionBuilderConnector } from './ModelClasses'
+import type { AdjacencyNodesSourceDefinitionBuilderConnector } from './ModelClasses'
 
 /**
  * Editing dialog for schema graph nodes business data ({@link AdjacencyNodesSourceDefinition}

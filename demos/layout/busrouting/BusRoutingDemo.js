@@ -48,7 +48,7 @@ import {
   SolidColorFill,
   Stroke
 } from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, reportDemoError, showApp } from '../../resources/demo-app.js'
 import SampleData from './resources/SampleData.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
@@ -129,7 +129,6 @@ const colorUtil = new ColorUtil()
 
 /**
  * Runs the demo.
- * @param licenseData The yFiles license information.
  * @returns {!Promise}
  */
 async function run() {
@@ -246,12 +245,7 @@ async function routeEdges(edgesToRoute = null) {
   try {
     await routeEdgesCore(edgesToRoute)
   } catch (error) {
-    const reporter = window.reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layoutRunning = false
     disableUI(false)

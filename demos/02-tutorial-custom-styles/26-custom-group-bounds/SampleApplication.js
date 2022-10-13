@@ -47,12 +47,12 @@ import {
   Size
 } from 'yfiles'
 
-import MyCollapsibleNodeStyleDecoratorRenderer from './MyCollapsibleNodeStyleDecoratorRenderer.js'
-import MyGroupNodeStyle from './MyGroupNodeStyle.js'
-import MySimpleEdgeStyle from './MySimpleEdgeStyle.js'
-import MySimpleLabelStyle from './MySimpleLabelStyle.js'
-import MySimpleNodeStyle from './MySimpleNodeStyle.js'
-import MySimplePortStyle from './MySimplePortStyle.js'
+import { MyCollapsibleNodeStyleDecoratorRenderer } from './MyCollapsibleNodeStyleDecoratorRenderer.js'
+import { MyGroupNodeStyle } from './MyGroupNodeStyle.js'
+import { MySimpleEdgeStyle } from './MySimpleEdgeStyle.js'
+import { MySimpleLabelStyle } from './MySimpleLabelStyle.js'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle.js'
+import { MySimplePortStyle } from './MySimplePortStyle.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'

@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { AdjacencyNodesSourceDefinitionBuilderConnector } from './ModelClasses.js'
-
 /**
  * Editing dialog for schema graph nodes business data ({@link AdjacencyNodesSourceDefinition}
  */

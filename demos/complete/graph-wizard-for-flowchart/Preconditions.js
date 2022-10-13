@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import GraphWizardInputMode from './GraphWizardInputMode.js'
 import { CreateEdgeInputMode, IEdge, INode } from 'yfiles'
 
 /**

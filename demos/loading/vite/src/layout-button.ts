@@ -30,7 +30,7 @@ import { getLayoutExecutorAsyncMessageHandler } from './web-worker-client-messag
 import licenseValue from '../../../../lib/license.json'
 import type { LayoutDescriptor } from 'yfiles'
 import { GraphComponent, HierarchicLayout, LayoutExecutor, LayoutExecutorAsync } from 'yfiles'
-import { isModuleSupportedInWorker } from '../../../utils/Workarounds'
+import { BrowserDetection } from '../../../utils/BrowserDetection'
 
 let listener: () => void
 let layoutButton: HTMLButtonElement
@@ -39,7 +39,7 @@ let layoutButton: HTMLButtonElement
 // Thus, during development, fall back to client-sided layout calculation if module workers are not supported.
 // In the production build, Web Workers are supported because the build creates cross-browser compatible workers.
 // @ts-ignore
-const useWorkerLayout = isModuleSupportedInWorker() || import.meta.env.PROD
+const useWorkerLayout = BrowserDetection.modulesSupportedInWorker || import.meta.env.PROD
 
 export function addLayoutButton(button: HTMLButtonElement, graphComponent: GraphComponent) {
   listener = runLayout

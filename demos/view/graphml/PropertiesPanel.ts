@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { HashMap, IEdge, IModelItem, INode, IPort, KeyScope, KeyType, List } from 'yfiles'
-import GraphMLProperty from './GraphMLProperty'
+import { GraphMLProperty } from './GraphMLProperty'
 import PropertiesPanelUI from './PropertiesPanelUI'
 
 /**

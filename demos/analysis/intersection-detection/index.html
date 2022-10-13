@@ -53,6 +53,38 @@
         height: auto;
         border-bottom: 4px solid #f7f7f7;
       }
+
+      .yfiles-tooltip {
+        background-color: #e0edf0;
+      }
+
+      .tooltip-container {
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+
+      .tooltip-content {
+        display: grid;
+        grid-template-columns: 3fr 4fr;
+        align-items: center;
+        column-gap: 10px;
+        row-gap: 3px;
+        margin-bottom: 10px;
+      }
+
+      .tooltip-key {
+        font-weight: bold;
+      }
+
+      .tooltip-title {
+        margin-top: 5px;
+        text-align: center;
+        text-decoration: underline;
+      }
+
+      .tooltip-separator {
+        border-top: 1px dashed black;
+      }
     </style>
   </head>
   <body class="demo-has-left demo-has-right">
@@ -155,6 +187,16 @@
               value="false"
               data-command="ConsiderItemGeometry"
               checked
+            />
+          </div>
+          <div class="demo-form-block">
+            <label for="consider-only-selection" class="option-label">Consider Only Selected Elements</label>
+            <input
+              class="option-element"
+              id="consider-only-selection"
+              type="checkbox"
+              value="false"
+              data-command="ConsiderOnlySelection"
             />
           </div>
           <div class="demo-form-block">

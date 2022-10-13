@@ -51,15 +51,12 @@ import {
   Mapper,
   MouseWheelBehaviors,
   NodeStyleDecorationInstaller,
-  NodeStyleLabelStyleAdapter,
   Point,
   QueryItemToolTipEventArgs,
   RadialLayout,
   RadialLayoutData,
   Rect,
   ScrollBarVisibility,
-  ShapeNodeShape,
-  ShapeNodeStyle,
   SizeChangedDetectionMode,
   StyleDecorationZoomPolicy,
   TimeSpan
@@ -526,16 +523,11 @@ function initializeHighlights() {
 
   decorator.labelDecorator.highlightDecorator.setImplementation(
     new LabelStyleDecorationInstaller({
-      labelStyle: new NodeStyleLabelStyleAdapter({
-        nodeStyle: new ShapeNodeStyle({
-          shape: ShapeNodeShape.ROUND_RECTANGLE,
-          fill: 'darkorange',
-          stroke: null
-        }),
-        labelStyle: new DefaultLabelStyle({
-          textFill: 'white'
-        }),
-        labelStyleInsets: [3, 5]
+      labelStyle: new DefaultLabelStyle({
+        shape: 'round-rectangle',
+        backgroundFill: 'darkorange',
+        textFill: 'white',
+        insets: [3, 5]
       }),
       margins: 0,
       zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES

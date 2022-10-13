@@ -27,13 +27,8 @@
  **
  ***************************************************************************/
 import {
-  IEdgeStyle,
   IGraph,
-  ILabelStyle,
-  IModelItem,
   INode,
-  INodeStyle,
-  IPortStyle,
   Mapper,
   VoidEdgeStyle,
   VoidLabelStyle,

@@ -34,6 +34,7 @@ import {
   GeneralPath,
   GraphComponent,
   GraphEditorInputMode,
+  GraphModelManager,
   HandleInputMode,
   HandlePositions,
   IArrow,
@@ -53,33 +54,38 @@ import {
   Rect,
   RectangleHandle,
   RectangleIndicatorInstaller,
-  ShapeNodeShape,
-  ShapeNodeStyle,
+  Size,
   StringTemplateNodeStyle,
-  SvgExport
+  SvgExport,
+  WebGL2FocusIndicatorManager,
+  WebGL2GraphModelManager,
+  WebGL2IconNodeStyle,
+  WebGL2SelectionIndicatorManager,
+  WebGL2ShapeNodeStyle
 } from 'yfiles'
 
 import PositionHandler from './PositionHandler'
 import FileSaveSupport from '../../utils/FileSaveSupport'
-import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
-import { detectInternetExplorerVersion } from '../../utils/Workarounds'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { addClass, bindCommand, removeClass, showApp } from '../../resources/demo-app'
+import type { ColorSetName } from '../../resources/demo-styles'
+import {
+  applyDemoTheme,
+  colorSets,
+  createDemoNodeStyle,
+  initDemoStyles
+} from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
+import { createCanvasContext, createUrlIcon } from '../../utils/IconCreation'
 
 /**
  * The area that will be exported.
  */
 let exportRect: MutableRectangle
-
-/**
- * The detected IE version for x-browser compatibility.
- */
-let ieVersion = -1
+const imageData: Record<string, ImageData> = {}
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
-
-  ieVersion = detectInternetExplorerVersion()
 
   const graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
@@ -95,10 +101,12 @@ async function run(): Promise<void> {
 
   // set nice default styles for nodes and edges
   initDemoStyles(graphComponent.graph)
+  // Start the async ImageData creation. Once finished, this will enable the WebGL2 mode button.
+  createIconImageData()
 
   graphComponent.fitGraphBounds()
 
-  registerCommands(graphComponent)
+  initializeUI(graphComponent)
   showApp(graphComponent)
 }
 
@@ -113,7 +121,7 @@ async function run(): Promise<void> {
  * @param rectangle The area to export.
  * @returns A promise that resolves with the exported SVG element.
  */
-function exportSvg(
+async function exportSvg(
   graphComponent: GraphComponent,
   scale: number,
   transparent: boolean,
@@ -124,6 +132,10 @@ function exportSvg(
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
   exportComponent.updateContentRect()
+
+  if (graphComponent.graphModelManager instanceof WebGL2GraphModelManager) {
+    useWebGL2Rendering(exportComponent)
+  }
 
   // determine the bounds of the exported area
   const targetRect = rectangle || exportComponent.contentRect
@@ -202,7 +214,7 @@ function addExportRectInputModes(inputMode: GraphEditorInputMode): void {
       path.appendRectangle(exportRect, false)
       return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
     }),
-    // ensure that this mode takes precendence over the move input mode used for regular graph
+    // ensure that this mode takes precedence over the move input mode used for regular graph
     // elements
     priority: 41
   })
@@ -222,7 +234,7 @@ function retainNodeAspectRatio(graph: IGraph): void {
     node => {
       const keepAspectRatio = new NodeReshapeHandleProvider(
         node,
-        node.lookup(IReshapeHandler.$class) as IReshapeHandler,
+        node.lookup(IReshapeHandler.$class)!,
         HandlePositions.CORNERS
       )
       keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
@@ -232,19 +244,21 @@ function retainNodeAspectRatio(graph: IGraph): void {
 }
 
 /**
- * Adds sample nodes represented by yFiles' {@link StringTemplateNodeStyle}.
+ * Adds sample nodes represented by yFiles's {@link StringTemplateNodeStyle}.
  * @param graph The demo's graph.
  */
 function addCssStyleSample(graph: IGraph): void {
   const nodeStyle = new StringTemplateNodeStyle(
-    '<rect class="{Binding}" fill="lightgray" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>'
+    '<rect class="{Binding css}" fill="none" stroke="black" ' +
+      'width="{TemplateBinding width}" height="{TemplateBinding height}">' +
+      '</rect>'
   )
-  graph.createNode(new Rect(10, 200, 40, 40), nodeStyle, 'node red')
-  graph.createNode(new Rect(110, 200, 40, 40), nodeStyle, 'node green')
-  graph.createNode(new Rect(210, 200, 40, 40), nodeStyle, 'node blue')
-  graph.createNode(new Rect(10, 300, 40, 40), nodeStyle, 'node red')
-  graph.createNode(new Rect(110, 300, 40, 40), nodeStyle, 'node green')
-  graph.createNode(new Rect(210, 300, 40, 40), nodeStyle, 'node blue')
+  graph.createNode(new Rect(10, 200, 40, 40), nodeStyle, { css: 'demo-palette-23-node' })
+  graph.createNode(new Rect(110, 200, 40, 40), nodeStyle, { css: 'demo-palette-25-node' })
+  graph.createNode(new Rect(210, 200, 40, 40), nodeStyle, { css: 'demo-palette-21-node' })
+  graph.createNode(new Rect(10, 300, 40, 40), nodeStyle, { css: 'demo-palette-23-node' })
+  graph.createNode(new Rect(110, 300, 40, 40), nodeStyle, { css: 'demo-palette-25-node' })
+  graph.createNode(new Rect(210, 300, 40, 40), nodeStyle, { css: 'demo-palette-21-node' })
 }
 
 /**
@@ -268,15 +282,15 @@ async function addNetworkSample(graph: IGraph): Promise<void> {
   })
 
   const labelModel = new ExteriorLabelModel()
-  const labelModelParameter1 = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
-  const labelModelParameter2 = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+  const southLabelPosition = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
+  const northLabelPosition = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
 
   // create sample nodes
-  const n1 = graph.createNode([150, 0, 60, 40], switchStyle)
-  const n2 = graph.createNode([0, 80, 60, 40], workstationStyle)
-  const n3 = graph.createNode([100, 80, 60, 40], workstationStyle)
-  const n4 = graph.createNode([200, 80, 60, 40], workstationStyle)
-  const n5 = graph.createNode([300, 80, 60, 40], workstationStyle)
+  const n1 = graph.createNode([150, 0, 60, 40], switchStyle, { type: 'switch' })
+  const n2 = graph.createNode([0, 80, 60, 40], workstationStyle, { type: 'workstation' })
+  const n3 = graph.createNode([100, 80, 60, 40], workstationStyle, { type: 'workstation' })
+  const n4 = graph.createNode([200, 80, 60, 40], workstationStyle, { type: 'workstation' })
+  const n5 = graph.createNode([300, 80, 60, 40], workstationStyle, { type: 'workstation' })
 
   // create sample edges
   graph.createEdge(n1, n2, edgeStyle)
@@ -285,11 +299,11 @@ async function addNetworkSample(graph: IGraph): Promise<void> {
   graph.createEdge(n1, n5, edgeStyle)
 
   // create sample labels
-  graph.addLabel(n1, 'Switch', labelModelParameter2)
-  graph.addLabel(n2, 'Workstation 1', labelModelParameter1)
-  graph.addLabel(n3, 'Workstation 2', labelModelParameter1)
-  graph.addLabel(n4, 'Workstation 3', labelModelParameter1)
-  graph.addLabel(n5, 'Workstation 4', labelModelParameter1)
+  graph.addLabel(n1, 'Switch', northLabelPosition)
+  graph.addLabel(n2, 'Workstation 1', southLabelPosition)
+  graph.addLabel(n3, 'Workstation 2', southLabelPosition)
+  graph.addLabel(n4, 'Workstation 3', southLabelPosition)
+  graph.addLabel(n5, 'Workstation 4', southLabelPosition)
 }
 
 /**
@@ -297,12 +311,8 @@ async function addNetworkSample(graph: IGraph): Promise<void> {
  * @param graph The demo's graph.
  */
 function addBezierEdgesSample(graph: IGraph): void {
-  const nodeStyle = new ShapeNodeStyle({
-    shape: ShapeNodeShape.ROUND_RECTANGLE,
-    fill: 'lightgrey',
-    stroke: '2px white'
-  })
-  const edgeStyle = new BezierEdgeStyle({ stroke: '28px #66dc143c' })
+  const nodeStyle = createDemoNodeStyle('demo-palette-21')
+  const edgeStyle = new BezierEdgeStyle({ stroke: `28px ${colorSets['demo-palette-22'].stroke}33` })
 
   const node1 = graph.createNode([0, 400, 30, 60], nodeStyle)
   const node2 = graph.createNode([0, 475, 30, 90], nodeStyle)
@@ -351,100 +361,153 @@ function addBezierEdgesSample(graph: IGraph): void {
 }
 
 /**
+ * Creates the ImageData for each icon used in this demo.
+ *
+ * Since creating ImageData for an image URL can only be done asynchronous, this is done in advance.
+ * Once finished, this will enable the WebGL2 mode button of this demo.
+ */
+async function createIconImageData() {
+  if (!BrowserDetection.webGL2) {
+    // This is only needed for WebGL2 rendering mode
+    return
+  }
+
+  const deviceNames = ['switch', 'workstation']
+  const svgSize = new Size(70, 70)
+  const ctx = createCanvasContext(128, 128)
+  const imageDataArray = await Promise.all(
+    deviceNames.map(device => createUrlIcon(ctx, `./resources/${device}.svg`, svgSize))
+  )
+
+  for (let i = 0; i < deviceNames.length; i++) {
+    imageData[deviceNames[i]] = imageDataArray[i]
+  }
+
+  // Now the ImageData is ready, and we can allow the user to switch to WebGL2 rendering mode
+  document.getElementById('toggleWebGL2Mode')!.removeAttribute('disabled')
+}
+
+function useWebGL2Rendering(graphComponent: GraphComponent) {
+  const webGL2GraphModelManager = new WebGL2GraphModelManager()
+  graphComponent.graphModelManager = webGL2GraphModelManager
+  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
+  graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager()
+
+  // Set explicit WebGL2 styles for nodes that don't get a suitable style by the auto-conversion
+  // from the SVG style
+  for (const node of graphComponent.graph.nodes) {
+    if (typeof node.tag?.type === 'string') {
+      webGL2GraphModelManager.setStyle(
+        node,
+        new WebGL2IconNodeStyle({
+          icon: imageData[node.tag.type] || imageData['workstation'],
+          fill: 'transparent',
+          stroke: 'none',
+          preserveAspectRatio: true
+        })
+      )
+    } else if (typeof node.tag?.css === 'string') {
+      const colorSet = colorSets[node.tag.css.replace('-node', '') as ColorSetName]
+      webGL2GraphModelManager.setStyle(
+        node,
+        new WebGL2ShapeNodeStyle({
+          shape: 'rectangle',
+          fill: colorSet.fill,
+          stroke: `1px ${colorSet.stroke}`
+        })
+      )
+    }
+  }
+}
+
+/**
  * Shows the export dialog.
  */
 function showExportDialog(svgElement: Element): void {
   svgElement.setAttribute('style', 'width: 100%; height: auto')
-  const svgContainerInner = document.getElementById('svgContainerInner') as HTMLDivElement
-  svgContainerInner.appendChild(svgElement)
+  document.getElementById('svgContainerInner')!.appendChild(svgElement)
 
-  const svgButton = cloneAndReplace(document.getElementById('svgSaveButton') as HTMLButtonElement)
-  svgButton.addEventListener('click', () => {
-    let fileContent: string = SvgExport.exportSvgString(svgElement)
-    if (ieVersion !== -1) {
-      fileContent = SvgExport.encodeSvgDataUrl(fileContent)
-    }
-    FileSaveSupport.save(fileContent, 'graph.svg').catch(() => {
-      alert(
-        'Saving directly to the filesystem is not supported by this browser. Please use the server-based export instead.'
-      )
-    })
-  })
-
-  showPopup()
-}
-
-/**
- * Replaces the given element with a clone. This prevents adding multiple listeners to a button.
- * @param element The element to replace.
- */
-function cloneAndReplace(element: HTMLElement): HTMLElement {
-  const clone = element.cloneNode(true) as HTMLElement
-  element.parentNode!.replaceChild(clone, element)
-  return clone
-}
-
-/**
- * Hides the export dialog.
- */
-function hidePopup(): void {
-  addClass(document.getElementById('popup') as HTMLElement, 'hidden')
-  ;(document.getElementById('svgContainerInner') as HTMLDivElement).innerHTML = ''
-}
-
-/**
- * Shows the export dialog.
- */
-function showPopup(): void {
-  removeClass(document.getElementById('popup') as HTMLElement, 'hidden')
+  removeClass(document.getElementById('popup')!, 'hidden')
 }
 
 /**
  * Binds the various commands available in yFiles for HTML to the buttons in the toolbar.
  * @param graphComponent The demo's main graph view.
  */
-function registerCommands(graphComponent: GraphComponent): void {
+function initializeUI(graphComponent: GraphComponent): void {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   // disable the save button in IE9
-  if (ieVersion !== -1 && ieVersion <= 9) {
-    const saveButton = document.getElementById('svgSaveButton') as HTMLButtonElement
+  const ieVersion = BrowserDetection.ieVersion
+  if (ieVersion > 0 && ieVersion <= 9) {
+    const saveButton = document.getElementById('svgSaveButton')!
     saveButton.setAttribute('style', 'display: none')
     // add save hint
     const hint = document.createElement('p')
     hint.innerHTML = 'Right-click the image and hit "Save As&hellip;" to save the SVG file.'
-    const container = document.getElementById('outerClientExport') as HTMLDivElement
+    const container = document.getElementById('outerClientExport')!
     container.insertBefore(hint, document.getElementById('svgContainer'))
   }
 
-  bindAction("button[data-command='Export']", async () => {
-    hidePopup()
-
-    if (window.location.protocol === 'file:') {
+  document.getElementById('svgSaveButton')!.addEventListener('click', () => {
+    const svgElement = document.getElementById('svgContainerInner')!.children.item(0)!
+    let fileContent: string = SvgExport.exportSvgString(svgElement)
+    if (BrowserDetection.ieVersion > 0) {
+      fileContent = SvgExport.encodeSvgDataUrl(fileContent)
+    }
+    FileSaveSupport.save(fileContent, 'graph.svg').catch(() => {
       alert(
-        'This demo features SVG export with inlined images. ' +
-          'Due to the browsers security settings, images can not be inlined if the demo is started from the file system. ' +
-          'Please start the demo from a web server.'
+        'Saving directly to the filesystem is not supported by this browser.' +
+          ' Please use the server-based export instead.'
       )
-      return
-    }
-    const scale = parseFloat((document.getElementById('scale') as HTMLInputElement).value)
-    if (isNaN(scale) || scale <= 0) {
-      alert('Scale must be a positive number.')
-      return
-    }
-
-    const transparent = document.getElementById('transparent') as HTMLInputElement
-    const inputUseRect = document.getElementById('useRect') as HTMLInputElement
-    const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
-    const svg = await exportSvg(graphComponent, scale, transparent.checked, rectangle)
-    showExportDialog(svg)
+    })
   })
 
-  bindAction('#closeButton', hidePopup)
+  document
+    .querySelector<HTMLButtonElement>('#exportButton')!
+    .addEventListener('click', async evt => {
+      ;(evt.target as HTMLButtonElement).disabled = true
+
+      if (window.location.protocol === 'file:') {
+        alert(
+          'This demo features SVG export with inlined images. ' +
+            'Due to the browsers security settings, images can not be inlined if the demo is started from the file system. ' +
+            'Please start the demo from a web server.'
+        )
+        return
+      }
+      const scale = parseFloat((document.getElementById('scale') as HTMLInputElement).value)
+      if (isNaN(scale) || scale <= 0) {
+        alert('Scale must be a positive number.')
+        return
+      }
+
+      const transparent = document.getElementById('transparent') as HTMLInputElement
+      const inputUseRect = document.getElementById('useRect') as HTMLInputElement
+      const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
+      const svg = await exportSvg(graphComponent, scale, transparent.checked, rectangle)
+      showExportDialog(svg)
+    })
+
+  document.querySelector<HTMLButtonElement>('#closeButton')!.addEventListener('click', evt => {
+    // Hide the popup
+    addClass(document.getElementById('popup')!, 'hidden')
+    // Remove the exported SVG element from the popup since it is no longer needed
+    document.getElementById('svgContainerInner')!.innerHTML = ''
+    // Re-enable the export button
+    document.querySelector<HTMLButtonElement>('#exportButton')!.disabled = false
+  })
+
+  document.querySelector<HTMLInputElement>('#toggleWebGL2Mode')!.addEventListener('change', evt => {
+    if ((evt.target as HTMLInputElement).checked) {
+      useWebGL2Rendering(graphComponent)
+    } else {
+      graphComponent.graphModelManager = new GraphModelManager()
+    }
+  })
 }
 
 // noinspection JSIgnoredPromiseFromCall

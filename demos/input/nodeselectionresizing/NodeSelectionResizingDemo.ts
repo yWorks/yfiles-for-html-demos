@@ -146,9 +146,9 @@ function registerCommands(): void {
       orthogonalEditingButton.checked
   })
 
-  bindChangeListener("select[data-command='ChangeResizeMode']", mode => {
+  bindChangeListener("select[data-command='ChangeResizeMode']", value => {
     if (nodeSelectionResizingInputMode) {
-      nodeSelectionResizingInputMode.mode = mode
+      nodeSelectionResizingInputMode.mode = value as 'scale' | 'resize'
     }
   })
 }

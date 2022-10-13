@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import licenseData from './license.json'
 import { HierarchicLayout, LayoutExecutorAsyncWorker, LayoutGraph, License } from 'yfiles'
+
+import licenseData from './license.json'
+License.value = licenseData
 
 function applyLayout(graph: LayoutGraph): void {
   return new HierarchicLayout().applyLayout(graph)
 }
-
-License.value = licenseData
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener(

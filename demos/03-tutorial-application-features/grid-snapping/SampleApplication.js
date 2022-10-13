@@ -60,9 +60,9 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import { isWebGlSupported } from '../../utils/Workarounds.js'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -168,7 +168,7 @@ function initializeGrid() {
   gridRenderModes.set('Canvas', RenderModes.CANVAS)
   gridRenderModes.set('Svg', RenderModes.SVG)
   // add WebGL only if the browser supports WebGL rendering
-  if (isWebGlSupported()) {
+  if (BrowserDetection.webGL) {
     gridRenderModes.set('WebGL', RenderModes.WEB_GL)
   }
 
@@ -445,9 +445,6 @@ function registerCommands() {
     grid.visible = document.querySelector('#grid-button').checked
     graphComponent.invalidate() // triggers repaint
   })
-  bindChangeListener("select[data-command='GridSnapTypeChanged']", updateSnapType)
-  bindChangeListener("select[data-command='GridRenderModeChanged']", updateRenderMode)
-  bindChangeListener("select[data-command='GridColorChanged']", updateGridColor)
   bindChangeListener('#thickness', updateGridThickness)
 }
 

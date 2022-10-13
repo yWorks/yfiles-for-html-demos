@@ -59,6 +59,7 @@ import {
   addOptions,
   bindAction,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app.js'
 import {
@@ -149,12 +150,7 @@ async function runLayout(animate) {
     // the actual layout calculation
     await runLayoutCore(animate)
   } catch (error) {
-    const reporter = window.reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layoutRunning = false
     disableUI(false)

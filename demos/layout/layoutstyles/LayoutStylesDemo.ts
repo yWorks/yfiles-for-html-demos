@@ -84,7 +84,7 @@ import PartialLayoutConfig from './PartialLayoutConfig'
 import GraphTransformerConfig from './GraphTransformerConfig'
 import CompactDiskLayoutConfig from './CompactDiskLayoutConfig'
 import { PresetsUiBuilder } from './PresetsUiBuilder'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import {
   addClass,
   addNavigationButtons,
@@ -95,8 +95,7 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app'
-import { isWebGlSupported } from '../../utils/Workarounds'
-import { createConfiguredGraphMLIOHandler } from './FaultTolerantGraphMLIOHandler'
+import { createConfiguredGraphMLIOHandler } from '../../utils/FaultTolerantGraphMLIOHandler'
 import type { LayoutSample } from './resources/LayoutSamples'
 import { isSeparator, LayoutStyles, Presets } from './resources/LayoutSamples'
 import { LoremIpsum } from './resources/LoremIpsum'
@@ -109,6 +108,7 @@ import {
   initDemoStyles
 } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 // We need to load the 'styles-other' module explicitly to prevent tree-shaking
 // tools from removing this dependency which is needed for loading all library styles.
@@ -993,7 +993,7 @@ function createEditorMode(): IInputMode {
   mode.createBendInputMode.priority = mode.moveInputMode.priority - 1
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
-  if (isWebGlSupported()) {
+  if (BrowserDetection.webGL) {
     mode.handleInputMode.renderMode = RenderModes.WEB_GL
   }
 
@@ -1164,8 +1164,8 @@ function registerCommands(): void {
   bindAction("button[data-command='LayoutCommand']", () => {
     applyLayout(false)
   })
-  bindChangeListener("select[data-command='LayoutSelectionChanged']", onLayoutChanged)
-  bindChangeListener("select[data-command='SampleSelectionChanged']", onSampleChanged)
+  bindChangeListener("select[data-command='LayoutSelectionChanged']", () => onLayoutChanged())
+  bindChangeListener("select[data-command='SampleSelectionChanged']", () => onSampleChanged())
 
   bindAction("button[data-command='GenerateNodeLabels']", () => {
     onGenerateItemLabels(graphComponent.graph.nodes)

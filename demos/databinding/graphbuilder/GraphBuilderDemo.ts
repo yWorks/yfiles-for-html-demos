@@ -54,6 +54,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app'
 import { EdgesSourceDialog, NodesSourceDialog } from './EditSourceDialog'
@@ -209,12 +210,7 @@ async function applyLayout(update: boolean): Promise<void> {
   try {
     await graphComponent.morphLayout(layout, '1s', layoutData)
   } catch (error) {
-    const reportError = (window as any).reportError
-    if (typeof reportError === 'function') {
-      reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     layouting = false
   }

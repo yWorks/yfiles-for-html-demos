@@ -26,14 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { GraphBuilderItemEventArgs, INode } from 'yfiles'
 import {
   DefaultNodePlacer,
-  GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
   ICommand,
   IGraph,
-  INode,
   InsideOutsidePortLabelModel,
   LayoutExecutor,
   License,

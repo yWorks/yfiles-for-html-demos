@@ -111,9 +111,9 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds.js'
 import EventView from './EventView.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /**
  * This demo shows how to register to the various events provided by the {@link IGraph graph},
@@ -3017,7 +3017,7 @@ function createDraggableNode() {
       simpleNode,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+      BrowserDetection.pointerEvents ? dragPreview : null
     )
     dragSource.addQueryContinueDragListener((src, args) => {
       if (args.dropTarget === null) {
@@ -3043,7 +3043,7 @@ function createDraggableNode() {
       startDrag()
       event.preventDefault()
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
 
   return div
@@ -3089,7 +3089,7 @@ function createDraggableLabel() {
       simpleLabel,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+      BrowserDetection.pointerEvents ? dragPreview : null
     )
     dragSource.addQueryContinueDragListener((src, args) => {
       if (args.dropTarget === null) {
@@ -3115,7 +3115,7 @@ function createDraggableLabel() {
       startDrag()
       event.preventDefault()
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
 
   return div
@@ -3163,7 +3163,7 @@ function createDraggablePort() {
       simplePort,
       DragDropEffects.ALL,
       true,
-      pointerEventsSupported ? dragPreview : null
+      BrowserDetection.pointerEvents ? dragPreview : null
     )
     dragSource.addQueryContinueDragListener((src, args) => {
       if (args.dropTarget === null) {
@@ -3189,7 +3189,7 @@ function createDraggablePort() {
       startDrag()
       event.preventDefault()
     },
-    passiveSupported ? { passive: false } : false
+    BrowserDetection.passiveEventListeners ? { passive: false } : false
   )
 
   return div

@@ -1,0 +1,354 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "tag": {
+        "name": "David Kerry",
+        "connections": 16,
+        "department": "Marketing",
+        "position": "Marketing Assistant"
+      }
+    },
+    {
+      "id": 1,
+      "tag": {
+        "name": "Liam Moore",
+        "connections": 15,
+        "department": "Production",
+        "position": "Production Supervisor"
+      }
+    },
+    {
+      "id": 2,
+      "tag": {
+        "name": "Edward Garcia",
+        "connections": 17,
+        "department": "Accounting",
+        "position": "Purchasing Assistant"
+      }
+    },
+    {
+      "id": 3,
+      "tag": {
+        "name": "Dorothy Turner",
+        "connections": 18,
+        "department": "Marketing",
+        "position": "Marketing Specialist"
+      }
+    },
+    {
+      "id": 4,
+      "tag": {
+        "name": "Mildred Shark",
+        "connections": 17,
+        "department": "Accounting",
+        "position": "Finance Manager"
+      }
+    },
+    {
+      "id": 5,
+      "tag": {
+        "name": "David Harris",
+        "connections": 225,
+        "department": "Marketing",
+        "position": "Marketing Manager"
+      }
+    },
+    {
+      "id": 6,
+      "tag": {
+        "name": "Martin Jackson",
+        "connections": 59,
+        "department": "Production",
+        "position": "Facilities Manager"
+      }
+    },
+    {
+      "id": 7,
+      "tag": {
+        "name": "Anne Binger",
+        "connections": 127,
+        "department": "Engineering",
+        "position": "Vice President of Engineering"
+      }
+    },
+    {
+      "id": 8,
+      "tag": {
+        "name": "Eric Joplin",
+        "connections": 309,
+        "department": "Sales",
+        "position": "Vice President of Sales"
+      }
+    },
+    {
+      "id": 9,
+      "tag": {
+        "name": "Joy Medico",
+        "connections": 16,
+        "department": "Accounting",
+        "position": "Accounts Manager"
+      }
+    },
+    {
+      "id": 10,
+      "tag": {
+        "name": "Jack Wilson",
+        "connections": 30,
+        "department": "Executive Unit",
+        "position": "Senior Assistant Executive"
+      }
+    },
+    {
+      "id": 11,
+      "tag": {
+        "name": "David Girard",
+        "connections": 34,
+        "department": "Marketing",
+        "position": "Marketing Assistant"
+      }
+    },
+    {
+      "id": 12,
+      "tag": {
+        "name": "Michael Tucker",
+        "connections": 51,
+        "department": "Engineering",
+        "position": "Senior Tool Designer"
+      }
+    },
+    {
+      "id": 13,
+      "tag": {
+        "name": "Raymond Douglas",
+        "connections": 120,
+        "department": "Sales",
+        "position": "European Sales Manager"
+      }
+    },
+    {
+      "id": 14,
+      "tag": {
+        "name": "Harper Clark",
+        "connections": 24,
+        "department": "Marketing",
+        "position": "Marketing Specialist"
+      }
+    },
+    {
+      "id": 15,
+      "tag": {
+        "name": "Noah Anderson",
+        "connections": 20,
+        "department": "Marketing",
+        "position": "Marketing Specialist"
+      }
+    },
+    {
+      "id": 16,
+      "tag": {
+        "name": "Elisabeth Thompson",
+        "connections": 40,
+        "department": "Production",
+        "position": "Master Scheduler"
+      }
+    },
+    {
+      "id": 17,
+      "tag": {
+        "name": "James Miller",
+        "connections": 15,
+        "department": "Production",
+        "position": "Maintenance Supervisor"
+      }
+    },
+    {
+      "id": 18,
+      "tag": {
+        "name": "Martin Wood",
+        "connections": 83,
+        "department": "Sales",
+        "position": "Sales Representative"
+      }
+    },
+    {
+      "id": 19,
+      "tag": {
+        "name": "Vera Jackson",
+        "connections": 28,
+        "department": "Accounting",
+        "position": "Chief Financial Officer"
+      }
+    },
+    {
+      "id": 20,
+      "tag": {
+        "name": "Eliza Maxwell",
+        "connections": 155,
+        "department": "Executive Unit",
+        "position": "Chief Assistant Executive"
+      }
+    },
+    {
+      "id": 21,
+      "tag": {
+        "name": "Amy Kain",
+        "connections": 296,
+        "department": "Production",
+        "position": "Vice President of Production"
+      }
+    },
+    {
+      "id": 22,
+      "tag": {
+        "name": "Isabella Johnson",
+        "connections": 126,
+        "department": "Engineering",
+        "position": "Engineering Manager"
+      }
+    },
+    {
+      "id": 23,
+      "tag": {
+        "name": "Robert Finn",
+        "connections": 194,
+        "department": "Sales",
+        "position": "Sales Representative"
+      }
+    },
+    {
+      "id": 24,
+      "tag": {
+        "name": "Edwin Nagy",
+        "connections": 54,
+        "department": "Accounting",
+        "position": "Financial Manager"
+      }
+    },
+    {
+      "id": 25,
+      "tag": {
+        "name": "Charles Wylam",
+        "connections": 22,
+        "department": "Executive Unit",
+        "position": "Senior Executive Assistant"
+      }
+    },
+    {
+      "id": 26,
+      "tag": {
+        "name": "Alice Webb",
+        "connections": 162,
+        "department": "Marketing",
+        "position": "Senior Marketing Specialist"
+      }
+    },
+    {
+      "id": 27,
+      "tag": {
+        "name": "Maria Dossantos",
+        "connections": 61,
+        "department": "Engineering",
+        "position": "Senior Design Engineer"
+      }
+    },
+    {
+      "id": 28,
+      "tag": {
+        "name": "Dennis Lacey",
+        "connections": 56,
+        "department": "Sales",
+        "position": "Sales Representative"
+      }
+    }
+  ],
+  "edges": [
+    { "source": 0, "target": 5, "tag": { "connections": 6 } },
+    { "source": 0, "target": 11, "tag": { "connections": 3 } },
+    { "source": 0, "target": 15, "tag": { "connections": 5 } },
+    { "source": 0, "target": 22, "tag": { "connections": 2 } },
+    { "source": 0, "target": 26, "tag": { "connections": 2 } },
+    { "source": 0, "target": 28, "tag": { "connections": 5 } },
+    { "source": 1, "target": 6, "tag": { "connections": 5 } },
+    { "source": 1, "target": 16, "tag": { "connections": 5 } },
+    { "source": 1, "target": 17, "tag": { "connections": 5 } },
+    { "source": 1, "target": 21, "tag": { "connections": 8 } },
+    { "source": 1, "target": 26, "tag": { "connections": 9 } },
+    { "source": 2, "target": 22, "tag": { "connections": 2 } },
+    { "source": 2, "target": 23, "tag": { "connections": 5 } },
+    { "source": 2, "target": 28, "tag": { "connections": 2 } },
+    { "source": 3, "target": 26, "tag": { "connections": 5 } },
+    { "source": 4, "target": 24, "tag": { "connections": 4 } },
+    { "source": 4, "target": 26, "tag": { "connections": 2 } },
+    { "source": 7, "target": 22, "tag": { "connections": 2 } },
+    { "source": 5, "target": 22, "tag": { "connections": 5 } },
+    { "source": 5, "target": 23, "tag": { "connections": 2 } },
+    { "source": 5, "target": 28, "tag": { "connections": 4 } },
+    { "source": 6, "target": 17, "tag": { "connections": 3 } },
+    { "source": 6, "target": 16, "tag": { "connections": 3 } },
+    { "source": 6, "target": 22, "tag": { "connections": 4 } },
+    { "source": 6, "target": 23, "tag": { "connections": 5 } },
+    { "source": 6, "target": 28, "tag": { "connections": 5 } },
+    { "source": 7, "target": 12, "tag": { "connections": 5 } },
+    { "source": 7, "target": 23, "tag": { "connections": 5 } },
+    { "source": 7, "target": 27, "tag": { "connections": 5 } },
+    { "source": 7, "target": 24, "tag": { "connections": 2 } },
+    { "source": 8, "target": 13, "tag": { "connections": 2 } },
+    { "source": 8, "target": 18, "tag": { "connections": 3 } },
+    { "source": 8, "target": 23, "tag": { "connections": 4 } },
+    { "source": 8, "target": 25, "tag": { "connections": 5 } },
+    { "source": 8, "target": 28, "tag": { "connections": 7 } },
+    { "source": 9, "target": 22, "tag": { "connections": 8 } },
+    { "source": 9, "target": 26, "tag": { "connections": 5 } },
+    { "source": 10, "target": 20, "tag": { "connections": 5 } },
+    { "source": 10, "target": 26, "tag": { "connections": 3 } },
+    { "source": 11, "target": 3, "tag": { "connections": 2 } },
+    { "source": 12, "target": 22, "tag": { "connections": 5 } },
+    { "source": 12, "target": 23, "tag": { "connections": 5 } },
+    { "source": 13, "target": 8, "tag": { "connections": 5 } },
+    { "source": 13, "target": 24, "tag": { "connections": 5 } },
+    { "source": 13, "target": 25, "tag": { "connections": 5 } },
+    { "source": 13, "target": 26, "tag": { "connections": 2 } },
+    { "source": 13, "target": 28, "tag": { "connections": 6 } },
+    { "source": 14, "target": 15, "tag": { "connections": 7 } },
+    { "source": 15, "target": 22, "tag": { "connections": 9 } },
+    { "source": 15, "target": 23, "tag": { "connections": 4 } },
+    { "source": 15, "target": 24, "tag": { "connections": 3 } },
+    { "source": 15, "target": 26, "tag": { "connections": 2 } },
+    { "source": 16, "target": 17, "tag": { "connections": 2 } },
+    { "source": 16, "target": 21, "tag": { "connections": 2 } },
+    { "source": 16, "target": 26, "tag": { "connections": 3 } },
+    { "source": 17, "target": 24, "tag": { "connections": 2 } },
+    { "source": 17, "target": 26, "tag": { "connections": 2 } },
+    { "source": 18, "target": 21, "tag": { "connections": 5 } },
+    { "source": 18, "target": 23, "tag": { "connections": 2 } },
+    { "source": 18, "target": 27, "tag": { "connections": 2 } },
+    { "source": 20, "target": 24, "tag": { "connections": 2 } },
+    { "source": 19, "target": 2, "tag": { "connections": 2 } },
+    { "source": 19, "target": 4, "tag": { "connections": 2 } },
+    { "source": 19, "target": 9, "tag": { "connections": 2 } },
+    { "source": 20, "target": 10, "tag": { "connections": 4 } },
+    { "source": 20, "target": 25, "tag": { "connections": 7 } },
+    { "source": 20, "target": 27, "tag": { "connections": 5 } },
+    { "source": 21, "target": 16, "tag": { "connections": 2 } },
+    { "source": 21, "target": 25, "tag": { "connections": 2 } },
+    { "source": 23, "target": 8, "tag": { "connections": 3 } },
+    { "source": 23, "target": 13, "tag": { "connections": 4 } },
+    { "source": 23, "target": 18, "tag": { "connections": 5 } },
+    { "source": 24, "target": 2, "tag": { "connections": 5 } },
+    { "source": 24, "target": 9, "tag": { "connections": 6 } },
+    { "source": 24, "target": 23, "tag": { "connections": 5 } },
+    { "source": 25, "target": 10, "tag": { "connections": 2 } },
+    { "source": 25, "target": 22, "tag": { "connections": 2 } },
+    { "source": 25, "target": 23, "tag": { "connections": 3 } },
+    { "source": 25, "target": 26, "tag": { "connections": 5 } },
+    { "source": 26, "target": 0, "tag": { "connections": 7 } },
+    { "source": 26, "target": 3, "tag": { "connections": 5 } },
+    { "source": 26, "target": 11, "tag": { "connections": 5 } },
+    { "source": 26, "target": 14, "tag": { "connections": 6 } },
+    { "source": 26, "target": 15, "tag": { "connections": 8 } },
+    { "source": 27, "target": 12, "tag": { "connections": 4 } },
+    { "source": 28, "target": 22, "tag": { "connections": 6 } },
+    { "source": 28, "target": 23, "tag": { "connections": 5 } }
+  ]
+}

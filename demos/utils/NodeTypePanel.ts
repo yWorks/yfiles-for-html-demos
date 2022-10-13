@@ -200,7 +200,7 @@ export default class NodeTypePanel {
     const height = this.div.offsetHeight
     const zoom = this.graphComponent.zoom
 
-    const labelModelParameter = new ExteriorLabelModel({ insets: [10, 0, 0, 0] }).createParameter(
+    const labelModelParameter = new ExteriorLabelModel({ insets: [20, 0, 0, 0] }).createParameter(
       ExteriorLabelModelPosition.NORTH
     )
     const dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParameter)

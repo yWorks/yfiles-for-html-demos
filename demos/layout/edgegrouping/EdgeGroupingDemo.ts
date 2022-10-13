@@ -64,7 +64,7 @@ import {
   VoidPortStyle
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import SampleData from './resources/SampleData'
 import {
   addClass,

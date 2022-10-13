@@ -53,14 +53,15 @@ import {
   TableEditorInputMode
 } from 'yfiles'
 
-import SimpleOutputHandler from './SimpleOutputHandler'
-import SimpleInputHandler from './SimpleInputHandler'
+import { SimpleOutputHandler } from './SimpleOutputHandler'
+import { SimpleInputHandler } from './SimpleInputHandler'
 import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app'
 import { PropertiesPanel } from './PropertiesPanel'
 import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import EditorSync from './EditorSync'
-import GraphMLProperty from './GraphMLProperty'
+import { EditorSync } from './EditorSync'
+import type { GraphMLProperty } from './GraphMLProperty'
 import { fetchLicense } from '../../resources/fetch-license'
+import { createConfiguredGraphMLIOHandler } from '../../utils/FaultTolerantGraphMLIOHandler'
 
 let graphComponent: GraphComponent
 
@@ -259,7 +260,8 @@ Class.ensure(ImageNodeStyle)
  * editor to write and parse events.
  */
 function createGraphMLIOHandler(): GraphMLIOHandler {
-  const ioHandler = new GraphMLIOHandler()
+  // Register a preconfigured GraphMLIOHandler that supports different styles created by our basic demos
+  const ioHandler = createConfiguredGraphMLIOHandler()
 
   // Enable parsing/writing of arbitrary custom data
   ioHandler.addQueryInputHandlersListener((sender, args) => {
@@ -520,6 +522,7 @@ async function onOpenCommandExecuted(): Promise<void> {
   // serialized repeatedly while loading.
   graphModifiedListener = () => {}
   await graphmlSupport.openFile(graphComponent.graph)
+  graphComponent.fitGraphBounds()
   onGraphModified()
   graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
   graphComponent.graph.undoEngine?.clear()

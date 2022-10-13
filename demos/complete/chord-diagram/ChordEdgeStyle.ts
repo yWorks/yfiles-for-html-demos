@@ -53,33 +53,18 @@ export type EdgeStyleHints = {
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const STROKE_WIDTH = 2
+
 /**
  * A custom edge style that draws the edges of a chord diagram.
  */
 export class ChordEdgeStyle extends EdgeStyleBase {
   /**
-   * Determines whether or not additional information is shown.
+   * Specifies whether to show the information about the underlying graph
    */
-  private _showStyleHints = false
+  public showStyleHints = false
 
   // opacity of edges if not further specified
   static defaultOpacity = 0.8
-
-  /**
-   * Specifies whether or not to show the information about the underlying graph
-   */
-  set showStyleHints(value: boolean) {
-    if (value !== this._showStyleHints) {
-      this._showStyleHints = value
-    }
-  }
-
-  /**
-   * Returns whether or not to show the information about the underlying graph
-   */
-  get showStyleHints(): boolean {
-    return this._showStyleHints
-  }
 
   constructor(graph: IGraph) {
     super()
@@ -136,14 +121,8 @@ export class ChordEdgeStyle extends EdgeStyleBase {
 
     // stop information for the <linearGradient>
     const stops = [
-      {
-        color: color1,
-        offset: '30%'
-      },
-      {
-        color: color2,
-        offset: '70%'
-      }
+      { color: color1, offset: '30%' },
+      { color: color2, offset: '70%' }
     ]
 
     // appends <stop> elements to the <linearGradient>
@@ -182,7 +161,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     gradient.setAttribute('y1', String(y1))
     gradient.setAttribute('y2', String(y2))
 
-    // reference the gradient by it's colors
+    // reference the gradient by its colors
     gradient.id = `Gradient_${color1}_${color2}`
 
     defs.appendChild(gradient)
@@ -227,7 +206,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
     const g = document.createElementNS(SVG_NS, 'g')
     // Get the necessary data for rendering of the edge
-    const hint = getStyleHint(context, edge)
+    const hint = ChordEdgeStyle.getStyleHint(context, edge)
     const cache = new EdgeRenderDataCache(
       hint.sourceStart,
       hint.sourceEnd,
@@ -266,7 +245,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     const oldCache = container['data-renderDataCache']
 
     // create the data for the new visual
-    const hint = getStyleHint(context, edge)
+    const hint = ChordEdgeStyle.getStyleHint(context, edge)
     const newCache = new EdgeRenderDataCache(
       hint.sourceStart,
       hint.sourceEnd,
@@ -279,18 +258,15 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     )
 
     // if nothing changed, reuse old visual, else rebuild
-    if (newCache.equals(oldCache)) {
-      return oldVisual
-    }
-    return this.createVisual(context, edge)
+    return newCache.equals(oldCache) ? oldVisual : this.createVisual(context, edge)
   }
 
   /**
    * Determines if the given location lies on the visualization of an edge in a chord diagram.
    */
   isHit(context: IInputModeContext, location: Point, edge: IEdge): boolean {
-    // approximation of the edge outline by bezier curves
-    const hint = getStyleHint(context, edge)
+    // approximation of the edge outline by Bézier curves
+    const hint = ChordEdgeStyle.getStyleHint(context, edge)
     const path = new GeneralPath()
     path.moveTo(hint.sourceStart)
     path.quadTo(edge.sourceNode!.layout.center, hint.sourceEnd)
@@ -304,7 +280,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
 
   /**
    * Determines whether the edge is to be drawn at all. Because the edge visualization differs
-   * from the the straight line that makes up the 'real' edge, this implementation checks
+   * from the straight line that makes up the 'real' edge, this implementation checks
    * instead if the bounding box of the circle and the viewport overlap.
    * @param context
    * @param rectangle
@@ -312,7 +288,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
    * @protected
    */
   protected isVisible(context: ICanvasContext, rectangle: Rect, edge: IEdge): boolean {
-    const hint = getStyleHint(context, edge)
+    const hint = ChordEdgeStyle.getStyleHint(context, edge)
     const radius = Math.abs(hint.circleCenter.distanceTo(hint.sourceStart))
     const bounding = new Rect(
       hint.circleCenter.x - radius,
@@ -321,6 +297,17 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       radius * 2
     )
     return bounding.intersects(rectangle)
+  }
+
+  /**
+   * Gets the hint object that the layout has provided.
+   */
+  private static getStyleHint(context: ICanvasContext, edge: IEdge): EdgeStyleHints {
+    const graphComponent = context.canvasComponent as GraphComponent
+    const mapper = graphComponent.graph.mapperRegistry.getMapper<IEdge, EdgeStyleHints>(
+      ChordDiagramLayout.STYLE_HINT_KEY
+    )
+    return mapper!.get(edge)!
   }
 }
 
@@ -337,30 +324,15 @@ class EdgeRenderDataCache {
   ) {}
 
   equals(other?: EdgeRenderDataCache): boolean {
-    if (!other) {
-      return false
-    } else {
-      return (
-        other.sourceStart == this.sourceStart &&
-        other.sourceEnd == this.sourceEnd &&
-        other.targetStart == this.targetStart &&
-        other.targetEnd == this.targetEnd &&
-        other.circleCenter == this.circleCenter &&
-        other.highlighted == this.highlighted &&
-        other.opacity == this.opacity &&
-        other.showStyleHints == this.showStyleHints
-      )
-    }
+    return other == null
+      ? false
+      : other.sourceStart == this.sourceStart &&
+          other.sourceEnd == this.sourceEnd &&
+          other.targetStart == this.targetStart &&
+          other.targetEnd == this.targetEnd &&
+          other.circleCenter == this.circleCenter &&
+          other.highlighted == this.highlighted &&
+          other.opacity == this.opacity &&
+          other.showStyleHints == this.showStyleHints
   }
-}
-
-/**
- * Gets the hint object that the layout has provided.
- */
-function getStyleHint(context: ICanvasContext, edge: IEdge): EdgeStyleHints {
-  const graphComponent = context.canvasComponent as GraphComponent
-  const mapper = graphComponent.graph.mapperRegistry.getMapper<IEdge, EdgeStyleHints>(
-    ChordDiagramLayout.STYLE_HINT_KEY
-  )
-  return mapper!.get(edge)!
 }

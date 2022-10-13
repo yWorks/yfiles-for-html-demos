@@ -46,7 +46,7 @@ import {
   ShapeNodeStyle
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, reportDemoError, showApp } from '../../resources/demo-app'
 import GraphBuilderData from './resources/kennedy-family'
 
 import { applyDemoTheme } from '../../resources/demo-styles'
@@ -99,12 +99,7 @@ function runLayout(graphComponent: GraphComponent): void {
     }
   })
   graphComponent.morphLayout(familyTreeLayout, '1s', familyTreeLayoutData).catch(error => {
-    const reporter = (window as any).reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   })
 }
 

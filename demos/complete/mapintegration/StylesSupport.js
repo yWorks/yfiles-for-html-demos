@@ -36,10 +36,7 @@ import {
   IEdge,
   IGraph,
   ImageNodeStyle,
-  NodeStyleLabelStyleAdapter,
   Rect,
-  ShapeNodeShape,
-  ShapeNodeStyle,
   Size
 } from 'yfiles'
 
@@ -139,19 +136,14 @@ function createLayoutNodeStyle() {
 }
 
 /**
- * @returns {!NodeStyleLabelStyleAdapter}
+ * @returns {!DefaultLabelStyle}
  */
 function createLabelStyle() {
-  return new NodeStyleLabelStyleAdapter({
-    nodeStyle: new ShapeNodeStyle({
-      shape: ShapeNodeShape.ROUND_RECTANGLE,
-      fill: 'crimson',
-      stroke: null
-    }),
-    labelStyle: new DefaultLabelStyle({
-      textFill: 'white'
-    }),
-    labelStyleInsets: [3, 5]
+  return new DefaultLabelStyle({
+    shape: 'round-rectangle',
+    backgroundFill: 'crimson',
+    textFill: 'white',
+    insets: [3, 5]
   })
 }
 

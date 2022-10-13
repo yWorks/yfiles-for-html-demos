@@ -26,7 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HierarchicLayout, HierarchicLayoutData, IGraph, INode } from 'yfiles'
+import type { INode } from 'yfiles'
+import { HierarchicLayout, HierarchicLayoutData, IGraph } from 'yfiles'
 
 /**
  * Creates a {@link HierarchicLayout} and the respective {@link HierarchicLayoutData} so

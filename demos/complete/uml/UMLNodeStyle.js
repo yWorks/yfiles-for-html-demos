@@ -906,13 +906,11 @@ export class UMLNodeStyle extends NodeStyleBase {
    */
   initializeStyles() {
     this.dummyNode = new SimpleNode()
-    const stroke = new Stroke({
-      fill: this.$fill,
-      thickness: 2
-    })
-    stroke.freeze()
     this.dummyNode.style = new ShapeNodeStyle({
-      stroke: stroke,
+      stroke: new Stroke({
+        fill: this.$fill,
+        thickness: 2
+      }).freeze(),
       shape: 'round-rectangle',
       fill: this.$fill
     })

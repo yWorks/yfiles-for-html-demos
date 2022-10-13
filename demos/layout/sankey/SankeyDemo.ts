@@ -64,9 +64,9 @@ import {
   SankeyPopupSupport,
   TagUndoUnit
 } from './SankeyHelper'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import { SankeyLayout } from './SankeyLayout'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, reportDemoError, showApp } from '../../resources/demo-app'
 import { fetchLicense } from '../../resources/fetch-license'
 
 const colors = [
@@ -75,7 +75,7 @@ const colors = [
   { dark: Color.from('#f0c808'), light: Color.from('#80f0c808') },
   { dark: Color.from('#56926e'), light: Color.from('#8056926e') },
   { dark: Color.from('#6c4f77'), light: Color.from('#806c4f77') },
-  { dark: Color.from('#4281a4'), light: Color.from('#804281a4') },
+  { dark: Color.from('#242265'), light: Color.from('#90242265') },
   { dark: Color.from('#4281a4'), light: Color.from('#804281a4') }
 ]
 
@@ -115,7 +115,7 @@ async function run(): Promise<void> {
 
   initializePopupMenus()
 
-  createSampleGraph()
+  await createSampleGraph()
 
   registerCommands()
 
@@ -189,7 +189,7 @@ function initializeGraph(): void {
 function createInputMode(): void {
   // initialize input mode
   const mode = new GraphEditorInputMode({
-    // disable selection for labels
+    // disable selection for all items
     selectableItems: GraphItemTypes.NONE,
     deletableItems: GraphItemTypes.NONE,
     allowCreateEdge: false,
@@ -199,8 +199,8 @@ function createInputMode(): void {
 
   mode.moveUnselectedInputMode.enabled = true
   mode.moveInputMode.enabled = false
-  mode.moveUnselectedInputMode.addDragFinishedListener(() => {
-    runLayout()
+  mode.moveUnselectedInputMode.addDragFinishedListener(async () => {
+    await runLayout()
   })
 
   mode.marqueeSelectionInputMode.enabled = false
@@ -208,22 +208,21 @@ function createInputMode(): void {
   mode.moveUnselectedInputMode.priority = mode.moveViewportInputMode.priority - 1
 
   // listener to react in edge label text changing
-  mode.addLabelTextChangedListener((sender: object, args: LabelEventArgs): void => {
+  mode.addLabelTextChangedListener(async (sender: object, args: LabelEventArgs): Promise<void> => {
     if (IEdge.isInstance(args.item.owner)) {
-      onEdgeLabelChanged(args.item)
+      await onEdgeLabelChanged(args.item)
     }
   })
 
   // listener to react in edge label addition
-  mode.addLabelAddedListener((sender: object, evt: LabelEventArgs): void => {
+  mode.addLabelAddedListener(async (sender: object, evt: LabelEventArgs): Promise<void> => {
     if (evt.item.owner && IEdge.isInstance(evt.item.owner)) {
-      onEdgeLabelChanged(evt.item)
+      await onEdgeLabelChanged(evt.item)
     }
   })
 
   mode.itemHoverInputMode.enabled = true
-  mode.itemHoverInputMode.hoverItems =
-    GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL | GraphItemTypes.NODE
+  mode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
   mode.itemHoverInputMode.discardInvalidItems = false
   // add hover listener to implement edge and label highlighting
   mode.itemHoverInputMode.addHoveredItemChangedListener(
@@ -232,9 +231,6 @@ function createInputMode(): void {
       highlightManager.clearHighlights()
       const item = args.item
       if (item) {
-        if (INode.isInstance(item)) {
-          return
-        }
         highlightManager.addHighlight(item)
         if (IEdge.isInstance(item)) {
           item.labels.forEach((label: ILabel): void => {
@@ -491,13 +487,7 @@ async function runLayout(): Promise<void> {
     // run the layout and animate the result
     await graphComponent.morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
   } catch (error) {
-    // @ts-ignore
-    if (typeof window.reportError === 'function') {
-      // @ts-ignore
-      window.reportError(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     inLayout = false
   }

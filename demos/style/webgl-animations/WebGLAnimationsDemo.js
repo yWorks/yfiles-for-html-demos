@@ -62,8 +62,13 @@ import {
   WebGL2Stroke
 } from 'yfiles'
 
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import { isWebGl2Supported } from '../../utils/Workarounds.js'
+import {
+  bindChangeListener,
+  bindCommand,
+  checkWebGL2Support,
+  reportDemoError,
+  showApp
+} from '../../resources/demo-app.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper.js'
 
@@ -99,9 +104,7 @@ let currentSelectedItem
  * @returns {!Promise}
  */
 async function run() {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support').removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }
@@ -353,7 +356,7 @@ function updateMagnitudeOptions(type) {
  * Sets the WebGL2 node and edge styles with a distinct color per graph component.
  * @param {!GraphComponent} graphComponent
  * @param {!Array.<Component>} connectedComponents
- * @param {!('ellipse'|'rectangle'|'triangle'|'hexagon'|'octagon')} nodeShape
+ * @param {!WebGL2ShapeNodeShapeStringValues} nodeShape
  */
 function setWebGLStyles(graphComponent, connectedComponents, nodeShape) {
   const gmm = graphComponent.graphModelManager
@@ -914,12 +917,7 @@ async function loadGraph(graphComponent) {
     const graphMLIOHandler = new GraphMLIOHandler()
     await graphMLIOHandler.readFromURL(graph, 'resources/graph.graphml')
   } catch (error) {
-    const reportError = window.reportError
-    if (typeof reportError === 'function') {
-      reportError()
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   }
 }
 

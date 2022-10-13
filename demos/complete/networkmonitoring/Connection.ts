@@ -26,12 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import Device from './Device'
+import type { Device } from './Device'
 
 /**
  * Class representing a connection in the network.
  */
-export default class Connection {
+export class Connection {
   /**
    * The load of this connection.
    * Load is a value between 0 and 1 that indicates how utilized the connection is (with 0 being

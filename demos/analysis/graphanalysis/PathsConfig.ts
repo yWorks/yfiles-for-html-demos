@@ -39,14 +39,14 @@ import {
   ShortestPath,
   SingleSourceShortestPaths
 } from 'yfiles'
-import AlgorithmConfiguration from './AlgorithmConfiguration'
+import { AlgorithmConfiguration } from './AlgorithmConfiguration'
 import { MultiColorNodeStyle } from './DemoStyles'
-import ContextMenu from '../../utils/ContextMenu'
+import type { ContextMenu } from '../../utils/ContextMenu'
 
 /**
  * Configuration options for the path algorithms.
  */
-export default class PathsConfig extends AlgorithmConfiguration {
+export class PathsConfig extends AlgorithmConfiguration {
   private paths: Path[] = []
   private dist: ResultItemMapping<INode, number> | null = null
   private pred: ResultItemMapping<INode, IEdge> | null = null

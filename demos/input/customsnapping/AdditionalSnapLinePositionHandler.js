@@ -27,12 +27,11 @@
  **
  ***************************************************************************/
 import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from 'yfiles'
-import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.js'
 
 /**
  * An {@link IPositionHandler} used to move {@link AdditionalSnapLineVisualCreator} instances.
  */
-export default class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandler) {
+export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Creates a new handler for the given `line`.
    * @param {!AdditionalSnapLineVisualCreator} line The additional snap line to move.

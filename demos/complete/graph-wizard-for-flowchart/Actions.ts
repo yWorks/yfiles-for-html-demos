@@ -67,7 +67,7 @@ import {
 } from './Preconditions'
 import type { ColorSet } from './ColorThemes'
 
-import GraphWizardInputMode, { WizardEventArgs } from './GraphWizardInputMode'
+import { GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode'
 
 /**
  * Creates a {@link WizardAction} that navigates to the next {@INode node} in the direction of

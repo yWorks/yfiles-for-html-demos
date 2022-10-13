@@ -50,16 +50,16 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import {
   bindAction,
   bindCommand,
   configureTwoPointerPanning,
   showApp
 } from '../../resources/demo-app.js'
-import { isWebGlSupported } from '../../utils/Workarounds.js'
 import { DemoStyleOverviewPaintable, initDemoStyles } from '../../resources/demo-styles.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -138,7 +138,7 @@ function createEditorMode() {
   mode.createBendInputMode.priority = mode.moveInputMode.priority - 1
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
-  if (isWebGlSupported()) {
+  if (BrowserDetection.webGL) {
     mode.handleInputMode.renderMode = RenderModes.WEB_GL
   }
 

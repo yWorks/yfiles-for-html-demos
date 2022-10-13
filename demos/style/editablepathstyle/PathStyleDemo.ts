@@ -87,8 +87,7 @@ function initializeGraph(): void {
 
   graph.undoEngineEnabled = true
 
-  const selectionStroke = new Stroke({ fill: 'black', thickness: 2, dashStyle: DashStyle.DASH })
-  selectionStroke.freeze()
+  const selectionStroke = new Stroke({ fill: 'black', thickness: 2, dashStyle: DashStyle.DASH }).freeze()
 
   // Highlight the selected nodes along their outline
   graph.decorator.nodeDecorator.selectionDecorator.setFactory(

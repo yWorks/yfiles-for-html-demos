@@ -43,15 +43,10 @@ import {
   KeyEventArgs,
   KeyEventType,
   ModifierKeys,
-  NodeStyleLabelStyleAdapter,
-  ShapeNodeStyle,
   Size,
-  Stroke,
   VerticalTextAlignment
 } from 'yfiles'
-import GraphWizardInputMode from './GraphWizardInputMode.js'
-import { Button } from '../../input/button-input-mode/ButtonInputMode.js'
-
+import { GraphWizardInputMode } from './GraphWizardInputMode.js'
 /**
  * A condition that has to be met so that a {@link WizardAction} is active.
  * @typedef {function} PreCondition
@@ -301,33 +296,21 @@ export default class WizardAction {
       const fill = styleConfig.backgroundFill
         ? Fill.from(styleConfig.backgroundFill)
         : Fill.WHITE_SMOKE
-      iconLabelStyle.wrapped = new NodeStyleLabelStyleAdapter(
-        new ShapeNodeStyle({
-          stroke: Stroke.TRANSPARENT,
-          fill: fill
-        })
-      )
+      iconLabelStyle.wrapped = new DefaultLabelStyle({
+        backgroundFill: fill
+      })
       return iconLabelStyle
     } else if (styleConfig && styleConfig.type === 'rect') {
-      return new NodeStyleLabelStyleAdapter({
-        nodeStyle: new ShapeNodeStyle({
-          stroke: Stroke.TRANSPARENT,
-          fill: Fill.WHITE_SMOKE
-        }),
-        labelStyle: new NodeStyleLabelStyleAdapter({
-          nodeStyle: new ShapeNodeStyle({
-            stroke: styleConfig.outline,
-            fill: styleConfig.fill || Fill.TRANSPARENT
-          })
-        }),
-        labelStyleInsets: new Insets(4)
+      return new DefaultLabelStyle({
+        backgroundStroke: styleConfig.outline,
+        backgroundFill: styleConfig.fill || null,
+        insets: new Insets(4)
       })
     } else if (styleConfig && styleConfig.type === 'text') {
       const fill = styleConfig.backgroundFill
         ? Fill.from(styleConfig.backgroundFill)
         : Fill.WHITE_SMOKE
       const labelStyle = new DefaultLabelStyle({
-        backgroundStroke: Stroke.TRANSPARENT,
         backgroundFill: fill,
         insets: new Insets(1),
         verticalTextAlignment: VerticalTextAlignment.CENTER,

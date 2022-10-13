@@ -55,10 +55,12 @@ import {
   addNavigationButtons,
   bindChangeListener,
   bindCommand,
+  reportDemoError,
   showApp
 } from '../../resources/demo-app.js'
 import CollapseAndExpandNodes from './CollapseAndExpandNodes.js'
 import { fetchLicense } from '../../resources/fetch-license.js'
+import { createDemoEdgeStyle } from '../../resources/demo-styles.js'
 
 /**
  * Utilities for collapsing and expanding nodes.
@@ -129,6 +131,9 @@ function createGraph() {
     iconConverter: data => (data && data.collapsed ? '#expand_icon' : '#collapse_icon')
   }
 
+  // set a default edge style
+  completeGraph.edgeDefaults.style = createDemoEdgeStyle()
+
   buildTree(completeGraph, 5)
 
   for (const node of completeGraph.nodes) {
@@ -174,11 +179,18 @@ function configureUserInteraction() {
     if (canExpand) {
       collapseAndExpandNodes.expand(node)
       filteredGraph.nodePredicateChanged()
+      // Stores the collapsed state of the node in the style tag in order to be able to bind to it
+      // using a template binding.
+      node.style.styleTag = { collapsed: false }
+
       await runLayout(node, true)
     } else {
       collapseAndExpandNodes.collapse(node)
       await runLayout(node, false)
       filteredGraph.nodePredicateChanged()
+      // Stores the collapsed state of the node in the style tag in order to be able to bind to it
+      // using a template binding.
+      node.style.styleTag = { collapsed: true }
     }
   })
 
@@ -292,12 +304,7 @@ async function runLayout(toggledNode, expand) {
   try {
     await layoutExecutor.start()
   } catch (error) {
-    const reporter = window.reportError
-    if (typeof reporter === 'function') {
-      reporter(error)
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   } finally {
     runningLayout = false
     layoutComboBox.disabled = false

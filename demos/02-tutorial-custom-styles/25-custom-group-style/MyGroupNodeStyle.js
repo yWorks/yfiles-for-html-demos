@@ -62,7 +62,7 @@ const INSET = 2
  * this makes customizations easy. Additionally, it uses a couple of inner
  * classes to customize certain aspects of the user interaction behavior.
  */
-export default class MyGroupNodeStyle extends NodeStyleBase {
+export class MyGroupNodeStyle extends NodeStyleBase {
   constructor() {
     super()
     this.$nodeColor = 'rgba(0, 130, 180, 1)'

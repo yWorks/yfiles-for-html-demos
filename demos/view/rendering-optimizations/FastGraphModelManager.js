@@ -82,7 +82,7 @@ import {
 
 import SvgEdgeStyle from './SvgEdgeStyle.js'
 import SimpleSvgNodeStyle from './SimpleSvgNodeStyle.js'
-import { isWebGlSupported } from '../../utils/Workarounds.js'
+import { BrowserDetection } from '../../utils/BrowserDetection.js'
 
 /**
  * A {@link GraphModelManager} implementation that uses several optimizations
@@ -192,7 +192,7 @@ export class FastGraphModelManager extends GraphModelManager {
     this.portDescriptor = this.fastPortDescriptor
 
     // initialize the intermediate and overview styles with default values
-    if (isWebGlSupported()) {
+    if (BrowserDetection.webGL) {
       this.overviewNodeStyle = new WebGLShapeNodeStyle()
       this.overviewEdgeStyle = new WebGLPolylineEdgeStyle()
       this._overviewNodeStyle = new WebGLShapeNodeStyle()

@@ -57,47 +57,38 @@
           Some input modes were configured to only begin when a specific modifier is pressed to
           distinguish which gesture should start.
         </p>
-        <p>The following gestures have been adjusted:</p>
 
-        <h4>Moving The Viewport</h4>
-        <p>
-          Moving the viewport may begin when <kbd>Ctrl</kbd> is pressed while hovering on an empty
-          location on the canvas. Its valid beginning is indicated by
-          <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#GRAB" target="_blank">Cursor.GRAB</a>.
-        </p>
-
-        <h4>Starting Lasso Selection</h4>
-        <p>
-          Lasso selection may begin when <kbd>Shift</kbd> is pressed while hovering on an empty
-          location on the canvas. Its valid beginning is indicated by a custom lasso cursor.
-        </p>
-
-        <h4>Starting Marquee Selection</h4>
-        <p>
-          Marquee selection may begin when neither <kbd>Shift</kbd> nor <kbd>Ctrl</kbd> is pressed
-          while hovering on an empty location on the canvas. Its valid beginning is indicated by
-          <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR" target="_blank">Cursor.CROSSHAIR</a>.
-        </p>
-
-        <h4>Creating Edges</h4>
-        <p>
-          Edge creation may begin when <kbd>Ctrl</kbd> is pressed while hovering on an unselected
-          node. Its valid beginning is indicated by a custom create-edge cursor.
-        </p>
-
-        <h4>Moving Nodes</h4>
-        <p>
-          Moving a node may begin when <kbd>Ctrl</kbd> is <b>not</b> pressed while hovering on a
-          selected or unselected node. Its valid beginning is indicated by
-          <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#MOVE" target="_blank">Cursor.MOVE</a>.
-        </p>
-
-        <h4>Show Tooltip</h4>
-        <p>
-          Tooltips are displayed when hovering on an edge for a second. Hovering over a location
-          where a tooltip may be displayed is indicated by
-          <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#HELP" target="_blank">Cursor.HELP</a>.
-        </p>
+        <h2>Things to try</h2>
+        <ul>
+          <li>
+            <b>Move the viewport</b> by pressing <kbd>Ctrl</kbd> while hovering on an empty location
+            on the canvas. Its valid beginning is indicated by
+            <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#GRAB" target="_blank">Cursor.GRAB</a>
+          </li>
+          <li>
+            <b>Start lasso selection</b> by pressing <kbd>Shift</kbd> while hovering on an empty
+            location on the canvas. Its valid beginning is indicated by a custom lasso cursor.
+          </li>
+          <li>
+            <b>Start marquee selection</b> when neither <kbd>Shift</kbd> nor <kbd>Ctrl</kbd> is
+            pressed while hovering on an empty location on the canvas. Its valid beginning is
+            indicated by <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR" target="_blank">Cursor.CROSSHAIR</a>.
+          </li>
+          <li>
+            <b>Create a new edge</b> by pressing <kbd>Ctrl</kbd> while hovering on an unselected
+            node. Its valid beginning is indicated by a custom create-edge cursor.
+          </li>
+          <li>
+            <b>Move a node</b> when <kbd>Ctrl</kbd> is <b>not</b> pressed while hovering on a
+            selected or unselected node. Its valid beginning is indicated by
+            <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#MOVE" target="_blank">Cursor.MOVE</a>.
+          </li>
+          <li>
+            <b>Show tooltips</b> when hovering on an edge for a second. Hovering over a location
+            where a tooltip may be displayed is indicated by
+            <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#HELP" target="_blank">Cursor.HELP</a>.
+          </li>
+        </ul>
       </div>
     </aside>
 

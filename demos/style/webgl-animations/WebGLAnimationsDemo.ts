@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { WebGL2ShapeNodeShapeStringValues } from 'yfiles'
 import {
   AdjacencyTypes,
   Color,
@@ -62,8 +63,13 @@ import {
   WebGL2Stroke
 } from 'yfiles'
 
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
-import { isWebGl2Supported } from '../../utils/Workarounds'
+import {
+  bindChangeListener,
+  bindCommand,
+  checkWebGL2Support,
+  reportDemoError,
+  showApp
+} from '../../resources/demo-app'
 import { fetchLicense } from '../../resources/fetch-license'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper'
 
@@ -99,9 +105,7 @@ let currentSelectedItem: IModelItem | undefined
  * Starts the demo.
  */
 async function run(): Promise<void> {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support')!.removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }
@@ -141,11 +145,11 @@ function configureUI(graphComponent: GraphComponent) {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   bindChangeListener("input[data-command='useLabelsChanged']", value => {
-    changeLabels(graphComponent, value)
+    changeLabels(graphComponent, value as boolean)
   })
 
   bindChangeListener("select[data-command='ShapeChanged']", value => {
-    setWebGLStyles(graphComponent, connectedComponents, value)
+    setWebGLStyles(graphComponent, connectedComponents, value as WebGL2ShapeNodeShapeStringValues)
     graphComponent.invalidate()
   })
 
@@ -360,7 +364,7 @@ function updateMagnitudeOptions(type: PulseType | ScaleType): any {
 function setWebGLStyles(
   graphComponent: GraphComponent,
   connectedComponents: Array<Component>,
-  nodeShape: 'ellipse' | 'rectangle' | 'triangle' | 'hexagon' | 'octagon'
+  nodeShape: WebGL2ShapeNodeShapeStringValues
 ) {
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
 
@@ -946,12 +950,7 @@ async function loadGraph(graphComponent: GraphComponent) {
     const graphMLIOHandler = new GraphMLIOHandler()
     await graphMLIOHandler.readFromURL(graph, 'resources/graph.graphml')
   } catch (error) {
-    const reportError = (window as any).reportError
-    if (typeof reportError === 'function') {
-      reportError()
-    } else {
-      throw error
-    }
+    reportDemoError(error)
   }
 }
 

@@ -50,14 +50,14 @@ import {
   SvgVisual
 } from 'yfiles'
 
-import MySimpleEdgeStyle from './MySimpleEdgeStyle.js'
+import { MySimpleEdgeStyle } from './MySimpleEdgeStyle.js'
 
 /**
  * A very simple implementation of an {@link INodeStyle}
  * that uses the convenience class {@link NodeStyleBase}
  * as the base class.
  */
-export default class MySimpleNodeStyle extends NodeStyleBase {
+export class MySimpleNodeStyle extends NodeStyleBase {
   constructor() {
     super()
     this.$nodeColor = 'rgba(0,130,180,1)'

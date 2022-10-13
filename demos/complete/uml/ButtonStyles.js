@@ -38,10 +38,7 @@ import {
   INode,
   IRenderContext,
   LabelStyleBase,
-  NodeStyleLabelStyleAdapter,
   Rect,
-  ShapeNodeShape,
-  ShapeNodeStyle,
   SimpleEdge,
   SimpleNode,
   SimplePort,
@@ -51,7 +48,6 @@ import {
   TextRenderSupport,
   VerticalTextAlignment
 } from 'yfiles'
-import { UMLClassModel } from './UMLClassModel.js'
 
 const font = new Font({
   fontFamily: 'monospace',
@@ -184,14 +180,11 @@ export class RelationButtonStyle extends LabelStyleBase {
  * @returns {!ILabelStyle}
  */
 function createBackgroundStyle() {
-  const nodeStyle = new ShapeNodeStyle({
-    fill: 'white',
-    stroke: '#607D8B',
-    shape: ShapeNodeShape.ELLIPSE
+  return new DefaultLabelStyle({
+    backgroundFill: 'white',
+    backgroundStroke: '#607D8B',
+    shape: 'pill'
   })
-  const labelStyle = new NodeStyleLabelStyleAdapter()
-  labelStyle.nodeStyle = nodeStyle
-  return labelStyle
 }
 
 /**

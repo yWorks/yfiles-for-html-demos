@@ -243,7 +243,7 @@ function distributeImpl(graph, nodes, minimumSpacing, coordinate, size) {
     const nl = node.layout
 
     min = Math.min(min, nl[coordinate])
-    max = Math.min(max, nl[coordinate] + nl[size])
+    max = Math.max(max, nl[coordinate] + nl[size])
     occupied += nl[size]
 
     array.push(node)

@@ -31,7 +31,7 @@ import { KeyScope, KeyType } from 'yfiles'
 /**
  * Models a property of the GraphML content.
  */
-export default class GraphMLProperty {
+export class GraphMLProperty {
   defaultValue: any = null
   defaultExists = false
   name: string | null = null

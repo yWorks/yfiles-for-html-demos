@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { FontStyleStringValues, FontWeightStringValues, TextWrappingStringValues } from 'yfiles'
-  import { Enum, Font, Size, TextMeasurePolicy, TextRenderSupport, TextWrapping } from 'yfiles'
+  import { Font, Size, TextMeasurePolicy, TextRenderSupport, TextWrapping } from 'yfiles'
 
   export let maxWidth = -1
   export let maxHeight = -1
@@ -25,11 +25,7 @@
             maxHeight < 0 ? Number.MAX_VALUE : maxHeight
           )
         : null
-    const wrapping = Enum.parse(
-      TextWrapping.$class,
-      textWrapping.replaceAll('-', '_'),
-      true
-    ) as TextWrapping
+    const wrapping = TextWrapping.from(textWrapping.replaceAll('-', '_') as TextWrappingStringValues)
     const font = new Font(fontFamily, fontSize, fontStyle, fontWeight)
     if (element) {
       while (element.firstElementChild !== null) {

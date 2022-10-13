@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import type { EditorFromTextArea } from 'codemirror'
-import { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses'
+import type { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses'
 
 /**
  * Editing dialog for schema graph nodes business data ({@link TreeNodesSourceDefinition}

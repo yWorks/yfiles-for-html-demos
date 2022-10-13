@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses.js'
-
 /**
  * Editing dialog for schema graph nodes business data ({@link TreeNodesSourceDefinition}
  */

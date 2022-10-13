@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { bindAction, bindInputListener, showApp } from '../../resources/demo-app'
+import type { IModelItem, INode, Rect } from 'yfiles'
 import {
   DefaultGraph,
   DefaultLabelStyle,
@@ -36,18 +36,16 @@ import {
   GraphSnapContext,
   ICommand,
   IGraph,
-  IModelItem,
-  INode,
   LabelSnapContext,
   License,
   Point,
   PolylineEdgeStyle,
-  Rect,
   ScrollBarVisibility,
   ShapeNodeStyle,
   Theme,
   ThemeVariant
 } from 'yfiles'
+import { bindAction, bindInputListener, showApp } from '../../resources/demo-app'
 import { colorSets } from '../../resources/demo-colors'
 import { fetchLicense } from '../../resources/fetch-license'
 

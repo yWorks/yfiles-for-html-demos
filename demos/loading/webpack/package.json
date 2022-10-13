@@ -8,10 +8,9 @@
   "main": "webpack-demo.js",
   "dependencies": {
     "color": "4.2.3",
-    "yfiles": "../../../lib-dev/yfiles-25.0.1+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.2+dev.tgz"
   },
   "scripts": {
-    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.js', './src/utils/Workarounds.js')\"",
     "production": "node --max-old-space-size=4096 ./node_modules/webpack-cli/bin/cli.js --mode production",
     "build": "webpack --mode development",
     "start": "webpack serve --mode development --open"

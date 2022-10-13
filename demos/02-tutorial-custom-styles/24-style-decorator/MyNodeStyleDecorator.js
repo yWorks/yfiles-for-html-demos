@@ -49,7 +49,7 @@ import {
   SvgVisualGroup
 } from 'yfiles'
 
-import MySimpleEdgeStyle from './MySimpleEdgeStyle.js'
+import { MySimpleEdgeStyle } from './MySimpleEdgeStyle.js'
 
 /**
  * A simple node style wrapper that takes a given node style and adds label edge rendering
@@ -63,7 +63,7 @@ import MySimpleEdgeStyle from './MySimpleEdgeStyle.js'
  * {@link EdgeStyleBase}, {@link LabelStyleBase} and
  * {@link PortStyleBase}.
  */
-export default class MyNodeStyleDecorator extends NodeStyleBase {
+export class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Creates a new instance of this style using the given wrapped style.
    * @param {!INodeStyle} wrappedStyle The style that is decorated by this instance.

@@ -75,7 +75,7 @@ import { EditAdjacencyNodesSourceDialog } from './EditAdjacencyNodeSourceDialog'
 import { ContentRectViewportLimiter } from './ContentRectViewportLimiter'
 import { addClass } from '../../resources/demo-app'
 import { FlippedArrow } from './FlippedArrow'
-import ContextMenu from '../../utils/ContextMenu'
+import { ContextMenu } from '../../utils/ContextMenu'
 import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles'
 
 type NeighborType = 'successor' | 'predecessor'

@@ -35,7 +35,8 @@ import {
   ICommand,
   InteriorLabelModel,
   InteriorStretchLabelModel,
-  License
+  License,
+  RectangleNodeStyle
 } from 'yfiles'
 import {
   addNavigationButtons,
@@ -110,6 +111,13 @@ async function loadSampleGraph() {
 
   // get the currently selected sample data
   const sampleName = sampleComboBox.value
+
+  // for the nested sample, add some more distance to the children nodes
+  if (sampleName === 'uml') {
+    distanceSlider.value = '5'
+    distanceLabel.textContent = '5'
+  }
+
   const data = await loadSampleData(`resources/${sampleName}.json`)
   const isSimple = sampleComboBox.value === 'simple'
 
@@ -139,6 +147,25 @@ async function loadSampleGraph() {
   nodeLabelCreator.textProvider = data => data.text
   nodeLabelCreator.layoutParameterProvider = () =>
     isSimple ? InteriorLabelModel.CENTER : InteriorLabelModel.WEST
+
+  const groupCreator = groupSource.nodeCreator
+  groupCreator.styleProvider = data => {
+    return data.parent === undefined
+      ? graph.groupNodeDefaults.style
+      : new GroupNodeStyle({
+          tabFill: colorSets['demo-palette-56'].stroke,
+          tabBackgroundFill: '#9EA02C',
+          contentAreaFill: 'white',
+          tabSlope: 0.5,
+          drawShadow: false,
+          contentAreaInsets: 8,
+          tabPosition: 'top-leading',
+          stroke: `1px ${colorSets['demo-palette-56']}`,
+          tabHeight: 20,
+          tabWidth: 80,
+          tabInset: 2
+        })
+  }
 
   // create labels for the group nodes
   const groupLabelCreator = groupSource.nodeCreator.createLabelsSource(
@@ -177,19 +204,35 @@ function initializeGraph() {
   const graph = graphComponent.graph
 
   // initialize the basic style of the graph items
-  initDemoStyles(graph, { theme: 'demo-palette-58' })
+  initDemoStyles(graph, { theme: 'demo-palette-56' })
+
+  graph.nodeDefaults.style = new RectangleNodeStyle({
+    fill: '#D0D1B3',
+    stroke: '1.5px  #717345',
+    cornerStyle: 'round',
+    cornerSize: 3.5
+  })
+
+  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+    backgroundFill: '#E7E8D9',
+    shape: 'round-rectangle',
+    insets: [2, 4, 2, 4]
+  })
 
   // customize the group node style and its label for this demo to get nice tabular groups
   const groupTheme = 'demo-palette-56'
   graph.groupNodeDefaults.style = new GroupNodeStyle({
-    tabFill: colorSets[groupTheme].fill,
-    contentAreaFill: colorSets[groupTheme].fill,
-    stroke: `1px solid #FFFFFF`,
-    tabWidth: 30,
+    tabFill: colorSets[groupTheme].stroke,
+    tabBackgroundFill: colorSets[groupTheme].fill,
+    contentAreaFill: 'white',
+    tabSlope: 0.5,
+    drawShadow: true,
+    contentAreaInsets: 8,
+    tabPosition: 'top-leading',
+    stroke: `1px ${colorSets[groupTheme]}`,
     tabHeight: 20,
-    tabInset: 2,
-    cornerRadius: 0,
-    contentAreaInsets: 2
+    tabWidth: 80,
+    tabInset: 2
   })
   graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',

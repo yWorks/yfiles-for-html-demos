@@ -67,7 +67,7 @@ import {
 } from 'yfiles'
 
 import * as ClusteringData from './resources/ClusteringData'
-import VoronoiDiagram from './VoronoiDiagram'
+import { VoronoiDiagram } from './VoronoiDiagram'
 import { PolygonVisual, VoronoiVisual } from './DemoVisuals'
 import { DendrogramComponent } from './DendrogramSupport'
 import {

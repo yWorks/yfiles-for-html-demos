@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import GraphMLProperty from './GraphMLProperty.js'
-
 /**
  * Properties Panel.
  */

@@ -45,7 +45,6 @@ import {
   Rect,
   UndoUnitBase
 } from 'yfiles'
-import { MinCutLine } from './DemoStyles.js'
 
 /**
  * This class provides undo/redo for an operation changing tag data.

@@ -99,15 +99,15 @@ import {
 } from '../../resources/demo-app'
 import PreConfigurator from './resources/PreConfigurator'
 import samples from './resources/samples'
-import { isWebGl2Supported, isWebGlSupported } from '../../utils/Workarounds'
-import { createUrlIcon } from '../../utils/IconCreation'
+import { createCanvasContext, createUrlIcon } from '../../utils/IconCreation'
 import { FPSMeter } from './FPSMeter'
 import { fetchLicense } from '../../resources/fetch-license'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 let graphComponent: GraphComponent
 
 /**
- * The time to wait after an edit event until a redraw should be performed.
+ * The time to wait after an edit event until a redrawing should be performed.
  */
 const AUTO_REDRAW_DELAY = 1000
 
@@ -251,7 +251,7 @@ function initializeUI() {
  * Checks whether WebGl2 is supported and updates the corresponding UI buttons.
  */
 async function prepareWebGL2Rendering(): Promise<void> {
-  if (isWebGl2Supported()) {
+  if (BrowserDetection.webGL2) {
     await createWebGLImageData(webGLImageData)
   } else {
     // if the browser does not support WebGL2, disable this option
@@ -354,7 +354,7 @@ function createFastGraphModelManager(graphComponent: GraphComponent): FastGraphM
   fastGraphModelManager.intermediateNodeStyle = new SimpleSvgNodeStyle(Color.from('#FF6C00'))
   const edgeColor = Color.from('#662b00')
   fastGraphModelManager.intermediateEdgeStyle = new SvgEdgeStyle(edgeColor, edgeThickness)
-  if (isWebGlSupported()) {
+  if (BrowserDetection.webGL) {
     fastGraphModelManager.overviewEdgeStyle = new WebGLTaperedEdgeStyle({
       thickness: 30,
       color: edgeColor
@@ -555,7 +555,7 @@ function createEditorInputMode(isMoveMode: boolean): IInputMode {
   }
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
-  if (isWebGlSupported()) {
+  if (BrowserDetection.webGL) {
     graphEditorInputMode.handleInputMode.renderMode = RenderModes.WEB_GL
   }
 
@@ -992,7 +992,7 @@ function onSelectEverythingClicked(): void {
 }
 
 /**
- * Disables/enables the redraw graph button.
+ * Disables/enables the redrawing graph button.
  */
 function updateRedrawGraphButton(): void {
   const mode = fastGraphModelManager.graphOptimizationMode
@@ -1135,15 +1135,11 @@ async function createWebGLImageData(webGLImageData: ImageData[]): Promise<void> 
   // The size of the SVG graphic
   const imageSize = new Size(75, 75)
   // The size of the created ImageData
-  const imageDataSize = new Size(128, 128)
   // canvas used to pre-render the icons
-  const canvas = document.createElement('canvas')
-  canvas.setAttribute('width', `${imageDataSize.width}`)
-  canvas.setAttribute('height', `${imageDataSize.height}`)
-  const ctx = canvas.getContext('2d')!
+  const ctx = createCanvasContext(128, 128)
 
   for (const image of await Promise.all(
-    imageNames.map(name => createUrlIcon(ctx, `resources/${name}.svg`, imageSize, imageDataSize))
+    imageNames.map(name => createUrlIcon(ctx, `resources/${name}.svg`, imageSize))
   )) {
     webGLImageData.push(image)
   }
@@ -1238,7 +1234,7 @@ function updateDefaultStyles(graph: IGraph): {
     })
   }
 
-  fastGraphModelManager.overviewNodeStyle = isWebGlSupported()
+  fastGraphModelManager.overviewNodeStyle = BrowserDetection.webGL
     ? new WebGLShapeNodeStyle({ color: overviewColor })
     : new SimpleSvgNodeStyle(overviewColor)
   fastGraphModelManager.intermediateNodeStyle = new SimpleSvgNodeStyle(intermediateColor)

@@ -26,8 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// noinspection JSIgnoredPromiseFromCall
-
+import type {
+  StyleDecorationZoomPolicyStringValues,
+  WebGL2AnimationEasingStringValues,
+  WebGL2IndicatorTypeStringValues
+} from 'yfiles'
 import {
   Color,
   DefaultLabelStyle,
@@ -43,10 +46,8 @@ import {
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size,
-  StyleDecorationZoomPolicy,
   TimeSpan,
   WebGL2AnimationDirection,
-  WebGL2AnimationEasing,
   WebGL2AnimationTiming,
   WebGL2ArcEdgeStyle,
   WebGL2ArrowType,
@@ -54,7 +55,6 @@ import {
   WebGL2DefaultLabelStyle,
   WebGL2EdgeIndicatorStyle,
   WebGL2GraphModelManager,
-  WebGL2IndicatorType,
   WebGL2LabelIndicatorStyle,
   WebGL2LabelShape,
   WebGL2NodeIndicatorStyle,
@@ -65,21 +65,26 @@ import {
   WebGL2Transition
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkWebGL2Support,
+  showApp
+} from '../../resources/demo-app'
 import { fetchLicense } from '../../resources/fetch-license'
-import { isWebGl2Supported } from '../../utils/Workarounds'
 
 let graphComponent: GraphComponent = null!
 
-let type = WebGL2IndicatorType.SOLID
 let primaryColor = '#fc0335'
 let primaryTransparency = 0
 let secondaryColor = '#e3f207'
 let secondaryTransparency = 0
 let thickness = 3
 let margins = 3
-let zoomPolicy: StyleDecorationZoomPolicy = StyleDecorationZoomPolicy.MIXED
-let easing: WebGL2AnimationEasing = WebGL2AnimationEasing.LINEAR
+let type: WebGL2IndicatorTypeStringValues = 'solid'
+let zoomPolicy: StyleDecorationZoomPolicyStringValues = 'mixed'
+let easing: WebGL2AnimationEasingStringValues = 'linear'
 let transition: WebGL2Transition | null = getTransition(easing)
 let dashStrokeAnimation: WebGL2AnimationTiming | null = null
 
@@ -87,9 +92,7 @@ let dashStrokeAnimation: WebGL2AnimationTiming | null = null
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  if (!isWebGl2Supported()) {
-    // show message if the browsers does not support WebGL2
-    document.getElementById('no-webgl-support')!.removeAttribute('style')
+  if (!checkWebGL2Support()) {
     showApp()
     return
   }
@@ -431,7 +434,7 @@ function getColor(color: string, transparency: number): Color {
 /**
  * Creates a WebGL2Transition with the given easing and default values.
  */
-function getTransition(easing: WebGL2AnimationEasing): WebGL2Transition {
+function getTransition(easing: WebGL2AnimationEasingStringValues) {
   return new WebGL2Transition({
     properties: 'opacity',
     easing,
@@ -465,7 +468,7 @@ function initUI(): void {
   })
 
   bindChangeListener("select[data-command='ChangeSelectionStyle']", value => {
-    type = value
+    type = value as WebGL2IndicatorTypeStringValues
     const selectedIndex = (
       document.querySelector("select[data-command='ChangeSelectionStyle']") as HTMLSelectElement
     ).selectedIndex
@@ -475,22 +478,22 @@ function initUI(): void {
   })
 
   bindChangeListener("input[data-command='ChangePrimaryColor']", value => {
-    primaryColor = value
+    primaryColor = value as string
     updateSelectionStyles()
   })
 
   bindChangeListener("input[data-command='ChangePrimaryColorTransparency']", value => {
-    primaryTransparency = value / 100
+    primaryTransparency = parseFloat(value as string) / 100
     updateSelectionStyles()
   })
 
   bindChangeListener("input[data-command='ChangeSecondaryColor']", value => {
-    secondaryColor = value
+    secondaryColor = value as string
     updateSelectionStyles()
   })
 
   bindChangeListener("input[data-command='ChangeSecondaryColorTransparency']", value => {
-    secondaryTransparency = value / 100
+    secondaryTransparency = parseFloat(value as string) / 100
     updateSelectionStyles()
   })
 
@@ -513,7 +516,7 @@ function initUI(): void {
   })
 
   bindChangeListener("select[data-command='ChangeEasing']", value => {
-    easing = value
+    easing = value as WebGL2AnimationEasingStringValues
 
     // also update transition and dash animation, if activated
     transition = transition ? getTransition(easing) : null
@@ -531,17 +534,17 @@ function initUI(): void {
   })
 
   bindChangeListener("select[data-command='ChangeZoomPolicy']", value => {
-    zoomPolicy = value
+    zoomPolicy = value as StyleDecorationZoomPolicyStringValues
     updateSelectionStyles()
   })
 
   bindChangeListener("input[data-command='ChangeThickness']", value => {
-    thickness = parseInt(value)
+    thickness = parseFloat(value as string)
     updateSelectionStyles()
   })
 
   bindChangeListener("input[data-command='ChangeMargins']", value => {
-    margins = parseInt(value)
+    margins = parseFloat(value as string)
     updateSelectionStyles()
   })
 }

@@ -175,11 +175,6 @@ try {
   // ignore
 }
 
-function getAsFrozen(fill: Fill): Fill {
-  fill.freeze()
-  return fill
-}
-
 /**
  * The namespace URI for yFiles BPMN extensions to GraphML.
  * This field has the constant value "http://www.yworks.com/xml/yfiles-bpmn/2.0"
@@ -198,7 +193,7 @@ export const YFILES_BPMN_PREFIX = 'bpmn'
 const BPMN_CONSTANTS_DOUBLE_LINE_OFFSET = 2
 const BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS = 6
 const BPMN_CONSTANTS_GROUP_NODE_CORNER_RADIUS = 3
-const BPMN_CONSTANTS_DEFAULT_BACKGROUND = getAsFrozen(new SolidColorFill(250, 250, 250))
+const BPMN_CONSTANTS_DEFAULT_BACKGROUND = new SolidColorFill(250, 250, 250).freeze()
 const BPMN_CONSTANTS_DEFAULT_ICON_COLOR = Fill.BLACK
 const BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE = null // null triggers fallback to characteristic-specific colors
 const BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE = Fill.BLACK
@@ -242,27 +237,13 @@ const BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE = Fill.BLACK
 const BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR = BPMN_CONSTANTS_DEFAULT_INITIATING_COLOR
 const BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR = BPMN_CONSTANTS_DEFAULT_RECEIVING_COLOR
 // Pools
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_BACKGROUND = getAsFrozen(
-  new SolidColorFill(0xe0, 0xe0, 0xe0)
-)
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_BACKGROUND = getAsFrozen(
-  new SolidColorFill(196, 215, 237)
-)
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_INSET = getAsFrozen(
-  new SolidColorFill(0xe0, 0xe0, 0xe0)
-)
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_BACKGROUND = getAsFrozen(
-  new SolidColorFill(171, 200, 226)
-)
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_INSET = getAsFrozen(
-  new SolidColorFill(0xe0, 0xe0, 0xe0)
-)
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_BACKGROUND = getAsFrozen(
-  new SolidColorFill(113, 146, 178)
-)
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_INSET = getAsFrozen(
-  new SolidColorFill(0xe0, 0xe0, 0xe0)
-)
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_BACKGROUND = new SolidColorFill(0xe0, 0xe0, 0xe0).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_BACKGROUND = new SolidColorFill(196, 215, 237).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_INSET = new SolidColorFill(0xe0, 0xe0, 0xe0).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_BACKGROUND = new SolidColorFill(171, 200, 226).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_INSET = new SolidColorFill(0xe0, 0xe0, 0xe0).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_BACKGROUND = new SolidColorFill(113, 146, 178).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_INSET = new SolidColorFill(0xe0, 0xe0, 0xe0).freeze()
 // Default sizes for different items
 const BPMN_CONSTANTS_SIZES_MARKER = new Size(10, 10)
 const BPMN_CONSTANTS_SIZES_TASK_TYPE = new Size(15, 15)
@@ -1256,7 +1237,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup<T extends any>(type: Class<T>): T | null {
     if (type === ILabelModelParameterProvider.$class) {
-      return this as T
+      return this as unknown as T
     }
     if (type === ILabelModelParameterFinder.$class) {
       return DefaultLabelModelParameterFinder.INSTANCE as T
@@ -2536,8 +2517,7 @@ class IconFactory {
         break
       }
       case TaskType.RECEIVE: {
-        const stroke = new Stroke(iconFill)
-        stroke.freeze()
+        const stroke = new Stroke(iconFill).freeze()
         result = IconFactory.createPlacedIcon(
           IconFactory.createMessage(stroke, Fill.TRANSPARENT),
           BPMN_CONSTANTS_PLACEMENTS_ACTIVITY_TASK_TYPE_MESSAGE,
@@ -2546,19 +2526,15 @@ class IconFactory {
         break
       }
       case TaskType.USER: {
-        const stroke = new Stroke({
+        BUILDER.stroke = new Stroke({
           fill: iconFill,
           lineCap: LineCap.ROUND,
           lineJoin: LineJoin.ROUND
-        })
-        stroke.freeze()
-        BUILDER.stroke = stroke
+        }).freeze()
 
         iconFill = iconFill || Fill.BLACK
         const color = (iconFill as SolidColorFill).color
-        const lightFill = new SolidColorFill(color.r, color.g, color.b, 255 * 0.17)
-        lightFill.freeze()
-        BUILDER.fill = lightFill
+        BUILDER.fill = new SolidColorFill(color.r, color.g, color.b, 255 * 0.17).freeze()
 
         // body + head
         icons = new List()
@@ -2577,7 +2553,11 @@ class IconFactory {
         icons.add(BUILDER.getPathIcon())
 
         // hair
-        BUILDER.stroke = stroke
+        BUILDER.stroke = new Stroke({
+          fill: iconFill,
+          lineCap: LineCap.ROUND,
+          lineJoin: LineJoin.ROUND
+        }).freeze()
         BUILDER.fill = iconFill
         BUILDER.moveTo(0.287, 0.229)
         BUILDER.cubicTo(0.48, 0.053, 0.52, 0.253, 0.713, 0.137)
@@ -2585,7 +2565,11 @@ class IconFactory {
         BUILDER.close()
         icons.add(BUILDER.getPathIcon())
 
-        BUILDER.stroke = stroke
+        BUILDER.stroke = new Stroke({
+          fill: iconFill,
+          lineCap: LineCap.ROUND,
+          lineJoin: LineJoin.ROUND
+        }).freeze()
 
         // arms
         BUILDER.moveTo(0.19, 1)
@@ -2602,13 +2586,11 @@ class IconFactory {
         break
       }
       case TaskType.MANUAL: {
-        const stroke = new Stroke({
+        BUILDER.stroke = new Stroke({
           fill: iconFill,
           lineCap: LineCap.ROUND,
           lineJoin: LineJoin.ROUND
-        })
-        stroke.freeze()
-        BUILDER.stroke = stroke
+        }).freeze()
         BUILDER.moveTo(0, 0.286)
         BUILDER.quadTo(0.037, 0.175, 0.147, 0.143)
 
@@ -2655,18 +2637,15 @@ class IconFactory {
           darkColorFill.g,
           darkColorFill.b,
           255 * 0.5
-        )
-        darkFill.freeze()
+        ).freeze()
         const lightColorFill = (iconFill as SolidColorFill).color
         const lightFill = new SolidColorFill(
           lightColorFill.r,
           lightColorFill.g,
           lightColorFill.b,
           255 * 0.17
-        )
-        lightFill.freeze()
-        const stroke = new Stroke(iconFill)
-        stroke.freeze()
+        ).freeze()
+        const stroke = new Stroke(iconFill).freeze()
         BUILDER.fill = darkFill
         BUILDER.stroke = stroke
 
@@ -2703,24 +2682,21 @@ class IconFactory {
       }
       case TaskType.SERVICE: {
         icons = new List()
-        const stroke = new Stroke(iconFill, 0.3)
-        stroke.freeze()
+        const stroke = new Stroke(iconFill, 0.3).freeze()
         const darkColorFill = (iconFill as SolidColorFill).color
         const darkFill = new SolidColorFill(
           darkColorFill.r,
           darkColorFill.g,
           darkColorFill.b,
           255 * 0.5
-        )
-        darkFill.freeze()
+        ).freeze()
         const lightColorFill = (iconFill as SolidColorFill).color
         const lightFill = new SolidColorFill(
           lightColorFill.r,
           lightColorFill.g,
           lightColorFill.b,
           255 * 0.17
-        )
-        lightFill.freeze()
+        ).freeze()
 
         // top gear
         icons.add(createGear(0.4, 0.4, 0.4, stroke, darkFill))
@@ -2761,13 +2737,11 @@ class IconFactory {
         break
       }
       case TaskType.SCRIPT: {
-        const stroke = new Stroke({
+        BUILDER.stroke = new Stroke({
           fill: iconFill,
           lineCap: LineCap.ROUND,
           lineJoin: LineJoin.ROUND
-        })
-        stroke.freeze()
-        BUILDER.stroke = stroke
+        }).freeze()
 
         // outline
         const size = 0.5
@@ -2835,9 +2809,7 @@ class IconFactory {
     }
 
     const BUILDER = IconFactory.BUILDER
-    const frozenStroke = new Stroke(iconFill)
-    frozenStroke.freeze()
-    BUILDER.stroke = frozenStroke
+    BUILDER.stroke = new Stroke(iconFill).freeze()
 
     switch (loopCharacteristic) {
       case LoopCharacteristic.LOOP: {
@@ -2900,8 +2872,7 @@ class IconFactory {
     }
 
     const BUILDER = IconFactory.BUILDER
-    const frozenStroke = new Stroke(iconFill)
-    frozenStroke.freeze()
+    const frozenStroke = new Stroke(iconFill).freeze()
     BUILDER.stroke = frozenStroke
     BUILDER.fill = iconFill
 
@@ -2952,10 +2923,8 @@ class IconFactory {
       }
     }
 
-    const frozenStroke = new Stroke(iconFill)
-    frozenStroke.freeze()
     const BUILDER = IconFactory.BUILDER
-    BUILDER.stroke = frozenStroke
+    BUILDER.stroke = new Stroke(iconFill).freeze()
     BUILDER.fill = filled ? iconFill : Fill.TRANSPARENT
 
     const sqrt3inv = 1 / Math.sqrt(3)
@@ -2990,8 +2959,7 @@ class IconFactory {
       return result
     }
 
-    const iconStroke = new Stroke(iconFill)
-    iconStroke.freeze()
+    const iconStroke = new Stroke(iconFill).freeze()
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = iconStroke
 
@@ -3046,9 +3014,7 @@ class IconFactory {
     }
 
     const BUILDER = IconFactory.BUILDER
-    const stroke = new Stroke(outline)
-    stroke.freeze()
-    BUILDER.stroke = stroke
+    BUILDER.stroke = new Stroke(outline).freeze()
     BUILDER.fill = background
     BUILDER.moveTo(0.5, 0)
     BUILDER.lineTo(1, 0.5)
@@ -3070,10 +3036,8 @@ class IconFactory {
       return result
     }
 
-    const stroke = new Stroke(fill)
-    stroke.freeze()
-    const thickStroke = new Stroke(fill, 3)
-    thickStroke.freeze()
+    const stroke = new Stroke(fill).freeze()
+    const thickStroke = new Stroke(fill, 3).freeze()
 
     const BUILDER = IconFactory.BUILDER
     switch (type) {
@@ -3237,9 +3201,8 @@ class IconFactory {
         stroke = new Stroke()
         break
     }
-    stroke.freeze()
 
-    BUILDER.stroke = stroke
+    BUILDER.stroke = stroke.freeze()
     BUILDER.fill = background
     const ellipseIcon = BUILDER.createEllipseIcon()!
 
@@ -3288,20 +3251,17 @@ class IconFactory {
       return result
     }
 
-    const stroke = new Stroke(fill)
-    stroke.freeze()
+    const stroke = new Stroke(fill).freeze()
     const roundStroke = new Stroke({
       fill: fill,
       lineJoin: LineJoin.ROUND,
       lineCap: LineCap.ROUND
-    })
-    roundStroke.freeze()
+    }).freeze()
     const backgroundRoundStroke = new Stroke({
       fill: background,
       lineJoin: LineJoin.ROUND,
       lineCap: LineCap.ROUND
-    })
-    backgroundRoundStroke.freeze()
+    }).freeze()
 
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = stroke
@@ -3514,10 +3474,8 @@ class IconFactory {
       }
     }
 
-    const stroke = new Stroke(outline, type === ChoreographyType.TASK ? 1 : 3)
-    stroke.freeze()
     const BUILDER = IconFactory.BUILDER
-    BUILDER.stroke = stroke
+    BUILDER.stroke = new Stroke(outline, type === ChoreographyType.TASK ? 1 : 3).freeze()
 
     // Needs all four arguments instead of one because the path is drawn differently in both cases
     // on some platforms ...
@@ -3556,10 +3514,8 @@ class IconFactory {
       return result
     }
 
-    const stroke = new Stroke(outline)
-    stroke.freeze()
     const BUILDER = IconFactory.BUILDER
-    BUILDER.stroke = stroke
+    BUILDER.stroke = new Stroke(outline).freeze()
     BUILDER.fill = background
     result = BUILDER.createVariableRectIcon(topRadius, topRadius, bottomRadius, bottomRadius)
 
@@ -3608,16 +3564,12 @@ class IconFactory {
       default:
       case ConversationType.CONVERSATION:
       case ConversationType.SUB_CONVERSATION: {
-        const stroke = new Stroke(outline)
-        stroke.freeze()
-        BUILDER.stroke = stroke
+        BUILDER.stroke = new Stroke(outline).freeze()
         break
       }
       case ConversationType.CALLING_GLOBAL_CONVERSATION:
       case ConversationType.CALLING_COLLABORATION: {
-        const stroke = new Stroke(outline, 3)
-        stroke.freeze()
-        BUILDER.stroke = stroke
+        BUILDER.stroke = new Stroke(outline, 3).freeze()
         break
       }
     }
@@ -3674,10 +3626,8 @@ class IconFactory {
       return IconFactory._dataObject
     }
 
-    const stroke = new Stroke(outline)
-    stroke.freeze()
     const icon = new DataObjectIcon()
-    icon.stroke = stroke
+    icon.stroke = new Stroke(outline).freeze()
     icon.fill = background
 
     if (hasDefaultColors) {
@@ -3731,8 +3681,7 @@ class IconFactory {
       return IconFactory._rightAnnotation
     }
 
-    const stroke = new Stroke(outline)
-    stroke.freeze()
+    const stroke = new Stroke(outline).freeze()
 
     const icons = new List<Icon>()
     const BUILDER = IconFactory.BUILDER
@@ -3774,8 +3723,7 @@ class IconFactory {
       return IconFactory._dataStore
     }
 
-    const stroke = new Stroke(outline)
-    stroke.freeze()
+    const stroke = new Stroke(outline).freeze()
 
     const halfEllipseHeight = 0.125
     const ringOffset = 0.07
@@ -3826,14 +3774,12 @@ class IconFactory {
       return result
     }
 
-    const stroke = new Stroke({
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = new Stroke({
       fill: fill,
       lineCap: LineCap.ROUND,
       lineJoin: LineJoin.ROUND
-    })
-    stroke.freeze()
-    const BUILDER = IconFactory.BUILDER
-    BUILDER.stroke = stroke
+    }).freeze()
     switch (type) {
       case ArrowType.DEFAULT_SOURCE:
         BUILDER.moveTo(0.1, 0.1)
@@ -4493,15 +4439,13 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     if (this._messageOutline !== value) {
       this.modCount++
       this._messageOutline = value
-      const messageStroke = new Stroke(this._messageOutline)
-      messageStroke.freeze()
+      const messageStroke = new Stroke(this._messageOutline).freeze()
       this._messageStroke = messageStroke
       const messageLineStroke = new Stroke({
         fill: this._messageOutline,
         dashStyle: DashStyle.DOT,
         lineCap: LineCap.ROUND
-      })
-      messageLineStroke.freeze()
+      }).freeze()
       this._messageLineStroke = messageLineStroke
       this.updateMessageLineIcon()
       this.updateInitiatingMessageIcon()
@@ -5467,9 +5411,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     }
 
     if (!this._messageOutline) {
-      const outline = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE)
-      outline.freeze()
-      this._messageOutline = outline
+      this._messageOutline = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE).freeze()
     }
 
     const delegateStyle = labelStyle.delegateStyle
@@ -8176,7 +8118,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup<T extends any>(type: Class<T>): T | null {
     if (type === ILabelModelParameterProvider.$class) {
-      return this as T
+      return this as unknown as T
     }
     if (type === ILabelModelParameterFinder.$class) {
       return DefaultLabelModelParameterFinder.INSTANCE as T
@@ -8556,8 +8498,7 @@ export class MessageLabelStyle extends LabelStyleBase {
 
   constructor() {
     super()
-    const stroke = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE)
-    stroke.freeze()
+    const stroke = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE).freeze()
     const messageIcon = IconFactory.createMessage(
       stroke,
       BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
@@ -9404,13 +9345,11 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
   }
 
   getPen(outline: Fill | null): Stroke {
-    const stroke = new Stroke({
+    return new Stroke({
       fill: outline,
       dashStyle: DashStyle.DASH_DOT,
       lineCap: LineCap.ROUND
-    })
-    stroke.freeze()
-    return stroke
+    }).freeze()
   }
 
   /**
@@ -9457,8 +9396,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
       fill: BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE,
       dashStyle: DashStyle.DASH_DOT,
       lineCap: LineCap.ROUND
-    })
-    groupOutline.freeze()
+    }).freeze()
     this._shapeNodeStyle = new ShapeNodeStyle({
       shape: ShapeNodeShape.ROUND_RECTANGLE,
       stroke: groupOutline,

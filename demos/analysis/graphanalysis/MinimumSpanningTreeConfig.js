@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import { IGraph, IModelItem, SpanningTree } from 'yfiles'
-import AlgorithmConfiguration from './AlgorithmConfiguration.js'
+import { AlgorithmConfiguration } from './AlgorithmConfiguration.js'
 import { MultiColorNodeStyle } from './DemoStyles.js'
 
 /**
  * Configuration options for the Minimum Spanning Tree Algorithm.
  */
-export default class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
+export class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
   /**
    * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
    * @param {!IGraph} graph The graph on which the minimum spanning tree algorithm is executed.

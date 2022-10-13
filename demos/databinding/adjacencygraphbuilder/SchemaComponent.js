@@ -75,7 +75,7 @@ import { EditAdjacencyNodesSourceDialog } from './EditAdjacencyNodeSourceDialog.
 import { ContentRectViewportLimiter } from './ContentRectViewportLimiter.js'
 import { addClass } from '../../resources/demo-app.js'
 import { FlippedArrow } from './FlippedArrow.js'
-import ContextMenu from '../../utils/ContextMenu.js'
+import { ContextMenu } from '../../utils/ContextMenu.js'
 import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles.js'
 
 /**

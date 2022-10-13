@@ -26,19 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type {
+  DefaultLabelStyle,
+  IModelItem,
+  QueryItemToolTipEventArgs,
+  SolidColorFill
+} from 'yfiles'
 import {
   Color,
-  DefaultLabelStyle,
   Enum,
   Fill,
-  GraphEditorInputMode,
+  GraphInputMode,
   HorizontalTextAlignment,
   ILabel,
-  IModelItem,
   LabelShape,
   Point,
-  QueryItemToolTipEventArgs,
-  SolidColorFill,
   TextWrapping,
   TimeSpan,
   VerticalTextAlignment
@@ -49,7 +51,7 @@ import { addClass } from '../../resources/demo-app'
  * Configures the given input mode to show tool tips for labels.
  * The tool tips show a description of the corresponding label's configuration.
  */
-export function configureToolTips(inputMode: GraphEditorInputMode): void {
+export function configureToolTips(inputMode: GraphInputMode): void {
   // Customize the tool tip's behavior to our liking.
   const mouseHoverInputMode = inputMode.mouseHoverInputMode
   mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)

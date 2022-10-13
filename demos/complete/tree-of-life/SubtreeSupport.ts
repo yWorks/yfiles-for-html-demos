@@ -26,12 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { FilteredGraphWrapper, ILabel } from 'yfiles'
 import {
-  FilteredGraphWrapper,
   GraphComponent,
   IEdge,
   IGraph,
-  ILabel,
   IModelItem,
   INode,
   Subtree,

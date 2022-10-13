@@ -150,7 +150,7 @@ function createPointElement(point: Point, color: Color): SVGElement {
   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
   circle.setAttribute('cx', point.x.toString())
   circle.setAttribute('cy', point.y.toString())
-  circle.setAttribute('r', '2')
+  circle.setAttribute('r', '3')
   circle.setAttribute('fill', `rgb(${color.r},${color.g},${color.b})`)
   circle.setAttribute('stroke', `rgb(${color.r},${color.g},${color.b})`)
   return circle

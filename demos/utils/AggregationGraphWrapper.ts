@@ -1726,7 +1726,7 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
   public lookup<T extends any>(type: Class<T>): T | null {
     if (type === ILookupDecorator.$class) {
       this.$wrappedDecorator = this.$graph.baseLookup(type) as ILookupDecorator
-      return this as T
+      return this as unknown as T
     }
     if (type === LookupChain.$class) {
       return this.$graphLookupChain as T

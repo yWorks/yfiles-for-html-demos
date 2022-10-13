@@ -53,6 +53,7 @@ import {
   TreeReductionStageData
 } from 'yfiles'
 import { isCrossReference, isLeft, isRoot } from './MindmapUtil'
+import { reportDemoError } from '../../resources/demo-app'
 
 /**
  * This class contains methods that deal with the mindmap graph layout.
@@ -271,8 +272,8 @@ export default class MindmapLayout {
         alert(
           'The layout computation was canceled because the maximum configured runtime was exceeded.'
         )
-      } else if (typeof (window as any).reportError === 'function') {
-        ;(window as any).reportError(err)
+      } else {
+        reportDemoError(err)
       }
     } finally {
       this.inLayout = false

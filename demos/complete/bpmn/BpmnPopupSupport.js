@@ -81,7 +81,6 @@ import {
   SubState,
   TaskType
 } from './bpmn-view.js'
-import ContextMenu from '../../utils/ContextMenu.js'
 
 class BpmnPopup {
   /**

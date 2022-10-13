@@ -50,10 +50,10 @@ import {
 } from 'yfiles'
 import { DemoStripeStyle, DemoTableStyle } from './TableStyles'
 import { addClass, removeClass } from '../../resources/demo-app'
-import { pointerEventsSupported } from '../../utils/Workarounds'
 
 import { DragAndDropPanel } from '../../utils/DndPanel'
 import { createDemoNodeStyle } from '../../resources/demo-styles'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 /**
  * Configures drag and drop interaction that considers dropping nodes on table nodes.
@@ -95,7 +95,7 @@ export function configureDndPanel(): void {
         data,
         'all',
         true,
-        pointerEventsSupported ? dragPreview : null
+        BrowserDetection.pointerEvents ? dragPreview : null
       )
     } else {
       dragSource = NodeDropInputMode.startDrag(
@@ -103,7 +103,7 @@ export function configureDndPanel(): void {
         data,
         'all',
         true,
-        pointerEventsSupported ? dragPreview : null
+        BrowserDetection.pointerEvents ? dragPreview : null
       )
     }
     dragSource.addQueryContinueDragListener((src, args) => {

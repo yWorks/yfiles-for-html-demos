@@ -47,7 +47,6 @@ import {
   YPoint
 } from 'yfiles'
 
-import VoronoiDiagram from './VoronoiDiagram.js'
 import { colorSets } from '../../resources/demo-styles.js'
 
 const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)

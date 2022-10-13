@@ -41,8 +41,8 @@ import {
   Size
 } from 'yfiles'
 
-import MySimpleLabelStyle from './MySimpleLabelStyle.js'
-import MySimpleNodeStyle from './MySimpleNodeStyle.js'
+import { MySimpleLabelStyle } from './MySimpleLabelStyle.js'
+import { MySimpleNodeStyle } from './MySimpleNodeStyle.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 
 import { applyDemoTheme } from '../../resources/demo-styles.js'

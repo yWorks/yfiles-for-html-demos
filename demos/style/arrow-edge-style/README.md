@@ -18,3 +18,5 @@ The edge style supports separate cropping values for the [source](https://docs.y
 
 - Select an edge and see its style settings in the property panel on the right-hand side.
 - Change some of the settings while an edge is selected and see how it affects the selected edge.
+- Move a node and observe how the shapes of the connected edges change.
+- Create new edges between nodes using the style settings of the property panel.

@@ -36,7 +36,7 @@ const HEIGHT = 4
  * This class is an example of a custom port style based on the {@link PortStyleBase} class.
  * The port is rendered as a circle.
  */
-export default class MySimplePortStyle extends PortStyleBase {
+export class MySimplePortStyle extends PortStyleBase {
   createVisual(context: IRenderContext, port: IPort): SvgVisual {
     // create the ellipse
     const ellipse = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
