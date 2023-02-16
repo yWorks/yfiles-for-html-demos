@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -53,7 +53,7 @@ export default class EdgeReconnectionPortCandidateProvider extends BaseClass<IEd
   /**
    * Gets a list of port candidates for edge reconnection that matches the list of candidates the
    * IPortCandidateProvider interface returns.
-   * @return The list of source port candidates
+   * @returns The list of source port candidates
    */
   getSourcePortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     return this.getPortCandidates(context, true)
@@ -62,7 +62,7 @@ export default class EdgeReconnectionPortCandidateProvider extends BaseClass<IEd
   /**
    * Gets a list of port candidates for edge reconnection that matches the list of candidates the
    * IPortCandidateProvider interface returns.
-   * @return The list of target port candidates
+   * @returns The list of target port candidates
    */
   getTargetPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     return this.getPortCandidates(context, false)

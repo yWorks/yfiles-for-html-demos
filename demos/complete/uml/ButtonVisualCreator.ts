@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -228,7 +228,7 @@ export default class ButtonVisualCreator
    * @param canvasComponent The canvas component in which the node resides.
    * @param node The node who should be checked for a button.
    * @param location The world location to check for a button.
-   * @return The edge style if there is a button at the given location, otherwise null.
+   * @returns The edge style if there is a button at the given location, otherwise null.
    */
   static getStyleButtonAt(
     canvasComponent: CanvasComponent,
@@ -256,7 +256,7 @@ export default class ButtonVisualCreator
    * Helper method to get the context button at the given location.
    * @param node The node who should be checked for a button.
    * @param location The world location to check for a button.
-   * @return The context button at the given or null.
+   * @returns The context button at the given or null.
    */
   static getContextButtonAt(node: INode, location: IPoint): string | null {
     const layout = node.layout

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -168,7 +168,7 @@ function createEditorMode(): GraphEditorInputMode {
 
 /**
  * Configures table editing specific parts.
- * @return The table editor input mode
+ * @returns The table editor input mode
  */
 function configureTableEditing(): TableEditorInputMode {
   const graphInputMode = graphComponent.inputMode as GraphEditorInputMode

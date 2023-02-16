@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -733,7 +733,7 @@ class FlowchartTransformerStage extends LayoutStageBase {
 
   /**
    * Returns the in-edges of the given node grouped by layer.
-   * @return the in-edges of the given node grouped by layer. the first array
+   * @returns the in-edges of the given node grouped by layer. the first array
    *   contains edges from preceding layers, the second array edges from succeeding layers.
    */
   getInEdgesByLayer(graph: LayoutGraph, groupedInEdges: EdgeList): EdgeList[][] {
@@ -769,7 +769,7 @@ class FlowchartTransformerStage extends LayoutStageBase {
   /**
    * Returns a collection of port candidate for the given direction.
    * one of the direction constants in {@link FlowchartLayout}.
-   * @return a collection of port candidate for the given direction.
+   * @returns a collection of port candidate for the given direction.
    */
   getPortCandidateCollection(direction: number): ICollection<PortCandidate | null> {
     const collection = []
@@ -1453,7 +1453,7 @@ function makeOrthogonal(combinedPath: YList): void {
 
 /**
  * Fixes the orthogonality the segment between the given points.
- * */
+ */
 function makeOrthogonalSegment(p1: YPoint, p2: YPoint): YPoint {
   return Math.abs(p1.x - p2.x) < Math.abs(p1.y - p2.y)
     ? new YPoint(p2.x, p1.y)

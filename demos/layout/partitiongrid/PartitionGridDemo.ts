@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -537,7 +537,7 @@ function updateMapping(node: INode, oldTag: CellId): void {
  * Returns an array containing the indices of the rows/columns that contain nodes (non-empty).
  * @param stripeCount the number of rows/columns in the current partition grid
  * @param isRow `true` if we examine the rows, `false` otherwise
- * @return An array containing the indices of the non-empty rows/columns
+ * @returns An array containing the indices of the non-empty rows/columns
  */
 function getNonEmptyIndices(stripeCount: number, isRow: boolean): number[] {
   const nonEmptyIndices = []
@@ -554,7 +554,7 @@ function getNonEmptyIndices(stripeCount: number, isRow: boolean): number[] {
 /**
  * Determines the cell indices to which the given point belongs.
  * @param point The given point
- * @return The row/column indices
+ * @returns The row/column indices
  */
 function determineCellIndex(point: Point): CellId {
   let rowIndex = -1
@@ -649,7 +649,7 @@ function adjustGraphComponentBounds(): void {
  * Returns a partition cell for the given node if it has valid row/column indices or
  * `null` otherwise.
  * @param node The given node to create the cell id for
- * @return A partition cell for the given node if it has valid row/column indices
+ * @returns A partition cell for the given node if it has valid row/column indices
  * or `null` otherwise
  */
 function createNodeCellId(node: INode): PartitionCellId | null {
@@ -664,7 +664,7 @@ function createNodeCellId(node: INode): PartitionCellId | null {
  * partition cell id or
  * `null` otherwise.
  * @param node The group node to create the cell id for
- * @return A partition cell id for the given group node if any of its descendants
+ * @returns A partition cell id for the given group node if any of its descendants
  * has a valid partition cell id or `null` otherwise
  */
 function getGroupNodeCellId(node: INode): PartitionCellId | null {
@@ -699,7 +699,7 @@ function getGroupNodeCellId(node: INode): PartitionCellId | null {
 /**
  * Returns whether or not a given node has valid row/column indices.
  * @param node The given node
- * @return `true` if the given node has valid row/column indices,
+ * @returns `true` if the given node has valid row/column indices,
  *   `false` otherwise
  */
 function hasActiveRestrictions(node: INode): boolean {
@@ -715,7 +715,7 @@ function existsPartitionGrid(): boolean | PartitionGrid {
 
 /**
  * Returns the partition grid for each layout run.
- * @return The newly created partition grid
+ * @returns The newly created partition grid
  */
 function createPartitionGrid(): PartitionGrid {
   const grid = new PartitionGrid(rowCount, columnCount)
@@ -753,7 +753,7 @@ function getFloatValue(id: string): number {
 
 /**
  * Returns the partition grid data for each layout run or null if no partition grid exists
- * @return The newly created partition grid data
+ * @returns The newly created partition grid data
  */
 function createPartitionGridData(): PartitionGridData | null {
   if (rowCount > 0 && columnCount > 0) {
@@ -993,7 +993,7 @@ function updateGrid() {
  * Checks whether the input provided by the user is valid, i.e., not larger than the desired value.
  * @param input The user's input
  * @param maxValue The maximum expected value
- * @return `true` if the input provided by the user is valid, i.e., not larger
+ * @returns `true` if the input provided by the user is valid, i.e., not larger
  * than the desired value, `false` otherwise
  */
 function isValidInput(input: Event, maxValue: number): boolean {
@@ -1063,7 +1063,7 @@ function canExecuteOrganicLayout(): boolean {
 /**
  * Returns the cell id of the first child node that is not a group node.
  * @param groupNode The group node
- * @return The cell id indices
+ * @returns The cell id indices
  */
 function getFirstChildActiveRestriction(groupNode: INode): CellId {
   const graph = graphComponent.graph
@@ -1220,7 +1220,7 @@ class CustomLayoutExecutor extends LayoutExecutor {
 
 /**
  * Returns a reference to the first element with the specified ID in the current document.
- * @return A reference to the first element with the specified ID in the current document.
+ * @returns A reference to the first element with the specified ID in the current document.
  */
 function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T

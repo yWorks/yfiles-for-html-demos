@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -87,8 +87,8 @@ export function getInEdge(node, graph) {
 
 /**
  * Creates a sibling node for a given node.
- * @param {!INode} node The given node.
  * @param {!IGraph} graph The input graph.
+ * @param {!INode} node The given node.
  * @param {!INodeStyle} nodeStyle The desired node style.
  * @param {!IEdgeStyle} edgeStyle The desired edge style.
  * @param {!ILabelStyle} labelStyle The desired label style.

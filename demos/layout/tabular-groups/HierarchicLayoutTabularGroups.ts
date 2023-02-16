@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,7 @@ import { HierarchicLayout, HierarchicLayoutData, IGraph } from 'yfiles'
  * @param graph the graph to be laid out
  * @param sorted whether the tabular group child nodes should be sorted by their label text
  * @param childDistance the distance between tabular group child nodes
- * @return the configured hierarchic layout algorithm
+ * @returns the configured hierarchic layout algorithm
  */
 export function createTabularGroupsHierarchicLayout(
   graph: IGraph,
@@ -80,7 +80,7 @@ export function createTabularGroupsHierarchicLayout(
 /**
  * Returns a {@link HierarchicLayout} with a left-to-right layout orientation.
  * @param graph the graph to be laid out
- * @return the configured hierarchic layout algorithm
+ * @returns the configured hierarchic layout algorithm
  */
 export function createDefaultHierarchicLayout(graph: IGraph): HierarchicLayout {
   return new HierarchicLayout({

@@ -8,6 +8,6 @@ Application Features Tutorial
 
 # Tooltips
 
-This demo shows how to enable tooltips for graph items.
+This demo shows how to enable tooltips for graph items and how to customize them using CSS styling.
 
 See the sources for details.

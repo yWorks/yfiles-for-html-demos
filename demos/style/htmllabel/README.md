@@ -1,14 +1,16 @@
-# HTML Label Demo
+# HTML Label Style Demo
 
 <img src="../../resources/image/htmllabel.png" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://live.yworks.com/demos/style/htmllabel/index.html).
 
-# HTML Label Demo
+# HTML Label Style Demo
 
-This demo shows how HTML can be used for rendering label texts using a custom label style implementation.
+This demo shows how HTML can be used for rendering labels with a custom label style.
 
-Note that the visualizations in this demo do not work in Internet Explorer due to missing SVG `foreign object` support.
+The custom style uses the [SVG <foreignObject>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/foreignObject) element to embed HTML elements in the default SVG rendering of the diagram.
+
+Note that the <foreignObject> element [is supported](https://caniuse.com/mdn-svg_elements_foreignobject) by all modern browsers but not Internet Explorer nor Edge Legacy.
 
 ## HTML Label Editor
 

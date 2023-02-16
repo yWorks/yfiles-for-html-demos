@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -122,6 +122,8 @@ async function run() {
   // initialize the demo styles
   initDemoStyles(graphComponent.graph)
 
+  await loadGraph()
+
   // create and configure a new AggregationGraphWrapper
   aggregateGraph = new AggregationGraphWrapper(graphComponent.graph)
 
@@ -146,7 +148,7 @@ async function run() {
 
   registerCommands()
 
-  loadGraph().then(() => graphComponent.fitGraphBounds())
+  graphComponent.fitGraphBounds()
 
   showApp(graphComponent)
 }
@@ -269,7 +271,7 @@ function populateContextMenu(contextMenu, sender, e) {
  * If the node is null, the selection is cleared.
  * If the node is already selected, the selection keeps unchanged, otherwise the selection
  * is cleared and the node is selected.
- * @param {?INode} node: The node to consider for the selection state
+ * @param {?INode} node The node to consider for the selection state
  */
 function updateSelection(node) {
   // see if no node was hit

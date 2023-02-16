@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -114,11 +114,11 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
    * more invocations of {@link IPositionHandler.handleMove}.
    * Alternatively to this method, the {@link IPositionHandler.cancelDrag} method might be called.
    * @param {!IInputModeContext} inputModeContext The context providing information about the drag.
-   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
-   *   This is the same value as delivered in the last invocation of {@link AdditionalSnapLinePositionHandler.handleMove}.
    * @param {!Point} originalLocation The value of the
    *   {@link AdditionalSnapLinePositionHandler.location} property at the time of
    *   {@link AdditionalSnapLinePositionHandler.initializeDrag}.
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
+   *   This is the same value as delivered in the last invocation of {@link AdditionalSnapLinePositionHandler.handleMove}.
    * @see Specified by {@link IPositionHandler.dragFinished}.
    */
   dragFinished(inputModeContext, originalLocation, newLocation) {

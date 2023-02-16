@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import { Rect } from 'yfiles'
  * @param {IGraph} graph
  * @param {number} x
  * @param {number} y
- * @return {INode}
+ * @returns {INode}
  */
 export function createNode(graph, x, y) {
   return graph.createNode({ layout: new Rect(x, y, 30, 30) })
@@ -43,7 +43,7 @@ export function createNode(graph, x, y) {
  * Creates an edge between the first two selected nodes in selection.
  * @param {IGraph} graph
  * @param {IGraphSelection} selection
- * @return {null|IEdge}
+ * @returns {null|IEdge}
  */
 export function createEdge(graph, selection) {
   if (selection.selectedNodes.size >= 2) {

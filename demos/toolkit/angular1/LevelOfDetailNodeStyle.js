@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,7 +50,7 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   /**
    * @param {IRenderContext} renderContext
    * @param {INode} node
-   * @return {Visual}
+   * @returns {Visual}
    */
   createVisual(renderContext, node) {
     // get scope previously stored in node tag at node creation
@@ -85,7 +85,7 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
    * @param {IRenderContext} renderContext
    * @param {Visual} oldVisual
    * @param {IGraph} node
-   * @return {Visual}
+   * @returns {Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
     if (oldVisual && oldVisual.svgElement) {
@@ -106,7 +106,7 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
 
   /**
    * @param {number} zoom
-   * @return {number}
+   * @returns {number}
    */
   getTemplateMode(zoom) {
     if (zoom > this.detailThreshold) {

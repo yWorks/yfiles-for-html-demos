@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -88,7 +88,6 @@ async function run(): Promise<void> {
 
 /**
  * Sets the {@link MarkupLabelStyle} as default label style for nodes and edges.
- * @param graph
  */
 function configureMarkupLabelStyle(graph: IGraph): void {
   graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER

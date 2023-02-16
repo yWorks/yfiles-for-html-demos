@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -92,7 +92,6 @@ async function run() {
 
 /**
  * Enables WebGL2 as the rendering technique.
- *
  * @param {!GraphComponent} graphComponent
  */
 function enableWebGLRendering(graphComponent) {
@@ -108,7 +107,6 @@ function enableWebGLRendering(graphComponent) {
 
 /**
  * Configures the interaction so that it works nicer with WebGL2.
- *
  * @param {!GraphComponent} graphComponent
  */
 function initInteraction(graphComponent) {
@@ -153,7 +151,7 @@ function initTutorialDefaults(graph) {
 /**
  * Creates an initial sample graph.
  *
- * @yjs:keep=edgeList
+ * @yjs:keep = edgeList
  * @param {!IGraph} graph The graph.
  */
 async function createGraph(graph) {

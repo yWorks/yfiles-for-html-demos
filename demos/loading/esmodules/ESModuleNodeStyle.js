@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,7 +39,7 @@ export default class extends NodeStyleBase {
    *
    * @param {IRenderContext} ctx The context.
    * @param {INode} node The node.
-   * @return {SvgVisual} The new visual.
+   * @returns {SvgVisual} The new visual.
    */
   createVisual(ctx, node) {
     const rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')

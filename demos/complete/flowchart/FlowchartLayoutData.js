@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -109,7 +109,7 @@ export default class FlowchartLayoutData {
 
   /**
    * Returns the preferred direction for negative branches.
-   * @return the preferred direction for negative branches.
+   * @returns the preferred direction for negative branches.
    * @type {number}
    */
   get preferredNegativeBranchDirection() {
@@ -129,7 +129,7 @@ export default class FlowchartLayoutData {
 
   /**
    * Returns the preferred direction for positive branches.
-   * @return the preferred direction for positive branches.
+   * @returns the preferred direction for positive branches.
    * @type {number}
    */
   get preferredPositiveBranchDirection() {
@@ -150,7 +150,7 @@ export default class FlowchartLayoutData {
   /**
    * Returns the adjusted direction that is set to negative branches. If the preferred positive and negative branches
    * interfere, this class adjusts them.
-   * @return the adjusted direction that is set to negative branches.
+   * @returns the adjusted direction that is set to negative branches.
    * @type {number}
    */
   get adjustedNegativeBranchDirection() {
@@ -160,7 +160,7 @@ export default class FlowchartLayoutData {
   /**
    * Returns the adjusted direction that is set to positive branches. If the preferred positive and negative branches
    * interfere, this class adjusts them.
-   * @return the adjusted direction that is set to positive branches.
+   * @returns the adjusted direction that is set to positive branches.
    * @type {number}
    */
   get adjustedPositiveBranchDirection() {

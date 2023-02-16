@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -103,9 +103,9 @@
   }
 
   var tutorialIds = [
-    'tutorial-application-features',
-    'tutorial-custom-styles',
     'tutorial-getting-started',
+    'tutorial-custom-styles',
+    'tutorial-application-features',
     'tutorial-layout-features'
   ]
 
@@ -294,7 +294,7 @@
    * @param {object} demo The JSON data of a demo
    * @param {string} needle A whitespace-separated list of search terms
    * @param {string} categoryFilter An optional filter to restrict matches to a certain category
-   * @return {number} The quality of the match in the range [0-100]. Higher quality is better and
+   * @returns {number} The quality of the match in the range [0-100]. Higher quality is better and
    *   the value is 0 if the demo doesn't match at all.
    */
   function matchDemo(demo, needle, categoryFilter) {
@@ -321,7 +321,7 @@
   /**
    * @param {object} demo The JSON data of a demo
    * @param {string} word A single search term
-   * @return {number} The quality of the match in the range [0-100]. Higher quality is better and
+   * @returns {number} The quality of the match in the range [0-100]. Higher quality is better and
    *   the value is 0 if the demo doesn't match at all.
    */
   function matchWord(demo, word) {
@@ -402,19 +402,23 @@
     demo.sidebarElement = sidebarItem
   })
 
-  searchBox.addEventListener('input', debounce(searchBoxChanged, 300, false))
+  searchBox.addEventListener('input', debounce(
+    function(evt) {
+      searchBoxChanged(evt)
+      updateHash()
+    }
+    , 300, false))
   searchBox.addEventListener('click', searchBoxClicked)
   searchBox.addEventListener('blur', function (e) {
     searchBox.addEventListener('click', searchBoxClicked)
   })
   resetSearchButton.addEventListener('click', function () {
     searchBox.value = ''
-    searchBoxChanged()
   })
 
-  function onHashChange() {
+  function setSearchTermFromHash() {
     if (location.hash && location.hash.length > 1 && location.hash.charAt(0) === '#') {
-      var text = decodeURIComponent(location.hash.substr(1))
+      var text = decodeURIComponent(location.hash.substring(1))
       searchBox.value = text
     } else {
       searchBox.value = ''
@@ -422,9 +426,17 @@
     searchBoxChanged()
   }
 
-  window.onhashchange = onHashChange
-  onHashChange()
-  searchBoxChanged()
+  window.onhashchange = setSearchTermFromHash
+  setSearchTermFromHash()
+
+  function updateHash() {
+    if (!history.replaceState) {
+      // Don't care about IE 9
+      return
+    }
+    var searchTerm = searchBox.value.trim()
+    history.replaceState({}, "", `#${searchTerm}`)
+  }
 
   function searchBoxClicked(evt) {
     searchBox.select()
@@ -432,7 +444,8 @@
   }
 
   function searchBoxChanged(evt, categoryFilter) {
-    const index = tutorialIds.indexOf(searchBox.value.trim())
+    var searchTerm = searchBox.value.trim()
+    var index = tutorialIds.indexOf(searchTerm)
     if (index >= 0) {
       categoryFilter = tutorialIds[index]
     }
@@ -444,11 +457,11 @@
     })
     document.getElementById('general-intro').style.display = 'block'
 
-    var searchBoxEmpty = searchBox.value.trim() === ''
+    var searchBoxEmpty = searchTerm === ''
     var sortedDemos = demos.map(function (demo) {
       return {
         demo: demo,
-        prio: matchDemo(demo, searchBox.value, categoryFilter)
+        prio: matchDemo(demo, searchTerm, categoryFilter)
       }
     })
 
@@ -467,10 +480,15 @@
       })
     }
 
-    sortedDemos.forEach(function (item) {
+    // The first indexes are reserved for other elements.
+    var baseTabIndex = 2
+    sortedDemos.forEach(function (item, index) {
       var demo = item.demo
       // Reorder the nodes in each grid section
       demo.element.parentElement.appendChild(demo.element)
+
+      // Update the tabindex.
+      demo.element.querySelector('.title').firstElementChild.setAttribute('tabindex', index + baseTabIndex)
 
       if (searchBoxEmpty && demo.hiddenInGrid) {
         // search box is empty ...
@@ -497,12 +515,16 @@
       }
     })
 
+    baseTabIndex += sortedDemos.length
     tutorialIds.forEach(function (id) {
-      var children = document.getElementById(id + '-grid').childNodes
+      var children = document.getElementById(id + '-grid').children
       var allHidden = true
       for (var i = 0; i < children.length; i++) {
-        if (children[i].getAttribute('class').indexOf('filtered') === -1) {
+        const demoCard = children[i]
+        if (demoCard.getAttribute('class').indexOf('filtered') === -1) {
           allHidden = false
+          // Update the tabindex.
+          demoCard.querySelector('.title').firstElementChild.setAttribute('tabindex', `${baseTabIndex++}`)
         }
       }
       if (allHidden) {
@@ -512,7 +534,7 @@
       }
     })
     noSearchResultsElement.style.display = noSearchResults ? 'block' : 'none'
-    changeTextContent(searchBox.value)
+    changeTextContent(searchTerm)
   }
 
   function changeTextContent(text) {
@@ -539,7 +561,7 @@
    * @param {function} func
    * @param {number} delay
    * @param {boolean} immediate
-   * @return {(function(): void)|*}
+   * @returns {(function(): void)|*}
    */
   function debounce(func, delay, immediate) {
     var timeout

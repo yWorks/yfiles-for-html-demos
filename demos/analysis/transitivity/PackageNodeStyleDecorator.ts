@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -73,7 +73,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * Creates a visual that contains the visual of the wrapped style as well as the icon.
    * @param context The render context
    * @param node The node to which this style instance is assigned
-   * @return The newly created visual
+   * @returns The newly created visual
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     const svgNS = 'http://www.w3.org/2000/svg'
@@ -131,10 +131,10 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Updates the given visual.
-   * @param node The node to which this style instance is assigned
    * @param context The render context
    * @param oldVisual The existing visual
-   * @return The updated visual
+   * @param node The node to which this style instance is assigned
+   * @returns The updated visual
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisualGroup, node: INode): SvgVisual {
     const selected = getCurrentItem(context) === node
@@ -182,8 +182,8 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
       if (!oldCache!.pendingDependencies && newCache.pendingDependencies) {
         createPlusImage(plusX + width, plusY, g1)
       } else if (oldCache!.pendingDependencies && !newCache.pendingDependencies) {
-        while (g1.firstChild) {
-          g1.removeChild(g1.firstChild)
+        while (g1.lastChild != null) {
+          g1.removeChild(g1.lastChild)
         }
       } else if (oldVisual.children.size === 3) {
         // in this case we have only to move the image to the correct location but we have first to determine whether
@@ -201,7 +201,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
   /**
    * Returns the enlarged area of the node if the node has the circles for more dependencies.
    * @param node The given node
-   * @return The enlarged area
+   * @returns The enlarged area
    */
   static getEnlargedOutline(node: INode): GeneralPath {
     const enlargedOutline = new GeneralPath()
@@ -236,7 +236,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * @param canvasContext The canvas context
    * @param p The point to test
    * @param node The node to which this style instance is assigned
-   * @return True if the node has been hit, false otherwise
+   * @returns True if the node has been hit, false otherwise
    */
   isHit(canvasContext: IInputModeContext, p: Point, node: INode): boolean {
     if (node.tag && node.tag.pendingDependencies) {
@@ -267,7 +267,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * @param node The node to which this style instance is assigned
    * @param inner The coordinates of a point lying inside the shape
    * @param outer The coordinates of a point lying outside the shape
-   * @return The intersection point
+   * @returns The intersection point
    */
   getIntersection(node: INode, inner: Point, outer: Point): Point | null {
     // delegate this to the wrapped style
@@ -278,7 +278,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * @param node The node to which this style instance is assigned
    * @param point The point to test
-   * @return True if the provided point is geometrically inside the visual bounds of the
+   * @returns True if the provided point is geometrically inside the visual bounds of the
    *   node, false otherwise
    */
   isInside(node: INode, point: Point): boolean {
@@ -289,7 +289,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
   /**
    * Gets the outline of the visual style.
    * @param node The node to which this style instance is assigned
-   * @return The outline of the visual style
+   * @returns The outline of the visual style
    */
   getOutline(node: INode): GeneralPath | null {
     // delegate this to the wrapped style
@@ -300,7 +300,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * Gets the bounds of the visual for the node in the given context.
    * @param canvasContext The canvas context
    * @param node The node to which this style instance is assigned
-   * @return The bounds of the visual
+   * @returns The bounds of the visual
    */
   getBounds(canvasContext: ICanvasContext, node: INode): Rect {
     // delegate this to the wrapped style
@@ -312,7 +312,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * @param canvasContext The canvas context
    * @param clip The clipping rectangle
    * @param node The node to which this style instance is assigned
-   * @return True if the visualization for this node is visible, false otherwise
+   * @returns True if the visualization for this node is visible, false otherwise
    */
   isVisible(canvasContext: ICanvasContext, clip: Rect, node: INode): boolean {
     // first check if the wrapped style is visible
@@ -338,7 +338,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * @param context The input mode context
    * @param box The marquee selection box
    * @param node The node to which this style instance is assigned
-   * @return if True the visualization is included in the marquee selection, false
+   * @returns if True the visualization is included in the marquee selection, false
    *   otherwise
    */
   isInBox(context: IInputModeContext, box: Rect, node: INode): boolean {
@@ -350,7 +350,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * Creates the render data cache object.
    * @param selected True if the given node is selected, false otherwise
    * @param pendingDependencies The pending pendingDependencies of the given node
-   * @return The render data cache object
+   * @returns The render data cache object
    */
   static createRenderDataCache(
     selected: boolean,

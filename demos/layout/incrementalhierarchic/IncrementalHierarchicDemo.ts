@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -114,7 +114,7 @@ function initializeInputModes(): void {
 /**
  * Creates the default input mode for the {@link GraphComponent} a
  * {@link GraphEditorInputMode}.
- * @return a specialized GraphEditorInputMode instance
+ * @returns a specialized GraphEditorInputMode instance
  */
 function createEditorMode(): IInputMode {
   const mode = new GraphEditorInputMode({
@@ -400,7 +400,7 @@ function createSampleGraph(): void {
  * Callback that creates the bend IHandle for the first and last bends.
  * @param bend The bend.
  * @param baseHandle The original implementation to delegate to.
- * @return The new handle that allows for interactively assign the port constraints.
+ * @returns The new handle that allows for interactively assign the port constraints.
  */
 function createBendHandle(bend: IBend | null, baseHandle: IHandle | null): IHandle | null {
   if (bend!.owner!.bends.get(0) === bend) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -68,7 +68,7 @@ export class IntersectionVisualCreator
   /**
    * Creates the visual showing the intersections found by the intersection algorithm.
    * @param context The context that describes where the visual will be used
-   * @return The intersection visual
+   * @returns The intersection visual
    */
   createVisual(context: IRenderContext): Visual {
     //sort the intersections so that area intersections (contain more points) are drawn first
@@ -102,7 +102,7 @@ export class IntersectionVisualCreator
    * Updates the intersection visual.
    * @param context The context that describes where the visual will be used
    * @param oldVisual The old visual
-   * @return The updated intersection visual
+   * @returns The updated intersection visual
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): Visual {
     return this.createVisual(context)

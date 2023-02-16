@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -165,8 +165,8 @@ export default class GraphSearch {
     if (!datalist) {
       return
     }
-    while (datalist.firstChild) {
-      datalist.firstChild.remove()
+    while (datalist.lastChild) {
+      datalist.lastChild.remove()
     }
     for (const item of autoCompleteSuggestions) {
       const option = document.createElement('option')
@@ -206,7 +206,7 @@ export default class GraphSearch {
    *
    * @param node The node to be examined
    * @param text The text to be queried
-   * @return True if the node matches the text, false otherwise
+   * @returns True if the node matches the text, false otherwise
    */
   matches(node: INode, text: string): boolean {
     return node.labels.some(label => label.text.toLowerCase().indexOf(text.toLowerCase()) !== -1)

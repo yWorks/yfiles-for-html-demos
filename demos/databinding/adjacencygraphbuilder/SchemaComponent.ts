@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -574,7 +574,6 @@ export class SchemaComponent {
 
   /**
    * Returns whether a {@link AdjacencyNodesSourceDefinition} has its own data or not.
-   * @param nodesSourceDefinition
    */
   private static hasData(nodesSourceDefinition: AdjacencyNodesSourceDefinition): boolean {
     return !!nodesSourceDefinition.data && nodesSourceDefinition.data.length > 0
@@ -583,7 +582,6 @@ export class SchemaComponent {
   /**
    * Configures the given {@link CreateEdgeInputMode} to be able to finish the gesture on an empty
    * canvas with a newly created node.
-   * @param createEdgeInputMode
    */
   private enableTargetNodeCreation(createEdgeInputMode: CreateEdgeInputMode): void {
     createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size =

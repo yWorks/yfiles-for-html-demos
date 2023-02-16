@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -82,8 +82,6 @@ export default class ClickablePortsSupport {
   /**
    * We add style to the ports which has children, this style will be + when
    * the children's nodes are hidden and - when the children' s nodes are already showed
-   *
-   * @private
    */
   setDefaultPortStyle() {
     this.orgChartGraph.filteredGraph.edges.forEach(edge => {

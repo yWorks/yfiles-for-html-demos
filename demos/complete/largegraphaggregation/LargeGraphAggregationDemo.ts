@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -244,7 +244,7 @@ function zoomToLocation(edge: IEdge, currentMouseClickLocation: Point): void {
 /**
  * Gets the focus point.
  * @param edge The element that we clicked.
- * @return The point that we should zoom to.
+ * @returns The point that we should zoom to.
  */
 function getFocusPoint(edge: IEdge): Point {
   // if the source and the target node are in the view port, then zoom to the middle point of the edge
@@ -772,7 +772,7 @@ class TemporaryGroupCustomizationStage extends LayoutStageBase {
 }
 
 /**
- * @yjs:keep=c
+ * @yjs:keep = c
  */
 function initializeStyles(): void {
   StringTemplateNodeStyle.CONVERTERS.radius = (diameter: number): number => diameter * 0.5

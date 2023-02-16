@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -257,7 +257,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
    * All work is delegated to the BridgeManager's addBridges() method.
    * @param path The path to decorate.
    * @param context The render context.
-   * @return A copy of the given path with bridges.
+   * @returns A copy of the given path with bridges.
    */
   createPathWithBridges(path: GeneralPath, context: IRenderContext): GeneralPath {
     const manager = this.getBridgeManager(context)
@@ -271,7 +271,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
    * The hash is used to avoid re-rendering the edge if nothing has changed.
    * This method gets the obstacle hash from the BridgeManager.
    * @param context The context to get the obstacle hash for.
-   * @return A hash value which represents the state of the obstacles.
+   * @returns A hash value which represents the state of the obstacles.
    */
   getObstacleHash(context: IRenderContext): number {
     const manager = this.getBridgeManager(context)
@@ -283,7 +283,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
   /**
    * Queries the context's lookup for a BridgeManager instance.
    * @param context The context to get the BridgeManager from.
-   * @return The BridgeManager for the given context instance or null
+   * @returns The BridgeManager for the given context instance or null
    */
   getBridgeManager(context: IRenderContext): BridgeManager | null {
     return context.lookup(BridgeManager.$class)
@@ -450,7 +450,7 @@ class BasicEdgeObstacleProvider
 
   /**
    * Returns this edge's path as obstacle.
-   * @return The edge's path.
+   * @returns The edge's path.
    */
   getObstacles(canvasContext: IRenderContext): GeneralPath | null {
     return this.edge.style.renderer.getPathGeometry(this.edge, this.edge.style).getPath()
@@ -517,4 +517,5 @@ export class Sample2EdgeStyleExtension extends MarkupExtension {
   }
 }
 
-const isBrowserWithBadMarkerSupport = BrowserDetection.ieVersion > 0 || BrowserDetection.safariVersion > 0
+const isBrowserWithBadMarkerSupport =
+  BrowserDetection.ieVersion > 0 || BrowserDetection.safariVersion > 0

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,7 +45,7 @@ import {
  * Demonstrates how to configure the {@link EdgeRouter} to create bus-like orthogonal routes.
  * In this example we use the data stored in the edge's tag to determine which edge belongs to which bus.
  * @param {!IGraph} graph The graph to be laid out
- * @returns {!object} {EdgeRouter, EdgeRouterData} the configured layout algorithm and the corresponding layout data
+ * @returns {!object} {{EdgeRouter, EdgeRouterData}} the configured layout algorithm and the corresponding layout data
  */
 export function createFeatureLayoutConfiguration(graph) {
   const layout = new EdgeRouter()

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,7 +50,7 @@ export default class SimplePartitionGridVisualCreator extends BaseClass(IVisualC
   /**
    * Creates the visual for the given partition grid.
    * @param context The context that describes where the visual will be used
-   * @return The visual for the given partition grid
+   * @returns The visual for the given partition grid
    */
   createVisual(context: IRenderContext): SvgVisual {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -80,7 +80,7 @@ export default class SimplePartitionGridVisualCreator extends BaseClass(IVisualC
    * @param context The context that describes where the visual will be used
    * @param oldVisual The visual instance that had been returned the last time the createVisual
    *   method was called on this instance
-   * @return The visual for the given partition grid
+   * @returns The visual for the given partition grid
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): SvgVisual {
     return this.createVisual(context)

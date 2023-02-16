@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -92,7 +92,7 @@ export default class DataTableLabelStyle extends LabelStyleBase {
   /**
    * Callback that returns the preferred {@link Size size} of the label.
    * @param label The label to which this style instance is assigned.
-   * @return The preferred size.
+   * @returns The preferred size.
    */
   getPreferredSize(label: ILabel): Size {
     const data = label.owner!.tag

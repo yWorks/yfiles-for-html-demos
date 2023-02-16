@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -735,6 +735,7 @@ export class BpmnDiParser {
    * Looks up the {@link BpmnElement} registered by `id`.
    * @param {!string} id The id to look up the element for.
    * @param {!object} element The element to set if one could be found for the given id.
+   * @param element.value The element to set if one could be found for the given id.
    * @returns {boolean}
    */
   tryGetElementForId(id, element) {
@@ -3598,7 +3599,7 @@ export class BpmnPlane {
   /**
    * Returns the {@link BpmnShape} with the given id.
    * @param {!string} id Id
-   * @returns {?BpmnShape} {@link BpmnShape} with the given id, or null if no {@link BpmnShape} with this id exists
+   * @returns {?BpmnShape} A {@link BpmnShape} with the given id, or null if no {@link BpmnShape} with this id exists
    */
   getShape(id) {
     for (const shape of this.listOfShapes) {
@@ -3870,7 +3871,6 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
    * @param {!IFoldingView} foldingView The folding view.
    * @param {!INode} viewNode The local node instance.
    * @param {!INode} masterNode The master node.
-   * @protected
    */
   synchronizeLabels(state, foldingView, viewNode, masterNode) {
     if (this.copyLabels) {
@@ -3902,7 +3902,6 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
   }
 
   /**
-   * @protected
    * @param {!FolderNodeState} state
    * @param {!IFoldingView} foldingView
    * @param {!INode} viewNode
@@ -3940,7 +3939,6 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
   }
 
   /**
-   * @protected
    * @param {!FolderNodeState} state
    * @param {!IFoldingView} foldingView
    * @param {!INode} viewNode

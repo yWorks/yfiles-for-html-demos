@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -127,8 +127,9 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
     // check if something changed
     if (!newCache.stateEquals(oldCache)) {
       // more than only the path changed - re-render the visual
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
+      while (container.lastChild != null) {
+        // remove all children
+        container.removeChild(container.lastChild)
       }
       this.render(context, edge, container, newCache)
       return oldVisual
@@ -224,8 +225,9 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
   ): void {
     // The first child must be a path - else re-create the container from scratch
     if (container.childNodes.length === 0 || !(container.childNodes[0] instanceof SVGPathElement)) {
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
+      while (container.lastChild != null) {
+        // remove all children
+        container.removeChild(container.lastChild)
       }
       this.render(context, edge, container, cache)
       return
@@ -250,7 +252,7 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
-   * @return A {@link GeneralPath} following the edge
+   * @returns A {@link GeneralPath} following the edge
    * @see Overrides {@link EdgeStyleBase.getPath}
    */
   getPath(edge: IEdge): GeneralPath {
@@ -270,7 +272,7 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
    * All work is delegated to the BridgeManager's addBridges() method.
    * @param path The path to decorate.
    * @param context The render context.
-   * @return A copy of the given path with bridges.
+   * @returns A copy of the given path with bridges.
    */
   static createPathWithBridges(path: GeneralPath, context: IRenderContext): GeneralPath {
     const manager = getBridgeManager(context)
@@ -284,7 +286,7 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
    * The hash is used to avoid re-rendering the edge if nothing has changed.
    * This method gets the obstacle hash from the BridgeManager.
    * @param context The context to get the obstacle hash for.
-   * @return A hash value which represents the state of the obstacles.
+   * @returns A hash value which represents the state of the obstacles.
    */
   static getObstacleHash(context: IRenderContext): number {
     const manager = getBridgeManager(context)
@@ -349,7 +351,7 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a general path for the locations of the ports and the bends of the edge.
    * @param edge The edge.
-   * @return A general path for the locations of the ports and the bends of the edge.
+   * @returns A general path for the locations of the ports and the bends of the edge.
    */
   static createPath(edge: IEdge): GeneralPath {
     const path = new GeneralPath()
@@ -458,7 +460,7 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
    * Returns this edge's path as obstacle.
    * Generally spoken, an obstacle is a path for which other edges
    * might have to draw bridges when crossing it.
-   * @return The edge's path.
+   * @returns The edge's path.
    * @see Specified by {@link IObstacleProvider.getObstacles}.
    */
   getObstacles(canvasContext: IRenderContext): GeneralPath {
@@ -470,7 +472,7 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
 /**
  * Queries the context's lookup for a BridgeManager instance.
  * @param context The context to get the BridgeManager from.
- * @return The BridgeManager for the given context instance or null
+ * @returns The BridgeManager for the given context instance or null
  */
 function getBridgeManager(context: IRenderContext): BridgeManager | null {
   if (context) {

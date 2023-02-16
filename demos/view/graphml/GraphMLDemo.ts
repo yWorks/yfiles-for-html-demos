@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -164,7 +164,7 @@ async function run(): Promise<void> {
 
 /**
  * Creates the editor input mode for the graph component with support for table nodes.
- * @return A new {@link GraphEditorInputMode} instance
+ * @returns A new {@link GraphEditorInputMode} instance
  */
 function createEditorMode(): IInputMode {
   const inputMode = new GraphEditorInputMode({
@@ -531,7 +531,7 @@ async function onOpenCommandExecuted(): Promise<void> {
 /**
  * Returns the corresponding master graph item for a provided view graph item.
  * @param item A view item
- * @return A master graph item
+ * @returns A master graph item
  */
 function getMasterItem(item: IModelItem | null): IModelItem | null {
   if (!item || foldingView.manager.masterGraph.contains(item)) {

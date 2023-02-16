@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -110,9 +110,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Creates the visual for the label.
    *
-   * @param label The label to which this style instance is assigned.
    * @param ctx The render context.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param label The label to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    */
   createVisual(ctx: IRenderContext, label: ILabel): SvgVisualGroup {
     this.updateDummyLabel(ctx, label)
@@ -154,10 +154,10 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Update the visual previously created by createVisual.
    *
-   * @param label The label to which this style instance is assigned.
    * @param ctx The render context.
    * @param oldVisual The visual that has been created in the call to createVisual.
-   * @return visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param label The label to which this style instance is assigned.
+   * @returns visual as required by the {@link IVisualCreator.createVisual} interface.
    */
   updateVisual(ctx: IRenderContext, oldVisual: SvgVisualGroup, label: ILabel): SvgVisual | null {
     this.updateDummyLabel(ctx, label)
@@ -245,9 +245,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Gets the bounds of the visual for the label in the given context.
    *
-   * @param label The label to which this style instance is assigned.
    * @param canvasContext The canvas context.
-   * @return The visual bounds of the visual representation.
+   * @param label The label to which this style instance is assigned.
+   * @returns The visual bounds of the visual representation.
    */
   getBounds(canvasContext: ICanvasContext, label: ILabel): Rect {
     this.updateDummyLabel(canvasContext, label)
@@ -264,9 +264,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visualization for the specified label is visible in the context.
    *
-   * @param label The label to which this style instance is assigned.
-   * @param clip The clipping rectangle.
    * @param canvasContext The canvas context.
+   * @param clip The clipping rectangle.
+   * @param label The label to which this style instance is assigned.
    */
   isVisible(canvasContext: ICanvasContext, clip: Rect, label: ILabel): boolean {
     this.updateDummyLabel(canvasContext, label)
@@ -276,9 +276,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visual representation of the label has been hit at the given location.
    *
-   * @param label The label to which this style instance is assigned.
-   * @param p The point to test.
    * @param canvasContext The canvas context.
+   * @param p The point to test.
+   * @param label The label to which this style instance is assigned.
    */
   isHit(canvasContext: IInputModeContext, p: Point, label: ILabel): boolean {
     this.updateDummyLabel(canvasContext, label)
@@ -288,9 +288,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visualization for the specified label is included in the marquee selection.
    *
-   * @param label The label to which this style instance is assigned.
-   * @param box The marquee selection box.
    * @param canvasContext The canvas context.
+   * @param box The marquee selection box.
+   * @param label The label to which this style instance is assigned.
    */
   isInBox(canvasContext: IInputModeContext, box: Rect, label: ILabel): boolean {
     this.updateDummyLabel(canvasContext, label)

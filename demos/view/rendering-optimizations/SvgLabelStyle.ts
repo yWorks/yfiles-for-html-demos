@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -60,7 +60,7 @@ export default class SvgLabelStyle extends LabelStyleBase {
    * Creates the visual representation for the given label.
    * @param context The render context.
    * @param label The label to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgLabelStyle.updateVisual}
    */
   createVisual(context: IRenderContext, label: ILabel): Visual {
@@ -86,7 +86,7 @@ export default class SvgLabelStyle extends LabelStyleBase {
    * @param oldVisual The visual that has been created in the call to
    * {@link SvgLabelStyle.createVisual}.
    * @param label The label to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgLabelStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): Visual {
@@ -128,7 +128,7 @@ export default class SvgLabelStyle extends LabelStyleBase {
   /**
    * Calculates the preferred {@link Size size} for the given label.
    * @param label The label to which this style instance is assigned.
-   * @return The preferred size.
+   * @returns The preferred size.
    */
   getPreferredSize(label: ILabel): Size {
     return TextRenderSupport.measureText(label.text, this.font)

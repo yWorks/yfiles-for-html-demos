@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -80,10 +80,7 @@ export class NodeComponentStyle extends NodeStyleBase {
     if (oldVisual && oldVisual.svgElement) {
       const g = oldVisual.svgElement
       g.setAttribute('transform', 'translate(' + node.layout.x + ' ' + node.layout.y + ')')
-      this.zone.run(() => {
-        // run inside the zone so Angular will update the NodeComponent
-        ;(g as any)['data-compRef'].instance.zoom = renderContext.zoom
-      })
+      ;(g as any)['data-compRef'].instance.zoom = renderContext.zoom
       return oldVisual
     }
     return this.createVisual(renderContext, node)

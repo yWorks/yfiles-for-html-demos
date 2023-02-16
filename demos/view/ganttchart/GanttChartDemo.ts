@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -326,7 +326,7 @@ async function updateSubRows(animate: boolean): Promise<void> {
  * The tasks are sorted by their x-coordinate. The algorithm runs over
  * the activities from left to right and chooses the first available sub row
  * for each task until all activities have been assigned to a sub row.
- * @return The number of sub rows needed for this task row.
+ * @returns The number of sub rows needed for this task row.
  */
 function calculateMappingForTask(
   task: Task,

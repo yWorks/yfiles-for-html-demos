@@ -8,7 +8,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.5.
-     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -57,6 +57,10 @@
 
       .demo-properties .demo-form-block input[type='range'] {
         width: 37%;
+      }
+
+      .info-message {
+        margin-top: 20px;
       }
     </style>
   </head>
@@ -131,11 +135,12 @@
 
     <aside class="demo-sidebar demo-right">
       <div class="demo-sidebar-content">
-        <div class="demo-properties">
-          <h2>Style Properties</h2>
+        <h2>Style Properties</h2>
+        <div class="info-message">Please select a node to modify its settings.</div>
+        <div class="demo-properties" style="display: none">
           <div class="demo-form-block">
             <label for="basic-shape" class="option-label">Basic Shape</label>
-            <select id="basic-shape" class="option-element">
+            <select id="basic-shape" class="option-element" disabled>
               <option value="ARROW">Arrow</option>
               <option value="DOUBLE_ARROW">Double Arrow</option>
               <option value="NOTCHED_ARROW">Notched Arrow</option>
@@ -144,7 +149,7 @@
             </select>
 
             <label for="shape-direction" class="option-label">Shape Direction</label>
-            <select id="shape-direction" class="option-element">
+            <select id="shape-direction" class="option-element" disabled>
               <option value="RIGHT">Right</option>
               <option value="DOWN">Down</option>
               <option value="LEFT">Left</option>
@@ -159,6 +164,7 @@
               max="180"
               value="90"
               data-command="Angle"
+              disabled
             />
             <label id="angle-label">90</label>
 
@@ -171,6 +177,7 @@
               step="0.1"
               value="0.3"
               data-command="ShaftRatio"
+              disabled
             />
             <label id="shaft-ratio-label">0.3</label>
           </div>

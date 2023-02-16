@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -103,7 +103,7 @@ let circleVisual
 // define the GraphLayer yFiles for HTML extension
 const GraphLayer = L.Layer.extend({
   /**
-   * @yjs:keep=animate
+   * @yjs:keep = animate
    */
   onAdd(map) {
     // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
@@ -208,7 +208,7 @@ const GraphLayer = L.Layer.extend({
 
   /**
    * Synchronizes the viewport of the map and the GraphComponent
-   * @yjs:keep=getSize,setPosition,getPosition
+   * @yjs:keep = getSize,setPosition,getPosition
    */
   updateGraphDiv(nodeLocationsMapper) {
     // get the size of the map in DOM coordinates
@@ -316,7 +316,7 @@ const ToggleGraphControl = L.Control.extend({
     addClass(toggleButtonLabel, 'toggle-graph-mode')
     toggleButtonLabel.title = 'Toggle Graph Mode'
 
-    // @yjs:keep=enable
+    // @yjs:keep = enable
     toggleButton.addEventListener('change', async () => {
       graphMode = !graphMode
       shortestPathSupport.graphMode = graphMode
@@ -397,7 +397,7 @@ const ToggleGraphControl = L.Control.extend({
 })
 
 /**
- * @yjs:keep=control
+ * @yjs:keep = control
  * @returns {!Promise}
  */
 async function run() {

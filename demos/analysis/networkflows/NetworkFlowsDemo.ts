@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -451,13 +451,13 @@ function runFlowAlgorithm(): void {
 /**
  * Runs the maximum flow minimum cost algorithm.
  * @param minCut True if the min cut should be also calculated, false otherwise
- * @return The calculated maximum flow.
+ * @returns The calculated maximum flow.
  */
 function calculateMaxFlowMinCut(minCut: boolean): number {
   const graph = graphComponent.graph
 
-  const singleNode = graph.nodes.at(0)
-  if (singleNode) {
+  if (graph.nodes.size === 1) {
+    const singleNode = graph.nodes.at(0)!
     singleNode.tag = {
       flow: 0,
       supply: 0,
@@ -519,7 +519,7 @@ function calculateMaxFlowMinCut(minCut: boolean): number {
 
 /**
  * Runs the minimum cost flow algorithm.
- * @return The calculated minimum cost.
+ * @returns The calculated minimum cost.
  */
 function calculateMinCostFlow(): number {
   const graph = graphComponent.graph
@@ -578,7 +578,7 @@ function calculateMinCostFlow(): number {
 /**
  * Returns an array of all supply-nodes.
  * @param graph The input graph
- * @return An array of all supply-nodes.
+ * @returns An array of all supply-nodes.
  */
 function getSupplyNodes(graph: IGraph): INode[] {
   const supplyNodes: INode[] = []
@@ -593,7 +593,7 @@ function getSupplyNodes(graph: IGraph): INode[] {
 /**
  * Returns an array of all demand-nodes.
  * @param graph The input graph
- * @return An array of all demand-nodes.
+ * @returns An array of all demand-nodes.
  */
 function getDemandNodes(graph: IGraph): INode[] {
   const demandNodes: INode[] = []
@@ -703,7 +703,7 @@ async function runLayout(
 
 /**
  * Returns the source nodes of the graph, i.e., the ones with in-degree 0.
- * @return An array of the source nodes of the graph, i.e., the ones with in-degree 0
+ * @returns An array of the source nodes of the graph, i.e., the ones with in-degree 0
  */
 function getSourceNodes(): INode[] {
   const sourceNodes: INode[] = []
@@ -723,7 +723,7 @@ function getSourceNodes(): INode[] {
 
 /**
  * Returns the sink nodes of the graph, i.e., the ones with out-degree 0.
- * @return An array of the sink nodes of the graph, i.e., the ones with out-degree 0
+ * @returns An array of the sink nodes of the graph, i.e., the ones with out-degree 0
  */
 function getSinkNodes(): INode[] {
   const sinkNodes: INode[] = []
@@ -859,7 +859,7 @@ function calculateExtrema(graph: IGraph, useCapacity: boolean): { min: number; m
  * @param startColor The start color
  * @param endColor The end color
  * @param gradientCount The number of gradient steps
- * @return An array or random gradient colors
+ * @returns An array or random gradient colors
  */
 function generateColors(startColor: Color, endColor: Color, gradientCount: number): Color[] {
   const colors: Color[] = []

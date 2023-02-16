@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -135,9 +135,9 @@ export class MyNodeStyleDecorator extends NodeStyleBase {
     const oldCache = container['data-renderDataCache']
     const newCache = this.createRenderDataCache(node)
     if (!newCache.equals(newCache, oldCache)) {
-      while (labelEdges.hasChildNodes()) {
+      while (container.lastChild != null) {
         // remove all children
-        labelEdges.removeChild(labelEdges.firstChild)
+        container.removeChild(container.lastChild)
       }
       this.renderLabelEdges(node, context, labelEdges, newCache)
       container['data-renderDataCache'] = newCache

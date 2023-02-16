@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -65,7 +65,7 @@ export class ChordDiagramLayout extends LayoutStageBase {
 
   /**
    * Returns the ratio of gaps to nodes, default value is 25%
-   * @return value [0..1] what ratio is occupied by empty space
+   * @returns value [0..1] what ratio is occupied by empty space
    */
   get gapRatio(): number {
     return this._gapRatio
@@ -242,10 +242,6 @@ function getHints(map: IDataMap, edge: Edge): EdgeStyleHints {
 /**
  * Helper function to compute the distance between startIndex and targetIndex nodes
  * in clockwise direction.
- * @param startIndex
- * @param targetIndex
- * @param nodeSizes
- * @param gap
  */
 function clockwiseDistance(
   startIndex: number,
@@ -268,10 +264,6 @@ function clockwiseDistance(
 /**
  * Helper function to compute the distance between startIndex and targetIndex nodes
  * in counter-clockwise direction.
- * @param startIndex
- * @param targetIndex
- * @param nodeSizes
- * @param gap
  */
 function counterclockwiseDistance(
   startIndex: number,
@@ -295,11 +287,6 @@ function counterclockwiseDistance(
  * Helper function to compute which edge should precede another on a node. If the shortest paths from
  * the start node lead in the same direction, sort them by distance. Else, arrange them so they
  * spread out undisturbed by one another.
- * @param startIndex
- * @param targetIndex0
- * @param targetIndex1
- * @param nodeSizes
- * @param gap
  */
 function compareEdges(
   startIndex: number,

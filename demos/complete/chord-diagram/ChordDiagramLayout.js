@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -92,7 +92,7 @@ export class ChordDiagramLayout extends LayoutStageBase {
 
   /**
    * Returns the ratio of gaps to nodes, default value is 25%
-   * @return value [0..1] what ratio is occupied by empty space
+   * @returns value [0..1] what ratio is occupied by empty space
    * @type {number}
    */
   get gapRatio() {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,7 +40,7 @@ import {
 /**
  * Demonstrates how to run a {@link HierarchicLayout} with a configured {@link PortCandidateSet}.
  * @param graph The graph to be laid out
- * @return {HierarchicLayout, HierarchicLayoutData} the configured layout algorithm and the corresponding layout data
+ * @returns {{HierarchicLayout, HierarchicLayoutData}} the configured layout algorithm and the corresponding layout data
  */
 export function createFeatureLayoutConfiguration(graph: IGraph): {
   layout: ILayoutAlgorithm
@@ -68,7 +68,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
 /**
  * Demonstrates how to run a {@link HierarchicLayout} with the default configuration.
  * @param graph The graph to be laid out
- * @return {HierarchicLayout, HierarchicLayoutData} the configured layout algorithm and the corresponding layout data
+ * @returns {{HierarchicLayout, HierarchicLayoutData}} the configured layout algorithm and the corresponding layout data
  */
 export function createDefaultLayoutConfiguration(graph: IGraph): {
   layout: ILayoutAlgorithm

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -93,9 +93,9 @@ export class MyGroupNodeStyle extends NodeStyleBase {
     // check if something changed except for the location of the node
     if (!newCache.equals(newCache, oldCache)) {
       // something changed - re-render the visual
-      while (container.hasChildNodes()) {
+      while (container.lastChild != null) {
         // remove all children
-        container.removeChild(container.firstChild!)
+        container.removeChild(container.lastChild)
       }
       this.render(container, newCache)
     }
@@ -283,7 +283,7 @@ export class MyGroupNodeStyle extends NodeStyleBase {
    * the {@link ITagOwner.tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
    * @param node The node to determine the color for.
-   * @return The color for filling the node.
+   * @returns The color for filling the node.
    */
   getNodeColor(node: INode): string {
     return typeof node.tag === 'string' ? node.tag : this.nodeColor

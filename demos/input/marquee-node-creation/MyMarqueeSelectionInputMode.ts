@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -66,8 +66,6 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
 
   /**
    * Creates a rectangle that incorporates the snap result
-   * @param startDragLocation
-   * @param currentDragLocation
    */
   calculateMarqueeRectangle(startDragLocation: Point, currentDragLocation: Point): Rect {
     this.currentReshapePosition = HandlePositions.NONE
@@ -93,7 +91,6 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
 
   /**
    * Called when a drag is started. Prepares the SnapContext for collecting results that the marquee can be snapped to.
-   * @param evt
    */
   onDragStarted(evt: MarqueeSelectionEventArgs): void {
     super.onDragStarted(evt)
@@ -161,7 +158,6 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
 
   /**
    * Signals the SnapContext that the drag is finished.
-   * @param evt
    */
   onDragFinished(evt: MarqueeSelectionEventArgs): void {
     const x =
@@ -178,7 +174,6 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
 
   /**
    * Signals the SnapContext that the drag has been canceled.
-   * @param evt
    */
   onDragCanceled(evt: MarqueeSelectionEventArgs): void {
     this.getSnapContext().cancelDrag()
@@ -204,8 +199,6 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
 
   /**
    * Determines the reshape position
-   * @param pointer
-   * @param rect
    */
   getReshapePosition(pointer: Point, rect: Rect): HandlePositions {
     const result = HandlePositions.NONE

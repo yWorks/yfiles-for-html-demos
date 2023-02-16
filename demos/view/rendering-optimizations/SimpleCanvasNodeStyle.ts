@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -52,7 +52,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
    * Creates the visual representation for the given node.
    * @param renderContext The render context.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleCanvasNodeStyle.updateVisual}
    */
   createVisual(renderContext: IRenderContext, node: INode): Visual {
@@ -65,7 +65,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
    * @param oldVisual The visual that has been created in the call to
    * {@link SimpleCanvasNodeStyle.createVisual}.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleCanvasNodeStyle.createVisual}
    */
   updateVisual(renderContext: IRenderContext, oldVisual: Visual, node: INode): Visual {

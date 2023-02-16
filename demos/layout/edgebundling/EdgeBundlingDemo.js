@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -303,7 +303,6 @@ function populateContextMenu(contextMenu, args) {
  * Counts the number of bundled and unbundled edges of a given selection.
  * @param {!Array.<IEdge>} edges The selected edges
  * @returns {!object} The number of bundled and unbundled edges as an object
- *
  */
 function countBundledEdges(edges) {
   let countBundled = 0
@@ -665,6 +664,8 @@ function updateNodeInformation(layoutData) {
       circleNodeSize: circleNodes.get(id)?.length || 0
     }
   })
+
+  graphComponent.invalidate()
 }
 
 /**

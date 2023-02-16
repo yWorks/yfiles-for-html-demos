@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -133,9 +133,9 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
       return oldVisual
     }
     // something changed - re-render the visual
-    while (container.hasChildNodes()) {
+    while (container.lastChild != null) {
       // remove all children
-      container.removeChild(container.firstChild!)
+      container.removeChild(container.lastChild)
     }
     this.render(context, edge, container, newCache)
     return oldVisual
@@ -205,7 +205,7 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
-   * @return A {@link GeneralPath} following the edge
+   * @returns A {@link GeneralPath} following the edge
    * @see Overrides {@link EdgeStyleBase.getPath}
    */
   getPath(edge: IEdge): GeneralPath {

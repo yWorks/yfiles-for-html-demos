@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -3084,7 +3084,7 @@ export const Hierarchical = {
   ]
 }
 
-// @yjs:keep=BiconnectedComponents
+// @yjs:keep = BiconnectedComponents
 export const BiconnectedComponents = {
   nodes: [
     {
@@ -4251,8 +4251,8 @@ export const BiconnectedComponents = {
   ]
 }
 
-// @yjs:keep=LouvainModularity,BiconnectedComponents
+// @yjs:keep = LouvainModularity,BiconnectedComponents
 export const LouvainModularity = BiconnectedComponents
 
-// @yjs:keep=LabelPropagation,BiconnectedComponents
+// @yjs:keep = LabelPropagation,BiconnectedComponents
 export const LabelPropagation = BiconnectedComponents

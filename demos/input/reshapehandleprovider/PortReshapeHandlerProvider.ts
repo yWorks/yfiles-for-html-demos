@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -63,7 +63,7 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
    * Returns {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER} as available handle
    * positions depending on the modifier state of `Ctrl`.
    * @param context The context the handles are created in.
-   * @returns {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER}
+   * @returns Either {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER}
    */
   getAvailableHandles(context: IInputModeContext): HandlePositions {
     const canvasComponent = context.canvasComponent!

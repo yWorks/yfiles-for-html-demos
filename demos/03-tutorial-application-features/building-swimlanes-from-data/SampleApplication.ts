@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -168,7 +168,7 @@ function configureTableEditing(graphComponent: GraphComponent): void {
  *
  * @param graph The graph.
  * @param graphData The graph data that was loaded from the JSON file.
- * @yjs:keep=nodesSource,edgesSource
+ * @yjs:keep = nodesSource,edgesSource
  */
 function buildGraph(graph: IGraph, graphData: any): void {
   // Store lanes and nodes references.
@@ -349,7 +349,7 @@ function writeToJSON(graph: IGraph): any {
 
 /**
  * Helper function that converts a {Color} to a hex color string.
- * @return hex color
+ * @returns hex color
  */
 function colorToHex(color: Color): string {
   // zero-padding
@@ -445,8 +445,7 @@ function registerCommands(): void {
  * demonstrated here.
  *
  * @param url The URL to load.
- *
- * @return A promise with the loaded data.
+ * @returns A promise with the loaded data.
  */
 async function loadJSON(url: string): Promise<JSON> {
   const response = await fetch(url)

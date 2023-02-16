@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -357,7 +357,7 @@ function isVisible(node: INode): boolean {
 
 /**
  * Loads the graph from data and apply default styles.
- * @yjs:keep=nodes
+ * @yjs:keep = nodes
  */
 async function loadGraph(graph: IGraph): Promise<IGraph> {
   const builder = new GraphBuilder(graph)

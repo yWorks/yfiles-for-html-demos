@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { ContextMenuInputMode } from 'yfiles'
 import { GraphComponent, Point, TimeSpan } from 'yfiles'
 import { BrowserDetection } from './BrowserDetection'
 
@@ -127,8 +128,8 @@ export class ContextMenu {
    */
   clearItems(): void {
     const element = this.element
-    while (element.firstChild) {
-      element.removeChild(element.firstChild)
+    while (element.lastChild != null) {
+      element.removeChild(element.lastChild)
     }
   }
 
@@ -308,10 +309,8 @@ export class ContextMenu {
    * Closes the context menu when it lost the focus.
    *
    * @param relatedTarget The related target of the focus event.
-   *
-   * @private
    */
-  onFocusOut(relatedTarget: HTMLElement): void {
+  private onFocusOut(relatedTarget: HTMLElement): void {
     // focusout can also occur when the focus shifts between the buttons in this context menu.
     // We have to find out if none of the buttons has the focus and focusout is real
     if (relatedTarget) {
@@ -330,13 +329,8 @@ export class ContextMenu {
 
   /**
    * Calculates the location of the center of the given element in absolute coordinates relative to the body element.
-   *
-   * @param element
-   * @return {Point}
-   *
-   * @private
    */
-  static getCenterInPage(element: HTMLElement): Point {
+  private static getCenterInPage(element: HTMLElement): Point {
     let left = element.clientWidth / 2.0
     let top = element.clientHeight / 2.0
     while (element.offsetParent) {

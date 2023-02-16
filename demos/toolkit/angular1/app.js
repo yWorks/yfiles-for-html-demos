@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 /*
- * @yjs:keep=command,parameter,target,controller,directive,link,module,restrict,scope
+ * @yjs:keep = command,parameter,target,controller,directive,link,module,restrict,scope
  */
 import {
   AssistantNodePlacer,
@@ -73,7 +73,7 @@ const module = angular.module('myApp', [])
 
 showApp()
 
-// @yjs:keep=graphComponent
+// @yjs:keep = graphComponent
 module.controller('graphCtrl', [
   '$scope',
   $scope => {
@@ -92,7 +92,7 @@ module.directive('graphComponent', [
   '$filter',
   'Layout',
   ($compile, $filter, Layout) => {
-    // @yjs:keep=graphComponent
+    // @yjs:keep = graphComponent
     return {
       restrict: 'E',
       scope: {

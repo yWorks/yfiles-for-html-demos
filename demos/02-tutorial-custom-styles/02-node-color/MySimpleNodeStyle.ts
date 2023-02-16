@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -84,7 +84,7 @@ export class MySimpleNodeStyle extends NodeStyleBase {
    * the {@link ITagOwner.tag} of the {@link INode} is of type `string`,
    * in which case that color overrides this style's setting.
    * @param node The node to determine the color for.
-   * @return The color for filling the node.
+   * @returns The color for filling the node.
    */
   getNodeColor(node: INode): string {
     // the color can be obtained from the "business data" that can be associated with

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -71,7 +71,7 @@ export default class CityLabelStyle extends LabelStyleBase {
    * Creates the visual for a label to be drawn.
    * @param context The render context
    * @param label The label to be rendered
-   * @return The visual for a label to be drawn.
+   * @returns The visual for a label to be drawn.
    */
   createVisual(context: IRenderContext, label: ILabel): SvgVisualGroup {
     // create a visual group
@@ -127,7 +127,7 @@ export default class CityLabelStyle extends LabelStyleBase {
   /**
    * Creates the edge that connects the label with its owner node.
    * @param label The given label
-   * @return The edge that connects the label with its owner node
+   * @returns The edge that connects the label with its owner node
    */
   createConnectorEdge(label: ILabel): SimpleEdge {
     // create a dummy node at the location of the label
@@ -145,7 +145,7 @@ export default class CityLabelStyle extends LabelStyleBase {
   /**
    * Returns the preferred size of the given label.
    * @param label The given label
-   * @return The preferred size of the given label
+   * @returns The preferred size of the given label
    */
   getPreferredSize(label: ILabel): Size {
     return this.innerLabelStyle.renderer.getPreferredSize(label, this.innerLabelStyle)
@@ -156,7 +156,7 @@ export default class CityLabelStyle extends LabelStyleBase {
    * @param context The canvas context
    * @param rectangle The clipping rectangle
    * @param label The given label
-   * @return True if the visualization is visible, false otherwise
+   * @returns True if the visualization is visible, false otherwise
    */
   isVisible(context: ICanvasContext, rectangle: Rect, label: ILabel): boolean {
     const isInnerLabelVisible = this.innerLabelStyle.renderer

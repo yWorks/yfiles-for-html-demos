@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -439,7 +439,7 @@ export class VoronoiDiagram {
    * coordinates
    * @param edge2face An edge map that holds for each edge the face(s) to which the edge
    * belongs
-   * @return The faces of the given graph as list
+   * @returns The faces of the given graph as list
    */
   calculateDelauneyFaces(
     graph: Graph,
@@ -556,7 +556,7 @@ export class VoronoiDiagram {
    * @param edge The given edge
    * @param reversedEdgesMap An edge map that holds for each edge the corresponding
    * reversed edge
-   * @return The next edge in the face
+   * @returns The next edge in the face
    */
   cyclicNextEdge(edge: Edge, reversedEdgesMap: IEdgeMap): Edge {
     const reversedEdge = reversedEdgesMap.get(edge)
@@ -569,7 +569,7 @@ export class VoronoiDiagram {
    * @param edge The given edge
    * @param reversedEdgesMap An edge map that holds for each edge the corresponding
    * reversed edge
-   * @return The previous edge in the face
+   * @returns The previous edge in the face
    */
   cyclicPrevEdge(edge: Edge, reversedEdgesMap: IEdgeMap): Edge {
     let tmp: Edge | null = edge.nextOutEdge
@@ -731,7 +731,7 @@ export class VoronoiDiagram {
   /**
    * Calculates the intersections between the bounding box and a line segment.
    * @param lineSegment The given line segment
-   * @return An array containing the intersections between a rectangle and a line segment
+   * @returns An array containing the intersections between a rectangle and a line segment
    */
   calculateIntersectionPoints(lineSegment: LineSegment): YPoint[] {
     const v1 = new YPoint(this.boundingBox.x, this.boundingBox.y)
@@ -772,7 +772,7 @@ export class VoronoiDiagram {
    * Enlarges the segment formed by the two given points from the side of the second point.
    * @param p1 The first point of the line segment
    * @param p2 The second point of the line segment
-   * @return A new point from the side of the second point
+   * @returns A new point from the side of the second point
    */
   enlargeSegment(p1: YPoint, p2: YPoint): YPoint {
     const alpha = Math.atan2(p1.y - p2.y, p1.x - p2.x)
@@ -784,7 +784,7 @@ export class VoronoiDiagram {
   /**
    * Checks whether this point belongs on the bounding box.
    * @param point The point to check
-   * @return True if the point belongs on the boundary, false otherwise
+   * @returns True if the point belongs on the boundary, false otherwise
    */
   belongsToBoundary(point: YPoint): boolean {
     return (
@@ -922,7 +922,7 @@ class VoronoiFace {
 
   /**
    * Determines whether the circumcenter of the triangle lies in the interior of the triangular face.
-   * @return True if the circumcenter of the triangle lies in the interior of the triangular face, false
+   * @returns True if the circumcenter of the triangle lies in the interior of the triangular face, false
    * otherwise
    */
   isCircumcenterInternal(circumcenter: YPoint): boolean {

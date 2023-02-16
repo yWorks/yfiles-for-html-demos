@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -65,8 +65,8 @@ export default class LimitingRectangleDescriptor extends BaseClass(
 
   /**
    * Determines whether the given canvas object is deemed dirty and needs updating.
-   * @param {!ICanvasObject} canvasObject The object to check
    * @param {!ICanvasContext} context The context that will be used for the update
+   * @param {!ICanvasObject} canvasObject The object to check
    * @returns {boolean} True if the given canvas object needs updating, false otherwise
    */
   isDirty(context, canvasObject) {

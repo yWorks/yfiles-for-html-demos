@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -734,6 +734,7 @@ export class BpmnDiParser {
    * Looks up the {@link BpmnElement} registered by `id`.
    * @param id The id to look up the element for.
    * @param element The element to set if one could be found for the given id.
+   * @param element.value The element to set if one could be found for the given id.
    */
   private tryGetElementForId(id: string, element: { value: BpmnElement | null }): boolean {
     element.value = null
@@ -2402,7 +2403,7 @@ export class BpmnDiagram {
   }
 
   /**
-   * @return The name of the Diagram
+   * @returns The name of the Diagram
    */
   toString(): string {
     return this.name
@@ -2560,7 +2561,7 @@ export class BpmnDocument {
   /**
    * Creates a {@link BpmnDiagram}.
    * @param xNode The XML node to start with
-   * @return The parsed {@link BpmnDiagram}
+   * @returns The parsed {@link BpmnDiagram}
    */
   private buildDiagram(xNode: Element): BpmnDiagram {
     const diagram = new BpmnDiagram(xNode)
@@ -2739,7 +2740,7 @@ export class BpmnEdge {
   /**
    * Calculate the preferred size for `text` using a {@link DefaultLabelStyle}.
    * @param text The text to measure.
-   * @return The preferred Size of the given text.
+   * @returns The preferred Size of the given text.
    */
   static calculatePreferredSize(text: string): Size {
     BpmnEdge.CALCULATE_SIZE_LABEL.text = text
@@ -2899,7 +2900,7 @@ export class BpmnEdge {
 
   /**
    * Returns true, if the edge has width and height attributes set.
-   * @return True, if the label has size, false if not
+   * @returns True, if the label has size, false if not
    */
   hasLabelSize(): boolean {
     return this.labelBounds.width > 0 && this.labelBounds.height > 0
@@ -2907,7 +2908,7 @@ export class BpmnEdge {
 
   /**
    * Returns true, if the top left point of the bounds is not 0/0 (standard case)
-   * @return True, if the label has a given position, false if it is 0/0
+   * @returns True, if the label has a given position, false if it is 0/0
    */
   hasLabelPosition(): boolean {
     return this.labelBounds.x > 0 && this.labelBounds.y > 0
@@ -2916,7 +2917,7 @@ export class BpmnEdge {
   /**
    * Returns the value of the given attribute of the linked BpmnElement, or null
    * @param attribute Id (name) of the attribute to get
-   * @return value of the attribute or null
+   * @returns value of the attribute or null
    */
   getAttribute(attribute: string): string | null {
     return this.element!.getValue(attribute)
@@ -3093,7 +3094,7 @@ export class BpmnElement {
 
   /**
    * Retrieves the sourceRef string of the current element
-   * @return The sourceRef string
+   * @returns The sourceRef string
    */
   loadSourceFromChild(): string {
     let ret = ''
@@ -3107,7 +3108,7 @@ export class BpmnElement {
 
   /**
    * Retrieves the targetRef string of the current element
-   * @return The targetRef string
+   * @returns The targetRef string
    */
   loadTargetFromChild(): string {
     let ret = ''
@@ -3168,7 +3169,7 @@ export class BpmnElement {
   /**
    * Returns the value of the given attribute, or null
    * @param attribute The attribute
-   * @return The value, or null
+   * @returns The value, or null
    */
   getValue(attribute: string): string | null {
     return this.attributes.has(attribute) ? this.attributes.get(attribute) : null
@@ -3411,7 +3412,7 @@ export class BpmnNamespaceManager {
    * Returns all Attributes in the list that belong to the given namespace
    * @param list The given list
    * @param nameSpace The namespace
-   * @return The list with all items left in the namespaces.
+   * @returns The list with all items left in the namespaces.
    */
   static attributesInNamespace(list: IEnumerable<Attr>, nameSpace: string): IEnumerable<Attr> {
     // Some Attributes do not have a namespace declared explicitly. Since we test the parent for the correct namespace this is ok.
@@ -3512,7 +3513,7 @@ export class BpmnPlane {
   /**
    * Returns the {@link BpmnShape} with the given id.
    * @param id Id
-   * @return {@link BpmnShape} with the given id, or null if no {@link BpmnShape} with this id exists
+   * @returns A {@link BpmnShape} with the given id, or null if no {@link BpmnShape} with this id exists
    */
   getShape(id: string): BpmnShape | null {
     for (const shape of this.listOfShapes) {
@@ -3731,7 +3732,7 @@ export class BpmnShape {
 
   /**
    * Returns true, if the shape has width and height attributes set.
-   * @return True, if the label has size, false if not
+   * @returns True, if the label has size, false if not
    */
   hasLabelSize(): boolean {
     return this.labelBounds.width > 0 && this.labelBounds.height > 0
@@ -3783,9 +3784,8 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
    * @param foldingView The folding view.
    * @param viewNode The local node instance.
    * @param masterNode The master node.
-   * @protected
    */
-  synchronizeLabels(
+  protected synchronizeLabels(
     state: FolderNodeState,
     foldingView: IFoldingView,
     viewNode: INode,
@@ -3819,10 +3819,7 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
     }
   }
 
-  /**
-   * @protected
-   */
-  initializeFolderNodePorts(
+  protected initializeFolderNodePorts(
     state: FolderNodeState,
     foldingView: IFoldingView,
     viewNode: INode,
@@ -3858,10 +3855,7 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
     }
   }
 
-  /**
-   * @protected
-   */
-  initializeFolderNodeLabels(
+  protected initializeFolderNodeLabels(
     state: FolderNodeState,
     foldingView: IFoldingView,
     viewNode: INode,

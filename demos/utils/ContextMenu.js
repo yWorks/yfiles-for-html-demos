@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -121,8 +121,8 @@ export class ContextMenu {
    */
   clearItems() {
     const element = this.element
-    while (element.firstChild) {
-      element.removeChild(element.firstChild)
+    while (element.lastChild != null) {
+      element.removeChild(element.lastChild)
     }
   }
 
@@ -302,8 +302,6 @@ export class ContextMenu {
    * Closes the context menu when it lost the focus.
    *
    * @param {!HTMLElement} relatedTarget The related target of the focus event.
-   *
-   * @private
    */
   onFocusOut(relatedTarget) {
     // focusout can also occur when the focus shifts between the buttons in this context menu.
@@ -324,11 +322,8 @@ export class ContextMenu {
 
   /**
    * Calculates the location of the center of the given element in absolute coordinates relative to the body element.
-   *
    * @param {!HTMLElement} element
-   * @returns {!Point} {Point}
-   *
-   * @private
+   * @returns {!Point}
    */
   static getCenterInPage(element) {
     let left = element.clientWidth / 2.0

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -278,11 +278,20 @@ type DataMap = {
  */
 export default class VuejsNodeStyle extends NodeStyleBase {
   private _template = ''
-  private constructorFunction: any
+  private _styleTag = null
+  protected constructorFunction: any
 
   constructor(template: string) {
     super()
     this.template = template
+  }
+
+  get styleTag(): any {
+    return this._styleTag
+  }
+
+  set styleTag(val: any) {
+    this._styleTag = val
   }
 
   /**
@@ -526,9 +535,13 @@ export default class VuejsNodeStyle extends NodeStyleBase {
   }
 }
 
+function hasText(el: Element) {
+  return el && el.querySelector && el.querySelector('text')
+}
+
 /**
  * Initializes the Vuejs components that are used in the 'Node Template Designer'.
- * @yjs:keep=visible,Node
+ * @yjs:keep = visible,Node
  */
 function initializeDesignerVueComponents(): void {
   Vue.config.warnHandler = (err: string, vm: any, info: string) => {
@@ -536,7 +549,7 @@ function initializeDesignerVueComponents(): void {
   }
 
   function addText(
-    value: string,
+    value: string | number | boolean,
     w: string | number,
     h: string | number,
     fontFamily: string,
@@ -546,9 +559,13 @@ function initializeDesignerVueComponents(): void {
     textDecoration: string | number,
     lineSpacing: string | number,
     wrapping: string | number,
-    textElement: SVGTextElement
+    textElement: SVGTextElement | null
   ): SVGTextElement | null {
-    if (textElement.nodeType !== Node.ELEMENT_NODE || textElement.nodeName !== 'text') {
+    if (
+      !textElement ||
+      textElement.nodeType !== Node.ELEMENT_NODE ||
+      textElement.nodeName !== 'text'
+    ) {
       return null
     }
 
@@ -613,7 +630,7 @@ function initializeDesignerVueComponents(): void {
   }
 
   function updateText(
-    value: string,
+    value: string | number | boolean,
     w: string | number,
     h: string | number,
     fontFamily: string,
@@ -623,10 +640,10 @@ function initializeDesignerVueComponents(): void {
     textDecoration: string | number,
     lineSpacing: string | number,
     wrapping: string | number,
-    textElement: SVGTextElement
+    textElement: SVGTextElement | null
   ) {
-    while (textElement.firstChild) {
-      textElement.removeChild(textElement.firstChild)
+    while (textElement?.lastChild) {
+      textElement.removeChild(textElement.lastChild)
     }
     addText(
       value,
@@ -646,7 +663,7 @@ function initializeDesignerVueComponents(): void {
   let clipId = 0
 
   type TextDataType = {
-    content: string
+    content: string | number | boolean
     width: string | number
     height: string | number
     fontFamily: string
@@ -667,7 +684,7 @@ function initializeDesignerVueComponents(): void {
     clipped: boolean
     align: string
     fill: string
-    content: string
+    content: string | number | boolean
     opacity: string | number
     visible: string | boolean
     wrapping: string | number
@@ -701,6 +718,9 @@ function initializeDesignerVueComponents(): void {
       return { refId: `svg-text-${clipId++}` }
     },
     mounted() {
+      if (!hasText(this.$el)) {
+        return
+      }
       addText(
         this.content,
         this.width,
@@ -717,6 +737,9 @@ function initializeDesignerVueComponents(): void {
     },
     watch: {
       width(this: TextDataType): void {
+        if (!hasText(this.$el)) {
+          return
+        }
         updateText(
           this.content,
           this.width,
@@ -728,10 +751,13 @@ function initializeDesignerVueComponents(): void {
           this.textDecoration,
           this.lineSpacing,
           this.wrapping,
-          this.$el.querySelector('text')!
+          this.$el.querySelector('text')
         )
       },
       height(this: TextDataType): void {
+        if (!hasText(this.$el)) {
+          return
+        }
         updateText(
           this.content,
           this.width,
@@ -743,10 +769,13 @@ function initializeDesignerVueComponents(): void {
           this.textDecoration,
           this.lineSpacing,
           this.wrapping,
-          this.$el.querySelector('text')!
+          this.$el.querySelector('text')
         )
       },
       content(this: TextDataType): void {
+        if (!hasText(this.$el)) {
+          return
+        }
         updateText(
           this.content,
           this.width,
@@ -758,7 +787,7 @@ function initializeDesignerVueComponents(): void {
           this.textDecoration,
           this.lineSpacing,
           this.wrapping,
-          this.$el.querySelector('text')!
+          this.$el.querySelector('text')
         )
       }
     },
@@ -800,7 +829,7 @@ function initializeDesignerVueComponents(): void {
         default: undefined
       },
       content: {
-        type: String,
+        type: [String, Number, Boolean],
         required: false,
         default: undefined
       },

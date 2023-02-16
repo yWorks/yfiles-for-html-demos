@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -44,7 +44,7 @@ export class NodeHighlightManager extends HighlightIndicatorManager<IModelItem> 
    * Gets a suitable highlight installer for the given item or `null` if the given
    * item should not be highlighted.
    * @param item The item to find an installer for
-   * @return The highlight installer
+   * @returns The highlight installer
    */
   getInstaller(item: IModelItem): ICanvasObjectInstaller | null {
     if (item instanceof INode) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -238,8 +238,8 @@ function createInputMode(): void {
 function onCurrentItemChanged(): void {
   // clear the current display
   labelsContainer.innerHTML = ''
-  while (propertyTable.hasChildNodes()) {
-    propertyTable.removeChild(propertyTable.firstChild!)
+  while (propertyTable.lastChild != null) {
+    propertyTable.removeChild(propertyTable.lastChild)
   }
 
   const currentItem = graphComponent.currentItem
@@ -270,7 +270,7 @@ function onCurrentItemChanged(): void {
 /**
  * Loads the graph data from the Neo4j database and constructs a graph using a custom
  * {@link GraphBuilder}.
- * @yjs:keep=nodeIds,end
+ * @yjs:keep = nodeIds,end
  */
 async function loadGraph(): Promise<void> {
   // show a loading indicator, as the queries can take a while to complete
@@ -402,7 +402,7 @@ function setUIDisabled(value: boolean): void {
 
 /**
  * Wires up the UI.
- * @yjs:keep=setValue,getValue
+ * @yjs:keep = setValue,getValue
  */
 function registerCommands(): void {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)

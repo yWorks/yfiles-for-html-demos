@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -199,7 +199,7 @@ export class NodeDragInputMode extends InputModeBase {
    * Creates an img element which represents the dragged node.
    * This element is the actually dragged element.
    * @param node The node to create the image for.
-   * @return The img element which shows the node
+   * @returns The img element which shows the node
    */
   static createNodeImage(node: INode): HTMLImageElement {
     // Create the HTML element for the visual.

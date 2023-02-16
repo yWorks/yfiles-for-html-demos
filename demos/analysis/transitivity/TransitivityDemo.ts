@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -305,7 +305,7 @@ async function run(): Promise<void> {
 /**
  * Gets the undo engine from the graph associated to the given graph component.
  * @param graphComponent the demo's graph component
- * @return the undo engine that is associated to graph of the given graph component.
+ * @returns the undo engine that is associated to graph of the given graph component.
  */
 function getUndoEngine(graphComponent: GraphComponent): UndoEngine {
   return graphComponent.graph.undoEngine!
@@ -378,7 +378,7 @@ function registerCommands(): void {
 /**
  * Returns enlarged bounds for the given item that correspond to the highlight bounds.
  * @param item The item whose bounds are enlarged.
- * @return The new bounds.
+ * @returns The new bounds.
  */
 function getEnlargedNodeBounds(item: INode): Rect {
   const nodeBounds = item.layout.toRect()
@@ -1452,7 +1452,6 @@ function beginUndoEdit(
 
 /**
  * Commits all undo edits contained in the given edit.
- * @param edit The edit to commit.
  */
 function commitUndoEdit(edit: { compoundEdit: ICompoundEdit; tagEdit: ICompoundEdit }): void {
   edit.tagEdit.commit()
@@ -1461,7 +1460,6 @@ function commitUndoEdit(edit: { compoundEdit: ICompoundEdit; tagEdit: ICompoundE
 
 /**
  * Cancels all undo edits contained in the given edit.
- * @param edit The edit to cancel.
  */
 function cancelUndoEdit(edit: { compoundEdit: ICompoundEdit; tagEdit: ICompoundEdit }): void {
   edit.tagEdit.cancel()
@@ -1470,7 +1468,7 @@ function cancelUndoEdit(edit: { compoundEdit: ICompoundEdit; tagEdit: ICompoundE
 
 /**
  * An undo unit that handles the undo/redo of the currentItem and all sets that determine whether
- * or not a node or edge is currently visible (part of the filtered graph).
+ * a node or edge is currently visible (part of the filtered graph).
  */
 class ChangedSetUndoUnit extends UndoUnitBase {
   private oldFilteredNodes: Set<INode> | null

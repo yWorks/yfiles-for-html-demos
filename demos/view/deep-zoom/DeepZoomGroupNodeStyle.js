@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -87,7 +87,6 @@ export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
    * group node.
    * @param {!Fill} fill The fill value
    * @param {!Stroke} stroke The stroke value
-   * @private
    */
   updateBackgroundColors(fill, stroke) {
     this._fill = fill
@@ -228,7 +227,6 @@ export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
    * @param {!Point} inner The first point of the line that is inside the shape
    * @param {!Point} outer The second point of the line that is outside the shape
    * @returns {!Point} {Point} The coordinates of the intersection point, if an intersection was found
-   * @protected
    */
   getIntersection(node, inner, outer) {
     return this.backGroundStyle.renderer

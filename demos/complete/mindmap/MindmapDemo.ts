@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -401,7 +401,7 @@ function initializeGraphFiltering(): void {
  * Predicate for the filtered graph wrapper that
  * indicates whether a node should be visible.
  * @param node The node to be tested.
- * @return True if the node should be visible, false otherwise.
+ * @returns True if the node should be visible, false otherwise.
  */
 function nodePredicate(node: INode): boolean {
   // return true if none of the parent nodes is collapsed
@@ -978,7 +978,7 @@ function updateStyles(subtreeRoot: INode): void {
  * Gets the label style based on the depth information
  * in the nodes' tags.
  * @param depth The nodes' depth.
- * @return The label's style.
+ * @returns The label's style.
  */
 function getLabelStyle(depth: number): ILabelStyle {
   const maxStyle = labelStyles.length - 1
@@ -989,7 +989,7 @@ function getLabelStyle(depth: number): ILabelStyle {
  * Gets the node style based on the depth information
  * in the nodes' tags.
  * @param depth The nodes' depth.
- * @return The node's style.
+ * @returns The node's style.
  */
 function getNodeStyle(depth: number): INodeStyle {
   const maxStyle = nodeStyles.length - 1
@@ -999,7 +999,7 @@ function getNodeStyle(depth: number): INodeStyle {
 /**
  * Gets the edge style based on the depth information.
  * @param depth The nodes' depth.
- * @return The edge's style.
+ * @returns The edge's style.
  */
 function getEdgeStyle(depth: number): IEdgeStyle {
   const maxStyle = edgeStyles.length - 1

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -289,7 +289,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * OptionGroupAttribute. Finally, all members are visited and the extracted data relevant to
    * build ui components are written to a JSObject.
    * @param {Object} config The input configuration written by the developer.
-   * @return {Object} The output configuration usable by yFilesOptionUI.
+   * @returns {Object} The output configuration usable by yFilesOptionUI.
    */
   convert: function (config) {
     const type = yfiles.lang.getType(config)
@@ -497,7 +497,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * Collect an UtilityProperty that disables or hides a control.
    * @param {MemberInfo} member The member to be processed.
-   * @return {boolean} true if property is an UtilityProperty
+   * @returns {boolean} true if property is an UtilityProperty
    */
   collectUtilityProperty: function (member) {
     if (startsWith(member.name, 'shouldHide')) {
@@ -624,7 +624,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * - all custom attributes
    * @param {FieldInfo} field The field to visit.
    * @param {Object} yFilesObj
-   * @return {Object} a new JSObject containing all information collected for the field
+   * @returns {Object} a new JSObject containing all information collected for the field
    */
   visitField: function (field, yFilesObj) {
     const f = new Object()
@@ -659,7 +659,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * - all custom attributes
    * @param {PropertyInfo} property The property to visit.
    * @param {Object} yFilesObj
-   * @return {Object} a new JSObject containing all information collected for the property
+   * @returns {Object} a new JSObject containing all information collected for the property
    */
   visitProperty: function (property, yFilesObj) {
     const p = new Object()
@@ -819,7 +819,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   },
 
   /**
-   * @return {Object}
+   * @returns {Object}
    */
   createOption: function (name, value) {
     const option = new Object()
@@ -888,7 +888,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   },
 
   /**
-   * @return {Object}
+   * @returns {Object}
    */
   getGroupObject: function (group) {
     const o = new Object()
@@ -913,7 +913,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   },
 
   /**
-   * @return {boolean}
+   * @returns {boolean}
    */
   isOptionGroup: function (groupMember) {
     if (isProperty(groupMember)) {
@@ -925,7 +925,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   },
 
   /**
-   * @return {string}
+   * @returns {string}
    */
   getTypeString: function (type) {
     if (type === YNumber.$class) {
@@ -939,14 +939,14 @@ export const ConfigConverter = Class('ConfigConverter', {
   },
 
   /**
-   * @return {Object}
+   * @returns {Object}
    */
   getDefaultCore: function (member, yFilesObj) {
     return yFilesObj[member.name]
   },
 
   /**
-   * @return {string}
+   * @returns {string}
    */
   getGroup: function (member) {
     const attributes = []
@@ -962,7 +962,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   },
 
   /**
-   * @return {string}
+   * @returns {string}
    */
   getComponent: function (value) {
     switch (value) {
@@ -984,7 +984,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   },
 
   /**
-   * @return {string}
+   * @returns {string}
    */
   getDefaultComponent: function (type) {
     if (type.isEnum) {
@@ -1030,7 +1030,7 @@ export const ConfigConverter = Class('ConfigConverter', {
         return typedAttributes
       },
 
-      /** @return {number} */
+      /** @returns {number} */
       compare: function (x, y) {
         let posX = 0,
           posY = 0
@@ -1061,23 +1061,23 @@ function isReadWrite(property) {
   return (property.propertyMask & 2) === 2
 }
 
-/** @return {boolean} */
+/** @returns {boolean} */
 function startsWith(text, pattern) {
   return text.slice(0, pattern.length) === pattern
 }
 
-/** @return {Object} */
+/** @returns {Object} */
 function visitMethod(method, yFilesObj) {
   // methods aren't used right now
   return new Object()
 }
 
-/** @return {boolean} */
+/** @returns {boolean} */
 function shouldIgnoreMember(member) {
   return startsWith(member.name, 'shouldHide') || startsWith(member.name, 'shouldDisable')
 }
 
-/** @return {Object} */
+/** @returns {Object} */
 function getMemberObject(member) {
   const o = new Object()
   o['type'] = 'option'

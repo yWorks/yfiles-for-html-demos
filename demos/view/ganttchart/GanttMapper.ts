@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,7 +34,7 @@ const { DateTime } = luxon
  * A helper class that handles the data model and maps graph coordinates to the corresponding dates.
  * The originDate specified in the data model is set as the origin on the x-axis.
  * The first task is placed at the origin of the y axis. Subsequent tasks are placed below.
- * @yjs:keep=duration
+ * @yjs:keep = duration
  */
 export class GanttMapper {
   private readonly _originDate: DateTimeType

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1550,7 +1550,7 @@ class HitTestInputChainLink extends BaseClass(IContextLookupChainLink) {
    * Retrieves an implementation of the given type for a given item.
    * @param item The item to lookup for
    * @param type The type to lookup for
-   * @return the implementation found
+   * @returns the implementation found
    */
   contextLookup(item: object, type: Class<any>): Object | null {
     const graph = this.graphComponent.graph

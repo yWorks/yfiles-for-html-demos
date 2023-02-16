@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -115,9 +115,8 @@ export class AndGateNodeStyle extends GateNodeStyle {
     // check if something changed except for the location of the node
     if (!newCache.equals(newCache, oldCache)) {
       // something changed - re-render the visual
-      while (container.hasChildNodes()) {
-        // remove all children
-        container.removeChild(container.firstChild!)
+      while (container.lastChild != null) {
+        container.removeChild(container.lastChild)
       }
       this.render(container, newCache, node)
     }
@@ -256,9 +255,8 @@ export class NotNodeStyle extends GateNodeStyle {
     // check if something changed except for the location of the node
     if (!newCache.equals(newCache, oldCache)) {
       // something changed - re-render the visual
-      while (container.hasChildNodes()) {
-        // remove all children
-        container.removeChild(container.firstChild!)
+      while (container.lastChild != null) {
+        container.removeChild(container.lastChild)
       }
       this.render(container, newCache, node)
     }
@@ -387,9 +385,8 @@ export class OrNodeStyle extends GateNodeStyle {
     // check if something changed except for the location of the node
     if (!newCache.equals(newCache, oldCache)) {
       // something changed - re-render the visual
-      while (container.hasChildNodes()) {
-        // remove all children
-        container.removeChild(container.firstChild!)
+      while (container.lastChild != null) {
+        container.removeChild(container.lastChild)
       }
       this.render(container, newCache, node)
     }
@@ -555,9 +552,8 @@ export class XOrNodeStyle extends GateNodeStyle {
     // check if something changed except for the location of the node
     if (!newCache.equals(newCache, oldCache)) {
       // something changed - re-render the visual
-      while (container.hasChildNodes()) {
-        // remove all children
-        container.removeChild(container.firstChild!)
+      while (container.lastChild != null) {
+        container.removeChild(container.lastChild)
       }
       this.render(container, newCache, node)
     }
@@ -677,7 +673,7 @@ export class XOrNodeStyle extends GateNodeStyle {
  * @param endPoint The end point of the curve
  * @param c1 The first control point of the curve
  * @param c2 The second control point of the curve
- * @return The calculated point the cubic bezier curve
+ * @returns The calculated point the cubic bezier curve
  */
 function getPointOnCurve(
   t: number,
@@ -704,7 +700,7 @@ type RenderDataCache = {
 /**
  * Creates an object containing all necessary data to create a visual for the node.
  * @param node The node to which this style instance is assigned.
- * @return The render data cache object
+ * @returns The render data cache object
  */
 function createRenderDataCache(node: INode): RenderDataCache {
   return {
@@ -764,7 +760,7 @@ function createPath(
  * @param textContent The text content
  * @param fontSize The font size
  * @param color The text color
- * @return The created text element
+ * @returns The created text element
  */
 function createText(textContent: string, fontSize: number, color: string): Element {
   const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')

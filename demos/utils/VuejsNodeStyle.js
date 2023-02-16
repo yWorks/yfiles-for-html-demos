@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -294,7 +294,22 @@ export default class VuejsNodeStyle extends NodeStyleBase {
   constructor(template) {
     super()
     this._template = ''
+    this._styleTag = null
     this.template = template
+  }
+
+  /**
+   * @type {*}
+   */
+  get styleTag() {
+    return this._styleTag
+  }
+
+  /**
+   * @type {*}
+   */
+  set styleTag(val) {
+    this._styleTag = val
   }
 
   /**
@@ -544,8 +559,15 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 }
 
 /**
+ * @param {!Element} el
+ */
+function hasText(el) {
+  return el && el.querySelector && el.querySelector('text')
+}
+
+/**
  * Initializes the Vuejs components that are used in the 'Node Template Designer'.
- * @yjs:keep=visible,Node
+ * @yjs:keep = visible,Node
  */
 function initializeDesignerVueComponents() {
   Vue.config.warnHandler = (err, vm, info) => {
@@ -565,7 +587,11 @@ function initializeDesignerVueComponents() {
     wrapping,
     textElement
   ) {
-    if (textElement.nodeType !== Node.ELEMENT_NODE || textElement.nodeName !== 'text') {
+    if (
+      !textElement ||
+      textElement.nodeType !== Node.ELEMENT_NODE ||
+      textElement.nodeName !== 'text'
+    ) {
       return null
     }
 
@@ -635,8 +661,8 @@ function initializeDesignerVueComponents() {
     wrapping,
     textElement
   ) {
-    while (textElement.firstChild) {
-      textElement.removeChild(textElement.firstChild)
+    while (textElement?.lastChild) {
+      textElement.removeChild(textElement.lastChild)
     }
     addText(
       value,
@@ -657,7 +683,7 @@ function initializeDesignerVueComponents() {
 
   /**
    * @typedef {Object} TextDataType
-   * @property {string} content
+   * @property {(string|number|boolean)} content
    * @property {(string|number)} width
    * @property {(string|number)} height
    * @property {string} fontFamily
@@ -679,7 +705,7 @@ function initializeDesignerVueComponents() {
    * @property {boolean} clipped
    * @property {string} align
    * @property {string} fill
-   * @property {string} content
+   * @property {(string|number|boolean)} content
    * @property {(string|number)} opacity
    * @property {(string|boolean)} visible
    * @property {(string|number)} wrapping
@@ -713,6 +739,9 @@ function initializeDesignerVueComponents() {
       return { refId: `svg-text-${clipId++}` }
     },
     mounted() {
+      if (!hasText(this.$el)) {
+        return
+      }
       addText(
         this.content,
         this.width,
@@ -729,6 +758,9 @@ function initializeDesignerVueComponents() {
     },
     watch: {
       width() {
+        if (!hasText(this.$el)) {
+          return
+        }
         updateText(
           this.content,
           this.width,
@@ -744,6 +776,9 @@ function initializeDesignerVueComponents() {
         )
       },
       height() {
+        if (!hasText(this.$el)) {
+          return
+        }
         updateText(
           this.content,
           this.width,
@@ -759,6 +794,9 @@ function initializeDesignerVueComponents() {
         )
       },
       content() {
+        if (!hasText(this.$el)) {
+          return
+        }
         updateText(
           this.content,
           this.width,
@@ -812,7 +850,7 @@ function initializeDesignerVueComponents() {
         default: undefined
       },
       content: {
-        type: String,
+        type: [String, Number, Boolean],
         required: false,
         default: undefined
       },

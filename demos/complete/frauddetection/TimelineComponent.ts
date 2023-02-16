@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -499,7 +499,7 @@ export default class TimelineComponent {
    * Checks whether or not a node of the source graph should be displayed. If filtering is not enabled, it returns
    * always true.
    * @param node the node to check
-   * @return true if a node should be displayed, false otherwise
+   * @returns true if a node should be displayed, false otherwise
    */
   nodePredicate(node: INode): boolean {
     if (this.filteringEnabled || !this.timeFrameVisual) {
@@ -1017,7 +1017,7 @@ export default class TimelineComponent {
 
   /**
    * Creates and returns the time frame animation for the video.
-   * @return The time frame animation
+   * @returns The time frame animation
    */
   getTimeFrameAnimation(): TimeFrameAnimation {
     if (
@@ -2104,7 +2104,7 @@ class TimeFramePositionHandler
   /**
    * Returns the next x position. If the rectangle reaches the borders of the boundary rectangle, the position
    * changes accordingly such that the rectangle fits in the timeline.
-   * @return The next x coordinate of the rectangle.
+   * @returns The next x coordinate of the rectangle.
    */
   getX(nextPositionX: number, x1: number, x2: number): number {
     // check if the next position is within the boundary rectangle borders
@@ -2185,7 +2185,7 @@ const MONTHS: string[] = [
 /**
  * Returns the size of the timeline nodes based on the zoom factor.
  * @param zoomLevel The current zoom level
- * @return The width of the timeline nodes
+ * @returns The width of the timeline nodes
  */
 function getXOffset(zoomLevel: ZoomLevel): number {
   switch (zoomLevel) {
@@ -2201,7 +2201,7 @@ function getXOffset(zoomLevel: ZoomLevel): number {
 /**
  * Returns the offset between two timeline nodes.
  * @param zoomLevel The current zoom level
- * @return The split offset
+ * @returns The split offset
  */
 function getSplitOffset(zoomLevel: ZoomLevel): number {
   switch (zoomLevel) {

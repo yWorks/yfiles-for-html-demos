@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import '../../../resources/style/demo.css'
-import { GraphComponent, GraphEditorInputMode, License } from 'yfiles'
+import { CanvasComponent, GraphComponent, GraphEditorInputMode, License } from 'yfiles'
 import licenseValue from '../../../../lib/license.json'
 
 import { addLayoutButton, removeLayoutButton } from './layout-button'
@@ -35,28 +35,38 @@ import { createSampleGraph } from './create-sample-graph'
 
 License.value = licenseValue
 
+// OPTIONALLY use Vite's Hot Module Replacement (HMR) API https://vitejs.dev/guide/api-hmr.html
+// This HMR code is a simple example of how to wire up HMR and is NOT necessary in general.
+// It may be removed together with the if-clauses regarding the GraphComponent's initialization.
+//
+// With HMR enabled, note how changes in the source files do not trigger an entire page reload during
+// development but are almost immediate reflected in the running dev-server.
 if (import.meta.hot) {
+  // accept any source code change without reloading the entire page
   import.meta.hot.accept()
+  // remove any state that results from (re-)loading this module
   import.meta.hot.dispose(() => {
     removeLayoutButton()
     graphComponent.graph.clear()
   })
 }
 
-const oldGc = (document.getElementById('graphComponent') as any)['data-this']
+// Instantiate or re-use (in case of HMR) a GraphComponent.
+const oldGc = CanvasComponent.getComponent(document.querySelector('#graphComponent')!)
 let graphComponent: GraphComponent
 if (oldGc instanceof GraphComponent) {
+  // re-use the existing GraphComponent during HMR
   graphComponent = oldGc
 } else {
+  // upon first load, create a new GraphComponent and assign an input mode
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
 }
 
+// create and fit an initial graph
 createSampleGraph(graphComponent.graph)
 graphComponent.fitGraphBounds()
 
-const button = document.querySelector<HTMLButtonElement>("[data-command='Layout']")
-
-if (button) {
-  addLayoutButton(button, graphComponent)
-}
+// wire up an automatic layout that is performed asynchronous on a Web Worker
+const button = document.querySelector<HTMLButtonElement>("[data-command='Layout']")!
+addLayoutButton(button, graphComponent)

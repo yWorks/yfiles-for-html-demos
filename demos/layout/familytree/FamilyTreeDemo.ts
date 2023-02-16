@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -247,7 +247,8 @@ function setDefaultEdgeStyle(graph: IGraph): void {
   })
 }
 
-/** Helper method that binds the various commands available in yFiles for HTML to the buttons
+/**
+ * Helper method that binds the various commands available in yFiles for HTML to the buttons
  * in the demo's toolbar.
  */
 function registerCommands(graphComponent: GraphComponent): void {

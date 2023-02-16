@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -92,12 +92,12 @@ export function getInEdge(node: INode, graph: IGraph): IEdge | null {
 
 /**
  * Creates a sibling node for a given node.
- * @param node The given node.
  * @param graph The input graph.
+ * @param node The given node.
  * @param nodeStyle The desired node style.
  * @param edgeStyle The desired edge style.
  * @param labelStyle The desired label style.
- * @return The created sibling.
+ * @returns The created sibling.
  */
 export function createSibling(
   graph: IGraph,
@@ -130,7 +130,7 @@ export function createSibling(
  * @param nodeStyle The desired node style.
  * @param edgeStyle The desired edge style.
  * @param labelStyle The desired label style.
- * @return The created child.
+ * @returns The created child.
  */
 export function createChild(
   graph: IGraph,
@@ -174,7 +174,7 @@ export function createChild(
  * @param targetCandidate The target port candidate.
  * @param dummyEdge The dummy edge instance that serves as template for the actual edge
  *   creation.
- * @return The newly created cross reference edge.
+ * @returns The newly created cross reference edge.
  */
 export function createCrossReferenceEdge(
   context: IInputModeContext,
@@ -229,7 +229,7 @@ export function setSubtreeDepths(graph: IGraph, node: INode, depth: number): voi
 /**
  * Returns whether an edge is a cross reference edge.
  * @param edge The given edge.
- * @return True if the edge is a cross reference edge, false otherwise
+ * @returns True if the edge is a cross reference edge, false otherwise
  */
 export function isCrossReference(edge: IEdge | null): boolean {
   return edge!.tag === CROSS_REFERENCE_MARKER
@@ -238,7 +238,7 @@ export function isCrossReference(edge: IEdge | null): boolean {
 /**
  * Returns whether a node is collapsed.
  * @param node The given node.
- * @return True if a node is collapsed, false otherwise
+ * @returns True if a node is collapsed, false otherwise
  */
 export function isCollapsed(node: INode): boolean {
   return node.tag.isCollapsed
@@ -247,7 +247,7 @@ export function isCollapsed(node: INode): boolean {
 /**
  * Returns whether a node is on the left of the root.
  * @param node The given node.
- * @return True if a node is on the left of the root, false otherwise
+ * @returns True if a node is on the left of the root, false otherwise
  */
 export function isLeft(node: INode): boolean {
   return node.tag.isLeft
@@ -256,7 +256,7 @@ export function isLeft(node: INode): boolean {
 /**
  * Returns whether a node is the root node.
  * @param node The given node.
- * @return True if a node is the root, false otherwise
+ * @returns True if a node is the root, false otherwise
  */
 export function isRoot(node: INode): boolean {
   return node.tag.depth === 0
@@ -265,7 +265,7 @@ export function isRoot(node: INode): boolean {
 /**
  * Returns the depth of a node.
  * @param node The given node.
- * @return The depth of a node
+ * @returns The depth of a node
  */
 export function getDepth(node: INode): number {
   return node.tag.depth
@@ -275,7 +275,7 @@ export function getDepth(node: INode): number {
  * Returns whether a node has children.
  * @param node The given node.
  * @param graph The given graph.
- * @return True if a node ahs children, false otherwise
+ * @returns True if a node ahs children, false otherwise
  */
 export function hasChildNodes(node: INode, graph: IGraph): boolean {
   return graph.outEdgesAt(node).find(edge => !isCrossReference(edge)) !== null

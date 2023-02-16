@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -233,8 +233,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
   /**
    * Calls the base method with the {@link AggregationGraphWrapper.$filteredGraph} instead of the passed graph for correct event forwarding.
-   * @param {!IGraph} oldGraph
-   * @param {!IGraph} newGraph
+   * @param {?IGraph} oldGraph
+   * @param {?IGraph} newGraph
    */
   onGraphChanged(oldGraph, newGraph) {
     if (!oldGraph) {

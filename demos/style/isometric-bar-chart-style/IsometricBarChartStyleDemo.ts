@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -161,7 +161,7 @@ function onBarDataChanged() {
 
 /**
  * Provides the data to be visualized by the bar chart.
- * @yjs:keep=degreeCentrality,graphCentrality,pageRank
+ * @yjs:keep = degreeCentrality,graphCentrality,pageRank
  * @param node The node to provide the bar chart data for.
  */
 function getTagData(node: INode): any {
@@ -199,7 +199,6 @@ function getTagData(node: INode): any {
 
 /**
  * Shows or hides the labels
- * @param enabled
  */
 function toggleLabels(enabled: boolean) {
   if (barManager.graph != null) {

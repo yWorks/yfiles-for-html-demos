@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,31 +36,25 @@ import {
   ILabel,
   IModelItem,
   INode,
-  ISelectionModel,
   License,
   NinePositionsEdgeLabelModel,
   Point,
   Size,
-  TemplateNodeStyle,
-  YObject
+  StringTemplateNodeStyle,
+  TemplateNodeStyle
 } from 'yfiles'
 
-import { ClipboardBusinessObject, createClipboardBusinessObject } from './ClipboardBusinessObject'
+import { createNodeBusinessData, getCommonName } from './BusinessDataHandling'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
-import { TagCopyItem, TaggedNodeClipboardHelper } from './ClipboardHelper'
+import { TaggedNodeClipboardHelper } from './ClipboardHelper'
 import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
 
-// This demo shows different ways of using the class GraphClipboard for Copy and Paste operations.
-
 let graphComponent: GraphComponent
-
 let graphComponent2: GraphComponent
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
-  // initialize converters for the node style
-  initConverters()
 
   // initialize the GraphComponents
   graphComponent = new GraphComponent('graphComponent')
@@ -68,12 +62,24 @@ async function run(): Promise<void> {
   applyDemoTheme(graphComponent)
   applyDemoTheme(graphComponent2)
 
+  // both components share the clipboard
+  graphComponent2.clipboard = graphComponent.clipboard
+
   // initializes the graph
-  initializeGraph()
+  initializeGraphStyling()
+
+  // Create nodes and an edge.
+  createSampleGraph(graphComponent.graph)
+  graphComponent.fitGraphBounds()
+  graphComponent2.zoomTo(graphComponent.center, graphComponent.zoom)
+
+  // Enable the Undo functionality.
+  graphComponent.graph.undoEngineEnabled = true
+  graphComponent2.graph.undoEngineEnabled = true
 
   // creates the input modes
-  graphComponent.inputMode = createEditorMode()
-  graphComponent2.inputMode = createEditorMode()
+  graphComponent.inputMode = createInputMode()
+  graphComponent2.inputMode = createInputMode()
 
   // wires up the UI
   registerCommands()
@@ -87,111 +93,62 @@ async function run(): Promise<void> {
 /**
  * Initializes the two graphs.
  */
-function initializeGraph(): void {
+function initializeGraphStyling(): void {
   // Initialize the left graph
   const graph = graphComponent.graph
-  // Enable the Undo functionality.
-  graph.undoEngineEnabled = true
-  graph.nodeDefaults.size = new Size(120, 60)
+
+  // Create a converter function for the StringTemplateNodeStyle that converts the node width
+  // into a "translate" expression that horizontally centers the transformed element
+  TemplateNodeStyle.CONVERTERS.centerTransform = (o: number, p: number | null): string => {
+    const verticalOffset = p || 0
+    // place in horizontal center
+    return `translate(${o * 0.5} ${verticalOffset})`
+  }
 
   // Set the default style for new nodes and edges
-  graph.nodeDefaults.style = new TemplateNodeStyle('ClipboardStyle')
+  graph.nodeDefaults.style = new StringTemplateNodeStyle(`<g>
+      <rect stroke-width="1.5" stroke="#617984" fill="#C1E1F1" rx="4" ry="4"
+          width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+      <text data-content="{Binding name}"
+          transform="{TemplateBinding width, Converter=centerTransform, Parameter=15}"
+          text-anchor="middle" style="font-size:120%; fill:#000" dy="0.5em"></text>
+    </g>
+  `)
+  graph.nodeDefaults.size = new Size(120, 60)
+
   graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: 'demo-palette-31' })
 
   // Set the default locations for new labels
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
   graph.edgeDefaults.labels.layoutParameter = NinePositionsEdgeLabelModel.CENTER_ABOVE
 
-  // Create nodes and an edge.
-  createSampleGraph(graph)
-  graphComponent.fitGraphBounds()
-
   graph.decorator.nodeDecorator.clipboardHelperDecorator.setImplementation(
     new TaggedNodeClipboardHelper()
   )
-  graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
-
-  // Register specialized copiers that can deal with our business objects
-  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener((sender, evt) => {
-    evt.copy.tag = nodeCopiedOnPaste(evt.original)
-  })
-  graphComponent.clipboard.toClipboardCopier.addNodeCopiedListener((sender, evt) => {
-    evt.copy.tag = nodeCopiedOnCopy(evt.original)
-  })
 
   // Initialize the right graph
   const graph2 = graphComponent2.graph
-  // Enable the Undo functionality.
-  graph2.undoEngineEnabled = true
   graph2.nodeDefaults = graph.nodeDefaults
   graph2.edgeDefaults = graph.edgeDefaults
+
+  graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
+  graph2.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
 
   graph2.decorator.nodeDecorator.clipboardHelperDecorator.setImplementation(
     new TaggedNodeClipboardHelper()
   )
-  graph2.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
-  graphComponent2.clipboard = graphComponent.clipboard
-
-  graphComponent2.zoomTo(graphComponent.center, graphComponent.zoom)
-}
-
-/**
- * Called when a node is pasted.
- * Either yields a previously cached copy for the given original or uses the copyDelegate to create
- * the copy of the original.
- * @param original The original item
- * @return A copy of the original, either cached, or newly created and then cached
- */
-function nodeCopiedOnPaste(original: INode): TagCopyItem {
-  return graphComponent.clipboard.fromClipboardCopier.getOrCreateCopy<any>(
-    YObject.$class,
-    original.tag,
-    createBusinessObjectFromTagCopyItem
-  )
-}
-
-/**
- * Called when a node is copied.
- * Either yields a previously cached copy for the given original or uses the copyDelegate to create
- * the copy of the original.
- * @param original The original item
- * @return A copy of the original, either cached, or newly created and then cached
- */
-function nodeCopiedOnCopy(original: INode): TagCopyItem {
-  return graphComponent.clipboard.toClipboardCopier.getOrCreateCopy<any>(
-    YObject.$class,
-    original.tag,
-    value => new TagCopyItem(value)
-  )
-}
-
-/**
- * Creates a business object from the given tag.
- */
-function createBusinessObjectFromTagCopyItem(tag: TagCopyItem): ClipboardBusinessObject {
-  const copyItem = tag
-  copyItem.increasePasteCount()
-  const origObject = copyItem.tag
-  const name =
-    copyItem.pasteCount < 2
-      ? `Copy of ${origObject.name}`
-      : `Copy (${copyItem.pasteCount}) of ${origObject.name}`
-
-  const newClipboardBusinessObject = new ClipboardBusinessObject(name)
-  newClipboardBusinessObject.name = name
-  return newClipboardBusinessObject
 }
 
 /**
  * Creates the GraphEditorInputMode for this demo.
  */
-function createEditorMode(): IInputMode {
+function createInputMode(): IInputMode {
   const inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true,
     // For each new node, create a node label and a business object automatically
     nodeCreator: (context, graph, location) => {
       const node = graph.createNodeAt(location)
-      node.tag = createClipboardBusinessObject()
+      node.tag = createNodeBusinessData()
       graph.addLabel(node, `Label ${graph.nodes.size.toString()}`)
       return node
     },
@@ -278,8 +235,6 @@ function registerCommands() {
   bindAction("button[data-command='PasteSpecial2']", () => onPasteSpecialCommand(graphComponent2))
   bindAction("button[data-command='EditName2']", () => onEditNameCommand(graphComponent2, 'right'))
 
-  graphComponent2.clipboard.addElementsCopiedListener(enablePasteSpecialButton)
-  graphComponent2.clipboard.addElementsCutListener(enablePasteSpecialButton)
   registerEditNameEnabledListeners(graphComponent2.inputMode as GraphEditorInputMode, 'EditName2')
 }
 
@@ -311,22 +266,29 @@ function onPasteSpecialCommand(component: GraphComponent): void {
  * @param elementID The id of the element that shows the dialog.
  */
 function onEditNameCommand(component: GraphComponent, elementID: string): void {
-  const nameDialog = window.document.getElementById('nameDialog')!
+  const nameDialog = document.querySelector('#nameDialog') as HTMLDivElement
   const nodeNameInput = nameDialog.querySelector('#nodeNameInput') as HTMLInputElement
   nodeNameInput.value = getCommonName(component.selection.selectedNodes)
 
-  bindAction('#applyButton', evt => {
+  const applyListener = (evt: any) => {
     evt.preventDefault()
     nameDialog.style.display = 'none'
     const name = nodeNameInput.value
     component.selection.selectedNodes.forEach(node => {
       node.tag.name = name
+      // The firePropertyChanged method is available on the tag because it was added by the
+      // {@link StringTemplateNodeStyle.makeObservable} method.
+      node.tag.firePropertyChanged('name')
     })
     component.focus()
-  })
+    document.querySelector('#applyButton')!.removeEventListener('click', applyListener)
+  }
+
+  document.querySelector('#applyButton')!.addEventListener('click', applyListener)
 
   bindAction('#cancelButton', () => {
     nameDialog.style.display = 'none'
+    document.querySelector('#applyButton')!.removeEventListener('click', applyListener)
   })
 
   nameDialog.style.display = 'block'
@@ -336,22 +298,10 @@ function onEditNameCommand(component: GraphComponent, elementID: string): void {
 }
 
 /**
- * Returns the common name of the selected nodes if such a common name
- * exists, or the empty string otherwise.
- */
-function getCommonName(selectedNodes: ISelectionModel<INode>): string {
-  if (selectedNodes.size === 0) {
-    return ''
-  }
-  const name = selectedNodes.first().tag.name
-  return selectedNodes.some((node: INode): boolean => name !== node.tag.name) ? '' : name
-}
-
-/**
  * Creates the sample graph.
  */
 function createSampleGraph(graph: IGraph): void {
-  const sharedBusinessObject = createClipboardBusinessObject()
+  const sharedBusinessObject = createNodeBusinessData()
 
   const node1 = graph.createNodeAt({
     location: new Point(100, 100),
@@ -365,24 +315,9 @@ function createSampleGraph(graph: IGraph): void {
   })
   graph.createNodeAt({
     location: new Point(100, 200),
-    tag: createClipboardBusinessObject()
+    tag: createNodeBusinessData()
   })
   graph.addLabel(graph.createEdge(node1, node2), 'Shared Object')
-
-  graph.undoEngine!.clear()
-}
-
-/**
- * Initializes the converters for the node style.
- */
-function initConverters(): void {
-  // Create a converter function that converts the node width into a translate
-  // expression that horizontally centers the transformed element
-  TemplateNodeStyle.CONVERTERS.centertransformconverter = (o: number, p: number | null): string => {
-    const verticalOffset = p || 0
-    // place in horizontal center
-    return `translate(${o * 0.5} ${verticalOffset})`
-  }
 }
 
 // noinspection JSIgnoredPromiseFromCall

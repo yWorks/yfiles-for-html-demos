@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -118,7 +118,6 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
    * Calculates it from the direction to the edge's port of interest relative to the center of the label layout.
    * The port of interest is the source port if toSource is true, the target port otherwise.
    * @param {!ILabel} label The label to get the direction for.
-   * @private
    * @returns {!ArrowDirection}
    */
   getDirection(label) {

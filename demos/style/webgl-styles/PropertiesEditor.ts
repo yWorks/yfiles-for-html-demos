@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable jsdoc/check-param-names */
 import {
   Color,
   Enum,
@@ -297,8 +298,6 @@ function getLineCapStyle(type: string): WebGL2LineCap {
 /**
  * Updates the stroke editor values in the editor section for the given item type with the
  * property values of the given stroke instance.
- * @param stroke
- * @param type
  */
 export function setStroke(stroke: WebGL2Stroke, type: ItemType): void {
   if (WebGL2Stroke.NONE == stroke) {

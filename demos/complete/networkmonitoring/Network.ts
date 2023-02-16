@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -56,7 +56,7 @@ export class Network {
   /**
    * Returns the connections having the given device as either sender or receiver.
    * @param device The device to find connected connections of.
-   * @return The connections that are connected to the device.
+   * @returns The connections that are connected to the device.
    */
   getAdjacentConnections(device: Device): Connection[] {
     return this.connections.filter(connection => Network.isAdjacentConnection(connection, device))
@@ -64,7 +64,6 @@ export class Network {
 
   /**
    * Checks whether the given connection is adjacent to the given device.
-   * @private
    */
   private static isAdjacentConnection(connection: Connection, device: Device): boolean {
     return connection.sender === device || connection.receiver === device
@@ -74,7 +73,7 @@ export class Network {
    * Returns the devices that are neighbors of the given device, that is, devices that are
    * directly connected to the given device via an connection.
    * @param device The device to find neighbors of.
-   * @return The neighboring devices.
+   * @returns The neighboring devices.
    */
   getNeighborDevices(device: Device): Device[] {
     return this.getAdjacentConnections(device).map(connection =>
@@ -84,7 +83,6 @@ export class Network {
 
   /**
    * Returns the device at the opposite side of the connection with respect to the given device.
-   * @private
    */
   private static getOppositeDevice(device: Device, connection: Connection): Device {
     return connection.sender === device ? connection.receiver : connection.sender

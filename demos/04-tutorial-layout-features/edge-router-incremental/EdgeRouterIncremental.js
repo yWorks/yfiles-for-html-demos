@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,7 +38,7 @@ import {
 /**
  * Demonstrates how to configure {@link EdgeRouter} to route a predefined set of edges only.
  * @param {!IGraph} graph The graph whose edges are to be routed.
- * @returns {!object} {EdgeRouter, EdgeRouterData} the configured layout algorithm and the
+ * @returns {!object} {{EdgeRouter, EdgeRouterData}} the configured layout algorithm and the
  * corresponding layout data.
  */
 export function createFeatureLayoutConfiguration(graph) {

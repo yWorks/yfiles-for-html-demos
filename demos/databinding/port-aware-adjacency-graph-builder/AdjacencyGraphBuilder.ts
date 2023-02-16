@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -234,7 +234,6 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
    * @param graph The graph to operate on.
    * @param node The node to add the port to.
    * @param portData The port data to create the port for.
-   * @private
    */
   private addPort(graph: IGraph, node: INode, portData: PortData) {
     const port = graph.addPort({
@@ -256,7 +255,6 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
    * @param graph The graph to operate on.
    * @param port The port to add the label to.
    * @param portData The port data to create the label for.
-   * @private
    */
   private addPortLabel(graph: IGraph, port: IPort, portData: PortData) {
     const text = this.getPortLabel(portData)
@@ -338,7 +336,6 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
 
   /**
    * Gets the label placement according to the port data.
-   * @private
    */
   private getParameter(portData: PortData): ILabelModelParameter {
     // whether the port is left or right
@@ -352,7 +349,6 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
   /**
    * Gets the label text to set from the port data.
    * Returns null if no label should be set.
-   * @private
    */
   private getPortLabel(portData: PortData): string | null {
     return portData.id
@@ -361,7 +357,6 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
   /**
    * Gets an array of PortData from the given node data.
    * Might be undefined.
-   * @private
    */
   private getPorts(nodeData: NodeData): PortData[] | undefined {
     return nodeData.ports
@@ -369,7 +364,6 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
 
   /**
    * Gets the (relative) port location from the port data.
-   * @private
    */
   private getPortLocation(portData: PortData): Point {
     return Point.from(portData.location)
@@ -377,7 +371,6 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
 
   /**
    * Gets the ID from the port data.
-   * @private
    */
   private getPortId(portData: PortData): string {
     return portData.id
@@ -402,7 +395,6 @@ class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
    * @param target The target node.
    * @param style The edge style.
    * @param tag The edge tag (actually the node data of the target node)
-   * @protected
    */
   protected createEdgeCore(
     graph: IGraph,
@@ -489,7 +481,6 @@ class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
   /**
    * Gets the source port ID from the node data.
    * Returns undefined if the port to connect is not specified.
-   * @private
    */
   private getSourcePortId(data: NodeData): string | undefined {
     return data.from
@@ -498,7 +489,6 @@ class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
   /**
    * Gets the target port ID from the node data.
    * Returns undefined if the port to connect is not specified.
-   * @private
    */
   private getTargetPortId(data: NodeData): string | undefined {
     return data.to

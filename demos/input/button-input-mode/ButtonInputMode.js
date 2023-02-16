@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable jsdoc/check-param-names */
 import {
   BaseClass,
   BendEventArgs,
@@ -349,7 +350,6 @@ export class ButtonInputMode extends InputModeBase {
    *
    * The implementation verifies an {@link IModelItem} if its type is included in {@link validOwnerTypes}.
    * @param {!IModelItem} item The item to verify.
-   * @protected
    * @returns {boolean}
    */
   isValidItem(item) {
@@ -430,7 +430,6 @@ export class ButtonInputMode extends InputModeBase {
    * This implementation {@link QueryButtonsEvent queries} all {@link addQueryButtonsListener added}
    * listeners and returns the buttons {@link QueryButtonsEvent.addButton added} by them.
    * @param {!IModelItem} item The item to provide buttons for.
-   * @protected
    * @returns {!Array.<Button>}
    */
   getButtons(item) {
@@ -623,7 +622,6 @@ export class ButtonInputMode extends InputModeBase {
   /**
    * Calculate the world location where the tooltip of the button shall be displayed.
    * @param {!Button} button The button whose tooltip shall be displayed.
-   * @private
    * @returns {!Point}
    */
   calculateTooltipLocation(button) {
@@ -644,7 +642,6 @@ export class ButtonInputMode extends InputModeBase {
   /**
    * Calculate the size of tooltip in world coordinates.
    * @param {!string} tooltip The tooltip content.
-   * @private
    * @returns {!Size}
    */
   calculateTooltipWorldSize(tooltip) {
@@ -661,7 +658,6 @@ export class ButtonInputMode extends InputModeBase {
   /**
    * Measures the size of a {@link HTMLDivElement} element containing the provided HTML string.
    * @param {!string} htmlString The content to measure
-   * @private
    * @returns {!Size}
    */
   static measureTooltipSize(htmlString) {
@@ -1187,9 +1183,11 @@ class ButtonDescriptor extends BaseClass(
       FreeLabelModel.INSTANCE.createDynamic(this.dummyLabelLayout)
     )
     this.dummyNode = new SimpleNode()
+    this.dummySourceNode = new SimpleNode()
+    this.dummyTargetNode = new SimpleNode()
     this.dummyEdge = new SimpleEdge({
-      sourcePort: new SimplePort(new SimpleNode()),
-      targetPort: new SimplePort(new SimpleNode())
+      sourcePort: new SimplePort(this.dummySourceNode),
+      targetPort: new SimplePort(this.dummyTargetNode)
     })
     this.dummyBends = []
     this.dummyBendsBackup = []
@@ -1438,13 +1436,11 @@ class ButtonDescriptor extends BaseClass(
 
     const owner = this.button?.owner
     if (owner instanceof INode) {
-      const ownerLayout = owner.layout
-      const topLeftView = canvas.toViewCoordinates(ownerLayout.topLeft)
-      const bottomRightView = canvas.toViewCoordinates(ownerLayout.bottomRight)
-      this.dummyNode.layout = new Rect(topLeftView, bottomRightView)
+      this.dummyNode.layout = this.getViewNodeLayout(owner, canvas)
       return this.dummyNode
     } else if (owner instanceof IEdge) {
       this.dummyEdge.style = owner.style
+      this.dummySourceNode.layout = this.getViewNodeLayout(owner.sourceNode, canvas)
       const sourcePort = this.dummyEdge.sourcePort
       sourcePort.locationParameter = FreeNodePortLocationModel.INSTANCE.createParameter(
         this.dummyEdge.sourcePort.owner,
@@ -1457,6 +1453,7 @@ class ButtonDescriptor extends BaseClass(
         dummyBend.location = canvas.toViewCoordinates(bend.location)
         this.dummyBends.push(dummyBend)
       })
+      this.dummyTargetNode.layout = this.getViewNodeLayout(owner.targetNode, canvas)
       const targetPort = this.dummyEdge.targetPort
       targetPort.locationParameter = FreeNodePortLocationModel.INSTANCE.createParameter(
         this.dummyEdge.targetPort.owner,
@@ -1476,6 +1473,17 @@ class ButtonDescriptor extends BaseClass(
       )
       return this.dummyNode
     }
+  }
+
+  /**
+   * @param {!INode} owner
+   * @param {!CanvasComponent} canvas
+   */
+  getViewNodeLayout(owner, canvas) {
+    const ownerLayout = owner.layout
+    const topLeftView = canvas.toViewCoordinates(ownerLayout.topLeft)
+    const bottomRightView = canvas.toViewCoordinates(ownerLayout.bottomRight)
+    return new Rect(topLeftView, bottomRightView)
   }
 
   updateDummyAngles() {

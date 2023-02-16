@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -48,7 +48,7 @@ export default class WebglBlobVisual extends WebGLVisual {
   }
 
   /**
-   * @yjs:keep=enable
+   * @yjs:keep = enable
    * @param {!IRenderContext} renderContext
    * @param {!WebGLRenderingContext} gl
    */

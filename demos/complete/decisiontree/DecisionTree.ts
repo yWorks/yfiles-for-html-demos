@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -239,7 +239,7 @@ export default class DecisionTree {
    * Expands the successor nodes of the given node.
    * Called when a node in the current layer has been clicked.
    * @param copiedNode The node that has been clicked
-   * @return The new nodes that were added
+   * @returns The new nodes that were added
    */
   expandActiveNode(copiedNode: INode): List<INode> {
     this.currentLayer++
@@ -309,7 +309,7 @@ export default class DecisionTree {
    * Removes all nodes in layers lower than the given node and expands the given node.
    * Called when a node in a layer above the current layer has been clicked.
    * @param copiedNode The node that has been clicked
-   * @return The new nodes that were added
+   * @returns The new nodes that were added
    */
   onHigherNodeClicked(copiedNode: INode): List<INode> {
     // get the layer the clicked node is in
@@ -360,7 +360,7 @@ export default class DecisionTree {
    * If a parent node is specified, the copied node will be assigned to the given parent node.
    * @param originalNode The node to copy
    * @param copiedParent The parent in the decision graph, or null if the node to copy is a top-level node
-   * @return The copied node
+   * @returns The copied node
    */
   copyNode(originalNode: INode, copiedParent: INode | null = null): INode {
     const copiedNode = this.graph.createNode(
@@ -390,7 +390,7 @@ export default class DecisionTree {
    * If a parent node is specified, the copied node will be assigned to the given parent node.
    * @param originalNode The group node to copy
    * @param copiedParent The parent in the decision graph, or null if the node to copy is a top-level node
-   * @return The copied group node
+   * @returns The copied group node
    */
   copyGroupNode(originalNode: INode, copiedParent: INode | null = null): INode {
     const copiedGroupNode = this.graph.createGroupNode(
@@ -420,7 +420,7 @@ export default class DecisionTree {
    * @param originalEdge The edge to copy
    * @param copiedSourceNode The source node in the decision graph
    * @param copiedTargetNode The target node in the decision graph
-   * @return The copied edge
+   * @returns The copied edge
    */
   copyEdge(originalEdge: IEdge, copiedSourceNode: INode, copiedTargetNode: INode): IEdge {
     const originalSourcePort = originalEdge.sourcePort!

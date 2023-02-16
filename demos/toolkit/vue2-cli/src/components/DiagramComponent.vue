@@ -179,7 +179,7 @@ export default {
      * show the latter by using a dynamically compiled Vue component.
      * @param {IModelItem} item
      * @returns {HTMLElement}
-     * @yjs:keep=content
+     * @yjs:keep = content
      */
     createTooltipContent(item) {
       const vueTooltipComponent = Vue.extend(Tooltip)
@@ -248,7 +248,7 @@ export default {
 
     /**
      * Runs a layout in a web worker.
-     * @return {Promise<any>}
+     * @returns {Promise<any>}
      */
     runLayout() {
       // helper function that performs the actual message passing to the web worker

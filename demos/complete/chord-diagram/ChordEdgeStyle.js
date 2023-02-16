@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -249,11 +249,9 @@ export class ChordEdgeStyle extends EdgeStyleBase {
    * update the existing one. Since chord diagrams are generally small, we will make ado
    * with at least checking whether the visualisation for the edge will not change at all and re-create
    * it otherwise.
-   *
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
    * @param {!IEdge} edge
-   * @protected
    * @returns {?Visual}
    */
   updateVisual(context, oldVisual, edge) {
@@ -306,7 +304,6 @@ export class ChordEdgeStyle extends EdgeStyleBase {
    * @param {!ICanvasContext} context
    * @param {!Rect} rectangle
    * @param {!IEdge} edge
-   * @protected
    * @returns {boolean}
    */
   isVisible(context, rectangle, edge) {

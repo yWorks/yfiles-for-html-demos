@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -53,9 +53,6 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the custom style for the given type of node.
-   * @param type
-   * @param stroke
-   * @param fill
    */
   constructor(type?: NodeTypeEnum, stroke?: FillConvertible, fill?: FillConvertible) {
     super()
@@ -199,7 +196,7 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
 
 /**
  * Creates the path for nodes of type "partnership".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createPartnershipPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -212,7 +209,7 @@ function createPartnershipPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "RCTB".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createRctbPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -229,7 +226,7 @@ function createRctbPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "Trapezoid".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createTrapezoidPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -248,7 +245,7 @@ function createTrapezoidPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "Branch".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createBranchPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -258,7 +255,7 @@ function createBranchPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "Disregarded".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createDisregardedPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -273,7 +270,7 @@ function createDisregardedPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "Dual_Resident".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createDualResidentPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -289,7 +286,7 @@ function createDualResidentPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "Multiple_Path".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createMultiplePath(): GeneralPath {
   const gp = new GeneralPath()
@@ -310,7 +307,7 @@ function createMultiplePath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "Trust".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createTrustPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -324,7 +321,7 @@ function createTrustPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "PE_Risk".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createPeRiskPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -334,7 +331,7 @@ function createPeRiskPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "Third_Party".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createThirdPartyPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -370,7 +367,7 @@ function createThirdPartyPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "Corporation".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createCorporationPath(): GeneralPath {
   const gp = new GeneralPath()
@@ -384,7 +381,7 @@ function createCorporationPath(): GeneralPath {
 
 /**
  * Creates the path for nodes of type "CTB".
- * @return The general path the describes this style
+ * @returns The general path the describes this style
  */
 function createCtbPath(): GeneralPath {
   const gp = new GeneralPath()

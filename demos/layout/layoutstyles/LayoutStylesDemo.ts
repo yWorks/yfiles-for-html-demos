@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -176,7 +176,7 @@ async function run(): Promise<void> {
     rootElement: getElementById<HTMLDivElement>('data-presets'),
     optionEditor: optionEditor,
     presetDefs: Presets,
-    onPresetApplied: (): void => applyLayout(false)
+    onPresetApplied: () => applyLayout(false)
   })
 
   // disable UI during initialization
@@ -299,7 +299,7 @@ function createLayoutConfig(normalizedName: string): LayoutConfigurationType {
  * Returns the index of the first option with the given value.
  * @param combobox The combobox to search.
  * @param value The value to match.
- * @return The index of the first option with the given text (ignoring case), or -1 if no
+ * @returns The index of the first option with the given text (ignoring case), or -1 if no
  *   such option exists.
  */
 function getIndexInComboBox(combobox: HTMLSelectElement, value: string): number {
@@ -320,8 +320,8 @@ function initializeComboBox(
   combobox: HTMLSelectElement,
   names: string[] | { label: string; sample: string }[]
 ): void {
-  while (combobox.firstChild) {
-    combobox.removeChild(combobox.firstChild)
+  while (combobox.lastChild) {
+    combobox.removeChild(combobox.lastChild)
   }
 
   for (const entry of names) {
@@ -351,7 +351,7 @@ function initializeComboBox(
  * calculation. This is set to `true` if this method is called directly after
  * loading a new sample graph.
  */
-function applyLayout(clearUndo: boolean): void {
+async function applyLayout(clearUndo: boolean): Promise<void> {
   const config = optionEditor.config as LayoutConfigurationType
 
   if (!config || !configOptionsValid || inLayout) {
@@ -362,7 +362,7 @@ function applyLayout(clearUndo: boolean): void {
   inLayout = true
   setUIDisabled(true)
 
-  config.apply(graphComponent, () => {
+  await config.apply(graphComponent, () => {
     releaseLocks()
     setUIDisabled(false)
     updateUIState()
@@ -447,7 +447,7 @@ async function onLayoutChanged(initSamples = true, appliedPresetId = ''): Promis
       appliedPresetId ? appliedPresetId : presetsStruct.defaultPreset
     )
 
-    applyLayout(!customGraphSelected)
+    await applyLayout(!customGraphSelected)
   }
 }
 
@@ -457,8 +457,8 @@ function updateDescriptionText(config: LayoutConfigurationType): void {
   const layoutTitle = getElementById<HTMLElement>('layout-title')
 
   removeClass(layoutDescriptionContainer, 'highlight-description')
-  while (layoutDescription.firstChild) {
-    layoutDescription.removeChild(layoutDescription.lastChild!)
+  while (layoutDescription.lastChild) {
+    layoutDescription.removeChild(layoutDescription.lastChild)
   }
   layoutTitle.innerHTML = ''
 
@@ -725,7 +725,7 @@ async function onSampleChanged(): Promise<void> {
   const presetsStruct = findPresets(getSelectedAlgorithm(), key)
   presetsUiBuilder.buildUi(presetsStruct, presetsStruct.defaultPreset)
 
-  applyLayout(true)
+  await applyLayout(true)
 }
 
 async function onSampleChangedCore(key: string | null): Promise<void> {
@@ -958,7 +958,7 @@ function addCustomGraphEntry(): void {
 /**
  * Creates the default input mode for the {@link GraphComponent},
  * a {@link GraphEditorInputMode}.
- * @return A new {@link GraphEditorInputMode} instance configured for snapping and
+ * @returns A new {@link GraphEditorInputMode} instance configured for snapping and
  *   orthogonal edge editing
  */
 function createEditorMode(): IInputMode {
@@ -1164,8 +1164,14 @@ function registerCommands(): void {
   bindAction("button[data-command='LayoutCommand']", () => {
     applyLayout(false)
   })
-  bindChangeListener("select[data-command='LayoutSelectionChanged']", () => onLayoutChanged())
-  bindChangeListener("select[data-command='SampleSelectionChanged']", () => onSampleChanged())
+  bindChangeListener("select[data-command='LayoutSelectionChanged']", async () => {
+    await onLayoutChanged()
+    layoutComboBox.focus()
+  })
+  bindChangeListener("select[data-command='SampleSelectionChanged']", async () => {
+    await onSampleChanged()
+    sampleComboBox.focus()
+  })
 
   bindAction("button[data-command='GenerateNodeLabels']", () => {
     onGenerateItemLabels(graphComponent.graph.nodes)
@@ -1267,7 +1273,7 @@ function getCenter(graph: IGraph): Point {
 
 /**
  * Returns a reference to the first element with the specified ID in the current document.
- * @return A reference to the first element with the specified ID in the current document.
+ * @returns A reference to the first element with the specified ID in the current document.
  */
 function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T

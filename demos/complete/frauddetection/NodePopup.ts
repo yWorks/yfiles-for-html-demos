@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -186,9 +186,8 @@ export default class NodePopup {
   }
 
   /**
-   * Retrieve the information from the tag element.
-   * @param tag The tag object from which to retrieve the information.
-   * @return An array of arrays with length = 2 which stores a name and a value for each piece of information.
+   * Retrieve the information from the given tag element.
+   * @returns An array of arrays with length = 2 which stores a name and a value for each piece of information.
    */
   getInfo(tag: {
     info: string | Record<string, string>

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -288,7 +288,7 @@ function removeEventListeners(): void {
  * @param menuLocation The location of the menu
  * @param eventLocation The location of the event
  * @param itemCount The number of menu items
- * @return Returns the index of the item at the given location; -1 if the location is inside the
+ * @returns Returns the index of the item at the given location; -1 if the location is inside the
  *   innerRadius, Number.POSITIVE_INFINITY if the location is outside the outerRadius.
  */
 function getItemIndex(menuLocation: Point, eventLocation: Point, itemCount: number): number {

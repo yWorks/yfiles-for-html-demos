@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -68,6 +68,10 @@ export class GraphDropInputMode extends ItemDropInputMode {
    */
   constructor() {
     super('graph')
+
+    // The latest filtered graph.
+    this.graphWrapper = null
+
     this.itemCreator = this.createGraph.bind(this)
     // The center of the preview graph.
     this.center = Point.ORIGIN
@@ -139,8 +143,15 @@ export class GraphDropInputMode extends ItemDropInputMode {
       targetGraph.groupingSupport.enlargeGroupNode(context, parent, true)
     }
 
+    // dispose any previous created graph instances to avoid memory leaks
+    if (this.graphWrapper) {
+      this.graphWrapper.dispose()
+    }
+
     // return the dropped graph
-    return new FilteredGraphWrapper(targetGraph, node => droppedNodes.has(node))
+    this.graphWrapper = new FilteredGraphWrapper(targetGraph, node => droppedNodes.has(node))
+
+    return this.graphWrapper
   }
 
   /**

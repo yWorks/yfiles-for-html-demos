@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -318,7 +318,6 @@ function adaptGroupNodes(): void {
 
 /**
  * Ensures that the node has geometry and color information present in its tag.
- * @param node
  */
 function ensureNodeTag(node: INode): void {
   if (!node.tag || typeof node.tag !== 'object') {

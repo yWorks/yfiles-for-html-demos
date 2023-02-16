@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -521,10 +521,11 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
+   *
+   * @param {!ILabel} label the label to calculate the geometry for
    * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter.model} property.
-   * @param {!ILabel} label the label to calculate the geometry for
    * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
@@ -1262,10 +1263,10 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
+   * @param {!ILabel} label the label to calculate the geometry for
    * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter.model} property.
-   * @param {!ILabel} label the label to calculate the geometry for
    * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
@@ -1664,8 +1665,8 @@ export class BpmnNodeStyle extends NodeStyleBase {
 
   /**
    * Callback that creates the visual.
-   * @param {!INode} node The node to which this style instance is assigned.
    * @param {!IRenderContext} renderContext The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @returns {?SvgVisual} The visual as required by the {@link IVisualCreator.createVisual}
    *   interface.
    * @see {@link NodeStyleBase.updateVisual}
@@ -1697,9 +1698,9 @@ export class BpmnNodeStyle extends NodeStyleBase {
 
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase.createVisual}.
-   * @param {!INode} node The node to which this style instance is assigned.
    * @param {!IRenderContext} renderContext The render context.
    * @param {!SvgVisual} oldVisual The visual that has been created in the call to {@link
+   * @param {!INode} node The node to which this style instance is assigned.
    *   NodeStyleBase#createVisual}.
    * @returns {?SvgVisual} The visual as required by the {@link IVisualCreator.createVisual}
    *   interface.
@@ -5045,7 +5046,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * These insets are extended by the sizes of the participant bands on top and bottom side
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
    * {@link INodeStyleRenderer.getContext context lookup}.
-   * @return An insets object that describes the insets of the task name band.
+   * @returns An insets object that describes the insets of the task name band.
    * @see {@link INodeInsetsProvider}
    * @type {!Insets}
    */
@@ -5612,9 +5613,9 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @param {!Point} p The point to test.
    * @param {!IInputModeContext} canvasContext The canvas context.
+   * @param {!Point} p The point to test.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @returns {boolean} whether or not the specified node representation is hit.
    */
   isHit(canvasContext, p, node) {
@@ -5678,8 +5679,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * This method is called in response to a {@link IBoundsProvider.getBounds}
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation simply yields the {@link INode.layout}.
-   * @param {!INode} node The node to which this style instance is assigned.
    * @param {!ICanvasContext} canvasContext The canvas context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @returns {!Rect} The visual bounds of the visual representation.
    */
   getBounds(canvasContext, node) {
@@ -6991,7 +6992,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
    * {@link NodeStyleBase.lookup lookup}.
    * @see {@link INodeInsetsProvider}
-   * @return An insets object that describes the insets of node.
+   * @returns An insets object that describes the insets of node.
    * @type {!Insets}
    */
   get insets() {
@@ -7418,8 +7419,8 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
 
   /**
    * Callback that creates the visual.
-   * @param {!IStripe} node The node to which this style instance is assigned.
    * @param {!IRenderContext} renderContext The render context.
+   * @param {!IStripe} node The node to which this style instance is assigned.
    * @returns {?SvgVisual} The visual.
    * @see {@link NodeStyleBase.updateVisual}
    */
@@ -7490,9 +7491,9 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation simply delegates to {@link NodeStyleBase.createVisual} so subclasses
    * should override to improve rendering performance.
-   * @param {!IStripe} node The node to which this style instance is assigned.
    * @param {!IRenderContext} renderContext The render context.
    * @param {!SvgVisualGroup} oldVisual The visual that should be updated.
+   * @param {!IStripe} node The node to which this style instance is assigned.
    * @returns {?SvgVisual} The visual.
    * @see {@link NodeStyleBase.createVisual}
    */
@@ -8068,8 +8069,8 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   /**
    * Determines if something has been hit at the given coordinates
    * in the world coordinate system.
-   * @param {!Point} location the coordinates in world coordinate system
    * @param {!IInputModeContext} context the context the hit test is performed in
+   * @param {!Point} location the coordinates in world coordinate system
    * @param {!ILabel} label the label that might be hit.
    * @returns {boolean} whether something has been hit
    * @see Specified by {@link IHitTestable.isHit}.
@@ -8089,8 +8090,8 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * This method may return `false` if the item cannot be
    * selected using a selection marquee or optionally if the
    * item is only partially contained within the box.
-   * @param {!Rect} box the box describing the marquee's bounds
    * @param {!IInputModeContext} context the current canvas context
+   * @param {!Rect} box the box describing the marquee's bounds
    * @param {!ILabel} label the label.
    * @returns {boolean} `true` if the item is considered to be captured by the marquee
    * @see Specified by {@link IMarqueeTestable.isInBox}.
@@ -8124,8 +8125,8 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
   /**
    * Determines whether an element might intersect the visible region for a given context.
-   * @param {!Rect} clip The visible region clip.
    * @param {!ICanvasContext} context The context to determine the visibility for.
+   * @param {!Rect} clip The visible region clip.
    * @param {!ILabel} label the label.
    * @returns {boolean} `false` if and only if it is safe not to paint the element because
    * it would not affect the given clipping region.
@@ -8481,6 +8482,29 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       insets: this.insets,
       equals: (self, other) => self.left === other.left && self.insets === other.insets
     }
+  }
+
+  /**
+   * @param {!ILabel} label
+   * @param {!Class} type
+   * @returns {*}
+   */
+  lookup(label, type) {
+    // Create an IEditLabelHelper that does nothing except to prevent other helpers from kicking in
+    if (type === IEditLabelHelper.$class && label.owner && label.owner instanceof INode) {
+      return IEditLabelHelper.create({
+        onLabelAdding(evt) {
+          // We should never enter here - calling an IEditLabelHelper for a non-existing label
+          evt.handled = false
+        },
+        onLabelEditing(evt) {
+          // We just claim we have handled the label to prevent the UML node style handler from
+          // kicking in without actually configuring anything
+          evt.handled = true
+        }
+      })
+    }
+    return super.lookup(label, type)
   }
 }
 
@@ -8918,10 +8942,10 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
+   * @param {!ILabel} label the label to calculate the geometry for
    * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter.model} property.
-   * @param {!ILabel} label the label to calculate the geometry for
    * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
@@ -10162,9 +10186,9 @@ export class EventNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @param {!Point} p The point to test.
    * @param {!ICanvasContext} canvasContext The canvas context.
+   * @param {!Point} p The point to test.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @returns {boolean} whether or not the specified node representation is hit.
    */
   isHit(canvasContext, p, node) {
@@ -10195,7 +10219,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
    * through the
    * {@link INodeStyleRenderer.getContext context lookup}.
    * @see {@link INodeInsetsProvider}
-   * @return An insets object that describes the insets of node.
+   * @returns An insets object that describes the insets of node.
    * @type {!Insets}
    */
   get insets() {
@@ -10671,9 +10695,9 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @param {!Point} p The point to test.
    * @param {!ICanvasContext} canvasContext The canvas context.
+   * @param {!Point} p The point to test.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @returns {boolean} whether or not the specified node representation is hit.
    */
   isHit(canvasContext, p, node) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -340,7 +340,6 @@ class BackLoopLayerer extends ConstraintIncrementalLayerer {
    * @param {!LayoutGraph} graph the input graph
    * @param {!ILayers} layers the {@link ILayers} instance that will be filled with the results of the calculation
    * @param {!ILayoutDataProvider} ldp the {@link ILayoutDataProvider} used for querying information about the nodes and edges
-   *
    * @see {@link ILayers.insert}
    * @see {@link ILayer.add}
    * @see Specified by {@link ILayerer.assignLayers}.

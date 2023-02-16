@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -56,7 +56,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
    * Creates the visual representation for the given node.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleSvgNodeStyle.updateVisual}
    */
   createVisual(context: IRenderContext, node: INode): Visual {
@@ -84,7 +84,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
    * @param oldVisual The visual that has been created in the call to
    * {@link SimpleSvgNodeStyle.createVisual}.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleSvgNodeStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): Visual {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -327,7 +327,6 @@ export default class FlowchartConfiguration {
   /**
    * Binds the {@link LayoutCommand} to the {@link runFromScratchLayout} method and the shortcut `L`.
    * @param keyboardInputMode The mode to add the command binding to.
-   * @private
    */
   private addLayoutCommand(keyboardInputMode: KeyboardInputMode) {
     const cb = keyboardInputMode.addCommandBinding(
@@ -400,7 +399,6 @@ export default class FlowchartConfiguration {
    * Creates a {@link WizardAction} to select or change the {@link FlowchartNodeType type} of a node.
    * @param handler The handler actually assigning the chosen flowchart type.
    * @param onlyPicker Whether only the type picker or also the main button shall be used.
-   * @private
    */
   private createChangeFlowchartTypeCore(handler: Handler, onlyPicker: boolean): WizardAction {
     return new WizardAction(
@@ -578,7 +576,6 @@ export default class FlowchartConfiguration {
    * Returns if node has a port at the provided node side.
    * @param node The node to check for ports.
    * @param side The node side to check.
-   * @private
    */
   private hasPortAt(node: INode, side: 'top' | 'bottom' | 'left' | 'right'): boolean {
     for (const port of node.ports) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -112,14 +112,13 @@ export default class RenderingTypesManager {
    * Instantiates the {@link RenderingTypesManager}
    * @param graphComponent the GraphComponent
    * @param svgThreshold the zoom threshold value at which switching between WebGL2 and SVG takes
-   * place
+   *   place
    * @param nodeStyleProvider the style provider for rendering nodes in SVG mode
    * @param webGL2NodeStyleProvider the style provider for rendering nodes in WebGL2 mode
    * @param edgeStyleProvider the style provider for rendering edges in SVG mode
    * @param webGL2EdgeStyleProvider the style provider for rendering edges in SVG mode
    * @param nodeCreator a NodeCreator. Useful if after node generation some more processing (like
-   * adding a tag) is necessary
-   *
+   *   adding a tag) is necessary
    */
   constructor(
     public readonly graphComponent: GraphComponent,
@@ -211,7 +210,7 @@ export default class RenderingTypesManager {
 
   /**
    * Gets the value of the SVG threshold.
-   * @return The value of the SVG threshold.
+   * @returns The value of the SVG threshold.
    */
   get svgThreshold() {
     return this.svgThresholdValue

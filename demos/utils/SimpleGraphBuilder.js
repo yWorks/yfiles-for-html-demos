@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -137,7 +137,7 @@ export class SimpleGraphBuilder {
      Initializes a new instance of the {@link SimpleGraphBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleGraphBuilder.nodesSource}, {@link SimpleGraphBuilder.groupsSource}, and {@link SimpleGraphBuilder.edgesSource} when {@link SimpleGraphBuilder.buildGraph} is called.
      @param graphOrOptions The parameters to pass.
-     @param [graphOrOptions.graph=null]
+     @param [graphOrOptions.graph=null] The graph
      @param [graphOrOptions.lazyNodeDefinition] A value indicating whether or not to automatically create nodes for values returned from {@link SimpleGraphBuilder.sourceNodeBinding} and {@link SimpleGraphBuilder.targetNodeBinding} that don't exist in {@link SimpleGraphBuilder.nodesSource}. This option sets the {@link SimpleGraphBuilder.lazyNodeDefinition} property on the created object.
      @param [graphOrOptions.nodesSource] The objects to be represented as nodes of the {@link SimpleGraphBuilder.graph}. This option sets the {@link SimpleGraphBuilder.nodesSource} property on the created object.
      @param [graphOrOptions.edgesSource] The objects to be represented as edges of the {@link SimpleGraphBuilder.graph}. This option sets the {@link SimpleGraphBuilder.edgesSource} property on the created object.
@@ -153,7 +153,8 @@ export class SimpleGraphBuilder {
      @param [graphOrOptions.groupLabelBinding] A binding that maps a group object to a label. This option sets the {@link SimpleGraphBuilder.groupLabelBinding} property on the created object.
      @param [graphOrOptions.parentGroupBinding] A binding that maps group objects to their containing groups. This option sets the {@link SimpleGraphBuilder.parentGroupBinding} property on the created object.
      @param [graphOrOptions.locationXBinding] The binding for determining a node's position on the x-axis. This option sets the {@link SimpleGraphBuilder.locationXBinding} property on the created object.
-     @param [graphOrOptions.locationYBinding] The binding for determining a node's position on the y-axis. This option sets the {@link SimpleGraphBuilder.locationYBinding} property on the created object. * @param {?(IGraph|GraphBuilderOptionArgs)} [graphOrOptions]
+     @param [graphOrOptions.locationYBinding] The binding for determining a node's position on the y-axis. This option sets the {@link SimpleGraphBuilder.locationYBinding} property on the created object.
+     * @param {?(IGraph|GraphBuilderOptionArgs)} [graphOrOptions]
   */
   constructor(graphOrOptions) {
     let options = null
@@ -379,7 +380,8 @@ export class SimpleGraphBuilder {
      @param {?INode} target The target node for the edge.
      @param {*} labelData The optional label data of the edge if an {@link SimpleGraphBuilder.edgeLabelBinding} is specified.
      @param {*} edgeObject The object from {@link SimpleGraphBuilder.edgesSource} from which to create the edge.
-     @returns {?IEdge} The created edge. */
+     @returns {?IEdge} The created edge.
+     */
   createEdge(graph, source, target, labelData, edgeObject) {
     return this.$graphBuilderHelper.createEdge(graph, source, target, labelData, edgeObject)
   }
@@ -395,7 +397,8 @@ export class SimpleGraphBuilder {
      @param {!IGraph} graph The graph in which to create the group node.
      @param {*} labelData The optional label data of the group node if an {@link SimpleGraphBuilder.groupLabelBinding} is specified.
      @param {*} groupObject The object from {@link SimpleGraphBuilder.groupsSource} from which to create the group node.
-     @returns {!INode} The created group node. */
+     @returns {!INode} The created group node.
+     */
   createGroupNode(graph, labelData, groupObject) {
     return this.$graphBuilderHelper.createGroupNode(graph, labelData, groupObject)
   }
@@ -413,7 +416,8 @@ export class SimpleGraphBuilder {
      @param {!Point} location The location of the node.
      @param {*} labelData The optional label data of the node if an {@link SimpleGraphBuilder.nodeLabelBinding} is specified.
      @param {*} nodeObject The object from {@link SimpleGraphBuilder.nodesSource} from which to create the node.
-     @returns {!INode} The created node. */
+     @returns {!INode} The created node.
+     */
   createNode(graph, parent, location, labelData, nodeObject) {
     return this.$graphBuilderHelper.createNode(graph, parent, location, labelData, nodeObject)
   }
@@ -424,7 +428,8 @@ export class SimpleGraphBuilder {
      @returns {*} The object from which the graph item has been created.
      @see SimpleGraphBuilder#getNode
      @see SimpleGraphBuilder#getEdge
-     @see SimpleGraphBuilder#getGroup */
+     @see SimpleGraphBuilder#getGroup
+     */
   getBusinessObject(item) {
     return this.$graphBuilderHelper.getBusinessObject(item)
   }
@@ -436,7 +441,8 @@ export class SimpleGraphBuilder {
      if `businessObject` is new since the last call to {@link SimpleGraphBuilder.updateGraph}.
      @see SimpleGraphBuilder#getNode
      @see SimpleGraphBuilder#getGroup
-     @see SimpleGraphBuilder#getBusinessObject */
+     @see SimpleGraphBuilder#getBusinessObject
+     */
   getEdge(businessObject) {
     return this.$graphBuilderHelper.getEdge(businessObject)
   }
@@ -448,7 +454,8 @@ export class SimpleGraphBuilder {
      happen if `groupObject` is new since the last call to {@link SimpleGraphBuilder.updateGraph}.
      @see SimpleGraphBuilder#getNode
      @see SimpleGraphBuilder#getEdge
-     @see SimpleGraphBuilder#getBusinessObject */
+     @see SimpleGraphBuilder#getBusinessObject
+     */
   getGroup(groupObject) {
     return this.$graphBuilderHelper.getGroup(groupObject)
   }
@@ -474,7 +481,8 @@ export class SimpleGraphBuilder {
      @param {!IGraph} graph The edge's containing graph.
      @param {!IEdge} edge The edge to update.
      @param {*} labelData The optional label data of the edge if an {@link SimpleGraphBuilder.edgeLabelBinding} is specified.
-     @param {*} edgeObject The object from {@link SimpleGraphBuilder.edgesSource} from which the edge has been created. */
+     @param {*} edgeObject The object from {@link SimpleGraphBuilder.edgesSource} from which the edge has been created.
+     */
   updateEdge(graph, edge, labelData, edgeObject) {
     this.$graphBuilderHelper.updateEdge(graph, edge, labelData, edgeObject)
   }
@@ -488,7 +496,8 @@ export class SimpleGraphBuilder {
      @param {!IGraph} graph The group node's containing graph.
      @param {!INode} groupNode The group node to update.
      @param {*} labelData The optional label data of the group node if an {@link SimpleGraphBuilder.groupLabelBinding} is specified.
-     @param {*} groupObject The object from {@link SimpleGraphBuilder.groupsSource} from which the group node has been created. */
+     @param {*} groupObject The object from {@link SimpleGraphBuilder.groupsSource} from which the group node has been created.
+     */
   updateGroupNode(graph, groupNode, labelData, groupObject) {
     this.$graphBuilderHelper.updateGroupNode(graph, groupNode, labelData, groupObject)
   }
@@ -504,14 +513,16 @@ export class SimpleGraphBuilder {
      @param {?INode} parent The node's parent node.
      @param {!Point} location The location of the node.
      @param {*} labelData The optional label data of the node if an {@link SimpleGraphBuilder.nodeLabelBinding} is specified.
-     @param {*} nodeObject The object from {@link SimpleGraphBuilder.nodesSource} from which the node has been created. */
+     @param {*} nodeObject The object from {@link SimpleGraphBuilder.nodesSource} from which the node has been created.
+     */
   updateNode(graph, node, parent, location, labelData, nodeObject) {
     this.$graphBuilderHelper.updateNode(graph, node, parent, location, labelData, nodeObject)
   }
 
   /**
-     Gets the {@link IGraph graph} used by this class. * @type {!IGraph}
-  */
+   * Gets the {@link IGraph graph} used by this class.
+   * @type {!IGraph}
+   */
   get graph() {
     return this.$graphBuilder.graph
   }
@@ -538,8 +549,9 @@ export class SimpleGraphBuilder {
   }
 
   /**
-     Gets or sets the objects to be represented as nodes of the {@link SimpleGraphBuilder.graph}. * @type {*}
-  */
+   * Gets or sets the objects to be represented as nodes of the {@link SimpleGraphBuilder.graph}.
+   * @type {*}
+   */
   get nodesSource() {
     return this.$nodesSource
   }
@@ -552,8 +564,9 @@ export class SimpleGraphBuilder {
   }
 
   /**
-     Gets or sets the objects to be represented as edges of the {@link SimpleGraphBuilder.graph}. * @type {*}
-  */
+   * Gets or sets the objects to be represented as edges of the {@link SimpleGraphBuilder.graph}.
+   * @type {*}
+   */
   get edgesSource() {
     return this.$edgesSource
   }
@@ -566,8 +579,9 @@ export class SimpleGraphBuilder {
   }
 
   /**
-     Gets or sets the objects to be represented as group nodes of the {@link SimpleGraphBuilder.graph}. * @type {*}
-  */
+   * Gets or sets the objects to be represented as group nodes of the {@link SimpleGraphBuilder.graph}.
+   * @type {*}
+   */
   get groupsSource() {
     return this.$groupsSource
   }
@@ -642,7 +656,8 @@ export class SimpleGraphBuilder {
      is set to the business object, too.
 
      Returning `null` from the binding will not create a label for that node.
-     @see SimpleGraphBuilder#nodesSource * @type {*}
+     @see SimpleGraphBuilder#nodesSource
+     * @type {*}
   */
   get nodeLabelBinding() {
     return this.$graphBuilderHelper.nodeLabelBinding
@@ -667,7 +682,8 @@ export class SimpleGraphBuilder {
      is set to the business object, too.
      @see SimpleGraphBuilder#nodesSource
      @see SimpleGraphBuilder#groupsSource
-     @see SimpleGraphBuilder#groupIdBinding * @type {*}
+     @see SimpleGraphBuilder#groupIdBinding
+     * @type {*}
   */
   get groupBinding() {
     return this.$graphBuilderHelper.groupBinding
@@ -690,7 +706,8 @@ export class SimpleGraphBuilder {
      recursively. A function is called with the business object to convert as first and only parameter, and the function's `this`
      is set to the business object, too.
      Returning `null` from the binding will not create a label for that edge.
-     @see SimpleGraphBuilder#edgesSource * @type {*}
+     @see SimpleGraphBuilder#edgesSource
+     * @type {*}
   */
   get edgeLabelBinding() {
     return this.$graphBuilderHelper.edgeLabelBinding
@@ -714,7 +731,8 @@ export class SimpleGraphBuilder {
      @see SimpleGraphBuilder#nodesSource
      @see SimpleGraphBuilder#targetNodeBinding
      @see SimpleGraphBuilder#nodeIdBinding
-     @see SimpleGraphBuilder#lazyNodeDefinition * @type {*}
+     @see SimpleGraphBuilder#lazyNodeDefinition
+     * @type {*}
   */
   get sourceNodeBinding() {
     return this.$sourceNodeBinding
@@ -738,7 +756,8 @@ export class SimpleGraphBuilder {
      @see SimpleGraphBuilder#nodesSource
      @see SimpleGraphBuilder#sourceNodeBinding
      @see SimpleGraphBuilder#nodeIdBinding
-     @see SimpleGraphBuilder#lazyNodeDefinition * @type {*}
+     @see SimpleGraphBuilder#lazyNodeDefinition
+     * @type {*}
   */
   get targetNodeBinding() {
     return this.$targetNodeBinding
@@ -764,7 +783,8 @@ export class SimpleGraphBuilder {
      built the graph once.
      @see SimpleGraphBuilder#groupsSource
      @see SimpleGraphBuilder#groupBinding
-     @see SimpleGraphBuilder#parentGroupBinding * @type {*}
+     @see SimpleGraphBuilder#parentGroupBinding
+     * @type {*}
   */
   get groupIdBinding() {
     return this.$graphBuilderHelper.groupIdBinding
@@ -786,7 +806,8 @@ export class SimpleGraphBuilder {
      Returning `null` from the binding will not create a label for that group node.
      The binding can either be a plain JavaScript function, a String, `null`, or an array which contains the same types
      recursively. Functions will be called with both `this` and the first and only argument as the value to convert.
-     @see SimpleGraphBuilder#groupsSource * @type {*}
+     @see SimpleGraphBuilder#groupsSource
+     * @type {*}
   */
   get groupLabelBinding() {
     return this.$graphBuilderHelper.groupLabelBinding
@@ -808,7 +829,8 @@ export class SimpleGraphBuilder {
      recursively. A function is called with the business object to convert as first and only parameter, and the function's `this`
      is set to the business object, too.
      @see SimpleGraphBuilder#groupsSource
-     @see SimpleGraphBuilder#groupIdBinding * @type {*}
+     @see SimpleGraphBuilder#groupIdBinding
+     * @type {*}
   */
   get parentGroupBinding() {
     return this.$graphBuilderHelper.parentGroupBinding
@@ -827,7 +849,8 @@ export class SimpleGraphBuilder {
      The binding can either be a plain JavaScript function, a String, `null`, or an array which contains the same types
      recursively. A function is called with the business object to convert as first and only parameter, and the function's `this`
      is set to the business object, too.
-     @see SimpleGraphBuilder#nodesSource * @type {*}
+     @see SimpleGraphBuilder#nodesSource
+     * @type {*}
   */
   get locationXBinding() {
     return this.$graphBuilderHelper.locationXBinding
@@ -846,7 +869,8 @@ export class SimpleGraphBuilder {
      The binding can either be a plain JavaScript function, a String, `null`, or an array which contains the same types
      recursively. A function is called with the business object to convert as first and only parameter, and the function's `this`
      is set to the business object, too.
-     @see SimpleGraphBuilder#nodesSource * @type {*}
+     @see SimpleGraphBuilder#nodesSource
+     * @type {*}
   */
   get locationYBinding() {
     return this.$graphBuilderHelper.locationYBinding
@@ -866,7 +890,8 @@ export class SimpleGraphBuilder {
      when there are new items in {@link SimpleGraphBuilder.nodesSource}.
      @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleGraphBuilder#addNodeUpdatedListener
-     @see SimpleGraphBuilder#removeNodeCreatedListener */
+     @see SimpleGraphBuilder#removeNodeCreatedListener
+     */
   addNodeCreatedListener(listener) {
     this.$graphBuilderHelper.addNodeCreatedListener(listener)
   }
@@ -878,7 +903,8 @@ export class SimpleGraphBuilder {
      when there are new items in {@link SimpleGraphBuilder.nodesSource}.
      @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addNodeUpdatedListener
-     @see SimpleGraphBuilder#addNodeCreatedListener */
+     @see SimpleGraphBuilder#addNodeCreatedListener
+     */
   removeNodeCreatedListener(listener) {
     this.$graphBuilderHelper.removeNodeCreatedListener(listener)
   }
@@ -891,7 +917,8 @@ export class SimpleGraphBuilder {
      in {@link SimpleGraphBuilder.nodesSource} since the last call to {@link SimpleGraphBuilder.buildGraph} or {@link SimpleGraphBuilder.updateGraph}.
      @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleGraphBuilder#addNodeCreatedListener
-     @see SimpleGraphBuilder#removeNodeUpdatedListener */
+     @see SimpleGraphBuilder#removeNodeUpdatedListener
+     */
   addNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.addNodeUpdatedListener(listener)
   }
@@ -904,7 +931,8 @@ export class SimpleGraphBuilder {
      in {@link SimpleGraphBuilder.nodesSource} since the last call to {@link SimpleGraphBuilder.buildGraph} or {@link SimpleGraphBuilder.updateGraph}.
      @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addNodeCreatedListener
-     @see SimpleGraphBuilder#addNodeUpdatedListener */
+     @see SimpleGraphBuilder#addNodeUpdatedListener
+     */
   removeNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.removeNodeUpdatedListener(listener)
   }
@@ -916,7 +944,8 @@ export class SimpleGraphBuilder {
      when there are new items in {@link SimpleGraphBuilder.edgesSource}.
      @param {!SimpleEdgeListener} listener The listener to add.
      @see SimpleGraphBuilder#addEdgeUpdatedListener
-     @see SimpleGraphBuilder#removeEdgeCreatedListener */
+     @see SimpleGraphBuilder#removeEdgeCreatedListener
+     */
   addEdgeCreatedListener(listener) {
     this.$graphBuilderHelper.addEdgeCreatedListener(listener)
   }
@@ -928,7 +957,8 @@ export class SimpleGraphBuilder {
      when there are new items in {@link SimpleGraphBuilder.edgesSource}.
      @param {!SimpleEdgeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addEdgeUpdatedListener
-     @see SimpleGraphBuilder#addEdgeCreatedListener */
+     @see SimpleGraphBuilder#addEdgeCreatedListener
+     */
   removeEdgeCreatedListener(listener) {
     this.$graphBuilderHelper.removeEdgeCreatedListener(listener)
   }
@@ -941,7 +971,8 @@ export class SimpleGraphBuilder {
      in {@link SimpleGraphBuilder.edgesSource} since the last call to {@link SimpleGraphBuilder.buildGraph} or {@link SimpleGraphBuilder.updateGraph}.
      @param {!SimpleEdgeListener} listener The listener to add.
      @see SimpleGraphBuilder#addEdgeCreatedListener
-     @see SimpleGraphBuilder#removeEdgeUpdatedListener */
+     @see SimpleGraphBuilder#removeEdgeUpdatedListener
+     */
   addEdgeUpdatedListener(listener) {
     this.$graphBuilderHelper.addEdgeUpdatedListener(listener)
   }
@@ -954,7 +985,8 @@ export class SimpleGraphBuilder {
      in {@link SimpleGraphBuilder.edgesSource} since the last call to {@link SimpleGraphBuilder.buildGraph} or {@link SimpleGraphBuilder.updateGraph}.
      @param {!SimpleEdgeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addEdgeCreatedListener
-     @see SimpleGraphBuilder#addEdgeUpdatedListener */
+     @see SimpleGraphBuilder#addEdgeUpdatedListener
+     */
   removeEdgeUpdatedListener(listener) {
     this.$graphBuilderHelper.removeEdgeUpdatedListener(listener)
   }
@@ -966,7 +998,8 @@ export class SimpleGraphBuilder {
      calling {@link SimpleGraphBuilder.updateGraph} when there are new items in {@link SimpleGraphBuilder.groupsSource}.
      @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleGraphBuilder#addGroupNodeUpdatedListener
-     @see SimpleGraphBuilder#removeGroupNodeCreatedListener */
+     @see SimpleGraphBuilder#removeGroupNodeCreatedListener
+     */
   addGroupNodeCreatedListener(listener) {
     this.$graphBuilderHelper.addGroupNodeCreatedListener(listener)
   }
@@ -978,7 +1011,8 @@ export class SimpleGraphBuilder {
      calling {@link SimpleGraphBuilder.updateGraph} when there are new items in {@link SimpleGraphBuilder.groupsSource}.
      @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addGroupNodeUpdatedListener
-     @see SimpleGraphBuilder#addGroupNodeCreatedListener */
+     @see SimpleGraphBuilder#addGroupNodeCreatedListener
+     */
   removeGroupNodeCreatedListener(listener) {
     this.$graphBuilderHelper.removeGroupNodeCreatedListener(listener)
   }
@@ -991,7 +1025,8 @@ export class SimpleGraphBuilder {
      anew in {@link SimpleGraphBuilder.groupsSource} since the last call to {@link SimpleGraphBuilder.buildGraph} or {@link SimpleGraphBuilder.updateGraph}.
      @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleGraphBuilder#addGroupNodeCreatedListener
-     @see SimpleGraphBuilder#removeGroupNodeUpdatedListener */
+     @see SimpleGraphBuilder#removeGroupNodeUpdatedListener
+     */
   addGroupNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.addGroupNodeUpdatedListener(listener)
   }
@@ -1004,7 +1039,8 @@ export class SimpleGraphBuilder {
      anew in {@link SimpleGraphBuilder.groupsSource} since the last call to {@link SimpleGraphBuilder.buildGraph} or {@link SimpleGraphBuilder.updateGraph}.
      @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addGroupNodeCreatedListener
-     @see SimpleGraphBuilder#addGroupNodeUpdatedListener */
+     @see SimpleGraphBuilder#addGroupNodeUpdatedListener
+     */
   removeGroupNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.removeGroupNodeUpdatedListener(listener)
   }
@@ -1015,7 +1051,8 @@ export class SimpleGraphBuilderItemEventArgs extends ItemEventArgs {
      Creates a new instance of the {@link SimpleGraphBuilderItemEventArgs} class with the given graph, item, and source object.
      @param {!IGraph} graph The graph that can be used to modify `item`.
      @param {!TItem} item The item created from `itemData`.
-     @param {!TSourceObject} sourceObject The object `item` was created from. */
+     @param {!TSourceObject} sourceObject The object `item` was created from.
+     */
   constructor(graph, item, sourceObject) {
     super(item)
     // Gets the graph that can be used to modify the {@link ItemEventArgs.item}.
@@ -1312,7 +1349,7 @@ export class SimpleTreeBuilder {
      Initializes a new instance of the {@link SimpleTreeBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleTreeBuilder.nodesSource} and {@link SimpleTreeBuilder.groupsSource} when {@link SimpleTreeBuilder.buildGraph} is called.
      @param graphOrOptions The parameters to pass.
-     @param [graphOrOptions.graph=null]
+     @param [graphOrOptions.graph=null] The graph.
      @param [graphOrOptions.nodesSource] The objects to be represented as nodes of the {@link SimpleTreeBuilder.graph}. This option sets the {@link SimpleTreeBuilder.nodesSource} property on the created object.
      @param [graphOrOptions.groupsSource] The objects to be represented as group nodes of the {@link SimpleTreeBuilder.graph}. This option sets the {@link SimpleTreeBuilder.groupsSource} property on the created object.
      @param [graphOrOptions.idBinding] A binding that maps node objects to their identifier. This option sets the {@link SimpleTreeBuilder.idBinding} property on the created object.
@@ -2171,7 +2208,7 @@ export class SimpleTreeBuilder {
  {@link SimpleGraphBuilder}.
 
  The different graph builders are discussed in the section {@link https://docs.yworks.com/yfileshtml/#/dguide/graph_builder Creating a Graph from Business Data}. Class
- {@link AdjacentNodesGraphBuilder}, in particular, is topic of section {@link https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacentNodesGraphBuilder AdjacentNodesGraphBuilder}.
+ {@link AdjacencyGraphBuilder}, in particular, is topic of section {@link https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder AdjacencyGraphBuilder}.
 
  @see {@link SimpleGraphBuilder}
  @see {@link SimpleTreeBuilder}
@@ -2184,7 +2221,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      is called.
 
      @param graphOrOptions The parameters to pass.
-     @param [graphOrOptions.graph=null]
+     @param [graphOrOptions.graph=null] The graph.
      @param [graphOrOptions.nodesSource] The objects to be represented as nodes of the {@link SimpleAdjacentNodesGraphBuilder.graph}. This option sets the {@link SimpleAdjacentNodesGraphBuilder.nodesSource} property on the created object.
      @param [graphOrOptions.groupsSource] The objects to be represented as group nodes of the {@link SimpleAdjacentNodesGraphBuilder.graph}. This option sets the {@link SimpleAdjacentNodesGraphBuilder.groupsSource} property on the created object.
      @param [graphOrOptions.nodeIdBinding] A binding that maps node objects to their identifier. This option sets the {@link SimpleAdjacentNodesGraphBuilder.nodeIdBinding} property on the created object.

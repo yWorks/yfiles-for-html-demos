@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -393,7 +393,7 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Return the size of this node considering the associated UML data.
    * @param node The node of which the size should be determined.
-   * @return The preferred size of this node.
+   * @returns The preferred size of this node.
    */
   getPreferredSize(node: INode): Size {
     const data = this.$model
@@ -452,9 +452,8 @@ export class UMLNodeStyle extends NodeStyleBase {
    * Adjusts the height of the given node to fit the UML data.
    * @param node The node whose size should be adjusted.
    * @param geim The responsible input mode.
-   * @private
    */
-  fitHeight(node: INode, geim: GraphEditorInputMode): void {
+  private fitHeight(node: INode, geim: GraphEditorInputMode): void {
     const layout = node.layout
     const newSize = this.getPreferredSize(node)
     // GEIM's setNodeLayout handles affected orthogonal edges automatically
@@ -532,9 +531,8 @@ export class UMLNodeStyle extends NodeStyleBase {
    * @param evt The event args with which the edit label was triggered.
    * @param node The node whose label should be edited.
    * @param adding Whether a new label is added or an existing one should be edited.
-   * @private
    */
-  async editLabel(
+  private async editLabel(
     evt: LabelEditingEventArgs,
     node: INode,
     adding: boolean
@@ -720,9 +718,8 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Triggers interactive label adding.
    * @param category 1 represents the attributes section, 2 represents the operations section
-   * @private
    */
-  addLabel(category: number, geim: GraphEditorInputMode, node: INode): void {
+  private addLabel(category: number, geim: GraphEditorInputMode, node: INode): void {
     const data = this.$model
     data.selectedCategory = category
     if (category === 1) {
@@ -742,9 +739,8 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Removes the selected label from the node.
    * @param category 1 represents the attributes section, 2 represents the operations section
-   * @private
    */
-  removeLabel(category: number, geim: GraphEditorInputMode, node: INode) {
+  private removeLabel(category: number, geim: GraphEditorInputMode, node: INode) {
     const data = this.$model
     const oldData = data.clone()
     data.selectedCategory = category
@@ -766,9 +762,8 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Toggles the open/closed state of the attributes or operations section.
    * @param category 1 represents the attributes section, 2 represents the operations section
-   * @private
    */
-  toggleOpenState(category: number, geim: GraphEditorInputMode, node: INode) {
+  private toggleOpenState(category: number, geim: GraphEditorInputMode, node: INode) {
     const data = this.$model
     if (category === 1) {
       data.attributesOpen = !data.attributesOpen
@@ -786,9 +781,8 @@ export class UMLNodeStyle extends NodeStyleBase {
    * @param node The node whose data is changed.
    * @param newData The new data.
    * @param oldData The previous data.
-   * @private
    */
-  handleUndo(
+  private handleUndo(
     geim: GraphEditorInputMode,
     node: INode,
     newData: UMLClassModel,
@@ -814,9 +808,13 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Helper function to return the relative layout of a given slot index. A negative index indicates the class header
    * area.
-   * @private
    */
-  getRelativeSlotLayout(slot: number, node: INode, isAdding: boolean, category: number): Rect {
+  private getRelativeSlotLayout(
+    slot: number,
+    node: INode,
+    isAdding: boolean,
+    category: number
+  ): Rect {
     const data = this.$model
     const layout = node.layout
 
@@ -846,9 +844,8 @@ export class UMLNodeStyle extends NodeStyleBase {
 
   /**
    * Helper function to add the control buttons.
-   * @private
    */
-  addControls(
+  private addControls(
     ctx: IRenderContext,
     container: Element,
     nodeLayout: IRectangle,
@@ -904,9 +901,8 @@ export class UMLNodeStyle extends NodeStyleBase {
 
   /**
    * Helper method to initialize the dummy styles and label models that are used to build the UML node style.
-   * @private
    */
-  initializeStyles(): void {
+  private initializeStyles(): void {
     this.dummyNode = new SimpleNode()
     this.dummyNode.style = new ShapeNodeStyle({
       stroke: new Stroke({
@@ -994,7 +990,6 @@ export class UMLNodeStyle extends NodeStyleBase {
 
 /**
  * Helper function to obtain the visual creator of the item.
- * @private
  */
 function getCreator(item: INode | ILabel, itemStyle?: INodeStyle | ILabelStyle): IVisualCreator {
   if (item instanceof INode) {

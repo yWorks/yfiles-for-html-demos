@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -346,7 +346,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
 
   /**
    * Updates which actions are active as well as the buttons and legend for these actions.
-   * @private
    */
   updateActiveActions() {
     if (this._isHandlingAction) {
@@ -367,7 +366,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
 
   /**
    * Updates the legend with the descriptions of the active actions.
-   * @private
    */
   updateLegend() {
     if (this._legendDiv) {
@@ -390,7 +388,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
 
   /**
    * Clears the given {@link HTMLDivElement} and sets its visibility to the given state.
-   * @private
    * @param {!HTMLDivElement} legendDiv
    * @param {boolean} visible
    */
@@ -403,7 +400,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * Handle mouse, keyboard and custom {@link WizardEventArgs wizard} events.
    * @param {!object} source The source that dispatched the event.
    * @param {!EventArgs} e The arguments of the event.
-   * @private
    * @returns {!Promise}
    */
   handleEvent(source, e) {
@@ -479,7 +475,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * the next picker button in arrow direction gets focused.
    * @param {!EventArgs} e The event to check.
    * @returns {boolean} Whether the picker button focus was moved.
-   * @private
    */
   tryMovePickerButtonFocus(e) {
     if (
@@ -597,7 +592,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * action that has {@link WizardAction.buttonOptions}.
    * @param {!ButtonInputMode} sender The {@link ButtonInputMode} handling the added buttons.
    * @param {!QueryButtonsEvent} evt The event to add the buttons to.
-   * @private
    */
   queryButtons(sender, evt) {
     if (this.pickerSelectionAction) {
@@ -668,7 +662,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * Adds the picker buttons for action to the {@link QueryButtonsEvent}.
    * @param {!WizardAction} action the action to add buttons for.
    * @param {!QueryButtonsEvent} evt The event to add the buttons to.
-   * @private
    */
   addPickerSelectionButtons(action, evt) {
     const parentOptions = action.buttonOptions
@@ -698,7 +691,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
 
   /**
    * Hides picker buttons and resolves the promise that was returned by {@link showPickerSelection}.
-   * @private
    * @param {boolean} success `true`, if a picker button was selected, or `false`, if the picker
    * selection was canceled.
    */
@@ -717,7 +709,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * Add button for the action.
    * @param {!WizardAction} action The action to the button for.
    * @param {!QueryButtonsEvent} evt The event to add the buttons to.
-   * @private
    */
   addSelfPlacedButton(action, evt) {
     // only add button if not only picker buttons shall be added
@@ -740,7 +731,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * Returns a {@link ButtonActionListener} that either {@link togglePickerButtons toggles the picker buttons}
    * if the action has those or just calls the {@link createDefaultButtonHandler default action} handler.
    * @param {!WizardAction} action The action to create the button handling for.
-   * @private
    * @returns {!ButtonActionListener}
    */
   createWizardActionHandler(action) {
@@ -754,7 +744,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
   /**
    * Returns a {@link ButtonActionListener} that calls {@link handleAction} for the given action.
    * @param {!WizardAction} action The action to create the button handling for.
-   * @private
    * @returns {!ButtonActionListener}
    */
   createDefaultButtonHandler(action) {
@@ -780,7 +769,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * @param {!function} getShortcuts A callback providing the shortcuts for the {@link ButtonOptions} at a
    * specified index.
    * @param {!QueryButtonsEvent} evt The event to add the buttons to.
-   * @private
    */
   addAutoPlacedButtons(
     options,
@@ -890,7 +878,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * @param {!Button} button The button to store.
    * @param {number} index The index of the button which is used to calculate its row and column indices.
    * @param {number} columnCount The count of columns the pickerButtons array should use.
-   * @private
    */
   setPickerButton(button, index, columnCount) {
     const row = Math.floor(index / columnCount)
@@ -911,7 +898,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * @param {number} index The index of this picker button of all picker buttons for this action.
    * @param {number} cols The count of the columns of the picker button grid.
    * @param {!Array.<number>} sizes The heights for a column layout, the widths for a row layout or an empty array for a grid layout.
-   * @private
    * @returns {!ILabelModelParameter}
    */
   getAutoPlacedButtonLayout(pickerLayout, relativeLayout, parentButtonSize, index, cols, sizes) {
@@ -1078,7 +1064,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
 
   /**
    * Clears the active actions.
-   * @private
    */
   clear() {
     this.cleanupActiveAction()

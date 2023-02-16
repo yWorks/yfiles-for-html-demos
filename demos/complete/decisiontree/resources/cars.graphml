@@ -2,7 +2,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.5.
-     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -48,7 +48,7 @@
 		<node id="n0">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Which car suits you?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -85,7 +85,7 @@
 		<node id="n1">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Fairly low income]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -117,7 +117,7 @@
 		<node id="n2">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Fairly high income]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -149,7 +149,7 @@
 		<node id="n3">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Very high income]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -181,7 +181,7 @@
 		<node id="n4">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Normal income]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -213,7 +213,7 @@
 		<node id="n5">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text>Microcar</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -235,7 +235,7 @@
 		<node id="n6">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text>Compact</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -262,7 +262,7 @@
 		<node id="n7">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text>Minivan</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -289,7 +289,7 @@
 		<node id="n8">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text>SUV</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -311,7 +311,7 @@
 		<node id="n9">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Sports Car]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -328,7 +328,7 @@
 		<node id="n10">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text>Van</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -345,7 +345,7 @@
 		<node id="n11">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text>Roadster</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -367,7 +367,7 @@
 		<node id="n12">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Compact MPV]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -394,7 +394,7 @@
 		<node id="n13">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Luxury Car]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -416,7 +416,7 @@
 		<node id="n14">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Mini SUV]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -433,7 +433,7 @@
 		<node id="n15">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text>Sedan</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -455,7 +455,7 @@
 		<node id="n16">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[City Car]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -477,7 +477,7 @@
 		<node id="n17">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[No Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -504,7 +504,7 @@
 		<node id="n18">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[1-2 Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -531,7 +531,7 @@
 		<node id="n19">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[More than 2 Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -553,7 +553,7 @@
 		<node id="n20">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[No Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -580,7 +580,7 @@
 		<node id="n21">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[1-2 Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -607,7 +607,7 @@
 		<node id="n22">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[More than 2 Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -634,7 +634,7 @@
 		<node id="n23">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[No Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -661,7 +661,7 @@
 		<node id="n24">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[1-2 Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -688,7 +688,7 @@
 		<node id="n25">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[More than 2 Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -715,7 +715,7 @@
 		<node id="n26">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[No Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -742,7 +742,7 @@
 		<node id="n27">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[1-2 Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -764,7 +764,7 @@
 		<node id="n28">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[More than 2 Kids]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -786,7 +786,7 @@
 		<node id="n29">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -808,7 +808,7 @@
 		<node id="n30">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -830,7 +830,7 @@
 		<node id="n31">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -852,7 +852,7 @@
 		<node id="n32">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -874,7 +874,7 @@
 		<node id="n33">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -896,7 +896,7 @@
 		<node id="n34">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -918,7 +918,7 @@
 		<node id="n35">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -940,7 +940,7 @@
 		<node id="n36">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -962,7 +962,7 @@
 		<node id="n37">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -984,7 +984,7 @@
 		<node id="n38">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1006,7 +1006,7 @@
 		<node id="n39">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1033,7 +1033,7 @@
 		<node id="n40">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1055,7 +1055,7 @@
 		<node id="n41">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Low income]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1077,7 +1077,7 @@
 		<node id="n42">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Sporty Driving?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1099,7 +1099,7 @@
 		<node id="n43">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Relaxed Driving?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1121,7 +1121,7 @@
 		<node id="n44">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1148,7 +1148,7 @@
 		<node id="n45">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1175,7 +1175,7 @@
 		<node id="n46">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1197,7 +1197,7 @@
 		<node id="n47">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1219,7 +1219,7 @@
 		<node id="n48">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend much on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1241,7 +1241,7 @@
 		<node id="n49">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Spend little on car?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1263,7 +1263,7 @@
 		<node id="n50">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Sporty Driving?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1285,7 +1285,7 @@
 		<node id="n51">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Relaxed Driving?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1307,7 +1307,7 @@
 		<node id="n52">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Sporty Driving?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1329,7 +1329,7 @@
 		<node id="n53">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Relaxed Driving?]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1351,7 +1351,7 @@
 		<node id="n54">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 						<y:Label.Text><![CDATA[Luxury Van]]></y:Label.Text>
 					</y:Label>
 				</x:List>

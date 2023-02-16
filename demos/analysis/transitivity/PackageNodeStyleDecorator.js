@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -128,9 +128,9 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Updates the given visual.
-   * @param {!INode} node The node to which this style instance is assigned
    * @param {!IRenderContext} context The render context
    * @param {!SvgVisualGroup} oldVisual The existing visual
+   * @param {!INode} node The node to which this style instance is assigned
    * @returns {!SvgVisual} The updated visual
    */
   updateVisual(context, oldVisual, node) {
@@ -179,8 +179,8 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
       if (!oldCache.pendingDependencies && newCache.pendingDependencies) {
         createPlusImage(plusX + width, plusY, g1)
       } else if (oldCache.pendingDependencies && !newCache.pendingDependencies) {
-        while (g1.firstChild) {
-          g1.removeChild(g1.firstChild)
+        while (g1.lastChild != null) {
+          g1.removeChild(g1.lastChild)
         }
       } else if (oldVisual.children.size === 3) {
         // in this case we have only to move the image to the correct location but we have first to determine whether

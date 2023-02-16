@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -65,10 +65,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the actual SVG element inside the provided container
-   * @param node
-   * @param container
-   * @param cache
-   * @private
    */
   private render(
     node: INode,
@@ -192,10 +188,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
   /**
    * Check wether the Visual has to be recreated, which isn't the case unless the defining
    * characteristics of the node have changed
-   * @param context
-   * @param oldVisual
-   * @param node
-   * @protected
    */
   protected updateVisual(
     context: IRenderContext,
@@ -377,8 +369,6 @@ class NodeRenderDataCache {
 
 /**
  * Helper function to check wether the defining characteristics of the node have changed
- * @param a
- * @param b
  */
 function equals(a: NodeData, b: NodeData): boolean {
   return (

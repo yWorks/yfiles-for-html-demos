@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -100,7 +100,7 @@ async function runHierarchicLayoutWithTabularGroups() {
 
 /**
  * Loads the sample currently selected in the combo box and populates the graph.
- * @yjs:keep=nodeList,edgeList
+ * @yjs:keep = nodeList,edgeList
  */
 async function loadSampleGraph(): Promise<void> {
   const graph = graphComponent.graph

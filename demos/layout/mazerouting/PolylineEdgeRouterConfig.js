@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -119,7 +119,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   /**
    * Applies this configuration to the given {@link GraphComponent}.
    * @param graphComponent The {@link GraphComponent} to apply the configuration on
-   * @return A promise which resolves after the layout is applied without errors.
+   * @returns A promise which resolves after the layout is applied without errors.
    */
   apply: async function (graphComponent) {
     if (this.$layoutRunning) {
@@ -871,7 +871,6 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /**
    * Creates a new {@link PreferredPlacementDescriptor} that matches the current settings.
-   * @return {PreferredPlacementDescriptor}
    */
   createPreferredPlacementDescriptor: function () {
     const descriptor = new PreferredPlacementDescriptor()

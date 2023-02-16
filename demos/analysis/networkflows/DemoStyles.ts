@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -80,7 +80,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    * Creates a new visual.
    * @param context The render context
    * @param node The node to which this style instance is assigned.
-   * @return The new visual
+   * @returns The new visual
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -101,7 +101,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    * @param context The render context
    * @param oldVisual The old visual
    * @param node The node to which this style instance is assigned
-   * @return The updated visual
+   * @returns The updated visual
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     const container = oldVisual.svgElement as SVGElement & {
@@ -114,9 +114,8 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     // check if something changed except for the location of the node
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
-      while (container.firstChild) {
-        // remove all children
-        container.removeChild(container.firstChild)
+      while (container.lastChild != null) {
+        container.removeChild(container.lastChild)
       }
       this.render(context, node, container, newCache)
     }
@@ -287,7 +286,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    * Creates the path for the pipe.
    * @param context The render context
    * @param node The given node
-   * @return The path for the pipe
+   * @returns The path for the pipe
    */
   static createPipePath(context: IRenderContext, node: INode): string {
     const layout = node.layout
@@ -328,7 +327,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    * Creates an object containing all necessary data to create a visual for the node.
    * @param context The render context
    * @param node The given node
-   * @return The render data cache object
+   * @returns The render data cache object
    */
   static createRenderDataCache(context: IRenderContext, node: INode): NodeRenderDataCache {
     const tag = node.tag
@@ -367,7 +366,7 @@ class NodeRenderDataCache {
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
    * @param other The render data cache that is compared to this cache.
-   * @return True if the values of the given cache equal the values of this cache, false otherwise.
+   * @returns True if the values of the given cache equal the values of this cache, false otherwise.
    */
   equals(other?: NodeRenderDataCache): boolean {
     return (
@@ -400,7 +399,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param context The render context
    * @param edge The edge to which this style instance is assigned.
    * @see Overrides {@link EdgeStyleBase.createVisual}
-   * @return The new visual
+   * @returns The new visual
    */
   createVisual(context: IRenderContext, edge: IEdge): Visual {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
@@ -428,7 +427,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param oldVisual The old visual
    * @param edge The edge to which this style instance is assigned.
    * @see Overrides {@link EdgeStyleBase.updateVisual}
-   * @return The updated visual
+   * @returns The updated visual
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): Visual {
     const container = oldVisual.svgElement as SVGElement & {
@@ -457,9 +456,8 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     }
 
     // more than only the path changed - re-render the visual
-    while (container.firstChild) {
-      // remove all children
-      container.removeChild(container.firstChild)
+    while (container.lastChild != null) {
+      container.removeChild(container.lastChild)
     }
     this.render(context, edge, container, newCache)
     return oldVisual
@@ -570,7 +568,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param color The start color
    * @param isLighter True of the new color should be lighter, false otherwise
    * @param percent A number indicating how much lighter or darker the new color should be
-   * @return A lighter or darker color from the given one.
+   * @returns A lighter or darker color from the given one.
    */
   generateLighterOrDarkerColor(color: Color, isLighter: boolean, percent: number): Color {
     const colorArray = [color.r, color.g, color.b]
@@ -589,7 +587,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param p The coordinates of the query in the world coordinate system
    * @param edge The given edge
    * @see Overrides {@link EdgeStyleBase.isHit}
-   * @return True if the edge has been hit, false otherwise
+   * @returns True if the edge has been hit, false otherwise
    */
   isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
     let thickness = 0
@@ -612,7 +610,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
    * @see Overrides {@link EdgeStyleBase.getPath}
-   * @return A {@link GeneralPath} following the edge
+   * @returns A {@link GeneralPath} following the edge
    */
   getPath(edge: IEdge): GeneralPath {
     // Create a general path from the locations of the ports and the bends of the edge.
@@ -631,7 +629,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @param path The path of the edge.
    * @param color The highlight color used for the edge.
    * @param selected The current selection state of the edge.
-   * @return The render data cache
+   * @returns The render data cache
    */
   static createRenderDataCache(
     tag: any,
@@ -676,7 +674,7 @@ class EdgeRenderDataCache {
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
    * @param other The render data cache that is compared to this cache.
-   * @return True if the values of the given cache equal the values of this cache, false otherwise.
+   * @returns True if the values of the given cache equal the values of this cache, false otherwise.
    */
   equals(other?: EdgeRenderDataCache): boolean {
     return (
@@ -694,7 +692,7 @@ class EdgeRenderDataCache {
 /**
  * Creates a new animated SVG gradient that corresponds to the given linear gradient.
  * @param linearGradient The base, non-animated gradient.
- * @return The SVG animated gradient
+ * @returns The SVG animated gradient
  */
 function createAnimatedGradient(linearGradient: LinearGradient): SVGElement {
   const svgGradient = linearGradient.toSvgGradient()
@@ -782,7 +780,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) implements IVisualCrea
   /**
    * Creates a visual that displays the min cut line.
    * @param context The context that describes where the visual will be used.
-   * @return The new visual
+   * @returns The new visual
    */
   createVisual(context: IRenderContext): Visual {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -795,7 +793,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) implements IVisualCrea
    * Updates the min cut line visual if necessary.
    * @param context The context that describes where the visual will be used in.
    * @param oldVisual The old visual
-   * @return The updated visual
+   * @returns The updated visual
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): Visual {
     const container = (oldVisual as SvgVisual).svgElement as SVGElement & {
@@ -872,7 +870,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) implements IVisualCrea
    * Creates an object containing all necessary data to create a visual for the min cut line.
    * @param bounds The line bounds
    * @param visible true if the min-cut line is visible, false otherwise
-   * @return The render data cache
+   * @returns The render data cache
    */
   static createRenderDataCache(bounds: IRectangle, visible: boolean): MclRenderDataCache {
     return new MclRenderDataCache(bounds.toRect(), visible)
@@ -889,7 +887,7 @@ class MclRenderDataCache {
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
    * @param other The render data cache that is compared to this cache.
-   * @return True if the values of the given cache equal the values of this cache, false otherwise.
+   * @returns True if the values of the given cache equal the values of this cache, false otherwise.
    */
   equals(other?: MclRenderDataCache): boolean {
     return !!other && this.bounds.equals(other.bounds) && this.visible === other.visible

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -87,7 +87,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
    * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
-   * @return The configured layout algorithm.
+   * @returns The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new TabularLayout()
@@ -114,7 +114,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /**
    * Creates and configures the layout data.
-   * @return The configured layout data.
+   * @returns The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     let horizontalAlignment

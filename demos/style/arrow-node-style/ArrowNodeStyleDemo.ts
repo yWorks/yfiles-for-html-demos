@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -53,12 +53,18 @@ import { bindCommand, bindInputListener, showApp } from '../../resources/demo-ap
 import { applyDemoTheme, colorSets, createDemoNodeLabelStyle } from '../../resources/demo-styles'
 import { fetchLicense } from '../../resources/fetch-license'
 
-const basicShape = document.querySelector<HTMLSelectElement>('#basic-shape')!
-const shapeDirection = document.querySelector<HTMLSelectElement>('#shape-direction')!
-const angleRange = document.querySelector<HTMLInputElement>('#angle-range')!
-const angleLabel = document.querySelector<HTMLLabelElement>('#angle-label')!
-const shaftRatioRange = document.querySelector<HTMLInputElement>('#shaft-ratio')!
-const shaftRatioLabel = document.querySelector<HTMLLabelElement>('#shaft-ratio-label')!
+const basicShape = document.querySelector<HTMLSelectElement>('#basic-shape') as HTMLSelectElement
+const shapeDirection = document.querySelector<HTMLSelectElement>(
+  '#shape-direction'
+) as HTMLSelectElement
+const angleRange = document.querySelector<HTMLInputElement>('#angle-range') as HTMLInputElement
+const angleLabel = document.querySelector<HTMLLabelElement>('#angle-label') as HTMLLabelElement
+const shaftRatioRange = document.querySelector<HTMLInputElement>('#shaft-ratio') as HTMLInputElement
+const shaftRatioLabel = document.querySelector<HTMLLabelElement>(
+  '#shaft-ratio-label'
+) as HTMLLabelElement
+const propertiesPanel = document.querySelector<HTMLDivElement>('.demo-properties') as HTMLDivElement
+const infoMessage = document.querySelector<HTMLDivElement>('.info-message') as HTMLDivElement
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -256,9 +262,11 @@ function initializeUI(graphComponent: GraphComponent): void {
   })
 
   // adjust option panel when the selection has been changed
-  graphComponent.selection.addItemSelectionChangedListener((sender, evt) =>
-    adjustOptionPanel(graphComponent.graph, evt.item as INode)
-  )
+  graphComponent.selection.addItemSelectionChangedListener((sender, evt) => {
+    if (evt.item instanceof INode && evt.item.style instanceof ArrowNodeStyle) {
+      adjustOptionPanel(graphComponent, evt.item)
+    }
+  })
 }
 
 /**
@@ -311,21 +319,17 @@ function styleToText(style: ArrowNodeStyle): string {
 
 /**
  * Adjusts the option panel to show the style settings of a newly selected node.
- * @param graph The graph where the node lives.
+ * @param graphComponent The graphComponent where the node lives.
  * @param node The node whose style setting should be shown.
  */
-function adjustOptionPanel(graph: IGraph, node: INode): void {
-  const style = node.style
-  if (style instanceof ArrowNodeStyle) {
-    const { shape, direction, angle, shaftRatio } = getStyleValues(style)
+function adjustOptionPanel(graphComponent: GraphComponent, node: INode): void {
+  const style = node.style as ArrowNodeStyle
+  const disabled = !graphComponent.selection.isSelected(node)
+  const { shape, direction, angle, shaftRatio } = getStyleValues(style)
+  const graph = graphComponent.graph
+  updatePanelState(shape, direction, angle, shaftRatio, disabled)
 
-    basicShape.value = shape
-    shapeDirection.value = direction
-    angleRange.value = angle
-    angleLabel.innerText = angle
-    shaftRatioRange.value = shaftRatio
-    shaftRatioLabel.innerText = shaftRatio
-
+  if (!disabled) {
     // update defaultArrowNodeStyle to correspond to the option panel
     const defaultArrowNodeStyle = graph.nodeDefaults.style as ArrowNodeStyle
     defaultArrowNodeStyle.shape = style.shape
@@ -334,6 +338,35 @@ function adjustOptionPanel(graph: IGraph, node: INode): void {
     defaultArrowNodeStyle.shaftRatio = style.shaftRatio
     graph.nodeDefaults.size = node.layout.toSize()
   }
+}
+
+/**
+ * Updates the current state of the options panel with the given values
+ * @param shape The shape to be applied.
+ * @param direction The direction to be applied.
+ * @param angle The angle to be applied.
+ * @param shaftRatio The shaft ration to be applied.
+ * @param disabled True if the panel should be disabled, false otherwise
+ */
+function updatePanelState(
+  shape: string,
+  direction: string,
+  angle: string,
+  shaftRatio: string,
+  disabled: boolean
+) {
+  basicShape.value = shape
+  basicShape.disabled = disabled
+  shapeDirection.value = direction
+  shapeDirection.disabled = disabled
+  angleRange.value = angle
+  angleRange.disabled = disabled
+  angleLabel.innerText = angle
+  shaftRatioRange.value = shaftRatio
+  shaftRatioRange.disabled = disabled
+  shaftRatioLabel.innerText = shaftRatio
+  propertiesPanel.style.display = disabled ? 'none' : 'inline-block'
+  infoMessage.style.display = disabled ? 'inline-block' : 'none'
 }
 
 /**

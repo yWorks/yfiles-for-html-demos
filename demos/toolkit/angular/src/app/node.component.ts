@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,6 +36,9 @@ function findBreak(text: string): number {
   }
   return result
 }
+
+export const zoomIntermediate = 0.4
+export const zoomDetail = 0.7
 
 @Component({
   selector: 'g[node-component]',
@@ -105,11 +108,11 @@ export class NodeComponent {
   }
 
   get zoomDetail() {
-    return 0.7
+    return zoomDetail
   }
 
   get zoomIntermediate() {
-    return 0.4
+    return zoomIntermediate
   }
 
   get positionFirstLine() {

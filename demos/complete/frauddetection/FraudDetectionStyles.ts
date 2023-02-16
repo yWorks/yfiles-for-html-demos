@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -155,7 +155,7 @@ export class IconNodeStyle extends NodeStyleBase {
   /**
    * Creates an object containing all necessary data to create a visual for the node.
    * @param node The node
-   * @return The render data cache object
+   * @returns The render data cache object
    */
   static createRenderDataCache(node: INode): NodeStyleCache {
     const layout = node.layout
@@ -168,7 +168,7 @@ export class IconNodeStyle extends NodeStyleBase {
   /**
    * Returns the resource path of the icon file according to the node's type.
    * @param node The node
-   * @return The resource path of the icon
+   * @returns The resource path of the icon
    */
   static getIconPath(node: INode): string | null {
     switch (node.tag.type) {
@@ -310,7 +310,7 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
    * @param canvasContext The input mode context
    * @param p The point to test
    * @param edge The edge to which this style instance is assigned
-   * @return True if the specified edge representation is hit, false otherwise
+   * @returns True if the specified edge representation is hit, false otherwise
    */
   isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
     // we use a very simple hit logic here (the base implementation)
@@ -410,7 +410,7 @@ export class FraudHighlightManager extends HighlightIndicatorManager<IModelItem>
   /**
    * This implementation always returns the highlightGroup of the canvasComponent of this instance.
    * @param item The item to check
-   * @return An ICanvasObjectGroup or null
+   * @returns An ICanvasObjectGroup or null
    */
   getCanvasObjectGroup(item: IModelItem): ICanvasObjectGroup | null {
     if (item instanceof IEdge) {
@@ -447,7 +447,7 @@ export class FraudHighlightManager extends HighlightIndicatorManager<IModelItem>
 /**
  * Returns the color of the edge according to it type.
  * @param edge The given edge
- * @return The color for the edge
+ * @returns The color for the edge
  */
 function getColor(edge: IEdge): string {
   const tag = edge.tag
@@ -475,7 +475,7 @@ function getColor(edge: IEdge): string {
 /**
  * Returns the fill color of the node according to its type.
  * @param node The node
- * @return The fill color for the node (SVG)
+ * @returns The fill color for the node (SVG)
  */
 function getFillColor(node: INode): string {
   if (node.tag.fraud) {
@@ -512,7 +512,7 @@ function getFillColor(node: INode): string {
 /**
  * Returns the stroke color of the node according to its type.
  * @param node The node
- * @return The stroke color for the node (SVG)
+ * @returns The stroke color for the node (SVG)
  */
 function getStrokeColor(node: INode): string {
   if (node.tag.fraud) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -111,7 +111,7 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether the children of the given node or port can be hidden.
-   * @return Whether the children of the given node or port can be hidden.
+   * @returns Whether the children of the given node or port can be hidden.
    */
   canExecuteHideChildren(item: INode): boolean {
     return !this.doingLayout && this.filteredGraph.outDegree(item) > 0
@@ -142,7 +142,7 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether the children of the given node or port can be shown.
-   * @return Whether the children of the given node or port can be shown.
+   * @returns Whether the children of the given node or port can be shown.
    */
   canExecuteShowChildren(item: INode): boolean {
     return (
@@ -173,7 +173,7 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether the parent of the given node can be shown.
-   * @return Whether the parent of the given node can be shown.
+   * @returns Whether the parent of the given node can be shown.
    */
   canExecuteShowParent(node: INode): boolean {
     return (
@@ -207,7 +207,7 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether the parent of the given node can be hidden.
-   * @return Whether the parent of the given node can be hidden.
+   * @returns Whether the parent of the given node can be hidden.
    */
   canExecuteHideParent(node: INode): boolean {
     return !this.doingLayout && this.filteredGraph.inDegree(node) > 0
@@ -241,7 +241,7 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether 'show all' can be executed.
-   * @return Whether 'show all' can be executed.
+   * @returns Whether 'show all' can be executed.
    */
   canExecuteShowAll(): boolean {
     return this.hiddenNodesSet.size !== 0 && !this.doingLayout
@@ -300,7 +300,7 @@ export default class OrgChartGraph {
 
   /**
    * Refreshes the node after modifications on the tree.
-   * @return a promise which is resolved when the layout has been executed.
+   * @returns a promise which is resolved when the layout has been executed.
    */
   async refreshLayout(
     centerNode: INode | null,
@@ -365,9 +365,8 @@ export default class OrgChartGraph {
 
   /**
    * Moves incremental nodes to a location between their neighbors before expanding for a smooth animation.
-   * @private
    */
-  prepareSmoothExpandLayoutAnimation(incrementalNodes: INode[]): void {
+  private prepareSmoothExpandLayoutAnimation(incrementalNodes: INode[]): void {
     const graph = this.graphComponent.graph
 
     // mark the new nodes and place them between their neighbors
@@ -381,10 +380,9 @@ export default class OrgChartGraph {
 
   /**
    * Creates a tree layout data for the tree layout
-   * @return A configured TreeLayoutData.
-   * @private
+   * @returns A configured TreeLayoutData.
    */
-  createConfiguredLayoutData(
+  private createConfiguredLayoutData(
     graph: IGraph = null!,
     incrementalNodes: INode[] = []
   ): TreeLayoutData {
@@ -429,10 +427,9 @@ export default class OrgChartGraph {
 
   /**
    * Creates a tree layout that handles assistant nodes and stack leaf nodes.
-   * @return A configured TreeLayout.
-   * @private
+   * @returns A configured TreeLayout.
    */
-  createConfiguredLayout(incremental: boolean): ILayoutAlgorithm {
+  private createConfiguredLayout(incremental: boolean): ILayoutAlgorithm {
     const treeLayout = new TreeLayout()
     treeLayout.defaultPortAssignment = new (class extends BaseClass(ITreeLayoutPortAssignment) {
       assignPorts(graph: LayoutGraph, node: YNode): void {
@@ -525,9 +522,8 @@ export default class OrgChartGraph {
 
   /**
    * Creates an array of all nodes except of the nodes in the subtree rooted in the excluded sub-root.
-   * @private
    */
-  static collectAllNodesExceptSubtree(graph: IGraph, excludedRoot: INode): INode[] {
+  private static collectAllNodesExceptSubtree(graph: IGraph, excludedRoot: INode): INode[] {
     const nodes = []
     let root: INode = excludedRoot
     while (graph.inDegree(root) > 0) {

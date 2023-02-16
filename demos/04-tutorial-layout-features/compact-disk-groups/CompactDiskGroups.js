@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,7 +40,7 @@ import {
  * {@link RecursiveGroupLayout} and {@link OrganicLayout} to arrange the group node children in a
  * compact, circular way.
  * @param {!IGraph} graph The graph to be laid out
- * @returns {!object} {CompactDiskLayout, CompactDiskLayoutData} the configured compact disk algorithm and the corresponding layout data
+ * @returns {!object} ({CompactDiskLayout, CompactDiskLayoutData}) the configured compact disk algorithm and the corresponding layout data
  */
 export function createFeatureLayoutConfiguration(graph) {
   // create the compact disk layout responsible for group node contents

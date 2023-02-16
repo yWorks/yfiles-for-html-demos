@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -89,7 +89,6 @@ export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
    * group node.
    * @param fill The fill value
    * @param stroke The stroke value
-   * @private
    */
   private updateBackgroundColors(fill: Fill, stroke: Stroke) {
     this._fill = fill
@@ -106,7 +105,7 @@ export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
    * the node has been zoomed out, an image that shows the content of the node.
    * @param renderContext The renderContext to be used
    * @param node The node to be rendered
-   * @return {SvgVisual} The SvgVisual for this group node
+   * @returns {SvgVisual} The SvgVisual for this group node
    */
   createVisual(renderContext: IRenderContext, node: INode): SvgVisual {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -190,7 +189,7 @@ export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
    * @param renderContext The renderContext to be used
    * @param oldVisual The visual instance to be updated
    * @param node The node to be rendered
-   * @return {SvgVisual} The SvgVisual for this group node
+   * @returns {SvgVisual} The SvgVisual for this group node
    */
   updateVisual(renderContext: IRenderContext, oldVisual: Visual, node: INode): SvgVisual {
     const container = (oldVisual as SvgVisual).svgElement
@@ -229,8 +228,7 @@ export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
    * @param node The node that has to be tested for intersections
    * @param inner The first point of the line that is inside the shape
    * @param outer The second point of the line that is outside the shape
-   * @return {Point} The coordinates of the intersection point, if an intersection was found
-   * @protected
+   * @returns {Point} The coordinates of the intersection point, if an intersection was found
    */
   protected getIntersection(node: INode, inner: Point, outer: Point): Point {
     return <Point>(
@@ -242,7 +240,7 @@ export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Delegates outline calculation onto the backgroundStyle that is used for actual drawing.
-   * @return {GeneralPath | null} The outline or null if no outline can be provided.
+   * @returns {GeneralPath | null} The outline or null if no outline can be provided.
    */
   protected getOutline(node: INode): GeneralPath | null {
     return this.backGroundStyle.renderer.getShapeGeometry(node, this.backGroundStyle).getOutline()
@@ -253,7 +251,7 @@ export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
  * Computes the transform for the rendering of the subgraph to fit the node that displays it.
  * @param subGraphDisplayNode The group node whom contents have to be scaled
  * @param actualSubGraphBounds The actual bounds of the group node
- * @return {Matrix} The transformation matrix
+ * @returns {Matrix} The transformation matrix
  */
 function computeTransform(subGraphDisplayNode: INode, actualSubGraphBounds: Rect): Matrix {
   const layout = subGraphDisplayNode.layout

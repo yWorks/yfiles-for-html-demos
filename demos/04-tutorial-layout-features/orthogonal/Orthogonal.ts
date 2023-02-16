@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,7 +43,7 @@ import {
 /**
  * Demonstrates basic configuration for the {@link OrthogonalLayout}.
  * @param graph The graph to be laid out
- * @return {OrthogonalLayout, OrthogonalLayoutData} the configured layout algorithm and the corresponding layout data
+ * @returns {{OrthogonalLayout, OrthogonalLayoutData}} the configured layout algorithm and the corresponding layout data
  */
 export function createLayoutConfiguration(graph: IGraph): {
   layoutAlgorithm: ILayoutAlgorithm

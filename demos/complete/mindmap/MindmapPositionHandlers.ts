@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -253,7 +253,7 @@ export class SubtreePositionHandler
    * Removes the old incoming edge and create a new edge from the new parent to the moved node.
    * @param newParent The new parent of the node.
    * @param graph The input graph.
-   * @return The edge created.
+   * @returns The edge created.
    */
   updateInEdge(newParent: INode | null, graph: IGraph): IEdge | null {
     if (graph.inDegree(this.movedNode) > 0) {
@@ -281,7 +281,7 @@ export class SubtreePositionHandler
    * the {@link SubtreePositionHandler.MAX_DISTANCE limit}.
    * @param isLeft True if the node is on the left of the subtree, false otherwise.
    * @param graph The input graph.
-   * @return The parent candidate, or null.
+   * @returns The parent candidate, or null.
    */
   computeClosestNode(isLeft: boolean, graph: IGraph): INode | null {
     let p: Point

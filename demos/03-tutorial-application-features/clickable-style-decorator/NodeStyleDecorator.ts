@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -89,7 +89,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * Creates a new visual as combination of the base node visualization and the decoration.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @return The created visual.
+   * @returns The created visual.
    * @see {@link NodeStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): Visual {
@@ -133,7 +133,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param context The render context.
    * @param oldVisual The visual that has been created in the call to {@link NodeStyleBase.createVisual}.
    * @param node The node to which this style instance is assigned.
-   * @return The updated visual.
+   * @returns The updated visual.
    * @see {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
@@ -189,7 +189,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
   /**
    * Returns the layout of the decoration for the given node layout.
    * @param nodeLayout The layout of the node.
-   * @return The layout of the decoration for the given node layout.
+   * @returns The layout of the decoration for the given node layout.
    */
   getDecorationLayout(nodeLayout: IRectangle): Rect {
     const size = this.dummyDecorationNode.layout.toSize()
@@ -206,7 +206,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param context The canvas context.
    * @param rectangle The clipping rectangle.
    * @param node The node to which this style instance is assigned.
-   * @return `true` if either the base visualization or the decoration is visible.
+   * @returns `true` if either the base visualization or the decoration is visible.
    * @see {@link NodeStyleBase.isVisible}
    */
   isVisible(context: ICanvasContext, rectangle: Rect, node: INode): boolean {
@@ -223,7 +223,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param context The context.
    * @param location The point to test.
    * @param node The node to which this style instance is assigned.
-   * @return `true` if the base visualization is hit.
+   * @returns `true` if the base visualization is hit.
    * @see {@link NodeStyleBase.isHit}
    */
   isHit(context: IInputModeContext, location: Point, node: INode): boolean {
@@ -240,7 +240,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param context The input mode context.
    * @param rectangle The marquee selection box.
    * @param node The node to which this style instance is assigned.
-   * @return `true` if the base visualization is hit.
+   * @returns `true` if the base visualization is hit.
    * @see {@link NodeStyleBase.isInBox}
    */
   isInBox(context: IInputModeContext, rectangle: Rect, node: INode): boolean {
@@ -256,7 +256,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param inner The coordinates of a point lying
    *   {@link NodeStyleBase.isInside inside} the shape.
    * @param outer The coordinates of a point lying outside the shape.
-   * @return The intersection point if one has been found or `null`, otherwise.
+   * @returns The intersection point if one has been found or `null`, otherwise.
    * @see {@link NodeStyleBase.getIntersection}
    */
   getIntersection(node: INode, inner: Point, outer: Point): Point | null {
@@ -269,7 +269,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * Returns whether the provided point is inside of the base visualization.
    * @param node The node to which this style instance is assigned.
    * @param location The point to test.
-   * @return `true` if the provided location is inside of the base visualization.
+   * @returns `true` if the provided location is inside of the base visualization.
    * @see {@link NodeStyleBase.isInside}
    */
   isInside(node: INode, location: Point): boolean {

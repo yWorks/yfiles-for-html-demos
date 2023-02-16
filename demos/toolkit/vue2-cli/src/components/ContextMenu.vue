@@ -24,7 +24,7 @@ function getCenterInPage(element) {
   return { x: left, y: top }
 }
 
-// @yjs:keep=hide
+// @yjs:keep = hide
 export default {
   name: 'ContextMenu',
   inject: ['yFilesAPI'],

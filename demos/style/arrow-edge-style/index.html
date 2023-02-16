@@ -8,7 +8,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.5.
-     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -58,6 +58,10 @@
       .demo-properties .demo-form-block input[type='range'] {
         width: 37%;
       }
+
+      .info-message {
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body class="demo-has-left demo-has-right">
@@ -103,23 +107,20 @@
             Change some of the settings while an edge is selected and see how it affects the
             selected edge.
           </li>
-          <li>
-            Move a node and observe how the shapes of the connected edges change.
-          </li>
-          <li>
-            Create new edges between nodes using the style settings of the property panel.
-          </li>
+          <li>Move a node and observe how the shapes of the connected edges change.</li>
+          <li>Create new edges between nodes using the style settings of the property panel.</li>
         </ul>
       </div>
     </aside>
 
     <aside class="demo-sidebar demo-right">
       <div class="demo-sidebar-content">
-        <div class="demo-properties">
-          <h2>Style Properties</h2>
+        <h2>Style Properties</h2>
+        <div class="info-message">Please select an edge to modify its settings.</div>
+        <div class="demo-properties" style="display: none">
           <div class="demo-form-block">
             <label for="basic-shape" class="option-label">Basic Shape</label>
-            <select id="basic-shape" class="option-element">
+            <select id="basic-shape" class="option-element" disabled>
               <option value="ARROW">Arrow</option>
               <option value="DOUBLE_ARROW">Double Arrow</option>
               <option value="NOTCHED_ARROW">Notched Arrow</option>
@@ -128,19 +129,35 @@
             </select>
 
             <label for="thickness-range" class="option-label">Thickness</label>
-            <input type="range" id="thickness-range" min="1" max="100" value="18" step="1" />
+            <input
+              type="range"
+              id="thickness-range"
+              min="1"
+              max="100"
+              value="18"
+              step="1"
+              disabled
+            />
             <label id="thickness-label">18</label>
 
             <label for="angle-range" class="option-label">Angle</label>
-            <input type="range" id="angle-range" min="0" max="90" value="45" />
+            <input type="range" id="angle-range" min="0" max="90" value="45" disabled />
             <label id="angle-label">45</label>
 
             <label for="shaft-ratio" class="option-label">Shaft Ratio</label>
-            <input type="range" id="shaft-ratio" min="0" max="1" step="0.1" value="0.3" />
+            <input type="range" id="shaft-ratio" min="0" max="1" step="0.1" value="0.3" disabled />
             <label id="shaft-ratio-label">0.3</label>
 
             <label for="cropping-range" class="option-label">Cropping</label>
-            <input type="range" id="cropping-range" min="0" max="20" step="0.1" value="3" />
+            <input
+              type="range"
+              id="cropping-range"
+              min="0"
+              max="20"
+              step="0.1"
+              value="3"
+              disabled
+            />
             <label id="cropping-label">3</label>
           </div>
         </div>

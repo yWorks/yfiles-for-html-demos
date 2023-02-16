@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -80,7 +80,7 @@ const gradientColors = [
  * Colors are represented like this: "rbg(r,g,b)".
  * @param componentId The id of the component.
  * @param useGradient Whether to use gradient colors
- * @return The color for the component.
+ * @returns The color for the component.
  */
 export function getColorForComponent(componentId: number, useGradient: boolean): string {
   if (useGradient) {
@@ -93,7 +93,7 @@ export function getColorForComponent(componentId: number, useGradient: boolean):
 /**
  * Checks whether or not the given item has a valid color in its tag.
  * @param item The item to be checked.
- * @return `true` if the node's tag contains a valid color, `false` otherwise.
+ * @returns `true` if the node's tag contains a valid color, `false` otherwise.
  */
 function hasValidColorTag(item: IModelItem): boolean {
   return item.tag !== null && item.tag.color !== null && item.tag.color !== undefined
@@ -101,7 +101,7 @@ function hasValidColorTag(item: IModelItem): boolean {
 
 /**
  * Returns whether or not the given two arrays are equals.
- * @return `true` if arrays are the same, `false` otherwise.
+ * @returns `true` if arrays are the same, `false` otherwise.
  */
 function arraysAreEqual(array1: any[], array2: any[]): boolean {
   if (!array1 || !array2 || array1.length !== array2.length) {
@@ -191,8 +191,8 @@ export class MultiColorNodeStyle extends NodeStyleBase {
 
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
+      while (container.lastChild != null) {
+        container.removeChild(container.lastChild)
       }
       this.render(renderContext, node, container, newCache)
     }
@@ -688,7 +688,7 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
-   * @return A {@link GeneralPath} following the edge
+   * @returns A {@link GeneralPath} following the edge
    */
   getPath(edge: IEdge): GeneralPath {
     // Create a general path from the locations of the ports and the bends of the edge.
@@ -1065,7 +1065,7 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge for which to create the path.
-   * @return A {@link GeneralPath} following the edge.
+   * @returns A {@link GeneralPath} following the edge.
    */
   getPath(edge: IEdge): GeneralPath {
     const path = new GeneralPath()
@@ -1165,8 +1165,8 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
 
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
+      while (container.lastChild != null) {
+        container.removeChild(container.lastChild)
       }
       this.render(renderContext, node, container, newCache)
     }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -2354,9 +2354,9 @@ function getDemoData() {
   },
   {
     "id": "html-label",
-    "name": "HTML Label",
+    "name": "HTML Label Style",
     "demoPath": "style/htmllabel/index.html",
-    "summary": "Shows how HTML can be used in label text with a custom label style.",
+    "summary": "Shows how HTML can be used for label rendering with a custom label style.",
     "category": "style",
     "type": "custom-styles",
     "thumbnailPath": "resources/image/htmllabel.png",
@@ -4201,6 +4201,27 @@ function getDemoData() {
     "keywords": [
       "v2.4.0.4",
       "webworker"
+    ],
+    "ts": true
+  },
+  {
+    "id": "parcel",
+    "name": "Parcel",
+    "demoPath": "loading/parcel/README.html",
+    "summary": "Shows how to integrate the yFiles library in a <a href=\"https://parceljs.org/\" target=\"_blank\">Parcel</a> project.",
+    "category": "loading",
+    "type": "integration",
+    "thumbnailPath": "resources/image/parcel.png",
+    "sourcePath": "loading/parcel/src/ParcelDemo.js",
+    "tags": [
+      "es modules",
+      "parcel",
+      "web worker"
+    ],
+    "keywords": [
+      "v2.5.0.3",
+      "webworker",
+      "deployment"
     ],
     "ts": true
   },
@@ -6146,6 +6167,32 @@ function getDemoData() {
       "resizing"
     ],
     "sourcePath": "03-tutorial-application-features/snapping/SampleApplication.js",
+    "ts": true
+  },
+  {
+    "id": "tutorial-application-features--application-features-subdivide-edges",
+    "name": "Subdivide Edges",
+    "summary": "Shows how to subdivide an edge when a node is dragged on it.",
+    "demoPath": "03-tutorial-application-features/subdivide-edges/index.html",
+    "thumbnailPath": "resources/image/tutorial3subdivision.png",
+    "category": "tutorial-application-features",
+    "tags": [
+      "interaction",
+      "tutorial",
+      "drag and drop"
+    ],
+    "keywords": [
+      "v2.5.0.3",
+      "drop input mode",
+      "create",
+      "subdivide",
+      "split",
+      "drag and drop",
+      "dnd",
+      "insert",
+      "divide"
+    ],
+    "sourcePath": "03-tutorial-application-features/subdivide-edges/SampleApplication.js",
     "ts": true
   },
   {

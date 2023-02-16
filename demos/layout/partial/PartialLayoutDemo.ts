@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -554,7 +554,7 @@ function setUIDisabled(disabled: boolean): void {
 
 /**
  * Returns a reference to the first element with the specified ID in the current document.
- * @return A reference to the first element with the specified ID in the current document.
+ * @returns A reference to the first element with the specified ID in the current document.
  */
 function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T

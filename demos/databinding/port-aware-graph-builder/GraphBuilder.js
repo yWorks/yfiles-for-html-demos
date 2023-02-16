@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -181,7 +181,6 @@ class TypeAwareNodeCreator extends NodeCreator {
    * @param {!IGraph} graph The graph to operate on.
    * @param {!INode} node The node to add the port to.
    * @param {!PortData} portData The port data to create the port for.
-   * @private
    */
   addPort(graph, node, portData) {
     const port = graph.addPort({
@@ -200,7 +199,6 @@ class TypeAwareNodeCreator extends NodeCreator {
    * @param {!IGraph} graph The graph to operate on.
    * @param {!IPort} port The port to add the label to.
    * @param {!PortData} portData The port data to create the label for.
-   * @private
    */
   addPortLabel(graph, port, portData) {
     const text = this.getPortLabel(portData)
@@ -279,7 +277,6 @@ class TypeAwareNodeCreator extends NodeCreator {
   /**
    * Gets an array of PortData from the given node data.
    * The port data is created according to the node type.
-   * @private
    * @param {!NodeData} nodeData
    * @returns {!Array.<PortData>}
    */
@@ -305,7 +302,6 @@ class TypeAwareNodeCreator extends NodeCreator {
 
   /**
    * Gets the (relative) port location from the port data.
-   * @private
    * @param {!PortData} pin
    * @returns {!Point}
    */
@@ -315,7 +311,6 @@ class TypeAwareNodeCreator extends NodeCreator {
 
   /**
    * Gets the ID from the port data.
-   * @private
    * @param {!PortData} pin
    */
   getPortId(pin) {
@@ -324,7 +319,6 @@ class TypeAwareNodeCreator extends NodeCreator {
 
   /**
    * Gets the port style from the port data.
-   * @private
    * @param {!PortData} pin
    * @returns {!IPortStyle}
    */
@@ -335,7 +329,6 @@ class TypeAwareNodeCreator extends NodeCreator {
 
   /**
    * Gets the port label location parameter.
-   * @private
    * @param {!PortData} pin
    * @returns {!ILabelModelParameter}
    */
@@ -349,7 +342,6 @@ class TypeAwareNodeCreator extends NodeCreator {
   /**
    * Gets the port label text.
    * Might be null if no label should be displayed.
-   * @private
    * @param {!PortData} pin
    * @returns {!string}
    */
@@ -360,7 +352,6 @@ class TypeAwareNodeCreator extends NodeCreator {
   /**
    * Overrides the default implementation to return
    * a style according to the node's type.
-   * @protected
    * @param {!NodeData} dataItem
    * @returns {?INodeStyle}
    */
@@ -395,7 +386,6 @@ class PortAwareEdgeCreator extends EdgeCreator {
    * @param {!INode} target The target node.
    * @param {!IEdgeStyle} style The edge style.
    * @param {*} tag The edge tag (actually the node data of the target node)
-   * @protected
    * @returns {!IEdge}
    */
   createEdgeCore(graph, source, target, style, tag) {
@@ -471,7 +461,6 @@ class PortAwareEdgeCreator extends EdgeCreator {
   /**
    * Gets the source port ID from the edge data.
    * Returns undefined if the port to connect is not specified.
-   * @private
    * @param {!EdgeData} data
    * @returns {!string}
    */
@@ -482,7 +471,6 @@ class PortAwareEdgeCreator extends EdgeCreator {
   /**
    * Gets the target port ID from the edge data.
    * Returns undefined if the port to connect is not specified.
-   * @private
    * @param {!EdgeData} data
    * @returns {!string}
    */

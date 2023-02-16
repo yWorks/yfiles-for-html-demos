@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -257,7 +257,6 @@ async function run(): Promise<void> {
 
   /**
    * Creates a {@link GraphViewerInputMode} and restricts some functionality.
-   * @return {GraphViewerInputMode}
    */
   function createViewerInputMode(): GraphViewerInputMode {
     return new GraphViewerInputMode({
@@ -273,8 +272,7 @@ async function run(): Promise<void> {
   /**
    * Create the Orgchart graph using a TreeSource.
    * @param nodesSource The source data in JSON format
-   * @param graph
-   * @return {IGraph}
+   * @param graph The graph
    */
   function createGraph(nodesSource: Employee[], graph: IGraph) {
     const treeBuilder = new TreeBuilder(graph)
@@ -299,7 +297,6 @@ async function run(): Promise<void> {
 
   /**
    * Applies a tree layout like in the Orgchart demo.
-   * @param tree
    */
   function doLayout(tree: IGraph) {
     const nodePlacerMapper = new Mapper<INode, ITreeLayoutNodePlacer>()

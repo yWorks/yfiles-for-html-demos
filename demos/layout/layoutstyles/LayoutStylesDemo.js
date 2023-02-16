@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -331,8 +331,8 @@ function getIndexInComboBox(combobox, value) {
  * @param {!(Array.<string>|Array.<object>)} names
  */
 function initializeComboBox(combobox, names) {
-  while (combobox.firstChild) {
-    combobox.removeChild(combobox.firstChild)
+  while (combobox.lastChild) {
+    combobox.removeChild(combobox.lastChild)
   }
 
   for (const entry of names) {
@@ -361,8 +361,9 @@ function initializeComboBox(combobox, names) {
  * @param {boolean} clearUndo Specifies whether the undo queue should be cleared after the layout
  * calculation. This is set to `true` if this method is called directly after
  * loading a new sample graph.
+ * @returns {!Promise}
  */
-function applyLayout(clearUndo) {
+async function applyLayout(clearUndo) {
   const config = optionEditor.config
 
   if (!config || !configOptionsValid || inLayout) {
@@ -373,7 +374,7 @@ function applyLayout(clearUndo) {
   inLayout = true
   setUIDisabled(true)
 
-  config.apply(graphComponent, () => {
+  await config.apply(graphComponent, () => {
     releaseLocks()
     setUIDisabled(false)
     updateUIState()
@@ -463,7 +464,7 @@ async function onLayoutChanged(initSamples = true, appliedPresetId = '') {
       appliedPresetId ? appliedPresetId : presetsStruct.defaultPreset
     )
 
-    applyLayout(!customGraphSelected)
+    await applyLayout(!customGraphSelected)
   }
 }
 
@@ -476,7 +477,7 @@ function updateDescriptionText(config) {
   const layoutTitle = getElementById('layout-title')
 
   removeClass(layoutDescriptionContainer, 'highlight-description')
-  while (layoutDescription.firstChild) {
+  while (layoutDescription.lastChild) {
     layoutDescription.removeChild(layoutDescription.lastChild)
   }
   layoutTitle.innerHTML = ''
@@ -759,7 +760,7 @@ async function onSampleChanged() {
   const presetsStruct = findPresets(getSelectedAlgorithm(), key)
   presetsUiBuilder.buildUi(presetsStruct, presetsStruct.defaultPreset)
 
-  applyLayout(true)
+  await applyLayout(true)
 }
 
 /**
@@ -1228,8 +1229,14 @@ function registerCommands() {
   bindAction("button[data-command='LayoutCommand']", () => {
     applyLayout(false)
   })
-  bindChangeListener("select[data-command='LayoutSelectionChanged']", () => onLayoutChanged())
-  bindChangeListener("select[data-command='SampleSelectionChanged']", () => onSampleChanged())
+  bindChangeListener("select[data-command='LayoutSelectionChanged']", async () => {
+    await onLayoutChanged()
+    layoutComboBox.focus()
+  })
+  bindChangeListener("select[data-command='SampleSelectionChanged']", async () => {
+    await onSampleChanged()
+    sampleComboBox.focus()
+  })
 
   bindAction("button[data-command='GenerateNodeLabels']", () => {
     onGenerateItemLabels(graphComponent.graph.nodes)

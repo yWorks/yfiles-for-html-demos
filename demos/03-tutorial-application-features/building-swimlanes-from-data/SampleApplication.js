@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -175,7 +175,7 @@ function configureTableEditing(graphComponent) {
  *
  * @param {!IGraph} graph The graph.
  * @param {*} graphData The graph data that was loaded from the JSON file.
- * @yjs:keep=nodesSource,edgesSource
+ * @yjs:keep = nodesSource,edgesSource
  */
 function buildGraph(graph, graphData) {
   // Store lanes and nodes references.
@@ -455,7 +455,6 @@ function registerCommands() {
  * demonstrated here.
  *
  * @param {!string} url The URL to load.
- *
  * @returns {!Promise.<JSON>} A promise with the loaded data.
  */
 async function loadJSON(url) {

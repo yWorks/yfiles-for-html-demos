@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -62,7 +62,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * Creates a new visual as combination of the base label visualization and the decoration.
    * @param context The render context.
    * @param label The label to which this style instance is assigned.
-   * @return The created visual.
+   * @returns The created visual.
    * @see {@link LabelStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, label: ILabel): Visual {
@@ -86,7 +86,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param oldVisual The visual that has been created in the call to
    *        {@link LabelStyleBase.createVisual}.
    * @param label The label to which this style instance is assigned.
-   * @return The updated visual.
+   * @returns The updated visual.
    * @see {@link LabelStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, label: ILabel): Visual {
@@ -118,7 +118,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * Creates the visualization of the decoration.
    * @param context The render context.
    * @param layout The label layout.
-   * @return The visual that provides the decoration.
+   * @returns The visual that provides the decoration.
    */
   private static createDecoration(context: IRenderContext, layout: IOrientedRectangle): SvgVisual {
     const xPadding = 3
@@ -179,7 +179,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
   /**
    * Returns the preferred {@link Size size} of the base style for the provided label.
    * @param label The label to which this style instance is assigned.
-   * @return The preferred size.
+   * @returns The preferred size.
    * @see {@link LabelStyleBase.getPreferredSize}
    */
   getPreferredSize(label: ILabel): Size {
@@ -191,7 +191,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    *
    * @param context The canvas context.
    * @param label The label to which this style instance is assigned.
-   * @return The visual bounds.
+   * @returns The visual bounds.
    * @override
    * @see {@link LabelStyleBase.getBounds}
    */
@@ -204,7 +204,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param context The canvas context.
    * @param rectangle The clipping rectangle.
    * @param label The label to which this style instance is assigned.
-   * @return `true` if either the base visualization or the decoration is
+   * @returns `true` if either the base visualization or the decoration is
    *   visible.
    * @see {@link LabelStyleBase.isVisible}
    */
@@ -220,7 +220,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param context The context.
    * @param location The point to test.
    * @param label The label to which this style instance is assigned.
-   * @return `true` if the base visualization is hit.
+   * @returns `true` if the base visualization is hit.
    * @override
    * @see {@link LabelStyleBase.isHit}
    */
@@ -234,7 +234,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param context The input mode context.
    * @param rectangle The marquee selection box.
    * @param label The label to which this style instance is assigned.
-   * @return `true` if the base visualization is hit.
+   * @returns `true` if the base visualization is hit.
    * @override
    * @see {@link LabelStyleBase.isInBox}
    */
@@ -250,7 +250,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    *
    * @param label The label to use for the context lookup.
    * @param type The type to query.
-   * @return An implementation of the `type` or `null`.
+   * @returns An implementation of the `type` or `null`.
    * @see EdgeStyleBase#lookup
    */
   lookup(label: ILabel, type: Class<any>): object | null {

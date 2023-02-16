@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -205,7 +205,7 @@ export class CyclesConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the description text that explains the cycle algorithm.
-   * @return The description text.
+   * @returns The description text.
    */
   get descriptionText(): string {
     return "<p style='margin-top:0'>Finding <em>cycles in a graph</em> is part of analysing graph structures. This part of the demo shows an algorithm that finds edges that belong to a cycle in a graph.</p><p>Independent cycles are presented with different colors. Cycles which share common nodes and edges get the same color. This algorithm is able to take the <em>direction of edges</em> into account.</p>"

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,30 +30,31 @@ declare const neo4j: any
 
 /* global neo4j */
 /**
- * @yjs:keep=types,Node
+ * @yjs:keep = types,Node
  */
 export const Neo4jNode = neo4j.types.Node
 /**
- * @yjs:keep=types,Relationship
+ * @yjs:keep = types,Relationship
  */
 export const Neo4jEdge = neo4j.types.Relationship
 
 /**
  * Establishes a connection to a Neo4j database.
- * @param url The URL to connect to (neo4j:// bolt:// neo4j+s://)
+ * @param url The URL to connect to (neo4j:// bolt:// neo4j+s://).
+ * @param databaseName The name of the database.
  * @param user The username to use.
  * @param pass The password to use.
  */
 export async function connectToDB(
   url: string,
-  database: string,
+  databaseName: string,
   user: string,
   pass: string
 ): Promise<(query: string, params?: {}) => Promise<Result>> {
   // create a new Neo4j driver instance
   const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass))
 
-  const runCypherQuery = createCypherQueryRunner(neo4jDriver, database)
+  const runCypherQuery = createCypherQueryRunner(neo4jDriver, databaseName)
 
   try {
     // check connection
@@ -68,10 +69,7 @@ export async function connectToDB(
 function createCypherQueryRunner(neo4jDriver: any, databaseName: string) {
   /**
    * Runs the Cypher query.
-   * @param query
-   * @param [params]
-   * @return {Promise}
-   * @yjs:keep=run
+   * @yjs:keep = run
    */
   return async (query: string, params: {} = {}): Promise<Result> => {
     const session = neo4jDriver.session({

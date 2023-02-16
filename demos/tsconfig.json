@@ -15,6 +15,7 @@
     "importsNotUsedAsValues": "error"
   },
   "exclude": [
+    "loading/parcel",
     "loading/vite",
     "loading/webworker-umd",
     "loading/webworker-webpack",

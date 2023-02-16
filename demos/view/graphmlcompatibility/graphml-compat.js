@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -146,7 +146,7 @@ import yfiles, {
 const compat = yfiles.module('compat')
 
 /**
- * @yjs:keep=Node
+ * @yjs:keep = Node
  */
 export function configureIOHandler(ioh) {
   // enable serialization of the compat modules - without a namespace mapping, serialization will fail
@@ -11976,7 +11976,7 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
       $textAlignment: null,
 
       /**
-       * @yjs:keep=textAlignment
+       * @yjs:keep = textAlignment
        */
       textAlignment: {
         $meta: function () {

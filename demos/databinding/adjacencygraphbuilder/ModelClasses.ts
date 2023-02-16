@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -107,7 +107,7 @@ let bindingErrorCaught = false
  * If the parameter is a function definition, a function object is
  * returned. Otherwise, a binding is created using the parameter as the
  * property path.
- * @return The source or target binding
+ * @returns The source or target binding
  */
 export function createBinding(bindingString: string): (dataItem: any) => any {
   if (bindingString.indexOf('function') >= 0 || bindingString.indexOf('=>') >= 0) {
@@ -144,7 +144,7 @@ export function createBinding(bindingString: string): (dataItem: any) => any {
 /**
  * Parses the string entered by the user and returns the parsed object
  * @param data the data entered by the user
- * @return the parsed data
+ * @returns the parsed data
  */
 export function parseData(data?: string): any[] {
   try {

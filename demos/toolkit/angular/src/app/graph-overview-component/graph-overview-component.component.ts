@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core'
 import { GraphComponent, GraphOverviewComponent } from 'yfiles'
 import { GraphComponentService } from '../services/graph-component.service'
 
@@ -39,8 +39,7 @@ export class GraphOverviewComponentComponent implements AfterViewInit {
   @ViewChild('graphOverviewComponentRef') graphOverviewComponentRef!: ElementRef
   graphOverviewComponent!: GraphOverviewComponent
   private readonly graphComponent: GraphComponent
-
-  constructor(graphComponentService: GraphComponentService) {
+  constructor(private zone: NgZone, graphComponentService: GraphComponentService) {
     this.graphComponent = graphComponentService.getGraphComponent()
   }
 
@@ -50,9 +49,11 @@ export class GraphOverviewComponentComponent implements AfterViewInit {
 
   private initializeOverview(graphComponent: GraphComponent): void {
     // instantiate a new GraphOverviewComponent
-    this.graphOverviewComponent = new GraphOverviewComponent(
-      '#graph-overview-component',
-      graphComponent
-    )
+    this.zone.runOutsideAngular(() => {
+      this.graphOverviewComponent = new GraphOverviewComponent(
+        '#graph-overview-component',
+        graphComponent
+      )
+    })
   }
 }

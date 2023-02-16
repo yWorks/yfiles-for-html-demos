@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -76,7 +76,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * Creates a new visual as combination of the base edge visualization and the bend visualizations.
    * @param context The render context.
    * @param edge The edge to which this style instance is assigned.
-   * @return The created visual.
+   * @returns The created visual.
    * @see EdgeStyleBase#createVisual
    */
   createVisual(context: IRenderContext, edge: IEdge): Visual {
@@ -100,7 +100,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * @param context The render context.
    * @param oldVisual The visual that has been created in the call to {@link EdgeStyleBase.createVisual}.
    * @param edge The edge to which this style instance is assigned.
-   * @return The updated visual.
+   * @returns The updated visual.
    * @see EdgeStyleBase#updateVisual
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, edge: IEdge): Visual {
@@ -181,7 +181,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
   /**
    * Returns a stroke for the provided data.
    * @param data A custom data object.
-   * @return The stroke for the provided data.
+   * @returns The stroke for the provided data.
    */
   static getStroke(data: string): Stroke {
     switch (data) {
@@ -201,7 +201,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * Returns the bounds provided by the base style for the edge.
    * @param context The canvas context.
    * @param edge The edge to which this style instance is assigned.
-   * @return The visual bounds.
+   * @returns The visual bounds.
    * @override
    * @see EdgeStyleBase#getBounds
    */
@@ -214,7 +214,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * @param context The canvas context.
    * @param rectangle The clipping rectangle.
    * @param edge The edge to which this style instance is assigned.
-   * @return `true` if the specified edge is visible in the clipping rectangle;
+   * @returns `true` if the specified edge is visible in the clipping rectangle;
    *   `false` otherwise.
    * @override
    * @see EdgeStyleBase#isInside
@@ -230,7 +230,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * @param context The context.
    * @param location The point to test.
    * @param edge The edge to which this style instance is assigned.
-   * @return `true` if the base visualization is hit.
+   * @returns `true` if the base visualization is hit.
    * @see EdgeStyleBase#isHit
    */
   isHit(context: IInputModeContext, location: Point, edge: IEdge): boolean {
@@ -242,7 +242,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * @param context The input mode context.
    * @param rectangle The marquee selection box.
    * @param edge The edge to which this style instance is assigned.
-   * @return `true` if the base visualization is hit.
+   * @returns `true` if the base visualization is hit.
    * @see EdgeStyleBase#isInBox
    */
   isInBox(context: IInputModeContext, rectangle: Rect, edge: IEdge): boolean {
@@ -256,7 +256,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * Delegates the lookup to the base style.
    * @param edge The edge to use for the context lookup.
    * @param type The type to query.
-   * @return An implementation of the `type` or `null`.
+   * @returns An implementation of the `type` or `null`.
    * @see EdgeStyleBase#lookup
    */
   lookup(edge: IEdge, type: Class<any>): object | null {

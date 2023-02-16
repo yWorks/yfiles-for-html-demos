@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.5.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Parcel Loading Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="./demo.css" />
+  </head>
+  <body class="demo-has-left demo-hide-left-when-small loaded">
+    <aside class="demo-sidebar demo-left">
+      <div class="demo-sidebar-header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+      </div>
+      <div class="demo-sidebar-content">
+        <h1>Parcel Loading Demo</h1>
+        <p>
+          This demo loads the yFiles module using version 2 of
+          <a href="https://parceljs.org/" rel="noopener" target="_blank">Parcel</a>.
+        </p>
+        <p>
+          The layout is executed asynchronously using Parcel's built-in support for
+          <a
+            href="https://parceljs.org/languages/javascript/#web-workers"
+            rel="noopener"
+            target="_blank"
+            >Web Workers</a
+          >.
+        </p>
+        <p>
+          Using Parcel's
+          <a
+            href="https://parceljs.org/features/dependency-resolution/"
+            rel="noopener"
+            target="_blank"
+            >dependency resolution</a
+          >
+          resolution support and aliases, the license and other dependencies are configured without
+          affecting the sources code.
+        </p>
+      </div>
+    </aside>
+
+    <div class="demo-content">
+      <div class="demo-header">
+        <a href="https://www.yworks.com" target="_blank">
+          <img src="./ylogo.svg" class="demo-y-logo" />
+        </a>
+        <a href="https://www.yworks.com/yfileshtml" target="_blank">yFiles for HTML</a>
+        <a href="./README.html" style="cursor: pointer" target="_blank" class="demo-title">Demos</a>
+        <span class="demo-title">Parcel Loading Demo [yFiles for HTML]</span>
+      </div>
+
+      <div class="demo-toolbar">
+        <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">
+          Layout
+        </button>
+      </div>
+
+      <div class="demo-content-dynamic">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="/src/ParcelDemo.js" type="module" crossorigin="anonymous"></script>
+  </body>
+</html>

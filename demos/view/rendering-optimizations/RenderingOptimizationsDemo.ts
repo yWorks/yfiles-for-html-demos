@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -459,8 +459,10 @@ async function loadGraph(fileName: string): Promise<void> {
 /**
  * Parses the sample data and creates the graph elements.
  * @param graph The graph to populate with the items.
- * @param graphData The JSON data
- * @yjs:keep=nodeList,edgeList
+ * @param graphData The JSON data.
+ * @param graphData.nodeList The data items of the nodes.
+ * @param graphData.edgeList The data items of the nodes.
+ * @yjs:keep = nodeList,edgeList
  */
 function loadGraphCore(
   graph: IGraph,
@@ -517,7 +519,7 @@ function loadGraphCore(
 /**
  * Reads the JSON data form a file.
  * @param url The URL of the file
- * @return A promise that resolves when the data is loaded correctly
+ * @returns A promise that resolves when the data is loaded correctly
  */
 async function loadJSONData(url: string): Promise<any> {
   const response = await fetch(url)
@@ -1310,7 +1312,7 @@ function onEdgeLabelsChanged(graph: IGraph): void {
 
 /**
  * Returns a random node from the graph.
- * @return A random node from the graph.
+ * @returns A random node from the graph.
  */
 function getRandomNode(): INode {
   const nodes = graphComponent.graph.nodes.toList()
@@ -1323,7 +1325,7 @@ function getRandomInt(upper: number): number {
 
 /**
  * Fisher Yates Shuffle for arrays.
- * @return Shuffled Array.
+ * @returns Shuffled Array.
  */
 function shuffle(array: Array<IModelItem>): IModelItem[] {
   let m: number = array.length
@@ -1344,7 +1346,7 @@ function shuffle(array: Array<IModelItem>): IModelItem[] {
  * Generates a different color shade
  * @param color The base color
  * @param factor how much lighter or darker the color should be, i.e. 0.8 => 20% darker, 1.2 => 20% lighter
- * @return a lighter color
+ * @returns a lighter color
  */
 function generateColorShade(color: Color, factor: number): Color {
   if (factor < 1) {

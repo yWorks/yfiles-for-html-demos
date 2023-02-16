@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -275,7 +275,6 @@ function addRow(graph: IGraph, node: INode, rowInfo: RowInfo): void {
     )
   }
 
-
   // register the row
   nodeInfo.rows.push(rowInfo)
 
@@ -365,15 +364,15 @@ function createSampleGraph(graph: IGraph): void {
   const n1 = createNode(graph, new Point(0, 0), 'Node 1', [
     { in: 'in 0', out: 'out 0' },
     { out: 'out 1' },
-    { in: 'in 2', out: 'out 2'},
+    { in: 'in 2', out: 'out 2' },
     { out: 'out 3' }
   ])
 
   const n2 = createNode(graph, new Point(400, 0), 'Node 2', [
-    { in: 'in 0', },
+    { in: 'in 0' },
     { in: 'in 1', out: 'out 1' },
     { in: 'in 2' },
-    { in: 'in 3', out: 'out 3'}
+    { in: 'in 3', out: 'out 3' }
   ])
 
   const out0 = n1.ports.get(1)
@@ -450,9 +449,7 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
           text = rowInfo.out
         }
         if (rowInfo.in || rowInfo.out) {
-          contextMenu.addMenuItem('Remove  ' + text, () =>
-            removeRow(graph, node, portInfoIndex)
-          )
+          contextMenu.addMenuItem(`Remove  ${text}`, () => removeRow(graph, node, portInfoIndex))
         }
       }
     }

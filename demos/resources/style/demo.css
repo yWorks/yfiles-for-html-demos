@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1451,35 +1451,6 @@ body.demo-left-hidden:not(.loaded):not(.file-system-warning):after {
     transform: rotate(360deg);
   }
 }
-.error-box {
-  visibility: visible;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 1000;
-  border: 2px solid #29323c;
-  background-color: white;
-  width: 361px;
-}
-.error-box h1 {
-  background-color: #29323c;
-  color: white;
-  font-size: 16px;
-  margin-top: 0;
-  text-align: left;
-  padding: 7px;
-}
-.error-box p {
-  font-size: 14px;
-  text-align: left;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-.error-box p.cause {
-  font-weight: bold;
-}
 body {
   /* don't disable scrollbars on the html element as well
      - otherwise, event coordinates will be wrong if scrolling
@@ -2554,7 +2525,7 @@ rect:not(.yfiles-node-highlight-inner-template):not(.yfiles-node-highlight-middl
   padding: 10px;
 }
 .demo-dialog {
-  z-index: 10000;
+  z-index: 2000;
   position: relative;
   right: -50%;
   width: 25em;

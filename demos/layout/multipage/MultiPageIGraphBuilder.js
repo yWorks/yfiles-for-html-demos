@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -605,13 +605,12 @@ export default class MultiPageIGraphBuilder {
    * If a model node is provided, the ports of the original node will be copied to the created view node.
    * Also, a clone of the original node style will be used as the style of the created node.
    * @param {!LayoutGraph} pageLayoutGraph The layout graph representing the current page
-   * @param {!IGraph} pageView The {@link IGraph} that is built to show the multi-page
-   *   layout in a graph canvas
+   * @param {!IGraph} pageView The {@link IGraph} that is built to show the multi-page layout in a graph canvas
    * @param {!YNode} layoutNode The node of the layout graph that should be copied
    * @param {?INode} modelNode The node of the original input graph that corresponds to the
-   *   `layoutNode` (may be `null`)
+   *   `layoutNode` (maybe `null`)
    * @param {boolean} isReferenceNode Whether the node is a proxy reference node
-   * @param {!INodeDefaults} nodeDefaults
+   * @param {!INodeDefaults} nodeDefaults The defaults for the new node
    * @returns {!INode} the created node
    * @see {@link MultiPageIGraphBuilder.createConnectorNode}
    * @see {@link MultiPageIGraphBuilder.createNormalNode}

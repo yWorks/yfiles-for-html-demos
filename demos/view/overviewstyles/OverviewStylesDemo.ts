@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -62,13 +62,13 @@ let graphComponent: GraphComponent
 
 /**
  * The overview graph component that use the Canvas and Svg visual creator.
- **/
+ */
 let overviewComponent: GraphOverviewComponent
 
 /**
  * The graph component that use the overview inputMode to let the overview graph use the same
  * styles as the graphComponent.
- **/
+ */
 let overviewGraphComponent: GraphComponent
 
 const overViewStyleBox = document.getElementById('graphChooserBox') as HTMLSelectElement
@@ -183,7 +183,7 @@ function overviewStyling(styleType: string): void {
 
 /**
  * Creates the visual creator that uses SVG rendering.
- * @return The visual creator that uses SVG rendering.
+ * @returns The visual creator that uses SVG rendering.
  */
 function getOverviewSvgVisualCreator(): GraphOverviewSvgVisualCreator {
   const overviewSvgVisualCreator = new GraphOverviewSvgVisualCreator(graphComponent.graph)
@@ -193,7 +193,7 @@ function getOverviewSvgVisualCreator(): GraphOverviewSvgVisualCreator {
 }
 /**
  * Creates the visual creator that uses WebGL rendering.
- * @return The visual creator that uses SVG rendering.
+ * @returns The visual creator that uses SVG rendering.
  */
 function getOverviewWebGLVisualCreator(): GraphOverviewWebGLVisualCreator {
   return new GraphOverviewWebGLVisualCreator(graphComponent.graph)

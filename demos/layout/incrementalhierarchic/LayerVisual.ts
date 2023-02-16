@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -123,7 +123,7 @@ export class LayerVisual
   /**
    * Gets the layer at the given location.
    * @param location The location.
-   * @return A positive value if a specific layer is hit, a negative one to indicate that a new layer should
+   * @returns A positive value if a specific layer is hit, a negative one to indicate that a new layer should
    * be inserted before layer -(value + 1) - int.MaxValue if no layer has been hit.
    */
   getLayer(location: Point): number {
@@ -176,7 +176,7 @@ export class LayerVisual
   /**
    * Gets the bounds of a layer by index as specified by {@link LayerVisual.getLayer}.
    * @param layerIndex Index of the layer.
-   * @return The bounds of the layer
+   * @returns The bounds of the layer
    */
   getLayerBounds(layerIndex: number): Rect {
     if (layerIndex === Number.MAX_SAFE_INTEGER) {

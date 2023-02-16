@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import { HierarchicLayout, LayoutDescriptor, LayoutGraph } from 'yfiles'
-import { createLayoutExecutorAsyncWorker } from './web-worker-server-message-handler'
+import { createLayoutExecutorAsyncWorker } from './message-handler-worker-thread'
 
 createLayoutExecutorAsyncWorker((graph: LayoutGraph, layoutDescriptor: LayoutDescriptor) => {
   // create and configure the layout algorithm
   if (layoutDescriptor.name === 'HierarchicLayout') {
     const layout = new HierarchicLayout(layoutDescriptor.properties)
 
-    // run the layout
+    // run the layout on the Web Worker
     layout.applyLayout(graph)
   }
 })

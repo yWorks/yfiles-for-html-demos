@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -238,11 +238,31 @@ const BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR = BPMN_CONSTANTS_DEFAULT_I
 const BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR = BPMN_CONSTANTS_DEFAULT_RECEIVING_COLOR
 // Pools
 const BPMN_CONSTANTS_DEFAULT_POOL_NODE_BACKGROUND = new SolidColorFill(0xe0, 0xe0, 0xe0).freeze()
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_BACKGROUND = new SolidColorFill(196, 215, 237).freeze()
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_INSET = new SolidColorFill(0xe0, 0xe0, 0xe0).freeze()
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_BACKGROUND = new SolidColorFill(171, 200, 226).freeze()
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_INSET = new SolidColorFill(0xe0, 0xe0, 0xe0).freeze()
-const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_BACKGROUND = new SolidColorFill(113, 146, 178).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_BACKGROUND = new SolidColorFill(
+  196,
+  215,
+  237
+).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_INSET = new SolidColorFill(
+  0xe0,
+  0xe0,
+  0xe0
+).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_BACKGROUND = new SolidColorFill(
+  171,
+  200,
+  226
+).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_INSET = new SolidColorFill(
+  0xe0,
+  0xe0,
+  0xe0
+).freeze()
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_BACKGROUND = new SolidColorFill(
+  113,
+  146,
+  178
+).freeze()
 const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_INSET = new SolidColorFill(0xe0, 0xe0, 0xe0).freeze()
 // Default sizes for different items
 const BPMN_CONSTANTS_SIZES_MARKER = new Size(10, 10)
@@ -475,7 +495,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
    * @param type the type for which an instance shall be returned
-   * @return an instance that is assignable to type or `null`
+   * @returns an instance that is assignable to type or `null`
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
@@ -488,7 +508,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
    * and parameter.
    * @param label The label to use in the context.
    * @param parameter The parameter to use for the label in the context.
-   * @return An implementation of the {@link ILookup} interface that can be used
+   * @returns An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
    * @see {@link ILookup.EMPTY}
    * @see Specified by {@link ILabelModel.getContext}.
@@ -500,11 +520,12 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
+   *
+   * @param label the label to calculate the geometry for
    * @param parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter.model} property.
-   * @param label the label to calculate the geometry for
-   * @return An instance that describes the geometry. This is typically
+   * @returns An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
    * @see Specified by {@link ILabelModel.getGeometry}.
@@ -561,7 +582,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
 
   /**
    * Creates a default parameter that can be used for this model.
-   * @return a parameter for this model instance
+   * @returns a parameter for this model instance
    * @see Specified by {@link ILabelModel.createDefaultParameter}.
    */
   createDefaultParameter(): ILabelModelParameter {
@@ -1164,11 +1185,11 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
+   * @param label the label to calculate the geometry for
    * @param parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter.model} property.
-   * @param label the label to calculate the geometry for
-   * @return An instance that describes the geometry. This is typically
+   * @returns An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
    * @see Specified by {@link ILabelModel.getGeometry}.
@@ -1211,7 +1232,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * and parameter.
    * @param label The label to use in the context.
    * @param parameter The parameter to use for the label in the context.
-   * @return An implementation of the {@link ILookup} interface that can be used
+   * @returns An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
    * @see {@link ILookup.EMPTY}
    * @see Specified by {@link ILabelModel.getContext}.
@@ -1231,7 +1252,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
    * @param type the type for which an instance shall be returned
-   * @return an instance that is assignable to type or `null`
+   * @returns an instance that is assignable to type or `null`
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
@@ -1253,7 +1274,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * instances that can be used for the given label and model.
    * @param label The label instance to use.
    * @param model The model to provide parameters for.
-   * @return A possibly empty enumerator over a
+   * @returns A possibly empty enumerator over a
    *   set of label model parameters.
    * @see Specified by {@link ILabelModelParameterProvider.getParameters}.
    */
@@ -1515,9 +1536,9 @@ export class BpmnNodeStyle extends NodeStyleBase {
 
   /**
    * Callback that creates the visual.
-   * @param node The node to which this style instance is assigned.
    * @param renderContext The render context.
-   * @return The visual as required by the {@link IVisualCreator.createVisual}
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual}
    *   interface.
    * @see {@link NodeStyleBase.updateVisual}
    */
@@ -1548,11 +1569,11 @@ export class BpmnNodeStyle extends NodeStyleBase {
 
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase.createVisual}.
-   * @param node The node to which this style instance is assigned.
    * @param renderContext The render context.
    * @param oldVisual The visual that has been created in the call to {@link
+   * @param node The node to which this style instance is assigned.
    *   NodeStyleBase#createVisual}.
-   * @return The visual as required by the {@link IVisualCreator.createVisual}
+   * @returns The visual as required by the {@link IVisualCreator.createVisual}
    *   interface.
    * @see {@link NodeStyleBase.createVisual}
    */
@@ -1623,7 +1644,7 @@ export class BpmnNodeStyle extends NodeStyleBase {
    * {@link NodeStyleBase.renderer}.
    * @param node The node to use for the context lookup.
    * @param type The type to query.
-   * @return An implementation of the `type` or `null`.
+   * @returns An implementation of the `type` or `null`.
    */
   lookup(node: INode, type: Class): object {
     const lookup = super.lookup(node, type)
@@ -1671,7 +1692,7 @@ export class Participant extends BaseClass(ICloneable) {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -4458,7 +4479,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * These insets are extended by the sizes of the participant bands on top and bottom side
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
    * {@link INodeStyleRenderer.getContext context lookup}.
-   * @return An insets object that describes the insets of the task name band.
+   * @returns An insets object that describes the insets of the task name band.
    * @see {@link INodeInsetsProvider}
    */
   get insets(): Insets {
@@ -4622,7 +4643,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * Callback that creates the visual.
    * @param renderContext The render context.
    * @param node The node to which this style instance is assigned.
-   * @return The visual.
+   * @returns The visual.
    * @see {@link NodeStyleBase.updateVisual}
    */
   createVisual(renderContext: IRenderContext, node: INode): SvgVisual {
@@ -4710,7 +4731,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @param renderContext The render context.
    * @param oldVisual The visual that should be updated.
    * @param node The node to which this style instance is assigned.
-   * @return The visual.
+   * @returns The visual.
    * @see {@link NodeStyleBase.createVisual}
    */
   updateVisual(renderContext: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
@@ -4959,7 +4980,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
    * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param node The node to which this style instance is assigned.
-   * @return The outline of the visual representation or `null`.
+   * @returns The outline of the visual representation or `null`.
    */
   getOutline(node: INode): GeneralPath {
     ChoreographyNodeStyle.SHAPE_NODE_STYLE.renderer.getShapeGeometry(
@@ -5005,10 +5026,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
-   * @param node The node to which this style instance is assigned.
-   * @param p The point to test.
    * @param canvasContext The canvas context.
-   * @return whether or not the specified node representation is hit.
+   * @param p The point to test.
+   * @param node The node to which this style instance is assigned.
+   * @returns whether or not the specified node representation is hit.
    */
   isHit(canvasContext: IInputModeContext, p: Point, node: INode): boolean {
     if (
@@ -5071,9 +5092,9 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * This method is called in response to a {@link IBoundsProvider.getBounds}
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation simply yields the {@link INode.layout}.
-   * @param node The node to which this style instance is assigned.
    * @param canvasContext The canvas context.
-   * @return The visual bounds of the visual representation.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual bounds of the visual representation.
    */
   getBounds(canvasContext: ICanvasContext, node: INode): Rect {
     let bounds: Rect = node.layout.toRect()
@@ -5107,7 +5128,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * that has been queried from the {@link NodeStyleBase.renderer}.
    * @param node The node to use for the context lookup.
    * @param type The type to query.
-   * @return An implementation of the `type` or `null`.
+   * @returns An implementation of the `type` or `null`.
    */
   lookup(node: INode, type: Class): object {
     if (type === INodeSizeConstraintProvider.$class) {
@@ -5128,7 +5149,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -5318,7 +5339,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -5435,7 +5456,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * This method may return a flyweight implementation, but never `null`.
    * @param item The item to provide an instance for
    * @param style The style to use for the creation of the visual
-   * @return An implementation that may be used to subsequently create or update
+   * @returns An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
    *   design pattern for implementations. This method may not return `null` but should
@@ -5455,7 +5476,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * This method may return a flyweight implementation.
    * @param item The item to provide an instance for
    * @param style The style to use for the calculating the painting bounds
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -5472,7 +5493,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * This method may return a flyweight implementation.
    * @param item The item to provide an instance for
    * @param style The style to use for the testing the visibility
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -5489,7 +5510,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * This method may return a flyweight implementation.
    * @param item The item to provide an instance for
    * @param style The style to use for the querying hit tests
-   * @return An implementation that may be used to subsequently perform
+   * @returns An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
@@ -5507,7 +5528,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * This method may return a flyweight implementation.
    * @param item The item to provide an instance for
    * @param style The style to use for the querying marquee intersection test.
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -5525,7 +5546,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * `null`.
    * @param item The item to provide a context instance for.
    * @param style The style to use for the context.
-   * @return An non-`null` lookup implementation.
+   * @returns An non-`null` lookup implementation.
    * @see {@link ILookup.EMPTY}
    * @see {@link ILookup}
    * @see Specified by {@link INodeStyleRenderer.getContext}.
@@ -5541,7 +5562,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * @param label The label to determine the preferred size for
    * @param style The style instance that uses this instance as its
    * {@link ILabelStyle.renderer}
-   * @return A size that can be used as the {@link ILabel.preferredSize}
+   * @returns A size that can be used as the {@link ILabel.preferredSize}
    * if this renderer paints the label using the associated style.
    * @see Specified by {@link ILabelStyleRenderer.getPreferredSize}.
    */
@@ -5556,7 +5577,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * {@link CanvasComponent} uses this interface through the {@link ICanvasObjectDescriptor}
    * to populate the visual canvas object tree.
    * @param context The context that describes where the visual will be used.
-   * @return The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the canvas object visual tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
@@ -5584,7 +5605,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * @param context The context that describes where the visual will be used in.
    * @param oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
-   * @return `oldVisual`, if this instance modified the visual, or a new visual
+   * @returns `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator.createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -5734,7 +5755,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -5862,7 +5883,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * to populate the visual canvas object tree.
    * @param context The context that describes where the visual will be used.
    * @param edge The edge for which the visual is created.
-   * @return The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the canvas object visual tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    */
@@ -5912,7 +5933,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * @param oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param edge The edge for which the visual is updated.
-   * @return `oldVisual`, if this instance modified the visual, or a new visual
+   * @returns `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator.createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -6296,7 +6317,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
    * {@link NodeStyleBase.lookup lookup}.
    * @see {@link INodeInsetsProvider}
-   * @return An insets object that describes the insets of node.
+   * @returns An insets object that describes the insets of node.
    */
   get insets(): Insets {
     return this._insets
@@ -6501,7 +6522,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   /**
    * Gets the outline of the visual style.
    * @param node The node to which this style instance is assigned.
-   * @return The outline of the visual representation or `null`.
+   * @returns The outline of the visual representation or `null`.
    */
   getOutline(node: INode): GeneralPath {
     return ActivityNodeStyle.createRoundRectPath(
@@ -6518,7 +6539,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * @param canvasContext The canvas context.
    * @param p The point to test.
    * @param node The node to which this style instance is assigned.
-   * @return `true` if the specified node representation is hit; otherwise,
+   * @returns `true` if the specified node representation is hit; otherwise,
    *   `false`.
    */
   isHit(canvasContext: IInputModeContext, p: Point, node: INode): boolean {
@@ -6531,7 +6552,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * Performs the {@link ILookup.lookup} operation.
    * @param node The node to use for the context lookup.
    * @param type The type to query.
-   * @return An implementation of the `type` or `null`.
+   * @returns An implementation of the `type` or `null`.
    */
   lookup(node: INode, type: Class): object {
     if (type === INodeInsetsProvider.$class) {
@@ -6692,9 +6713,9 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
 
   /**
    * Callback that creates the visual.
-   * @param node The node to which this style instance is assigned.
    * @param renderContext The render context.
-   * @return The visual.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual.
    * @see {@link NodeStyleBase.updateVisual}
    */
   createVisual(renderContext: IRenderContext, node: IStripe): SvgVisual | null {
@@ -6768,10 +6789,10 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation simply delegates to {@link NodeStyleBase.createVisual} so subclasses
    * should override to improve rendering performance.
-   * @param node The node to which this style instance is assigned.
    * @param renderContext The render context.
    * @param oldVisual The visual that should be updated.
-   * @return The visual.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual.
    * @see {@link NodeStyleBase.createVisual}
    */
   updateVisual(
@@ -7173,7 +7194,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -7184,7 +7205,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * Creates a new visual for the label.
    * @param context The context that describes where the visual will be used.
    * @param label The label for which the visual is created.
-   * @return The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the canvas object visual tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
@@ -7231,7 +7252,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
   /**
    * Calculates the preferred size given the current state of the renderer.
-   * @return The size as suggested by this renderer.
+   * @returns The size as suggested by this renderer.
    */
   getPreferredSize(label: ILabel): Size {
     if (!this.iconSize.equals(Size.ZERO)) {
@@ -7251,7 +7272,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * @param oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param label The label whose visual is updated.
-   * @return `oldVisual`, if this instance modified the visual, or a new visual
+   * @returns `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): SvgVisual {
@@ -7331,10 +7352,10 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   /**
    * Determines if something has been hit at the given coordinates
    * in the world coordinate system.
-   * @param location the coordinates in world coordinate system
    * @param context the context the hit test is performed in
+   * @param location the coordinates in world coordinate system
    * @param label the label that might be hit.
-   * @return whether something has been hit
+   * @returns whether something has been hit
    * @see Specified by {@link IHitTestable.isHit}.
    */
   isHit(context: IInputModeContext, location: Point, label: ILabel): boolean {
@@ -7352,10 +7373,10 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * This method may return `false` if the item cannot be
    * selected using a selection marquee or optionally if the
    * item is only partially contained within the box.
-   * @param box the box describing the marquee's bounds
    * @param context the current canvas context
+   * @param box the box describing the marquee's bounds
    * @param label the label.
-   * @return `true` if the item is considered to be captured by the marquee
+   * @returns `true` if the item is considered to be captured by the marquee
    * @see Specified by {@link IMarqueeTestable.isInBox}.
    */
   isInBox(context: IInputModeContext, box: Rect, label: ILabel): boolean {
@@ -7373,7 +7394,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * {@link Rect.EMPTY}.
    * @param context the context to calculate the bounds for
    * @param label the label.
-   * @return the bounds or {@link Rect.EMPTY} to indicate an unbound area
+   * @returns the bounds or {@link Rect.EMPTY} to indicate an unbound area
    * @see Specified by {@link IBoundsProvider.getBounds}.
    */
   getBounds(context: ICanvasContext, label: ILabel): Rect {
@@ -7387,10 +7408,10 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
   /**
    * Determines whether an element might intersect the visible region for a given context.
-   * @param clip The visible region clip.
    * @param context The context to determine the visibility for.
+   * @param clip The visible region clip.
    * @param label the label.
-   * @return `false` if and only if it is safe not to paint the element because
+   * @returns `false` if and only if it is safe not to paint the element because
    * it would not affect the given clipping region.
    * @see Specified by {@link IVisibilityTestable.isVisible}.
    */
@@ -7542,7 +7563,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -7594,7 +7615,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * Returns the bounds of the visual for the label.
    * @param context The rendering context.
    * @param label The label to provide the bounds for
-   * @return The bounds of the label.
+   * @returns The bounds of the label.
    */
   getBounds(context: ICanvasContext, label: ILabel): Rect {
     const delegateStyle = this.getCurrentStyle(label)
@@ -7606,7 +7627,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * @param context The rendering context.
    * @param rectangle The clipping rectangle.
    * @param label The label.
-   * @return Whether or not the label is currently visible.
+   * @returns Whether or not the label is currently visible.
    */
   isVisible(context: ICanvasContext, rectangle: Rect, label: ILabel): boolean {
     const delegateStyle = this.getCurrentStyle(label)
@@ -7631,7 +7652,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * Calculates the {@link ILabel.preferredSize preferred size}
    * of a given label using the associated style.
    * @param label The label to determine the preferred size for.
-   * @return A size that can be used as the {@link ILabel.preferredSize}.
+   * @returns A size that can be used as the {@link ILabel.preferredSize}.
    */
   getPreferredSize(label: ILabel): Size {
     const preferredTextSize = AnnotationLabelStyle.TEXT_STYLE.renderer.getPreferredSize(
@@ -7651,7 +7672,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * to populate the visual canvas object tree.
    * @param context The context that describes where the visual will be used.
    * @param label The label.
-   * @return The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the canvas object visual tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
@@ -7681,7 +7702,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * @param oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param label The label.
-   * @return `oldVisual`, if this instance modified the visual, or a new visual
+   * @returns `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator.createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -7716,6 +7737,24 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       insets: this.insets,
       equals: (self: any, other: any) => self.left === other.left && self.insets === other.insets
     }
+  }
+
+  lookup(label: ILabel, type: Class): any {
+    // Create an IEditLabelHelper that does nothing except to prevent other helpers from kicking in
+    if (type === IEditLabelHelper.$class && label.owner && label.owner instanceof INode) {
+      return IEditLabelHelper.create({
+        onLabelAdding(evt: LabelEditingEventArgs) {
+          // We should never enter here - calling an IEditLabelHelper for a non-existing label
+          evt.handled = false
+        },
+        onLabelEditing(evt: LabelEditingEventArgs) {
+          // We just claim we have handled the label to prevent the UML node style handler from
+          // kicking in without actually configuring anything
+          evt.handled = true
+        }
+      })
+    }
+    return super.lookup(label, type)
   }
 }
 
@@ -7899,7 +7938,7 @@ export class PoolNodeStyle extends NodeStyleBase {
    * to populate the visual canvas object tree.
    * @param renderContext The context that describes where the visual will be used.
    * @param node The node.
-   * @return The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the canvas object visual tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
@@ -7932,7 +7971,7 @@ export class PoolNodeStyle extends NodeStyleBase {
    * @param oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param node The node
-   * @return `oldVisual`, if this instance modified the visual, or a new visual
+   * @returns `oldVisual`, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator.createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -7984,7 +8023,7 @@ export class PoolNodeStyle extends NodeStyleBase {
    * Returns an instance that implements the given type or `null`.
    * @param node the node
    * @param type the type for which an instance shall be returned
-   * @return an instance that is assignable to type or `null`
+   * @returns an instance that is assignable to type or `null`
    * @see Specified by {@link ILookup.lookup}.
    */
   lookup(node: INode, type: Class): object {
@@ -8005,7 +8044,7 @@ export class PoolNodeStyle extends NodeStyleBase {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -8112,7 +8151,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
    * @param type the type for which an instance shall be returned
-   * @return an instance that is assignable to type or `null`
+   * @returns an instance that is assignable to type or `null`
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
@@ -8132,11 +8171,11 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
+   * @param label the label to calculate the geometry for
    * @param parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter.model} property.
-   * @param label the label to calculate the geometry for
-   * @return An instance that describes the geometry. This is typically
+   * @returns An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
    * @see Specified by {@link ILabelModel.getGeometry}.
@@ -8199,7 +8238,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
 
   /**
    * Creates a default parameter that can be used for this model.
-   * @return a parameter for this model instance
+   * @returns a parameter for this model instance
    * @see Specified by {@link ILabelModel.createDefaultParameter}.
    */
   createDefaultParameter(): ILabelModelParameter {
@@ -8211,7 +8250,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
    * and parameter.
    * @param label The label to use in the context.
    * @param parameter The parameter to use for the label in the context.
-   * @return An implementation of the {@link ILookup} interface that can be used
+   * @returns An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
    * @see {@link ILookup.EMPTY}
    * @see Specified by {@link ILabelModel.getContext}.
@@ -8225,7 +8264,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
    * instances that can be used for the given label and model.
    * @param label The label instance to use.
    * @param model The model to provide parameters for.
-   * @return A possibly empty enumerator over a
+   * @returns A possibly empty enumerator over a
    *   set of label model parameters.
    * @see Specified by {@link ILabelModelParameterProvider.getParameters}.
    */
@@ -8368,7 +8407,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @param atSource whether this will be the source arrow
    * @param anchor the anchor point for the tip of the arrow
    * @param direction the direction the arrow is pointing in
-   * @return Itself as a flyweight.
+   * @returns Itself as a flyweight.
    * @see Specified by {@link IArrow.getPaintable}.
    */
   getPaintable(edge: IEdge, atSource: boolean, anchor: Point, direction: Point): IVisualCreator {
@@ -8385,7 +8424,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @param atSource whether this will be the source arrow
    * @param anchor the anchor point for the tip of the arrow
    * @param direction the direction the arrow is pointing in
-   * @return an implementation of the {@link IBoundsProvider} interface
+   * @returns an implementation of the {@link IBoundsProvider} interface
    *   that can subsequently be used to query the bounds. Clients will always call this method
    *   before using the implementation and may not cache the instance returned. This allows for
    *   applying the flyweight design pattern to implementations.
@@ -8412,7 +8451,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * This method is called by the framework to create a
    * that will be included into the {@link IRenderContext}.
    * @param context The context that describes where the visual will be used.
-   * @return The arrow visual to include in the canvas object visual tree.
+   * @returns The arrow visual to include in the canvas object visual tree.
    * @see {@link IconArrow.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
    */
@@ -8448,7 +8487,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @param context The context that describes where the visual will be used in.
    * @param oldVisual The visual instance that had been returned the last time the {@link
    *   IconArrow#createVisual} method was called on this instance.
-   * @return the old visual if this instance modified the visual, or a new visual that
+   * @returns the old visual if this instance modified the visual, or a new visual that
    *   should replace the existing one in the canvas object visual tree.
    * @see {@link IconArrow.createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -8631,7 +8670,7 @@ export class MessageLabelStyle extends LabelStyleBase {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -8707,7 +8746,7 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
    * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
    * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param node The node to which this style instance is assigned.
-   * @return The outline of the visual representation or `null`.
+   * @returns The outline of the visual representation or `null`.
    */
   getOutline(node: INode): GeneralPath {
     const halfEllipseHeight = 0.125
@@ -8898,7 +8937,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
    * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
    * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param node The node to which this style instance is assigned.
-   * @return The outline of the visual representation or `null`.
+   * @returns The outline of the visual representation or `null`.
    */
   getOutline(node: INode): GeneralPath {
     const cornerSize = Math.min(node.layout.width, node.layout.height) * 0.4
@@ -9032,7 +9071,7 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
    * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
    * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param node The node to which this style instance is assigned.
-   * @return The outline of the visual representation or `null`.
+   * @returns The outline of the visual representation or `null`.
    */
   getOutline(node: INode): GeneralPath {
     const width = Math.min(
@@ -9239,7 +9278,7 @@ export class EventNodeStyle extends BpmnNodeStyle {
    * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
    * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param node The node to which this style instance is assigned.
-   * @return The outline of the visual representation or `null`.
+   * @returns The outline of the visual representation or `null`.
    */
   getOutline(node: INode): GeneralPath {
     const size = Math.min(node.layout.width, node.layout.height)
@@ -9261,10 +9300,10 @@ export class EventNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
-   * @param node The node to which this style instance is assigned.
-   * @param p The point to test.
    * @param canvasContext The canvas context.
-   * @return whether or not the specified node representation is hit.
+   * @param p The point to test.
+   * @param node The node to which this style instance is assigned.
+   * @returns whether or not the specified node representation is hit.
    */
   isHit(canvasContext: ICanvasContext, p: Point, node: INode): boolean {
     const size = Math.min(node.layout.width, node.layout.height)
@@ -9295,7 +9334,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
    * through the
    * {@link INodeStyleRenderer.getContext context lookup}.
    * @see {@link INodeInsetsProvider}
-   * @return An insets object that describes the insets of node.
+   * @returns An insets object that describes the insets of node.
    */
   get insets(): Insets {
     return this._insets
@@ -9354,7 +9393,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -9419,7 +9458,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * This method may return a flyweight implementation, but never `null`.
    * @param node The node to provide an instance for
    * @param style The style to use for the creation of the visual
-   * @return An implementation that may be used to subsequently create or update
+   * @returns An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
    *   design pattern for implementations. This method may not return `null` but should
@@ -9437,7 +9476,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * This method may return a flyweight implementation.
    * @param node The node to provide an instance for
    * @param style The style to use for the calculating the painting bounds
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -9453,7 +9492,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * This method may return a flyweight implementation.
    * @param node The node to provide an instance for
    * @param style The style to use for the testing the visibility
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -9469,7 +9508,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * This method may return a flyweight implementation.
    * @param node The node to provide an instance for
    * @param style The style to use for the querying hit tests
-   * @return An implementation that may be used to subsequently perform
+   * @returns An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
@@ -9486,7 +9525,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * This method may return a flyweight implementation.
    * @param node The node to provide an instance for
    * @param style The style to use for the querying marquee intersection test.
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -9503,7 +9542,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * `null`.
    * @param item The item to provide a context instance for.
    * @param style The style to use for the context.
-   * @return An non-`null` lookup implementation.
+   * @returns An non-`null` lookup implementation.
    * @see {@link ILookup.EMPTY}
    * @see {@link ILookup}
    * @see Specified by {@link INodeStyleRenderer.getContext}.
@@ -9520,7 +9559,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * This method may return a flyweight implementation.
    * @param node The node to provide an instance for
    * @param style The style to use for the painting
-   * @return An implementation that may be used to subsequently query geometry
+   * @returns An implementation that may be used to subsequently query geometry
    *   information from. Clients should not cache this instance and must always call this method
    *   immediately before using the value returned. This enables the use of the flyweight design
    *   pattern for implementations
@@ -9541,7 +9580,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * type and context whether the instance returned stays up to date or needs to
    * be reobtained for subsequent use.
    * @param type the type for which an instance shall be returned
-   * @return an instance that is assignable to type or `null`
+   * @returns an instance that is assignable to type or `null`
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
@@ -9704,7 +9743,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
    * Implementing this method influences the behavior of {@link NodeStyleBase.isInside}
    * and {@link NodeStyleBase.getIntersection} since the default implementations delegate to it.
    * @param node The node to which this style instance is assigned.
-   * @return The outline of the visual representation or `null`.
+   * @returns The outline of the visual representation or `null`.
    */
   getOutline(node: INode): GeneralPath {
     const size = Math.min(node.layout.width, node.layout.height)
@@ -9742,10 +9781,10 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase.renderer}.
    * This implementation uses the {@link NodeStyleBase.getOutline outline} to determine
    * whether the node has been hit.
-   * @param node The node to which this style instance is assigned.
-   * @param p The point to test.
    * @param canvasContext The canvas context.
-   * @return whether or not the specified node representation is hit.
+   * @param p The point to test.
+   * @param node The node to which this style instance is assigned.
+   * @returns whether or not the specified node representation is hit.
    */
   isHit(canvasContext: ICanvasContext, p: Point, node: INode): boolean {
     if (!node.layout.toRect().getEnlarged(canvasContext.hitTestRadius).contains(p)) {
@@ -9877,7 +9916,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
 
   /**
    * Create a clone of this object.
-   * @return A clone of this object.
+   * @returns A clone of this object.
    * @see Specified by {@link ICloneable.clone}.
    */
   clone(): this {
@@ -9916,7 +9955,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * handle the provided item and its associated style.
    * @param port The port to provide an instance for
    * @param style The style to use for the creation of the visual
-   * @return An implementation that may be used to subsequently create or update
+   * @returns An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
    *   design pattern for implementations. This method may not return `null` but should
@@ -9934,7 +9973,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * handle the provided item and its associated style.
    * @param port The port to provide an instance for
    * @param style The style to use for the calculating the painting bounds
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -9950,7 +9989,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * handle the provided item and its associated style.
    * @param port The port to provide an instance for
    * @param style The style to use for the testing the visibility
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -9966,7 +10005,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * handle the provided item and its associated style.
    * @param port The port to provide an instance for
    * @param style The style to use for the querying hit tests
-   * @return An implementation that may be used to subsequently perform
+   * @returns An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
@@ -9983,7 +10022,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * handle the provided item and its associated style.
    * @param port The port to provide an instance for
    * @param style The style to use for the querying marquee intersection test.
-   * @return An implementation that may be used to subsequently query
+   * @returns An implementation that may be used to subsequently query
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -9999,7 +10038,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * for the item's style.
    * @param port The item to provide a context instance for.
    * @param style The style to use for the context.
-   * @return An non-`null` lookup implementation.
+   * @returns An non-`null` lookup implementation.
    * @see {@link ILookup.EMPTY}
    * @see {@link ILookup}
    * @see Specified by {@link IPortStyleRenderer.getContext}.
@@ -10021,7 +10060,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
    * @param type the type for which an instance shall be returned
-   * @return an instance that is assignable to type or `null`
+   * @returns an instance that is assignable to type or `null`
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint

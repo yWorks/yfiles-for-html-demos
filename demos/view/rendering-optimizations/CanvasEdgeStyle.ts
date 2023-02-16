@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -58,7 +58,7 @@ export default class CanvasEdgeStyle extends EdgeStyleBase {
    * Creates the visual representation for the given edge.
    * @param context The render context.
    * @param edge The edge to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link CanvasEdgeStyle.updateVisual}
    */
   createVisual(context: IRenderContext, edge: IEdge): Visual {
@@ -77,7 +77,7 @@ export default class CanvasEdgeStyle extends EdgeStyleBase {
    * @param oldVisual The visual that has been created in the call to
    * {@link CanvasEdgeStyle.createVisual}.
    * @param edge The edge to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link CanvasEdgeStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, edge: IEdge): Visual {

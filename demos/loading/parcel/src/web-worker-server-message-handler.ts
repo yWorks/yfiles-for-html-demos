@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,41 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// use the vite specific ?worker suffix to load the script as a web worker, automatically
-// see https://vitejs.dev/guide/features.html#web-workers for details
-import LayoutWorker from './layout-worker?worker'
+import type { LayoutDescriptor, LayoutGraph } from 'yfiles'
+import { LayoutExecutorAsyncWorker, License } from 'yfiles'
 
-function getWebWorkerMessageHandler(
-  licenseString: string
-): Promise<typeof webWorkerMessageHandler> {
-  const worker = new LayoutWorker()
-  worker.postMessage(licenseString)
+const workerSelf = self as unknown as Worker
 
-  function webWorkerMessageHandler(data: Object): Promise<Object> {
-    return new Promise(resolve => {
-      worker.onmessage = (e: any) => resolve(e.data)
-      worker.postMessage(data)
-    })
-  }
+export function createLayoutExecutorAsyncWorker(
+  handler: (graph: LayoutGraph, descriptor: LayoutDescriptor) => Promise<void> | void
+): LayoutExecutorAsyncWorker {
+  // create a new LayoutExecutor for the web worker
+  const executorWorker = new LayoutExecutorAsyncWorker(handler)
+  let initialized = false
 
-  return new Promise<typeof webWorkerMessageHandler>((resolve, reject) => {
-    worker.onmessage = ev => {
-      if (ev.data === 'started') {
-        resolve(webWorkerMessageHandler)
+  // when a message is received..
+  workerSelf.addEventListener(
+    'message',
+    e => {
+      if (!initialized) {
+        License.value = JSON.parse(e.data)
+        workerSelf.postMessage('started')
+        initialized = true
       } else {
-        reject()
+        // send it to the executor for processing and post the results
+        // back to the caller
+        executorWorker
+          .process(e.data)
+          .then(data => workerSelf.postMessage(data))
+          .catch(errorObj => workerSelf.postMessage(errorObj))
       }
-    }
-  })
-}
-
-let promise: Promise<(data: Object) => Promise<Object>> | null = null
-
-export function getLayoutExecutorAsyncMessageHandler(
-  license: Record<string, unknown>
-): Promise<(data: Object) => Promise<Object>> {
-  if (!promise) {
-    promise = getWebWorkerMessageHandler(JSON.stringify(license))
-  }
-  return promise
+    },
+    false
+  )
+  return executorWorker
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -314,8 +314,7 @@ function populateContextMenu(
 /**
  * Counts the number of bundled and unbundled edges of a given selection.
  * @param edges The selected edges
- * @return The number of bundled and unbundled edges as an object
- *
+ * @returns The number of bundled and unbundled edges as an object
  */
 function countBundledEdges(edges: Array<IEdge>): { countBundled: number; countUnbundled: number } {
   let countBundled = 0
@@ -534,7 +533,7 @@ async function runLayout() {
 /**
  * Creates and configures the circular layout algorithm.
  * @param singleCycle True if the layout should be single-cycle, false otherwise
- * @return The configured circular layout algorithm
+ * @returns The configured circular layout algorithm
  */
 function createCircularLayout(singleCycle: boolean): CircularLayout {
   const circularLayout = new CircularLayout({
@@ -550,7 +549,7 @@ function createCircularLayout(singleCycle: boolean): CircularLayout {
 
 /**
  * Creates and configures the radial layout algorithm.
- * @return The configured radial layout algorithm
+ * @returns The configured radial layout algorithm
  */
 function createRadialLayout(): RadialLayout {
   const radialLayout = new RadialLayout({
@@ -562,7 +561,7 @@ function createRadialLayout(): RadialLayout {
 
 /**
  * Creates and configures the balloon layout algorithm.
- * @return The configured balloon layout algorithm
+ * @returns The configured balloon layout algorithm
  */
 function createBalloonLayout(): BalloonLayout {
   const balloonLayout = new BalloonLayout({
@@ -578,7 +577,7 @@ function createBalloonLayout(): BalloonLayout {
 
 /**
  * Creates and configures the tree layout algorithm.
- * @return The configured tree layout algorithm
+ * @returns The configured tree layout algorithm
  */
 function createTreeLayout(): TreeLayout {
   const treeLayout = new TreeLayout({
@@ -678,12 +677,14 @@ function updateNodeInformation(layoutData: CircularLayoutData): void {
       circleNodeSize: circleNodes.get(id)?.length || 0
     }
   })
+
+  graphComponent.invalidate()
 }
 
 /**
  * Calculates the coordinates of the circle formed by the given points
  * @param circleNodes An array containing the 3 points that form the circle
- * @return The coordinates of the center of the circle
+ * @returns The coordinates of the center of the circle
  */
 function calculateCircleCenter(circleNodes: Array<INode>): Point {
   const p1 = circleNodes[0].layout.center

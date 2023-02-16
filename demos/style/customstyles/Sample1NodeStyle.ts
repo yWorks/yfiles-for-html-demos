@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -77,7 +77,7 @@ export default class Sample1NodeStyle extends NodeStyleBase {
    * the {@link ITagOwner.tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
    * @param node The node to determine the color for.
-   * @return The color for filling the node.
+   * @returns The color for filling the node.
    */
   private getNodeColor(node: INode): string {
     // the color can be obtained from the "business data" that can be associated with
@@ -377,7 +377,7 @@ export default class Sample1NodeStyle extends NodeStyleBase {
 
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
-   * @return True if p is inside node.
+   * @returns True if p is inside node.
    * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(context: IInputModeContext, location: Point, node: INode): boolean {
@@ -386,7 +386,7 @@ export default class Sample1NodeStyle extends NodeStyleBase {
 
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
-   * @return True if the box intersects the elliptical shape of the node. Also true if box lies completely
+   * @returns True if the box intersects the elliptical shape of the node. Also true if box lies completely
    *   inside node.
    * @see Overrides {@link NodeStyleBase.isInBox}
    */

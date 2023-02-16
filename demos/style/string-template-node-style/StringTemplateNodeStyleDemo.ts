@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -150,8 +150,8 @@ function initializeStyles(graph: IGraph): void {
       />
   <defs>
     <linearGradient id="bottomGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="{Binding status, Converter=demoConverters.statusColorConverter}" stop-opacity="stop-opacity:1"/>
-      <stop offset="5%" stop-color="white" stop-opacity="stop-opacity:1" />
+      <stop offset="0%" stop-color="{Binding status, Converter=demoConverters.statusColorConverter}" stop-opacity="1"/>
+      <stop offset="5%" stop-color="white" stop-opacity="1" />
     </linearGradient>
   </defs>
 </g>`)
@@ -350,7 +350,7 @@ function registerCommands(graphComponent: GraphComponent): void {
 
 /**
  * Returns a reference to the first element with the specified ID in the current document.
- * @return A reference to the first element with the specified ID in the current document.
+ * @returns A reference to the first element with the specified ID in the current document.
  */
 function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T

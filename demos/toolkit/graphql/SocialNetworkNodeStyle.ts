@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,7 +37,7 @@ export class SocialNetworkNodeStyle extends NodeStyleBase {
    * Creates the node visual.
    * @param context The render context
    * @param node The node to which this style instance is assigned
-   * @return The new visual
+   * @returns The new visual
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
     const person = node.tag
@@ -102,7 +102,7 @@ export class SocialNetworkNodeStyle extends NodeStyleBase {
    * @param context The render context
    * @param oldVisual The previously rendered visual
    * @param node The node to which this style instance is assigned
-   * @return The updated visual
+   * @returns The updated visual
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
     const person = node.tag

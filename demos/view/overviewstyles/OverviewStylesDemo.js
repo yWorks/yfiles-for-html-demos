@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -63,14 +63,14 @@ let graphComponent
 
 /**
  * The overview graph component that use the Canvas and Svg visual creator.
- ** @type {GraphOverviewComponent}
+ * @type {GraphOverviewComponent}
  */
 let overviewComponent
 
 /**
  * The graph component that use the overview inputMode to let the overview graph use the same
  * styles as the graphComponent.
- ** @type {GraphComponent}
+ * @type {GraphComponent}
  */
 let overviewGraphComponent
 

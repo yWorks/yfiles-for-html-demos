@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -90,8 +90,8 @@ export class SourceDialog {
    * Removes the dialog container's children and sets it to display none
    */
   dispose() {
-    while (this.dialogContainer.firstChild) {
-      this.dialogContainer.removeChild(this.dialogContainer.firstChild)
+    while (this.dialogContainer.lastChild != null) {
+      this.dialogContainer.removeChild(this.dialogContainer.lastChild)
     }
     this.dialogContainerModal.style.setProperty('display', 'none')
   }

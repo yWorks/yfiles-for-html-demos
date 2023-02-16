@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -322,9 +322,11 @@ function initResponsiveToolbar(toolbar) {
   let toolbarWidth = 0
   const resizeHandler = () => {
     const toolbarComputedStyle = window.getComputedStyle(toolbar, null)
-    const toolbarPadding = parseInt(
-      toolbarComputedStyle.getPropertyValue('padding-right').match(/(\d+)/)[0]
-    )
+    const paddingRightStyle = toolbarComputedStyle.getPropertyValue('padding-right').match(/(\d+)/)
+    if (!Array.isArray(paddingRightStyle)) {
+      return
+    }
+    const toolbarPadding = parseInt(paddingRightStyle[0])
     // only update if clientWidth is > 0 - this allows to temporarily hide the toolbar with "display:'none'"
     if (toolbarWidth !== toolbar.clientWidth - toolbarPadding && toolbar.clientWidth > 0) {
       toolbarWidth = wrapToolbar(toolbar)

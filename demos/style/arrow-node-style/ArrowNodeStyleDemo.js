@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -58,6 +58,8 @@ const angleRange = document.querySelector('#angle-range')
 const angleLabel = document.querySelector('#angle-label')
 const shaftRatioRange = document.querySelector('#shaft-ratio')
 const shaftRatioLabel = document.querySelector('#shaft-ratio-label')
+const propertiesPanel = document.querySelector('.demo-properties')
+const infoMessage = document.querySelector('.info-message')
 
 /**
  * @returns {!Promise}
@@ -252,9 +254,11 @@ function initializeUI(graphComponent) {
   })
 
   // adjust option panel when the selection has been changed
-  graphComponent.selection.addItemSelectionChangedListener((sender, evt) =>
-    adjustOptionPanel(graphComponent.graph, evt.item)
-  )
+  graphComponent.selection.addItemSelectionChangedListener((sender, evt) => {
+    if (evt.item instanceof INode && evt.item.style instanceof ArrowNodeStyle) {
+      adjustOptionPanel(graphComponent, evt.item)
+    }
+  })
 }
 
 /**
@@ -304,21 +308,17 @@ function styleToText(style) {
 
 /**
  * Adjusts the option panel to show the style settings of a newly selected node.
- * @param {!IGraph} graph The graph where the node lives.
+ * @param {!GraphComponent} graphComponent The graphComponent where the node lives.
  * @param {!INode} node The node whose style setting should be shown.
  */
-function adjustOptionPanel(graph, node) {
+function adjustOptionPanel(graphComponent, node) {
   const style = node.style
-  if (style instanceof ArrowNodeStyle) {
-    const { shape, direction, angle, shaftRatio } = getStyleValues(style)
+  const disabled = !graphComponent.selection.isSelected(node)
+  const { shape, direction, angle, shaftRatio } = getStyleValues(style)
+  const graph = graphComponent.graph
+  updatePanelState(shape, direction, angle, shaftRatio, disabled)
 
-    basicShape.value = shape
-    shapeDirection.value = direction
-    angleRange.value = angle
-    angleLabel.innerText = angle
-    shaftRatioRange.value = shaftRatio
-    shaftRatioLabel.innerText = shaftRatio
-
+  if (!disabled) {
     // update defaultArrowNodeStyle to correspond to the option panel
     const defaultArrowNodeStyle = graph.nodeDefaults.style
     defaultArrowNodeStyle.shape = style.shape
@@ -327,6 +327,29 @@ function adjustOptionPanel(graph, node) {
     defaultArrowNodeStyle.shaftRatio = style.shaftRatio
     graph.nodeDefaults.size = node.layout.toSize()
   }
+}
+
+/**
+ * Updates the current state of the options panel with the given values
+ * @param {!string} shape The shape to be applied.
+ * @param {!string} direction The direction to be applied.
+ * @param {!string} angle The angle to be applied.
+ * @param {!string} shaftRatio The shaft ration to be applied.
+ * @param {boolean} disabled True if the panel should be disabled, false otherwise
+ */
+function updatePanelState(shape, direction, angle, shaftRatio, disabled) {
+  basicShape.value = shape
+  basicShape.disabled = disabled
+  shapeDirection.value = direction
+  shapeDirection.disabled = disabled
+  angleRange.value = angle
+  angleRange.disabled = disabled
+  angleLabel.innerText = angle
+  shaftRatioRange.value = shaftRatio
+  shaftRatioRange.disabled = disabled
+  shaftRatioLabel.innerText = shaftRatio
+  propertiesPanel.style.display = disabled ? 'none' : 'inline-block'
+  infoMessage.style.display = disabled ? 'inline-block' : 'none'
 }
 
 /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -406,7 +406,7 @@ export class PathsConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the description text that explains the currently used path algorithm.
-   * @return The description text.
+   * @returns The description text.
    */
   get descriptionText(): string {
     switch (this.algorithmType) {
@@ -443,7 +443,7 @@ export class PathsConfig extends AlgorithmConfiguration {
    * Returns whether or not all the given nodes belong to the graph.
    * @param nodes The nodes.
    * @param graph The graph.
-   * @return `true` if all nodes belong to the graph, `false` otherwise.
+   * @returns `true` if all nodes belong to the graph, `false` otherwise.
    */
   nodesInGraph(nodes: INode[], graph: IGraph): boolean {
     return nodes.every(node => graph.contains(node))

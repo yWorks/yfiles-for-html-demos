@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,7 +34,8 @@ import {
   ICommand,
   InteriorStretchLabelModel,
   License,
-  Rect,
+  Point,
+  ShapeNodeStyle,
   Size
 } from 'yfiles'
 
@@ -63,152 +64,154 @@ async function run() {
     return
   }
 
-  // initialize graph component
-  graphComponent = new GraphComponent('graphComponent')
+  const graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
-  graphComponent.inputMode = new GraphEditorInputMode()
 
-  // Make links work again, as the GraphComponent prevents the default action when clicking a link
-  graphComponent.addMouseClickListener((sender, args) => {
-    let target = args.originalEvent.target
-    while (!target.hasAttribute('href') && target.parentElement) {
-      target = target.parentElement
-    }
-    if (target.hasAttribute('href')) {
-      window.open(target.getAttribute('href'), '_blank')
-    }
+  // Disable node creation since they wouldn't have an HTML label anyway
+  graphComponent.inputMode = new GraphEditorInputMode({
+    allowCreateNode: false
   })
 
+  // Apply default styling
   const graph = graphComponent.graph
-  // set the defaults for nodes
   initDemoStyles(graph)
-  graph.nodeDefaults.size = new Size(200, 100)
+  graph.nodeDefaults.size = new Size(250, 200)
+  graph.nodeDefaults.style = new ShapeNodeStyle({ stroke: null, fill: null })
   graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
   graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graphComponent.focusIndicatorManager.enabled = false
 
-  // node labels get the HTML label support
-  const font = new Font('"Segoe UI", Arial', 11)
+  // Labels get the HTML label style
+  const font = new Font('Montserrat,sans-serif', 14)
   graph.nodeDefaults.labels.style = new HtmlLabelStyle(font)
   graph.edgeDefaults.labels.style = new HtmlLabelStyle(font)
 
-  // create a graph
-  const node1 = graph.createNode(new Rect(800, 0, 300, 270))
-  const node2 = graph.createNode(new Rect(100, 500, 300, 180))
-  const node3 = graph.createNode(new Rect(450, 500, 300, 180))
-  const node4 = graph.createNode(new Rect(800, 500, 300, 180))
-  const node5 = graph.createNode(new Rect(1150, 500, 300, 240))
-  const node6 = graph.createNode(new Rect(1500, 500, 300, 240))
+  // Create a graph
+  const node1 = graph.createNodeAt({
+    location: new Point(800, 0),
+    tag: {
+      name: 'Eric Joplin',
+      position: 'Chief Executive Officer',
+      email: 'ejoplin@yoyodyne.com',
+      phone: '555-0100',
+      fax: '555-0101',
+      web: 'yoyodyne.com/ejoplin',
+      assistants: ['Gary Robers', 'Alexander Burns', 'Linda Newland'],
+      department: 'executive'
+    }
+  })
+  const node2 = graph.createNodeAt({
+    location: new Point(100, 500),
+    tag: {
+      name: 'Amy Kain',
+      position: 'Vice President of Production',
+      email: 'akain@yoyodyne.com',
+      phone: '555-0106',
+      fax: '555-0107',
+      web: 'yoyodyne.com/akain',
+      department: 'production'
+    }
+  })
+  const node3 = graph.createNodeAt({
+    location: new Point(450, 500),
+    tag: {
+      name: 'Richard Fuller',
+      position: 'Vice President of Sales',
+      email: 'rfuller@yoyodyne.com',
+      phone: '555-0134',
+      fax: '555-0135',
+      web: 'yoyodyne.com/rfuller',
+      department: 'sales'
+    }
+  })
+  const node4 = graph.createNodeAt({
+    location: new Point(800, 500),
+    tag: {
+      name: 'Mildred Shark',
+      position: 'Vice President of Engineering',
+      email: 'mshark@yoyodyne.com',
+      phone: '555-0156',
+      fax: '555-0157',
+      web: 'yoyodyne.com/mshark',
+      department: 'engineering'
+    }
+  })
+  const node5 = graph.createNodeAt({
+    location: new Point(1150, 500),
+    tag: {
+      name: 'Angela Haase',
+      position: 'Marketing Manager',
+      email: 'ahaase@yoyodyne.com',
+      phone: '555-0170',
+      fax: '555-0171',
+      web: 'yoyodyne.com/ahaase',
+      department: 'marketing',
+      assistants: ['Lorraine Deaton']
+    }
+  })
+  const node6 = graph.createNodeAt({
+    location: new Point(1500, 500),
+    tag: {
+      name: 'David Kerry',
+      position: 'Chief Financial Officer',
+      email: 'dkerry@yoyodyne.com',
+      phone: '555-0180',
+      fax: '555-0181',
+      web: 'yoyodyne.com/dkerry',
+      department: 'accounting',
+      assistants: ['Aaron Buckman']
+    }
+  })
   graph.createEdge(node1, node2)
   graph.createEdge(node1, node3)
   graph.createEdge(node1, node4)
   graph.createEdge(node1, node5)
   graph.createEdge(node1, node6)
 
-  // add HTML labels to the nodes - the style is obtained in html-label.css
-  graph.addLabel(
-    node1,
-    '<div class="label executive">' +
-      '<h1>Eric&nbsp;Joplin</h1>' +
-      '<h2>Chief Executive Officer</h2>' +
-      '<a href="mailto:ejoplin@yoyodyne.com">ejoplin@yoyodyne.com</a>' +
-      '<p>Phone: 555-0100 Fax: 555-0101' +
-      '<br>' +
-      'Web: <a href="https://yoyodyne.com/ejoplin" target="_blank">yoyodyne.com/ejoplin</a>' +
-      '</p>' +
-      '<hr>' +
-      '<div class="subordinates">' +
-      '<b>Assistants:</b>' +
-      '<ul>' +
-      '<li>Gary Robers</li>' +
-      '<li>Alexander Burns</li>' +
-      '<li>Linda Newland</li>' +
-      '</ul>' +
-      '</div>' +
-      '</div>'
-  )
-  graph.addLabel(
-    node2,
-    '<div class="label production">' +
-      '<h1>Amy&nbsp;Kain</h1>' +
-      '<h2>Vice President of Production</h2>' +
-      '<a href="mailto:akain@yoyodyne.com">akain@yoyodyne.com</a>' +
-      '<p>Phone: 555-0106 Fax: 555-0107' +
-      '<br>' +
-      'Web: <a href="https://yoyodyne.com/akain" target="_blank">yoyodyne.com/akain</a>' +
-      '</p>' +
-      '</div>'
-  )
-  graph.addLabel(
-    node3,
-    '<div class="label sales">' +
-      '<h1>Richard&nbsp;Fuller</h1>' +
-      '<h2>Vice President of Sales</h2>' +
-      '<a href="mailto:rfuller@yoyodyne.com">rfuller@yoyodyne.com</a>' +
-      '<p>Phone: 555-0134 Fax: 555-0135' +
-      '<br>' +
-      'Web: <a href="https://yoyodyne.com/rfuller" target="_blank">yoyodyne.com/rfuller</a>' +
-      '</p>' +
-      '</div>'
-  )
-  graph.addLabel(
-    node4,
-    '<div class="label engineering">' +
-      '<h1>Mildred&nbsp;Shark</h1>' +
-      '<h2>Vice President of Engineering</h2>' +
-      '<a href="mailto:mshark@yoyodyne.com">mshark@yoyodyne.com</a>' +
-      '<p>Phone: 555-0156 Fax: 555-0157' +
-      '<br>' +
-      'Web: <a href="https://yoyodyne.com/mshark" target="_blank">yoyodyne.com/mshark</a>' +
-      '</p>' +
-      '</div>'
-  )
-  graph.addLabel(
-    node5,
-    '<div class="label marketing">' +
-      '<h1>Angela&nbsp;Haase</h1>' +
-      '<h2>Marketing Manager</h2>' +
-      '<a href="mailto:ahaase@yoyodyne.com">ahaase@yoyodyne.com</a>' +
-      '<p>Phone: 555-0170 Fax: 555-0171' +
-      '<br>' +
-      'Web: <a href="https://yoyodyne.com/ahaase" target="_blank">yoyodyne.com/ahaase</a>' +
-      '</p>' +
-      '<hr>' +
-      '<div class="subordinates">' +
-      '<b>Assistants:</b>' +
-      '<ul><li>Lorraine Deaton</li></ul>' +
-      '</div>' +
-      '</div>'
-  )
-  graph.addLabel(
-    node6,
-    '<div class="label accounting">' +
-      '<h1>David&nbsp;Kerry</h1>' +
-      '<h2>Chief Financial Officer</h2>' +
-      '<a href="mailto:dkerry@yoyodyne.com">dkerry@yoyodyne.com</a>' +
-      '<p>Phone: 555-0180 Fax: 555-0181' +
-      '<br>' +
-      'Web: <a href="https://yoyodyne.com/dkerry" target="_blank">yoyodyne.com/dkerry</a>' +
-      '</p>' +
-      '<hr>' +
-      '<div class="subordinates">' +
-      '<b>Assistants:</b>' +
-      '<ul><li>Aaron Buckman</li></ul>' +
-      '</div>' +
-      '</div>'
-  )
+  // Add HTML labels to the nodes
+  for (const node of graph.nodes) {
+    graph.addLabel(node, buildLabelText(node.tag))
+  }
 
   graphComponent.fitGraphBounds()
 
-  // bind UI elements to actions
-  registerCommands()
+  registerCommands(graphComponent)
 
   showApp(graphComponent)
 }
 
-/** @type {GraphComponent} */
-let graphComponent
+/**
+ * Builds the string of the HTML snippet that displays the given data.
+ * @param {!Record.<string,*>} data
+ */
+function buildLabelText(data) {
+  const assistants =
+    !Array.isArray(data.assistants) || data.assistants.length === 0
+      ? ''
+      : `
+<hr>
+<div class="assistants">
+  <b>Assistants:</b>
+  <ul>
+${data.assistants.map(name => `    <li>${name}</li>`).join('\n')}
+  </ul>
+</div>`
 
-function registerCommands() {
+  return `<div class="label-content ${data.department}">
+<h1>${data.name}</h1>
+<div class="position">${data.position}</div>
+<div class="details">
+  <a href="mailto:${data.email}">${data.email}</a><br>
+  Phone: ${data.phone} Fax: ${data.fax}<br>
+  Web: <a href="https://${data.web}" target="_blank">${data.web}</a>
+</div>${assistants}`
+}
+
+/**
+ * Binds UI elements to commands.
+ * @param {!GraphComponent} graphComponent
+ */
+function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)

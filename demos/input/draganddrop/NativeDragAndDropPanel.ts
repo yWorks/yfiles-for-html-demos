@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -49,7 +49,7 @@ export class DragAndDropPanelItem<T> {
   constructor(public element: T, public tooltip: string) {}
 }
 
-// @yjs:keep=effectAllowed
+// @yjs:keep = effectAllowed
 
 /**
  * A palette of sample nodes. Users can drag and drop the nodes from this palette to a graph control.

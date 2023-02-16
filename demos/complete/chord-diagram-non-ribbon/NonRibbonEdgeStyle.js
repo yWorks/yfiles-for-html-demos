@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -44,10 +44,18 @@ import {
  */
 export class NonRibbonEdgeStyle extends EdgeStyleBase {
   /**
+   * @param {number} [thickness]
+   */
+  constructor(thickness) {
+    super()
+    // meant to be used to create thicker edges
+    this.thicknessOffset = thickness || 0
+  }
+  /**
    * Creates the visual for an edge.
    * @param {!IRenderContext} context The render context
    * @param {!IEdge} edge The edge to which this style instance is assigned
-   * @yjs:keep=connections
+   * @yjs:keep = connections
    * @returns {?SvgVisual}
    */
   createVisual(context, edge) {
@@ -59,7 +67,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     const controlPoints = NonRibbonEdgeStyle.subdivideBezierCurve(edge)
     if (controlPoints.length === 0) {
       // this should not happen, since the configuration that we used for the circular layout must provide
-      // two control points for each edges
+      // two control points for each edge
       return null
     }
 
@@ -77,7 +85,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
       const path = generalPath.createSvgPath()
       path.setAttribute('fill', 'none')
       path.setAttribute('stroke', i === 0 ? sourceColor : targetColor)
-      path.setAttribute('stroke-width', `${edge.tag.connections * 0.5}`)
+      path.setAttribute('stroke-width', `${edge.tag.connections * 0.5 + this.thicknessOffset}`)
       g.appendChild(path)
     }
 
@@ -106,9 +114,38 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
   }
 
   /**
+   * Returns the original edge path as cubic Bézier curve.
+   * @param {!IEdge} edge The given edge
+   * @returns {?GeneralPath}
+   */
+  getPath(edge) {
+    if (edge.bends.size < 2) {
+      // this should not happen, since the configuration that we used for the circular layout must provide
+      // two control points for each edge
+      return null
+    }
+
+    const path = new GeneralPath()
+    path.moveTo(edge.sourcePort.location)
+    path.cubicTo(edge.bends.get(0).location, edge.bends.get(1).location, edge.targetPort.location)
+    return path
+  }
+
+  /**
+   * Determines whether the visual representation of the edge has been hit at the given location.
+   * @param {!IInputModeContext} canvasContext The input mode context
+   * @param {!Point} p The point to test
+   * @param {!IEdge} edge The edge to which this style instance is assigned
+   * @returns {boolean} True if the edge has been hit, false otherwise
+   */
+  isHit(canvasContext, p, edge) {
+    const thickness = edge.tag.connections * 0.5 + this.thicknessOffset
+    return this.getPath(edge).pathContains(p, canvasContext.hitTestRadius + thickness * 0.5)
+  }
+
+  /**
    * Subdivides the cubic curve in 2 sub-curves to apply the gradient.
    * @param {!IEdge} edge The edge to be subdivided
-   * @private
    * @returns {!Array.<Point>}
    */
   static subdivideBezierCurve(edge) {
@@ -149,7 +186,6 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
    * Returns the color of the given node.
    * In this demo, the node's style is ShapeNodeStyle.
    * @param {!INode} node
-   * @private
    */
   static getColor(node) {
     if (!(node.style instanceof ShapeNodeStyle)) {

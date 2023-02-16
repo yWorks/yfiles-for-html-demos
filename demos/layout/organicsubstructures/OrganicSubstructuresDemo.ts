@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -447,7 +447,7 @@ async function loadSampleData(samplePath: string): Promise<any> {
 
 /**
  * Updates the settings UI to match the given sample's default layout settings
- * @yjs:keep=cycleSubstructureStyle,chainSubstructureStyle,starSubstructureStyle,parallelSubstructureStyle,parallelSubstructureTypeSeparation,starSubstructureTypeSeparation
+ * @yjs:keep = cycleSubstructureStyle,chainSubstructureStyle,starSubstructureStyle,parallelSubstructureStyle,parallelSubstructureTypeSeparation,starSubstructureTypeSeparation
  * @param data the sample data representing the desired graph structure.
  */
 function updateLayoutSettings(data: any): void {
@@ -504,7 +504,7 @@ function updateSelectedIndex(id: string, value: string | undefined): void {
  * Determines the index of the given value in the given HTMLSelectElement's options.
  * @param select the HTMLSelectElement whose options are searched for the given value.
  * @param value the value to search for.
- * @return the index of the given value or -1 if the given value is undefined or not a value
+ * @returns the index of the given value or -1 if the given value is undefined or not a value
  * of the given HTMLSelectElement's options.
  */
 function indexOf(select: HTMLSelectElement, value: string | undefined): number {
@@ -572,7 +572,7 @@ function initializeUI(): void {
 /**
  * Determines the currently selected value of the HTMLSelectElement identified by the given ID.
  * @param id the ID for the HTMLSelectElement whose selected value is returned.
- * @return the selected value of the HTMLSelectElement identified by the given ID.
+ * @returns the selected value of the HTMLSelectElement identified by the given ID.
  */
 function getSelectedValue(id: string): string {
   const select = getElementById<HTMLSelectElement>(id)
@@ -581,7 +581,7 @@ function getSelectedValue(id: string): string {
 
 /**
  * Returns a reference to the first element with the specified ID in the current document.
- * @return A reference to the first element with the specified ID in the current document.
+ * @returns A reference to the first element with the specified ID in the current document.
  */
 function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T

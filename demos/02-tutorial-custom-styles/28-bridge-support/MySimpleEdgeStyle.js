@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -133,8 +133,9 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
     // check if something changed
     if (!newCache.stateEquals(oldCache)) {
       // more than only the path changed - re-render the visual
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
+      while (container.lastChild != null) {
+        // remove all children
+        container.removeChild(container.lastChild)
       }
       this.render(context, edge, container, newCache)
       return oldVisual
@@ -229,8 +230,9 @@ export class MySimpleEdgeStyle extends EdgeStyleBase {
   updatePath(context, edge, container, cache) {
     // The first child must be a path - else re-create the container from scratch
     if (container.childNodes.length === 0 || !(container.childNodes[0] instanceof SVGPathElement)) {
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
+      while (container.lastChild != null) {
+        // remove all children
+        container.removeChild(container.lastChild)
       }
       this.render(context, edge, container, cache)
       return

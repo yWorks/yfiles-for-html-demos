@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
   delegate,
   FilteredGraphWrapper,
   FreeNodePortLocationModel,
@@ -149,7 +148,6 @@ export class CompanyStructureView {
     this.edgeClickListener = null
 
     // Returns the edge types.
-    // @private
     this.currentEdgeTypes = new Set([EdgeTypeEnum.Hierarchy, EdgeTypeEnum.Relation])
 
     this.toggleButtonSupport = new TogglePortButtonSupport()
@@ -338,7 +336,6 @@ export class CompanyStructureView {
    * @param {!IGraph} graph The given graph
    */
   updateVisibility(graph) {
-    const tree = new TreeAnalysis({ subgraphEdges: isDominantHierarchyEdge }).run(graph)
     if (graph.nodes.some(isOutputCollapsed)) {
       graph.nodes.forEach(n => {
         setVisible(n, this.shouldBeShown(graph, n))
@@ -402,7 +399,7 @@ export class CompanyStructureView {
    * @param {!GraphData} graphData The graph data
    * @param {!function} nodePredicate The node filter function
    * @param {!function} edgePredicate The edge filter function
-   * @yjs:keep=nodes,edges
+   * @yjs:keep = nodes,edges
    * @returns {!GraphBuilder}
    */
   createGraphBuilder(graph, graphData, nodePredicate, edgePredicate) {
@@ -514,7 +511,6 @@ export class CompanyStructureView {
 
   /**
    * Updates the visibility of the graph if something has changed.
-   * @private
    */
   graphHasChanged() {
     this.calculateHierarchy(this.completeGraph)

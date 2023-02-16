@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,7 +45,7 @@ import {
  * Demonstrates how to configure the {@link EdgeRouter} to create bus-like orthogonal routes.
  * In this example we use the data stored in the edge's tag to determine which edge belongs to which bus.
  * @param graph The graph to be laid out
- * @return {EdgeRouter, EdgeRouterData} the configured layout algorithm and the corresponding layout data
+ * @returns {{EdgeRouter, EdgeRouterData}} the configured layout algorithm and the corresponding layout data
  */
 export function createFeatureLayoutConfiguration(graph: IGraph): {
   layout: ILayoutAlgorithm
@@ -65,7 +65,6 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
 
 /**
  * Configures a bus where the backbone is not manually configured but will be computed automatically.
- * @param layoutData
  */
 function configureFirstBus(layoutData: EdgeRouterData) {
   // define the first bus
@@ -77,8 +76,6 @@ function configureFirstBus(layoutData: EdgeRouterData) {
 
 /**
  * Configures a bus where the location of the backbone is manually defined.
- * @param layoutData
- * @param graph
  */
 function configureSecondBus(layoutData: EdgeRouterData, graph: IGraph) {
   // define the bus
@@ -129,7 +126,6 @@ function configureSecondBus(layoutData: EdgeRouterData, graph: IGraph) {
 
 /**
  * Returns the bounding box of the given nodes.
- * @param nodes
  */
 function getBoundingBox(nodes: IEnumerable<INode>): Rect {
   let nodeBounds = Rect.EMPTY

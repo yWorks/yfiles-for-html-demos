@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,7 +43,7 @@ import type { Editor, Position, TextMarker } from 'codemirror'
 
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
- * @yjs:keep=setValue,getValue
+ * @yjs:keep = setValue,getValue
  */
 export class EditorSync {
   private itemToIdMap: HashMap<IModelItem, string> = new HashMap()
@@ -65,7 +65,6 @@ export class EditorSync {
 
   /**
    * Dispatched when the GraphML content has been modified by the used.
-   * @param listener
    */
   addEditorContentChangedListener(listener: (args: { value: string }) => void): void {
     this.editorContentChangedListener = listener
@@ -80,7 +79,6 @@ export class EditorSync {
 
   /**
    * Dispatched when the GraphML representation of a graph item has been selected in the editor.
-   * @param listener
    */
   addItemSelectedListener(listener: (args: { item: IModelItem }) => void): void {
     this.itemSelectedListener = listener
@@ -122,7 +120,6 @@ export class EditorSync {
   /**
    * The graph has been modified interactively in the view:
    * replace the editor content with the updated GraphML representation, and update the editor markers.
-   * @param event
    */
   onGraphModified(event: { graphml: string; selectedItem: IModelItem | null }): void {
     // don't fire changes while replacing the content
@@ -401,7 +398,7 @@ function isGreater(pos1: Position, pos2: Position): boolean {
 
 /**
  * Finds a matching closing tag for a provided start tag (at the appropriate nesting depth).
- * @return The index of the match
+ * @returns The index of the match
  */
 function findMatchingTag(str: string, startIndex: number, tagName: string): number {
   const regExp = new RegExp(`<${tagName}.*>|</${tagName}>`, 'gi')

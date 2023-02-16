@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,10 +40,8 @@ import {
 
 /**
  * Initializes the defaults for the styles in this tutorial.
- *
- * @param graph The graph.
  */
-function initTutorialDefaults(graph: IGraph): void {
+function initializeDefaultStyles(graph: IGraph): void {
   // configure defaults for normal nodes and their labels
   const shapeNodeStyle = new ShapeNodeStyle({
     fill: '#ff6c00',
@@ -77,11 +75,12 @@ function initTutorialDefaults(graph: IGraph): void {
 
 /**
  * Creates an initial sample graph.
- *
- * @param graph The graph.
  */
 export function createSampleGraph(graph: IGraph): void {
-  initTutorialDefaults(graph)
+  // define default styles for new graph items
+  initializeDefaultStyles(graph)
+
+  // create a few graph items
   const node1 = graph.createNodeAt([110, 20])
   const node2 = graph.createNodeAt([145, 95])
   const node3 = graph.createNodeAt([75, 95])

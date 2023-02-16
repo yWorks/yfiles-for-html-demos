@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -295,7 +295,6 @@ function runLayout() {
 /**
  * Creates a tree layout data for the tree layout
  * @returns {!TreeLayoutData} A configured TreeLayoutData.
- * @private
  * @param {!IGraph} graph
  */
 function createConfiguredLayoutData(graph) {
@@ -308,7 +307,6 @@ function createConfiguredLayoutData(graph) {
 /**
  * Creates a tree layout that handles assistant nodes and stack leaf nodes.
  * @returns {!TreeLayout} A configured TreeLayout.
- * @private
  */
 function createConfiguredLayout() {
   const treeLayout = new TreeLayout()

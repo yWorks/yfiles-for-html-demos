@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -133,7 +133,7 @@ export class CustomNodePortLocationModel
    * created
    * @param location The location in the world coordinate system that should be matched as
    * best as possible
-   * @return A new instance that can be used to describe the location of
+   * @returns A new instance that can be used to describe the location of
    * an {@link IPort} at the given owner
    */
   createParameter(owner: IPortOwner, location: Point): IPortLocationModelParameter {

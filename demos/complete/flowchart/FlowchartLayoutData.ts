@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -108,7 +108,7 @@ export default class FlowchartLayoutData {
 
   /**
    * Returns the preferred direction for negative branches.
-   * @return the preferred direction for negative branches.
+   * @returns the preferred direction for negative branches.
    */
   get preferredNegativeBranchDirection(): number {
     return this.$preferredNegativeBranchDirection
@@ -126,7 +126,7 @@ export default class FlowchartLayoutData {
 
   /**
    * Returns the preferred direction for positive branches.
-   * @return the preferred direction for positive branches.
+   * @returns the preferred direction for positive branches.
    */
   get preferredPositiveBranchDirection(): number {
     return this.$preferredPositiveBranchDirection
@@ -145,7 +145,7 @@ export default class FlowchartLayoutData {
   /**
    * Returns the adjusted direction that is set to negative branches. If the preferred positive and negative branches
    * interfere, this class adjusts them.
-   * @return the adjusted direction that is set to negative branches.
+   * @returns the adjusted direction that is set to negative branches.
    */
   get adjustedNegativeBranchDirection(): number {
     return this.$adjustedNegativeBranchDirection
@@ -154,7 +154,7 @@ export default class FlowchartLayoutData {
   /**
    * Returns the adjusted direction that is set to positive branches. If the preferred positive and negative branches
    * interfere, this class adjusts them.
-   * @return the adjusted direction that is set to positive branches.
+   * @returns the adjusted direction that is set to positive branches.
    */
   get adjustedPositiveBranchDirection(): number {
     return this.$adjustedPositiveBranchDirection
@@ -272,7 +272,7 @@ export default class FlowchartLayoutData {
 
   /**
    * Returns the flowchart element type of the given model item.
-   * @return one of the node type constants in the FlowchartElements file.
+   * @returns one of the node type constants in the FlowchartElements file.
    */
   getType(item: IModelItem): number {
     if (item instanceof INode) {
@@ -315,7 +315,7 @@ export default class FlowchartLayoutData {
 
   /**
    * Returns the branch type of the given edge.
-   * @return one of the direction constants in {@link FlowchartLayout}.
+   * @returns one of the direction constants in {@link FlowchartLayout}.
    */
   getBranchType(edge: IEdge): number {
     if (this.isPositiveBranch(edge)) {
@@ -330,7 +330,7 @@ export default class FlowchartLayoutData {
    * Returns whether or not the given edge is a positive branch. This default implementation considers an edge
    * as positive branch if its source is a decision and if its label text equals 'Yes' (ignoring case considerations).
    * @param edge the edge to consider.
-   * @return whether or not the given edge is a positive branch.
+   * @returns whether or not the given edge is a positive branch.
    */
   isPositiveBranch(edge: IEdge): boolean {
     return (
@@ -344,7 +344,7 @@ export default class FlowchartLayoutData {
    * Returns whether or not the given edge is a positive branch. This default implementation considers an edge
    * as negative branch if its source is a decision and if its label text equals 'No' (ignoring case considerations).
    * @param edge the edge to consider.
-   * @return whether or not the given edge is a negative branch.
+   * @returns whether or not the given edge is a negative branch.
    */
   isNegativeBranch(edge: IEdge): boolean {
     return (

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -124,7 +124,7 @@ export class Device {
    * Determines whether this device can send packets.
    * By definition in our model, neither switches nor WiFi access points can send packets; they
    * just relay them. Servers and databases won't send packets without receiving one first.
-   * @return `true` if the device is not a switch or access point, `false`
+   * @returns `true` if the device is not a switch or access point, `false`
    * otherwise.
    */
   canSendPackets(): boolean {
@@ -143,7 +143,7 @@ export class Device {
    * Determines whether this device can receive packets.
    * By definition in our model, switches and WiFi access points only relay packets. Everything
    * else can receive them.
-   * @return `true` if the device is not a switch or access point, `false`
+   * @returns `true` if the device is not a switch or access point, `false`
    * otherwise.
    */
   canReceivePackets(): boolean {
@@ -175,7 +175,7 @@ export class Device {
    * - Laptop &rarr; WiFi &rarr; Workstation
    * - Workstation &rarr; Switch &rarr; Smartphone
    * @param targetNode The candidate target device's type.
-   * @return `true` if the packet could travel to the target device according to the
+   * @returns `true` if the packet could travel to the target device according to the
    * described rules, `false` otherwise.
    */
   canConnectTo(targetNode: Device): boolean {

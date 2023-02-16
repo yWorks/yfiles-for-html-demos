@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -133,7 +133,7 @@ export class SankeyPopupSupport {
 
   /**
    * Gets the {@link IModelItem item} to display information for.
-   * @return The item to display information for
+   * @returns The item to display information for
    */
   get currentItem(): IModelItem | null {
     return this.$currentItem
@@ -149,7 +149,7 @@ export class SankeyPopupSupport {
 
   /**
    * Gets the flag for the current position is no longer valid.
-   * @return True if the current position is no longer valid, false otherwise
+   * @returns True if the current position is no longer valid, false otherwise
    */
   get dirty(): boolean {
     return this.$dirty
@@ -395,7 +395,7 @@ export class HighlightManager extends HighlightIndicatorManager<IModelItem> {
   /**
    * This implementation always returns the highlightGroup of the canvasComponent of this instance.
    * @param item The item to check
-   * @return An ICanvasObjectGroup or null
+   * @returns An ICanvasObjectGroup or null
    */
   getCanvasObjectGroup(item: IModelItem): ICanvasObjectGroup | null {
     if (IEdge.isInstance(item)) {
@@ -411,7 +411,7 @@ export class HighlightManager extends HighlightIndicatorManager<IModelItem> {
   /**
    * Callback used by install to retrieve the installer for a given item.
    * @param item The item to find an installer for
-   * @return The Highlighting installer
+   * @returns The Highlighting installer
    */
   getInstaller(item: IModelItem): ICanvasObjectInstaller {
     if (IEdge.isInstance(item)) {

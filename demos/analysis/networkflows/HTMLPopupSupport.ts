@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -88,7 +88,7 @@ export default class HTMLPopupSupport {
 
   /**
    * Gets the {@link IModelItem item} to display information for.
-   * @return The current graph item
+   * @returns The current graph item
    */
   get currentItem(): IModelItem | null {
     return this._currentItem

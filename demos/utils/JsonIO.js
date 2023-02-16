@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -52,7 +52,7 @@ import {
 } from 'yfiles'
 
 // Prevent obfuscation of the property names of the JSON data that represent the graph.
-// @yjs:keep=nodeList,edgeList,graphBounds,edgeData,nodeData
+// @yjs:keep = nodeList,edgeList,graphBounds,edgeData,nodeData
 /**
  * @typedef {object} JSONGraph
  * @property {JSONRectangle} graphBounds
@@ -595,7 +595,7 @@ export class JSONReader {
    * @param {function|null} provider
    * @param data
    * @param {function?} then
-   * @return {object|null}
+   * @returns {object|null}
    *
    * @private
    */
@@ -616,7 +616,7 @@ export class JSONReader {
  */
 export class JSONWriter {
   constructor() {
-    /* @yjs:keep=id,sourcePort,targetPort,bends */
+    /* @yjs:keep = id,sourcePort,targetPort,bends */
 
     Table = yfiles.graph.Table
     ITable = yfiles.graph.ITable
@@ -836,7 +836,7 @@ export class JSONWriter {
    * @param {IGraph} graph
    * @param {Table} table
    * @param {INode} tableNode
-   * @return {JSONNode}
+   * @returns {JSONNode}
    *
    * @private
    */
@@ -873,12 +873,12 @@ export class JSONWriter {
    * Serializes the data of the given edge.
    * @param {IEdge} edge
    * @param {IGraph} graph
-   * @return {JSONEdge}
+   * @returns {JSONEdge}
    *
    * @private
    */
   createEdgeData(edge, graph) {
-    /* @yjs:keep=source,target */
+    /* @yjs:keep = source,target */
     /** @type {JSONEdge} */
     const edgeData = {
       source: this.nodeIdProvider(edge.sourceNode),
@@ -934,7 +934,7 @@ export class JSONWriter {
   /**
    * Returns a string that identifies the label's layout parameter.
    * @param {ILabel} label
-   * @return {'default'|'interior-stretch-north'|'interior-stretch-south'|'interior-stretch-east'|'interior-stretch-west'|'interior-stretch-center'}
+   * @returns {'default'|'interior-stretch-north'|'interior-stretch-south'|'interior-stretch-east'|'interior-stretch-west'|'interior-stretch-center'}
    */
   createLayoutParameter(label) {
     if (label.layoutParameter.model instanceof InteriorStretchLabelModel) {

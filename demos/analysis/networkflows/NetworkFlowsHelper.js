@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -228,8 +228,8 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Occurs when a mouse button has been pressed.
-   * @param {!MouseButtons} buttons The state of the mouse buttons at the time of the event creation
    * @param {!Point} location The event location in world coordinates
+   * @param {!MouseButtons} buttons The state of the mouse buttons at the time of the event creation
    */
   onMouseDown(location, buttons) {
     if (this.controller.active && this.hitItem && buttons === MouseButtons.LEFT) {

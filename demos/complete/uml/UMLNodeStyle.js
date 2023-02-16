@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -457,7 +457,6 @@ export class UMLNodeStyle extends NodeStyleBase {
    * Adjusts the height of the given node to fit the UML data.
    * @param {!INode} node The node whose size should be adjusted.
    * @param {!GraphEditorInputMode} geim The responsible input mode.
-   * @private
    */
   fitHeight(node, geim) {
     const layout = node.layout
@@ -526,7 +525,6 @@ export class UMLNodeStyle extends NodeStyleBase {
    * @param {!LabelEditingEventArgs} evt The event args with which the edit label was triggered.
    * @param {!INode} node The node whose label should be edited.
    * @param {boolean} adding Whether a new label is added or an existing one should be edited.
-   * @private
    * @returns {!Promise.<UMLClassModel>}
    */
   async editLabel(evt, node, adding) {
@@ -713,7 +711,6 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Triggers interactive label adding.
    * @param {number} category 1 represents the attributes section, 2 represents the operations section
-   * @private
    * @param {!GraphEditorInputMode} geim
    * @param {!INode} node
    */
@@ -737,7 +734,6 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Removes the selected label from the node.
    * @param {number} category 1 represents the attributes section, 2 represents the operations section
-   * @private
    * @param {!GraphEditorInputMode} geim
    * @param {!INode} node
    */
@@ -763,7 +759,6 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Toggles the open/closed state of the attributes or operations section.
    * @param {number} category 1 represents the attributes section, 2 represents the operations section
-   * @private
    * @param {!GraphEditorInputMode} geim
    * @param {!INode} node
    */
@@ -785,7 +780,6 @@ export class UMLNodeStyle extends NodeStyleBase {
    * @param {!INode} node The node whose data is changed.
    * @param {!UMLClassModel} newData The new data.
    * @param {!UMLClassModel} oldData The previous data.
-   * @private
    */
   handleUndo(geim, node, newData, oldData) {
     const graph = geim.graph
@@ -808,7 +802,6 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Helper function to return the relative layout of a given slot index. A negative index indicates the class header
    * area.
-   * @private
    * @param {number} slot
    * @param {!INode} node
    * @param {boolean} isAdding
@@ -845,7 +838,6 @@ export class UMLNodeStyle extends NodeStyleBase {
 
   /**
    * Helper function to add the control buttons.
-   * @private
    * @param {!IRenderContext} ctx
    * @param {!Element} container
    * @param {!IRectangle} nodeLayout
@@ -902,7 +894,6 @@ export class UMLNodeStyle extends NodeStyleBase {
 
   /**
    * Helper method to initialize the dummy styles and label models that are used to build the UML node style.
-   * @private
    */
   initializeStyles() {
     this.dummyNode = new SimpleNode()
@@ -992,7 +983,6 @@ export class UMLNodeStyle extends NodeStyleBase {
 
 /**
  * Helper function to obtain the visual creator of the item.
- * @private
  * @param {!(INode|ILabel)} item
  * @param {!(INodeStyle|ILabelStyle)} [itemStyle]
  * @returns {!IVisualCreator}

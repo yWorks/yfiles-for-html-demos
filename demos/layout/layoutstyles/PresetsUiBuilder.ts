@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,7 +42,7 @@ export class PresetsUiBuilder {
   private readonly grid: HTMLDivElement
   private readonly optionEditor: OptionEditor
   private readonly presetDefs: Record<string, Preset>
-  private readonly onPresetApplied: (presetId: string) => void
+  private readonly onPresetApplied: (presetId: string) => Promise<void>
   private tooltip: Tooltip = new Tooltip()
   private tooltipTimer: any
 
@@ -50,7 +50,7 @@ export class PresetsUiBuilder {
     rootElement: HTMLDivElement
     optionEditor: OptionEditor
     presetDefs: Record<string, Preset>
-    onPresetApplied: (presetId: string) => void
+    onPresetApplied: (presetId: string) => Promise<void>
   }) {
     this.grid = newGrid(options.rootElement)
     this.optionEditor = options.optionEditor
@@ -182,10 +182,8 @@ function newGrid(rootElement: HTMLDivElement): HTMLDivElement {
 }
 
 function clearGrid(htmlElement: HTMLElement): void {
-  if (htmlElement.childElementCount > 0) {
-    while (htmlElement.firstChild) {
-      htmlElement.removeChild(htmlElement.lastChild!)
-    }
+  while (htmlElement.lastChild) {
+    htmlElement.removeChild(htmlElement.lastChild)
   }
 }
 

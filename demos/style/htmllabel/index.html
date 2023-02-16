@@ -8,7 +8,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.5.
-     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,12 +34,20 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-    <title>HTML Label Demo [yFiles for HTML]</title>
+    <title>HTML Label Style Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
     <!--Add stylesheet for HTML labels-->
     <link rel="stylesheet" href="html-label.css" />
+
+    <style>
+      .demo-sidebar-content .unsupported {
+        background-color: #fbeeed;
+        border: 2px solid #d9534f;
+        padding: 0.5em;
+      }
+    </style>
 
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
@@ -49,15 +57,24 @@
         <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
       </div>
       <div class="demo-sidebar-content">
-        <h1>HTML Label Demo</h1>
+        <h1>HTML Label Style Demo</h1>
 
+        <p>This demo shows how HTML can be used for rendering labels with a custom label style.</p>
         <p>
-          This demo shows how HTML can be used for rendering label texts using a custom label style
-          implementation.
+          The custom style uses the
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/foreignObject"
+            target="_blank"
+            >SVG &lt;foreignObject></a
+          >
+          element to embed HTML elements in the default SVG rendering of the diagram.
         </p>
         <p id="note">
-          Note that the visualizations in this demo do not work in Internet Explorer due to missing
-          SVG <code>foreign object</code> support.
+          Note that the &lt;foreignObject> element
+          <a href="https://caniuse.com/mdn-svg_elements_foreignobject" target="_blank"
+            >is supported</a
+          >
+          by all modern browsers but not Internet Explorer nor Edge Legacy.
         </p>
 
         <h2>HTML Label Editor</h2>

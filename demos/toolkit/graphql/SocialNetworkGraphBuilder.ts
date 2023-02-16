@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -66,7 +66,7 @@ export class SocialNetworkGraphBuilder {
   /**
    * Adds the given persons to the graph.
    * @param persons The persons that should be added
-   * @return The newly created nodes
+   * @returns The newly created nodes
    */
   addPersons(persons: Person[]): Iterable<INode> {
     for (const person of persons) {
@@ -83,7 +83,7 @@ export class SocialNetworkGraphBuilder {
    * Helper method to add a person to the graph in which we make sure to not add the same person
    * multiple times.
    * @param newPerson The person that should be added
-   * @return The newly added or existing person
+   * @returns The newly added or existing person
    */
   private addPerson(newPerson: Person): Person {
     const existingPerson = this._persons.find(person => person.id === newPerson.id)
@@ -123,7 +123,7 @@ export class SocialNetworkGraphBuilder {
 
   /**
    * Creates the edges for the persons that are currently in the graph.
-   * @return A list of connections
+   * @returns A list of connections
    */
   private createEdgesSource(): Friendship[] {
     const edges: Friendship[] = []

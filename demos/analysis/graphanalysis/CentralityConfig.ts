@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -241,7 +241,7 @@ export class CentralityConfig extends AlgorithmConfiguration {
    * This LayoutStage can be used to adjust the layout algorithm and to be able to use just one layout run.
    * @param coreLayout the core layout algorithm
    * @param directed true if the edges should be considered directed, false otherwise
-   * @return a layoutStage that sets the node sizes according to their centrality value
+   * @returns a layoutStage that sets the node sizes according to their centrality value
    */
   getCentralityStage(coreLayout: ILayoutAlgorithm, directed: boolean): CentralityStage {
     const centralityStage = new CentralityStage(coreLayout)
@@ -277,7 +277,7 @@ export class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the description text for the centrality algorithms.
-   * @return the description text for the centrality algorithms
+   * @returns the description text for the centrality algorithms
    */
   get descriptionText(): string {
     switch (this.algorithmType) {

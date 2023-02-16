@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,28 +27,6 @@
  **
  ***************************************************************************/
 import { BaseClass, IClipboardHelper, IGraphClipboardContext, IModelItem, INode } from 'yfiles'
-import type { ClipboardBusinessObject } from './ClipboardBusinessObject'
-
-/**
- * Holds the tag of the item that has been copied.
- */
-export class TagCopyItem {
-  /**
-   * Creates a new instance of {@link TagCopyItem}.
-   * @param tag The tag of the copied item
-   */
-  constructor(public tag: ClipboardBusinessObject) {}
-
-  /** The number of items that have been pasted. */
-  public pasteCount = 0
-
-  /**
-   * Increments the number of pasted elements.
-   */
-  increasePasteCount(): void {
-    this.pasteCount++
-  }
-}
 
 /**
  * This class is used to assign custom labels to pasted nodes.

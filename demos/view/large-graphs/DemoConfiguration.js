@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -86,7 +86,7 @@ export class DemoConfiguration {
 
   /**
    * Parses the json graph data and builds a graph accordingly
-   * @yjs:keep=edgeList
+   * @yjs:keep = edgeList
    * @param {!IGraph} graph the IGraph
    * @param {*} graphData the graph data in JSON format
    */

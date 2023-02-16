@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -78,7 +78,7 @@ let graphComponent: GraphComponent = null!
 
 /**
  * The overview graph shown alongside the GraphComponent.
- **/
+ */
 let overviewComponent: GraphOverviewComponent = null!
 
 let orgChartGraph: OrgChartGraph = null!
@@ -190,8 +190,8 @@ function configureContextMenu(): void {
 /**
  * Populates the context menu based on the item the mouse hovers over.
  *
- * @param graphComponent The given graphComponent
  * @param contextMenu The context menu.
+ * @param graphComponent The given graphComponent
  * @param args The event args.
  */
 function populateContextMenu(
@@ -439,7 +439,7 @@ function addParentReferences(nodesSourceItem: Employee): void {
 /**
  * Creates the sample graph of this demo.
  * @param nodesSource The source data in JSON format.
- * @return The complete sample graph of this demo.
+ * @returns The complete sample graph of this demo.
  */
 function createGraph(nodesSource: Employee[]): IGraph {
   addParentReferences(nodesSource[0])
@@ -537,7 +537,7 @@ class OrgChartGraphSearch extends GraphSearch {
    * This method searches the matching string to the labels and the tags of the nodes.
    * @param node The node to be examined
    * @param text The text to be queried
-   * @return True if the node matches the text, false otherwise
+   * @returns True if the node matches the text, false otherwise
    */
   matches(node: INode, text: string): boolean {
     const lowercaseText = text.toLowerCase()

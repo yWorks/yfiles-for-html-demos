@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,7 +39,6 @@ import {
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
-  GraphItemTypes,
   GraphViewerInputMode,
   ICommand,
   IGraph,
@@ -60,6 +59,7 @@ import { applyDemoTheme } from '../../resources/demo-styles'
 import { NonRibbonEdgeStyle } from './NonRibbonEdgeStyle'
 import type { ColorSetName } from '../../resources/demo-colors'
 import { colorSets } from '../../resources/demo-colors'
+import { configureHighlight } from './HighlightSupport'
 
 const predefinedColorSets = new Map<string, ColorSetName>([
   ['Engineering', 'demo-palette-42'],
@@ -69,8 +69,6 @@ const predefinedColorSets = new Map<string, ColorSetName>([
   ['Accounting', 'demo-palette-47'],
   ['Marketing', 'demo-palette-48']
 ])
-
-type NodeLabelingType = 'ray-like' | 'horizontal'
 
 /**
  * Runs this demo.
@@ -85,6 +83,8 @@ async function run(): Promise<void> {
 
   // configure the input mode to enable hovered tooltips
   configureInputMode(graphComponent)
+  // configure the items to be highlighted on hover
+  configureHighlight(graphComponent)
 
   // create an initial sample graph
   await initializeGraph(graphComponent.graph)
@@ -107,7 +107,6 @@ async function run(): Promise<void> {
 function configureInputMode(graphComponent: GraphComponent) {
   const gvim = new GraphViewerInputMode()
   gvim.itemHoverInputMode.enabled = true
-  gvim.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
 
   const mouseHoverInputMode = gvim.mouseHoverInputMode
   mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
@@ -137,8 +136,6 @@ function configureInputMode(graphComponent: GraphComponent) {
  */
 function createTooltipContent(item: IModelItem): HTMLElement {
   const tooltip = document.createElement('div')
-  tooltip.setAttribute('class', 'tooltip')
-  tooltip.setAttribute('style', 'padding: 4px;')
   tooltip.innerHTML =
     `<div style='margin-bottom: 1ex; font-weight: bold;'>${item.tag.name}</div>` +
     `<div style='margin-bottom: 1ex'>Position: ${item.tag.position}</div>` +
@@ -149,8 +146,7 @@ function createTooltipContent(item: IModelItem): HTMLElement {
 /**
  * Loads the graph and sets the styles of the graph elements.
  * @param graph The graph.
- *
- * @yjs:keep=connections
+ * @yjs:keep = connections
  */
 async function initializeGraph(graph: IGraph): Promise<void> {
   // set the FreeNodeLabelModel as default layout parameter for the labels so that ray-like labeling is supported
@@ -158,6 +154,13 @@ async function initializeGraph(graph: IGraph): Promise<void> {
 
   // use a custom style for the edges to support Bézier curves with two colors
   graph.edgeDefaults.style = new NonRibbonEdgeStyle()
+
+  // hide the selection/focus decorator
+  const decorator = graph.decorator
+  decorator.nodeDecorator.selectionDecorator.hideImplementation()
+  decorator.edgeDecorator.selectionDecorator.hideImplementation()
+  decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
+  decorator.edgeDecorator.focusIndicatorDecorator.hideImplementation()
 
   const graphData = await fetch('resources/GraphData.json').then(response => response.json())
 

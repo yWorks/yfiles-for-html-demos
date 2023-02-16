@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -53,6 +53,7 @@ import { NodeComponentStyle } from './NodeComponentStyle'
 import { GraphComponentService } from './services/graph-component.service'
 import GraphSearch from '../utils/GraphSearch'
 import { BrowserDetection } from '../utils/BrowserDetection'
+import { zoomDetail, zoomIntermediate } from './node.component'
 
 const ieVersion = BrowserDetection.ieVersion
 const useWebWorkerLayout = !ieVersion || ieVersion > 11
@@ -93,15 +94,37 @@ export class AppComponent implements AfterViewInit {
 
     // hook up the properties view panel with the current item of the graph
     this.graphComponent.addCurrentItemChangedListener(() => {
-      this.currentPerson = this.graphComponent.currentItem!.tag
+      this._zone.run(() => {
+        this.currentPerson = this.graphComponent.currentItem!.tag
+      })
     })
 
     // create a sample graph from data
     createSampleGraph(this.graphComponent.graph)
     this.graphComponent.fitGraphBounds()
 
-    // arrange the graph elements in a tree-like fashion
-    runLayout(this.graphComponent)
+    // Since the node component style runs "outside of angular", we have to
+    // trigger change detection manually if the level of detail needs to change.
+    let oldZoom = this.graphComponent.zoom
+    this.graphComponent.addZoomChangedListener((sender, evt) => {
+      const newZoom = this.graphComponent.zoom
+      if (
+        (newZoom > zoomDetail && oldZoom <= zoomDetail) ||
+        (newZoom <= zoomDetail && oldZoom > zoomDetail) ||
+        (newZoom > zoomIntermediate && oldZoom <= zoomIntermediate) ||
+        (newZoom <= zoomIntermediate && oldZoom > zoomIntermediate)
+      ) {
+        this._appRef.tick()
+      }
+      oldZoom = newZoom
+    })
+
+    // Run the layout animation outside angular zone, so no change detection
+    // is initiated for listeners registered during the layout process.
+    this._zone.runOutsideAngular(() => {
+      // arrange the graph elements in a tree-like fashion
+      runLayout(this.graphComponent)
+    })
 
     // register the graph search
     this.graphSearch = new PersonSearch(this.graphComponent)

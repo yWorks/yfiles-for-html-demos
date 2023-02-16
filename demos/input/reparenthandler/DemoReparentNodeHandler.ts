@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,7 +41,7 @@ export default class DemoReparentNodeHandler extends ReparentNodeHandler {
    * @param context The context that provides information about the
    * user input.
    * @param node The node that will possibly be reparented.
-   * @return Whether this is a reparenting gesture.
+   * @returns Whether this is a reparenting gesture.
    */
   isReparentGesture(context: IInputModeContext, node: INode): boolean {
     return super.isReparentGesture(context, node) || node.tag === 'green'
@@ -55,7 +55,7 @@ export default class DemoReparentNodeHandler extends ReparentNodeHandler {
    * user input.
    * @param node The node that is about to be detached from its
    * current parent.
-   * @return Whether the node may be detached and reparented.
+   * @returns Whether the node may be detached and reparented.
    */
   shouldReparent(context: IInputModeContext, node: INode): boolean {
     return node.tag !== 'red'
@@ -68,7 +68,7 @@ export default class DemoReparentNodeHandler extends ReparentNodeHandler {
    * user input.
    * @param node The node that will be reparented.
    * @param newParent The potential new parent.
-   * @return Whether `newParent` is a valid new parent
+   * @returns Whether `newParent` is a valid new parent
    * for `node`.
    */
   isValidParent(context: IInputModeContext, node: INode, newParent: INode): boolean {

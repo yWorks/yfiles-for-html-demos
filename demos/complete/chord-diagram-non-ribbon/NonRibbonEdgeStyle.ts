@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { SolidColorFill } from 'yfiles'
+import type { IInputModeContext, SolidColorFill } from 'yfiles'
 import {
   EdgeStyleBase,
   GeneralPath,
@@ -44,11 +44,18 @@ import {
  * edge is drawn with two colors (one from the source node and one from the target node).
  */
 export class NonRibbonEdgeStyle extends EdgeStyleBase {
+  // meant to be used to create thicker edges
+  private readonly thicknessOffset: number
+
+  constructor(thickness?: number) {
+    super()
+    this.thicknessOffset = thickness || 0
+  }
   /**
    * Creates the visual for an edge.
    * @param context The render context
    * @param edge The edge to which this style instance is assigned
-   * @yjs:keep=connections
+   * @yjs:keep = connections
    */
   createVisual(context: IRenderContext, edge: IEdge): SvgVisual | null {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -59,7 +66,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     const controlPoints = NonRibbonEdgeStyle.subdivideBezierCurve(edge)
     if (controlPoints.length === 0) {
       // this should not happen, since the configuration that we used for the circular layout must provide
-      // two control points for each edges
+      // two control points for each edge
       return null
     }
 
@@ -77,7 +84,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
       const path = generalPath.createSvgPath()
       path.setAttribute('fill', 'none')
       path.setAttribute('stroke', i === 0 ? sourceColor : targetColor)
-      path.setAttribute('stroke-width', `${edge.tag.connections * 0.5}`)
+      path.setAttribute('stroke-width', `${edge.tag.connections * 0.5 + this.thicknessOffset}`)
       g.appendChild(path)
     }
 
@@ -105,9 +112,37 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
   }
 
   /**
+   * Returns the original edge path as cubic Bézier curve.
+   * @param edge The given edge
+   */
+  protected getPath(edge: IEdge): GeneralPath | null {
+    if (edge.bends.size < 2) {
+      // this should not happen, since the configuration that we used for the circular layout must provide
+      // two control points for each edge
+      return null
+    }
+
+    const path = new GeneralPath()
+    path.moveTo(edge.sourcePort!.location)
+    path.cubicTo(edge.bends.get(0).location, edge.bends.get(1).location, edge.targetPort!.location)
+    return path
+  }
+
+  /**
+   * Determines whether the visual representation of the edge has been hit at the given location.
+   * @param canvasContext The input mode context
+   * @param p The point to test
+   * @param edge The edge to which this style instance is assigned
+   * @returns True if the edge has been hit, false otherwise
+   */
+  protected isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
+    const thickness = edge.tag.connections * 0.5 + this.thicknessOffset
+    return this.getPath(edge)!.pathContains(p, canvasContext.hitTestRadius + thickness * 0.5)
+  }
+
+  /**
    * Subdivides the cubic curve in 2 sub-curves to apply the gradient.
    * @param edge The edge to be subdivided
-   * @private
    */
   private static subdivideBezierCurve(edge: IEdge): Point[] {
     // should not happen, since the configuration that we used for the circular layout must provide
@@ -145,8 +180,6 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
   /**
    * Returns the color of the given node.
    * In this demo, the node's style is ShapeNodeStyle.
-   * @param node
-   * @private
    */
   private static getColor(node: INode) {
     if (!(node.style instanceof ShapeNodeStyle)) {

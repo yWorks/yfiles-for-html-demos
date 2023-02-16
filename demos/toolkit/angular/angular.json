@@ -71,5 +71,8 @@
       }
     }
   },
-  "defaultProject": "angular-cli"
+  "defaultProject": "angular-cli",
+  "cli": {
+    "analytics": false
+  }
 }

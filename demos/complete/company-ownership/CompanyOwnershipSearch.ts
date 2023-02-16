@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,7 +39,7 @@ export class CompanyOwnershipSearch extends GraphSearch {
    * This method searches the matching string to the labels and the tags of the nodes.
    * @param node The node to be examined
    * @param text The text to be queried
-   * @return True if the node matches the text, false otherwise
+   * @returns True if the node matches the text, false otherwise
    */
   matches(node: INode, text: string): boolean {
     const lowercaseText = text.toLowerCase()

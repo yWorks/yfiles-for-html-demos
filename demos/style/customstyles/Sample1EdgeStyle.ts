@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -192,7 +192,7 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
-   * @return A {@link GeneralPath} following the edge
+   * @returns A {@link GeneralPath} following the edge
    * @see Overrides {@link EdgeStyleBase.getPath}
    */
   getPath(edge: IEdge): GeneralPath | null {

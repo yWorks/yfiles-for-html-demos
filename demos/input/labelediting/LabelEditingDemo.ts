@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -108,7 +108,7 @@ function initializeInputModes(): void {
  * Creates the default input mode for the GraphComponent, a {@link GraphEditorInputMode}.
  *
  * This implementation configures label text validation.
- * @return A new GraphEditorInputMode instance
+ * @returns A new GraphEditorInputMode instance
  */
 function createEditorMode(): GraphEditorInputMode {
   const graphEditorInputMode = new GraphEditorInputMode()

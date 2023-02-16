@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Font,
-  ILabel,
-  IOrientedRectangle,
-  IRenderContext,
-  LabelStyleBase,
-  Size,
-  SvgVisual,
-  YObject
-} from 'yfiles'
+import { LabelStyleBase, OrientedRectangle, Size, SvgVisual } from 'yfiles'
 
 /**
  * @typedef {Object} Cache
- * @property {IOrientedRectangle} layout
+ * @property {OrientedRectangle} layout
  * @property {string} text
  * @property {Font} font
  */
@@ -48,13 +39,25 @@ import {
  * A label style which displays HTML markup as label text.
  */
 export default class HtmlLabelStyle extends LabelStyleBase {
-  /*
-   * Creates a new instance of the HTMLLabelStyle class.
+  /** 
    *
-   * @param font The font used for rendering the label text.
+     * A (shared) event listener that just stops event propagation.
+     
+  * @type {function(*)}
    */
+  static get stopPropagationAlwaysListener() {
+    if (typeof HtmlLabelStyle.$stopPropagationAlwaysListener === 'undefined') {
+      HtmlLabelStyle.$stopPropagationAlwaysListener = evt => {
+        evt.stopImmediatePropagation()
+      }
+    }
+
+    return HtmlLabelStyle.$stopPropagationAlwaysListener
+  }
+
   /**
-   * @param {!Font} font
+   * Creates a new instance of the HTMLLabelStyle class.
+   * @param {!Font} font The font used for rendering the label text.
    */
   constructor(font) {
     super()
@@ -62,44 +65,59 @@ export default class HtmlLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * Creates a visual that uses a foreignObject-element to display a HTML formatted text.
+   * Creates a visual that uses a <foreignObject> element to display an HTML-formatted text.
    * @see Overrides {@link LabelStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!ILabel} label
    * @returns {!SvgVisual}
    */
   createVisual(context, label) {
-    const labelLayout = label.layout
+    const layout = label.layout
 
     const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject')
+    foreignObject.setAttribute('class', 'label-container')
     foreignObject.setAttribute('x', '0')
     foreignObject.setAttribute('y', '0')
+    foreignObject.setAttribute('width', `${layout.width}`)
+    foreignObject.setAttribute('height', `${layout.height}`)
+    foreignObject.style.overflow = 'none'
 
-    const div = document.createElement('div')
-    div.style.setProperty('overflow', 'hidden')
-    foreignObject.setAttribute('width', `${labelLayout.width}`)
-    foreignObject.setAttribute('height', `${labelLayout.height}`)
-    div.style.setProperty('width', `${labelLayout.width}px`)
-    div.style.setProperty('height', `${labelLayout.height}px`)
-    div.style.setProperty('font-family', this.font.fontFamily)
-    div.style.setProperty('font-size', `${this.font.fontSize}px`)
-    div.style.setProperty('font-weight', `${this.font.fontWeight}`)
-    div.style.setProperty('font-style', `${this.font.fontStyle}`)
-    div.innerHTML = label.text
-    foreignObject.appendChild(div)
+    this.updateElement(foreignObject, {
+      text: label.text,
+      font: this.font,
+      layout: new OrientedRectangle(layout)
+    })
 
-    // move container to correct location
-    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
-    transform.applyTo(foreignObject)
+    const stopPropagationOptions = { capture: true, passive: true }
 
-    // Get the necessary data for rendering of the label and store information with the visual
-    foreignObject['data-cache'] = createRenderDataCache(label, this.font)
+    // Prevent event propagation for the mousewheel event, otherwise it will be captured by the graph
+    // component, which calls preventDefault on it.
+    for (const eventName of ['mousewheel', 'wheel']) {
+      foreignObject.addEventListener(
+        eventName,
+        HtmlLabelStyle.createStopPropagationListenerForScrolling(foreignObject.firstElementChild),
+        stopPropagationOptions
+      )
+    }
+
+    // Prevent event propagation for the click event, otherwise it will be captured by the graph
+    // component, which calls preventDefault on it.
+    foreignObject.querySelectorAll('a').forEach(element => {
+      element.addEventListener(
+        'click',
+        HtmlLabelStyle.stopPropagationAlwaysListener,
+        stopPropagationOptions
+      )
+    })
+
+    // Move the element to correct location
+    LabelStyleBase.createLayoutTransform(context, layout, true).applyTo(foreignObject)
 
     return new SvgVisual(foreignObject)
   }
 
   /**
-   * Updates the visual that uses a foreignObject-element to display a HTML formatted text.
+   * Updates the visual that uses a <foreignObject> element to display an HTML-formatted text.
    * @see Overrides {@link LabelStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
@@ -108,47 +126,58 @@ export default class HtmlLabelStyle extends LabelStyleBase {
    */
   updateVisual(context, oldVisual, label) {
     const element = oldVisual.svgElement
-    if (element === null || element.childElementCount !== 1) {
-      // re-create from scratch if this is not the case
+    if (!(element instanceof SVGForeignObjectElement)) {
+      // Re-create from scratch if the visual isn't as expected
       return this.createVisual(context, label)
     }
 
-    // get the data with which the old visual was created
-    const oldCache = element['data-cache']
+    this.updateElement(element, {
+      text: label.text,
+      font: this.font,
+      layout: new OrientedRectangle(label.layout)
+    })
 
-    // get the data for the new visual
-    const newCache = createRenderDataCache(label, this.font)
-
-    // update elements if they have changed
-    const foreignObject = element
-    const div = foreignObject.firstElementChild
-    if (!YObject.equals(oldCache.layout, newCache.layout)) {
-      const labelLayout = label.layout
-      foreignObject.setAttribute('width', `${labelLayout.width}`)
-      foreignObject.setAttribute('height', `${labelLayout.height}`)
-
-      div.style.setProperty('width', `${labelLayout.width}px`)
-      div.style.setProperty('height', `${labelLayout.height}px`)
-    }
-    if (!oldCache.font.equals(newCache.font)) {
-      div.style.setProperty('font-family', this.font.fontFamily)
-      div.style.setProperty('font-size', `${this.font.fontSize}px`)
-      div.style.setProperty('font-weight', `${this.font.fontWeight}`)
-      div.style.setProperty('font-style', `${this.font.fontStyle}`)
-    }
-
-    if (oldCache.text !== newCache.text) {
-      div.innerHTML = label.text
-    }
-
-    // update the cache
-    element['data-cache'] = newCache
-
-    // move container to correct location
-    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
-    transform.applyTo(foreignObject)
+    // Move the element to correct location
+    LabelStyleBase.createLayoutTransform(context, label.layout, true).applyTo(element)
 
     return oldVisual
+  }
+
+  /**
+   * Updates the given element to match the given data.
+   *
+   * If the element comes with cached data, only the different parts are updated.
+   * @param {!SVGElement} element
+   * @param {!Cache} newData
+   */
+  updateElement(element, newData) {
+    // Get the data that describes the current state of the element
+    const currentData = element['data-cache'] || {
+      text: null,
+      font: null,
+      layout: null
+    }
+
+    if (currentData.layout?.width !== newData.layout.width) {
+      element.setAttribute('width', `${newData.layout.width}`)
+    }
+    if (currentData.layout?.height !== newData.layout.height) {
+      element.setAttribute('height', `${newData.layout.height}`)
+    }
+
+    if (!currentData.font?.equals(newData.font)) {
+      element.style.fontFamily = this.font.fontFamily
+      element.style.fontSize = `${this.font.fontSize}px`
+      element.style.fontWeight = `${this.font.fontWeight}`
+      element.style.fontStyle = `${this.font.fontStyle}`
+    }
+
+    if (currentData.text !== newData.text) {
+      element.innerHTML = newData.text
+    }
+
+    // Update the cache
+    element['data-cache'] = newData
   }
 
   /**
@@ -166,18 +195,27 @@ export default class HtmlLabelStyle extends LabelStyleBase {
     document.body.removeChild(div)
     return new Size(clientRect.width, clientRect.height)
   }
-}
 
-/**
- * Creates an object containing all necessary data to create a label visual.
- * @param {!ILabel} label The current label.
- * @param {!Font} font The font of the label text.
- * @returns {!Cache}
- */
-function createRenderDataCache(label, font) {
-  return {
-    text: label.text,
-    font,
-    layout: label.layout
+  /**
+   * Detects whether the given element has the need for a scrollbar, i.e., it shows as scrollbar
+   * in overflow: auto mode.
+   * @param {!Element} element
+   */
+  static needsScrollbar(element) {
+    const isVerticalScrollbar = element.scrollHeight > element.clientHeight
+    const isHorizontalScrollbar = element.scrollWidth > element.clientWidth
+    return isHorizontalScrollbar || isVerticalScrollbar
+  }
+
+  /**
+   * Returns an event listener that stops event propagation if the element can be scrolled itself.
+   * @param {!Element} element
+   */
+  static createStopPropagationListenerForScrolling(element) {
+    return evt => {
+      if (HtmlLabelStyle.needsScrollbar(element)) {
+        evt.stopImmediatePropagation()
+      }
+    }
   }
 }

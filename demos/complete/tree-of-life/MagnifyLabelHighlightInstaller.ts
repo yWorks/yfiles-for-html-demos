@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -65,7 +65,7 @@ export default class MagnifyLabelHighlightInstaller
    *   visual representation
    * @param group The canvas object group to add the newly generated ICanvasObject
    * @param item The item to install.
-   * @return The newly generated ICanvasObject for the item's visual representation or
+   * @returns The newly generated ICanvasObject for the item's visual representation or
    *   null if nothing was installed.
    */
   addCanvasObject(
@@ -109,7 +109,7 @@ class LabelStyleDescriptor
   /**
    * Returns an implementation of IVisualCreator that will create the Visual tree for the user object.
    * @param forUserObject The user object to create a Visual for
-   * @return An implementation of IVisualCreator
+   * @returns An implementation of IVisualCreator
    */
   getVisualCreator(forUserObject: any): IVisualCreator {
     this.updateItem(forUserObject)
@@ -120,7 +120,7 @@ class LabelStyleDescriptor
    * Returns an implementation of IBoundsProvider that can determine the visible bounds of the rendering of the user
    * object.
    * @param forUserObject The user object to query the bounds for
-   * @return An implementation of IBoundsProvider
+   * @returns An implementation of IBoundsProvider
    */
   getBoundsProvider(forUserObject: any): IBoundsProvider {
     this.updateItem(forUserObject)
@@ -131,7 +131,7 @@ class LabelStyleDescriptor
    * Returns an implementation of IVisibilityTestable that can determine if the rendering of the user object would be
    * visible in a given context.
    * @param forUserObject The user object to query the visibility test for
-   * @return An implementation of IVisibilityTestable
+   * @returns An implementation of IVisibilityTestable
    */
   getVisibilityTestable(forUserObject: any): IVisibilityTestable {
     this.updateItem(forUserObject)
@@ -142,7 +142,7 @@ class LabelStyleDescriptor
    * Returns an implementation of IHitTestable that can determine whether the rendering of the user object has
    * been hit at a given coordinate.
    * @param forUserObject The user object to do the hit testing for
-   * @return An implementation of IHitTestable
+   * @returns An implementation of IHitTestable
    */
   getHitTestable(forUserObject: any): IHitTestable {
     return IHitTestable.NEVER
@@ -152,7 +152,7 @@ class LabelStyleDescriptor
    * Determines whether the given canvas object is deemed dirty and needs updating.
    * @param context The context that will be used for the update
    * @param canvasObject The object to check
-   * @return True if the given canvas object needs updating, false otherwise
+   * @returns True if the given canvas object needs updating, false otherwise
    */
   isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
     return true
@@ -161,7 +161,7 @@ class LabelStyleDescriptor
   /**
    * Creates the descriptor's visual.
    * @param context The context that describes where the visual will be used
-   * @return The newly created visual
+   * @returns The newly created visual
    */
   createVisual(context: IRenderContext): Visual | null {
     // create a visual group
@@ -184,7 +184,7 @@ class LabelStyleDescriptor
    * Updates the descriptor's visual.
    * @param context The context that describes where the visual will be used
    * @param oldVisual The old visual
-   * @return The newly created visual
+   * @returns The newly created visual
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): Visual | null {
     if (!(oldVisual instanceof SvgVisualGroup) || oldVisual.children.size !== 2) {
@@ -241,7 +241,7 @@ class LabelStyleDescriptor
   /**
    * Returns a tight rectangular area where the whole rendering would fit into.
    * @param context The context to calculate the bounds for
-   * @return The bounds of the visual
+   * @returns The bounds of the visual
    */
   getBounds(context: ICanvasContext): Rect {
     return this.item.style.renderer.getBoundsProvider(this.item, this.item.style).getBounds(context)
@@ -251,7 +251,7 @@ class LabelStyleDescriptor
    * Determines whether an element might intersect the visible region for a given context.
    * @param context The context to determine the visibility for.
    * @param rectangle The visible region clip
-   * @return True if the element intersects the visible region, false otherwise
+   * @returns True if the element intersects the visible region, false otherwise
    */
   isVisible(context: ICanvasContext, rectangle: Rect): boolean {
     return this.getBounds(context).intersects(rectangle)

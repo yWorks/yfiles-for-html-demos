@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,7 +45,7 @@ export default class FileSaveSupport {
    *
    * @param fileContent The file contents to be saved.
    * @param fileName The default filename for the downloaded file.
-   * @return {Promise} A promise which resolves when the save operation is complete.
+   * @returns {Promise} A promise which resolves when the save operation is complete.
    */
   static save(fileContent: string, fileName: string): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -155,7 +155,6 @@ export default class FileSaveSupport {
    * Returns whether the MS Internet Explorer specific save technique is available.
    * This works in IE 10+. See the related demo for more details.
    * for more details.
-   * @return {boolean}
    */
   static isMsSaveAvailable(): boolean {
     return (

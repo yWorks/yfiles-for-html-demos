@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -65,9 +65,9 @@ export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Moves the {@link IMutablePoint} away from the start position by the difference
    * between newLocation and originalLocation
-   * @param context
-   * @param newLocation the new location
+   * @param context The context
    * @param originalLocation the original location
+   * @param newLocation the new location
    */
   public handleMove(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     if (this.startPosition) {

@@ -3,7 +3,7 @@
     {
       "id": 0,
       "tag": {
-        "name": "David Kerry",
+        "name": "David Girard",
         "connections": 16,
         "department": "Marketing",
         "position": "Marketing Assistant"
@@ -48,8 +48,8 @@
     {
       "id": 5,
       "tag": {
-        "name": "David Harris",
-        "connections": 225,
+        "name": "David Harrison",
+        "connections": 200,
         "department": "Marketing",
         "position": "Marketing Manager"
       }
@@ -75,8 +75,8 @@
     {
       "id": 8,
       "tag": {
-        "name": "Eric Joplin",
-        "connections": 309,
+        "name": "Raymond Douglas",
+        "connections": 280,
         "department": "Sales",
         "position": "Vice President of Sales"
       }
@@ -102,7 +102,7 @@
     {
       "id": 11,
       "tag": {
-        "name": "David Girard",
+        "name": "David Kain",
         "connections": 34,
         "department": "Marketing",
         "position": "Marketing Assistant"
@@ -120,8 +120,8 @@
     {
       "id": 13,
       "tag": {
-        "name": "Raymond Douglas",
-        "connections": 120,
+        "name": "Eric Joplin",
+        "connections": 90,
         "department": "Sales",
         "position": "European Sales Manager"
       }
@@ -147,7 +147,7 @@
     {
       "id": 16,
       "tag": {
-        "name": "Elisabeth Thompson",
+        "name": "Amy Kain",
         "connections": 40,
         "department": "Production",
         "position": "Master Scheduler"
@@ -192,7 +192,7 @@
     {
       "id": 21,
       "tag": {
-        "name": "Amy Kain",
+        "name": "Elisabeth Thompson",
         "connections": 296,
         "department": "Production",
         "position": "Vice President of Production"
@@ -237,8 +237,8 @@
     {
       "id": 26,
       "tag": {
-        "name": "Alice Webb",
-        "connections": 162,
+        "name": "Alice Weber",
+        "connections": 150,
         "department": "Marketing",
         "position": "Senior Marketing Specialist"
       }

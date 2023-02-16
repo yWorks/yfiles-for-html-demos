@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -64,7 +64,7 @@ export default class DemoCommands {
   /**
    * Executes the collapse node command.
    * @param node The given node.
-   * @return true if the command is executed, false otherwise
+   * @returns true if the command is executed, false otherwise
    */
   executeToggleCollapseState(node: INode | null): boolean {
     if (node === null || typeof node === 'undefined') {
@@ -87,7 +87,7 @@ export default class DemoCommands {
   /**
    * Determines whether command ToggleCollapseState can be executed.
    * @param node The given node.
-   * @return true if the command can be executed, false otherwise
+   * @returns true if the command can be executed, false otherwise
    */
   canExecuteToggleCollapseState(node: INode): boolean {
     return INode.isInstance(node) && !MindmapLayout.instance.inLayout
@@ -169,7 +169,7 @@ export default class DemoCommands {
 
   /**
    * Determines whether command CreateChild can be executed.
-   * @return True if the command can be executed, false otherwise.
+   * @returns True if the command can be executed, false otherwise.
    */
   canExecuteCreateChildren(): boolean {
     const parent = this.graphComponent.currentItem
@@ -178,7 +178,7 @@ export default class DemoCommands {
 
   /**
    * Executes CreateChild Command.
-   * @return True if the command is executed, false otherwise.
+   * @returns True if the command is executed, false otherwise.
    */
   async executeCreateChildren(
     nodeStyle: INodeStyle,
@@ -233,7 +233,7 @@ export default class DemoCommands {
 
   /**
    * Determines whether command DeleteItem can be executed.
-   * @return True if the command can be executed, false otherwise.
+   * @returns True if the command can be executed, false otherwise.
    */
   canExecuteDeleteItem(): boolean {
     const edge = this.graphComponent.selection.selectedEdges.at(0)
@@ -247,7 +247,7 @@ export default class DemoCommands {
 
   /**
    * Executes DeleteItem Command.
-   * @return True if the command is executed, false otherwise.
+   * @returns True if the command is executed, false otherwise.
    */
   async executeDeleteItem(): Promise<boolean> {
     const edge = this.graphComponent.selection.selectedEdges.at(0)
@@ -271,7 +271,7 @@ export default class DemoCommands {
 
   /**
    * Determines whether command ExpandNode can be executed.
-   * @return True if the command can be executed, false otherwise.
+   * @returns True if the command can be executed, false otherwise.
    */
   canExecuteExpandNode(): boolean {
     const node = this.graphComponent.selection.selectedNodes.at(0)
@@ -280,7 +280,7 @@ export default class DemoCommands {
 
   /**
    * Executes ExpandNode Command.
-   * @return True if the command is executed, false otherwise.
+   * @returns True if the command is executed, false otherwise.
    */
   executeExpandNode(): boolean {
     const node = this.graphComponent.selection.selectedNodes.at(0)
@@ -293,7 +293,7 @@ export default class DemoCommands {
 
   /**
    * Determines whether command CollapseNode can be executed.
-   * @return True if the command can be executed, false otherwise.
+   * @returns True if the command can be executed, false otherwise.
    */
   canExecuteCollapseNode(): boolean {
     const node = this.graphComponent.selection.selectedNodes.at(0)
@@ -302,7 +302,7 @@ export default class DemoCommands {
 
   /**
    * Executes CollapseNode Command.
-   * @return True if the command is executed, false otherwise.
+   * @returns True if the command is executed, false otherwise.
    */
   executeCollapseNode(): boolean {
     const node = this.graphComponent.selection.selectedNodes.at(0)
@@ -315,7 +315,7 @@ export default class DemoCommands {
 
   /**
    * Determines whether command CreateSibling can be executed.
-   * @return True if the command can be executed, false otherwise.
+   * @returns True if the command can be executed, false otherwise.
    */
   canExecuteCreateSibling(): boolean {
     const node = this.graphComponent.selection.selectedNodes.at(0)
@@ -327,7 +327,7 @@ export default class DemoCommands {
    * @param nodeStyle The desired node style
    * @param edgeStyle The desired edge style.
    * @param labelStyle The desired label style.
-   * @return True if the command is executed, false otherwise.
+   * @returns True if the command is executed, false otherwise.
    */
   async executeCreateSibling(
     nodeStyle: INodeStyle,

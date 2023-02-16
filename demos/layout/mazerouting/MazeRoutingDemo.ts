@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -194,7 +194,7 @@ function initializeUndoEngine(graph: IGraph): void {
 
 /**
  * Applies the routing algorithm.
- * @return A promise which resolves after the layout is applied without errors.
+ * @returns A promise which resolves after the layout is applied without errors.
  */
 async function route(): Promise<void> {
   // prevent starting another layout calculation
@@ -234,7 +234,7 @@ async function route(): Promise<void> {
 
 /**
  * Routes all edges in the demo's graph.
- * @return A promise which resolves after the layout is applied without errors.
+ * @returns A promise which resolves after the layout is applied without errors.
  */
 async function routeAll(): Promise<void> {
   await routeImpl(null, EdgeRouterScope.ROUTE_ALL_EDGES)
@@ -242,7 +242,7 @@ async function routeAll(): Promise<void> {
 
 /**
  * Routes the edges that match the routing scope from the demo's layout settings.
- * @return A promise which resolves after the layout is applied without errors.
+ * @returns A promise which resolves after the layout is applied without errors.
  */
 async function routeWithSettingsScope(): Promise<void> {
   await routeImpl(null, null)
@@ -251,7 +251,7 @@ async function routeWithSettingsScope(): Promise<void> {
 /**
  * Routes only the affected edges.
  * @param affectedEdges The list of edges to be routed
- * @return A promise which resolves after the layout is applied without errors.
+ * @returns A promise which resolves after the layout is applied without errors.
  */
 async function routeAffectedEdges(affectedEdges: List<IEdge>): Promise<void> {
   await routeImpl(
@@ -263,7 +263,7 @@ async function routeAffectedEdges(affectedEdges: List<IEdge>): Promise<void> {
 /**
  * Routes only the edges connected to affected nodes.
  * @param affectedNodes The list of nodes whose edges will be routed
- * @return A promise which resolves after the layout is applied without errors.
+ * @returns A promise which resolves after the layout is applied without errors.
  */
 async function routeEdgesAtAffectedNodes(affectedNodes: List<INode>): Promise<void> {
   await routeImpl(
@@ -277,7 +277,7 @@ async function routeEdgesAtAffectedNodes(affectedNodes: List<INode>): Promise<vo
  * for those affected edges (which may be all edges in the graph).
  * @param affectedItems A predicate determining the items for the given scope. May be null.
  * @param scope The scope determining the routing algorithm's mode of operation.
- * @return A promise which resolves after the layout is applied without errors.
+ * @returns A promise which resolves after the layout is applied without errors.
  */
 async function routeImpl(
   affectedItems: ((item: IModelItem) => boolean) | null,
@@ -417,7 +417,7 @@ class MazeVisual extends BaseClass<IVisualCreator>(IVisualCreator) implements IV
   /**
    * Creates the maze visual.
    * @param context The render context
-   * @return The maze visual
+   * @returns The maze visual
    */
   createVisual(context: IRenderContext): SvgVisual {
     const visualGroup = new SvgVisualGroup()
@@ -435,7 +435,7 @@ class MazeVisual extends BaseClass<IVisualCreator>(IVisualCreator) implements IV
    * returned.
    * @param context The render context
    * @param oldVisual The old visual
-   * @return The updated visual
+   * @returns The updated visual
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual): SvgVisual {
     return oldVisual

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -453,7 +453,7 @@ function initializeAlgorithms() {
 
 /**
  * Creates the default input mode for the graph component, a {@link GraphEditorInputMode}.
- * @return a new {@link GraphEditorInputMode} instance and configures snapping and orthogonal edge editing
+ * @returns a new {@link GraphEditorInputMode} instance and configures snapping and orthogonal edge editing
  */
 function createEditorMode(): GraphEditorInputMode {
   incrementalElements = new Mapper<INode, boolean>()
@@ -1034,7 +1034,6 @@ function updateDescriptionText(): void {
  *
  * @param graph the given graph
  * @param type the algorithm type
- *
  */
 function getGraphInformation(
   graph: IGraph,
@@ -1119,7 +1118,7 @@ function getGraphInformation(
  * This implementation retrieves the weights from the labels or alternatively from the edge length.
  *
  * @param edge the edge.
- * @return the weight of the edge
+ * @returns the weight of the edge
  */
 function getEdgeWeight(edge: IEdge): number | null {
   if (useUniformWeights) {
@@ -1259,7 +1258,7 @@ function fillComboBox(combobox: HTMLSelectElement, content: string[]): void {
 
 /**
  * Returns true if the algorithm can take the edge direction into consideration, false otherwise.
- * @return true if the algorithm can take the edge direction into consideration, false
+ * @returns true if the algorithm can take the edge direction into consideration, false
  *   otherwise
  */
 function algorithmSupportsDirectedEdges(): boolean {
@@ -1276,7 +1275,7 @@ function algorithmSupportsDirectedEdges(): boolean {
 
 /**
  * Returns true if the algorithm needs directed edges to work
- * @return true if the algorithm needs directed edges
+ * @returns true if the algorithm needs directed edges
  */
 function algorithmNeedsDirectedEdges(): boolean {
   const selectedIndex = algorithmComboBox.selectedIndex
@@ -1285,7 +1284,7 @@ function algorithmNeedsDirectedEdges(): boolean {
 
 /**
  * Returns true if the algorithm can take the edge weights into consideration, false otherwise.
- * @return true if the algorithm can take the edge weights into consideration, false
+ * @returns true if the algorithm can take the edge weights into consideration, false
  *   otherwise
  */
 function algorithmSupportsWeights(): boolean {

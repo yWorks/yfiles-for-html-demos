@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -139,7 +139,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
    * Creates an object containing all necessary data to create an edge visual.
    * @param context The render context
    * @param edge The given edge
-   * @return The render data cache
+   * @returns The render data cache
    */
   createRenderDataCache(context: IRenderContext, edge: IEdge): EdgeStyleCache {
     const selection = (context.canvasComponent as GraphComponent).selection
@@ -220,7 +220,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for
-   * @return A {@link GeneralPath} following the edge
+   * @returns A {@link GeneralPath} following the edge
    */
   getPath(edge: IEdge): GeneralPath {
     // Create a general path from the locations of the ports and the bends of the edge.
@@ -246,7 +246,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
    * @param canvasContext The input mode context
    * @param p The point to test
    * @param edge The edge to which this style instance is assigned
-   * @return True if the edge has been hit, false otherwise
+   * @returns True if the edge has been hit, false otherwise
    */
   isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
     return this.getPath(edge).pathContains(
@@ -259,7 +259,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
    * Generates gradient colors between the two given colors.
    * @param startColor The start color
    * @param endColor The end color
-   * @return The gradient color array
+   * @returns The gradient color array
    */
   static generateColors(startColor: Color, endColor: Color): string[] {
     const gradient = 25
@@ -334,7 +334,7 @@ export class DemoNodeStyle extends NodeStyleBase {
    * Creates an object containing all necessary data to create a node visual.
    * @param context The render context
    * @param node The given node
-   * @return The render data cache
+   * @returns The render data cache
    */
   createRenderDataCache(context: IRenderContext, node: INode): NodeStyleCache {
     const selection = (context.canvasComponent as GraphComponent).selection
@@ -409,7 +409,7 @@ export class DemoNodeStyle extends NodeStyleBase {
    * @param context The canvas context
    * @param location The point to test
    * @param node The given node
-   * @return True if the node has been hit, false otherwise
+   * @returns True if the node has been hit, false otherwise
    */
   isHit(context: IInputModeContext, location: Point, node: INode): boolean {
     if (node.tag && node.tag.center) {
@@ -509,7 +509,7 @@ export class HighlightManager extends HighlightIndicatorManager<IModelItem> {
 /**
  * Returns the points of the given path.
  * @param path The given path
- * @return The array of points of the given path
+ * @returns The array of points of the given path
  */
 function getPathPoints(path: GeneralPath): Point[] {
   if (path === null) {
@@ -557,7 +557,7 @@ function getPathPoints(path: GeneralPath): Point[] {
 /**
  * Calculates the control points for the given edge.
  * @param edge The given edge
- * @return The control points of the edge
+ * @returns The control points of the edge
  */
 function calculateControlPoints(edge: IEdge): Point[] {
   const controlPoints = []

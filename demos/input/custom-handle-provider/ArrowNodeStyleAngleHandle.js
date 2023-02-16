@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -261,7 +261,7 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
 
   /**
    * The handle's y coordinate.
-   * * @type {number}
+   * @type {number}
    */
   get y() {
     switch (this.style.direction) {

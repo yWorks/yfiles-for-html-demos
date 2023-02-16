@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -764,7 +764,7 @@ export class CutOffPositionHandler
    * Returns the next x position. If the rectangle reaches the borders of the boundary rectangle, the position
    * changes accordingly such that the rectangle fits in the timeline.
    * @param nextPositionY The next y-position
-   * @return number The next x coordinate of the rectangle.
+   * @returns number The next x coordinate of the rectangle.
    */
   getY(nextPositionY: number): number {
     const y1 = this.boundaryRectangle.y
@@ -826,7 +826,7 @@ class HighlightManager extends HighlightIndicatorManager<IModelItem> {
   /**
    * This implementation always returns the highlightGroup of the canvasComponent of this instance.
    * @param item The item to check
-   * @return An ICanvasObjectGroup or null
+   * @returns An ICanvasObjectGroup or null
    */
   getCanvasObjectGroup(item: IModelItem): ICanvasObjectGroup | null {
     if (item instanceof IEdge) {

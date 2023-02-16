@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -227,7 +227,7 @@ function isBottomOutlier(value: number, q1: number, q3: number): boolean {
 /**
  * Calculates the Q1=25th and Q3=75th percentiles of the data.
  * @param wordFrequency Holds the frequency of each word in the tag cloud
- * @return The values of the lower quartile q1 and the upper quartile q3
+ * @returns The values of the lower quartile q1 and the upper quartile q3
  */
 function findInterquartileRange(wordFrequency: { keyword: string; frequency: number }[]): {
   q1: number
@@ -252,7 +252,7 @@ function findInterquartileRange(wordFrequency: { keyword: string; frequency: num
  * @param wordFrequency Holds the frequency of each word in the tag cloud
  * @param q1 The value of the lower quartile (25th percentile)
  * @param q3 The value of the upper quartile (75th percentile)
- * @return The minimum, maximum, and difference of the two aforementioned values
+ * @returns The minimum, maximum, and difference of the two aforementioned values
  */
 function findMinMaxFrequency(
   wordFrequency: { keyword: string; frequency: number }[],

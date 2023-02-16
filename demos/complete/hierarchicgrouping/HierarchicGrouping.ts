@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -113,11 +113,11 @@ export default class HierarchicGrouping {
       this.beforeCollapsingGroup(evt.item)
     )
 
-    navigationInputMode.addGroupExpandedListener(async (sender, evt) =>
-      await this.afterGroupStateChanged(evt.item)
+    navigationInputMode.addGroupExpandedListener(
+      async (sender, evt) => await this.afterGroupStateChanged(evt.item)
     )
-    navigationInputMode.addGroupCollapsedListener(async (sender, evt) =>
-      await this.afterGroupStateChanged(evt.item)
+    navigationInputMode.addGroupCollapsedListener(
+      async (sender, evt) => await this.afterGroupStateChanged(evt.item)
     )
   }
 
@@ -306,8 +306,7 @@ export default class HierarchicGrouping {
    *
    * @param graph The graph to which the group node belongs.
    * @param group The group node which is collapsed.
-   *
-   * @return An array of all affected edges.
+   * @returns An array of all affected edges.
    */
   private getAffectedEdges(graph: IGraph, group: INode): IEdge[] {
     // Collect all edges that connect to the group node.

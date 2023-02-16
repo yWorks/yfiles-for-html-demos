@@ -8,7 +8,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.5.
-     // Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,23 +39,6 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
     <script src="../../resources/filesystem-warning.js"></script>
-
-    <script type="text/yfiles-template">
-      <g id="ClipboardStyle">
-        <defs>
-          <linearGradient id="innerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#C1E1F1;stop-opacity:1"/>
-            <stop offset="100%" style="stop-color:#67B7DC;stop-opacity:1"/>
-          </linearGradient>
-        </defs>
-        <rect stroke-width="1.5" stroke="#617984" fill="url(#innerGradient)" rx="4" ry="4" width="{TemplateBinding width}"
-            height="{TemplateBinding height}"></rect>
-        <rect stroke="none" fill="white" fill-opacity="0.25" width="{TemplateBinding width}" height="30"></rect>
-        <text data-content="{Binding name}"
-            transform="{TemplateBinding width, Converter=centertransformconverter, Parameter=15}"
-            text-anchor="middle" style="font-size:120%; fill:#000" dy="0.5em"></text>
-      </g>
-    </script>
 
     <style>
       .demo-content .demo-toolbar {
@@ -211,20 +194,7 @@
             Edit Name
           </button>
         </div>
-        <div id="graphComponent" class="component">
-          <div id="nameDialog" class="demo-dialog" style="display: none">
-            <!-- The content template for the name dialog panel -->
-            <h2>Node Name</h2>
-            <div class="demo-properties demo-dialog-content">
-              <form>
-                <label for="nodeNameInput">Edit the node name</label>
-                <input id="nodeNameInput" maxlength="25" />
-                <button type="submit" id="applyButton">Apply</button>
-                <button type="button" id="cancelButton">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </div>
+        <div id="graphComponent" class="component"></div>
       </div>
 
       <div id="right">
@@ -264,6 +234,18 @@
           </button>
         </div>
         <div id="graphComponent2" class="component"></div>
+      </div>
+    </div>
+    <div id="nameDialog" class="demo-dialog" style="display: none">
+      <!-- The content template for the name dialog panel -->
+      <h2>Node Name</h2>
+      <div class="demo-properties demo-dialog-content">
+        <form>
+          <label for="nodeNameInput">Edit the node name</label>
+          <input id="nodeNameInput" maxlength="25" />
+          <button type="submit" id="applyButton">Apply</button>
+          <button type="button" id="cancelButton">Cancel</button>
+        </form>
       </div>
     </div>
 

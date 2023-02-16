@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -95,7 +95,7 @@ export function registerErrorDialog() {
    * @param {number} lineNumber The line number where the error occurred.
    * @param {number} columnNumber The line number where the error occurred.
    * @param {Error} error An optional Error instance.
-   * @return {boolean}
+   * @returns {boolean}
    */
   window.onerror = (message, url, lineNumber, columnNumber, error) => {
     const cl = typeof columnNumber === 'number' ? columnNumber : 0
@@ -173,7 +173,7 @@ function unwindStack(error) {
  * @param {number} lineNumber The line number where the error occurred.
  * @param {number} columnNumber The line number where the error occurred.
  * @param {Error} error An optional Error instance.
- * @return {boolean}
+ * @returns {boolean}
  */
 function openErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
   if (errorDialogOpen) {
@@ -216,7 +216,7 @@ function openErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
  * @param {number} lineNumber The line number where the error occurred.
  * @param {number} columnNumber The line number where the error occurred.
  * @param {Error} error An optional Error instance.
- * @return {Element}
+ * @returns {Element}
  */
 function createSimpleErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
   const { dialogAnchor, dialogPanel, contentPanel } = createPlainDialog('Error')
@@ -268,7 +268,7 @@ function createSimpleErrorDialog(errorMessage, url, lineNumber, columnNumber, er
  * @param {number} lineNumber The line number where the error occurred.
  * @param {number} columnNumber The line number where the error occurred.
  * @param {Error} error An optional Error instance.
- * @return {Element}
+ * @returns {Element}
  */
 function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
   const actionUrl = 'https://www.yworks.com/actions/errorReportHtmlDemos'
@@ -432,7 +432,7 @@ function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
  * Creates an empty general-purpose dialog with a title bar.
  *
  * @param {string} titleText The text for the dialog title.
- * @return {*[]}
+ * @returns {*[]}
  */
 export function createPlainDialog(titleText) {
   const dialogAnchor = document.createElement('div')
@@ -459,7 +459,7 @@ export function createPlainDialog(titleText) {
   }
 }
 
-/** @return {boolean} */
+/** @returns {boolean} */
 function inErrorState() {
   return (
     typeof window['data-demo-status'] === 'string' &&
@@ -467,7 +467,7 @@ function inErrorState() {
   )
 }
 
-/** @return {Object} */
+/** @returns {Object} */
 function encode(value) {
   return typeof value === 'string'
     ? value.replace(new RegExp('<', 'g'), '[').replace(new RegExp('>', 'g'), ']')
@@ -481,7 +481,7 @@ function encode(value) {
  * @param {string} type
  * @param {*} value
  * @param {boolean} editable
- * @return {Element}
+ * @returns {Element}
  */
 function tryAddFormRow(form, id, label, type, value, editable) {
   return value ? addFormRow(form, id, label, type, value, editable) : null
@@ -494,7 +494,7 @@ function tryAddFormRow(form, id, label, type, value, editable) {
  * @param {string} type
  * @param {*} value
  * @param {boolean} editable
- * @return {Element}
+ * @returns {Element}
  */
 function addFormRow(form, id, label, type, value, editable) {
   const labelElement = document.createElement('label')
@@ -527,7 +527,7 @@ function addFormRow(form, id, label, type, value, editable) {
  * @param {Element} form
  * @param {string} id
  * @param {*} value
- * @return {Element}
+ * @returns {Element}
  */
 function addHiddenField(form, id, value) {
   const input = document.createElement('input')
@@ -542,7 +542,7 @@ function addHiddenField(form, id, value) {
 /**
  * @param {Element} e
  * @param {string} className
- * @return {Element}
+ * @returns {Element}
  */
 function addClass(e, className) {
   const classes = e.getAttribute('class')
@@ -557,7 +557,7 @@ function addClass(e, className) {
 /**
  * @param {Element} e
  * @param {string} className
- * @return {boolean}
+ * @returns {boolean}
  */
 function hasClass(e, className) {
   const classes = e.getAttribute('class')

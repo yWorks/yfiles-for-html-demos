@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -178,7 +178,7 @@ export default class CollapseDecorator extends NodeStyleBase {
    * @param {!INode} node The node to create the visual for.
    * @param {!IRenderContext} context The render context.
    * @param {boolean} visible True if the icon should be visible, false otherwise.
-   * @return The icon visual.
+   * @returns The icon visual.
    */
   createIconVisual(node, context, visible) {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -242,17 +242,15 @@ export default class CollapseDecorator extends NodeStyleBase {
       if (oldButtonVisual !== newButtonVisual) {
         container['data-visual'] = newButtonVisual
         newButtonVisual.svgElement.setAttribute('class', 'collapseButton')
-        while (container.hasChildNodes()) {
-          // remove all children
-          container.removeChild(container.firstChild)
+        while (container.lastChild != null) {
+          container.removeChild(container.lastChild)
         }
         container.appendChild(newButtonVisual.svgElement)
       }
     } else {
       // if not visible, remove all children
-      while (container.hasChildNodes()) {
-        // remove all children
-        container.removeChild(container.firstChild)
+      while (container.lastChild != null) {
+        container.removeChild(container.lastChild)
       }
     }
   }

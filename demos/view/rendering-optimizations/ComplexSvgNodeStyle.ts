@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -70,8 +70,8 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
 
   /**
    * Updates the defs element. This implementation does nothing.
-   * @param oldElement The old defs element.
    * @param context The canvas context.
+   * @param oldElement The old defs element.
    * @see Specified by {@link ISvgDefsCreator.updateDefsElement}.
    */
   updateDefsElement(context: ICanvasContext, oldElement: SVGElement): void {}
@@ -130,7 +130,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * Creates the visual representation for the given node.
    * @param context The render context.
    * @param node The node to create the visual for.
-   * @return The visual for the given node.
+   * @returns The visual for the given node.
    * @see {@link updateVisual}
    * @see {@link ComplexSvgNodeStyle.updateVisual}
    */
@@ -166,7 +166,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @param oldVisual The visual that has been created in the call to
    * {@link ComplexSvgNodeStyle.createVisual}.
    * @param node The node to create the visual for.
-   * @return The new or updated visual for the given node.
+   * @returns The new or updated visual for the given node.
    * @see {@link ComplexSvgNodeStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
@@ -216,7 +216,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @param context The input mode context.
    * @param location The location to be checked.
    * @param node The node that may be hit.
-   * @return Whether the visual representation of the node has been hit at the given location.
+   * @returns Whether the visual representation of the node has been hit at the given location.
    * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(context: IInputModeContext, location: Point, node: INode): boolean {
@@ -232,7 +232,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @param context The input mode context.
    * @param rectangle The rectangle to be checked.
    * @param node The node that may be in the rectangle.
-   * @return true if the specified node is selected by the marquee rectangle; false otherwise.
+   * @returns true if the specified node is selected by the marquee rectangle; false otherwise.
    * @see Overrides {@link NodeStyleBase.isInBox}
    */
   isInBox(context: IInputModeContext, rectangle: Rect, node: INode): boolean {
@@ -260,7 +260,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * @param node The node.
    * @param location The point to check.
-   * @return Whether the point is considered to lie inside the shape.
+   * @returns Whether the point is considered to lie inside the shape.
    * @see Overrides {@link NodeStyleBase.isInside}
    */
   isInside(node: INode, location: Point): boolean {

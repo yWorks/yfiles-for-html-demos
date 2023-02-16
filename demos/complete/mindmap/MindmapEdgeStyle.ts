@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -121,7 +121,7 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
 
   /**
    * Gets or sets the array of points after flattening the path.
-   * @return The edge path.
+   * @returns The edge path.
    */
   public points: Point[] = null!
 
@@ -265,7 +265,7 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
   /**
    * Converts a hex to rgb color.
    * @param hex The hex to be converted.
-   * @return The color in rgb format.
+   * @returns The color in rgb format.
    */
   static hexToRgb(hex: string): RGB {
     const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)

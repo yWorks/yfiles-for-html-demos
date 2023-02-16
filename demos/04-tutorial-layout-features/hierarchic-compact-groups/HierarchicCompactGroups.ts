@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,7 +38,7 @@ import {
  * Demonstrates how to configure a left-to-right {@link HierarchicLayout} such that it
  * yields maximally compact group nodes.
  * @param graph The graph to be laid out
- * @return the configured hierarchic layout algorithm
+ * @returns the configured hierarchic layout algorithm
  */
 export function createFeatureLayoutConfiguration(graph: IGraph): ILayoutAlgorithm {
   const hl = new HierarchicLayout({
@@ -70,7 +70,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): ILayoutAlgorith
 /**
  * Demonstrates how to run a left-to-right {@link HierarchicLayout} with the default configuration.
  * @param graph The graph to be laid out
- * @return the configured hierarchic layout algorithm
+ * @returns the configured hierarchic layout algorithm
  */
 export function createDefaultLayoutConfiguration(graph: IGraph): ILayoutAlgorithm {
   return new HierarchicLayout({

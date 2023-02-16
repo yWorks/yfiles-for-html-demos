@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,7 +51,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * Creates the visual representation for the given node.
    * @param context The render context.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link ComplexCanvasNodeStyle.updateVisual}
    */
   createVisual(context: IRenderContext, node: INode): Visual {
@@ -65,7 +65,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * @param oldVisual The visual that has been created in the call to
    * {@link ComplexCanvasNodeStyle.createVisual}.
    * @param node The node to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link ComplexCanvasNodeStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual {
@@ -99,7 +99,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * @param context The input mode context.
    * @param p The location to be checked.
    * @param node The node that may be hit.
-   * @return True if p is inside node.
+   * @returns True if p is inside node.
    * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(context: IInputModeContext, p: Point, node: INode): boolean {
@@ -115,7 +115,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * @param context The input mode context.
    * @param rectangle the rectangle to be checked.
    * @param node The node that may be in the rectangle.
-   * @return True if the box intersects the elliptical shape of the node. Also true if box lies
+   * @returns True if the box intersects the elliptical shape of the node. Also true if box lies
    * completely inside node.
    * @see Overrides {@link NodeStyleBase.isInBox}
    */

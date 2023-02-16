@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -517,7 +517,7 @@ function setRunningLayout(running) {
 /**
  * Enables/disables the button to show the decision tree.
  * The button gets disabled if the graph is empty or just has group nodes in it.
- * @yjs:keep=contains
+ * @yjs:keep = contains
  */
 function updateShowDecisionTreeButton() {
   const graph = graphComponent.graph

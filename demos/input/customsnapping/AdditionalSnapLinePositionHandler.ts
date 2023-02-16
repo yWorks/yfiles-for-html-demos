@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -88,7 +88,7 @@ export class AdditionalSnapLinePositionHandler
    * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
    *   Depending on the implementation the {@link AdditionalSnapLinePositionHandler.location} may or may not be
    *   modified to reflect the new value.
-   * @return Whether the move had any visual effect. This is a hint to the engine to optimize invalidation.
+   * @returns Whether the move had any visual effect. This is a hint to the engine to optimize invalidation.
    * @see Specified by {@link IPositionHandler.handleMove}.
    */
   handleMove(
@@ -124,11 +124,11 @@ export class AdditionalSnapLinePositionHandler
    * more invocations of {@link IPositionHandler.handleMove}.
    * Alternatively to this method, the {@link IPositionHandler.cancelDrag} method might be called.
    * @param inputModeContext The context providing information about the drag.
-   * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
-   *   This is the same value as delivered in the last invocation of {@link AdditionalSnapLinePositionHandler.handleMove}.
    * @param originalLocation The value of the
    *   {@link AdditionalSnapLinePositionHandler.location} property at the time of
    *   {@link AdditionalSnapLinePositionHandler.initializeDrag}.
+   * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
+   *   This is the same value as delivered in the last invocation of {@link AdditionalSnapLinePositionHandler.handleMove}.
    * @see Specified by {@link IPositionHandler.dragFinished}.
    */
   dragFinished(

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -132,7 +132,7 @@ export class EmptyReshapeHandleProvider
    * Returns the indicator for no valid position.
    * @param inputModeContext The context for which the handles are queried
    * @see Specified by {@link IReshapeHandleProvider.getAvailableHandles}.
-   * @return The indicator for no valid position
+   * @returns The indicator for no valid position
    */
   getAvailableHandles(inputModeContext: IInputModeContext): HandlePositions {
     return HandlePositions.NONE
@@ -143,7 +143,7 @@ export class EmptyReshapeHandleProvider
    * @param inputModeContext The context for which the handles are queried
    * @param position The single position a handle implementation should be
    *   returned for
-   * @return Null since getAvailableHandles returns no valid position.
+   * @returns Null since getAvailableHandles returns no valid position.
    */
   getHandle(inputModeContext: IInputModeContext, position: HandlePositions): IHandle {
     // Never called since getAvailableHandles returns no valid position.
@@ -224,7 +224,7 @@ export class NetworkFlowInputMode extends InputModeBase {
    * the area of a node that represents the flow supply/demand (if the flow can be adjusted like in
    * Minimum Cost flow algorithm).
    * @param location The event location in world coordinates
-   * @return True if the mouse hover occurred on a valid position, false otherwise
+   * @returns True if the mouse hover occurred on a valid position, false otherwise
    */
   isValidHover(location: Point): boolean {
     const hits = this.graphComponent!.graphModelManager.hitTester.enumerateHits(
@@ -252,8 +252,8 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Occurs when a mouse button has been pressed.
-   * @param buttons The state of the mouse buttons at the time of the event creation
    * @param location The event location in world coordinates
+   * @param buttons The state of the mouse buttons at the time of the event creation
    */
   onMouseDown(location: Point, buttons: MouseButtons): void {
     if (this.controller!.active && this.hitItem && buttons === MouseButtons.LEFT) {

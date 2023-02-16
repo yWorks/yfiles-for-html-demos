@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -274,8 +274,8 @@ function initializeSamplesComboBox() {
  * @param {!HTMLElement} htmlElement
  */
 function removeAllChildren(htmlElement) {
-  while (htmlElement.firstChild) {
-    htmlElement.removeChild(htmlElement.firstChild)
+  while (htmlElement.lastChild) {
+    htmlElement.removeChild(htmlElement.lastChild)
   }
 }
 

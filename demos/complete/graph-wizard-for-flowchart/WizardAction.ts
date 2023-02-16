@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -159,10 +159,10 @@ export default class WizardAction {
    * @param type The type of the action that is passed to the {@link WizardAction.handler}.
    * @param preCondition The pre-condition that has to be met so that the action is active.
    * @param handler The callback executing the action once it is triggered.
-   * @param shortcuts? The keyboard shortcuts to trigger this action.
-   * @param description? The description added to the legend when this action is active.
-   * @param buttonOptions? The configuration options for a button that is displayed when this action is active.
-   * @param trigger? A callback to decide whether an event should trigger this action in addition
+   * @param shortcuts The keyboard shortcuts to trigger this action.
+   * @param description The description added to the legend when this action is active.
+   * @param buttonOptions The configuration options for a button that is displayed when this action is active.
+   * @param trigger A callback to decide whether an event should trigger this action in addition
    * to the short-cuts and the button.
    * @param noUndo Whether the action should not be enqueued in the undo stack.
    */
@@ -275,7 +275,6 @@ export default class WizardAction {
    * Returns the type of the action triggered by the button configured by the button options.
    * @param options The {@link ButtonOptions} to determine the type for.
    * @param owner The model item owning the button.
-   * @private
    */
   static getButtonType(options: ButtonOptions, owner: IModelItem): string {
     let type = ''
@@ -292,7 +291,6 @@ export default class WizardAction {
    * @param options The {@link ButtonOptions} to determine the style for.
    * @param owner The model item owning the button.
    * @param buttonSize The size of the button.
-   * @private
    */
   static getButtonStyle(options: ButtonOptions, owner: IModelItem, buttonSize: Size): ILabelStyle {
     // Determine the style config that has to be defined either by style or styleFactory
@@ -349,7 +347,6 @@ export default class WizardAction {
    * The text is only considered when {@link ButtonOptions.style} is {@link TextButton}.
    * @param options The {@link ButtonOptions} to determine the text for.
    * @param owner The model item owning the button.
-   * @private
    */
   static getButtonText(options: ButtonOptions, owner: IModelItem): string {
     // Determine the style config that has to be defined either by style or styleFactory
@@ -364,7 +361,6 @@ export default class WizardAction {
    * Returns the {@link ILabelModelParameter layout} used for the button configured by the button options.
    * @param options The {@link ButtonOptions} to determine the layout for.
    * @param owner The model item owning the button.
-   * @private
    */
   static getButtonLayout(options: ButtonOptions, owner: IModelItem): ILabelModelParameter {
     if (options.layout) {
@@ -381,7 +377,6 @@ export default class WizardAction {
    * @param options The {@link ButtonOptions} to determine the tooltip for.
    * @param owner The model item owning the button.
    * @param shortcuts The shortcuts to include in the tooltip.
-   * @private
    */
   static getButtonTooltip(
     options: ButtonOptions,

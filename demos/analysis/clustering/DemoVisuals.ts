@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -85,7 +85,7 @@ export class VoronoiVisual
   /**
    * Creates the Voronoi visual.
    * @param context The context that describes where the visual will be used
-   * @return The visual for the Voronoi diagram
+   * @returns The visual for the Voronoi diagram
    */
   createVisual(context: IRenderContext): Visual {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -116,7 +116,7 @@ export class VoronoiVisual
    * Updates the Voronoi visual
    * @param context The context that describes where the visual will be used
    * @param oldVisual The old visual
-   * @return The visual for the Voronoi diagram
+   * @returns The visual for the Voronoi diagram
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): Visual {
     return this.createVisual(context)
@@ -153,8 +153,10 @@ export class PolygonVisual
   /**
    * Creates a new instance.
    * @param drawCenter Whether to draw an X at the center.
-   * @param clusters The clusters to draw. Defines the number of clusters,
-   * the layout of the nodes contained in the clusters, and the center of the clusters
+   * @param clusters The clusters to draw.
+   * @param clusters.number The number of clusters.
+   * @param clusters.clustering The layout of the nodes contained in the clusters.
+   * @param clusters.centroids The center of the clusters.
    */
   constructor(
     private drawCenter: boolean,
@@ -172,7 +174,7 @@ export class PolygonVisual
   /**
    * Creates the polygonal visual containing the nodes that belong to the same cluster.
    * @param context The context that describes where the visual will be used
-   * @return The polygonal visual
+   * @returns The polygonal visual
    */
   createVisual(context: IRenderContext): Visual {
     const element = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -238,7 +240,7 @@ export class PolygonVisual
    * Updates the polygonal containing the nodes that belong to the same cluster.
    * @param context The context that describes where the visual will be used
    * @param oldVisual The old visual
-   * @return The polygonal diagram
+   * @returns The polygonal diagram
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): Visual {
     return this.createVisual(context)
@@ -260,7 +262,7 @@ export class AxisVisual
   /**
    * Creates the polygonal visual containing the nodes that belong to the same cluster.
    * @param context The context that describes where the visual will be used
-   * @return The polygonal visual
+   * @returns The polygonal visual
    */
   createVisual(context: IRenderContext): Visual {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -319,7 +321,7 @@ export class AxisVisual
    * Updates the polygonal containing the nodes that belong to the same cluster.
    * @param context The context that describes where the visual will be used
    * @param oldVisual The old visual
-   * @return The polygonal diagram
+   * @returns The polygonal diagram
    */
   updateVisual(context: IRenderContext, oldVisual: Visual): Visual {
     return this.createVisual(context)
@@ -394,7 +396,7 @@ export class CutoffVisual
  * @param startColor The start color
  * @param endColor The end color
  * @param gradientCount The number of gradient steps
- * @return An array or random gradient colors
+ * @returns An array or random gradient colors
  */
 export function generateColors(startColor: Color, endColor: Color, gradientCount: number): Color[] {
   const colors = []

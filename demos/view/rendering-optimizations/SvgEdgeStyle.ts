@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -62,7 +62,7 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
    * Creates the visual representation for the given edge.
    * @param context The render context.
    * @param edge The edge to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgEdgeStyle.updateVisual}
    */
   createVisual(context: IRenderContext, edge: IEdge): SvgVisual {
@@ -90,7 +90,7 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
    * @param oldVisual The visual that has been created in the call to
    * {@link SvgEdgeStyle.createVisual}.
    * @param edge The edge to which this style instance is assigned.
-   * @return The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgEdgeStyle.createVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): SvgVisual {
@@ -154,7 +154,7 @@ class RenderDataCache {
  * @param source The source port location.
  * @param target The target port location.
  * @param edge The edge.
- * @return The edge path's geometry.
+ * @returns The edge path's geometry.
  */
 function createSvgPath(source: Point, target: Point, edge: IEdge): string {
   const path = edge.style.renderer.getPathGeometry(edge, edge.style).getPath()!
@@ -164,7 +164,7 @@ function createSvgPath(source: Point, target: Point, edge: IEdge): string {
 /**
  * Gets a list of bend locations from an edge.
  * @param edge The edge.
- * @return A list of the edge's bend locations, or an empty list if there are no bends.
+ * @returns A list of the edge's bend locations, or an empty list if there are no bends.
  */
 function getBendLocations(edge: IEdge): Point[] {
   const count = edge.bends.size

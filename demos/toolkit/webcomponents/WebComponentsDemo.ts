@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphEditorInputMode, IGraph, IInputMode, License, Rect } from 'yfiles'
+import { GraphEditorInputMode, IGraph, IInputMode, License, Rect, ShapeNodeStyle } from 'yfiles'
 import { fetchLicense } from '../../resources/fetch-license'
 
 import './GraphComponentElement'
-import { createDemoEdgeStyle, createDemoNodeStyle } from '../../resources/demo-styles'
+import { createDemoEdgeStyle } from '../../resources/demo-styles'
 
 // wait for the custom graph-component element to be defined
 if (window.customElements) {
@@ -80,7 +80,7 @@ async function run(): Promise<void> {
 
 function initializeGraph(graph: IGraph): void {
   // initialize default styles
-  graph.nodeDefaults.style = createDemoNodeStyle()
+  graph.nodeDefaults.style = new ShapeNodeStyle({ fill: 'orange' })
   graph.edgeDefaults.style = createDemoEdgeStyle()
 
   // create small sample graph

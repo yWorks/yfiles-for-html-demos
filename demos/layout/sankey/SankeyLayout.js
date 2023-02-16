@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -133,7 +133,7 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Gets the main orientation of the layout. Should be the same value as for the associated core layout
    * algorithm.
-   * @return The main orientation of the layout
+   * @returns The main orientation of the layout
    * @type {!LayoutOrientation}
    */
   get layoutOrientation() {
@@ -153,7 +153,7 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Gets the port border gap ratio for the port distribution at the sides of the nodes.
    * Should be the same value as for the associated core layout algorithm.
-   * @return The port border gap ratio
+   * @returns The port border gap ratio
    * @type {number}
    */
   get portBorderGapRatio() {
@@ -172,7 +172,7 @@ class NodeResizingStage extends LayoutStageBase {
 
   /**
    * Returns the minimum distance between two ports on the same node side.
-   * @return The minimum distance between two ports
+   * @returns The minimum distance between two ports
    * @type {number}
    */
   get minimumPortDistance() {

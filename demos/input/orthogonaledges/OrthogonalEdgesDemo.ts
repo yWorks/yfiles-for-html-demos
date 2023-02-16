@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,6 +51,7 @@ import BlueOrthogonalEdgeHelper from './BlueOrthogonalEdgeHelper'
 import OrangeOrthogonalEdgeHelper from './OrangeOrthogonalEdgeHelper'
 import PurpleOrthogonalEdgeHelper from './PurpleOrthogonalEdgeHelper'
 import RedOrthogonalEdgeHelper from './RedOrthogonalEdgeHelper'
+import YellowOrthogonalEdgeHelper from './YellowOrthogonalEdgeHelper'
 import type { ColorSetName } from '../../resources/demo-styles'
 import {
   applyDemoTheme,
@@ -90,13 +91,22 @@ function registerOrthogonalEdgeHelperDecorators(graph: IGraph): void {
   )
 
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
+    edge => edge.tag === 'yellow',
+    new YellowOrthogonalEdgeHelper()
+  )
+
+  edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
     edge => edge.tag === 'blue',
     new BlueOrthogonalEdgeHelper()
   )
 
   // Disable moving of the complete edge for orthogonal edges since this would create way too many bends
   edgeDecorator.positionHandlerDecorator.hideImplementation(
-    edge => edge.tag === 'orange' || edge.tag === 'green' || edge.tag === 'purple'
+    edge =>
+      edge.tag === 'orange' ||
+      edge.tag === 'yellow' ||
+      edge.tag === 'green' ||
+      edge.tag === 'purple'
   )
 
   // Add a custom BendCreator for blue edges that ensures orthogonality
@@ -174,9 +184,10 @@ function createSampleGraph(graph: IGraph): void {
   createSubgraph(graph, 110, 'demo-green', 'green')
   createSubgraph(graph, 220, 'demo-purple', 'purple', true)
   createSubgraph(graph, 330, 'demo-orange', 'orange')
+  createSubgraph(graph, 440, 'demo-palette-510', 'yellow')
 
   // The blue edge has more bends than the other edges
-  const blueEdge = createSubgraph(graph, 440, 'demo-lightblue', 'blue')
+  const blueEdge = createSubgraph(graph, 550, 'demo-lightblue', 'blue')
   const blueBends = blueEdge.bends.toArray()
   graph.remove(blueBends[1])
   graph.remove(blueBends[0])

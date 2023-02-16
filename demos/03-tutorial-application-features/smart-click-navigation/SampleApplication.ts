@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -186,7 +186,7 @@ function zoomToLocation(item: IModelItem, currentMouseClickLocation: Point): voi
 /**
  * Gets the focus point.
  * @param item The element that we clicked.
- * @return The point that we should zoom to.
+ * @returns The point that we should zoom to.
  */
 function getFocusPoint(item: IModelItem): Point | null {
   if (IEdge.isInstance(item)) {

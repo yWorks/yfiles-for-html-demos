@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1498,7 +1498,7 @@ function beginUndoEdit(undoName, redoName) {
 
 /**
  * Commits all undo edits contained in the given edit.
- * @param {!object} edit The edit to commit.
+ * @param {!object} edit
  */
 function commitUndoEdit(edit) {
   edit.tagEdit.commit()
@@ -1507,7 +1507,7 @@ function commitUndoEdit(edit) {
 
 /**
  * Cancels all undo edits contained in the given edit.
- * @param {!object} edit The edit to cancel.
+ * @param {!object} edit
  */
 function cancelUndoEdit(edit) {
   edit.tagEdit.cancel()
@@ -1516,7 +1516,7 @@ function cancelUndoEdit(edit) {
 
 /**
  * An undo unit that handles the undo/redo of the currentItem and all sets that determine whether
- * or not a node or edge is currently visible (part of the filtered graph).
+ * a node or edge is currently visible (part of the filtered graph).
  */
 class ChangedSetUndoUnit extends UndoUnitBase {
   constructor() {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -63,7 +63,7 @@ export class SankeyLayout {
   /**
    * Configures the hierarchic layout algorithm for the Sankey visualization
    * @param fromSketchMode True if the layout should run from sketch, false otherwise
-   * @return The configured hierarchic layout
+   * @returns The configured hierarchic layout
    */
   configureHierarchicLayout(fromSketchMode: boolean): HierarchicLayout {
     const hierarchicLayout = new HierarchicLayout({
@@ -97,7 +97,7 @@ export class SankeyLayout {
 
   /**
    * Configures the hierarchic layout data for the Sankey visualization
-   * @return The configured hierarchic Layout data object
+   * @returns The configured hierarchic Layout data object
    */
   createHierarchicLayoutData(): HierarchicLayoutData {
     // create the layout data
@@ -139,7 +139,7 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Gets the main orientation of the layout. Should be the same value as for the associated core layout
    * algorithm.
-   * @return The main orientation of the layout
+   * @returns The main orientation of the layout
    */
   get layoutOrientation(): LayoutOrientation {
     return this.$layoutOrientation
@@ -157,7 +157,7 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Gets the port border gap ratio for the port distribution at the sides of the nodes.
    * Should be the same value as for the associated core layout algorithm.
-   * @return The port border gap ratio
+   * @returns The port border gap ratio
    */
   get portBorderGapRatio(): number {
     return this.$portBorderGapRatio
@@ -174,7 +174,7 @@ class NodeResizingStage extends LayoutStageBase {
 
   /**
    * Returns the minimum distance between two ports on the same node side.
-   * @return The minimum distance between two ports
+   * @returns The minimum distance between two ports
    */
   get minimumPortDistance(): number {
     return this.$minimumPortDistance

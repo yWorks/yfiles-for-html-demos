@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -110,8 +110,8 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Creates the visual for the label.
    *
-   * @param {!ILabel} label The label to which this style instance is assigned.
    * @param {!IRenderContext} ctx The render context.
+   * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {!SvgVisualGroup} The visual as required by the {@link IVisualCreator.createVisual} interface.
    */
   createVisual(ctx, label) {
@@ -154,9 +154,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Update the visual previously created by createVisual.
    *
-   * @param {!ILabel} label The label to which this style instance is assigned.
    * @param {!IRenderContext} ctx The render context.
    * @param {!SvgVisualGroup} oldVisual The visual that has been created in the call to createVisual.
+   * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {?SvgVisual} visual as required by the {@link IVisualCreator.createVisual} interface.
    */
   updateVisual(ctx, oldVisual, label) {
@@ -248,8 +248,8 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Gets the bounds of the visual for the label in the given context.
    *
-   * @param {!ILabel} label The label to which this style instance is assigned.
    * @param {!ICanvasContext} canvasContext The canvas context.
+   * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {!Rect} The visual bounds of the visual representation.
    */
   getBounds(canvasContext, label) {
@@ -267,9 +267,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visualization for the specified label is visible in the context.
    *
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @param {!Rect} clip The clipping rectangle.
    * @param {!ICanvasContext} canvasContext The canvas context.
+   * @param {!Rect} clip The clipping rectangle.
+   * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {boolean}
    */
   isVisible(canvasContext, clip, label) {
@@ -280,9 +280,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visual representation of the label has been hit at the given location.
    *
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @param {!Point} p The point to test.
    * @param {!IInputModeContext} canvasContext The canvas context.
+   * @param {!Point} p The point to test.
+   * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {boolean}
    */
   isHit(canvasContext, p, label) {
@@ -293,9 +293,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visualization for the specified label is included in the marquee selection.
    *
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @param {!Rect} box The marquee selection box.
    * @param {!IInputModeContext} canvasContext The canvas context.
+   * @param {!Rect} box The marquee selection box.
+   * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {boolean}
    */
   isInBox(canvasContext, box, label) {

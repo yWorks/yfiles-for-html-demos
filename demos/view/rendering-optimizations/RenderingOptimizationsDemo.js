@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -470,8 +470,10 @@ async function loadGraph(fileName) {
 /**
  * Parses the sample data and creates the graph elements.
  * @param {!IGraph} graph The graph to populate with the items.
- * @param {!object} graphData The JSON data
- * @yjs:keep=nodeList,edgeList
+ * @param {!object} graphData The JSON data.
+ * @param graphData.nodeList The data items of the nodes.
+ * @param graphData.edgeList The data items of the nodes.
+ * @yjs:keep = nodeList,edgeList
  */
 function loadGraphCore(graph, graphData) {
   graph.clear()

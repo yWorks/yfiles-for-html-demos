@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -142,8 +142,10 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
   /**
    * Creates a new instance.
    * @param {boolean} drawCenter Whether to draw an X at the center.
-   * @param {!object} clusters The clusters to draw. Defines the number of clusters,
-   * the layout of the nodes contained in the clusters, and the center of the clusters
+   * @param {!object} clusters The clusters to draw.
+   * @param clusters.number The number of clusters.
+   * @param clusters.clustering The layout of the nodes contained in the clusters.
+   * @param clusters.centroids The center of the clusters.
    */
   constructor(drawCenter, clusters) {
     super()

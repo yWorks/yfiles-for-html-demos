@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable jsdoc/check-param-names */
 import {
   AdjacencyTypes,
   Arrow,
@@ -131,7 +132,7 @@ export abstract class AlgorithmConfiguration {
    * Returns a node style to mark source and target nodes of paths.
    * @param source true if the node is a source node of a path.
    * @param target true if the node is a target node of a path.
-   * @return the marked nodes' style
+   * @returns the marked nodes' style
    */
   getSourceTargetNodeStyle(source: boolean, target: boolean): SourceTargetNodeStyle {
     let type: number
@@ -151,7 +152,7 @@ export abstract class AlgorithmConfiguration {
    * @param type the type of node which determines the color of the style
    * @param  [gradient] whether or not the color is chosen as a gradient or different colors are applied
    * @param  [svgColor] the color for the edge
-   * @return the marked edges' style
+   * @returns the marked edges' style
    */
   getMarkedEdgeStyle(
     isDirected: boolean,
@@ -180,7 +181,7 @@ export abstract class AlgorithmConfiguration {
    * Generates random colors for nodes and edges.
    *
    * @param gradient whether or not the color is chosen as a gradient or different colors are applied
-   * @return an array of strings representing colors in the form of rgb[x,x,x]
+   * @returns an array of strings representing colors in the form of rgb[x,x,x]
    */
   generateColors(gradient: { size: number; lightToDark: boolean } | null): string[] {
     if (gradient != null) {
@@ -226,7 +227,7 @@ export abstract class AlgorithmConfiguration {
    * Callback that gets the edge weight for a given edge.
    * This implementation retrieves the weights from the labels or alternatively from the edge length.
    * @param edge the given edge.
-   * @return weight of the edge
+   * @returns weight of the edge
    */
   getEdgeWeight(edge: IEdge): number {
     if (this.useUniformWeights) {
@@ -264,7 +265,7 @@ export abstract class AlgorithmConfiguration {
    * Finds the edge components that are affected based on the elements marked as incremental.
    * @param components the existing components
    * @param graph the given graph
-   * @return the set of indices of the edge affected components
+   * @returns the set of indices of the edge affected components
    */
   getAffectedEdgeComponents(
     components: ResultItemMapping<IEdge, number>,
@@ -291,7 +292,7 @@ export abstract class AlgorithmConfiguration {
    * Finds the node components that are affected based on the elements marked as incremental.
    * @param components the existing components
    * @param graph the given graph
-   * @return the set of indices of the node affected components
+   * @returns the set of indices of the node affected components
    */
   getAffectedNodeComponents(
     components: ResultItemMapping<INode, number>,
@@ -323,7 +324,7 @@ export abstract class AlgorithmConfiguration {
    * @param allComponents an array of all components
    * @param graph the given graph
    * @param element the given element (node/edge)
-   * @return a string representing the element color in rgb[x,x,x] format
+   * @returns a string representing the element color in rgb[x,x,x] format
    */
   determineElementColor(
     colors: string[],
@@ -395,7 +396,7 @@ export abstract class AlgorithmConfiguration {
    * Finds the component with the larger number of elements.
    * @param affectedComponents the set of the affected components
    * @param allComponents an array of all components
-   * @return the index of the largest component
+   * @returns the index of the largest component
    */
   getLargestComponentIndex(affectedComponents: Set<number>, allComponents: IModelItem[][]): number {
     if (allComponents && affectedComponents !== null && affectedComponents.size > 0) {
@@ -448,7 +449,7 @@ export abstract class AlgorithmConfiguration {
   /**
    * Finds the color that most of the elements of the component have.
    * @param component the components' array
-   * @return a string representing the color that most of the elements of the components have in rgb[x,x,x] format
+   * @returns a string representing the color that most of the elements of the components have in rgb[x,x,x] format
    */
   generateMajorColor(component: IModelItem[]): string | undefined {
     const color2Frequency = new Map<string, number>()
@@ -487,7 +488,7 @@ export abstract class AlgorithmConfiguration {
    * Generates a color that does not already exist in the graph, unless such a color does not exist.
    * @param graph the given graph
    * @param colors an array with the existing colors
-   * @return a string representing a unique color in rgb[x,x,x] format
+   * @returns a string representing a unique color in rgb[x,x,x] format
    */
   generateUniqueColor(graph: IGraph, colors: string[]): string | null {
     const existingColors = new Set<string>()
@@ -519,7 +520,7 @@ export abstract class AlgorithmConfiguration {
   /**
    * Checks if a graph element has a valid color in the tag.
    * @param element the given graph element
-   * @return true if a graph element has a valid color in the tag, false otherwise.
+   * @returns true if a graph element has a valid color in the tag, false otherwise.
    */
   static hasValidColorTag(element: IModelItem): boolean {
     return element.tag !== null && element.tag.color !== null && element.tag.color !== undefined

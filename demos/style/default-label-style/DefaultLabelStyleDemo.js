@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.5.
- ** Copyright (c) 2000-2022 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -86,7 +86,7 @@ async function run() {
  * @param {!IGraph} graph The graph to add node labels to.
  */
 function createSampleNodeLabels(graph) {
-  const n1 = graph.createNode({ layout: [-25, -100, 50, 200] })
+  const n1 = graph.createNode({ layout: [-25, -100, 50, 200], tag: { editableLabels: true } })
   // Add sample node labels to the first node, distributed evenly on the side and with different
   // background shapes
   graph.addLabel({
@@ -321,14 +321,15 @@ function createSampleEdgeLabels(graph) {
 
 /**
  * Creates and configures a node label style.
- * @param theme The name of the color set to use for the style's fills and stroke.
- * @param shape The label shape for the background.
- * @param font The font for the label text.
- * @param insets Optional insets to account for special background shapes.
- * @param wrapping The optional text wrapping defining how text of the label is trimmed.
- * @param verticalTextAlignment The vertical text alignment.
- * @param horizontalTextAlignment The horizontal text alignment.
- * @param clipText Determines whether overflowing text shold be clipped.
+ * @param theme The options of the style.
+ * @param theme.theme The name of the color set to use for the style's fills and stroke.
+ * @param theme.shape The label shape for the background.
+ * @param theme.font The font for the label text.
+ * @param theme.insets Optional insets to account for special background shapes.
+ * @param theme.wrapping The optional text wrapping defining how text of the label is trimmed.
+ * @param theme.verticalTextAlignment The vertical text alignment.
+ * @param theme.horizontalTextAlignment The horizontal text alignment.
+ * @param theme.clipText Determines whether overflowing text should be clipped.
  * @param {!object} undefined
  * @returns {!DefaultLabelStyle}
  */
@@ -358,13 +359,14 @@ function createNodeLabelStyle({
 
 /**
  * Creates and configures an edge label style.
- * @param theme The name of the color set to use for the style's fills and stroke.
- * @param shape The label shape for the background.
- * @param font The font for the label text.
- * @param insets Optional insets to account for special background shapes.
- * @param wrapping The optional text wrapping defining how text of the label is trimmed.
- * @param verticalTextAlignment The vertical text alignment.
- * @param horizontalTextAlignment The horizontal text alignment.
+ * @param theme The options of the style.
+ * @param theme.theme The name of the color set to use for the style's fills and stroke.
+ * @param theme.shape The label shape for the background.
+ * @param theme.font The font for the label text.
+ * @param theme.insets Optional insets to account for special background shapes.
+ * @param theme.wrapping The optional text wrapping defining how text of the label is trimmed.
+ * @param theme.verticalTextAlignment The vertical text alignment.
+ * @param theme.horizontalTextAlignment The horizontal text alignment.
  * @param {!object} undefined
  * @returns {!DefaultLabelStyle}
  */
@@ -420,6 +422,12 @@ function configureInteraction(graphComponent) {
     selectableItems: 'label',
     movableItems: 'label',
     deletableItems: 'none'
+  })
+  inputMode.addLabelEditingListener((sender, args) => {
+    // only the labels of the orange node are editable
+    if (!args.owner?.tag?.editableLabels) {
+      args.cancel = true
+    }
   })
   configureToolTips(inputMode)
 
