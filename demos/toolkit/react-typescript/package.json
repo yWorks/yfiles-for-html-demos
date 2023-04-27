@@ -13,7 +13,7 @@
     "react-dom": "18.2.0",
     "react-scripts": "5.0.1",
     "typescript": "~4.4.4",
-    "yfiles": "../../../lib-dev/yfiles-25.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.4+dev.tgz"
   },
   "scripts": {
     "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs-extra').copySync('../../utils/BrowserDetection.ts', './src/utils/BrowserDetection.ts'); require('fs-extra').copySync('../../utils/GraphSearch.ts', './src/utils/GraphSearch.ts');\"",

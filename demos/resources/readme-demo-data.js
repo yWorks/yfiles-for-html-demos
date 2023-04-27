@@ -3996,7 +3996,7 @@ function getDemoData() {
     "id": "browserify",
     "name": "Browserify",
     "demoPath": "loading/browserify/README.html",
-    "summary": "Shows how to bundle the yFiles library in a <a href=\"http://browserify.org\" target=\"_blank\">Browserify</a> project.",
+    "summary": "Shows how to bundle the yFiles library in a <a href=\"https://browserify.org\" target=\"_blank\">Browserify</a> project.",
     "category": "loading",
     "type": "integration",
     "thumbnailPath": "resources/image/browserify.png",

@@ -73,15 +73,17 @@ export default class MoveNodesAsideStage extends LayoutStageBase {
 
     const asideNodes: YNode[] = []
 
-    for (const node of graph.nodes) {
-      // For each node, get the original node and see whether the tag specifies that it
-      // should be handled specially.
-      const iNode = originalNodeDp?.get(node) as INode
-      if (iNode?.tag?.moveAside) {
-        // If so, hide the node for now ...
-        hider.hide(node)
-        // ... and remember it for later use
-        asideNodes.push(node)
+    if (originalNodeDp) {
+      for (const node of graph.nodes) {
+        // For each node, get the original node and see whether the tag specifies that it
+        // should be handled specially.
+        const iNode = originalNodeDp.get(node) as INode | null
+        if (iNode?.tag?.moveAside) {
+          // If so, hide the node for now ...
+          hider.hide(node)
+          // ... and remember it for later use
+          asideNodes.push(node)
+        }
       }
     }
 

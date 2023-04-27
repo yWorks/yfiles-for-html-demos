@@ -82,6 +82,7 @@ export class ContextMenu {
     // This way, the individual menu items do not need to handle this by themselves.
     this.closeListener = (evt): void => {
       evt.stopPropagation()
+      evt.preventDefault()
       this.close()
       // Set the focus to the graph component
       graphComponent.focus()
@@ -90,7 +91,7 @@ export class ContextMenu {
 
     // A ESC key press listener that closes the menu and calls the callback.
     this.closeOnEscListener = (evt): void => {
-      if (evt.keyCode === 27 && this.element.parentNode) {
+      if (evt.key === 'Escape' && this.element.parentNode) {
         this.closeListener(evt)
       }
     }
@@ -298,7 +299,7 @@ export class ContextMenu {
 
     // Listen to the context menu key to make it work in Chrome
     componentDiv.addEventListener('keyup', evt => {
-      if (evt.keyCode === 93) {
+      if (evt.key === 'ContextMenu') {
         evt.preventDefault()
         openingCallback(ContextMenu.getCenterInPage(componentDiv))
       }

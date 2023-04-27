@@ -6,8 +6,8 @@
   "private": true,
   "scripts": {
     "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
-    "build": "node --max-old-space-size=4096 ./node_modules/grunt/bin/grunt",
-    "production": "node --max-old-space-size=4096 ./node_modules/grunt/bin/grunt production"
+    "build": "node --max-old-space-size=8000 ./node_modules/grunt/bin/grunt",
+    "production": "node --max-old-space-size=8000 ./node_modules/grunt/bin/grunt production"
   },
   "devDependencies": {
     "@babel/core": "^7.18.5",
@@ -29,6 +29,6 @@
     "core-js": "^3.23.1",
     "regenerator-runtime": "^0.13.9",
     "unfetch": "^4.2.0",
-    "yfiles": "../../../lib-dev/yfiles-25.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.4+dev.tgz"
   }
 }

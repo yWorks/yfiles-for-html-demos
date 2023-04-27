@@ -281,20 +281,19 @@ export class ButtonInputMode extends InputModeBase {
    * @type {!ILabelStyle}
    */
   get focusedButtonStyle() {
-    return (this.buttonLabelManager?.descriptor).focusedButtonStyle
+    return this.buttonLabelManager.descriptor.focusedButtonStyle
   }
 
   /**
    * @type {!ILabelStyle}
    */
   set focusedButtonStyle(style) {
-    ;(this.buttonLabelManager?.descriptor).focusedButtonStyle = style
+    this.buttonLabelManager.descriptor.focusedButtonStyle = style
   }
 
   constructor() {
     super()
     this.buttons = null
-    this.buttonLabelManager = null
     this.queryButtonsListener = null
     this.itemRemovedListener = this.onItemRemoved.bind(this)
     this.onMouseMoveListener = this.onMouseMove.bind(this)
@@ -327,22 +326,23 @@ export class ButtonInputMode extends InputModeBase {
     this.clearPending = false
     this.priority = 0
     this.exclusive = true
-    this.createButtonLabelCollectionModel()
+    this.buttonLabelManager = this.createButtonLabelCollectionModel()
     this._cursor = Cursor.POINTER
     this.tooltipMode.duration = TimeSpan.fromSeconds(5)
   }
 
   createButtonLabelCollectionModel() {
-    this.buttonLabelManager = new CollectionModelManager(Button.$class)
-    this.buttonLabelManager.descriptor = new ButtonDescriptor()
-    this.buttonLabelManager.model = new ObservableCollection()
+    const buttonLabelManager = new CollectionModelManager(Button.$class)
+    buttonLabelManager.descriptor = new ButtonDescriptor()
+    buttonLabelManager.model = new ObservableCollection()
+    return buttonLabelManager
   }
 
   /**
    * @type {!ObservableCollection.<Button>}
    */
   get buttonLabels() {
-    return this.buttonLabelManager?.model
+    return this.buttonLabelManager.model
   }
 
   /**
@@ -678,7 +678,7 @@ export class ButtonInputMode extends InputModeBase {
    * @param {!Point} location
    */
   updateHoveredItem(location) {
-    const hitItem = this.getHitItem(this.inputModeContext?.canvasComponent, location)
+    const hitItem = this.getHitItem(location)
     if (hitItem != this.hoveredOwner) {
       // hovered model item has changed
       if (hitItem) {
@@ -726,10 +726,10 @@ export class ButtonInputMode extends InputModeBase {
    * @type {?Button}
    */
   set focusedButton(focusedButton) {
-    ;(this.buttonLabelManager?.descriptor).focusedButton = focusedButton
+    this.buttonLabelManager.descriptor.focusedButton = focusedButton
     this._focusedButton = focusedButton
     if (focusedButton) {
-      this.buttonLabelManager?.update(focusedButton)
+      this.buttonLabelManager.update(focusedButton)
     }
     this.inputModeContext?.canvasComponent?.invalidate()
   }
@@ -755,7 +755,7 @@ export class ButtonInputMode extends InputModeBase {
         this.triggerAction(hitButton)
       }
     } else if (rightClick && this.buttonTrigger === ButtonTrigger.RIGHT_CLICK) {
-      const hitItem = this.getHitItem(sender, evt.location)
+      const hitItem = this.getHitItem(evt.location)
       if (hitItem && hitItem != this.buttonOwner) {
         this.showButtons(hitItem)
       } else {
@@ -822,10 +822,9 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   /**
-   * @param {!GraphComponent} graphComponent
    * @param {!Point} location
    */
-  getHitItem(graphComponent, location) {
+  getHitItem(location) {
     const context = this.inputModeContext
     const hitTester = context.lookup(IHitTester.$class)
     let hitItem = hitTester

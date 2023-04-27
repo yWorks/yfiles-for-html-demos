@@ -160,7 +160,7 @@ export enum ButtonTrigger {
  */
 export class ButtonInputMode extends InputModeBase {
   private buttons: Button[] | null = null
-  private buttonLabelManager: CollectionModelManager<Button> | null = null
+  private buttonLabelManager: CollectionModelManager<Button>
   private queryButtonsListener: QueryButtonsListener | null = null
   private itemRemovedListener = this.onItemRemoved.bind(this)
   private onMouseMoveListener = this.onMouseMove.bind(this)
@@ -295,30 +295,31 @@ export class ButtonInputMode extends InputModeBase {
    * Using the {@link Key.TAB} the focus can be moved to the next button.
    */
   get focusedButtonStyle(): ILabelStyle {
-    return (this.buttonLabelManager?.descriptor as ButtonDescriptor).focusedButtonStyle
+    return (this.buttonLabelManager.descriptor as ButtonDescriptor).focusedButtonStyle
   }
 
   set focusedButtonStyle(style: ILabelStyle) {
-    ;(this.buttonLabelManager?.descriptor as ButtonDescriptor).focusedButtonStyle = style
+    ;(this.buttonLabelManager.descriptor as ButtonDescriptor).focusedButtonStyle = style
   }
 
   constructor() {
     super()
     this.priority = 0
     this.exclusive = true
-    this.createButtonLabelCollectionModel()
+    this.buttonLabelManager = this.createButtonLabelCollectionModel()
     this._cursor = Cursor.POINTER
     this.tooltipMode.duration = TimeSpan.fromSeconds(5)
   }
 
   private createButtonLabelCollectionModel() {
-    this.buttonLabelManager = new CollectionModelManager<Button>(Button.$class)
-    this.buttonLabelManager.descriptor = new ButtonDescriptor()
-    this.buttonLabelManager.model = new ObservableCollection<Button>()
+    const buttonLabelManager = new CollectionModelManager<Button>(Button.$class)
+    buttonLabelManager.descriptor = new ButtonDescriptor()
+    buttonLabelManager.model = new ObservableCollection<Button>()
+    return buttonLabelManager
   }
 
   private get buttonLabels(): ObservableCollection<Button> {
-    return this.buttonLabelManager?.model as ObservableCollection<Button>
+    return this.buttonLabelManager.model as ObservableCollection<Button>
   }
 
   /**
@@ -358,7 +359,7 @@ export class ButtonInputMode extends InputModeBase {
           // get the bounding rectangle around all the buttons in this set
           const wholeBounds = this.buttons.reduce((previousValue, currentValue) => {
             const boundsProvider =
-              this.buttonLabelManager!.descriptor!.getBoundsProvider(currentValue)
+              this.buttonLabelManager.descriptor!.getBoundsProvider(currentValue)
             return Rect.add(previousValue, boundsProvider.getBounds(canvasContext))
           }, Rect.EMPTY)
           // get the bounds for the owner of the buttons
@@ -442,7 +443,7 @@ export class ButtonInputMode extends InputModeBase {
 
   private getHitButtons(context: IInputModeContext, location: Point) {
     return context
-      .canvasComponent!.hitElementsAt(context, location, this.buttonLabelManager!.canvasObjectGroup)
+      .canvasComponent!.hitElementsAt(context, location, this.buttonLabelManager.canvasObjectGroup)
       .map(canvasObject => canvasObject.userObject as Button)
   }
 
@@ -453,7 +454,7 @@ export class ButtonInputMode extends InputModeBase {
   install(context: IInputModeContext, controller: ConcurrencyController) {
     super.install(context, controller)
     const graphComponent = context.canvasComponent as GraphComponent
-    this.buttonLabelManager!.canvasObjectGroup = graphComponent.inputModeGroup.addGroup()
+    this.buttonLabelManager.canvasObjectGroup = graphComponent.inputModeGroup.addGroup()
     graphComponent.addMouseMoveListener(this.onMouseMoveListener)
     graphComponent.addMouseDragListener(this.onMouseDragListener)
     graphComponent.addMouseLeaveListener(this.onMouseMoveListener)
@@ -493,7 +494,7 @@ export class ButtonInputMode extends InputModeBase {
     graphComponent.removeMouseDragListener(this.onMouseDragListener)
     graphComponent.removeMouseLeaveListener(this.onMouseMoveListener)
     this.updateHoveredButton(null)
-    this.buttonLabelManager!.canvasObjectGroup!.remove()
+    this.buttonLabelManager.canvasObjectGroup!.remove()
     super.uninstall(context)
   }
 
@@ -573,9 +574,9 @@ export class ButtonInputMode extends InputModeBase {
     const tooltipWorldSize = this.calculateTooltipWorldSize(button.tooltip)
 
     // get the bounds of the button using the ButtonDescriptor
-    const buttonBounds = this.buttonLabelManager!.descriptor!.getBoundsProvider(button).getBounds(
-      this.inputModeContext!.canvasComponent!.canvasContext
-    )
+    const buttonBounds = this.buttonLabelManager
+      .descriptor!.getBoundsProvider(button)
+      .getBounds(this.inputModeContext!.canvasComponent!.canvasContext)
 
     // horizontally the tooltip is centered with the button center
     const x = buttonBounds.centerX - tooltipWorldSize.width / 2
@@ -618,10 +619,7 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   private updateHoveredItem(location: Point) {
-    const hitItem = this.getHitItem(
-      this.inputModeContext?.canvasComponent as GraphComponent,
-      location
-    )
+    const hitItem = this.getHitItem(location)
     if (hitItem != this.hoveredOwner) {
       // hovered model item has changed
       if (hitItem) {
@@ -665,10 +663,10 @@ export class ButtonInputMode extends InputModeBase {
    * @param focusedButton The button to focus or `null` if no button shall be focused.
    */
   public set focusedButton(focusedButton: Button | null) {
-    ;(this.buttonLabelManager?.descriptor as ButtonDescriptor).focusedButton = focusedButton
+    ;(this.buttonLabelManager.descriptor as ButtonDescriptor).focusedButton = focusedButton
     this._focusedButton = focusedButton
     if (focusedButton) {
-      this.buttonLabelManager?.update(focusedButton)
+      this.buttonLabelManager.update(focusedButton)
     }
     this.inputModeContext?.canvasComponent?.invalidate()
   }
@@ -687,7 +685,7 @@ export class ButtonInputMode extends InputModeBase {
         this.triggerAction(hitButton)
       }
     } else if (rightClick && this.buttonTrigger === ButtonTrigger.RIGHT_CLICK) {
-      const hitItem = this.getHitItem(sender as GraphComponent, evt.location)
+      const hitItem = this.getHitItem(evt.location)
       if (hitItem && hitItem != this.buttonOwner) {
         this.showButtons(hitItem)
       } else {
@@ -738,7 +736,7 @@ export class ButtonInputMode extends InputModeBase {
     button.onAction(button)
   }
 
-  private getHitItem(graphComponent: GraphComponent, location: Point) {
+  private getHitItem(location: Point) {
     const context = this.inputModeContext!
     const hitTester = context.lookup(IHitTester.$class) as IHitTester<IModelItem>
     let hitItem: IModelItem | null = hitTester

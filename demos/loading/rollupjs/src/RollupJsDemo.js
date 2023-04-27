@@ -41,8 +41,6 @@ const layoutWorker = new LayoutWorker()
 
 License.value = license
 
-enableWorkarounds()
-
 // Create a GraphComponent and enable interactive editing
 const graphComponent = new GraphComponent('graphComponent')
 const graph = graphComponent.graph

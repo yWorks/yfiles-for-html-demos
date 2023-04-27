@@ -11,8 +11,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "importsNotUsedAsValues": "error"
+    "moduleResolution": "node"
   },
   "exclude": [
     "loading/parcel",

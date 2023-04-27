@@ -14,7 +14,7 @@
     "vue": "^2.6.14",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
-    "yfiles": "../../../lib-dev/yfiles-25.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-25.0.4+dev.tgz"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.6",
