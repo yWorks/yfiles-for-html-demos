@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { createApp, defineComponent, onMounted } from 'vue'
+import { onMounted, render, createVNode, getCurrentInstance } from 'vue'
 import {
   GraphComponent,
   GraphEditorInputMode,
@@ -111,18 +111,15 @@ export function useTooltips(getGraphComponent: () => GraphComponent) {
       }`
     }
 
-    const vueTooltip = (defineComponent as any)({
-      extends: Tooltip,
-      data() {
-        return {
-          title,
-          content
-        }
-      }
-    })
+    const vNode = createVNode(Tooltip, { title, content })
+
+    // Very important so we can use globally registered components, plugins, ...etc.
+    // Note: getCurrentInstance must run inside a vue setup() function
+    vNode.appContext = getCurrentInstance()?.appContext || null
 
     const root = document.createElement('div')
-    createApp(vueTooltip).mount(root)
+    render(vNode, root)
+
     return root.firstElementChild as HTMLElement
   }
 

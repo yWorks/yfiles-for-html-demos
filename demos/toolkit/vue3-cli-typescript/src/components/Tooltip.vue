@@ -5,18 +5,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
-
-export default defineComponent({
-  name: 'Tooltip',
-  setup() {
-    const title = ref('Tooltip')
-    const content = ref('Tooltip Content')
-
-    return { title, content }
-  }
-})
+<script setup lang="ts">
+defineProps<{ title: string; content: string }>()
 </script>
 
 <style>
