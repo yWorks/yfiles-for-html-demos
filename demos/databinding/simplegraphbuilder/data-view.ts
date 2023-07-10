@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,18 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { EditorFromTextArea } from 'codemirror'
-import { toggleClass } from '../../resources/demo-app'
+import * as CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/dialog/dialog'
 
 let container: HTMLDivElement
-let sourceDataView: EditorFromTextArea
+let sourceDataView: CodeMirror.EditorFromTextArea
 
 /**
  * Initializes a data view in the element with the given selector.
  * The data view displays JSON data in a CodeMirror editor.
  */
 function initDataView(selector: string): void {
-  container = document.querySelector(selector) as HTMLDivElement
+  container = document.querySelector<HTMLDivElement>(selector)!
   const header = document.createElement('div')
   const dataContainer = document.createElement('div')
   const textArea = document.createElement('textarea')
@@ -46,14 +49,14 @@ function initDataView(selector: string): void {
   container.appendChild(dataContainer)
   dataContainer.appendChild(textArea)
 
-  container.setAttribute('class', 'demo-overview-container')
+  container.setAttribute('class', 'demo-overlay')
   dataContainer.setAttribute('class', 'data-container')
-  header.setAttribute('class', 'demo-overview-header')
+  header.setAttribute('class', 'demo-overlay__header')
 
   header.textContent = 'Source Data'
 
   header.addEventListener('click', () => {
-    toggleClass(container, 'collapsed')
+    container.classList.toggle('collapsed')
   })
   const mode = { name: 'javascript', json: true }
   sourceDataView = CodeMirror.fromTextArea(textArea, {

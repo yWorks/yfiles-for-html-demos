@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,10 +42,7 @@ import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle.js'
  * A markup extension class used for (de-)serializing a Lit node style.
  */
 export class LitNodeStyleMarkupExtension extends MarkupExtension {
-  constructor() {
-    super()
-    this._renderFunction = ''
-  }
+  _renderFunction = ''
 
   /**
    * @type {!string}

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { GraphComponent, IModelItem, Point } from 'yfiles'
-import { addClass, hasClass, removeClass } from '../../resources/demo-app'
 
 const innerRadius = 30
 const outerRadius = 100
@@ -219,12 +218,12 @@ function addEventListeners(items: MenuItem[], location: Point, contextMenu: Dial
     }
     if (hoveredItem !== item) {
       if (hoveredItem) {
-        removeClass(hoveredItem, 'highlighted')
+        hoveredItem.classList.remove('highlighted')
       }
       hoveredItem = item
     }
-    if (item && !hasClass(item, 'disabled')) {
-      addClass(item, 'highlighted')
+    if (item && !item.classList.contains('disabled')) {
+      item.classList.add('highlighted')
     }
   }
 

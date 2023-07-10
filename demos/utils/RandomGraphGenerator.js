@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,29 +33,44 @@ import { HashMap, IGraph, INode } from 'yfiles'
  * These options influence the properties of the created graph.
  */
 export default class RandomGraphGenerator {
+  /** The callback that is responsible for creating a new node. */
+  nodeCreator
+  /** The node count of the graph to be generated. The default value is 30. */
+  nodeCount
+  /**
+   * The edge count of the graph to be generated. The default value is 40.
+   * If the edge count is higher than it is theoretically possible by the generator options set, then the highest
+   * possible edge count is applied instead.
+   */
+  edgeCount
+  /**
+   * Whether or not to allow the generation of self-loops, i.e. edges with same source and target nodes.
+   * If allowed it still could happen by chance that the generated graph contains no self-loops.
+   * By default disallowed.
+   */
+  allowSelfLoops
+  /**
+   * Whether or not to allow the generation of cyclic graphs, i.e. graphs that contain directed cyclic paths.
+   * If allowed it still could happen by chance that the generated graph is acyclic. By default allowed.
+   */
+  allowCycles
+  /**
+   * Whether or not to allow the generation of graphs that contain multiple edges, i.e. graphs that has more than one
+   * edge that connect the same pair of nodes. If allowed it still could happen by chance that the generated graph
+   * does not contain multiple edges. By default disallowed.
+   */
+  allowMultipleEdges
+
   /**
    * Creates a new instance of RandomGraphGenerator.
    * @param {!object} config
    */
   constructor(config) {
-    // The callback that is responsible for creating a new node.
     this.nodeCreator = config.nodeCreator || (graph => graph.createNode())
-    // The node count of the graph to be generated. The default value is 30.
     this.nodeCount = config.$nodeCount || 30
-    // The edge count of the graph to be generated. The default value is 40.
-    // If the edge count is higher than it is theoretically possible by the generator options set, then the highest
-    // possible edge count is applied instead.
     this.edgeCount = config.$edgeCount || 40
-    // Whether or not to allow the generation of self-loops, i.e. edges with same source and target nodes.
-    // If allowed it still could happen by chance that the generated graph contains no self-loops.
-    // By default disallowed.
     this.allowSelfLoops = config.$allowSelfLoops || false
-    // Whether or not to allow the generation of cyclic graphs, i.e. graphs that contain directed cyclic paths.
-    // If allowed it still could happen by chance that the generated graph is acyclic. By default allowed.
     this.allowCycles = config.$allowCycles || false
-    // Whether or not to allow the generation of graphs that contain multiple edges, i.e. graphs that has more than one
-    // edge that connect the same pair of nodes. If allowed it still could happen by chance that the generated graph
-    // does not contain multiple edges. By default disallowed.
     this.allowMultipleEdges = config.$allowMultipleEdges || false
   }
 

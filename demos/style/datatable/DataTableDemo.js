@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,24 +31,24 @@ import {
   ExteriorLabelModelPosition,
   GraphComponent,
   GraphEditorInputMode,
+  GraphItemTypes,
   GraphMLSupport,
-  ICommand,
   IGraph,
   INode,
   License,
-  List,
   Point,
-  Size,
+  Rect,
   StorageLocation
 } from 'yfiles'
 
 import createNewRandomUserData from './UserDataFactory.js'
 import DataTableLabelStyle from './DataTableLabelStyle.js'
 import DataTableNodeStyle from './DataTableNodeStyle.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { DataTableRenderSupport } from './DataTableRenderSupport.js'
 
 /**
  * @returns {!Promise}
@@ -59,6 +59,9 @@ async function run() {
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
+
+  // since the labels always show the data of their owners, they can only be copied together with their owner
+  graphComponent.clipboard.independentCopyItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
   // initialize default demo styles
   initializeStyles(graphComponent.graph)
@@ -78,9 +81,7 @@ async function run() {
   graphComponent.graph.undoEngineEnabled = true
 
   // wire up the UI
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  initializeUI(graphComponent)
 }
 
 /**
@@ -90,16 +91,9 @@ async function run() {
 function initializeStyles(graph) {
   // initialize node style
   graph.nodeDefaults.style = new DataTableNodeStyle()
-  graph.nodeDefaults.size = new Size(170, 120)
 
   // initialize default label
   graph.nodeDefaults.labels.style = new DataTableLabelStyle()
-
-  const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
-
-  graph.nodeDefaults.labels.layoutParameter = exteriorLabelModel.createParameter(
-    ExteriorLabelModelPosition.WEST
-  )
 }
 
 /**
@@ -116,8 +110,8 @@ function initializeInputMode(graphComponent) {
   mode.addNodeCreatedListener((sender, e) => {
     e.item.tag = createNewRandomUserData()
     // check if the label should be displayed
-    const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
-    onToggleNodeLabel(graphComponent.graph, e.item, exteriorLabelModel)
+    onToggleNodeLabel(graphComponent.graph, e.item, shouldAddLabels())
+    updateNodeSize(e.item, graphComponent.graph)
     graphComponent.updateContentRect()
   })
   graphComponent.inputMode = mode
@@ -157,9 +151,9 @@ function enableGraphML(graphComponent) {
  * @param {!IGraph} graph
  */
 function onToggleLabels(graph) {
-  const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
+  const addLabels = shouldAddLabels()
   for (const node of graph.nodes) {
-    onToggleNodeLabel(graph, node, exteriorLabelModel)
+    onToggleNodeLabel(graph, node, addLabels)
   }
 }
 
@@ -167,21 +161,41 @@ function onToggleLabels(graph) {
  * Executed for each node when Toggle Labels button is pressed.
  * @param {!IGraph} graph
  * @param {!INode} node
- * @param {!ExteriorLabelModel} exteriorLabelModel
+ * @param {boolean} addLabels
  */
-function onToggleNodeLabel(graph, node, exteriorLabelModel) {
-  if (document.getElementById('ToggleLabels').checked) {
+function onToggleNodeLabel(graph, node, addLabels) {
+  if (addLabels) {
+    const exteriorLabelModel = new ExteriorLabelModel({ insets: 10 })
     const parameter =
-      node.layout.x < 100
-        ? exteriorLabelModel.createParameter(ExteriorLabelModelPosition.EAST)
-        : exteriorLabelModel.createParameter(ExteriorLabelModelPosition.WEST)
+      node.layout.x < 200
+        ? exteriorLabelModel.createParameter(ExteriorLabelModelPosition.WEST)
+        : exteriorLabelModel.createParameter(ExteriorLabelModelPosition.EAST)
     graph.addLabel(node, '', parameter)
   } else {
-    // if there exist labels, remove them
-    for (const label of new List(node.labels)) {
+    // if there are labels, remove them
+    for (const label of [...node.labels]) {
       graph.remove(label)
     }
   }
+}
+
+/**
+ * Determines whether to add or to remove labels.
+ * @returns {boolean}
+ */
+function shouldAddLabels() {
+  return document.querySelector('#toggle-labels-btn').checked
+}
+
+/**
+ * @param {!INode} node
+ * @param {!IGraph} graph
+ */
+function updateNodeSize(node, graph) {
+  const userData = node.tag
+  const size = DataTableRenderSupport.calculateTableSize(userData, 'data-table-node')
+  const origLayout = node.layout
+  graph.setNodeLayout(node, new Rect(origLayout.x, origLayout.y, size.width, size.height))
 }
 
 /**
@@ -193,12 +207,15 @@ function createSampleGraph(graph, nodeCount) {
   // Create nodes with random user data
   const nodes = []
   for (let i = 0; i < nodeCount; i++) {
-    const x = i % 2 === 0 ? 0 : 350
+    const x = i % 2 === 0 ? 0 : 400
     nodes[i] = graph.createNodeAt({
-      location: new Point(x, i * 150),
+      location: new Point(x, i * 200),
       tag: createNewRandomUserData()
     })
   }
+
+  // resize nodes
+  graph.nodes.forEach(node => updateNodeSize(node, graph))
 
   // Create some edges
   if (nodes.length > 1) {
@@ -214,32 +231,12 @@ function createSampleGraph(graph, nodeCount) {
  * Binds actions to the demo's UI controls.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    graphComponent.fitGraphBounds()
-  })
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
-
-  bindAction("input[data-command='ToggleLabels']", () => {
+function initializeUI(graphComponent) {
+  document.querySelector('#toggle-labels-btn').addEventListener('click', () => {
     onToggleLabels(graphComponent.graph)
     graphComponent.updateContentRect()
+    void graphComponent.ensureVisible(graphComponent.contentRect)
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

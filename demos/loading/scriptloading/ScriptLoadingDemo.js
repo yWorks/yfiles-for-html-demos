@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -78,7 +78,7 @@ async function run() {
   graphComponent.fitGraphBounds()
 
   // initialize layout button
-  const element = document.querySelector("button[data-command='Layout']")
+  const element = document.querySelector('#layout')
   element.addEventListener('click', applyLayout.bind(this))
 }
 
@@ -107,8 +107,7 @@ async function applyLayout() {
  * @param disabled true if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.querySelector("button[data-command='Layout']").disabled = disabled
+  document.querySelector('#layout').disabled = disabled
 }
 
-// noinspection JSIgnoredPromiseFromCall
 run()

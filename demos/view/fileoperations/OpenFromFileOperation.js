@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,6 +41,8 @@ const ERROR_ON_LOCAL_ACCESS =
  * Most browsers prevent the usage of the HTML5 FileReader APIs for scripts that run locally (via file: URLs).
  */
 export default class OpenFromFileOperation {
+  inputElement
+
   /**
    * @param clearInputElementValueAfterOpen Specifies whether or not to reset the input element at the end
    *   of opening. Enable this as a workaround for an unexpected behavior of Google Chrome: the change event is not

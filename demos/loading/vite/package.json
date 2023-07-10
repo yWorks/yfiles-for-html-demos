@@ -5,13 +5,19 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json')\" || echo To run this demo, please add a license.json to the src/ folder.",
     "dev": "vite",
-    "build": "vite build",
+    "build": "node --max_old_space_size=8192 node_modules/vite/bin/vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "demo-resources": "../../resources",
+    "demo-utils": "../../utils",
+    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
+  },
   "devDependencies": {
-    "typescript": "^4.9.5",
-    "vite": "^4.1.1",
-    "yfiles": "../../../lib-dev/yfiles-25.0.4+dev.tgz"
+    "@yworks/optimizer": "^1.8.1",
+    "typescript": "~5.1.6",
+    "vite": "^4.3.9"
   }
 }

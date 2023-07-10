@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,24 +45,24 @@ import {
  * state to a node style.
  */
 export default class Sample1CollapsibleNodeStyleDecoratorRenderer extends CollapsibleNodeStyleDecoratorRenderer {
+  /** The node style used for the rendering of the expanded state. */
+  expandedButtonStyle = new ImageNodeStyle('resources/collapse.svg')
+  /** The node style used for the rendering of the collapsed state. */
+  collapsedButtonStyle = new ImageNodeStyle('resources/expand.svg')
+  /**
+   * A dummy node that is used internally for the rendering of the button. This is a class field
+   * since we want to reuse the same instance for each call to
+   * {@link Sample1CollapsibleNodeStyleDecoratorRenderer.createButton} and
+   * {@link Sample1CollapsibleNodeStyleDecoratorRenderer.updateButton} (for performance reasons).
+   */
+  dummyNode = new SimpleNode()
+
   /**
    * @param {!Size} size
    */
   constructor(size) {
     super()
     this.size = size
-
-    // The node style used for the rendering of the expanded state.
-    this.expandedButtonStyle = new ImageNodeStyle('resources/collapse.svg')
-
-    // The node style used for the rendering of the collapsed state.
-    this.collapsedButtonStyle = new ImageNodeStyle('resources/expand.svg')
-
-    // A dummy node that is used internally for the rendering of the button. This is a class field
-    // since we want to reuse the same instance for each call to
-    // {@link Sample1CollapsibleNodeStyleDecoratorRenderer.createButton} and
-    // {@link Sample1CollapsibleNodeStyleDecoratorRenderer.updateButton} (for performance reasons).
-    this.dummyNode = new SimpleNode()
   }
 
   /**

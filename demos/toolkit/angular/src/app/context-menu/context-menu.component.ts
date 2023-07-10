@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,7 +29,8 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core'
 import { GraphComponent, GraphInputMode } from 'yfiles'
 import { GraphComponentService } from '../services/graph-component.service'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+// needs .js extension since it resides in node_modules
+import { BrowserDetection } from 'demo-utils/BrowserDetection.js'
 
 export type ContextMenuAction = { title: string; action: () => void }
 
@@ -50,8 +51,6 @@ function getCenterInPage(element: HTMLElement): { x: number; y: number } {
   styleUrls: ['./context-menu.component.css']
 })
 export class ContextMenuComponent implements AfterViewInit {
-  private static readonly KEYCODE_CONTEXTMENU: number = 93
-
   private inputMode!: GraphInputMode
 
   showMenu: boolean = false
@@ -155,7 +154,7 @@ export class ContextMenuComponent implements AfterViewInit {
 
     // Listen to the context menu key to make it work in Chrome
     componentDiv.addEventListener('keyup', evt => {
-      if (evt.keyCode === ContextMenuComponent.KEYCODE_CONTEXTMENU) {
+      if (evt.key === 'ContextMenu') {
         evt.preventDefault()
         openingCallback(getCenterInPage(componentDiv))
       }

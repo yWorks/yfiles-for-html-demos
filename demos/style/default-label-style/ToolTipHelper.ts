@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,7 +45,6 @@ import {
   TimeSpan,
   VerticalTextAlignment
 } from 'yfiles'
-import { addClass } from '../../resources/demo-app'
 
 /**
  * Configures the given input mode to show tool tips for labels.
@@ -87,7 +86,7 @@ function createToolTipContent(label: ILabel): HTMLElement {
   const title = document.createElement('h4')
   title.innerHTML = 'Properties of "' + label.text + '"'
   const grid1 = document.createElement('div')
-  addClass(grid1, 'tooltip-content')
+  grid1.classList.add('tooltip-content')
   addToToolTipGrid(grid1, 'Shape', Enum.getName(LabelShape.$class, style.shape))
   addToToolTipGrid(grid1, 'Background Fill', style.backgroundFill!)
   addToToolTipGrid(
@@ -99,7 +98,7 @@ function createToolTipContent(label: ILabel): HTMLElement {
   const textTitle = document.createElement('h4')
   textTitle.innerHTML = 'Text properties'
   const grid2 = document.createElement('div')
-  addClass(grid2, 'tooltip-content')
+  grid2.classList.add('tooltip-content')
   addToToolTipGrid(grid2, 'Font', `${style.font.fontFamily}, ${style.font.fontSize}`)
   addToToolTipGrid(grid2, 'Text Color', style.textFill)
   addToToolTipGrid(
@@ -117,7 +116,7 @@ function createToolTipContent(label: ILabel): HTMLElement {
 
   // build the tooltip container
   const toolTip = document.createElement('div')
-  addClass(toolTip, 'tooltip-container')
+  toolTip.classList.add('tooltip-container')
   toolTip.appendChild(title)
   toolTip.appendChild(grid1)
   toolTip.appendChild(textTitle)
@@ -138,7 +137,7 @@ function addToToolTipGrid(grid: HTMLDivElement, key: string, value: string | Fil
   if (typeof value === 'string') {
     valueSpan.innerHTML = value
   } else {
-    addClass(valueSpan, 'color')
+    valueSpan.classList.add('color')
     valueSpan.setAttribute('style', `background-color: ${fillToHexString(value)};`)
   }
   grid.appendChild(valueSpan)

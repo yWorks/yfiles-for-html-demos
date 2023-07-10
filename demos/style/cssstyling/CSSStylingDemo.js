@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,30 +29,24 @@
 import {
   DefaultLabelStyle,
   ExteriorLabelModel,
-  Fill,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphOverviewCanvasVisualCreator,
   GraphOverviewComponent,
   GraphSnapContext,
-  ICommand,
   IEdge,
   ILabel,
-  IModelItem,
   INode,
   IPort,
-  IRenderContext,
   LabelSnapContext,
   License,
-  Point,
-  Stroke,
-  TimeSpan,
   Visualization
 } from 'yfiles'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
-import { createDemoEdgeStyle, createDemoNodeStyle } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { createDemoEdgeStyle, createDemoNodeStyle } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import CSS3NodeStyleWrapper from './CSS3NodeStyleWrapper.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -71,10 +65,6 @@ async function run() {
 
   configureInputMode()
   createSampleGraph()
-
-  registerCommands()
-
-  showApp(graphComponent, overviewComponent)
 }
 
 /**
@@ -98,9 +88,9 @@ function configureInputMode() {
 
   // enable tooltips
   const mouseHoverInputMode = graphEditorInputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = Point.from([15, 15])
-  mouseHoverInputMode.delay = TimeSpan.from('500ms')
-  mouseHoverInputMode.duration = TimeSpan.from('5s')
+  mouseHoverInputMode.toolTipLocationOffset = [15, 15]
+  mouseHoverInputMode.delay = '500ms'
+  mouseHoverInputMode.duration = '5s'
 
   // show an indicator for the current label position
   graphEditorInputMode.moveLabelInputMode.visualization = Visualization.GHOST
@@ -122,6 +112,13 @@ function configureInputMode() {
     if (event.item) {
       graphComponent.highlightIndicatorManager.addHighlight(event.item)
     }
+  })
+
+  // whenever a node is created by the user, we set a created flag on its tag data object, which will then be used
+  // by the custom node style to set the appropriate CSS classes
+  graphEditorInputMode.addNodeCreatedListener((sender, args) => {
+    const node = args.item
+    node.tag = { created: true }
   })
 
   graphComponent.inputMode = graphEditorInputMode
@@ -151,11 +148,11 @@ function createTooltipContent(item) {
  */
 function createSampleGraph() {
   const demoNodeStyle = createDemoNodeStyle()
-  demoNodeStyle.stroke = Stroke.from('1.5px #3c4253')
-  demoNodeStyle.fill = Fill.from('white')
+  demoNodeStyle.stroke = '1.5px #3c4253'
+  demoNodeStyle.fill = 'white'
 
   const demoEdgeStyle = createDemoEdgeStyle({ showTargetArrow: false })
-  demoEdgeStyle.stroke = Stroke.from('1.5px white')
+  demoEdgeStyle.stroke = '1.5px white'
 
   const demoLabelStyle = new DefaultLabelStyle({
     textFill: 'white',
@@ -164,7 +161,7 @@ function createSampleGraph() {
   })
 
   const graph = graphComponent.graph
-  graph.nodeDefaults.style = demoNodeStyle
+  graph.nodeDefaults.style = new CSS3NodeStyleWrapper(demoNodeStyle)
   graph.edgeDefaults.style = demoEdgeStyle
   graph.nodeDefaults.labels.style = demoLabelStyle
   graph.edgeDefaults.labels.style = demoLabelStyle
@@ -200,16 +197,6 @@ function createSampleGraph() {
   graph.createEdge(node9, node4)
 
   graphComponent.fitGraphBounds()
-}
-
-/**
- * Connects the toolbar buttons to actions.
- */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
 class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
@@ -251,5 +238,4 @@ class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+void run().then(finishLoading)

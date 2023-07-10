@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,24 +40,15 @@ import {
   GraphMLSupport,
   HorizontalTextAlignment,
   IBend,
-  ICommand,
   IEdge,
   IHandle,
   IInputMode,
   ILabelModelParameter,
   License,
-  Point,
   ShapeNodeShape,
   ShapeNodeStyle,
   StorageLocation
 } from 'yfiles'
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  bindInputListener,
-  showApp
-} from '../../resources/demo-app'
 import { BezierGraphEditorInputMode } from './BezierGraphEditorInputMode'
 import { InnerControlPointHandle, OuterControlPointHandle } from './BezierHandles'
 import { BezierBendCreator } from './BezierBendCreator'
@@ -66,11 +57,11 @@ import { BezierSelectionIndicatorInstaller } from './BezierSelectionIndicatorIns
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
 import { SampleCircle, SampleLabels } from './resources/SampleGraphs'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent = null!
 
 /**
  * Configuration object for managing the demo settings
@@ -108,9 +99,7 @@ async function run(): Promise<void> {
 
   initializeGraph()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -247,22 +236,18 @@ function loadSample(sample: any): void {
   graph.edges.forEach(edge => {
     if (edge.tag.bends) {
       edge.tag.bends.forEach((bend: any): void => {
-        graph.addBend(edge, Point.from(bend))
+        graph.addBend(edge, bend)
       })
     }
   })
 
   graphComponent.fitGraphBounds()
+
+  graph.undoEngine?.clear()
 }
 
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindAction("input[data-command='BezierEditing']", () => {
+function initializeUI(): void {
+  document.querySelector<HTMLInputElement>('#bezier-editing')!.addEventListener('click', () => {
     config.enableEditing = !config.enableEditing
     if (graphComponent) {
       const geim = graphComponent.inputMode
@@ -278,7 +263,7 @@ function registerCommands(): void {
     ;(document.getElementById('smooth-editing') as HTMLInputElement).disabled =
       !config.enableEditing
   })
-  bindAction("input[data-command='SmoothEditing']", () => {
+  document.querySelector<HTMLInputElement>('#smooth-editing')!.addEventListener('click', () => {
     config.smoothSegments = !config.smoothSegments
     if (graphComponent) {
       const geim = graphComponent.inputMode
@@ -292,7 +277,7 @@ function registerCommands(): void {
     }
   })
 
-  bindAction("input[data-command='AutoRotation']", () => {
+  document.querySelector<HTMLInputElement>('#auto-rotation')!.addEventListener('click', () => {
     config.autoRotation = !config.autoRotation
     bezierEdgeSegmentLabelModel.autoRotation = config.autoRotation
     bezierPathLabelModel.autoRotation = config.autoRotation
@@ -300,7 +285,7 @@ function registerCommands(): void {
       graphComponent.updateVisual()
     }
   })
-  bindAction("input[data-command='AutoSnapping']", () => {
+  document.querySelector<HTMLInputElement>('#auto-snapping')!.addEventListener('click', () => {
     config.autoSnapping = !config.autoSnapping
     bezierEdgeSegmentLabelModel.autoSnapping = config.autoSnapping
     bezierPathLabelModel.autoSnapping = config.autoSnapping
@@ -309,7 +294,8 @@ function registerCommands(): void {
     }
   })
   const angleLabel = document.getElementById('angle-label') as HTMLLabelElement
-  bindInputListener("input[data-command='Angle']", value => {
+  document.querySelector<HTMLInputElement>('#angle-range')!.addEventListener('input', evt => {
+    const value = (evt.target as HTMLInputElement).value
     config.angle = Number(value)
     bezierEdgeSegmentLabelModel.angle = (Math.PI * config.angle) / 180.0
     bezierPathLabelModel.angle = (Math.PI * config.angle) / 180.0
@@ -319,7 +305,8 @@ function registerCommands(): void {
     }
   })
 
-  bindChangeListener("select[data-command='SwitchSample']", value => {
+  document.querySelector<HTMLSelectElement>('#sample-select')!.addEventListener('change', evt => {
+    const value = (evt.target as HTMLSelectElement).value
     if (value === 'circle') {
       loadSample(SampleCircle)
     } else {
@@ -328,5 +315,4 @@ function registerCommands(): void {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

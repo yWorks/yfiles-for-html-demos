@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,12 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import '../../../resources/style/demo.css'
-import { CanvasComponent, GraphComponent, GraphEditorInputMode, License } from 'yfiles'
-import licenseValue from '../../../../lib/license.json'
+import 'demo-resources/style/loading-demo.css'
+import {
+  CanvasComponent,
+  GraphComponent,
+  GraphEditorInputMode,
+  HierarchicLayout,
+  License
+} from 'yfiles'
+import licenseValue from './license.json'
 
 import { addLayoutButton, removeLayoutButton } from './layout-button'
-import { createSampleGraph } from './create-sample-graph'
+
+import {
+  createGroupedSampleGraph,
+  initializeBasicDemoStyles,
+  initializeFolding
+} from 'demo-utils/sample-graph'
 
 License.value = licenseValue
 
@@ -64,9 +75,14 @@ if (oldGc instanceof GraphComponent) {
 }
 
 // create and fit an initial graph
-createSampleGraph(graphComponent.graph)
+initializeFolding(graphComponent)
+initializeBasicDemoStyles(graphComponent.graph)
+createGroupedSampleGraph(graphComponent.graph)
+
+// initial layout is left-to-right, pressing the button uses top-top-bottom
+graphComponent.graph.applyLayout(new HierarchicLayout({ layoutOrientation: 'left-to-right' }))
 graphComponent.fitGraphBounds()
 
 // wire up an automatic layout that is performed asynchronous on a Web Worker
-const button = document.querySelector<HTMLButtonElement>("[data-command='Layout']")!
+const button = document.querySelector<HTMLButtonElement>('#layout')!
 addLayoutButton(button, graphComponent)

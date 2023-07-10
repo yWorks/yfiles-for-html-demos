@@ -21,7 +21,7 @@
   import SvgNodeComponent from './SvgNodeComponent.svelte'
   import type { Person } from './types'
   import { getLayoutExecutorAsyncMessageHandler } from './web-worker-client-message-handler'
-  import { BrowserDetection } from '../../../utils/BrowserDetection'
+  import { BrowserDetection } from 'demo-utils/BrowserDetection'
 
   License.value = licenseValue
 
@@ -164,13 +164,17 @@
     if (filter) {
       graphComponent.graph.nodes
         .filter(n => (n.tag as Person).name.toLowerCase().includes(filter.toLowerCase()))
-        .forEach(n => highlightManager.addHighlight(n))
+        .forEach(n => {
+          highlightManager.addHighlight(n)
+        })
     }
+    // invalidate to trigger an update of the node styles where the highlight state is bound to the node's fill
+    graphComponent.invalidate()
   }
 </script>
 
 <div
-  class="graphComponent"
+  class="demo-main__graph-component"
   bind:this={graphComponentDiv}
   style="width: {width ?? '100%'}; height: {height ?? '100%'}"
 >
@@ -178,7 +182,7 @@
 </div>
 
 <style>
-  .graphComponent {
+  .demo-main__graph-component {
     min-width: 300px;
     min-height: 300px;
   }

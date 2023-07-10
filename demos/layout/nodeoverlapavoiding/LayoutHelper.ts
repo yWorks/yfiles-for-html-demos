@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,7 +51,6 @@ import {
   LayoutExecutor,
   LayoutGraph,
   LayoutStageBase,
-  List,
   SequentialLayout,
   Size,
   TimeSpan
@@ -240,22 +239,22 @@ export class LayoutHelper implements PendingLayout {
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData!)
     if (resizeState === 'SHRINKING') {
       const fillAreaLayoutData = new FillAreaLayoutData()
-      fillAreaLayoutData.fixedNodes.items = List.from(this.nodes)
+      fillAreaLayoutData.fixedNodes = this.nodes
       layoutData.items.add(fillAreaLayoutData)
       if (this.state === 'FINISHING') {
         const polylineEdgeRouterData = new EdgeRouterData()
-        polylineEdgeRouterData.affectedNodes.items = List.from(this.nodes)
+        polylineEdgeRouterData.affectedNodes = this.nodes
         // only route edges for the final layout
         layoutData.items.add(polylineEdgeRouterData)
       }
     } else {
       if (resizeState === 'BOTH') {
         const fillAreaLayoutData = new FillAreaLayoutData()
-        fillAreaLayoutData.fixedNodes.items = List.from(this.nodes)
+        fillAreaLayoutData.fixedNodes = this.nodes
         layoutData.items.add(fillAreaLayoutData)
       }
       const clearAreaLayoutData = new ClearAreaLayoutData()
-      clearAreaLayoutData.areaNodes.items = List.from(this.nodes)
+      clearAreaLayoutData.areaNodes = this.nodes
       layoutData.items.add(clearAreaLayoutData)
     }
     return layoutData

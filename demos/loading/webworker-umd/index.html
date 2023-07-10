@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,14 +30,12 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Web Worker UMD Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
 
     <style>
       #graphComponentStatus {
@@ -76,36 +73,53 @@
         margin-right: auto;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left loaded">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body class="loaded">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Web Worker UMD</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <!-- prettier-ignore -->
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a href="https://www.yworks.com/products/yfiles" class="demo-description__logo"></a>
+      </div>
+      <div class="demo-description__content">
         <h1>Web Worker Demo (UMD)</h1>
         <p>
-          This demo shows how to run a yFiles layout algorithm in a
-          <a href="https://html.spec.whatwg.org/multipage/workers.html" target="_blank"
-            >Web Worker</a
-          >
-          task in order to prevent the layout calculation from blocking the UI.
+          This demo shows how to run a yFiles layout algorithm in a <a
+          href="https://html.spec.whatwg.org/multipage/workers.html" target='_blank'>Web Worker</a> task in order to
+          prevent the layout calculation from blocking the UI.
         </p>
-        <p>In order to run this demo, please run <code>npm install</code> in the demo folder.</p>
         <p>This demo loads yFiles using the AMD loader require.js</p>
         <p>
           The graph, layout, and layout data are configured in the main thread and transferred to
-          the web worker using class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>. The actual layout calculation
-          is performed in <em>WorkerLayout.js</em> with class
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> on the web worker thread.
+          the web worker using class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>. The actual layout calculation is performed in
+          <em>WorkerLayout.js</em> with class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> on the web worker thread.
         </p>
 
         <h2>Things to Try</h2>
 
         <ul>
           <li>
-            Modify the graph structure by adding/removing nodes and edges, and re-run the web worker
-            layout.
+            Modify the graph structure by adding/removing nodes and edges, and re-run the web worker layout.
           </li>
           <li>
             Observe the loading animation which continues while the layout algorithm is working.
@@ -115,58 +129,43 @@
       </div>
     </aside>
 
-    <div class="demo-content">
-      <div class="demo-header">
-        <a href="https://www.yworks.com" target="_blank">
-          <img src="../../resources/icons/ylogo.svg" class="demo-y-logo" />
-        </a>
-        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
-        <a href="../../README.html" style="cursor: pointer" target="_blank" class="demo-title"
-          >Demos</a
-        >
-        <span class="demo-title">Web Worker Demo (UMD)</span>
-      </div>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
 
-        <span class="demo-separator"></span>
+      <span class="demo-separator"></span>
 
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
 
-        <span class="demo-separator"></span>
+      <span class="demo-separator"></span>
 
-        <button
-          id="layoutBtn"
-          data-command="WebWorkerLayout"
-          title="Run the web worker layout"
-          class="demo-icon-yIconLayout labeled"
-          disabled
-        >
-          Layout
-        </button>
-      </div>
+      <button
+        id="layout-button"
+        title="Run the web worker layout"
+        class="demo-icon-yIconLayout labeled"
+        disabled
+      >
+        Layout
+      </button>
+    </div>
 
-      <div id="graphComponent"></div>
-      <div id="graphComponentStatus">
-        <div id="layout-animation"></div>
-        Running Web Worker
-        <div id="cancel-layout" data-command="cancelLayout">Cancel Layout</div>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+        <div id="graphComponentStatus">
+          <div id="layout-animation"></div>
+          Running Web Worker
+          <div id="cancel-layout">Cancel Layout</div>
+        </div>
       </div>
     </div>
 
-    <script src="./node_modules/requirejs/require.js"></script>
+    <!-- Using RequireJS as the AMD Loader implementation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
+
     <script src="./WebWorkerDemo.js"></script>
   </body>
 </html>

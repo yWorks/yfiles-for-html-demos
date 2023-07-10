@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+<svg xmlns="http://www.w3.org/2000/svg" height="40" width="40" viewBox="0 0 40 40.000001"><g display="block"><path d="M36.246 22.561l-2.279 6.263M2.828 16.504v6.993M36.246 17.44l-2.279-6.262M4.977 28.618l3.49 4.158M4.977 11.383l3.49-4.158M19.984 3.012l-6.809 1.2M13.175 35.789l6.809 1.2M30.475 7.139l-5.37-3.1M25.105 35.961l5.37-3.1" stroke="#FFF" stroke-miterlimit="10" fill="none" stroke-width=".1707"/><path d="M8.054 32.776h5.121v5.121h-5.12zM30.475 6.057h5.12v5.12h-5.12zM.268 23.497h5.12v5.12H.269zM.268 11.383h5.12v5.121H.269zM34.618 17.44h5.12v5.121h-5.12zM30.475 28.823h5.12v5.12h-5.12zM19.984 34.88h5.12V40h-5.12zM8.054 2.104h5.121v5.12h-5.12zM19.984 0h5.12v5.121h-5.12z" stroke="#FFF" fill="#FFF"/></g></svg>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphEditorInputMode,
   GraphObstacleProvider,
   HierarchicNestingPolicy,
-  ICommand,
   Insets,
   License,
   Point,
@@ -43,14 +42,9 @@ import {
 } from 'yfiles'
 
 import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper.js'
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Holds the graphComponent.
@@ -89,10 +83,6 @@ async function run() {
   initializeToolBarElements()
 
   createSampleGraph()
-
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -129,8 +119,11 @@ function configureBridges() {
  * Initializes the combo boxes and the text-boxes of the toolbar.
  */
 function initializeToolBarElements() {
-  const crossingStylesComboBox = document.getElementById('crossingStyleComboBox')
-  addNavigationButtons(crossingStylesComboBox)
+  const crossingStylesComboBox = document.querySelector('#crossing-styles')
+  addNavigationButtons(crossingStylesComboBox).addEventListener('change', () => {
+    bridgeManager.defaultBridgeCrossingStyle = getValueFromComboBox('crossing-styles')
+    graphComponent.invalidate()
+  })
   const crossingStylesElements = [
     {
       text: 'Arc',
@@ -167,8 +160,11 @@ function initializeToolBarElements() {
   ]
   fillComboBox(crossingStylesComboBox, crossingStylesElements)
 
-  const crossingPolicyComboBox = document.getElementById('crossingPolicyComboBox')
-  addNavigationButtons(crossingPolicyComboBox)
+  const crossingPolicyComboBox = document.querySelector('#crossing-policies')
+  addNavigationButtons(crossingPolicyComboBox).addEventListener('change', () => {
+    bridgeManager.bridgeCrossingPolicy = getValueFromComboBox('crossing-policies')
+    graphComponent.invalidate()
+  })
   const crossingDeterminationElements = [
     {
       text: 'HorizontalBridgesVertical',
@@ -189,8 +185,11 @@ function initializeToolBarElements() {
   ]
   fillComboBox(crossingPolicyComboBox, crossingDeterminationElements)
 
-  const bridgeOrientationComboBox = document.getElementById('bridgeOrientationComboBox')
-  addNavigationButtons(bridgeOrientationComboBox)
+  const bridgeOrientationComboBox = document.querySelector('#bridge-orientations')
+  addNavigationButtons(bridgeOrientationComboBox).addEventListener('change', () => {
+    bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('bridge-orientations')
+    graphComponent.invalidate()
+  })
   const bridgeOrientationElements = [
     {
       text: 'Up',
@@ -226,6 +225,19 @@ function initializeToolBarElements() {
     }
   ]
   fillComboBox(bridgeOrientationComboBox, bridgeOrientationElements)
+
+  document.querySelector('#bridge-width-slider').addEventListener('change', evt => {
+    const value = evt.target.value
+    bridgeManager.defaultBridgeWidth = parseInt(value)
+    graphComponent.invalidate()
+    document.getElementById('bridge-width-label').textContent = value
+  })
+  document.querySelector('#bridge-height-slider').addEventListener('change', evt => {
+    const value = evt.target.value
+    bridgeManager.defaultBridgeHeight = parseInt(value)
+    graphComponent.invalidate()
+    document.getElementById('bridge-height-label').textContent = value
+  })
 }
 
 /**
@@ -243,39 +255,6 @@ function fillComboBox(comboBox, content) {
     el.value = content[i].value.toString()
     comboBox.appendChild(el)
   }
-}
-
-/**
- * Wires up the UI.
- */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
-
-  bindChangeListener("select[data-command='CrossingStyleChanged']", () => {
-    bridgeManager.defaultBridgeCrossingStyle = getValueFromComboBox('crossingStyleComboBox')
-    graphComponent.invalidate()
-  })
-  bindChangeListener("select[data-command='CrossingPolicyChanged']", () => {
-    bridgeManager.bridgeCrossingPolicy = getValueFromComboBox('crossingPolicyComboBox')
-    graphComponent.invalidate()
-  })
-  bindChangeListener("select[data-command='BridgeOrientationChanged']", () => {
-    bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('bridgeOrientationComboBox')
-    graphComponent.invalidate()
-  })
-  bindChangeListener('#bridgeWidthSlider', value => {
-    bridgeManager.defaultBridgeWidth = parseInt(value)
-    graphComponent.invalidate()
-    document.getElementById('bridgeWidthLabel').textContent = value
-  })
-  bindChangeListener('#bridgeHeightSlider', value => {
-    bridgeManager.defaultBridgeHeight = parseInt(value)
-    graphComponent.invalidate()
-    document.getElementById('bridgeHeightLabel').textContent = value
-  })
 }
 
 /**
@@ -338,5 +317,4 @@ function createSampleGraph() {
   graphComponent.fitGraphBounds()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

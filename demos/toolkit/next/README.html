@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Next.js Demo [yFiles for HTML]</title>
+    <link rel="stylesheet" href="../../../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
+    <div id="header" class="simple-header">Next.js Demo</div>
+    <main>
+      <div class="content-centered">
+        <div class="content">
+          <div class="breadcrumbs">
+            <a href="../../README.html">yFiles for HTML</a>
+            <span class="angle-right"></span>
+            Next.js Demo
+          </div>
+
+          <h1>Next.js Demo</h1>
+
+          <p>
+            This demo shows how to integrate yFiles in a
+            <a href="https://nextjs.org/" target="_blank" rel="noopener noreferrer">Next.js</a>
+            application with
+            <a href="https://www.typescriptlang.org/" target="_blank" rel="noopener noreferrer"
+              >TypeScript</a
+            >.
+          </p>
+
+          <p>To start the demo</p>
+          <ol>
+            <li>Go to the demo's directory <code>demos-ts/toolkit/next</code></li>
+            <li>Run <code>npm install</code></li>
+            <li>Run <code>npm run dev</code></li>
+          </ol>
+          <p>This will start the development server of the toolkit.</p>
+
+          <p>
+            The integrated development server of the project will automatically update the
+            application upon code changes.
+          </p>
+
+          <h1>Deploying Next.js with yFiles</h1>
+
+          <p>
+            There are no special caveats that you need to look out for when you load yFiles as NPM
+            dependency as in this demo application. However, we recommend to include the
+            <a href="https://www.npmjs.com/package/@yworks/optimizer" target="_blank"
+              >@yworks/optimizer</a
+            >
+            when you deploy your app for production.
+          </p>
+          <p>
+            The optimizer will obfuscate the public API of the yFiles module files, as well as
+            yFiles API usages in application sources.
+          </p>
+          <p>
+            We highly recommend obfuscating the yFiles for HTML library prior to deploying your
+            application to a public web server to reduce the download size of the library for the
+            end user. Note that, at the time of writing, you are not required to use obfuscation.
+          </p>
+        </div>
+        <!-- populated by readme-style.js -->
+        <div id="footer-detailed"></div>
+      </div>
+    </main>
+    <script src="../../../doc/readme-style.js"></script>
+  </body>
+</html>

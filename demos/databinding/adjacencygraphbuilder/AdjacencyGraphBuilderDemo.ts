@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutLayeringStrategy,
-  ICommand,
   IIncrementalHintsFactory,
   IList,
   IModelItem,
@@ -45,21 +44,14 @@ import {
   PreferredPlacementDescriptor,
   TemplateNodeStyle
 } from 'yfiles'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  reportDemoError,
-  showApp
-} from '../../resources/demo-app'
 import { SchemaComponent } from './SchemaComponent'
 import samples from './samples'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-const samplesComboBox = document.getElementById('samplesComboBox') as HTMLSelectElement
+const samplesComboBox = document.querySelector<HTMLSelectElement>('#samples-combo-box')!
 
 let layout: HierarchicLayout
 let layoutData: HierarchicLayoutData
@@ -104,33 +96,29 @@ async function run(): Promise<void> {
   // noinspection JSIgnoredPromiseFromCall
   loadSample(samples[0])
 
-  // register toolbar and other GUI element commands
-  registerCommands()
-
-  // initialize the demo
-  showApp(graphComponent)
+  // register toolbar and other GUI elements
+  initializeUI()
 }
 
 /**
- * Bind various UI elements to the appropriate commands
+ * Bind various UI elements to the appropriate actions.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-
-  bindAction("button[data-command='BuildGraph']", async (): Promise<void> => {
-    samplesComboBox.disabled = true
-    await buildGraphFromData(false)
-    samplesComboBox.disabled = false
-  })
-  bindAction("button[data-command='UpdateGraph']", async (): Promise<void> => {
-    samplesComboBox.disabled = true
-    await buildGraphFromData(true)
-    samplesComboBox.disabled = false
-  })
-  bindChangeListener("select[data-command='SetSampleData']", async (): Promise<void> => {
+function initializeUI(): void {
+  document
+    .querySelector<HTMLButtonElement>('#build-graph-button')!
+    .addEventListener('click', async (): Promise<void> => {
+      samplesComboBox.disabled = true
+      await buildGraphFromData(false)
+      samplesComboBox.disabled = false
+    })
+  document
+    .querySelector<HTMLButtonElement>('#update-graph-button')!
+    .addEventListener('click', async (): Promise<void> => {
+      samplesComboBox.disabled = true
+      await buildGraphFromData(true)
+      samplesComboBox.disabled = false
+    })
+  addNavigationButtons(samplesComboBox).addEventListener('change', async (): Promise<void> => {
     const i = samplesComboBox.selectedIndex
     if (samples && samples[i]) {
       samplesComboBox.disabled = true
@@ -139,7 +127,6 @@ function registerCommands(): void {
       samplesComboBox.disabled = false
     }
   })
-  addNavigationButtons(samplesComboBox)
 }
 
 /**
@@ -193,8 +180,6 @@ async function applyLayout(update: boolean): Promise<void> {
   layouting = true
   try {
     await graphComponent.morphLayout(layout, '1s', layoutData)
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     layouting = false
   }
@@ -219,8 +204,8 @@ async function loadSample(sample: object): Promise<void> {
 function initializeSamplesComboBox(): void {
   for (let i = 0; i < samples.length; i++) {
     const option = document.createElement('option')
-    option.textContent = samples[i].name
-    // @ts-ignore
+    option.label = samples[i].name
+    // @ts-ignore The value should be a string, but this seems to work, anyway.
     option.value = samples[i]
     samplesComboBox.appendChild(option)
   }
@@ -246,7 +231,7 @@ function initializeLayout() {
   preferredPlacementDescriptor.freeze()
 
   layoutData = new HierarchicLayoutData({
-    incrementalHints: (item: IModelItem, hintsFactory: IIncrementalHintsFactory): Object | null => {
+    incrementalHints: (item: IModelItem, hintsFactory: IIncrementalHintsFactory): object | null => {
       if (item instanceof INode && !existingNodes!.includes(item)) {
         return hintsFactory.createLayerIncrementallyHint(item)
       }
@@ -256,5 +241,4 @@ function initializeLayout() {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

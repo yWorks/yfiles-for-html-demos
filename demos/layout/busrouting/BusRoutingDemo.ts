@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,21 +37,18 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphSnapContext,
-  ICollection,
-  ICommand,
   IEdge,
   IGraph,
   License,
   OrthogonalEdgeEditingContext,
   PolylineEdgeStyle,
-  Size,
   SolidColorFill,
   Stroke
 } from 'yfiles'
-import { bindAction, bindCommand, reportDemoError, showApp } from '../../resources/demo-app'
 import SampleData from './resources/SampleData'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Provides different color fills for new edge busses in this demo.
@@ -126,7 +123,7 @@ const colorUtil = new ColorUtil()
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
-  registerCommands()
+  initializeUI()
 
   graphComponent = new GraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
@@ -140,8 +137,6 @@ async function run(): Promise<void> {
   graphComponent.fitGraphBounds()
 
   await routeEdges()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -174,7 +169,7 @@ function configureGraph(graph: IGraph): void {
   initDemoStyles(graph)
 
   // increase the default node size to 50x50 pixel
-  graph.nodeDefaults.size = Size.from([50, 50])
+  graph.nodeDefaults.size = [50, 50]
 }
 
 /**
@@ -233,8 +228,6 @@ async function routeEdges(edgesToRoute: IEdge[] | null = null): Promise<void> {
 
   try {
     await routeEdgesCore(edgesToRoute)
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     layoutRunning = false
     disableUI(false)
@@ -253,10 +246,10 @@ async function routeEdgesCore(edgesToRoute: IEdge[] | null): Promise<void> {
   if (edgesToRoute && edgesToRoute.length > 0) {
     // affected edges are all the edges created in the last connectNodes action
     // mark those edges for routing ...
-    layoutData.affectedEdges.source = ICollection.from(edgesToRoute)
+    layoutData.affectedEdges = edgesToRoute
     // ... and assign those edges to a new edge bus
     layoutData.buses.add(new EdgeRouterBusDescriptor({ multipleBackboneSegments: false })).items =
-      ICollection.from(edgesToRoute)
+      edgesToRoute
   } else {
     // affected edges are all edges
 
@@ -329,16 +322,11 @@ function disableUI(disabled: boolean) {
 }
 
 /**
- * Binds commands to the buttons in the toolbar.
+ * Binds actions to the buttons in the toolbar.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-
-  bindAction("button[data-command='Route']", () => routeEdges())
-  bindAction("button[data-command='Connect']", connectNodes)
+function initializeUI() {
+  document.querySelector<HTMLButtonElement>('#route')!.addEventListener('click', () => routeEdges())
+  document.querySelector<HTMLButtonElement>('#connect')!.addEventListener('click', connectNodes)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

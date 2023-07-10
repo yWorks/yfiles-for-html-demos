@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,9 +37,10 @@ import {
   FreeNodePortLocationModel,
   GeneralPath,
   GraphComponent,
+  GraphFocusIndicatorManager,
+  GraphSelectionIndicatorManager,
   GraphViewerInputMode,
   IArrow,
-  ICommand,
   IEnumerable,
   IGraph,
   INode,
@@ -56,13 +57,15 @@ import {
   TemplateLabelStyle,
   TemplateNodeStyle,
   TemplatePortStyle,
+  VoidNodeStyle,
   YNodeList
 } from 'yfiles'
 
 import PropertiesView from './PropertiesView'
 import OrgChartData from './resources/OrgChartData'
-import { bindCommand, showApp } from '../../resources/demo-app'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /**
  * Specifies the properties of an employee, i.e. the business data associated to each node
@@ -88,13 +91,12 @@ async function run(): Promise<void> {
   initConverters()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the default styles for nodes, edges, labels, and ports
   configureStyles(graphComponent.graph)
 
   initialize(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -210,7 +212,7 @@ function initConverters(): void {
 
 function initialize(graphComponent: GraphComponent): void {
   // initialize the graph
-  initializeGraph(graphComponent.graph)
+  initializeGraph(graphComponent)
 
   // create the graph items
   createGraph(graphComponent.graph)
@@ -221,8 +223,6 @@ function initialize(graphComponent: GraphComponent): void {
 
   createPropertiesPanel(graphComponent)
 
-  registerCommands(graphComponent)
-
   runLayout(graphComponent)
 }
 
@@ -230,12 +230,17 @@ function initialize(graphComponent: GraphComponent): void {
  * Customizes the graph - in this case, the default node size is set and the default decoration for
  * selection and focus is removed.
  */
-function initializeGraph(graph: IGraph): void {
+function initializeGraph(graphComponent: GraphComponent): void {
+  const graph = graphComponent.graph
   graph.nodeDefaults.size = new Size(100, 100)
 
   // remove the default selection and focus decoration
-  graph.decorator.nodeDecorator.selectionDecorator.hideImplementation()
-  graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    nodeStyle: VoidNodeStyle.INSTANCE
+  })
+  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
+    nodeStyle: VoidNodeStyle.INSTANCE
+  })
 }
 
 /**
@@ -393,15 +398,4 @@ function limitViewport(graphComponent: GraphComponent): void {
   limiter.bounds = graphComponent.contentRect
 }
 
-/**
- * Binds actions to the demo's UI controls.
- */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

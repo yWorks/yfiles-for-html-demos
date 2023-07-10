@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,7 @@ const webpack = require('webpack')
 module.exports = {
   mode: 'development',
   entry: {
-    app: ['./src/webpack-demo.js']
+    app: ['./src/webpack-demo.ts']
   },
   // default devtool needs to be disabled for the SourceMapDevToolPlugin below to be used
   devtool: false,

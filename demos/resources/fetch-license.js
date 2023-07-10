@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import { DefaultGraph, GraphComponent, License } from 'yfiles'
 import { INVALID_LICENSE_MESSAGE } from './demo-error.js'
-
 /**
  * Fetches `license.json` file and returns its data.
  *
@@ -51,16 +50,16 @@ export async function fetchLicense() {
  */
 async function fetchLicenseCore() {
   try {
-    const response = await fetch('../../../lib/license.json')
+    const response = await fetch(new URL('../../lib/license.json', import.meta.url).toString())
     if (response.ok) {
       return response.json()
     } else {
-      console.log('Could not load license json')
-      return tryLocalStorage()
+      console.warn('yFiles demo app: Could not load license.json')
+      return loadLicenseFromLocalStorage()
     }
   } catch (e) {
-    console.log('Could not load license json', e)
-    return tryLocalStorage()
+    console.warn('yFiles demo app: Could not load license.json', e)
+    return loadLicenseFromLocalStorage()
   }
 }
 
@@ -91,112 +90,88 @@ function checkLicense(licenseData) {
  * Following are license helpers for the demo-framework.
  */
 /**
- * @param {!string} licenseString
- * @returns {!(Record.<string,unknown>|string)}
+ * @param {!string} [licenseString]
+ * @returns {!Record.<string,unknown>}
  */
 function parseLicense(licenseString) {
+  if (licenseString == null) {
+    return
+  }
+
   try {
     return JSON.parse(licenseString)
   } catch (e) {
-    // try a container object
-    try {
-      return JSON.parse('{' + licenseString + '}')
-    } catch (e) {
-      console.log('Could not parse license information', licenseString)
-    }
-  }
-  return licenseString
-}
-
-/**
- * @returns {!(Record.<string,unknown>|boolean)}
- */
-function tryGetLicenseFromLocalStorage() {
-  if (isLocalStorageSupported() && window.localStorage.getItem('yFiles_for_HTML_license')) {
-    const licenseObject = parseLicense(window.localStorage.getItem('yFiles_for_HTML_license'))
-    if (licenseObject !== null && typeof licenseObject === 'object') {
-      return licenseObject
-    }
-  }
-  return false
-}
-
-/**
- * @returns {boolean}
- */
-function isLocalStorageSupported() {
-  if (!window.localStorage) {
-    return false
-  }
-  try {
-    window.localStorage.setItem('probe', String(true))
-    window.localStorage.removeItem('probe')
-    return true
-  } catch (error) {
-    return false
+    console.warn('yFiles demo app: Cannot parse license information', licenseString)
   }
 }
 
 /**
- * @returns {!Promise.<(Record.<string,unknown>|string)>}
+ * @returns {!Promise.<(Record.<string,unknown>|void)>}
  */
-function tryLocalStorage() {
+function loadLicenseFromLocalStorage() {
+  if (typeof window === 'undefined') {
+    console.warn('yFiles demo app: No yFiles for HTML license included!')
+    return Promise.resolve()
+  }
+
+  const storedLicense = parseLicense(window.localStorage.getItem('yFiles_for_HTML_license'))
+  if (storedLicense) {
+    console.warn('yFiles demo app: Using license from local storage.')
+    return Promise.resolve(storedLicense)
+  }
+
+  return showLicenseDialog()
+}
+
+/**
+ * @returns {!Promise.<(Record.<string,unknown>|void)>}
+ */
+async function showLicenseDialog() {
   return new Promise(resolve => {
-    if (typeof window !== 'undefined') {
-      const storedLicense = tryGetLicenseFromLocalStorage()
-      if (storedLicense) {
-        console.log('Using license from local storage.')
-        resolve(storedLicense)
-      } else {
-        window.setTimeout(function () {
-          const div = document.createElement('div')
-          div.setAttribute(
-            'style',
-            'position:absolute; visibility:visible; top:280px; left:0; right:0; margin:auto; width:50em; padding:10px; z-index:2001; ' +
-              'background:#efefef; border: 2px solid #888; color:black;'
-          )
-          div.innerHTML =
-            '<h2>No yFiles for HTML license included</h2>\
-    <p>Enter your license information in JSON format into the file <b>lib/license.json</b>.</p>\
-    <p>If you have received a license file from yWorks, you can simply overwrite the file <b>lib/license.json</b> with\
-    the license file you have received.</p>\
-    <p>If you have received license information in another way, please replace the contents of the file <b>lib/license.json</b> \
-    with the actual license information.</p>'
-          if (isLocalStorageSupported()) {
-            div.innerHTML +=
-              '<p>You can also temporarily enter your license information below which is then stored in the local storage of your browser.</p>'
-            const licenseInputDiv = document.createElement('div')
-            const input = document.createElement('textarea')
-            input.setAttribute('rows', '6')
-            input.setAttribute('style', 'width: 100%; resize: vertical')
-            input.setAttribute(
-              'placeholder',
-              '{\n  "company": "Company name",\n  "domains": ["example.com"],\n  "key": "c543edd9d30db901d65e86a4d0aa2106775f4532"\n  ...\n}'
-            )
-            const inputNote = document.createElement('span')
-            inputNote.setAttribute('style', 'display: none;')
-            inputNote.innerHTML = 'Please enter your license information.'
-            const confirm = document.createElement('button')
-            confirm.innerHTML = 'Save license and continue'
-            confirm.addEventListener('click', function () {
-              if (input.value.length > 0) {
-                window.localStorage.setItem('yFiles_for_HTML_license', input.value)
-                resolve(parseLicense(input.value))
-                div.parentNode.removeChild(div)
-              } else {
-                inputNote.setAttribute('style', 'display: inline; margin-left: 5px; color: red;')
-              }
-            })
-            licenseInputDiv.appendChild(input)
-            licenseInputDiv.appendChild(confirm)
-            licenseInputDiv.appendChild(inputNote)
-            div.appendChild(licenseInputDiv)
-          }
-          document.body.appendChild(div)
-        }, 2000)
-      }
-    } else {
-      console.log('No yFiles for HTML license included!')
-    }
+    window.setTimeout(function () {
+      const div = document.createElement('div')
+      div.setAttribute(
+        'style',
+        'position:absolute; visibility:visible; top:280px; left:0; right:0;' +
+          ' margin:auto; width:50em; padding:10px; z-index:2001; ' +
+          ' background:#efefef; border: 2px solid #888; color:black;'
+      )
+      div.innerHTML =
+        '<h2>No yFiles for HTML license included</h2>\
+  <p>Enter your license information in JSON format into the file <b>lib/license.json</b>.</p>\
+  <p>If you have received a license file from yWorks, you can simply overwrite the file <b>lib/license.json</b> with\
+  the license file you have received.</p>\
+  <p>If you have received license information in another way, please replace the contents of the file <b>lib/license.json</b> \
+  with the actual license information.</p>'
+      div.innerHTML +=
+        '<p>You can also temporarily enter your license information below which is then stored in the local storage of your browser.</p>'
+      const licenseInputDiv = document.createElement('div')
+      const input = document.createElement('textarea')
+      input.setAttribute('rows', '6')
+      input.setAttribute('style', 'width: 100%; resize: vertical')
+      input.setAttribute(
+        'placeholder',
+        '{\n  "company": "Company name",\n  "domains": ["example.com"],\n  "key": "c543edd9d30db901d65e86a4d0aa2106775f4532"\n  ...\n}'
+      )
+      const inputNote = document.createElement('span')
+      inputNote.setAttribute('style', 'display: none;')
+      inputNote.innerHTML = 'Please enter your license information.'
+      const confirm = document.createElement('button')
+      confirm.innerHTML = 'Save license and continue'
+      confirm.addEventListener('click', function () {
+        if (input.value.length > 0) {
+          window.localStorage.setItem('yFiles_for_HTML_license', input.value)
+          resolve(parseLicense(input.value))
+          div.parentNode.removeChild(div)
+        } else {
+          inputNote.setAttribute('style', 'display: inline; margin-left: 5px; color: red;')
+        }
+      })
+      licenseInputDiv.appendChild(input)
+      licenseInputDiv.appendChild(confirm)
+      licenseInputDiv.appendChild(inputNote)
+      div.appendChild(licenseInputDiv)
+      document.body.appendChild(div)
+    }, 2000)
   })
 }

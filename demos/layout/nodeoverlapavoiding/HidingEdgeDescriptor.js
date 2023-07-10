@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,17 +42,23 @@ import {
 } from 'yfiles'
 
 export class HidingEdgeDescriptor extends BaseClass(ICanvasObjectDescriptor) {
+  // the original descriptor that is wrapped
+  originalDescriptor
+
   /**
    * Creates a new instance that wraps the `originalDescriptor`.
    * @param {!ICanvasObjectDescriptor} originalDescriptor
    */
   constructor(originalDescriptor) {
     super()
-    // the original descriptor that is wrapped
     this.originalDescriptor = originalDescriptor
-    // The edges to hide.
     this.hiddenEdges = new Set()
   }
+
+  /**
+   * The edges to hide.
+   */
+  hiddenEdges
 
   /**
    * @param {!object} forUserObject

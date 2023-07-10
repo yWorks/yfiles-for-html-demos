@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,7 +52,6 @@ aside input {
 }
 aside label {
   vertical-align: text-bottom;
-  margin: 0.75ex 0 0.25ex 0;
   display: inline-block;
 }
 .form-border {
@@ -120,7 +119,7 @@ input {
   width: 100%;
   height: 75px;
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 0;
 }
 #gt40 {
@@ -143,12 +142,8 @@ legend {
 #tooltip {
   position: absolute;
   margin: 5px;
-  width: 300px;
+  width: 380px;
   z-index: 999;
-  -webkit-transition: opacity 0.3s ease-in-out;
-  -moz-transition: opacity 0.3s ease-in-out;
-  -ms-transition: opacity 0.3s ease-in-out;
-  -o-transition: opacity 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
 }
 #tooltip p {
@@ -169,6 +164,7 @@ legend {
 }
 .info-hidden {
   opacity: 0;
+  pointer-events: none;
 }
 .unrecommended {
   position: relative;
@@ -334,7 +330,6 @@ legend {
   border: 1px solid #888;
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  border: 1px solid #888;
   background-color: #ddd;
   color: #343f4a;
 }
@@ -342,45 +337,18 @@ legend {
   background-color: #bbb !important;
   cursor: pointer;
 }
-.demo-sidebar.demo-right {
-  width: 368px;
-  line-height: 135%;
-}
-.demo-right-hidden .demo-sidebar.demo-right {
-  right: -368px;
-}
-@media screen and (max-width: 960px) {
-  .demo-sidebar {
-    width: 100% !important;
-  }
-  .demo-right-hidden .demo-sidebar.demo-right {
-    right: -100% !important;
-  }
-  .demo-hide-right-when-small:not(.demo-right-hidden) .demo-content {
-    right: 0;
-  }
-}
-.demo-has-right:not(.demo-right-hidden) .demo-content-dynamic {
-  right: 368px;
-}
 
 #fpsContainer {
   position: relative;
   height: 75px;
   float: right;
-  width: 200px;
+  width: 180px;
   display: inline-block;
 }
 #fpsDescription {
-  width: 120px;
+  width: 160px;
   float: left;
   margin-top: 5px;
-}
-#no-webgl-support {
-  display: none;
-  border-left: 4px solid red;
-  padding: 2px 5px;
-  font-weight: bold;
 }
 
 .animations-grid {
@@ -392,6 +360,13 @@ legend {
   display: grid;
   grid: auto-flow / 1fr;
   justify-items: center;
+  user-select: none;
+  cursor: pointer;
+}
+
+.animations-button button {
+  user-select: none;
+  cursor: pointer;
 }
 
 .section {
@@ -404,11 +379,20 @@ legend {
   align-items: center;
 }
 
+.vertical-button-list input {
+  cursor: pointer;
+}
+
 .selection-grid {
   display: grid;
   grid: auto-flow / 1fr 1fr 1fr 1fr;
   align-items: center;
   justify-items: stretch;
+}
+
+.selection-grid button {
+  user-select: none;
+  cursor: pointer;
 }
 
 .selection-title {
@@ -436,4 +420,28 @@ div.document-icon {
   width: 90%;
   float: left;
   margin-bottom: 5px;
+}
+
+.select-button {
+  outline: none;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color: transparent;
+  height: 24px;
+  width: 24px;
+  line-height: 24px;
+  box-sizing: border-box;
+  padding: 0 10px 0 10px;
+}
+
+.content {
+  display: grid;
+  margin-bottom: 8px;
+  grid-template-columns: [start] 25px [mid] auto [end] 25px;
+  justify-items: center;
+}
+
+.demo-main__sidebar {
+  --sidebar-width: 380px;
 }

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Large Graphs Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="resources/demo-style.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="https://unpkg.com/vue@2.6.11"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Large Graphs</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button data-command="CUT"></button>
+      <button data-command="COPY"></button>
+      <button data-command="PASTE"></button>
+      <span class="demo-separator"></span>
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+      <span class="demo-separator"></span>
+      <span>Sample:</span>
+      <select id="sampleSelection" title="Select a sample graph"></select>
+      <span class="demo-separator"></span>
+      <span>SVG threshold:</span>
+      <select
+        id="svgThreshold"
+        title="Select the zoom threshold above which to switch to SVG"
+      ></select>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
+        <h1>Large Graphs Demo</h1>
+
+        <p>
+          This demo shows how to display large graphs with both good performance and high quality.
+          For this, the demo uses
+          <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL2</a></em>
+          rendering on small zoom levels and switches to high quality
+          <em>SVG</em>
+          rendering when the user zoomed-in above a certain threshold.
+        </p>
+        <p>
+          Due to its vector graphics, SVG is very well suited for high-quality rendering with lots
+          of details and crisp text. If a large number of graphical elements needs to be displayed
+          at the same time, the browser's rendering engine reaches its limits and the rendering
+          starts to lag.
+        </p>
+        <p>
+          Rendering a large number of elements which are not too detailed is where WebGL2 rendering
+          shines. Therefore, this demo relies on this rendering method when elements on the screen
+          get smaller and details are less recognizable anyway.
+        </p>
+        <p>
+          Depending on the desired item visualization, using WebGL2 rendering for all zoom values is
+          a valid option, too. You can disable SVG rendering completely in the toolbar.
+        </p>
+
+        <h2>
+          <span id="sampleName">Hierarchic</span>
+          sample
+        </h2>
+        <div id="hierarchicOrganic">
+          <p>
+            The node styles for both SVG and WebGL2 are instantiated with the same image data so
+            that the transition between the rendering methods is as smooth as possible.
+          </p>
+          <h2>Things to try</h2>
+          <ul>
+            <li>
+              Zoom in and out of the graph and observe the rendering method switch at the zoom
+              threshold.
+            </li>
+            <li>
+              Adjust the zoom threshold to a high value and zoom in to observe the fidelity
+              difference between WebGL and SVG rendering.
+            </li>
+            <li>
+              Adjust the zoom threshold to a small value to observe the performance difference
+              between WebGL and SVG rendering.
+            </li>
+          </ul>
+        </div>
+
+        <div id="orgChart" style="display: none">
+          <p>
+            In WebGL2 rendering, the node visualization only matches the color and shape of the SVG
+            rendering but omits details like label text.
+          </p>
+          <p>
+            With SVG rendering, the nodes show additional information depending on the zoom level.
+          </p>
+          <h2>Things to try</h2>
+          <ul>
+            <li>
+              Zoom in and out of the graph and observe the rendering method switch at the zoom
+              threshold.
+            </li>
+            <li>
+              Keep on zooming in above the zoom threshold and observe the display of additional
+              information in the nodes.
+            </li>
+          </ul>
+        </div>
+
+        <h2>Graph information</h2>
+        <p>
+          <span>Number of nodes: <b><span id="numberNodes"></span></b></span>
+          <br />
+          <span>Number of edges: <b><span id="numberEdges"></span></b></span>
+          <br />
+        </p>
+        <h2>Display information</h2>
+        <p>
+          <span>Rendering technique: <b><span id="renderType"></span></b></span>
+          <br />
+          <span>Zoom level: <b><span id="zoomLevel"></span> %</b></span>
+          <br />
+        </p>
+
+        <h2>Troubleshooting</h2>
+        <p>
+          When encountering rendering issues or low frame rates, please refer to the
+          <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2_troubleshooting" target="_blank">WebGL2 Troubleshooting</a></em>
+          section in the Developer's guide.
+        </p>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <div id="renderingInfoPopup" style="pointer-events: none"></div>
+      <div id="loadingPopup" style="pointer-events: none">Loading graph...</div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="LargeGraphsDemo.ts" async></script>
+  </body>
+</html>

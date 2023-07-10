@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,7 +37,6 @@ import {
   HierarchicLayout,
   HoveredItemChangedEventArgs,
   ICanvasObjectDescriptor,
-  ICommand,
   IEdge,
   IGraph,
   ILabel,
@@ -62,19 +61,11 @@ import {
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '../../resources/demo-styles.js'
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  readGraph,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app.js'
+} from 'demo-resources/demo-styles'
 import MultiPageIGraphBuilder from './MultiPageIGraphBuilder.js'
 import PageBoundsVisualCreator from './PageBoundsVisualCreator.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
-import { BrowserDetection } from '../../utils/BrowserDetection.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
@@ -92,12 +83,10 @@ async function run() {
   applyDemoTheme(modelGraphComponent)
   initDemoStyles(modelGraphComponent.graph, { theme: 'demo-palette-21' })
 
-  registerCommands()
+  initializeUI()
   initializeCoreLayouts()
   initializeInputModes()
   loadModelGraph('Pop Artists')
-
-  showApp(graphComponent)
 }
 
 /**
@@ -244,8 +233,8 @@ async function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
     pageBoundsVisualCreator.pageHeight = pageHeight
   }
 
-  document.getElementById('previousPage').disabled = true
-  document.getElementById('nextPage').disabled = viewGraphs.length <= 1
+  document.querySelector('#previous-page').disabled = true
+  document.querySelector('#next-page').disabled = viewGraphs.length <= 1
 
   await showLoadingIndicator(false)
 }
@@ -259,8 +248,8 @@ function setPageNumber(newPageNumber, targetNode = null) {
   graphComponent.focusIndicatorManager.focusedItem = null
 
   if (viewGraphs.length <= 0) {
-    document.getElementById('previousPage').disabled = true
-    document.getElementById('nextPage').disabled = true
+    document.querySelector('#previous-page').disabled = true
+    document.querySelector('#next-page').disabled = true
     return
   }
 
@@ -271,7 +260,7 @@ function setPageNumber(newPageNumber, targetNode = null) {
       ? viewGraphs.length - 1
       : newPageNumber
 
-  const pageNumberTextBox = document.getElementById('pageNumberTextBox')
+  const pageNumberTextBox = document.getElementById('page-number-text-box')
   pageNumberTextBox.value = (pageNumber + 1).toString()
   pageNumberTextBox.setAttribute('min', '1')
   pageNumberTextBox.setAttribute('max', `${viewGraphs.length}`)
@@ -304,8 +293,8 @@ function setPageNumber(newPageNumber, targetNode = null) {
     graphComponent.fitGraphBounds()
   }
 
-  document.getElementById('previousPage').disabled = !checkPageNumber(pageNumber - 1)
-  document.getElementById('nextPage').disabled = !checkPageNumber(pageNumber + 1)
+  document.querySelector('#previous-page').disabled = !checkPageNumber(pageNumber - 1)
+  document.querySelector('#next-page').disabled = !checkPageNumber(pageNumber + 1)
 }
 
 /**
@@ -337,40 +326,37 @@ function checkPageNumber(pageNo) {
 }
 
 /**
- * Registers the JavaScript commands for the GUI elements, typically the
- * tool bar buttons, during the creation of this application.
+ * Registers the actions for the GUI elements, typically the
+ * toolbar buttons, during the creation of this application.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindAction("button[data-command='PreviousPage']", () => {
+function initializeUI() {
+  document.querySelector('#previous-page').addEventListener('click', () => {
     if (checkPageNumber(pageNumber - 1)) {
       setPageNumber(pageNumber - 1)
     }
   })
-  bindAction("button[data-command='NextPage']", () => {
+  document.querySelector('#next-page').addEventListener('click', () => {
     if (checkPageNumber(pageNumber + 1)) {
       setPageNumber(pageNumber + 1)
     }
   })
-  bindChangeListener("input[data-command='PageNumberTextBox']", page => {
+  document.querySelector('#page-number-text-box').addEventListener('change', evt => {
+    const page = evt.target.value
     const pageNo = parseInt(page) - 1
     if (!isNaN(pageNo) && checkPageNumber(pageNo)) {
       setPageNumber(pageNo)
     }
   })
 
-  bindChangeListener("select[data-command='SampleComboBox']", value => {
+  document.querySelector('#samples').addEventListener('change', async evt => {
+    const value = evt.target.value
     if (value === 'yFiles Layout Namespaces') {
       document.getElementById('coreLayoutComboBox').value = 'Tree'
     }
-    loadModelGraph(value)
+    await loadModelGraph(value)
   })
 
-  bindAction("button[data-command='DoLayout']", async () => {
+  document.querySelector('#apply-layout').addEventListener('click', async () => {
     await showLoadingIndicator(true)
     runMultiPageLayout()
   })
@@ -410,7 +396,7 @@ function initializeCoreLayouts() {
     () => {
       additionalParentCount.disabled = coreLayoutComboBox.value !== 'Tree'
     },
-    BrowserDetection.passiveEventListeners ? { passive: false } : false
+    { passive: false }
   )
 }
 
@@ -495,7 +481,7 @@ async function loadModelGraph(graphId) {
       ? 'resources/pop-artists-small.graphml'
       : 'resources/yfiles-layout-namespaces.graphml'
 
-  await readGraph(new GraphMLIOHandler(), modelGraphComponent.graph, filename)
+  await new GraphMLIOHandler().readFromURL(modelGraphComponent.graph, filename)
   // fit model graph to the component
   modelGraphComponent.fitGraphBounds()
 
@@ -506,5 +492,4 @@ async function loadModelGraph(graphId) {
   runMultiPageLayout()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

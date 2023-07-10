@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,14 +26,26 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { defineConfig, searchForWorkspaceRoot } from 'vite'
+import { defineConfig } from 'vite'
+import optimizer from '@yworks/optimizer/rollup-plugin'
 
-export default defineConfig({
-  base: './',
-  // config options
-  server: {
-    fs: {
-      allow: [searchForWorkspaceRoot(process.cwd()), '../../resources/icons']
+export default defineConfig(({ mode }) => {
+  const plugins = []
+  if (mode === 'production') {
+    plugins.push(
+      optimizer({
+        shouldOptimize({ id }) {
+          // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
+          return id.includes('demo-utils') || !id.includes('node_modules')
+        }
+      })
+    )
+  }
+  return {
+    base: './',
+    plugins,
+    resolve: {
+      preserveSymlinks: true
     }
   }
 })

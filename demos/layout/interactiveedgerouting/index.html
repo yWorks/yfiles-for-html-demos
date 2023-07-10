@@ -6,7 +6,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -30,31 +30,96 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Interactive Edge Routing Demo</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Interactive Edge Routing</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button id="reload" title="Reload" class="demo-icon-yIconReload"></button>
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="CUT"></button>
+      <button data-command="COPY"></button>
+      <button data-command="PASTE"></button>
+      <button data-command="DELETE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Routing Policy:
+        <select title="Select Routing Policy" id="select-routing-policy">
+          <option value="segment">Segment as Needed</option>
+          <option value="path">Path as Needed</option>
+        </select>
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Interactive Edge Routing Demo</h1>
 
         <p>
-          The Interactive Edge Routing demo showcases <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>'s ability to find and
-          re-layout edge paths which are not yet ‘good’.
+          The Interactive Edge Routing demo showcases
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>
+          's ability to find and re-layout edge paths which are not yet ‘good’.
         </p>
 
         <p>
-          After each user interaction the edge router is applied with <a href="https://docs.yworks.com/yfileshtml/#/api/RoutingPolicy" target="_blank">RoutingPolicy</a> set
-          to either re-route entire edges or only necessary segments of edges. The edge router
+          After each user interaction the edge router is applied with
+          <a href="https://docs.yworks.com/yfileshtml/#/api/RoutingPolicy" target="_blank">RoutingPolicy</a>
+          set to either re-route entire edges or only necessary segments of edges. The edge router
           itself determines automatically which edges need a re-routing based on various criteria
           like intersections with other elements or routing style violations.
         </p>
@@ -72,63 +137,16 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="Reload" title="Reload" class="demo-icon-yIconReload"></button>
-        <button
-          data-command="Open"
-          title="Open a GraphML file"
-          class="demo-icon-yIconOpen"
-        ></button>
-        <button
-          data-command="Save"
-          title="Save a GraphML file"
-          class="demo-icon-yIconSave"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-        <span class="demo-separator"></span>
-
-        <label for="selectRoutingPolicy" style="width: auto">Routing Policy:</label>
-        <select data-command="SelectPolicy" title="Select Routing Policy" id="selectRoutingPolicy">
-          <option value="segment">Segment as Needed</option>
-          <option value="path">Path as Needed</option>
-        </select>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="InteractiveEdgeRoutingDemo.js"></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="InteractiveEdgeRoutingDemo.ts"
+      async
+    ></script>
   </body>
 </html>

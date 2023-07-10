@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,13 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { addClass } from '../../resources/demo-app.js'
-
 /**
  * Control containing a list of sub controls for every {link SourceDefinition} added to it
  * The sub controls provide Edit- and Remove- buttons
  */
 export class SourcesListBox {
+  Factory
+  DialogFactory
+
+  sources
+  lastSourceIndex
+  rootElement
+  addButton
+  dataUpdatedCallback
+
   /**
    * Sources list box constructor
    * @param {!function} factory the arrow function providing an appropriate {@link SourceDefinitionBuilderConnector}
@@ -76,13 +83,13 @@ export class SourcesListBox {
     this.sources.push(newDefinition)
 
     const container = document.createElement('div')
-    addClass(container, 'sourceCard')
+    container.classList.add('sourceCard')
 
     const label = document.createElement('span')
     label.textContent = newDefinition.sourceDefinition.name
 
     const editButton = document.createElement('button')
-    addClass(editButton, 'editButton')
+    editButton.classList.add('editButton')
     editButton.addEventListener('click', () => {
       new this.DialogFactory(newDefinition, () => {
         label.textContent = newDefinition.sourceDefinition.name
@@ -92,7 +99,7 @@ export class SourcesListBox {
     editButton.textContent = 'Edit'
 
     const removeButton = document.createElement('button')
-    addClass(removeButton, 'removeButton')
+    removeButton.classList.add('removeButton')
     removeButton.addEventListener('click', () => this.removeDefinition(newDefinition, container))
     removeButton.textContent = 'Remove'
 

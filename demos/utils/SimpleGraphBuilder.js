@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -133,6 +133,16 @@ import {
  @see {@link SimpleTreeBuilder}
  */
 export class SimpleGraphBuilder {
+  $graphBuilder
+  $builderNodesSource
+  $builderGroupsSource
+  $builderEdgesSource
+
+  $graphBuilderHelper
+
+  $sourceIdProvider
+  $targetIdProvider
+
   /**
      Initializes a new instance of the {@link SimpleGraphBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleGraphBuilder.nodesSource}, {@link SimpleGraphBuilder.groupsSource}, and {@link SimpleGraphBuilder.edgesSource} when {@link SimpleGraphBuilder.buildGraph} is called.
@@ -527,6 +537,7 @@ export class SimpleGraphBuilder {
     return this.$graphBuilder.graph
   }
 
+  $lazyNodeDefinition
   /**
      Gets or sets a value indicating whether or not to automatically create nodes for values returned from {@link SimpleGraphBuilder.sourceNodeBinding} and {@link SimpleGraphBuilder.targetNodeBinding} that don't
      exist in {@link SimpleGraphBuilder.nodesSource}.
@@ -548,6 +559,7 @@ export class SimpleGraphBuilder {
     this.$lazyNodeDefinition = value
   }
 
+  $nodesSource
   /**
    * Gets or sets the objects to be represented as nodes of the {@link SimpleGraphBuilder.graph}.
    * @type {*}
@@ -563,6 +575,7 @@ export class SimpleGraphBuilder {
     this.$nodesSource = value
   }
 
+  $edgesSource
   /**
    * Gets or sets the objects to be represented as edges of the {@link SimpleGraphBuilder.graph}.
    * @type {*}
@@ -578,6 +591,7 @@ export class SimpleGraphBuilder {
     this.$edgesSource = value
   }
 
+  $groupsSource
   /**
    * Gets or sets the objects to be represented as group nodes of the {@link SimpleGraphBuilder.graph}.
    * @type {*}
@@ -619,6 +633,8 @@ export class SimpleGraphBuilder {
   set nodeIdBinding(value) {
     this.$graphBuilderHelper.nodeIdBinding = value
   }
+
+  $edgeIdBinding
 
   /**
      Gets or sets a binding that maps edge objects to their identifier.
@@ -720,6 +736,8 @@ export class SimpleGraphBuilder {
     this.$graphBuilderHelper.edgeLabelBinding = value
   }
 
+  $sourceNodeBinding
+
   /**
      Gets or sets a binding that maps edge objects to their source node.
      This maps an object _E_ that represents an edge to another object _N_ that specifies the source node of _E_.
@@ -744,6 +762,8 @@ export class SimpleGraphBuilder {
   set sourceNodeBinding(value) {
     this.$sourceNodeBinding = value
   }
+
+  $targetNodeBinding
 
   /**
      Gets or sets a binding that maps edge objects to their target node.
@@ -1055,11 +1075,18 @@ export class SimpleGraphBuilderItemEventArgs extends ItemEventArgs {
      */
   constructor(graph, item, sourceObject) {
     super(item)
-    // Gets the graph that can be used to modify the {@link ItemEventArgs.item}.
     this.graph = graph
-    // Gets the object the {@link ItemEventArgs.item} has been created from.
     this.sourceObject = sourceObject
   }
+
+  /**
+   Gets the graph that can be used to modify the {@link ItemEventArgs.item}.
+   */
+  graph
+  /**
+   Gets the object the {@link ItemEventArgs.item} has been created from.
+   */
+  sourceObject
 }
 
 /**
@@ -1094,6 +1121,9 @@ function createNodeCollectionCloner(originalCollection) {
  */
 
 class IterableNodeCollectionCloner {
+  $array
+  $valueSet
+
   /**
    * @type {*}
    */
@@ -1133,6 +1163,9 @@ class IterableNodeCollectionCloner {
 }
 
 class ObjectNodeCollectionCloner {
+  $object
+  $valueSet
+  $currentIndex
   /**
    * @type {*}
    */
@@ -1204,6 +1237,8 @@ function createEdgeCollectionCloner(originalCollection) {
  */
 
 class IterableEdgeCollectionCloner {
+  $array
+  $originalCollection
   /**
    * @param {!Iterable} originalCollection
    */
@@ -1230,6 +1265,8 @@ class IterableEdgeCollectionCloner {
 }
 
 class ObjectEdgeCollectionCloner {
+  $originalCollection
+  $object
   /**
    * @type {*}
    */
@@ -1345,6 +1382,10 @@ class ObjectEdgeCollectionCloner {
  @see {@link SimpleAdjacentNodesGraphBuilder}
  */
 export class SimpleTreeBuilder {
+  $adjacentNodesGraphBuilder
+
+  $edgeLabelBinding
+
   /**
      Initializes a new instance of the {@link SimpleTreeBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleTreeBuilder.nodesSource} and {@link SimpleTreeBuilder.groupsSource} when {@link SimpleTreeBuilder.buildGraph} is called.
@@ -1407,6 +1448,8 @@ export class SimpleTreeBuilder {
    */
   $createAdjacentNodesGraphBuilderWrapper(graph) {
     class AdjacentNodesGraphBuilderWrapper extends SimpleAdjacentNodesGraphBuilder {
+      $treeBuilder
+
       /**
        * @param {?(IGraph|AdjacentNodesGraphBuilderOptionArgs)} graphOrOptions
        * @param {!SimpleTreeBuilder} treeBuilder
@@ -2215,6 +2258,23 @@ export class SimpleTreeBuilder {
  @see {@link SimpleAdjacentNodesGraphBuilder}
  */
 export class SimpleAdjacentNodesGraphBuilder {
+  $graphBuilderHelper
+  $graphBuilder
+  $builderNodesSource
+  $builderEdgeCreator
+  $builderGroupsSource
+  $mirrorGraph
+  $nodeToMirrorNodeMap
+
+  $nodesSource
+  $groupsSource
+  $successorsBinding
+  $predecessorsBinding
+  $predecessorsProvider
+  $successorsProvider
+  $predecessorsIdProvider
+  $successorsIdProvider
+
   /**
      Initializes a new instance of the {@link SimpleAdjacentNodesGraphBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleAdjacentNodesGraphBuilder.nodesSource} and {@link SimpleAdjacentNodesGraphBuilder.groupsSource} when {@link SimpleAdjacentNodesGraphBuilder.buildGraph}
@@ -2743,6 +2803,24 @@ export class SimpleAdjacentNodesGraphBuilder {
   }
 
   /**
+   Gets or sets a binding that maps node objects to their identifier.
+   This maps an object that represents a node to its identifier. This is needed when {@link SimpleAdjacentNodesGraphBuilder.predecessorsBinding predecessors} or {@link SimpleAdjacentNodesGraphBuilder.successorsBinding successors} are
+   represented only by an identifier of nodes instead of pointing directly to the respective node objects.
+
+   The binding can either be a plain JavaScript function, a String, `null`, or an array which contains the same types
+   recursively. A function is called with the business object to convert as first and only parameter, and the function's `this`
+   is set to the business object, too.
+
+   __Warning:__ The identifiers returned by the binding must be stable and not change over time. Otherwise the {@link SimpleAdjacentNodesGraphBuilder.updateGraph update mechanism} cannot
+   determine whether nodes have been added or updated. For the same reason this property must not be changed after having
+   built the graph once.
+
+   @see SimpleAdjacentNodesGraphBuilder#nodesSource
+   @see SimpleAdjacentNodesGraphBuilder#predecessorsBinding
+   @see SimpleAdjacentNodesGraphBuilder#successorsBinding
+   @see SimpleAdjacentNodesGraphBuilder */
+  $nodeIdBinding
+  /**
    * @type {*}
    */
   get nodeIdBinding() {
@@ -3246,6 +3324,38 @@ export class SimpleAdjacentNodesGraphBuilder {
  */
 
 class GraphBuilderHelper {
+  $graph
+  $eventSender
+  $builderCreateNode
+  $builderUpdateNode
+  $builderCreateGroupNode
+  $builderUpdateGroupNode
+  $builderCreateEdge
+  $builderUpdateEdge
+
+  nodeLabelBinding
+  locationXBinding
+  locationYBinding
+  groupBinding
+  edgeLabelBinding
+  groupIdBinding
+  groupLabelBinding
+  parentGroupBinding
+  nodeIdBinding
+
+  locationXProvider
+  locationYProvider
+  nodeLabelProvider
+  groupLabelProvider
+  edgeLabelProvider
+
+  $edgeUpdatedListeners
+  $nodeCreatedListeners
+  $nodeUpdatedListeners
+  $groupCreatedListeners
+  $groupUpdatedListeners
+  $edgeCreatedListeners
+
   /**
    * @param {!object} eventSender
    * @param {!IGraph} graph
@@ -3523,6 +3633,8 @@ class GraphBuilderHelper {
    */
   createNodeCreator() {
     class SimpleGraphBuilderNodeCreator extends NodeCreator {
+      $graphBuilder
+
       /**
        * @param {!GraphBuilderHelper} graphBuilder
        */
@@ -3603,6 +3715,8 @@ class GraphBuilderHelper {
    */
   createGroupCreator() {
     class SimpleGraphBuilderGroupCreator extends NodeCreator {
+      $graphBuilder
+
       /**
        * @param {!GraphBuilderHelper} graphBuilder
        */
@@ -3671,6 +3785,9 @@ class GraphBuilderHelper {
    */
   createEdgeCreator(labelDataFromSourceAndTarget = false) {
     class SimpleGraphBuilderEdgeCreator extends EdgeCreator {
+      $graphBuilder
+      $labelDataFromSourceAndTarget
+
       /**
        * @param {!GraphBuilderHelper} graphBuilder
        * @param {boolean} labelDataFromSourceAndTarget

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -148,7 +148,7 @@ export default class OpenFromFileOperation {
     }
     let textStream: any = null
     try {
-      // @ts-ignore
+      // @ts-ignore This feature detection is okay
       const fso = new ActiveXObject('Scripting.FileSystemObject')
       textStream = fso.openTextFile(fileInputElement.value, 1)
       const content = textStream.readAll()

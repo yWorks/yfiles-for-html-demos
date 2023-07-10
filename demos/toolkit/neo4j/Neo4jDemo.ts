@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,53 +34,52 @@ import {
   CycleSubstructureStyle,
   DefaultLabelStyle,
   EdgePathLabelModel,
-  EdgeStyleDecorationInstaller,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   GraphBuilder,
   GraphComponent,
+  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   IModelItem,
+  IndicatorEdgeStyleDecorator,
+  IndicatorNodeStyleDecorator,
   INode,
   LayoutExecutor,
   License,
-  NodeStyleDecorationInstaller,
   OrganicLayout,
+  OrganicLayoutStarSubstructureStyle,
   ParallelEdgeRouter,
   ParallelSubstructureStyle,
   PolylineEdgeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
-  StarSubstructureStyle,
   Stroke,
-  StyleDecorationZoomPolicy,
   VoidLabelStyle
 } from 'yfiles'
+
+import * as CodeMirror from 'codemirror'
+import 'codemirror/mode/cypher/cypher'
+import 'codemirror/lib/codemirror.css'
 
 import {
   applyDemoTheme,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles'
-import {
-  bindAction,
-  bindCommand,
-  reportDemoError,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app'
+} from 'demo-resources/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
 import type { Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
+
+let editor: CodeMirror.EditorFromTextArea
 
 let graphComponent: GraphComponent
 
-let runCypherQuery: (query: string, params?: {}) => Promise<Result>
+let runCypherQuery: (query: string, params?: Record<string, any>) => Promise<Result>
 
 let graphBuilder: GraphBuilder
 
@@ -89,14 +88,14 @@ let nodes: Node[] = []
 let edges: Relationship[] = []
 
 // get hold of some UI elements
-const labelsContainer = document.getElementById('labels') as HTMLParagraphElement
-const selectedNodeContainer = document.getElementById('selected-node-container') as HTMLDivElement
-const propertyTable = document.getElementById('propertyTable') as HTMLTableElement
+const labelsContainer = document.querySelector<HTMLParagraphElement>('#labels')!
+const selectedNodeContainer = document.querySelector<HTMLDivElement>('#selected-node-container')!
+const propertyTable = document.querySelector<HTMLTableElement>('#propertyTable')!
 const propertyTableHeader = propertyTable.firstElementChild as HTMLTableHeaderCellElement
-const numNodesInput = document.getElementById('numNodes') as HTMLInputElement
-const numLabelsInput = document.getElementById('numLabels') as HTMLInputElement
-const showEdgeLabelsCheckbox = document.getElementById('showEdgeLabels') as HTMLInputElement
-const queryErrorContainer = document.getElementById('queryError') as HTMLPreElement
+const numNodesInput = document.querySelector<HTMLInputElement>('#numNodes')!
+const numLabelsInput = document.querySelector<HTMLInputElement>('#numLabels')!
+const showEdgeLabelsCheckbox = document.querySelector<HTMLInputElement>('#showEdgeLabels')!
+const queryErrorContainer = document.querySelector<HTMLPreElement>('#queryError')!
 
 /**
  * Runs the demo.
@@ -105,9 +104,8 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   if (!('WebSocket' in window)) {
     // early exit the application if WebSockets are not supported
-    document.getElementById('login')!.hidden = true
-    document.getElementById('noWebSocketAPI')!.hidden = false
-    showApp()
+    document.querySelector<HTMLDivElement>('#login')!.hidden = true
+    document.querySelector<HTMLDivElement>('#noWebSocketAPI')!.hidden = false
     return
   }
 
@@ -117,8 +115,7 @@ async function run(): Promise<void> {
   initializeGraphDefaults()
   initializeHighlighting()
   createInputMode()
-  registerCommands()
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -151,35 +148,30 @@ function initializeHighlighting(): void {
   const orangeRed = Color.ORANGE_RED
   const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
 
-  const decorator = graphComponent.graph.decorator
-
-  const highlightShape = new ShapeNodeStyle({
-    shape: ShapeNodeShape.ROUND_RECTANGLE,
-    stroke: orangeStroke,
-    fill: null
+  const nodeStyleHighlight = new IndicatorNodeStyleDecorator({
+    wrapped: new ShapeNodeStyle({
+      shape: ShapeNodeShape.ROUND_RECTANGLE,
+      stroke: orangeStroke,
+      fill: null
+    }),
+    padding: 5
   })
-
-  const nodeStyleHighlight = new NodeStyleDecorationInstaller({
-    nodeStyle: highlightShape,
-    margins: 5,
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
-  })
-  decorator.nodeDecorator.highlightDecorator.setImplementation(nodeStyleHighlight)
 
   const dummyCroppingArrow = new Arrow({
     type: ArrowType.NONE,
     cropLength: 5
   })
-  const edgeStyle = new PolylineEdgeStyle({
-    stroke: orangeStroke,
-    targetArrow: dummyCroppingArrow,
-    sourceArrow: dummyCroppingArrow
+  const edgeStyleHighlight = new IndicatorEdgeStyleDecorator({
+    wrapped: new PolylineEdgeStyle({
+      stroke: orangeStroke,
+      targetArrow: dummyCroppingArrow,
+      sourceArrow: dummyCroppingArrow
+    })
   })
-  const edgeStyleHighlight = new EdgeStyleDecorationInstaller({
-    edgeStyle,
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
+    nodeStyle: nodeStyleHighlight,
+    edgeStyle: edgeStyleHighlight
   })
-  decorator.edgeDecorator.highlightDecorator.setImplementation(edgeStyleHighlight)
 
   graphComponent.addCurrentItemChangedListener(() => onCurrentItemChanged())
 }
@@ -246,7 +238,7 @@ function onCurrentItemChanged(): void {
   const isNode = currentItem instanceof INode
   selectedNodeContainer.hidden = !isNode
   if (isNode) {
-    const node = currentItem!
+    const node = currentItem
     // show all labels of the current node
     labelsContainer.textContent = node.tag.labels.join(', ')
     const properties = node.tag.properties
@@ -335,26 +327,26 @@ async function loadGraph(): Promise<void> {
  * indicator to make it easier for the user to understand the graph's structure.
  * @param hoveredItem The currently hovered item
  */
-function onHoveredItemChanged(hoveredItem: IModelItem): void {
+function onHoveredItemChanged(hoveredItem: IModelItem | null): void {
   // we use the highlight manager of the GraphComponent to highlight related items
   const manager = graphComponent.highlightIndicatorManager
 
   // first remove previous highlights
   manager.clearHighlights()
   // then see where we are hovering over, now
-  if (hoveredItem) {
-    // we highlight the item itself
-    manager.addHighlight(hoveredItem)
-    if (hoveredItem instanceof INode) {
-      // and if it's a node, we highlight all adjacent edges, too
-      graphComponent.graph.edgesAt(hoveredItem).forEach(edge => {
-        manager.addHighlight(edge)
-      })
-    } else if (hoveredItem instanceof IEdge) {
-      // if it's an edge - we highlight the adjacent nodes
-      manager.addHighlight(hoveredItem.sourceNode!)
-      manager.addHighlight(hoveredItem.targetNode!)
-    }
+  if (!hoveredItem) {
+    return
+  }
+  manager.addHighlight(hoveredItem)
+  if (hoveredItem instanceof INode) {
+    // and if it's a node, we highlight all adjacent edges, too
+    graphComponent.graph.edgesAt(hoveredItem).forEach(edge => {
+      manager.addHighlight(edge)
+    })
+  } else if (hoveredItem instanceof IEdge) {
+    // if it's an edge - we highlight the adjacent nodes
+    manager.addHighlight(hoveredItem.sourceNode!)
+    manager.addHighlight(hoveredItem.targetNode!)
   }
 }
 
@@ -367,7 +359,7 @@ async function doLayout(): Promise<void> {
   organicLayout.chainSubstructureStyle = ChainSubstructureStyle.STRAIGHT_LINE
   organicLayout.cycleSubstructureStyle = CycleSubstructureStyle.CIRCULAR
   organicLayout.parallelSubstructureStyle = ParallelSubstructureStyle.STRAIGHT_LINE
-  organicLayout.starSubstructureStyle = StarSubstructureStyle.CIRCULAR
+  organicLayout.starSubstructureStyle = OrganicLayoutStarSubstructureStyle.CIRCULAR
   organicLayout.minimumNodeDistance = 60
   organicLayout.considerNodeLabels = true
   organicLayout.considerNodeSizes = true
@@ -383,8 +375,6 @@ async function doLayout(): Promise<void> {
       duration: '1s',
       animateViewport: true
     }).start()
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     setUIDisabled(false)
   }
@@ -395,21 +385,19 @@ async function doLayout(): Promise<void> {
  * @param value Whether the elements should be disabled.
  */
 function setUIDisabled(value: boolean): void {
-  ;(document.getElementById('reloadDataButton') as HTMLButtonElement).disabled = value
-  ;(document.getElementById('numNodes') as HTMLInputElement).disabled = value
-  ;(document.getElementById('numLabels') as HTMLInputElement).disabled = value
+  document.querySelector<HTMLButtonElement>('#reloadDataButton')!.disabled = value
+  numNodesInput.disabled = value
+  numLabelsInput.disabled = value
 }
 
 /**
  * Wires up the UI.
  * @yjs:keep = setValue,getValue
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindAction("button[data-command='ReloadData']", loadGraph)
+function initializeUI(): void {
+  document
+    .querySelector<HTMLButtonElement>('#reloadDataButton')!
+    .addEventListener('click', () => loadGraph())
 
   // toggle edge label display
   showEdgeLabelsCheckbox.addEventListener('input', () => {
@@ -422,12 +410,12 @@ function registerCommands(): void {
     }
   })
 
-  const userEl = document.querySelector('#userInput') as HTMLInputElement
-  const hostEl = document.querySelector('#hostInput') as HTMLInputElement
-  const passwordEl = document.querySelector('#passwordInput') as HTMLInputElement
-  const databaseEl = document.querySelector('#databaseNameInput') as HTMLInputElement
+  const userEl = document.querySelector<HTMLInputElement>('#userInput')!
+  const hostEl = document.querySelector<HTMLInputElement>('#hostInput')!
+  const passwordEl = document.querySelector<HTMLInputElement>('#passwordInput')!
+  const databaseEl = document.querySelector<HTMLInputElement>('#databaseNameInput')!
 
-  document.getElementById('login-form')!.addEventListener('submit', async e => {
+  document.querySelector<HTMLFormElement>('#login-form')!.addEventListener('submit', async e => {
     e.preventDefault()
     let url = hostEl.value
     if (url.indexOf('://') < 0) {
@@ -440,16 +428,19 @@ function registerCommands(): void {
       runCypherQuery = await connectToDB(url, database, user, pass)
 
       // hide the login form and show the graph component
-      document.querySelector('#loginPane')!.setAttribute('style', 'display: none;')
-      document.querySelector('#graphPane')!.removeAttribute('style')
+      document.querySelector<HTMLDivElement>('#loginPane')!.setAttribute('style', 'display: none;')
+      document.querySelector<HTMLElement>('#graphPane')!.style.visibility = 'visible'
+      document.querySelector<HTMLElement>('#queryPane')!.style.visibility = 'visible'
       await loadGraph()
     } catch (e) {
-      document.querySelector('#connectionError')!.innerHTML = `An error occurred: ${e}`
+      document.querySelector<HTMLDivElement>(
+        '#connectionError'
+      )!.innerHTML = `An error occurred: ${e}`
       // In some cases (connecting from https to http) an exception is thrown outside the promise
       if (window.location.protocol === 'https:') {
-        ;(document.querySelector('#openInHttp') as HTMLDivElement).hidden = false
+        document.querySelector<HTMLDivElement>('#openInHttp')!.hidden = false
         document
-          .querySelector('#openInHttp>a')!
+          .querySelector<HTMLDivElement>('#openInHttp>a')!
           .setAttribute('href', window.location.href.replace('https:', 'http:'))
       }
     }
@@ -458,7 +449,8 @@ function registerCommands(): void {
   numNodesInput.addEventListener(
     'input',
     () => {
-      document.getElementById('numNodesLabel')!.textContent = numNodesInput.value.toString()
+      document.querySelector<HTMLDivElement>('#numNodesLabel')!.textContent =
+        numNodesInput.value.toString()
     },
     true
   )
@@ -466,49 +458,51 @@ function registerCommands(): void {
   numLabelsInput.addEventListener(
     'input',
     () => {
-      document.getElementById('numLabelsLabel')!.textContent = numLabelsInput.value.toString()
+      document.querySelector<HTMLDivElement>('#numLabelsLabel')!.textContent =
+        numLabelsInput.value.toString()
     },
     true
   )
 
   // create cypher query editor
-  const cypherInput = document.getElementById('cypher-input')
-  const { editor } = (window as any).CypherCodeMirror.createCypherEditor(cypherInput, {
-    mode: 'cypher',
-    theme: 'cypher',
-    lineNumbers: true
-  })
-  // sample query
+  editor = CodeMirror.fromTextArea(
+    document.querySelector<HTMLTextAreaElement>('#query-text-area')!,
+    {
+      lineNumbers: true,
+      mode: 'cypher'
+    } as CodeMirror.EditorConfiguration
+  )
   editor.setValue('MATCH (n)-[e]-(m)\nRETURN * LIMIT 150')
 
-  bindAction('#run-cypher-button', async () => {
-    const query = editor.getValue()
-    let result: Result
-    try {
-      result = await runCypherQuery(query)
-    } catch (e) {
-      queryErrorContainer.textContent = `Query failed: ${e}`
-      return
-    }
-    queryErrorContainer.textContent = ''
-    nodes = []
-    edges = []
-    for (const record of result.records) {
-      record.forEach((field: any) => {
-        if (field instanceof Neo4jNode) {
-          nodes.push(field)
-        } else if (field instanceof Neo4jEdge) {
-          edges.push(field)
-        }
-      })
-    }
-    graphComponent.graph.clear()
-    graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
-    graphBuilder.buildGraph()
-    // apply a layout to the new graph
-    await doLayout()
-  })
+  document
+    .querySelector<HTMLButtonElement>('#run-cypher-button')!
+    .addEventListener('click', async () => {
+      const query = editor.getValue()
+      let result: Result
+      try {
+        result = await runCypherQuery(query)
+      } catch (e) {
+        queryErrorContainer.textContent = `Query failed: ${e}`
+        return
+      }
+      queryErrorContainer.textContent = ''
+      nodes = []
+      edges = []
+      for (const record of result.records) {
+        record.forEach((field: any) => {
+          if (field instanceof Neo4jNode) {
+            nodes.push(field)
+          } else if (field instanceof Neo4jEdge) {
+            edges.push(field)
+          }
+        })
+      }
+      graphComponent.graph.clear()
+      graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
+      graphBuilder.buildGraph()
+      // apply a layout to the new graph
+      await doLayout()
+    })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

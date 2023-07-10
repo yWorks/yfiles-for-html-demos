@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>06 Edge Cropping - Port Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-port-style-implementation">
+          Port Style Implementation Tutorial
+        </a>
+
+        <span>06 Edge Cropping</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-port/05-hit-testing/index.html'><span>05 Hit-Testing</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 6/6</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 06 Edge Cropping</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-port/01-render-port-shape/index.html"
+            class="tutorial-dropdown__item"
+            >01 Rendering the Port</a
+          ><a
+            href="../../tutorial-style-implementation-port/02-port-size/index.html"
+            class="tutorial-dropdown__item"
+            >02 Port Size</a
+          ><a
+            href="../../tutorial-style-implementation-port/03-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >03 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-port/04-conditional-coloring/index.html"
+            class="tutorial-dropdown__item"
+            >04 Conditional Port Coloring</a
+          ><a
+            href="../../tutorial-style-implementation-port/05-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >05 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-port/06-edge-cropping/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >06 Edge Cropping</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Customizing edge-cropping</h1>
+          <div class="paragraph">
+            <p>
+              In this tutorial step, we will add support for edge cropping at the port. Since in
+              this example, the ports protrude from their owner node&#8217;s bounds, the
+              edge&#8217;s arrow can be hidden behind the port.
+            </p>
+          </div>
+          <div id="old-state" class="inline-graph-component"></div>
+          <div class="paragraph">
+            <p>
+              To define the port shape, we first define an <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> for the
+              style. This interface is later used by the <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgePathCropper" target="_blank">IEdgePathCropper</a> to crop
+              the edge at the port outline.
+            </p>
+          </div>
+          <div class="paragraph">
+            <p>
+              We override the <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_concepts_lookup" target="_blank">lookup</a> method to
+              return the <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> to the port style. The
+              <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> gets the port&#8217;s bounds and uses the convenience
+              class <a href="https://docs.yworks.com/yfileshtml/#/api/GeomUtilities" target="_blank">GeomUtilities</a> to consider the elliptic port shape.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">lookup</span>(<span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>, <span class="hljs-attr">type</span>: <span class="hljs-title class_">Class</span>): <span class="hljs-built_in">any</span> {
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IShapeGeometry</span>.<span class="hljs-property">$class</span>) {
+    <span class="hljs-comment">// calculate the port bounds for edge cropping</span>
+    <span class="hljs-keyword">const</span> bounds = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getPortBounds</span>(port)
+    <span class="hljs-comment">// the IShapeGeometry implementation for this style</span>
+    <span class="hljs-keyword">const</span> <span class="hljs-title class_">PortShapeGeometry</span> = <span class="hljs-keyword">class</span> <span class="hljs-title class_">extends</span> <span class="hljs-title class_">BaseClass</span>(<span class="hljs-title class_">IShapeGeometry</span>) {
+      <span class="hljs-title function_">getIntersection</span>(<span class="hljs-attr">inner</span>: <span class="hljs-title class_">Point</span>, <span class="hljs-attr">outer</span>: <span class="hljs-title class_">Point</span>): <span class="hljs-title class_">Point</span> | <span class="hljs-literal">null</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-title class_">GeomUtilities</span>.<span class="hljs-title function_">findEllipseLineIntersection</span>(bounds, inner, outer)
+      }
+
+      <span class="hljs-title function_">getOutline</span>(): <span class="hljs-title class_">GeneralPath</span> | <span class="hljs-literal">null</span> {
+        <span class="hljs-keyword">const</span> path = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GeneralPath</span>()
+        path.<span class="hljs-title function_">appendEllipse</span>(bounds, <span class="hljs-literal">false</span>)
+        <span class="hljs-keyword">return</span> path
+      }
+
+      <span class="hljs-title function_">isInside</span>(<span class="hljs-attr">location</span>: <span class="hljs-title class_">Point</span>): <span class="hljs-built_in">boolean</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-title class_">GeomUtilities</span>.<span class="hljs-title function_">ellipseContains</span>(bounds, location, <span class="hljs-number">0</span>)
+      }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PortShapeGeometry</span>()
+  }</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              Now, we have to provide an <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgePathCropper" target="_blank">IEdgePathCropper</a> instance in the
+              <code>lookup</code> method that yFiles for HTML can use it for edge cropping. We subclass
+              <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultEdgePathCropper" target="_blank">DefaultEdgePathCropper</a> and override
+              <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultEdgePathCropper#DefaultEdgePathCropper-method-getPortGeometry" target="_blank">getPortGeometry</a>. In this method, we use the port&#8217;s <code>lookup</code> to get the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> we defined above. We enable
+              <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultEdgePathCropper#DefaultEdgePathCropper-property-cropAtPort" target="_blank">cropAtPort</a>
+              in the constructor.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IEdgePathCropper</span>.<span class="hljs-property">$class</span>) {
+  <span class="hljs-comment">// a custom IEdgePathCropped implementation that uses the IShapeGeometry defined above</span>
+  <span class="hljs-keyword">const</span> <span class="hljs-title class_">CustomEdgePathCropper</span> = <span class="hljs-keyword">class</span> <span class="hljs-title class_">extends</span> <span class="hljs-title class_">DefaultEdgePathCropper</span> {
+    <span class="hljs-keyword">protected</span> <span class="hljs-title function_">getPortGeometry</span>(<span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">IShapeGeometry</span> | <span class="hljs-literal">null</span> {
+      <span class="hljs-keyword">return</span> port.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">IShapeGeometry</span>.<span class="hljs-property">$class</span>)
+    }
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomEdgePathCropper</span>({ <span class="hljs-attr">cropAtPort</span>: <span class="hljs-literal">true</span> })
+}</code></pre>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

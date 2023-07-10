@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,11 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { toggleClass } from '../../resources/demo-app.js'
+import * as CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/dialog/dialog'
 
 /** @type {HTMLDivElement} */
 let container
-/** @type {EditorFromTextArea} */
 let sourceDataView
 
 /**
@@ -48,14 +51,14 @@ function initDataView(selector) {
   container.appendChild(dataContainer)
   dataContainer.appendChild(textArea)
 
-  container.setAttribute('class', 'demo-overview-container')
+  container.setAttribute('class', 'demo-overlay')
   dataContainer.setAttribute('class', 'data-container')
-  header.setAttribute('class', 'demo-overview-header')
+  header.setAttribute('class', 'demo-overlay__header')
 
   header.textContent = 'Source Data'
 
   header.addEventListener('click', () => {
-    toggleClass(container, 'collapsed')
+    container.classList.toggle('collapsed')
   })
   const mode = { name: 'javascript', json: true }
   sourceDataView = CodeMirror.fromTextArea(textArea, {

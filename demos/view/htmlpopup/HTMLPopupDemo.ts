@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,8 +47,9 @@ import {
 } from 'yfiles'
 
 import HTMLPopupSupport from './HTMLPopupSupport'
-import { bindCommand, readGraph, showApp } from '../../resources/demo-app'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /**
  * Runs the demo.
@@ -57,16 +58,13 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputMode(graphComponent)
 
   initializePopups(graphComponent)
 
   readSampleGraph(graphComponent)
-
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -79,7 +77,7 @@ function initializePopups(graphComponent: GraphComponent): void {
   const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
 
   // Creates the pop-up for the node pop-up template
-  const nodePopup = new HTMLPopupSupport(
+  const nodePopup = new HTMLPopupSupport<INode>(
     graphComponent,
     getDiv('nodePopupContent'),
     nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
@@ -90,7 +88,7 @@ function initializePopups(graphComponent: GraphComponent): void {
   const edgeLabelModel = new EdgePathLabelModel({ autoRotation: false })
 
   // Creates the pop-up for the edge pop-up template
-  const edgePopup = new HTMLPopupSupport(
+  const edgePopup = new HTMLPopupSupport<IEdge>(
     graphComponent,
     getDiv('edgePopupContent'),
     edgeLabelModel.createDefaultParameter()
@@ -149,7 +147,7 @@ function getDiv(id: string): HTMLDivElement {
 /**
  * Updates the node pop-up content with the elements from the node's tag.
  */
-function updateNodePopupContent(nodePopup: HTMLPopupSupport, node: INode): void {
+function updateNodePopupContent(nodePopup: HTMLPopupSupport<INode>, node: INode): void {
   // get business data from node tag
   const data = node.tag
 
@@ -171,7 +169,7 @@ function updateNodePopupContent(nodePopup: HTMLPopupSupport, node: INode): void 
 /**
  * Updates the edge pop-up content with the elements from the edge's tag.
  */
-function updateEdgePopupContent(edgePopup: HTMLPopupSupport, edge: IEdge): void {
+function updateEdgePopupContent(edgePopup: HTMLPopupSupport<IEdge>, edge: IEdge): void {
   // get business data from node tags
   const sourceData = edge.sourcePort!.owner!.tag
   const targetData = edge.targetPort!.owner!.tag
@@ -206,7 +204,7 @@ async function readSampleGraph(graphComponent: GraphComponent): Promise<void> {
     // configure to load and save to the file system
     storageLocation: StorageLocation.FILE_SYSTEM
   })
-  await readGraph(gs.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml')
+  await gs.graphMLIOHandler.readFromURL(graphComponent.graph, 'resources/sample.graphml')
   graphComponent.fitGraphBounds()
 }
 
@@ -234,15 +232,4 @@ function initializeInputMode(graphComponent: GraphComponent): void {
   graphComponent.inputMode = mode
 }
 
-/**
- * Binds commands to the demo's UI controls.
- */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global CodeMirror */
-
 import {
   HashMap,
   IEdge,
@@ -40,15 +38,22 @@ import {
   WriteEventArgs
 } from 'yfiles'
 import type { Editor, Position, TextMarker } from 'codemirror'
+import * as CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/mode/xml/xml'
+import 'codemirror/addon/dialog/dialog'
+import 'codemirror/addon/search/search'
+import 'codemirror/addon/search/searchcursor'
 
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
  * @yjs:keep = setValue,getValue
  */
 export class EditorSync {
-  private itemToIdMap: HashMap<IModelItem, string> = new HashMap()
-  private itemToMarkerMap: HashMap<IModelItem, TextMarker<any>> = new HashMap()
-  private markerToItemMap: HashMap<TextMarker<any>, IModelItem> = new HashMap()
+  private readonly itemToIdMap: HashMap<IModelItem, string> = new HashMap()
+  private readonly itemToMarkerMap: HashMap<IModelItem, TextMarker<any>> = new HashMap()
+  private readonly markerToItemMap: HashMap<TextMarker<any>, IModelItem> = new HashMap()
   private readonly contentChanged: () => void
   private readonly cursorActivity: () => void
   private _editor: Editor | null = null

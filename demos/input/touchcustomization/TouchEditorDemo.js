@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,13 +33,13 @@ import {
   DefaultGraph,
   DefaultLabelStyle,
   DefaultPortCandidateDescriptor,
-  DragDropEffects,
-  EdgeStyleDecorationInstaller,
   Fill,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
+  GraphFocusIndicatorManager,
   GraphItemTypes,
+  GraphSelectionIndicatorManager,
   GroupNodeStyle,
   HandleInputMode,
   HandleTypes,
@@ -50,13 +50,13 @@ import {
   IGraph,
   ILabel,
   IModelItem,
+  IndicatorEdgeStyleDecorator,
   INode,
   Insets,
   InteriorStretchLabelModel,
   InteriorStretchLabelModelPosition,
   License,
   MouseEventRecognizers,
-  NodeDropInputMode,
   Point,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
@@ -70,25 +70,27 @@ import {
   SolidColorFill,
   Stroke,
   TouchEventArgs,
-  TouchEventRecognizers
+  TouchEventRecognizers,
+  VoidNodeStyle
 } from 'yfiles'
 
-import { DragAndDropPanel } from '../../utils/DndPanel.js'
+import { DragAndDropPanel } from 'demo-utils/DragAndDropPanel'
 import NodePortCandidateProvider from './NodePortCandidateProvider.js'
 import EdgeReconnectionPortCandidateProvider from './EdgeReconnectionPortCandidateProvider.js'
 import WrappingHandle from './WrappingHandle.js'
 import HandleTemplate from './HandleTemplate.js'
 import DialContextMenu from './DialContextMenu.js'
 import TouchHandleInputMode from './TouchHandleInputMode.js'
-import { showApp } from '../../resources/demo-app.js'
 import PortCandidateTemplate from './PortCandidateTemplate.js'
 import {
+  applyDemoTheme,
   colorSets,
   createDemoGroupStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -103,6 +105,8 @@ async function run() {
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
+
   graphComponent.graph = createConfiguredGraph()
 
   // initialize the drag and drop panel
@@ -119,8 +123,8 @@ async function run() {
   initializeCustomHandles(graphComponent)
   // configure the custom port candidates
   initializeCustomPortCandidates(graphComponent)
-  // configure the selection decoration
-  configureSelectionDecoration(graphComponent)
+  // configure the selection indication
+  configureSelectionIndication(graphComponent)
   // configure edge reconnection
   configurePortInteraction(graphComponent.graph)
 
@@ -129,8 +133,6 @@ async function run() {
 
   // enable undo and redo
   graphComponent.graph.foldingView.manager.masterGraph.undoEngineEnabled = true
-
-  showApp(graphComponent)
 
   graphComponent.fitGraphBounds()
 }
@@ -236,7 +238,7 @@ function elapsedTime(before, after) {
  * @param {!GraphEditorInputMode} geim
  */
 function addCancelButtonListeners(geim) {
-  const cancelButton = document.getElementById('cancelButton')
+  const cancelButton = document.getElementById('cancel-button')
 
   const createEdgeButtonListener = () => {
     geim.createEdgeInputMode.cancel()
@@ -647,20 +649,18 @@ function initializeCustomPortCandidates(graphComponent) {
  * Customizes the selection visualization.
  * @param {!GraphComponent} graphComponent
  */
-function configureSelectionDecoration(graphComponent) {
-  const decorator = graphComponent.graph.decorator
-
-  decorator.nodeDecorator.selectionDecorator.hideImplementation()
-  decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
-
-  // edge selection
-  decorator.edgeDecorator.selectionDecorator.setImplementation(
-    new EdgeStyleDecorationInstaller({
-      edgeStyle: new PolylineEdgeStyle({
+function configureSelectionIndication(graphComponent) {
+  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
+    nodeStyle: VoidNodeStyle.INSTANCE
+  })
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    nodeStyle: VoidNodeStyle.INSTANCE,
+    edgeStyle: new IndicatorEdgeStyleDecorator(
+      new PolylineEdgeStyle({
         stroke: '4px #2C4B52'
       })
-    })
-  )
+    )
+  })
 
   graphComponent.selection.addItemSelectionChangedListener((sender, args) => {
     const item = args.item
@@ -794,12 +794,10 @@ function createBend(location, item) {
  * Initializes the drag and drop panel.
  */
 function initializeDnDPanel() {
-  const dndPanel = new DragAndDropPanel(document.getElementById('dndPanel'))
+  const dndPanel = new DragAndDropPanel(document.getElementById('dnd-panel'))
   // Set the callback that starts the actual drag and drop operation
-  dndPanel.beginDragCallback = (element, data) =>
-    NodeDropInputMode.startDrag(element, data, DragDropEffects.ALL)
   dndPanel.maxItemWidth = 160
-  dndPanel.populatePanel(createDnDPanelNodes)
+  dndPanel.populatePanel(createDnDPanelNodes())
 }
 
 /**
@@ -807,7 +805,7 @@ function initializeDnDPanel() {
  * @param {!GraphEditorInputMode} geim
  */
 function initializePanSnapping(geim) {
-  const select = document.querySelector('#snapPanningBox>select')
+  const select = document.querySelector('#snap-panning-box>select')
   select.addEventListener('change', () => {
     const item = select[select.selectedIndex]
     switch (item.value) {
@@ -856,7 +854,7 @@ function initializePanStart(geim) {
   // initialize the demo with two-finger panning
   configurePanStartGesture(geim, 'two')
   // listen for behavior switch
-  const select = document.querySelector('#startPanningBox>select')
+  const select = document.querySelector('#start-panning-box>select')
   select.addEventListener('change', () => {
     const item = select[select.selectedIndex]
     configurePanStartGesture(geim, item.value)
@@ -952,5 +950,4 @@ function populateGraph(graph) {
   graph.addBend(e, new Point(200, 250))
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

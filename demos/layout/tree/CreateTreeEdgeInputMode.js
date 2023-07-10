@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,14 +55,14 @@ import { LayerColors } from './NodePlacerPanel.js'
  * node. This will keep the tree-structure of the graph intact.
  */
 export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
+  targetNode = null
+  canvasObject = null
+
   /**
    * Creates a new instance of this input mode.
    */
   constructor() {
     super()
-
-    this.targetNode = null
-    this.canvasObject = null
 
     // edge creation can end anytime because the target node is also created by this input mode
     this.endHitTestable = IHitTestable.ALWAYS

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -76,18 +76,22 @@ export default class AlignmentStage extends LayoutStageBase {
   }
 
   /**
+   * Backup of the {@link IDataProvider} that was registered at the input graph before
+   * registering our own priorities.
+   */
+  originalPriorities = null
+
+  /**
+   * Stores the temporary edges this stage inserts before running the core layout algorithm.
+   */
+  alignmentEdges = null
+
+  /**
    * Creates a new instance of this stage with the given core layout.
    * @param {?ILayoutAlgorithm} coreLayout
    */
   constructor(coreLayout) {
     super(coreLayout)
-
-    // Backup of the {@link IDataProvider} that was registered at the input graph before
-    // registering our own priorities.
-    this.originalPriorities = null
-
-    // Stores the temporary edges this stage inserts before running the core layout algorithm.
-    this.alignmentEdges = null
   }
 
   /**

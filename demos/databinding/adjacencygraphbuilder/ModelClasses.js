@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,6 +36,11 @@ import { AdjacencyGraphBuilder, AdjacencyNodesSource, StringTemplateNodeStyle } 
  * Defines an adjacency node source consisting of data and bindings
  */
 export class AdjacencyNodesSourceDefinition {
+  name
+  data
+  idBinding
+  template
+
   constructor() {
     this.name = ''
     this.data = ''
@@ -48,6 +53,10 @@ export class AdjacencyNodesSourceDefinition {
  * Connector for {@link AdjacencyNodesSource}s, {@link AdjacencyNodesSourceDefinition}s and {@link AdjacencyGraphBuilder}
  */
 export class AdjacencyNodesSourceDefinitionBuilderConnector {
+  sourceDefinition
+  nodesSource
+  graphBuilder
+
   /**
    * @param {!AdjacencyNodesSourceDefinition} nodesSourceDefinition the {@link AdjacencyNodesSourceDefinition} to connect
    * @param {!AdjacencyNodesSource} nodesSource the {@link AdjacencyNodesSource} to connect

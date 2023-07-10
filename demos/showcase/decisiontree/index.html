@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Decision Tree Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .inline-image {
+        width: 12px;
+        height: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Decision Tree</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Decision Tree Demo</h1>
+
+        <p>This demo shows how to create an interactive decision tree from a graph.</p>
+
+        <p>The decision tree contains different types of nodes.</p>
+        <ul>
+          <li>
+            Orange nodes are the current options that can be clicked in order to expand the next
+            tree level.
+          </li>
+          <li>Blue nodes are nodes that have been previously chosen.</li>
+          <li>Green nodes represent options along the path that have not been chosen.</li>
+          <li>Red nodes are end nodes.</li>
+        </ul>
+
+        <h2>Things to Try</h2>
+
+        <h3>Decision Tree</h3>
+
+        <ul>
+          <li>Browse the <em>Sample</em> graphs.</li>
+          <li>
+            Click the <em>orange nodes</em>
+            to make a decision and expand the next level of the tree.
+          </li>
+          <li>
+            Click the <em>blue</em> or <em>green nodes</em>
+            to reset the decision tree back to this level and select the clicked option.
+          </li>
+          <li>Click <em>Restart</em> to reset the current decision tree.</li>
+          <li>
+            Click the <em>edit button</em>
+            <img
+              class="inline-image"
+              src="../../resources/icons/settings-16.svg"
+              alt="edit button"
+            />
+            to edit the current sample and view the complete graph.
+          </li>
+        </ul>
+
+        <h3>Edit View</h3>
+
+        <ul>
+          <li>Modify the current sample graph or load other graphs from your computer.</li>
+          <li>
+            Right click a node and select "Set as root node" to start the decision tree at this
+            node. Right click the empty canvas to clear the root node.
+          </li>
+          <li>
+            Click the <em>start button</em>
+            <img class="inline-image" src="../../resources/icons/play2-16.svg" alt="start button" />
+            to start the decision tree with the current graph.
+          </li>
+        </ul>
+
+        <h2>Source Graph Structure</h2>
+
+        <p>The <em>DecisionTree</em> component supports different formats of graphs.</p>
+        <ul>
+          <li>
+            The source graph does not have to be a tree. It can be an arbitrary graph structure.
+          </li>
+          <li>Loops in the graph are supported (see <em>quiz</em> sample).</li>
+          <li>
+            The graph can contain group nodes, but the clickable nodes have to be normal nodes.
+          </li>
+          <li>
+            Only group nodes that are direct parents of clickable nodes appear in the decision
+            graph.
+          </li>
+          <li>
+            Edges connecting nodes in groups can either end directly at the child nodes (as in the
+            <em>quiz</em> sample), or at the containing group node (as in the <em>what-to-do</em>
+            sample).
+          </li>
+        </ul>
+        <p>
+          The first node that's found that has no incoming edges serves as the start node. The
+          <em>DecisionTree</em> component also supports explicitly specifying a start node.
+        </p>
+      </div>
+    </aside>
+
+    <div class="demo-page__toolbar hidden" id="editor-toolbar">
+      <button data-command="NEW"></button>
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button id="layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+    </div>
+    <div class="demo-page__toolbar" id="decision-tree-toolbar">
+      <button data-command="INCREASE_ZOOM_DECISION_TREE" class="demo-icon-yIconZoomIn"></button>
+      <button
+        data-command="ZOOM_ORIGINAL_DECISION_TREE"
+        class="demo-icon-yIconZoomOriginal"
+      ></button>
+      <button data-command="DECREASE_ZOOM_DECISION_TREE" class="demo-icon-yIconZoomOut"></button>
+      <button data-command="FIT_GRAPH_BOUNDS_DECISION_TREE" class="demo-icon-yIconZoomFit"></button>
+
+      <span class="demo-separator"></span>
+
+      <span>Sample</span>
+      <select id="samples" title="Select a sample graph"></select>
+
+      <span class="demo-separator"></span>
+      <button id="restart" title="Restart Decision Tree" class="demo-icon-yIconReload labeled">
+        Restart
+      </button>
+    </div>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent" class="hidden"></div>
+        <div id="decision-tree"></div>
+      </div>
+      <div
+        id="toggle-decision-tree-button"
+        class="action-button decision-tree"
+        title="Edit Decision Tree Graph"
+      ></div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="DecisionTreeDemo.ts" async></script>
+  </body>
+</html>

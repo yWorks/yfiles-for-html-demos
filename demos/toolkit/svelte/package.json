@@ -7,18 +7,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node --max_old_space_size=8192 node_modules/vite/bin/vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "yfiles": "../../../lib-dev/yfiles-25.0.4+dev.tgz"
+    "demo-resources": "../../resources",
+    "demo-utils": "../../utils",
+    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "1.0.0-next.49",
+    "@sveltejs/vite-plugin-svelte": "^2.4.1",
     "@tsconfig/svelte": "^3.0.0",
-    "svelte": "^3.48.0",
-    "svelte-preprocess": "^4.10.7",
-    "typescript": "^4.4.4",
-    "vite": "^2.9.12"
+    "@yworks/optimizer": "^1.8.1",
+    "svelte": "^3.59.2",
+    "svelte-preprocess": "^5.0.4",
+    "typescript": "~5.1.6",
+    "vite": "^4.3.9"
   }
 }

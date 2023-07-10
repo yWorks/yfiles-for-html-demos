@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,8 +38,7 @@ import {
   Point,
   PolylineEdgeStyle,
   Rect,
-  SvgVisual,
-  YObject
+  SvgVisual
 } from 'yfiles'
 
 /**
@@ -189,7 +188,7 @@ function getBendLocations(edge: IEdge): Point[] {
  * compare equal to the respective element in the other array, `false` otherwise.
  */
 function arrayEqual(a: Point[], b: Point[]): boolean {
-  if (YObject.referenceEquals(a, b)) {
+  if (a === b) {
     return true
   }
 

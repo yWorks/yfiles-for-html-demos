@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,14 +30,14 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Hierarchic Bus Structures Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       input {
@@ -53,13 +52,104 @@
         vertical-align: middle;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Hierarchic Bus Structures</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button
+        id="layout"
+        title="Run layout with current settings"
+        class="demo-icon-yIconLayout labeled"
+      >
+        Layout
+      </button>
+
+      <input
+        type="checkbox"
+        id="bus-structures-toggle"
+        class="demo-toggle-button labeled"
+        checked=""
+      />
+      <label for="bus-structures-toggle" title="Toggles bus structures for HierarchicLayout">
+        Toggle Bus Structures
+      </label>
+
+      <span class="demo-separator"></span>
+
+      <select id="bus-preset-select" title="Select a bus structure preset">
+        <option value="balanced">Balanced</option>
+        <option value="leaves">Leaves</option>
+        <option value="squares">Squares</option>
+        <option value="left-aligned">Left Aligned</option>
+        <option value="right-aligned">Right Aligned</option>
+        <option value="custom">Custom</option>
+      </select>
+
+      <span id="bus-sliders" style="opacity: 0.5">
+        <span class="demo-separator"></span>
+
+        <label>
+          Max. before Bus:
+          <input id="before-bus-slider" type="range" min="0" max="20" value="0" disabled="" />
+          <span id="before-bus-label">0</span>
+        </label>
+
+        <span class="demo-separator"></span>
+
+        <label>
+          Max. after Bus:
+          <input
+            id="after-bus-slider"
+            type="range"
+            min="0"
+            max="20"
+            value="0"
+            style="padding: 0px"
+            disabled=""
+          />
+          <span id="after-bus-label">0</span>
+        </label>
+      </span>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Hierarchic Bus Structures Demo</h1>
 
         <p>
@@ -80,34 +170,46 @@
         <dl>
           <dt>Balanced</dt>
           <dd>
-            Each bus is assigned a default <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> with no further
-            configuration.
+            Each bus is assigned a default
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a>
+            with no further configuration.
           </dd>
           <dt>Leaves</dt>
           <dd>
-            Each bus uses a <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> where only one node is allowed
-            before and after the bus by setting <code>maximumNodesAfterBus</code> and
-            <code>maximumNodesBeforeBus</code> to one.
+            Each bus uses a
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a>
+            where only one node is allowed before and after the bus by setting
+            <code>maximumNodesAfterBus</code>
+            and
+            <code>maximumNodesBeforeBus</code>
+            to one.
           </dd>
           <dt>Squares</dt>
           <dd>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a> for each bus is configured separately such
-            that its elements will be arranged in a square.
+            The
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor" target="_blank">HierarchicLayoutBusDescriptor</a>
+            for each bus is configured separately such that its elements will be arranged in a
+            square.
           </dd>
           <dt>Left Aligned</dt>
           <dd>
-            Setting the <code>maximumNodesBeforeBus</code> to zero and allowing arbitrarily many
-            nodes after the bus, results in a left alignment.
+            Setting the
+            <code>maximumNodesBeforeBus</code>
+            to zero and allowing arbitrarily many nodes after the bus, results in a left alignment.
           </dd>
           <dt>Right Aligned</dt>
           <dd>
-            Setting the <code>maximumNodesAfterBus</code> to zero and allowing arbitrarily many
-            nodes before the bus, results in a right alignment.
+            Setting the
+            <code>maximumNodesAfterBus</code>
+            to zero and allowing arbitrarily many nodes before the bus, results in a right
+            alignment.
           </dd>
           <dt>Custom</dt>
           <dd>
             In this mode, you can play around with the sliders that control the
-            <code>maximumNodesAfterBus</code> and <code>maximumNodesBeforeBus</code>
+            <code>maximumNodesAfterBus</code>
+            and
+            <code>maximumNodesBeforeBus</code>
             setting to see its effect.
           </dd>
         </dl>
@@ -115,106 +217,34 @@
         <h2>Things to Try</h2>
         <ul>
           <li>
-            Click <em>Toggle Bus Structures</em> to see the difference between the layout without
-            bus structures and the current bus structure preset.
+            Click
+            <em>Toggle Bus Structures</em>
+            to see the difference between the layout without bus structures and the current bus
+            structure preset.
           </li>
           <li>Try the different bus structure presets in the dropdown menu.</li>
           <li>
-            Choose the <em>Custom</em> preset of the dropdown and try different settings for
-            <code>maximumNodesAfterBus</code> and <code>maximumNodesBeforeBus</code> with the
-            sliders.
+            Choose the
+            <em>Custom</em>
+            preset of the dropdown and try different settings for
+            <code>maximumNodesAfterBus</code>
+            and
+            <code>maximumNodesBeforeBus</code>
+            with the sliders.
           </li>
           <li>
             Edit the graph and click the
-            <span class="inline-icon demo-icon-yIconLayout"></span> button to re-run the layout with
-            the current settings.
+            <span class="inline-icon demo-icon-yIconLayout"></span>
+            button to re-run the layout with the current settings.
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          id="layoutButton"
-          data-command="Layout"
-          title="Run layout with current settings"
-          class="demo-icon-yIconLayout"
-        ></button>
-
-        <input
-          type="checkbox"
-          id="bus-structures-toggle"
-          class="demo-toggle-button labeled"
-          data-command="ToggleBusStructures"
-          checked=""
-        />
-        <label for="bus-structures-toggle" title="Toggles bus structures for HierarchicLayout"
-          >Toggle Bus Structures</label
-        >
-
-        <span class="demo-separator"></span>
-
-        <select
-          id="bus-preset-select"
-          data-command="SelectBusPreset"
-          title="Select a bus structure preset"
-        >
-          <option value="balanced">Balanced</option>
-          <option value="leaves">Leaves</option>
-          <option value="squares">Squares</option>
-          <option value="left-aligned">Left Aligned</option>
-          <option value="right-aligned">Right Aligned</option>
-          <option value="custom">Custom</option>
-        </select>
-
-        <span id="bus-sliders" style="opacity: 0.5">
-          <span class="demo-separator"></span>
-
-          <span style="margin: 0 10px 0 10px" for="before-bus-slider">Max. before Bus:</span>
-          <input
-            id="before-bus-slider"
-            type="range"
-            min="0"
-            max="20"
-            value="0"
-            style="padding: 0px"
-            disabled=""
-          />
-          <span id="before-bus-label">0</span>
-
-          <span class="demo-separator"></span>
-
-          <span style="margin: 0 10px 0 10px" for="after-bus-slider">Max. after Bus:</span>
-          <input
-            id="after-bus-slider"
-            type="range"
-            min="0"
-            max="20"
-            value="0"
-            style="padding: 0px"
-            disabled=""
-          />
-          <span id="after-bus-label">0</span>
-        </span>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="BusStructuresDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="BusStructuresDemo.ts" async></script>
   </body>
 </html>

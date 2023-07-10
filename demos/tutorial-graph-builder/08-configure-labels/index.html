@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>08 Configure Labels - Graph Builder Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-graph-builder"> Graph Builder Tutorial </a>
+
+        <span>08 Configure Labels</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-graph-builder/07-create-labels-sources/index.html'><span>07 Create Labels Sources</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 8/13</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 08 Configure Labels</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-graph-builder/01-create-graph/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create Graph</a
+          ><a
+            href="../../tutorial-graph-builder/02-create-nodes-sources/index.html"
+            class="tutorial-dropdown__item"
+            >02 Create Nodes Sources</a
+          ><a
+            href="../../tutorial-graph-builder/03-create-edges-sources/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Edges Sources</a
+          ><a
+            href="../../tutorial-graph-builder/04-group-nodes/index.html"
+            class="tutorial-dropdown__item"
+            >04 Group Nodes</a
+          ><a
+            href="../../tutorial-graph-builder/05-implicit-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >05 Implicit Grouping</a
+          ><a
+            href="../../tutorial-graph-builder/06-configure-styles/index.html"
+            class="tutorial-dropdown__item"
+            >06 Configure Styles</a
+          ><a
+            href="../../tutorial-graph-builder/07-create-labels-sources/index.html"
+            class="tutorial-dropdown__item"
+            >07 Create Labels Sources</a
+          ><a
+            href="../../tutorial-graph-builder/08-configure-labels/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >08 Configure Labels</a
+          ><a
+            href="../../tutorial-graph-builder/09-configure-tags/index.html"
+            class="tutorial-dropdown__item"
+            >09 Configure Tags</a
+          ><a
+            href="../../tutorial-graph-builder/10-configure-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Configure Layout</a
+          ><a
+            href="../../tutorial-graph-builder/11-update-graph/index.html"
+            class="tutorial-dropdown__item"
+            >11 Update Graph</a
+          ><a
+            href="../../tutorial-graph-builder/12-adjacency-graph-builder/index.html"
+            class="tutorial-dropdown__item"
+            >12 Adjacency Graph Builder</a
+          ><a
+            href="../../tutorial-graph-builder/13-tree-builder/index.html"
+            class="tutorial-dropdown__item"
+            >13 Tree Builder</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-graph-builder/09-configure-tags/index.html'><span>09 Configure Tags</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Configure label styles and placement</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In this tutorial step, you will learn how to configure
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> to place the labels of the graph elements at a
+                  desired position and configure their style.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          This step is optional when building a graph with
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. If you do not want to add labels to your
+                          graph, you can proceed with the next step.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="paragraph">
+                <p>In this step, we will use a simple company ownership diagram.</p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> data = {
+  <span class="hljs-attr">nodeData</span>: [
+    {
+      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Investment Capital&#x27;</span>,
+      <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Corporation&#x27;</span>
+    },
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Melissa Barner&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span> },
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Monster Inc&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Corporation&#x27;</span> },
+    {
+      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;3&#x27;</span>,
+      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;International Group&#x27;</span>,
+      <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span>
+    }
+  ],
+  <span class="hljs-attr">edgeData</span>: [
+    {
+      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+      <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;1&#x27;</span>,
+      <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+      <span class="hljs-attr">ownership</span>: <span class="hljs-number">30</span>
+    },
+    {
+      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>,
+      <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;2&#x27;</span>,
+      <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+      <span class="hljs-attr">ownership</span>: <span class="hljs-number">60</span>
+    },
+    {
+      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>,
+      <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;3&#x27;</span>,
+      <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+      <span class="hljs-attr">ownership</span>: <span class="hljs-number">5</span>
+    }
+  ]
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_configure_node_labels">Configure node labels</h2>
+            <div class="sectionbody">
+              <div class="sect2">
+                <h3 id="_label_placement">Label placement</h3>
+                <div class="paragraph">
+                  <p>
+                    The label placement can be defined either using a <em>default</em> configuration
+                    or using a <em>layout provider</em> on the <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator" target="_blank">LabelCreator</a>.
+                  </p>
+                </div>
+                <div class="paragraph">
+                  <p>
+                    A default placement will apply to all labels of the
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelsSource" target="_blank">LabelsSource</a> for which no other placement is specified. In this
+                    example, as a default, we place the labels at the center of the node as follows:
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript">typeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-title class_">InteriorLabelModel</span>.<span class="hljs-property">CENTER</span></code></pre>
+                  </div>
+                </div>
+                <div class="paragraph">
+                  <p>
+                    In the case where you want to determine the label position based on specific
+                    properties of the data, you can use a
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-layoutParameterProvider" target="_blank">layout parameter provider</a>
+                    which will provide the information about the desired label placement.
+                  </p>
+                </div>
+                <div class="paragraph">
+                  <p>
+                    In this example, we want to create two labels for each node. The first label
+                    will be bound to the <code>type</code> property of our dataset and will use the
+                    <code>default</code> placement, i.e., at the center of the node. The second
+                    label will be bound to the <code>name</code> property and will be placed at the
+                    top side of the node, stretched over the node&#8217;s width. To achieve the
+                    desired placement, we create the layout provider as follows:
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// position the label on the top of the node</span>
+nameLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = (): <span class="hljs-function"><span class="hljs-params">ILabelModelParameter</span> =&gt;</span>
+  <span class="hljs-title class_">InteriorStretchLabelModel</span>.<span class="hljs-property">NORTH</span></code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="sect2">
+                <h3 id="_label_styles">Label styles</h3>
+                <div class="paragraph">
+                  <p>
+                    Similar to node/edge styling, there exist three ways to style labels.
+                    Specifically, you can set <em>defaults</em>, <em>style</em>
+                    <em>bindings</em> and <em>style</em> <em>providers</em> on the
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator" target="_blank">LabelCreator</a>.
+                  </p>
+                </div>
+                <div class="paragraph">
+                  <p>
+                    In our example, we will first create a default style for all labels for which we
+                    will not set a specific style. More precisely, we use the
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle" target="_blank">DefaultLabelStyle</a> and align the text to the
+                    <code>center</code> of the node.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript">nameLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+  <span class="hljs-attr">horizontalTextAlignment</span>: <span class="hljs-string">&#x27;center&#x27;</span>
+})</code></pre>
+                  </div>
+                </div>
+                <div class="paragraph">
+                  <p>
+                    Next, we will visualize the labels bound to the <code>type</code> property with
+                    a different font style. To achieve this, we have first to make sure that we do
+                    not share the same style to all labels.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// disable the sharing of the label style</span>
+typeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>
+<span class="hljs-comment">// create a new binding to assign a new font</span>
+typeLabelCreator.<span class="hljs-property">styleBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;font&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-string">&#x27;bold 12px Roboto&#x27;</span>)</code></pre>
+                  </div>
+                </div>
+                <div class="paragraph">
+                  <p>
+                    For the labels bound to the <code>name</code> property, we want to use a
+                    different background color based on the <code>type</code> of the associated
+                    node. For these of type <code>Trust</code>, we will also add an icon using the
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/IconLabelStyle" target="_blank">IconLabelStyle</a>.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// disable the sharing of the label style</span>
+nameLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>
+<span class="hljs-comment">// create a provider that will assign a new style, based on the type property</span>
+nameLabelCreator.<span class="hljs-property">styleProvider</span> = (data): <span class="hljs-function"><span class="hljs-params">ILabelStyle</span> =&gt;</span> {
+  <span class="hljs-keyword">if</span> (data.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Corporation&#x27;</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+      <span class="hljs-attr">backgroundFill</span>: orange,
+      <span class="hljs-attr">horizontalTextAlignment</span>: <span class="hljs-string">&#x27;center&#x27;</span>
+    })
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IconLabelStyle</span>({
+      icon,
+      <span class="hljs-attr">iconSize</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">14</span>, <span class="hljs-number">14</span>),
+      <span class="hljs-attr">iconPlacement</span>: <span class="hljs-title class_">InteriorLabelModel</span>.<span class="hljs-property">WEST</span>,
+      <span class="hljs-attr">wrapped</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+        <span class="hljs-attr">backgroundFill</span>: pink,
+        <span class="hljs-attr">horizontalTextAlignment</span>: <span class="hljs-string">&#x27;center&#x27;</span>
+      })
+    })
+  }
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="sect2">
+                <h3 id="_label_size">Label size</h3>
+                <div class="paragraph">
+                  <p>
+                    Using the same approach, the label size can be configured either using
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-preferredSizeBindings" target="_blank">size bindings</a>
+                    or using a
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-preferredSizeProvider" target="_blank">size provider</a>. The following code shows how to set a different size to the labels of type
+                    <code>Trust</code>.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// set a new size for the labels with type &#x27;Trust&#x27;</span>
+typeLabelCreator.<span class="hljs-property">preferredSizeProvider</span> = (data): <span class="hljs-function"><span class="hljs-params">Size</span> =&gt;</span>
+  data.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Trust&#x27;</span> ? <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">70</span>, <span class="hljs-number">15</span>) : <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">100</span>, <span class="hljs-number">15</span>)
+
+<span class="hljs-comment">// set different widths for nodes with type &#x27;Trust&#x27;</span>
+typeLabelCreator.<span class="hljs-property">preferredSizeBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;width&#x27;</span>, <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> {
+  <span class="hljs-keyword">return</span> data.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Trust&#x27;</span> ? <span class="hljs-number">200</span> : <span class="hljs-number">100</span>
+})</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_configure_edge_labels">Configure edge labels</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Following a similar approach, we can configure the edge labels. In this example,
+                  we bind the label text to the <code>ownership</code> property and select a layout
+                  parameter that will position the label near the middle of the associated edge
+                  path. Regarding the style, labels that show <code>ownership</code> values greater
+                  than <code>50%</code> are drawn in red-color.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// configure the position of the label</span>
+edgeLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = (): <span class="hljs-function"><span class="hljs-params">ILabelModelParameter</span> =&gt;</span>
+  <span class="hljs-keyword">new</span> <span class="hljs-title class_">EdgePathLabelModel</span>({
+    <span class="hljs-attr">autoRotation</span>: <span class="hljs-literal">false</span>
+  }).<span class="hljs-title function_">createDefaultParameter</span>()
+
+<span class="hljs-comment">// configure its style</span>
+edgeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>
+edgeLabelCreator.<span class="hljs-property">styleBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;textFill&#x27;</span>, <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> {
+  <span class="hljs-keyword">return</span> (data.<span class="hljs-property">ownership</span> ?? <span class="hljs-number">0</span>) &gt; <span class="hljs-number">50</span> ? red : grey
+})</code></pre>
+                </div>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          Please have a look in this tutorial step’s demo code in
+                          <code>configure-labels.ts</code> and play around with the sample data and
+                          try different layout and styling for the labels.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-graph-builder/09-configure-tags/index.html'><span>09 Configure Tags</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

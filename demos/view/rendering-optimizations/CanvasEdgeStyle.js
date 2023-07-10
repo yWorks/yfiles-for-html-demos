@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -91,6 +91,8 @@ export default class CanvasEdgeStyle extends EdgeStyleBase {
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
+  color
+
   /**
    * Creates an edge render visual instance for an edge.
    * @param {!IListEnumerable.<IBend>} bends

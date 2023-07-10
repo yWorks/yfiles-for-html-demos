@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,6 @@ import {
   ArrowType,
   GraphComponent,
   GraphEditorInputMode,
-  IArrow,
   IBend,
   IEdge,
   IModelItem,
@@ -39,10 +38,9 @@ import {
   IPort,
   Point,
   PolylineEdgeStyle,
-  PopulateItemContextMenuEventArgs,
-  Stroke
+  PopulateItemContextMenuEventArgs
 } from 'yfiles'
-import { ContextMenu } from '../../utils/ContextMenu.js'
+import { ContextMenu } from 'demo-utils/ContextMenu'
 
 export default class ContextMenuSupport {
   /**
@@ -189,8 +187,8 @@ export default class ContextMenuSupport {
    */
   static updateEdgeColor(edge, color) {
     const edgeStyle = edge.style
-    edgeStyle.stroke = Stroke.from(`3px ${color}`)
-    edgeStyle.targetArrow = IArrow.from(`${color} 1.5 triangle`)
+    edgeStyle.stroke = `3px ${color}`
+    edgeStyle.targetArrow = `${color} 1.5 triangle`
   }
 
   /**

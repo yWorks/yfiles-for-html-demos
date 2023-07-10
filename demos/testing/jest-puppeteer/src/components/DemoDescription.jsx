@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,8 +33,12 @@ export default class DemoDescription extends Component {
   render() {
     return (
       <div>
-        <h1 className="demo-sidebar-header">Description</h1>
-        <div className="demo-sidebar-content">
+        <div className="demo-description__header">
+          {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
+          <a href="https://www.yworks.com/products/yfiles" className="demo-description__logo" />
+        </div>
+        <div className="demo-description__content">
+          <h1>Jest Puppeteer Demo</h1>
           <p>
             This demo shows how to use{' '}
             <a href="https://jestjs.io/en/" rel="noopener noreferrer" target="_blank">
@@ -52,23 +56,23 @@ export default class DemoDescription extends Component {
               Go to the demo&apos;s directory <code>demos-js/testing/jest-puppeteer</code>.
             </li>
             <li>
-              <code>npm install</code>.
+              Run: <code>npm install</code>
             </li>
             <li>
               Start the demo:
               <br />
-              <code>npm run start-test</code>.
+              <code>npm run start-test</code>
             </li>
             <li>
               Run the integration tests:
               <br />
-              <code>npm run test:integration</code>.
+              <code>npm run test:integration</code>
             </li>
           </ol>
 
           <p>
             The demo starts with an empty graph, but graph items can be created interactively. The
-            integration tests test this functionality by simulating node, edge and port creation
+            integration tests check this functionality by simulating node, edge and port creation
             gestures and verifying that the graph instance actually contains the newly created graph
             items.
           </p>

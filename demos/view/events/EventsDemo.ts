@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,7 +43,6 @@ import {
   HandleInputMode,
   HoveredItemChangedEventArgs,
   IBend,
-  ICommand,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
   IEdgeStyle,
@@ -101,19 +100,11 @@ import {
   VoidNodeStyle
 } from 'yfiles'
 
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import {
-  addClass,
-  bindAction,
-  bindActions,
-  bindCommand,
-  configureTwoPointerPanning,
-  removeClass,
-  showApp
-} from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import EventView from './EventView'
-import { fetchLicense } from '../../resources/fetch-license'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * This demo shows how to register to the various events provided by the {@link IGraph graph},
@@ -127,7 +118,7 @@ async function run(): Promise<void> {
   // initialize the GraphComponent
   initializeGraphComponent()
 
-  registerCommands()
+  initializeUI()
   initializeInputModes()
   setupToolTips()
   setupContextMenu()
@@ -146,8 +137,6 @@ async function run(): Promise<void> {
 
   // initialize collapsible headings
   initOptionHeadings()
-
-  showApp(graphComponent)
 }
 
 let eventView: EventView
@@ -3059,13 +3048,13 @@ function createDraggableNode(): HTMLElement {
       simpleNode,
       DragDropEffects.ALL,
       true,
-      BrowserDetection.pointerEvents ? dragPreview : null
+      dragPreview
     )
     dragSource.addQueryContinueDragListener((src, args) => {
       if (args.dropTarget === null) {
-        removeClass(dragPreview, 'hidden')
+        dragPreview.classList.remove('hidden')
       } else {
-        addClass(dragPreview, 'hidden')
+        dragPreview.classList.add('hidden')
       }
     })
   }
@@ -3085,7 +3074,7 @@ function createDraggableNode(): HTMLElement {
       startDrag()
       event.preventDefault()
     },
-    BrowserDetection.passiveEventListeners ? { passive: false } : false
+    { passive: false }
   )
 
   return div
@@ -3128,13 +3117,13 @@ function createDraggableLabel(): HTMLDivElement {
       simpleLabel,
       DragDropEffects.ALL,
       true,
-      BrowserDetection.pointerEvents ? dragPreview : null
+      dragPreview
     )
     dragSource.addQueryContinueDragListener((src, args) => {
       if (args.dropTarget === null) {
-        removeClass(dragPreview, 'hidden')
+        dragPreview.classList.remove('hidden')
       } else {
-        addClass(dragPreview, 'hidden')
+        dragPreview.classList.add('hidden')
       }
     })
   }
@@ -3154,7 +3143,7 @@ function createDraggableLabel(): HTMLDivElement {
       startDrag()
       event.preventDefault()
     },
-    BrowserDetection.passiveEventListeners ? { passive: false } : false
+    { passive: false }
   )
 
   return div
@@ -3199,13 +3188,13 @@ function createDraggablePort(): HTMLDivElement {
       simplePort,
       DragDropEffects.ALL,
       true,
-      BrowserDetection.pointerEvents ? dragPreview : null
+      dragPreview
     )
     dragSource.addQueryContinueDragListener((src, args) => {
       if (args.dropTarget === null) {
-        removeClass(dragPreview, 'hidden')
+        dragPreview.classList.remove('hidden')
       } else {
-        addClass(dragPreview, 'hidden')
+        dragPreview.classList.add('hidden')
       }
     })
   }
@@ -3225,7 +3214,7 @@ function createDraggablePort(): HTMLDivElement {
       startDrag()
       event.preventDefault()
     },
-    BrowserDetection.passiveEventListeners ? { passive: false } : false
+    { passive: false }
   )
 
   return div
@@ -3313,16 +3302,35 @@ function createSampleGraph(): void {
   graph.adjustGroupNodeLayout(groupNode)
 }
 
-function registerCommands(): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+/**
+ * Binds all event-check-boxes to the appropriate functions
+ */
+function bindEventCheckBoxes() {
+  const elements = document.querySelectorAll<HTMLInputElement>("input[data-action='ToggleEvents']")
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i]
 
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent, null)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent, null)
+    element.addEventListener('click', (e: Event) => {
+      const eventKind = element.getAttribute('data-event-kind')
+      if (eventKind) {
+        const enable = element.checked
+        const fn = enable
+          ? (eventRegistration as any)[`register${eventKind}Events`]
+          : (eventRegistration as any)[`deregister${eventKind}Events`]
+        if (typeof fn === 'function') {
+          fn()
+        } else if (typeof window.console !== 'undefined') {
+          console.log(`NOT FOUND: ${eventKind}`)
+        }
+      }
+    })
+  }
+}
 
-  bindAction("input[data-command='ToggleEditing']", () => {
+function initializeUI(): void {
+  bindEventCheckBoxes()
+
+  document.querySelector('#toggle-editing')!.addEventListener('click', () => {
     if (graphComponent.inputMode === editorMode) {
       graphComponent.inputMode = viewerMode
     } else {
@@ -3330,35 +3338,18 @@ function registerCommands(): void {
     }
   })
 
-  bindAction('#demo-orthogonal-editing-button', () => {
-    const orthogonalEditingButton = document.querySelector(
-      '#demo-orthogonal-editing-button'
-    ) as HTMLInputElement
+  const orthogonalEditingButton = document.querySelector<HTMLInputElement>(
+    '#demo-orthogonal-editing-button'
+  )!
+  orthogonalEditingButton.addEventListener('click', () => {
     editorMode.orthogonalEdgeEditingContext!.enabled = orthogonalEditingButton.checked
   })
 
-  bindAction("button[data-command='ClearLog']", () => clearButtonClick())
+  document.querySelector('#clear-log-button')!.addEventListener('click', () => clearButtonClick())
 
-  bindActions("input[data-command='ToggleEvents']", event => {
-    const element = event.target as HTMLInputElement
-    const eventKind = element.getAttribute('data-event-kind')
-    if (eventKind) {
-      const enable = element.checked
-      const fn = enable
-        ? (eventRegistration as any)[`register${eventKind}Events`]
-        : (eventRegistration as any)[`deregister${eventKind}Events`]
-      if (typeof fn === 'function') {
-        fn()
-      } else if (typeof window.console !== 'undefined') {
-        console.log(`NOT FOUND: ${eventKind}`)
-      }
-    }
-  })
-
-  bindAction("input[data-command='ToggleLogGrouping']", () => {
-    eventView.groupEvents = (
-      document.getElementById('toggle-log-grouping') as HTMLInputElement
-    ).checked
+  const toggleLogGrouping = document.querySelector<HTMLInputElement>('#toggle-log-grouping')!
+  toggleLogGrouping.addEventListener('click', () => {
+    eventView.groupEvents = toggleLogGrouping.checked
   })
 }
 
@@ -3436,5 +3427,4 @@ function initOptionHeadings(): void {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

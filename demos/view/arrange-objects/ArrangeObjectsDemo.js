@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphBuilder,
-  GraphComponent,
-  GraphEditorInputMode,
-  ICommand,
-  IGraph,
-  License
-} from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { GraphBuilder, GraphComponent, GraphEditorInputMode, IGraph, License } from 'yfiles'
 import {
   alignBottom,
   alignHorizontally,
@@ -46,8 +38,9 @@ import {
   distributeVertically
 } from './AlignmentUtils.js'
 import SampleData from './resources/SampleData.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Bootstraps this demo.
@@ -74,10 +67,7 @@ async function run() {
   graphComponent.graph.undoEngineEnabled = true
 
   // bind the demo's new node alignment and node distribution operations to the demo's UI controls
-  registerCommands(graphComponent)
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  initializeUI(graphComponent)
 }
 
 /**
@@ -96,46 +86,53 @@ function createSampleGraph(graph) {
 }
 
 /**
- * Binds actions and commands to the demo's UI controls.
+ * Binds actions to the demo's UI controls.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
+function initializeUI(graphComponent) {
   // bind the demo's new node alignment operations to toolbar controls
-  bindAction("button[data-command='AlignBottom']", () =>
-    alignBottom(graphComponent.graph, graphComponent.selection.selectedNodes)
-  )
-  bindAction("button[data-command='AlignHorizontally']", () =>
-    alignHorizontally(graphComponent.graph, graphComponent.selection.selectedNodes)
-  )
-  bindAction("button[data-command='AlignLeft']", () =>
-    alignLeft(graphComponent.graph, graphComponent.selection.selectedNodes)
-  )
-  bindAction("button[data-command='AlignRight']", () =>
-    alignRight(graphComponent.graph, graphComponent.selection.selectedNodes)
-  )
-  bindAction("button[data-command='AlignTop']", () =>
-    alignTop(graphComponent.graph, graphComponent.selection.selectedNodes)
-  )
-  bindAction("button[data-command='AlignVertically']", () =>
-    alignVertically(graphComponent.graph, graphComponent.selection.selectedNodes)
-  )
+  document
+    .querySelector('#align-bottom')
+    .addEventListener('click', () =>
+      alignBottom(graphComponent.graph, graphComponent.selection.selectedNodes)
+    )
+  document
+    .querySelector('#align-horizontally')
+    .addEventListener('click', () =>
+      alignHorizontally(graphComponent.graph, graphComponent.selection.selectedNodes)
+    )
+  document
+    .querySelector('#align-left')
+    .addEventListener('click', () =>
+      alignLeft(graphComponent.graph, graphComponent.selection.selectedNodes)
+    )
+  document
+    .querySelector('#align-right')
+    .addEventListener('click', () =>
+      alignRight(graphComponent.graph, graphComponent.selection.selectedNodes)
+    )
+  document
+    .querySelector('#align-top')
+    .addEventListener('click', () =>
+      alignTop(graphComponent.graph, graphComponent.selection.selectedNodes)
+    )
+  document
+    .querySelector('#align-vertically')
+    .addEventListener('click', () =>
+      alignVertically(graphComponent.graph, graphComponent.selection.selectedNodes)
+    )
 
   // bind the demo's new node distribution operations to toolbar controls
-  bindAction("button[data-command='DistributeHorizontally']", () =>
-    distributeHorizontally(graphComponent.graph, graphComponent.selection.selectedNodes)
-  )
-  bindAction("button[data-command='DistributeVertically']", () =>
-    distributeVertically(graphComponent.graph, graphComponent.selection.selectedNodes)
-  )
+  document
+    .querySelector('#distribute-horizontally')
+    .addEventListener('click', () =>
+      distributeHorizontally(graphComponent.graph, graphComponent.selection.selectedNodes)
+    )
+  document
+    .querySelector('#distribute-vertically')
+    .addEventListener('click', () =>
+      distributeVertically(graphComponent.graph, graphComponent.selection.selectedNodes)
+    )
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

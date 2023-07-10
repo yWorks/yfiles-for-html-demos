@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Simple Graph Builder Demo
-
-<img src="../../resources/image/simplegraphbuilder.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/databinding/simplegraphbuilder/index.html).
 
 # Simple Graph Builder Demo
 
@@ -28,6 +35,14 @@ Registers a data source that represents the group nodes.
 `createEdgesSource`
 
 Registers a data source that represent the edges that connect the nodes.
+
+`NodesSource.createChildNodesSource`
+
+Registers a data source that represents the child nodes for a node in the NodesSource.
+
+`NodesSource.createParentNodesSource`
+
+Registers a data source that represents the group node for a node in the NodesSource.
 
 ### TreeBuilder
 
@@ -66,6 +81,7 @@ Registers a provider for target node IDs to which edges are created.
 The files
 
 - `graph-builder-data.js`
+- `graph-builder-with-grouping-data.js`
 - `tree-builder-data-array.js`
 - `tree-builder-data-json.js`
 - `adjacent-builder-id-data-array.js`

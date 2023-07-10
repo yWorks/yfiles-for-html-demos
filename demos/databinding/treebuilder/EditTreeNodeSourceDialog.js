@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,10 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import * as CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/mode/xml/xml'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/dialog/dialog'
+
 /**
  * Editing dialog for schema graph nodes business data ({@link TreeNodesSourceDefinition}
  */
 export class EditTreeNodesSourceDialog {
+  dialogContainerModal
+  dialogContainer
+  acceptCallback
+
+  nodesSourceConnector
+
+  dataEditor
+  idBindingInput
+  templateEditor
+  nameInput
+
   /**
    * Constructor for EditTreeNodesSourceDialog
    * @param {!TreeNodesSourceDefinitionBuilderConnector} nodesSourceConnector the connector providing the business data
@@ -177,7 +195,7 @@ export class EditTreeNodesSourceDialog {
    * @param {!string} labelText the heading label
    * @param {!string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
    * @param {!(string|object)} mode the language syntax configuration object for CodeMirror
-   * @returns {!EditorFromTextArea}
+   * @returns {*}
    */
   createEditorField(labelText, doc, mode) {
     const container = this.createDescription(labelText, doc)

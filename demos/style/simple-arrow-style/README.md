@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Simple Arrow Style Demo
-
-<img src="../../resources/image/simple-arrow-style.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/style/simple-arrow-style/index.html).
 
 # Simple Arrow Style Demo
 
@@ -15,5 +22,4 @@ This demo shows how to create a simple custom arrow for edges.
 
 ## Related Demos
 
-- [Tutorial: Custom Arrow](../../02-tutorial-custom-styles/20-custom-arrow/index.html)
-- [Tutorial: Arrow Thickness](../../02-tutorial-custom-styles/22-arrow-thickness/index.html)
+- [Tutorial: Custom Arrow](../../tutorial-style-implementation-edge/12-custom-arrow/index.html)

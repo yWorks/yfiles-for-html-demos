@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   IInputModeContext,
   INode,
   INodeHitTester,
@@ -51,20 +50,11 @@ import {
   SvgVisual
 } from 'yfiles'
 
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
 import SampleData from './resources/SampleData.js'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper.js'
-import {
-  applyDemoTheme,
-  createDemoGroupStyle,
-  initDemoStyles
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -92,11 +82,8 @@ async function run() {
 
   graphComponent.graph.undoEngine.clear()
 
-  // bind the buttons to their commands
-  registerCommands()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the buttons to their actions
+  initializeUI()
 }
 
 /**
@@ -282,7 +269,7 @@ function loadGraph(sampleName) {
       graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach(bend => {
-      graph.addBend(edge, Point.from(bend))
+      graph.addBend(edge, bend)
     })
   })
 
@@ -290,26 +277,18 @@ function loadGraph(sampleName) {
 }
 
 /**
- * Registers commands and actions for the items in the toolbar.
+ * Registers actions for the items in the toolbar.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  const sampleGraphs = document.getElementById('sample-graphs')
-  addNavigationButtons(sampleGraphs)
-  bindChangeListener("select[data-command='SelectSampleGraph']", () => {
+function initializeUI() {
+  const sampleGraphs = document.querySelector('#sample-graphs')
+  addNavigationButtons(sampleGraphs).addEventListener('change', () => {
     const selectedIndex = sampleGraphs.selectedIndex
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
   })
 
-  const assignmentStrategies = document.getElementById('component-assignment-strategies')
-  bindChangeListener("select[data-command='SelectAssignmentStrategy']", () => {
+  const assignmentStrategies = document.querySelector('#component-assignment-strategies')
+  assignmentStrategies.addEventListener('change', () => {
     const selectedOption = assignmentStrategies.options[assignmentStrategies.selectedIndex]
     switch (selectedOption.value) {
       case 'single':
@@ -324,8 +303,8 @@ function registerCommands() {
     }
   })
 
-  const clearAreaStrategies = document.getElementById('clear-area-strategies')
-  bindChangeListener("select[data-command='SelectClearAreaStrategy']", () => {
+  const clearAreaStrategies = document.querySelector('#clear-area-strategies')
+  clearAreaStrategies.addEventListener('change', () => {
     const selectedOption = clearAreaStrategies.options[clearAreaStrategies.selectedIndex]
     switch (selectedOption.value) {
       case 'local':
@@ -347,5 +326,4 @@ function registerCommands() {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

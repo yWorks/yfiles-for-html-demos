@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
-  ICommand,
   Insets,
   License,
   NodeSizeConstraintProvider,
@@ -41,10 +40,10 @@ import {
   Size
 } from 'yfiles'
 import { NodeSelectionResizingInputMode } from './NodeSelectionResizingInputMode.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import SampleData from './resources/SampleData.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -80,9 +79,7 @@ async function run() {
   // load sample graph
   loadSampleGraph()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 function initializeInputMode() {
@@ -130,26 +127,22 @@ function loadSampleGraph() {
   graphComponent.graph.undoEngine.clear()
 }
 
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-
+function initializeUI() {
   const snappingButton = document.querySelector('#demo-snapping-button')
-  bindAction('#demo-snapping-button', () => {
+  snappingButton.addEventListener('click', () => {
     graphComponent.inputMode.snapContext.enabled = snappingButton.checked
   })
   const orthogonalEditingButton = document.querySelector('#demo-orthogonal-editing-button')
-  bindAction('#demo-orthogonal-editing-button', () => {
+  orthogonalEditingButton.addEventListener('click', () => {
     graphComponent.inputMode.orthogonalEdgeEditingContext.enabled = orthogonalEditingButton.checked
   })
 
-  bindChangeListener("select[data-command='ChangeResizeMode']", value => {
+  const changeResizeModeButton = document.querySelector('#change-resize-mode')
+  changeResizeModeButton.addEventListener('change', evt => {
     if (nodeSelectionResizingInputMode) {
-      nodeSelectionResizingInputMode.mode = value
+      nodeSelectionResizingInputMode.mode = changeResizeModeButton.value
     }
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

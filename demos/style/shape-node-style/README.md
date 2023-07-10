@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Shape Node Style Demo
-
-<img src="../../resources/image/shape-node-style.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/style/shape-node-style/index.html).
 
 # Shape Node Style Demo
 
@@ -22,4 +29,4 @@ To illustrate the effects of the latter feature, three nodes with different aspe
 - [Rectangle Node Style](../rectangle-node-style/index.html)
 - [Group Node Style](../group-node-style/index.html)
 - [Arrow Node Style](../arrow-node-style/index.html)
-- [Tutorial: Custom Node Style](../../02-tutorial-custom-styles/01-custom-node-style/index.html)
+- [Tutorial: Node Style Implementation](../../tutorial-style-implementation-node/01-create-a-rectangle/index.html)

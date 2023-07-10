@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -116,8 +116,7 @@ export default class FileSaveSupport {
           blob = new Blob([fileContent])
         }
 
-        // @ts-ignore
-        if (window.navigator.msSaveOrOpenBlob(blob, fileName)) {
+        if ((window.navigator as any).msSaveOrOpenBlob(blob, fileName)) {
           resolve('File saved successfully')
         } else {
           reject(new Error('File save failed: A failure occurred during saving.'))

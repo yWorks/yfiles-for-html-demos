@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global CodeMirror */
-
 import {
   HashMap,
   IEdge,
@@ -39,18 +37,30 @@ import {
   ParseEventArgs,
   WriteEventArgs
 } from 'yfiles'
+import * as CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/mode/xml/xml'
+import 'codemirror/addon/dialog/dialog'
+import 'codemirror/addon/search/search'
+import 'codemirror/addon/search/searchcursor'
 
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
  * @yjs:keep = setValue,getValue
  */
 export class EditorSync {
+  itemToIdMap = new HashMap()
+  itemToMarkerMap = new HashMap()
+  markerToItemMap = new HashMap()
+  contentChanged
+  cursorActivity
+  _editor = null
+  _graph = null
+  editorContentChangedListener
+  itemSelectedListener
+
   constructor() {
-    this.itemToIdMap = new HashMap()
-    this.itemToMarkerMap = new HashMap()
-    this.markerToItemMap = new HashMap()
-    this._editor = null
-    this._graph = null
     this.contentChanged = this.onContentChanged.bind(this)
     this.cursorActivity = this.onCursorActivity.bind(this)
     this.editorContentChangedListener = () => {}

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,29 +32,22 @@ import {
   GraphComponent,
   GraphViewerInputMode,
   GroupNodeStyle,
-  ICommand,
   InteriorLabelModel,
   InteriorStretchLabelModel,
   License,
   RectangleNodeStyle
 } from 'yfiles'
 import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
-import {
   createDefaultHierarchicLayout,
   createTabularGroupsHierarchicLayout
 } from './HierarchicLayoutTabularGroups'
-import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-const sortingToggle = document.querySelector<HTMLInputElement>('#sortingToggle')!
-const tabularGroupsToggle = document.querySelector<HTMLInputElement>('#tabularGroupsToggle')!
-const distanceSlider = document.querySelector<HTMLInputElement>('#childDistanceSlider')!
+const sortingToggle = document.querySelector<HTMLInputElement>('#sorting-toggle')!
+const tabularGroupsToggle = document.querySelector<HTMLInputElement>('#tabular-groups-toggle')!
+const distanceSlider = document.querySelector<HTMLInputElement>('#child-distance-slider')!
 const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
 const distanceLabel = document.getElementById('childDistanceLabel')!
 
@@ -79,8 +72,7 @@ async function run(): Promise<void> {
   await runHierarchicLayoutWithTabularGroups()
 
   // bind actions to the buttons in the toolbar
-  registerCommands()
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -248,31 +240,35 @@ function initializeGraph() {
 }
 
 /**
- * Binds the various actions to the buttons in the toolbar.
+ * Binds actions to the buttons in the toolbar.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindAction("input[data-command='TabularGroupsToggle']", async () => {
-    if (tabularGroupsToggle.checked) {
-      // run the hierarchic layout with the tabular groups feature
-      sortingToggle.disabled = false
-      distanceSlider.disabled = false
-      await runHierarchicLayoutWithTabularGroups()
-    } else {
-      // run hierarchic layout without tabular groups
-      await graphComponent.morphLayout(createDefaultHierarchicLayout(graphComponent.graph), '0.5s')
-      sortingToggle.disabled = true
-      distanceSlider.disabled = true
-    }
-  })
+function initializeUI(): void {
+  document
+    .querySelector<HTMLInputElement>('#tabular-groups-toggle')!
+    .addEventListener('click', async () => {
+      if (tabularGroupsToggle.checked) {
+        // run the hierarchic layout with the tabular groups feature
+        sortingToggle.disabled = false
+        distanceSlider.disabled = false
+        await runHierarchicLayoutWithTabularGroups()
+      } else {
+        // run hierarchic layout without tabular groups
+        await graphComponent.morphLayout(
+          createDefaultHierarchicLayout(graphComponent.graph),
+          '0.5s'
+        )
+        sortingToggle.disabled = true
+        distanceSlider.disabled = true
+      }
+    })
 
-  bindAction("input[data-command='ToggleSorting']", runHierarchicLayoutWithTabularGroups)
+  document
+    .querySelector<HTMLInputElement>('#sorting-toggle')!
+    .addEventListener('click', runHierarchicLayoutWithTabularGroups)
 
-  const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
-  sampleComboBox.addEventListener('change', async () => {
+  addNavigationButtons(
+    document.querySelector<HTMLSelectElement>('#sample-combo-box')!
+  ).addEventListener('change', async () => {
     // reset and disable the toolbar ui elements
     sortingToggle.disabled = true
     tabularGroupsToggle.disabled = true
@@ -291,13 +287,13 @@ function registerCommands(): void {
     tabularGroupsToggle.disabled = false
     distanceSlider.disabled = false
   })
-  addNavigationButtons(sampleComboBox)
 
-  bindChangeListener('#childDistanceSlider', async value => {
-    distanceLabel.textContent = value as string
-    await runHierarchicLayoutWithTabularGroups()
-  })
+  document
+    .querySelector<HTMLInputElement>('#child-distance-slider')!
+    .addEventListener('change', async evt => {
+      distanceLabel.textContent = (evt.target as HTMLInputElement).value
+      await runHierarchicLayoutWithTabularGroups()
+    })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

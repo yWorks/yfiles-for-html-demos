@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,7 +30,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Events Demo [yFiles for HTML]</title>
@@ -39,13 +38,72 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="style.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Events Viewer</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <input type="checkbox" id="demo-orthogonal-editing-button" class="demo-toggle-button" />
+      <label
+        for="demo-orthogonal-editing-button"
+        class="demo-icon-yIconOrthogonal"
+        title="Toggle orthogonal editing"
+      ></label>
+
+      <span class="demo-separator"></span>
+
+      <input type="checkbox" id="toggle-editing" class="demo-toggle-button labeled" checked="" />
+      <label
+        id="toolbar-text-label"
+        for="toggle-editing"
+        title="Choose between Edit Mode (selected) and Viewer Mode (unselected)"
+      >
+        Edit Mode
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
 
       <p class="event-types-headline">Event Types</p>
       <div data-header="Event Types" id="event-options">
@@ -54,153 +112,168 @@
           <div class="event-options-content">
             <ul>
               <li data-tooltip="Events dispatched by GraphViewerInputMode or GraphEditorInputMode.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="InputMode"
                     checked=""
-                  />Viewer/Editor Events</label
-                >
+                  />
+                  Viewer/Editor Events
+                </label>
               </li>
               <li
                 data-tooltip="Events dispatched by NavigationInputMode when a group node was collapsed, expanded, entered or exited."
               >
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="NavigationInputMode"
                     checked=""
-                  />Navigation Events</label
-                >
+                  />
+                  Navigation Events
+                </label>
               </li>
               <li data-tooltip="Events dispatched by ClickInputMode.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="ClickInputMode"
-                  />Click Events</label
-                >
+                  />
+                  Click Events
+                </label>
               </li>
               <li data-tooltip="Events dispatched by TapInputMode on touch devices.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="TapInputMode"
-                  />Tap Events</label
-                >
+                  />
+                  Tap Events
+                </label>
               </li>
               <li data-tooltip="Events dispatched by MoveInputMode when an item was moved.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="MoveInputMode"
-                  />Move Events</label
-                >
+                  />
+                  Move Events
+                </label>
               </li>
               <li
                 data-tooltip="Events dispatched by MoveViewportInputMode when the graph was panned or zoomed."
               >
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="MoveViewportInputMode"
-                  />Move Viewport Events</label
-                >
+                  />
+                  Move Viewport Events
+                </label>
               </li>
               <li
                 data-tooltip="Events dispatched by HandleInputMode when a node was resized or another handle was moved."
               >
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="HandleInputMode"
-                  />Handle Move Events</label
-                >
+                  />
+                  Handle Move Events
+                </label>
               </li>
               <li
                 data-tooltip="Events dispatched by MouseHoverInputMode when an item was hovered for a certain amount of time (e.g. to show a ToolTip)."
               >
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="MouseHoverInputMode"
-                  />Mouse Hover Events</label
-                >
+                  />
+                  Mouse Hover Events
+                </label>
               </li>
               <li data-tooltip="Events dispatched by TextEditorInputMode during Label Editing.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="TextEditorInputMode"
-                  />Text Editor Events</label
-                >
+                  />
+                  Text Editor Events
+                </label>
               </li>
               <li data-tooltip="Events dispatched by ContextMenuInputMode.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="ContextMenuInputMode"
-                  />Context Menu Events</label
-                >
+                  />
+                  Context Menu Events
+                </label>
               </li>
               <li data-tooltip="Events dispatched by CreateBendInputMode during bend creation.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="CreateBendInputMode"
-                  />Create Bend Events</label
-                >
+                  />
+                  Create Bend Events
+                </label>
               </li>
               <li data-tooltip="Events dispatched by CreateEdgeInputMode during edge creation.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="CreateEdgeInputMode"
-                  />Create Edge Events</label
-                >
+                  />
+                  Create Edge Events
+                </label>
               </li>
               <li
                 data-tooltip="Events dispatched by ItemHoverInputMode when the mouse enters or leaves an item."
               >
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="ItemHoverInputMode"
-                  />Item Hover Events</label
-                >
+                  />
+                  Item Hover Events
+                </label>
               </li>
               <li data-tooltip="Events dispatched by MoveLabelInputMode when a label was moved.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="MoveLabelInputMode"
-                  />Move Label Events</label
-                >
+                  />
+                  Move Label Events
+                </label>
               </li>
               <li
                 data-tooltip="Events dispatched by an ItemDropInputMode during a drag and drop gesture."
               >
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="ItemDropInputMode"
-                  />Drag and Drop Events</label
-                >
+                  />
+                  Drag and Drop Events
+                </label>
               </li>
             </ul>
           </div>
@@ -214,80 +287,84 @@
               <li
                 data-tooltip="Dispatched when the clipboard changes and for the duplicate command."
               >
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="ClipboardCopier"
-                  />Clipboard Events</label
-                >
+                  />
+                  Clipboard Events
+                </label>
               </li>
               <li data-tooltip="Dispatched when the mouse is moved or mouse buttons are pressed.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="GraphComponentMouse"
-                  />Mouse Events</label
-                >
+                  />
+                  Mouse Events
+                </label>
               </li>
               <li data-tooltip="Dispatched on touch devices upon touch interaction.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="GraphComponentTouch"
-                  />Touch Events</label
-                >
+                  />
+                  Touch Events
+                </label>
               </li>
               <li data-tooltip="Dispatched when a key is pressed or released.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="GraphComponentKey"
-                  />Key Events</label
-                >
+                  />
+                  Key Events
+                </label>
               </li>
               <li
                 data-tooltip="Dispatched by GraphComponent.selection when graph items are selected or deselected."
               >
-                <label
-                  ><input
-                    type="checkbox"
-                    data-command="ToggleEvents"
-                    data-event-kind="Selection"
-                  />Selection Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Selection" />
+                  Selection Events
+                </label>
               </li>
               <li data-tooltip="Report changes of the view port and zoom level.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="GraphComponentViewport"
-                  />Viewport Events</label
-                >
+                  />
+                  Viewport Events
+                </label>
               </li>
               <li data-tooltip="Dispatched when the GraphComponent is rendered.">
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="GraphComponentRender"
-                  />Render Events</label
-                >
+                  />
+                  Render Events
+                </label>
               </li>
               <li
                 data-tooltip="Logs changes of the Current Item, the complete graph or the input mode."
               >
-                <label
-                  ><input
+                <label>
+                  <input
                     type="checkbox"
-                    data-command="ToggleEvents"
+                    data-action="ToggleEvents"
                     data-event-kind="GraphComponent"
-                  />Other Events</label
-                >
+                  />
+                  Other Events
+                </label>
               </li>
             </ul>
           </div>
@@ -297,82 +374,69 @@
           <div class="event-options-content" style="display: none">
             <ul>
               <li data-tooltip="Dispatched when a node is created, removed, or changed.">
-                <label
-                  ><input type="checkbox" data-command="ToggleEvents" data-event-kind="Node" />Node
-                  Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Node" />
+                  Node Events
+                </label>
               </li>
               <li data-tooltip="Dispatched when an edge is created, removed, or changed.">
-                <label
-                  ><input type="checkbox" data-command="ToggleEvents" data-event-kind="Edge" />Edge
-                  Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Edge" />
+                  Edge Events
+                </label>
               </li>
               <li data-tooltip="Dispatched when a label is created, removed, or changed.">
-                <label
-                  ><input
-                    type="checkbox"
-                    data-command="ToggleEvents"
-                    data-event-kind="Label"
-                  />Label Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Label" />
+                  Label Events
+                </label>
               </li>
               <li data-tooltip="Dispatched when a port is created, removed, or changed.">
-                <label
-                  ><input type="checkbox" data-command="ToggleEvents" data-event-kind="Port" />Port
-                  Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Port" />
+                  Port Events
+                </label>
               </li>
               <li data-tooltip="Dispatched when a bend is created, removed, or changed.">
-                <label
-                  ><input type="checkbox" data-command="ToggleEvents" data-event-kind="Bend" />Bend
-                  Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Bend" />
+                  Bend Events
+                </label>
               </li>
               <li
                 data-tooltip="Dispatched when the group state or the parent of a node is changed."
               >
-                <label
-                  ><input
-                    type="checkbox"
-                    data-command="ToggleEvents"
-                    data-event-kind="Hierarchy"
-                  />Hierarchy Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Hierarchy" />
+                  Hierarchy Events
+                </label>
               </li>
               <li
                 data-tooltip="Dispatched when a group is expanded, collapsed or a property is changed."
               >
-                <label
-                  ><input
-                    type="checkbox"
-                    data-command="ToggleEvents"
-                    data-event-kind="Folding"
-                  />Folding Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Folding" />
+                  Folding Events
+                </label>
               </li>
               <li
                 data-tooltip="Reports events that occur when the graph is rendered within a control."
               >
-                <label
-                  ><input
-                    type="checkbox"
-                    data-command="ToggleEvents"
-                    data-event-kind="GraphRender"
-                  />Graph Render Events</label
-                >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="GraphRender" />
+                  Graph Render Events
+                </label>
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <div data-header="Description" class="demo-sidebar-content">
+      <div data-header="Description" class="demo-description__content">
         <h1>Events Demo</h1>
         <p>
-          This demo shows the multitude of events provided by the classes
-          <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">IGraph</a>
-          and <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> and the <em>Input Modes</em>.
+          This demo shows the multitude of events provided by the classes <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">IGraph</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> and the <em>Input Modes</em>.
         </p>
         <p>
           The events are logged to the <em>Event Log</em> panel. Logging can be switched on and off
@@ -402,81 +466,33 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-        <span class="demo-separator"></span>
-
-        <input type="checkbox" id="demo-orthogonal-editing-button" class="demo-toggle-button" />
-        <label
-          for="demo-orthogonal-editing-button"
-          class="demo-icon-yIconOrthogonal"
-          title="Toggle orthogonal editing"
-        ></label>
-
-        <span class="demo-separator"></span>
-
-        <span title="Choose between Edit Mode (selected) and Viewer Mode (unselected)">
-          <input
-            type="checkbox"
-            id="toggle-editing"
-            class="demo-toggle-button labeled"
-            data-command="ToggleEditing"
-            checked
-          /><label id="toolbar-text-label" for="toggle-editing">Edit Mode</label></span
-        >
-      </div>
-
-      <div class="demo-content-dynamic">
-        <!-- The GraphComponent -->
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-    </div>
+      <aside class="event-demo-side-bar">
+        <div class="event-demo-side-bar-content-controls">
+          <div>
+            <h2>Drag And Drop Panel</h2>
 
-    <aside class="demo-sidebar demo-right event-log">
-      <div class="demo-sidebar-content">
-        <h2>Drag And Drop Panel</h2>
+            <div id="drag-and-drop-panel"></div>
 
-        <div id="drag-and-drop-panel"></div>
+            <h2>Event Log</h2>
 
-        <h2>Event Log</h2>
-
-        <div data-header="Event Log">
-          <label
-            ><input
-              type="checkbox"
-              data-command="ToggleLogGrouping"
-              id="toggle-log-grouping"
-              checked=""
-              style="float: left"
-            />Group identical events</label
-          >
-          <button style="float: right" data-command="ClearLog" title="Clear the Event Log">
-            Clear
-          </button>
+            <div data-header="Event Log">
+              <label>
+                <input type="checkbox" id="toggle-log-grouping" checked="" />
+                Group identical events
+              </label>
+              <button style="float: right" id="clear-log-button" title="Clear the Event Log">
+                Clear
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-      <div id="log"></div>
-    </aside>
-
-    <script type="module" crossorigin="anonymous" src="EventsDemo.js"></script>
+        <div id="log"></div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="EventsDemo.ts" async></script>
   </body>
 </html>

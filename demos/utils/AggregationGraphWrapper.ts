@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -84,7 +84,7 @@ import {
   PortEventArgs,
   Rect,
   Size,
-  SizeConvertible
+  type SizeConvertible
 } from 'yfiles'
 
 /**
@@ -144,10 +144,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   private readonly $labels: ListEnumerable<ILabel>
   private readonly $ports: ListEnumerable<IPort>
 
-  // @ts-ignore
-  private $aggregationNodeDefaults: INodeDefaults
-  // @ts-ignore
-  private $aggregationEdgeDefaults: IEdgeDefaults
+  private $aggregationNodeDefaults: INodeDefaults | undefined
+  private $aggregationEdgeDefaults: IEdgeDefaults | undefined
   private $lookupDecorator: AggregationLookupDecorator
 
   /**
@@ -162,6 +160,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         'ArgumentError: Affected parameter graph: Cannot wrap another AggregationGraphWrapper'
       )
     }
+    this.onGraphChanged(null, this.wrappedGraph)
 
     this.edgeReplacementPolicy = EdgeReplacementPolicy.UNDIRECTED
 
@@ -1178,12 +1177,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       tag = options.tag
     }
 
-    if (!(preferredSize instanceof Size)) {
-      if (Array.isArray(preferredSize)) {
-        preferredSize = new Size(preferredSize[0], preferredSize[1])
-      } else if (preferredSize) {
-        preferredSize = new Size(preferredSize.width, preferredSize.height)
-      }
+    if (preferredSize && !(preferredSize instanceof Size)) {
+      preferredSize = Size.from(preferredSize)
     }
 
     const labelOwner =
@@ -1519,10 +1514,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     tag?: any
   ): IEdge {
     if (!(source instanceof INode || source instanceof IPort)) {
-      const options = source
-      // @ts-ignore
+      const options = source as any
       source = options.source
-      // @ts-ignore
       target = options.target
       style = options.style as IEdgeStyle
       tag = options.tag
@@ -1983,7 +1976,6 @@ class AggregationEdge extends BaseClass(IEdge) {
     return this.$portsEnumerable
   }
 
-  // @ts-ignore
   public get graph(): AggregationGraphWrapper | null {
     return this.$graph
   }
@@ -2322,7 +2314,6 @@ class AggregationLabel extends BaseClass(ILabel) {
     }
   }
 
-  // @ts-ignore
   get layout(): IOrientedRectangle {
     return this.$layout
   }

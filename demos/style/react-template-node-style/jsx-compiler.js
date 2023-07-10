@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,46 +26,135 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ReactComponentNodeStyle } from './ReactComponentNodeStyle.js'
-const { createElement } = React
+import { ReactComponentSvgNodeStyle } from './ReactComponentSvgNodeStyle.js'
+import { ReactComponentSvgLabelStyle } from './ReactComponentSvgLabelStyle.js'
+import { ReactComponentHtmlNodeStyle } from './ReactComponentHtmlNodeStyle.js'
+import { ReactComponentHtmlLabelStyle } from './ReactComponentHtmlLabelStyle.js'
+import { SvgText } from './SvgText.js'
+import { transform } from '@babel/standalone'
+import * as React from 'react'
+
+// We need a global React at runtime
+window.React = React
 
 /**
- * @param {!string} jsx
+ * The following is a simple "compile" function that is inherently unsafe in that
+ * it executes the code in the string.
+ * Make sure that the code comes from a trusted source.
+ * @param {!string} jsx the trusted JSX string that will be compiled by this function
  * @returns {!function}
  */
 function compileRenderFunction(jsx) {
-  const transpiledCode = Babel.transform('const renderFunction = ' + jsx, {
+  const transpiledCode = transform('const renderFunction = ' + jsx, {
     presets: ['react', 'env']
   }).code
   // eslint-disable-next-line
-  const renderFn = new Function(transpiledCode + '\n return renderFunction')()
+  const renderFn = new Function('SvgText', transpiledCode + '\n return renderFunction')(SvgText)
   return props => {
     try {
       return renderFn(props)
     } catch (e) {
-      return createElement('text', {}, 'Invalid template')
+      console.log(e)
+      return React.createElement('text', {}, `Invalid template: ${e.message}`)
     }
   }
 }
 
 /**
- * @typedef {*} ReactComponentNodeStyleEx
+ * @typedef {*} JSXCacheType
+ */
+/**
+ * @typedef {JSXCacheType.<ReactComponentSvgNodeStyle.<T>>} ReactComponentSvgNodeStyleEx
+ */
+/**
+ * @typedef {JSXCacheType.<ReactComponentHtmlNodeStyle.<T>>} ReactComponentHtmlNodeStyleEx
+ */
+
+/**
+ * @typedef {JSXCacheType.<ReactComponentSvgLabelStyle.<T>>} ReactComponentSvgLabelStyleEx
+ */
+/**
+ * @typedef {JSXCacheType.<ReactComponentHtmlLabelStyle.<T>>} ReactComponentHtmlLabelStyleEx
  */
 
 /**
  * @param {*} o
- * @returns {!ReactComponentNodeStyleEx.<unknown>}
+ * @returns {!ReactComponentSvgNodeStyleEx.<unknown>}
  */
-export function isReactComponentNodeStyleEx(o) {
-  return o && typeof o.jsx === 'string' && o instanceof ReactComponentNodeStyle
+export function isReactComponentSvgNodeStyleEx(o) {
+  return o && typeof o.jsx === 'string' && o instanceof ReactComponentSvgNodeStyle
+}
+
+/**
+ * @param {*} o
+ * @returns {!ReactComponentHtmlNodeStyleEx.<unknown>}
+ */
+export function isReactComponentHtmlNodeStyleEx(o) {
+  return o && typeof o.jsx === 'string' && o instanceof ReactComponentHtmlNodeStyle
+}
+
+/**
+ * @param {*} o
+ * @returns {!ReactComponentSvgLabelStyleEx.<unknown>}
+ */
+export function isReactComponentSvgLabelStyleEx(o) {
+  return o && typeof o.jsx === 'string' && o instanceof ReactComponentSvgLabelStyle
+}
+
+/**
+ * @param {*} o
+ * @returns {!ReactComponentHtmlLabelStyleEx.<unknown>}
+ */
+export function isReactComponentHtmlLabelStyleEx(o) {
+  return o && typeof o.jsx === 'string' && o instanceof ReactComponentHtmlLabelStyle
+}
+
+/**
+ * @param {*} o
+ * @returns {!object}
+ */
+export function isReactComponentStyleEx(o) {
+  return o && typeof o.jsx === 'string'
 }
 
 /**
  * @param {!string} jsx
- * @returns {!ReactComponentNodeStyle.<unknown>}
+ * @returns {!ReactComponentSvgNodeStyle.<unknown>}
  */
-export function createReactComponentNodeStyleFromJSX(jsx) {
-  const style = new ReactComponentNodeStyle(compileRenderFunction(jsx))
+export function createReactComponentSvgNodeStyleFromJSX(jsx) {
+  const style = new ReactComponentSvgNodeStyle(compileRenderFunction(jsx))
+  style.jsx = jsx
+  return style
+}
+
+/**
+ * @param {!string} jsx
+ * @returns {!ReactComponentHtmlNodeStyle.<unknown>}
+ */
+export function createReactComponentHtmlNodeStyleFromJSX(jsx) {
+  const style = new ReactComponentHtmlNodeStyle(compileRenderFunction(jsx))
+  style.jsx = jsx
+  return style
+}
+
+/**
+ * @param {!string} jsx
+ * @param {!(Size|SizeConvertible)} size
+ * @returns {!ReactComponentSvgLabelStyle.<unknown>}
+ */
+export function createReactComponentSvgLabelStyleFromJSX(jsx, size) {
+  const style = new ReactComponentSvgLabelStyle(compileRenderFunction(jsx), size)
+  style.jsx = jsx
+  return style
+}
+
+/**
+ * @param {!string} jsx
+ * @param {!(Size|SizeConvertible)} size
+ * @returns {!ReactComponentHtmlLabelStyle}
+ */
+export function createReactComponentHtmlLabelStyleFromJSX(jsx, size) {
+  const style = new ReactComponentHtmlLabelStyle(compileRenderFunction(jsx), size)
   style.jsx = jsx
   return style
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,11 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
-import type { FunctionalComponent } from './preact-loader'
-// @ts-ignore
-import { html, render, useState } from './preact-loader'
-import { fetchLicense } from '../../resources/fetch-license'
+// @ts-ignore - We have no proper types for preact, here
+import { type FunctionalComponent, html, render, useState } from './preact-loader'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import { License } from 'yfiles'
 import ItemList from './components/items/ItemList'
 import PreactGraphComponent from './components/graphComponent/PreactGraphComponent'
@@ -100,18 +98,20 @@ const App: FunctionalComponent = () => {
     setConnections(newConnections)
   }
 
-  return html` <${PreactGraphComponent} itemData="${items}" connectionData="${connections}" />
+  return html`
+    <${PreactGraphComponent} itemData="${items}" connectionData="${connections}" />
     <${ItemList}
       itemData="${items}"
       toggleState="${toggleItemState}"
       removeDataItem="${removeDataItem}"
       addDataItem="${addDataItem}"
-    />`
+    />
+  `
 }
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
-  render(html` <${App} />`, document.querySelector('.preact-app'))
+  render(html` <${App} /> `, document.querySelector('.preact-app'))
 }
 
 // noinspection JSIgnoredPromiseFromCall

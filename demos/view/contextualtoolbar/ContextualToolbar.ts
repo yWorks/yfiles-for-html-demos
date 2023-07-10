@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,14 +57,10 @@ import {
   TextDecoration
 } from 'yfiles'
 
-import {
-  addClass,
-  bindAction,
-  bindActions,
-  bindCommand,
-  hasClass,
-  removeClass
-} from '../../resources/demo-app'
+import { bindYFilesCommand } from 'demo-resources/demo-page'
+
+// we use font-awesome icons for the toolbar in this demo
+import '@fortawesome/fontawesome-free/js/all.min.js'
 
 /**
  * Adds a HTML panel on top of the contents of the GraphComponent that is used as a container for the contextual
@@ -279,9 +275,8 @@ export default class ContextualToolbar {
    */
   showPickerContainer(e: Event): void {
     const toggleButton = e.target as HTMLInputElement
-    const pickerContainer = document.getElementById(
-      (toggleButton as HTMLElement).getAttribute('data-container-id')!
-    ) as HTMLElement
+    const dataContainerId = toggleButton.getAttribute('data-container-id')!
+    const pickerContainer = document.querySelector<HTMLElement>('#' + dataContainerId)!
     const show = toggleButton.checked
 
     if (!show) {
@@ -294,9 +289,9 @@ export default class ContextualToolbar {
 
     // position the container above/below the toggle button
     pickerContainer.style.display = 'block'
-    const labelElement = document.querySelector(
+    const labelElement = document.querySelector<HTMLLabelElement>(
       `label[for="${toggleButton.id}"]`
-    ) as HTMLLabelElement
+    )!
     const labelBoundingRect = labelElement.getBoundingClientRect()
     const toolbarClientRect = this.container.getBoundingClientRect()
     const pickerClientRect = pickerContainer.getBoundingClientRect()
@@ -309,10 +304,10 @@ export default class ContextualToolbar {
     const gcAnchor = this.graphComponent.toPageFromView(new Point(0, 0))
     if (toolbarClientRect.top - gcAnchor.y < pickerClientRect.height + 20) {
       pickerContainer.style.top = '55px'
-      addClass(pickerContainer, 'bottom')
+      pickerContainer.classList.add('bottom')
     } else {
       pickerContainer.style.top = `-${pickerClientRect.height + 12}px`
-      removeClass(pickerContainer, 'bottom')
+      pickerContainer.classList.remove('bottom')
     }
 
     // timeout the fading animation to make sure that the element is visible
@@ -330,17 +325,17 @@ export default class ContextualToolbar {
     exceptToggleButton?: HTMLInputElement,
     exceptContainer?: HTMLElement
   ): void {
-    const toggleButtons = document.querySelectorAll('input[data-container-id]')
+    const toggleButtons = document.querySelectorAll<HTMLInputElement>('input[data-container-id]')
     for (let i = 0; i < toggleButtons.length; i++) {
-      const btn = toggleButtons[i] as HTMLInputElement
+      const btn = toggleButtons[i]
       if (btn !== exceptToggleButton) {
         btn.checked = false
       }
     }
 
-    const pickerContainers = document.querySelectorAll('.picker-container')
+    const pickerContainers = document.querySelectorAll<HTMLElement>('.picker-container')
     for (let i = 0; i < pickerContainers.length; i++) {
-      const container = pickerContainers[i] as HTMLElement
+      const container = pickerContainers[i]
       if (container.style.opacity !== '0' && container !== exceptContainer) {
         container.style.opacity = '0'
         setTimeout(() => {
@@ -383,28 +378,28 @@ export default class ContextualToolbar {
    * Shows or hides the user interface elements for the different item types depending on the current selection.
    */
   updateItemUI(): void {
-    const nodeUI = document.getElementById('node-ui') as HTMLElement
-    const labelUI = document.getElementById('label-ui') as HTMLElement
-    const edgeUI = document.getElementById('edge-ui') as HTMLElement
+    const nodeUI = document.querySelector<HTMLElement>('#node-ui')!
+    const labelUI = document.querySelector<HTMLElement>('#label-ui')!
+    const edgeUI = document.querySelector<HTMLElement>('#edge-ui')!
     if (this.containsNodes) {
-      addClass(this.container, 'node-ui-visible')
+      this.container.classList.add('node-ui-visible')
       nodeUI.style.display = 'inline-block'
     } else {
-      removeClass(this.container, 'node-ui-visible')
+      this.container.classList.remove('node-ui-visible')
       nodeUI.style.display = 'none'
     }
     if (this.containsLabels) {
-      addClass(this.container, 'label-ui-visible')
+      this.container.classList.add('label-ui-visible')
       labelUI.style.display = 'inline-block'
     } else {
-      removeClass(this.container, 'label-ui-visible')
+      this.container.classList.remove('label-ui-visible')
       labelUI.style.display = 'none'
     }
     if (this.containsEdges) {
-      addClass(this.container, 'edge-ui-visible')
+      this.container.classList.add('edge-ui-visible')
       edgeUI.style.display = 'inline-block'
     } else {
-      removeClass(this.container, 'edge-ui-visible')
+      this.container.classList.remove('edge-ui-visible')
       edgeUI.style.display = 'none'
     }
   }
@@ -417,11 +412,11 @@ export default class ContextualToolbar {
     const labels = this.getSelectedLabels()
     if (labels.length > 0) {
       const font = (labels[0].style as DefaultLabelStyle).font
-      const fontBoldToggle = document.getElementById('font-bold') as HTMLInputElement
+      const fontBoldToggle = document.querySelector<HTMLInputElement>('#font-bold')!
       fontBoldToggle.checked = font.fontWeight === FontWeight.BOLD
-      const fontItalicToggle = document.getElementById('font-italic') as HTMLInputElement
+      const fontItalicToggle = document.querySelector<HTMLInputElement>('#font-italic')!
       fontItalicToggle.checked = font.fontStyle === FontStyle.ITALIC
-      const fontUnderlineToggle = document.getElementById('font-underline') as HTMLInputElement
+      const fontUnderlineToggle = document.querySelector<HTMLInputElement>('#font-underline')!
       fontUnderlineToggle.checked = font.textDecoration === TextDecoration.UNDERLINE
     }
   }
@@ -565,100 +560,129 @@ export default class ContextualToolbar {
    * Wire up the functions of the contextual toolbar.
    */
   registerClickListeners(): void {
-    bindAction('#clipboard', e => this.showPickerContainer(e))
-    bindAction('#color-picker', e => this.showPickerContainer(e))
-    bindAction('#shape-picker', e => this.showPickerContainer(e))
-    bindAction('#font-color-picker', e => this.showPickerContainer(e))
-    bindAction('#edge-color-picker', e => this.showPickerContainer(e))
-    bindAction('#source-arrow-picker', e => {
-      ;(document.getElementById('target-arrow-picker') as HTMLInputElement).checked = false
+    document
+      .querySelector('#clipboard')
+      ?.addEventListener('click', e => this.showPickerContainer(e))
+    document
+      .querySelector('#color-picker')
+      ?.addEventListener('click', e => this.showPickerContainer(e))
+    document
+      .querySelector('#shape-picker')
+      ?.addEventListener('click', e => this.showPickerContainer(e))
+    document
+      .querySelector('#font-color-picker')
+      ?.addEventListener('click', e => this.showPickerContainer(e))
+    document
+      .querySelector('#edge-color-picker')
+      ?.addEventListener('click', e => this.showPickerContainer(e))
+    const sourceArrowPicker = document.querySelector<HTMLInputElement>('#source-arrow-picker')
+    const targetArrowPicker = document.querySelector<HTMLInputElement>('#target-arrow-picker')
+    sourceArrowPicker?.addEventListener('click', e => {
+      targetArrowPicker!.checked = false
       const pickerContainer = document.getElementById(
-        (e.target as HTMLInputElement).getAttribute('data-container-id')!
+        sourceArrowPicker.getAttribute('data-container-id')!
       )!
-      removeClass(pickerContainer, 'target')
+      pickerContainer.classList.remove('target')
       this.showPickerContainer(e)
     })
-    bindAction('#target-arrow-picker', e => {
-      ;(document.getElementById('source-arrow-picker') as HTMLInputElement).checked = false
+    targetArrowPicker?.addEventListener('click', e => {
+      sourceArrowPicker!.checked = false
       const pickerContainer = document.getElementById(
-        (e.target as HTMLInputElement).getAttribute('data-container-id')!
+        targetArrowPicker.getAttribute('data-container-id')!
       )!
-      addClass(pickerContainer, 'target')
+      pickerContainer.classList.add('target')
       this.showPickerContainer(e)
     })
 
-    bindActions('#color-picker-colors > button', e => {
-      const color = (e.target as HTMLInputElement).getAttribute('data-color')
-      this.applyNodeStyle(color)
-    })
+    for (const button of document.querySelectorAll<HTMLInputElement>(
+      '#color-picker-colors > button'
+    )) {
+      button.addEventListener('click', e => {
+        const color = button.getAttribute('data-color')
+        this.applyNodeStyle(color)
+      })
+    }
 
-    bindActions('#font-color-picker-colors > button', e => {
-      const color = (e.target as HTMLInputElement).getAttribute('data-color')
-      this.applyFontStyle({}, color)
-    })
+    for (const button of document.querySelectorAll<HTMLInputElement>(
+      '#font-color-picker-colors > button'
+    )) {
+      button.addEventListener('click', e => {
+        const color = button.getAttribute('data-color')
+        this.applyFontStyle({}, color)
+      })
+    }
 
-    bindActions('#shape-picker-shapes > button', e => {
-      const shape = (e.target as HTMLInputElement).getAttribute(
-        'data-shape'
-      ) as ShapeNodeShapeStringValues | null
-      this.applyNodeStyle(null, shape)
-    })
+    for (const button of document.querySelectorAll<HTMLInputElement>(
+      '#shape-picker-shapes > button'
+    )) {
+      button.addEventListener('click', e => {
+        const shape = button.getAttribute('data-shape') as ShapeNodeShapeStringValues | null
+        this.applyNodeStyle(null, shape)
+      })
+    }
 
-    bindActions('#quick-element-creation', _ => this.createConnectedNode())
+    document
+      .querySelector('#quick-element-creation')
+      ?.addEventListener('click', () => this.createConnectedNode())
 
-    bindActions('#arrow-picker-types > button', e => {
-      const arrowType = (e.target as HTMLInputElement).getAttribute(
-        'data-type'
-      ) as ArrowTypeStringValues | null
-      const isTarget = hasClass((e.target as HTMLInputElement).parentElement!, 'target')
-      if (isTarget) {
-        this.applyEdgeStyle(null, null, arrowType)
-      } else {
-        this.applyEdgeStyle(null, arrowType, null)
-      }
-    })
+    for (const button of document.querySelectorAll<HTMLInputElement>(
+      '#arrow-picker-types > button'
+    )) {
+      button.addEventListener('click', e => {
+        const arrowType = button.getAttribute('data-type') as ArrowTypeStringValues | null
+        const isTarget = button.parentElement!.classList.contains('target')
+        if (isTarget) {
+          this.applyEdgeStyle(null, null, arrowType)
+        } else {
+          this.applyEdgeStyle(null, arrowType, null)
+        }
+      })
+    }
 
-    bindActions('#edge-colors > button', e => {
-      const color = (e.target as HTMLInputElement).getAttribute('data-color')
-      this.applyEdgeStyle(color, null, null)
-    })
+    for (const button of document.querySelectorAll<HTMLInputElement>('#edge-colors > button')) {
+      button.addEventListener('click', e => {
+        const color = button.getAttribute('data-color')
+        this.applyEdgeStyle(color, null, null)
+      })
+    }
 
-    bindAction('#font-bold', e => {
+    document.querySelector('#font-bold')?.addEventListener('click', e => {
       this.hideAllPickerContainer()
       const target = e.target as HTMLInputElement
       this.applyFontStyle({
         fontWeight: target.checked ? target.getAttribute('data-fontWeight')! : 'normal'
       })
     })
-    bindAction('#font-italic', e => {
+    document.querySelector('#font-italic')?.addEventListener('click', e => {
       this.hideAllPickerContainer()
       const target = e.target as HTMLInputElement
       this.applyFontStyle({
         fontStyle: target.checked ? target.getAttribute('data-fontStyle')! : 'normal'
       })
     })
-    bindAction('#font-underline', e => {
+    document.querySelector('#font-underline')?.addEventListener('click', e => {
       this.hideAllPickerContainer()
       const target = e.target as HTMLInputElement
       this.applyFontStyle({
         textDecoration: target.checked ? target.getAttribute('data-textDecoration')! : 'none'
       })
     })
-    bindAction('#decrease-font-size', () => {
+    document.querySelector('#decrease-font-size')?.addEventListener('click', () => {
       this.hideAllPickerContainer()
       this.changeFontSize(false)
     })
-    bindAction('#increase-font-size', () => {
+    document.querySelector('#increase-font-size')?.addEventListener('click', () => {
       this.hideAllPickerContainer()
       this.changeFontSize(true)
     })
 
-    bindCommand("div[data-command='Cut']", ICommand.CUT, this.graphComponent)
-    bindCommand("div[data-command='Duplicate']", ICommand.DUPLICATE, this.graphComponent)
-    bindCommand("div[data-command='Delete']", ICommand.DELETE, this.graphComponent)
-    // we don't use the bindCommand helper for some buttons, because we want to close the picker container after the
+    bindYFilesCommand('#cut-button', ICommand.CUT, this.graphComponent, null, '')
+    bindYFilesCommand('#duplicate-button', ICommand.DUPLICATE, this.graphComponent, null, '')
+    bindYFilesCommand('#delete-button', ICommand.DELETE, this.graphComponent, null, '')
+
+    // we don't use the bindYFilesCommand helper for some buttons, because we want to close the picker container after the
     // command was executed
-    const pasteButton = document.querySelector("div[data-command='Paste']") as HTMLDivElement
+    const pasteButton = document.querySelector<HTMLDivElement>('#paste-button')!
     ICommand.PASTE.addCanExecuteChangedListener(() => {
       if (ICommand.PASTE.canExecute(null, this.graphComponent)) {
         pasteButton.removeAttribute('disabled')
@@ -672,7 +696,7 @@ export default class ContextualToolbar {
         this.hideAllPickerContainer()
       }
     })
-    const copyButton = document.querySelector("div[data-command='Copy']") as HTMLDivElement
+    const copyButton = document.querySelector<HTMLDivElement>('#copy-button')!
     ICommand.COPY.addCanExecuteChangedListener(() => {
       if (ICommand.COPY.canExecute(null, this.graphComponent)) {
         copyButton.removeAttribute('disabled')

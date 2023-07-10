@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -366,19 +366,27 @@ export default {
   ],
 
   groupsSource: [
-    { id: 'group0' },
-    { id: 'group1' },
+    { id: 'Asia' },
+    { id: 'Europe' },
+    {
+      id: 'group0',
+      parentGroup: 'Asia'
+    },
+    {
+      id: 'group1',
+      parentGroup: 'Asia'
+    },
     {
       id: 'group10',
-      parentGroup: 'group1'
+      parentGroup: 'Europe'
     },
     {
       id: 'group11',
-      parentGroup: 'group1'
+      parentGroup: 'Europe'
     },
     {
       id: 'group12',
-      parentGroup: 'group1'
+      parentGroup: 'Europe'
     }
   ]
 }

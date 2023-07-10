@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -111,18 +111,11 @@ dd {
   fill-opacity: 1;
   transform: scale(1);
 }
-.demo-overview-container {
+.demo-overlay {
   width: 500px;
   height: 530px;
 }
 
-.demo-overview-container .yfiles-canvascomponent {
+.demo-overlay .yfiles-canvascomponent {
   height: 500px;
-}
-
-#no-webgl-support {
-  display: none;
-  border-left: 4px solid red;
-  padding: 2px 5px;
-  background-color: #ffebee;
 }

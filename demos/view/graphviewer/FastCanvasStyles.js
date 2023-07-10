@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -189,10 +189,11 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
  * This style does not support multiline text.
  */
 export class FastLabelStyle extends LabelStyleBase {
+  _zoomThreshold = 0.7
+  _font = new Font()
+
   constructor() {
     super()
-    this._zoomThreshold = 0.7
-    this._font = new Font()
   }
 
   /**

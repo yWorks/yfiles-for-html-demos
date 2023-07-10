@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>02 Port Size - Port Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-port-style-implementation">
+          Port Style Implementation Tutorial
+        </a>
+
+        <span>02 Port Size</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-port/01-render-port-shape/index.html'><span>01 Rendering the Port</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 2/6</b><span class="demo-toolbar__tutorial-step-title"> &mdash; 02 Port Size</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-port/01-render-port-shape/index.html"
+            class="tutorial-dropdown__item"
+            >01 Rendering the Port</a
+          ><a
+            href="../../tutorial-style-implementation-port/02-port-size/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >02 Port Size</a
+          ><a
+            href="../../tutorial-style-implementation-port/03-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >03 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-port/04-conditional-coloring/index.html"
+            class="tutorial-dropdown__item"
+            >04 Conditional Port Coloring</a
+          ><a
+            href="../../tutorial-style-implementation-port/05-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >05 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-port/06-edge-cropping/index.html"
+            class="tutorial-dropdown__item"
+            >06 Edge Cropping</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-port/03-render-performance/index.html'><span>03 Render Performance</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Configuring the port size</h1>
+          <div class="paragraph">
+            <p>
+              Unlike nodes, ports do not possess an intrinsic size. A port is defined merely by a
+              point. The port style can define how large the port should be rendered. In the
+              previous step, we used fix values that resulted in a circle with a diameter of 6. In
+              this sample, we will add a property to the port style that allows us to customize the
+              size of the circle.
+            </p>
+          </div>
+          <div class="paragraph">
+            <p>
+              First, we add a constructor that defines a size property with a default value of 6.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript"><span class="hljs-title function_">constructor</span>(<span class="hljs-params">public size: number = <span class="hljs-number">6</span></span>) {
+  <span class="hljs-variable language_">super</span>()
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              Now we can use this value in <code>createVisual</code> to configure the size of the
+              circle.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> radius = <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span> * <span class="hljs-number">0.5</span>
+ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;rx&#x27;</span>, <span class="hljs-title class_">String</span>(radius))
+ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;ry&#x27;</span>, <span class="hljs-title class_">String</span>(radius))</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>We also adjust <code>getBounds</code> to consider the size property.</p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">getBounds</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">ICanvasContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Rect</span> {
+  <span class="hljs-keyword">const</span> { x, y } = port.<span class="hljs-property">location</span>
+  <span class="hljs-keyword">const</span> radius = <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span> * <span class="hljs-number">0.5</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rect</span>(x - radius, y - radius, <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span>)
+}</code></pre>
+            </div>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  A port does not have to be visualized as a circle, of course. Any shape is
+                  possible. In this tutorial, we use a circle for simplicity.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="paragraph">
+            <p>Now, we can create multiple style instances that use different sizes.</p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> defaultPortStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomPortStyle</span>()
+<span class="hljs-keyword">const</span> largePortStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomPortStyle</span>(<span class="hljs-number">10</span>)
+<span class="hljs-keyword">const</span> smallPortStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomPortStyle</span>(<span class="hljs-number">4</span>)
+
+graph.<span class="hljs-title function_">addPort</span>({
+  <span class="hljs-attr">owner</span>: owner,
+  <span class="hljs-attr">locationParameter</span>: <span class="hljs-title class_">FreeNodePortLocationModel</span>.<span class="hljs-property">NODE_CENTER_ANCHORED</span>,
+  <span class="hljs-attr">style</span>: smallPortStyle
+})</code></pre>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-port/03-render-performance/index.html'><span>03 Render Performance</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

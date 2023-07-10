@@ -1,0 +1,29 @@
+{
+  "name": "vue-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview",
+    "build": "node --max_old_space_size=8000 node_modules/vite/bin/vite build",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
+  },
+  "dependencies": {
+    "core-js": "^3.31.0",
+    "vue": "^3.3.4",
+    "demo-utils": "../../utils",
+    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^2.0.1",
+    "@types/node": "^18.16.18",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/tsconfig": "^0.4.0",
+    "@yworks/optimizer": "^1.8.1",
+    "typescript": "~5.1.6",
+    "vite": "^4.3.9",
+    "vue-tsc": "^1.8.1"
+  }
+}

@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,24 +30,27 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
-    <title>Webpack Lazy Load Layout Modules [yFiles for HTML]</title>
-
-    <style>
-      #graphComponent {
-        top: 100px;
-      }
-    </style>
+    <title>Webpack Dynamic yFiles Import Demo [yFiles for HTML]</title>
   </head>
 
-  <body class="demo-hide-left-when-small demo-has-left loaded">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
-      </div>
-      <div class="demo-sidebar-content">
+  <body>
+    <header class="demo-header">
+      <a href="https://www.yworks.com/products/yfiles" class="demo-header__y-logo"></a>
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__breadcrumb demo-header__breadcrumb--link"
+      >
+        yFiles for HTML
+      </a>
+
+      <div class="demo-header__breadcrumb">Webpack Dynamic yFiles Import Demo</div>
+    </header>
+
+    <aside class="demo-page__description">
+      <div class="demo-description__content">
         <h1>Webpack Dynamic yFiles Import Demo</h1>
         <p>
           This demo shows how to lazy load specific yFiles modules with
@@ -72,9 +74,9 @@
         <p>Two fundamental concepts for webpack projects are demonstrated:</p>
         <ul>
           <li>
-            <a href="https://webpack.js.org/guides/code-splitting/" target="_blank"
-              >Dynamic import of modules</a
-            >
+            <a href="https://webpack.js.org/guides/code-splitting/" target="_blank">
+              Dynamic import of modules
+            </a>
           </li>
           <li>
             Separate webpack configurations for development and
@@ -90,17 +92,20 @@
             <a
               href="https://docs.yworks.com/yfileshtml/#/dguide/yfiles-modules#es-modules"
               target="_blank"
-              >yFiles ES modules</a
             >
-            which allows webpack to split yFiles in different chunks.<br />This approach is shown in
-            this demo application for the layout functionality when clicking the layout button in
-            the toolbar.
+              yFiles ES modules
+            </a>
+            which allows webpack to split yFiles in different chunks.
+            <br />
+            This approach is shown in this demo application for the layout functionality when
+            clicking the layout button in the toolbar.
           </li>
           <li>
             Create a separate diagram component that imports from the <code>yfiles</code> meta
             module. In this case, webpack cannot separate yFiles anymore, however, tree-shaking is
-            still applied such that only the necessary modules are bundled.<br />This separate
-            diagram component with yFiles can then be loaded dynamically on demand.
+            still applied such that only the necessary modules are bundled.
+            <br />
+            This separate diagram component with yFiles can then be loaded dynamically on demand.
           </li>
         </ul>
 
@@ -108,7 +113,7 @@
 
         <p>First, install the required npm modules in the demo directory:</p>
 
-        <code> > npm install </code>
+        <code>> npm install</code>
 
         <h3>Development</h3>
 
@@ -119,7 +124,7 @@
           >:
         </p>
 
-        <code> > npm start </code>
+        <code>> npm start</code>
 
         <h3>Production</h3>
 
@@ -131,31 +136,25 @@
           webpack plugin:
         </p>
 
-        <code> > npm run production </code>
+        <code>> npm run production</code>
       </div>
     </aside>
-    <div class="demo-content">
-      <header class="demo-header">
-        <a href="https://www.yworks.com/" target="_blank"
-          ><img src="<%=require('../../resources/icons/ylogo.svg')%>" class="demo-y-logo"
-        /></a>
-        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
-        <a href="../../README.html" style="cursor: pointer" target="_blank" class="demo-title"
-          >Demos</a
-        >
-        <span class="demo-title demo-breadcrumb">Webpack Dynamic yFiles Import Demo</span>
-      </header>
-      <div class="demo-toolbar">
-        <button class="demo-icon-yIconZoomIn" title="Zoom In" id="zoom-in-btn"></button>
-        <button class="demo-icon-yIconZoomOriginal" title="Reset Zoom" id="reset-zoom-btn"></button>
-        <button class="demo-icon-yIconZoomOut" title="Zoom Out" id="zoom-out-btn"></button>
-        <button class="demo-icon-yIconZoomFit" title="Fit Diagram" id="fit-zoom-btn"></button>
-        <span class="demo-separator"></span>
-        <button class="demo-icon-yIconLayout labeled" title="Apply Layout" id="apply-layout-btn">
-          Load Layout Modules and Apply
-        </button>
+
+    <div class="demo-page__toolbar">
+      <button class="demo-icon-yIconZoomIn" title="Zoom In" id="zoom-in-btn"></button>
+      <button class="demo-icon-yIconZoomOriginal" title="Reset Zoom" id="reset-zoom-btn"></button>
+      <button class="demo-icon-yIconZoomOut" title="Zoom Out" id="zoom-out-btn"></button>
+      <button class="demo-icon-yIconZoomFit" title="Fit Diagram" id="fit-zoom-btn"></button>
+      <span class="demo-separator"></span>
+      <button class="demo-icon-yIconLayout labeled" title="Apply Layout" id="apply-layout-btn">
+        Load Layout Modules and Apply
+      </button>
+    </div>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
       </div>
-      <div id="graphComponent"></div>
     </div>
   </body>
 </html>

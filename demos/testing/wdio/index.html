@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,17 +30,35 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Webdriver IO Testing Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
   </head>
   <body>
-    <aside class="demo-sidebar demo-left">
-      <h1 class="demo-sidebar-header">Description</h1>
-      <div class="demo-sidebar-content">
+    <header class="demo-header">
+      <a href="https://www.yworks.com/products/yfiles" class="demo-header__y-logo"></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+        <span>Webdriver IO Testing Demo</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__content">
+        <h1 class="demo-sidebar-header">Description</h1>
         <p>
           This demo shows how to use
           <a target="_blank" href="https://webdriver.io/">WebdriverIO</a> for integration testing a
@@ -50,7 +67,11 @@
 
         <p>To run the integration tests:</p>
         <ol>
-          <li>Go to the demo's directory <code>demos-js/testing/wdio</code>.</li>
+          <li>
+            Ensure that the demo server is running, see
+            <a data-dguide="demos-server#demos-server">The Demo Server</a>.
+          </li>
+          <li>Go to the demo's directory <code>demos/testing/wdio</code>.</li>
           <li>Run <code>npm install</code>.</li>
           <li>Run the integration tests with <code>npm run test</code>.</li>
         </ol>
@@ -64,32 +85,18 @@
         <p>
           Tests are run in both Firefox and Chrome in headless mode. If you want to see the gestures
           that are being tested, you can disable the "headless" options in
-          <code>wdio.conf.js</code> and add an <code>await browser.debug()</code>
+          <code>wdio.conf.ts</code> and add an <code>await browser.debug()</code>
           <a target="_blank" href="https://webdriver.io/docs/api/browser/debug.html">statement</a>
           at the end of a test in the spec file.
         </p>
       </div>
     </aside>
 
-    <div class="demo-content">
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
       </div>
-
-      <div id="graphComponent"></div>
     </div>
-
-    <script src="WdioDemo.js" type="module"></script>
+    <script type="module" crossorigin="anonymous" src="WdioDemo.ts" async></script>
   </body>
 </html>

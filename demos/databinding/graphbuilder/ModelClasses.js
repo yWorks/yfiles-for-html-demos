@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,12 +43,20 @@ import {
 /**
  * Abstract base class for node and edge source definitions
  */
-export class SourceDefinition {}
+export class SourceDefinition {
+  name
+  data
+}
 
 /**
  * Defines a node source consisting of data and bindings
  */
 export class NodesSourceDefinition extends SourceDefinition {
+  name
+  data
+  idBinding
+  template
+
   constructor() {
     super()
     this.name = ''
@@ -62,6 +70,17 @@ export class NodesSourceDefinition extends SourceDefinition {
  * Defines an edge source consisting of data and bindings
  */
 export class EdgesSourceDefinition extends SourceDefinition {
+  name
+  data
+  sourceBinding
+  targetBinding
+  labelBinding
+  strokeBinding
+  sourceProvider
+  targetProvider
+  labelTextProvider
+  strokeProvider
+
   constructor() {
     super()
     this.name = ''
@@ -77,6 +96,8 @@ export class EdgesSourceDefinition extends SourceDefinition {
  * Abstract base class for a SourceDefinition to GraphBuilder connector
  */
 export class SourceDefinitionBuilderConnector {
+  sourceDefinition
+
   /**
    * Updates/sets the sources' bindings and new data content
    */
@@ -97,6 +118,10 @@ export class SourceDefinitionBuilderConnector {
  * Connector for {@link NodesSource}s and {@link NodesSourceDefinition}s
  */
 export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuilderConnector {
+  sourceDefinition
+  nodesSource
+  graphBuilder
+
   /**
    * @param {!NodesSourceDefinition} nodesSourceDefinition the {@link NodesSourceDefinition} to connect
    * @param {!NodesSource} nodesSource the {@link NodesSource} to connect
@@ -138,6 +163,10 @@ export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
  * Connector for {@link EdgesSource}s and {@link EdgesSourceDefinition}s
  */
 export class EdgesSourceDefinitionBuilderConnector extends SourceDefinitionBuilderConnector {
+  sourceDefinition
+  edgesSource
+  graphBuilder
+
   /**
    * @param {!EdgesSourceDefinition} edgesSourceDefinition the {@link EdgesSourceDefinition} to connect
    * @param {!EdgesSource} edgesSource the {@link EdgesSource} to connect
@@ -236,6 +265,8 @@ function parseData(data) {
  * Factory class for creation of {@link SourceDefinitionBuilderConnector}
  */
 export class SourcesFactory {
+  graphBuilder
+
   /**
    * @param {!GraphBuilder} graphBuilder
    */

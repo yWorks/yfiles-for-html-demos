@@ -1,0 +1,291 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.main-view-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.demo-content__components {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+#graphComponent {
+  border-bottom: 4px solid #f7f7f7;
+}
+
+#timeline-component {
+  height: 250px;
+  width: 100%;
+}
+
+#fraud-detection-component {
+  flex: 1;
+  border-bottom: 4px solid #f7f7f7;
+}
+
+.fraud-detection-view {
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  border: 5px solid orangered;
+  background-color: white;
+}
+
+.fraud-detection-view--visible {
+  display: flex;
+}
+
+.fraud-detection-view__title {
+  position: relative;
+  padding-left: 5px;
+  font-size: 20px;
+  color: white;
+}
+
+#layout-button {
+  display: none;
+  height: 24px;
+}
+
+#layout-button:hover {
+  cursor: pointer;
+  background-color: #bbb !important;
+}
+
+#layout-button.visible {
+  display: inline-block;
+}
+
+.fraud-detection-view__close-button {
+  position: absolute;
+  right: 4px;
+  top: 1px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  background: url('./icons/close-large.svg') no-repeat center;
+}
+
+.fraud-detection-view__header {
+  background-color: orangered;
+  height: 30px;
+}
+
+#fraud-detection-timeline-component {
+  position: relative;
+  height: 180px;
+}
+
+.demo-toggle-button.labeled:disabled + label {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.demo-toggle-button.labeled:hover + label {
+  background: none;
+}
+
+#properties-view .header-container {
+  position: relative;
+}
+
+#properties-view .header {
+  position: relative;
+  height: 40px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #4281a4;
+  display: flex;
+  flex-direction: row;
+}
+
+#properties-view .details-container {
+  height: 250px;
+}
+
+#properties-view .properties-container {
+  height: 100%;
+  background: white;
+}
+
+#properties-view .no-item-selection {
+  background: white url('icons/no-selection.svg') no-repeat center;
+  background-size: 50px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#properties-view .no-item-selection-text {
+  padding-top: 100px;
+  font-style: italic;
+}
+
+#properties-view .header h2 {
+  font-size: 18px;
+  font-weight: normal;
+  color: white;
+  align-self: center;
+  width: 70%;
+  margin: 0;
+}
+
+#properties-view .header img {
+  width: 15%;
+  align-self: center;
+  margin: 0;
+}
+
+#properties-view td {
+  padding: 4px 5px;
+  font-size: 14px;
+}
+
+#properties-view td:first-of-type {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #4281a4;
+  width: 100px;
+  vertical-align: top;
+}
+
+#properties-view .table-container {
+  overflow: auto;
+  height: calc(100% - 40px);
+  padding: 10px 5px;
+}
+
+#fraud-rings {
+  display: inline-block;
+  white-space: nowrap;
+  margin-left: 1ex;
+}
+
+.demo-page__toolbar .warning {
+  background-image: url('./icons/fraud-warning.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px;
+  background-color: transparent;
+  margin-right: 1px;
+  border: none;
+  color: orangered;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.demo-page__toolbar .warning:active {
+  background-color: #b2b2b2;
+  border: none;
+}
+
+.demo-page__toolbar .warning:hover {
+  cursor: pointer;
+  background-color: #bbb !important;
+  border: none;
+}
+
+.demo-page__toolbar .warning:focus {
+  outline: none;
+}
+
+.customCursor {
+  cursor: pointer !important;
+}
+
+.legend__box {
+  width: 160px;
+  background: white;
+  border: 2px solid #7e7979;
+  border-radius: 4px;
+  margin: auto;
+  padding: 5px;
+}
+
+.legend__item {
+  display: grid;
+  grid-template-columns: 45% 45%;
+  padding: 0 5px;
+}
+
+.legend__line {
+  height: 3px;
+  width: 55px;
+  margin: auto !important;
+  padding-left: 10px;
+}
+
+.legend__line.red {
+  background-color: #db3a34;
+}
+
+.legend__line.light-green {
+  background-color: #56926e;
+}
+
+.legend__line.green {
+  background-color: #2d4d3a;
+}
+
+.legend__line.yellow {
+  background-color: #e0e04f;
+}
+
+.legend__line.dark-blue {
+  background-color: #242265;
+}
+
+.legend__line.blue {
+  background-color: #4281a4;
+}
+
+.legend__desc {
+  font-size: 12px;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.main-view-buttons {
+  display: flex;
+  align-items: center;
+}

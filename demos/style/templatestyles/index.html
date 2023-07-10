@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,7 +30,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Template Styles Demo [yFiles for HTML]</title>
@@ -39,7 +38,7 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="./resources/styles.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <!-- This script tag contains the style templates -->
     <script type="text/yfiles-template">
@@ -96,13 +95,49 @@
                  rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.10}" ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.10}"></ellipse>
       </g>
     </script>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Template Styles</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Template Styles Demo</h1>
 
         <p>
@@ -119,8 +154,10 @@
         <h3>Data Binding</h3>
         <p>
           SVG attributes can be bound to graph item data or to contextual information, using a
-          special binding syntax, e.g.<br />
-          <code>fill="{Binding myColor}"</code><br />
+          special binding syntax, e.g.
+          <br />
+          <code>fill="{Binding myColor}"</code>
+          <br />
           The bound values can be manipulated and processed using converters. This makes it possible
           to set visual attributes based on the item data, e.g. you can link the background color of
           an employee node to the employee's business unit.
@@ -130,87 +167,68 @@
           The binding context gives you information about the current state, e.g. the zoom level,
           the item size, the item's selection state, etc. Template bindings are written like this:
           <br />
-          <code>width="{TemplateBinding width}"</code><br />
+          <code>width="{TemplateBinding width}"</code>
+          <br />
         </p>
 
         <h2>Related Demos</h2>
         <ul>
           <li>
-            <a href="../../style/string-template-node-style/index.html"
-              >String Template Node Style Demo</a
-            >
+            <a href="../../style/string-template-node-style/">
+              String Template Node Style Demo
+            </a>
           </li>
           <li>
-            <a href="../../style/vuejstemplatenodestyle/index.html"
-              >Vue.js Template Node Style Demo</a
-            >
+            <a href="../../style/vue-template-node-style/">
+              Vue.js Template Node Style Demo
+            </a>
           </li>
           <li>
-            <a href="../react-template-node-style/index.html"
-              >React JSX Component Node Style Demo</a
-            >
+            <a href="../react-template-node-style/">React JSX Component Style Demo</a>
           </li>
           <li>
-            <a href="../lit-template-node-style/index.html">Lit Template Node Style Demo</a>
+            <a href="../lit-template-node-style/">Lit Template Node Style Demo</a>
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-    </div>
-
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content">
-        <h2>Personal Data</h2>
-        <div style="width: 100%">
-          <div id="propertiesView">
-            <p>Select an employee in the organization chart to show his properties.</p>
+      <aside class="demo-main__sidebar">
+        <!-- prettier-ignore -->
+        <div class="demo-sidebar__content">
+          <h2>Personal Data</h2>
+          <div style="width: 100%">
+            <div id="propertiesView">
+              <p>Select an employee in the organization chart to show his properties.</p>
+            </div>
           </div>
+
+          <h2>Things to Try</h2>
+
+          <ul>
+            <li>Select a node and take a look at the Properties Panel to see the node details.</li>
+            <li>
+              Click the 'settings' button to edit the name and change the status using the dropdown
+              box. The changes immediately reflect in the node.
+            </li>
+            <li>
+              Take a look at the templates for nodes, labels and ports in <code>index.html</code>.
+            </li>
+            <li>
+              Take a look at method <code>initConverters()</code> in <code>TemplateStylesDemo</code>
+              to see how the data binding converters are initialized.
+            </li>
+            <li>
+              Take a look at method <code>configureStyles()</code> in
+              <code>TemplateStylesDemo</code> to see how the template styles are initialized.
+            </li>
+          </ul>
         </div>
-
-        <h2>Things to Try</h2>
-
-        <ul>
-          <li>Select a node and take a look at the Properties Panel to see the node details.</li>
-          <li>
-            Click the 'settings' button to edit the name and change the status using the dropdown
-            box. The changes immediately reflect in the node.
-          </li>
-          <li>
-            Take a look at the templates for nodes, labels and ports in <code>index.html</code>.
-          </li>
-          <li>
-            Take a look at method <code>initConverters()</code> in
-            <code>TemplateStylesDemo</code> to see how the data binding converters are initialized.
-          </li>
-          <li>
-            Take a look at method <code>configureStyles()</code> in
-            <code>TemplateStylesDemo</code> to see how the template styles are initialized.
-          </li>
-        </ul>
-      </div>
-    </aside>
-
-    <script type="module" crossorigin="anonymous" src="TemplateStylesDemo.js"></script>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="TemplateStylesDemo.ts" async></script>
   </body>
 </html>

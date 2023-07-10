@@ -12,10 +12,11 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "target": "es6",
+    "target": "es2022",
     "module": "esnext",
     "types": [],
-    "lib": ["es2018", "dom"]
+    "lib": ["es2018", "dom"],
+    "preserveSymlinks": true
   },
   "include": ["**/*.ts"],
   "exclude": ["**/environments/**", "src/**/*.worker.ts"]

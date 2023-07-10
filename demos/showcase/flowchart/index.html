@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Flowchart Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./option-panel/option-panel.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .demo-dnd-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: max-content;
+        gap: 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Flowchart Editor</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Flowchart Demo</h1>
+
+        This demo provides a number of
+        <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>
+        s which are shaped as common flowchart symbols. To use those different styles, drag them
+        from the palette to the main graph component.
+
+        <h2>Flowchart Layout</h2>
+        There is an adjusted
+        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>
+        which considers some flowchart specialities.
+        <ul>
+          <li>
+            Incoming-edges are grouped if they are many and there are also some outgoing-edges.
+          </li>
+          <li>
+            The direction of edges that represent positive ('yes') or negative ('branches') can be
+            selected in the toolbar.
+          </li>
+          <li>
+            Flatwise edges can be drawn entirely to one side or just attach at the side of a node.
+          </li>
+          <li>Long paths in the graph are aligned.</li>
+        </ul>
+        Try out the different styles on the set of sample graphs by selecting the directions and
+        press the layout-button.
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div id="dnd-panel" class="demo-dnd-panel demo-dnd-panel--left"></div>
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Samples</h2>
+          <div class="settings-sample">
+            <select id="select-sample" data-type="ComboBox" title="Choose a Sample Graph">
+              <option value="ProblemSolving">Problem Solving</option>
+              <option value="StudentRegistration">Student Registration</option>
+              <option value="eCommerce">eCommerce</option>
+              <option value="ComputingFactorial">Computing Factorial</option>
+              <option value="LargestNumber">Largest Number</option>
+            </select>
+          </div>
+
+          <h2>Layout Options</h2>
+          <div class="demo-properties__settings">
+            <div class="settings-grid">
+              <label for="positive-branch-direction" class="settings-label-row1">
+                'Yes'-Branch
+              </label>
+              <select
+                class="settings-editor-row1"
+                id="positive-branch-direction"
+                title="Choose a preferred direction for edges with 'Yes'-Labels"
+              >
+                <option value="1">Same As Flow</option>
+                <option value="12">Flatwise</option>
+                <option value="4">Left In Flow</option>
+                <option value="8">Right In Flow</option>
+                <option selected="" value="0">Undefined</option>
+              </select>
+              <label for="negative-branch-direction" class="settings-label-row2">'No'-Branch</label>
+              <select
+                class="settings-editor-row2"
+                id="negative-branch-direction"
+                title="Choose a preferred direction for edges with 'No'-Labels"
+              >
+                <option value="1">Same As Flow</option>
+                <option value="12">Flatwise</option>
+                <option value="4">Left In Flow</option>
+                <option value="8">Right In Flow</option>
+                <option selected="" value="0">Undefined</option>
+              </select>
+              <label for="in-edge-grouping" class="settings-label-row3">In-Edge Grouping</label>
+              <select
+                class="settings-editor-row3"
+                id="in-edge-grouping"
+                title="Choose in which way edges are grouped"
+              >
+                <option value="none">None</option>
+                <option value="all">All</option>
+                <option selected="" value="optimized">Optimized</option>
+              </select>
+              <label for="allow-flatwise-edges" class="settings-label-row4">
+                Allow Flatwise Edges
+              </label>
+              <input
+                class="settings-editor-row4"
+                type="checkbox"
+                id="allow-flatwise-edges"
+                checked=""
+              />
+              <button
+                id="layout-button"
+                title="Run a Layout Algorithm"
+                class="settings-editor-row5 flat-button"
+              >
+                Layout
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="FlowchartDemo.ts" async></script>
+  </body>
+</html>

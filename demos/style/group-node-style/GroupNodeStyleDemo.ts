@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,28 +42,24 @@ import {
   License,
   NodeAlignmentPolicy,
   Rect,
-  WebGL2FocusIndicatorManager,
-  WebGL2GraphModelManager,
-  WebGL2SelectionIndicatorManager
+  WebGL2GraphModelManager
 } from 'yfiles'
 import { configureToolTips } from './ToolTipHelper'
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
-import { colorSets, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { initializeSvgWebGlSwitchButton } from './svg-webgl-switch'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   configureFolding(graphComponent)
   configureInteraction(graphComponent)
+  configureRenderMode(graphComponent)
 
   configureDefaultStyles(graphComponent.graph)
   createSampleGraph(graphComponent.graph)
@@ -71,9 +67,7 @@ async function run(): Promise<void> {
   // center the sample graph in the visible area
   graphComponent.fitGraphBounds()
 
-  initializeUI(graphComponent)
-
-  showApp(graphComponent)
+  initializeSvgWebGlSwitchButton('#styleTypeChooser', graphComponent)
 }
 
 /**
@@ -89,7 +83,14 @@ function createSampleGraph(graph: IGraph): void {
   stylesWithTabAtTop.push(
     new GroupNodeStyle({
       folderIcon: 'none',
-      tabFill: red.fill
+      tabFill: red.fill,
+      tabBackgroundFill: red.fill,
+      // tab width 0 together with a leading or trailing tab position prevents corner rounding for
+      // the "inner" corners of the tab stroke and the content area
+      tabPosition: 'top-leading',
+      tabWidth: 0.0,
+      tabHeight: 24.0,
+      stroke: red.stroke
     })
   )
 
@@ -100,6 +101,9 @@ function createSampleGraph(graph: IGraph): void {
       cornerRadius: 0.0,
       groupIcon: 'triangle-down',
       folderIcon: 'triangle-up',
+      // enable general CSS support by setting a CSS class
+      // this is used for the rotation and hover animations of the folder/group icon
+      cssClass: 'group-node',
       iconPosition: 'leading',
       iconBackgroundShape: 'square',
       iconForegroundFill: 'white',
@@ -117,6 +121,9 @@ function createSampleGraph(graph: IGraph): void {
       drawShadow: true,
       groupIcon: 'chevron-down',
       folderIcon: 'chevron-up',
+      // enable general CSS support by setting a CSS class
+      // this is used for the rotation and hover animations of the folder/group icon
+      cssClass: 'group-node',
       iconForegroundFill: blue.stroke,
       iconPosition: 'trailing',
       tabPosition: 'top-leading',
@@ -136,6 +143,9 @@ function createSampleGraph(graph: IGraph): void {
       contentAreaFill: orange.nodeLabelFill,
       drawShadow: true,
       groupIcon: 'minus',
+      // enable general CSS support by setting a CSS class
+      // this is used for the hover animation of the folder/group icon
+      cssClass: 'group-node',
       iconBackgroundFill: orange.nodeLabelFill,
       iconForegroundFill: orange.stroke,
       iconBackgroundShape: 'circle-solid',
@@ -154,6 +164,11 @@ function createSampleGraph(graph: IGraph): void {
   stylesWithTabAtMiscPositions.push(
     new GroupNodeStyle({
       groupIcon: 'minus',
+      // enable general CSS support by setting a CSS class
+      // this is used for the hover animation of the folder/group icon
+      cssClass: 'group-node',
+      contentAreaFill: 'none',
+      renderTransparentContentArea: true,
       iconForegroundFill: gold.fill,
       tabFill: gold.fill
     })
@@ -166,6 +181,9 @@ function createSampleGraph(graph: IGraph): void {
       cornerRadius: 0.0,
       groupIcon: 'triangle-left',
       folderIcon: 'triangle-right',
+      // enable general CSS support by setting a CSS class
+      // this is used for the rotation and hover animations of the folder/group icon
+      cssClass: 'group-node',
       iconPosition: 'leading',
       iconBackgroundShape: 'square',
       iconForegroundFill: 'white',
@@ -183,6 +201,9 @@ function createSampleGraph(graph: IGraph): void {
       drawShadow: true,
       groupIcon: 'chevron-up',
       folderIcon: 'chevron-down',
+      // enable general CSS support by setting a CSS class
+      // this is used for the rotation and hover animations of the folder/group icon
+      cssClass: 'group-node',
       iconForegroundFill: blue.stroke,
       iconPosition: 'leading',
       tabPosition: 'bottom-trailing',
@@ -202,6 +223,9 @@ function createSampleGraph(graph: IGraph): void {
       contentAreaFill: purple.nodeLabelFill,
       drawShadow: true,
       groupIcon: 'minus',
+      // enable general CSS support by setting a CSS class
+      // this is used for the hover animation of the folder/group icon
+      cssClass: 'group-node',
       iconPosition: 'leading',
       iconBackgroundFill: purple.nodeLabelFill,
       iconForegroundFill: purple.stroke,
@@ -220,7 +244,7 @@ function createSampleGraph(graph: IGraph): void {
   // style for red nodes
   labelStyles.push(
     new DefaultLabelStyle({
-      verticalTextAlignment: 'center',
+      verticalTextAlignment: 'top',
       clipText: false,
       wrapping: 'character-ellipsis',
       textFill: red.nodeLabelFill
@@ -391,8 +415,6 @@ function createGroupAndFolderNodes(
     let x = x0
     const n = nodeStyles.length
     for (let i = 0; i < n; ++i) {
-      const row = Math.floor(graph.nodes.size / n) + 1
-
       const node = graph.createGroupNode(null, new Rect(x, y, width, height), nodeStyles[i])
 
       graph.addLabel(node, `${labelTexts[i]} ${j + 1}`, tabBackgroundParameter, labelStyles[i])
@@ -453,13 +475,16 @@ function configureInteraction(graphComponent: GraphComponent): void {
   })
   geim.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.CENTER
 
-  // provide a way to collapse group nodes or expand folder nodes even if their style does not
-  // show an icon for collapsing or expanding
+  // Provide a way to collapse group nodes or expand folder nodes even if their style does not
+  // show an icon for collapsing or expanding.
   geim.addItemLeftDoubleClickedListener((sender, args) => {
     const item = args.item
     if (item instanceof INode) {
       if (ICommand.TOGGLE_EXPANSION_STATE.canExecute(item, graphComponent)) {
         ICommand.TOGGLE_EXPANSION_STATE.execute(item, graphComponent)
+        // we need to make sure that any handles that are present are reevaluated because they
+        // may have different constraints after the expand/collapse operation
+        geim.requeryHandles()
         args.handled = true
       }
     }
@@ -471,54 +496,20 @@ function configureInteraction(graphComponent: GraphComponent): void {
 }
 
 /**
+ * Configures the graphModelManager to support switching between svg and webgl rendering.
+ * At the beginning, the svg rendering is applied.
+ */
+function configureRenderMode(graphComponent: GraphComponent) {
+  graphComponent.graphModelManager = BrowserDetection.webGL2
+    ? new WebGL2GraphModelManager({ renderMode: 'svg' })
+    : new GraphModelManager(graphComponent, graphComponent.contentGroup)
+}
+
+/**
  * Configures the default styles for new nodes, edges, and labels in the given graph.
  */
 function configureDefaultStyles(graph: IGraph): void {
   initDemoStyles(graph, { theme: 'demo-palette-58' })
 }
 
-/**
- * Changes the style implementations in the given graph component from SVG to WebGL2 and vice versa.
- * @param graphComponent The demo's main graph view.
- * @param styleType The new type of style implementation to use. Either 'svg' or 'webgl'.
- */
-function onStyleTypeChanged(graphComponent: GraphComponent, styleType: string): void {
-  if ('webgl' === styleType) {
-    graphComponent.graphModelManager = new WebGL2GraphModelManager()
-
-    // WebGL2 indicator managers simply fall back to normal rendering if no WebGL2GraphModelManager
-    // is used, so we don't need the switch them back for SVG
-    graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
-    graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager()
-  } else {
-    graphComponent.graphModelManager = new GraphModelManager(
-      graphComponent,
-      graphComponent.contentGroup
-    )
-  }
-}
-
-/**
- * Binds actions and commands to the demo's UI controls.
- */
-function initializeUI(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-
-  if (BrowserDetection.webGL2) {
-    addNavigationButtons(document.querySelector<HTMLSelectElement>('#styleTypeChooser')!)
-  } else {
-    const optionElement = document.querySelector<HTMLOptionElement>('option[value="webgl"]')!
-    optionElement.disabled = true
-    optionElement.title = 'This style is disabled since WebGL2 is not available.'
-  }
-
-  bindChangeListener('#styleTypeChooser', styleType =>
-    onStyleTypeChanged(graphComponent, styleType as string)
-  )
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

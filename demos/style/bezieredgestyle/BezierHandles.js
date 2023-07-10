@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,21 +51,41 @@ const EPS = 1e-6
  */
 export class OuterControlPointHandle extends BaseClass(IHandle) {
   /**
+   * The core bend handle that performs the actual bend movement.
+   */
+  coreHandle
+
+  /**
+   * The bend that belongs to this handle instance
+   */
+  bend
+
+  /**
+   * The other handle that is controlled indirectly from us.
+   */
+  slaveHandle
+
+  /**
+   * The original location ot the slave handle, required to perform the actual movement of the other handle.
+   */
+  slaveOrigin
+
+  /**
+   * The location of the middle bend of a control point triple. This is used as the axis of rotation to keep the collinearity invariant.
+   */
+  middleLocation
+
+  /**
    * Creates a new instance that wraps the original `coreHandle` for the given `bend`.
    * @param {!IHandle} coreHandle
    * @param {!IBend} bend
    */
   constructor(coreHandle, bend) {
     super()
-    // The core bend handle that performs the actual bend movement.
     this.coreHandle = coreHandle
-    // The bend that belongs to this handle instance
     this.bend = bend
-    // The other handle that is controlled indirectly from us.
     this.slaveHandle = null
-    // The original location ot the slave handle, required to perform the actual movement of the other handle.
     this.slaveOrigin = Point.ORIGIN
-    // The location of the middle bend of a control point triple. This is used as the axis of rotation to keep the collinearity invariant.
     this.middleLocation = Point.ORIGIN
   }
 
@@ -241,24 +261,48 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
  */
 export class InnerControlPointHandle extends BaseClass(IHandle) {
   /**
+   * The core bend handle that performs the actual bend movement.
+   */
+  coreHandle
+
+  /**
+   * The bend that belongs to this handle instance
+   */
+  bend
+
+  /**
+   * The first (slave) handle in a control point triple
+   */
+  firstSlaveHandle
+
+  /**
+   * The last (slave) handle in a control point triple
+   */
+  lastSlaveHandle
+
+  /**
+   * The original location ot the first slave handle, required to perform the actual movement of the that handle.
+   */
+  firstOrigin
+
+  /**
+   * The original location ot the last slave handle, required to perform the actual movement of the that handle.
+   */
+  lastOrigin
+
+  /**
    * Creates a new instance that wraps the original `coreHandle` for the given `bend`.
    * @param {!IHandle} coreHandle
    * @param {!IBend} bend
    */
   constructor(coreHandle, bend) {
     super()
-    // The core bend handle that performs the actual bend movement.
     this.coreHandle = coreHandle
-    // The bend that belongs to this handle instance
     this.bend = bend
 
-    // The first (slave) handle in a control point triple
     this.firstSlaveHandle = null
-    // The last (slave) handle in a control point triple
     this.lastSlaveHandle = null
-    // The original location ot the first slave handle, required to perform the actual movement of the that handle.
     this.firstOrigin = Point.ORIGIN
-    // The original location ot the last slave handle, required to perform the actual movement of the that handle.
     this.lastOrigin = Point.ORIGIN
   }
 

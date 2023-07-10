@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,7 +51,6 @@ import {
   LayoutExecutor,
   LayoutGraph,
   LayoutStageBase,
-  List,
   SequentialLayout,
   Size,
   TimeSpan
@@ -63,6 +62,12 @@ import { HidingEdgeDescriptor } from './HidingEdgeDescriptor.js'
  */
 export class LayoutHelper {
   /**
+   * Performs the layout and the animation.
+   */
+  executor
+  resolveFinishLayoutPromise
+
+  /**
    * @type {!IGraph}
    */
   get graph() {
@@ -70,20 +75,52 @@ export class LayoutHelper {
   }
 
   /**
+   * The control that displays the graph.
+   */
+  graphComponent
+
+  /**
+   * The graph layout copy that stores the original layout before the node has been changed.
+   * This copy is used to restore the graph when the drag is canceled.
+   */
+  resetToOriginalGraphStageData
+
+  /**
+   * The node that is moved or resized.
+   */
+  node
+
+  /**
+   * The node that is moved and its descendants if the node is a group.
+   */
+  nodes
+
+  /**
+   * The initial size of the node.
+   */
+  oldSize
+
+  /**
+   * The state of the current gesture.
+   */
+  resizeState
+
+  /**
+   * The edges which are hidden temporally during the gesture.
+   */
+  hiddenEdges
+
+  /**
    * Initializes the helper.
    * @param {!GraphComponent} graphComponent
    * @param {!INode} node
    */
   constructor(graphComponent, node) {
-    // The control that displays the graph.
     this.graphComponent = graphComponent
-    // The node that is moved or resized.
     this.node = node
-    // The initial size of the node.
     this.oldSize = node.layout.toSize()
     const hashSet = new Set()
     hashSet.add(node)
-    // The node that is moved and its descendants if the node is a group.
     this.nodes = hashSet
     if (this.graph.isGroupNode(node)) {
       this.graph.groupingSupport
@@ -91,19 +128,12 @@ export class LayoutHelper {
         .forEach(descendant => this.nodes.add(descendant))
     }
     const descriptor = graphComponent.graphModelManager.edgeDescriptor
-    // The edges which are hidden temporally during the gesture.
     this.hiddenEdges =
       descriptor instanceof HidingEdgeDescriptor ? descriptor.hiddenEdges : new Set()
-    // Performs the layout and the animation.
     this.executor = null
-    // The graph layout copy that stores the original layout before the node has been changed.
-    // This copy is used to restore the graph when the drag is canceled.
     this.resetToOriginalGraphStageData = null
-    // The {@link FillAreaLayout} used for "GROWING" and "BOTH".
     this.fillLayout = null
-    // The state of the current gesture.
     this.resizeState = 'NONE'
-    // The current state of the gesture.
     this.state = 'CANCELLED'
     this.resolveFinishLayoutPromise = null
   }
@@ -224,22 +254,22 @@ export class LayoutHelper {
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData)
     if (resizeState === 'SHRINKING') {
       const fillAreaLayoutData = new FillAreaLayoutData()
-      fillAreaLayoutData.fixedNodes.items = List.from(this.nodes)
+      fillAreaLayoutData.fixedNodes = this.nodes
       layoutData.items.add(fillAreaLayoutData)
       if (this.state === 'FINISHING') {
         const polylineEdgeRouterData = new EdgeRouterData()
-        polylineEdgeRouterData.affectedNodes.items = List.from(this.nodes)
+        polylineEdgeRouterData.affectedNodes = this.nodes
         // only route edges for the final layout
         layoutData.items.add(polylineEdgeRouterData)
       }
     } else {
       if (resizeState === 'BOTH') {
         const fillAreaLayoutData = new FillAreaLayoutData()
-        fillAreaLayoutData.fixedNodes.items = List.from(this.nodes)
+        fillAreaLayoutData.fixedNodes = this.nodes
         layoutData.items.add(fillAreaLayoutData)
       }
       const clearAreaLayoutData = new ClearAreaLayoutData()
-      clearAreaLayoutData.areaNodes.items = List.from(this.nodes)
+      clearAreaLayoutData.areaNodes = this.nodes
       layoutData.items.add(clearAreaLayoutData)
     }
     return layoutData
@@ -273,6 +303,16 @@ export class LayoutHelper {
     layoutExecutor.duration = TimeSpan.fromMilliseconds(150)
     return layoutExecutor
   }
+
+  /**
+   * The current state of the gesture.
+   */
+  state
+
+  /**
+   * The {@link FillAreaLayout} used for "GROWING" and "BOTH".
+   */
+  fillLayout
 
   /**
    * Starts a layout calculation if none is already running.
@@ -420,14 +460,19 @@ export class LayoutHelper {
  */
 class DragLayoutExecutor extends LayoutExecutor {
   /**
+   * The graph that contains all elements except the subgraph.
+   *
+   * This is the part of the graph that is morphed after a new layout has been calculated.
+   */
+  filteredGraph
+
+  /**
    * @param {!GraphComponent} graphComponent
    * @param {!ILayoutAlgorithm} layout
    * @param {!Set.<INode>} nodes
    */
   constructor(graphComponent, layout, nodes) {
     super(graphComponent, layout)
-    // The graph that contains all elements except the subgraph.
-    // This is the part of the graph that is morphed after a new layout has been calculated.
     this.filteredGraph = new FilteredGraphWrapper(
       graphComponent.graph,
       n => {
@@ -447,6 +492,8 @@ class DragLayoutExecutor extends LayoutExecutor {
 }
 
 class AffectedEdgesChannelRouter extends LayoutStageBase {
+  channelEdgeRouter
+
   constructor() {
     super()
     this.channelEdgeRouter = new ChannelEdgeRouter()
@@ -467,10 +514,18 @@ class AffectedEdgesChannelRouter extends LayoutStageBase {
  * Singleton class that ensures no two layouts are running at the same time.
  */
 export class LayoutRunner {
+  /**
+   * A lock which prevents re-entrant layout execution.
+   */
+  layoutIsRunning
+
+  /**
+   * Stores the pending layout. Only one layout can be pending at a time.
+   */
+  pendingLayout
+
   constructor() {
-    // A lock which prevents re-entrant layout execution.
     this.layoutIsRunning = false
-    // Stores the pending layout. Only one layout can be pending at a time.
     this.pendingLayout = null
   }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,7 +46,7 @@ graph.undoEngineEnabled = true
 graphComponent.fitGraphBounds()
 
 // Initialize layout button
-const element = document.querySelector<HTMLButtonElement>("button[data-command='Layout']")!
+const element = document.querySelector<HTMLButtonElement>('#LayoutButton')!
 addLayoutButton(element, graphComponent)
 
 // Make sure that when "hot-reloading" reloads the file,
@@ -58,3 +58,6 @@ if (module.hot) {
     graphComponent.cleanUp()
   })
 }
+
+// hide loading indicator
+document.body.classList.add('loaded')

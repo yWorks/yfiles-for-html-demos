@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,6 +54,10 @@ import {
  * that the user is familiar with these concepts.
  */
 export class VoronoiDiagram {
+  centroids
+  boundingBox
+  voronoiFaces
+
   /**
    * Creates a new instance of Voronoi diagram.
    * @param {!IEnumerable.<Point>} centroids
@@ -784,6 +788,28 @@ export class VoronoiDiagram {
  * represents its reverse.
  */
 class VoronoiDart {
+  source
+  target
+  associatedEdge
+  index
+
+  /**
+   * The next dart in counter-clockwise order.
+   */
+  next = null
+  /**
+   * Whether or not this dart is marked.
+   */
+  marked = false
+  /**
+   * The reversed dart for this dart.
+   */
+  reversed = null
+  /**
+   * The angle formed by this dart in counter-clockwise order.
+   */
+  angle = 0
+
   /**
    * Creates a new instance of Dart.
    * @param {!YNode} source
@@ -792,18 +818,6 @@ class VoronoiDart {
    * @param {number} index
    */
   constructor(source, target, associatedEdge, index) {
-    // The next dart in counter-clockwise order.
-    this.next = null
-
-    // Whether or not this dart is marked.
-    this.marked = false
-
-    // The reversed dart for this dart.
-    this.reversed = null
-
-    // The angle formed by this dart in counter-clockwise order.
-    this.angle = 0
-
     this.source = source
     this.target = target
     this.associatedEdge = associatedEdge
@@ -815,24 +829,34 @@ class VoronoiDart {
  * This class models a triangular face.
  */
 class VoronoiFace {
-  constructor() {
-    // The central Voronoi node of the face.
-    this.voronoiNode = null
+  /**
+   * The central Voronoi node of the face.
+   */
+  voronoiNode = null
 
-    // The edges of this face.
-    this.edges = []
+  /**
+   * The edges of this face.
+   */
+  edges = []
 
-    this.vertices = []
+  vertices = []
 
-    // The circumcenter of the face.
-    this.circumcenter = null
+  /**
+   * The circumcenter of the face.
+   */
+  circumcenter = null
 
-    // The node map containing the coordinates of the nodes of the faces.
-    this.nodeCoordinates = Maps.createHashedNodeMap()
+  /**
+   * The node map containing the coordinates of the nodes of the faces.
+   */
+  nodeCoordinates = Maps.createHashedNodeMap()
 
-    // Whether this face is the outer face.
-    this.outer = false
-  }
+  /**
+   * Whether this face is the outer face.
+   */
+  outer = false
+
+  constructor() {}
 
   /**
    * Adds the given edges to the list of edges of the given face.

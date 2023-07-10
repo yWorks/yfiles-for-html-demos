@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,11 +32,17 @@ const OptimizerPlugin = require('@yworks/optimizer/webpack-plugin')
 module.exports = {
   mode: 'production',
   entry: {
-    app: ['core-js/stable', 'regenerator-runtime/runtime', './src/webpack-demo.js']
+    app: ['./src/webpack-demo.ts']
   },
   plugins: [
     new OptimizerPlugin({
-      logLevel: 'info'
+      logLevel: 'info',
+      shouldOptimize(module) {
+        return (
+          !/node_modules/.test(module.resource) ||
+          /node_modules[\\/](demo-resources|utils)/.test(module.resource)
+        )
+      }
     })
   ],
   optimization: {

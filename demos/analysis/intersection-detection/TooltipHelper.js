@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { IEdge, IModelItem, INode, Intersection, Point } from 'yfiles'
-import { addClass } from '../../resources/demo-app.js'
 
 /**
  * The tool tip may either be a plain string or it can also be a rich HTML element. In this case, we
@@ -45,11 +44,11 @@ export function createToolTipContent(item, intersectionInfoArray) {
     return null
   }
   const title = document.createElement('h3')
-  addClass(title, 'tooltip-title')
+  title.classList.add('tooltip-title')
   title.innerHTML = 'Intersections Info'
 
   const toolTip = document.createElement('div')
-  addClass(toolTip, 'tooltip-container')
+  toolTip.classList.add('tooltip-container')
   toolTip.appendChild(title)
 
   let n = 0
@@ -58,7 +57,7 @@ export function createToolTipContent(item, intersectionInfoArray) {
     const item2 = intersection.item2
 
     const grid1 = document.createElement('div')
-    addClass(grid1, 'tooltip-content')
+    grid1.classList.add('tooltip-content')
 
     let intersectionType
     if (item1 instanceof INode && item2 instanceof INode) {
@@ -87,7 +86,7 @@ export function createToolTipContent(item, intersectionInfoArray) {
     toolTip.appendChild(grid1)
 
     const grid2 = document.createElement('div')
-    addClass(grid2, 'tooltip-content')
+    grid2.classList.add('tooltip-content')
     addToToolTipGrid(grid2, 'Intersection Points', '')
 
     let i = 1
@@ -97,7 +96,7 @@ export function createToolTipContent(item, intersectionInfoArray) {
     toolTip.appendChild(grid2)
     if (n++ !== filteredIntersections.length - 1) {
       const separator = document.createElement('hr')
-      addClass(separator, 'tooltip-separator')
+      separator.classList.add('tooltip-separator')
       toolTip.appendChild(separator)
     }
   }
@@ -120,7 +119,7 @@ function getRoundedPoint(p) {
  */
 function addToToolTipGrid(grid, key, value) {
   const keySpan = document.createElement('span')
-  addClass(keySpan, 'tooltip-key')
+  keySpan.classList.add('tooltip-key')
   keySpan.innerHTML = key
   grid.appendChild(keySpan)
 

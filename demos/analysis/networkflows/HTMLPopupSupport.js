@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,6 +46,9 @@ import {
  * parameter} to determine the position of the pop-up.
  */
 export default class HTMLPopupSupport {
+  _currentItem
+  dirty
+
   /**
    * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
    * to determine the relative position of the popup.

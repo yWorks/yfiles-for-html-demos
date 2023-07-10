@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,9 +50,8 @@
       ? '  This demo uses yFiles as a local NPM dependency with ES Module imports.'
       : '  Most demos in this package use yFiles as a local NPM dependency with ES Module imports.') +
     '      Hence, a preprocessing is necessary to resolve the ES Module imports. Usually, this is done by' +
-    '      bundling the application e.g. with webpack. Alternatively, the imports can be resolved with ' +
-    '      a preconfigured server. A <a href="../demos-js/demo-server/README.html" style="color: #ffaf00; text-decoration: underline;">local Node.js Express server</a>' +
-    '      is included in the yFiles for HTML package and can be run with: ' +
+    '      bundling the application, e.g. with vite or webpack. Alternatively, the imports can be resolved with ' +
+    '      a preconfigured server. A vite dev server is installed locally by the yFiles for HTML package and can be run with: ' +
     '    </p>' +
     '    <pre style="color: #333;background-color: #f7f7f7;">\n' +
     '   > cd %YFILES_HTML_DISTRIBUTION_DIR%/' +
@@ -100,13 +99,11 @@
     '</div>'
 
   var missingEs6Support =
-    '<div style="visibility: visible; position: fixed; top: 0;left: 0;right: 0;padding: 24px;background-color: #336699; color: white; border-bottom: 4px solid rgba(26, 52, 78, 0.65); font-size: 18px; text-align: center; max-height: 100%; overflow: auto; box-sizing: border-box;">' +
+    '<div style="z-index: 99; visibility: visible; position: fixed; top: 0;left: 0;right: 0;padding: 24px;background-color: #336699; color: white; border-bottom: 4px solid rgba(26, 52, 78, 0.65); font-size: 18px; text-align: center; max-height: 100%; overflow: auto; box-sizing: border-box;">' +
     '  <div style="max-width: 800px; display: inline-block; text-align: initial;">' +
     '    <h2 style="color: #FFFFFF">Starting the demo failed</h2>' +
     '    <p>The demos in this package require at least ECMAScript 6 support that your browser does not support.</p>' +
-    '    <p>Please switch to a browser with support for ECMAScript 6 (Chrome, Firefox, Edge, Safari 10) or use the included ' +
-    '     <a style="color: #ffaf00; text-decoration: underline;" href="../../../deployment/demos-es5/README.html">deployment tool</a> to convert the demos to ECMAScript 5. The converted ' +
-    '     demos are also <a style="color: #ffaf00; text-decoration: underline;" href="https://live.yworks.com/demos/" target="_blank">available online</a>.</p>' +
+    '    <p>Please switch to a browser with support for ECMAScript 6 (Chrome, Firefox, Edge, Safari).</p>' +
     '    <p>Note that ECMAScript 6 is a requirement of the demos, only. The yFiles for HTML library itself is compatible with ECMAScript 5.</p>' +
     '  </div>' +
     '</div>'
@@ -120,7 +117,7 @@
 
   function checkDemoServerStatus(response) {
     // check if the demo server is running through the headers
-    var demoServerHeader = response.headers.get('x-yfiles-for-html-demo-server')
+    var demoServerHeader = response.headers.get('x-yfiles-for-html-dev-server')
     if (demoServerHeader) {
       demoServerIsRunning = true
       var demoServerRunningBtn = document.getElementById('demo-server-running-btn')

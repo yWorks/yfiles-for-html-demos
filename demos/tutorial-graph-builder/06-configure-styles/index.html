@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>06 Configure Styles - Graph Builder Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-graph-builder"> Graph Builder Tutorial </a>
+
+        <span>06 Configure Styles</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-graph-builder/05-implicit-grouping/index.html'><span>05 Implicit Grouping</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 6/13</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 06 Configure Styles</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-graph-builder/01-create-graph/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create Graph</a
+          ><a
+            href="../../tutorial-graph-builder/02-create-nodes-sources/index.html"
+            class="tutorial-dropdown__item"
+            >02 Create Nodes Sources</a
+          ><a
+            href="../../tutorial-graph-builder/03-create-edges-sources/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Edges Sources</a
+          ><a
+            href="../../tutorial-graph-builder/04-group-nodes/index.html"
+            class="tutorial-dropdown__item"
+            >04 Group Nodes</a
+          ><a
+            href="../../tutorial-graph-builder/05-implicit-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >05 Implicit Grouping</a
+          ><a
+            href="../../tutorial-graph-builder/06-configure-styles/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >06 Configure Styles</a
+          ><a
+            href="../../tutorial-graph-builder/07-create-labels-sources/index.html"
+            class="tutorial-dropdown__item"
+            >07 Create Labels Sources</a
+          ><a
+            href="../../tutorial-graph-builder/08-configure-labels/index.html"
+            class="tutorial-dropdown__item"
+            >08 Configure Labels</a
+          ><a
+            href="../../tutorial-graph-builder/09-configure-tags/index.html"
+            class="tutorial-dropdown__item"
+            >09 Configure Tags</a
+          ><a
+            href="../../tutorial-graph-builder/10-configure-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Configure Layout</a
+          ><a
+            href="../../tutorial-graph-builder/11-update-graph/index.html"
+            class="tutorial-dropdown__item"
+            >11 Update Graph</a
+          ><a
+            href="../../tutorial-graph-builder/12-adjacency-graph-builder/index.html"
+            class="tutorial-dropdown__item"
+            >12 Adjacency Graph Builder</a
+          ><a
+            href="../../tutorial-graph-builder/13-tree-builder/index.html"
+            class="tutorial-dropdown__item"
+            >13 Tree Builder</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-graph-builder/07-create-labels-sources/index.html'><span>07 Create Labels Sources</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Styling the graph using GraphBuilder</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> supports various approaches for styling the graph
+                  elements. They range from simple default visualizations to accessing the business
+                  data for defining specific styles.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  We will now style the nodes and edges in the graph using a simple company
+                  ownership diagram with the following types.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">type <span class="hljs-title class_">EntityData</span> = {
+  <span class="hljs-attr">id</span>: string
+  <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span> | <span class="hljs-string">&#x27;Corporation&#x27;</span> | <span class="hljs-string">&#x27;Branch&#x27;</span> | <span class="hljs-string">&#x27;PE_Risk&#x27;</span>
+  <span class="hljs-attr">currency</span>: <span class="hljs-string">&#x27;USD&#x27;</span> | <span class="hljs-string">&#x27;EUR&#x27;</span>
+}
+
+type <span class="hljs-title class_">ConnectionData</span> = {
+  <span class="hljs-attr">sourceId</span>: string
+  <span class="hljs-attr">targetId</span>: string
+  <span class="hljs-attr">ownership</span>: number
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_node_styling">Node styling</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  There are basically three ways to style nodes using GraphBuilder: Specifically,
+                  you can set <em>default styles</em>, <em>style</em> <em>bindings</em> and
+                  <em>style</em> <em>providers</em> on the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator(TDataItem)" target="_blank">NodeCreator</a>.
+                </p>
+              </div>
+              <div class="sect2">
+                <h3 id="_default_styles">Default styles</h3>
+                <div class="paragraph">
+                  <p>
+                    A default style will apply to all nodes of the NodesSource for which no other
+                    style is specified. In this example, as a default, we set the size, shape and
+                    fill as follows:
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript">nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">defaults</span>.<span class="hljs-property">size</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">150</span>, <span class="hljs-number">90</span>)
+nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">defaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({
+  <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;ellipse&#x27;</span>,
+  <span class="hljs-attr">fill</span>: blue
+})</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="sect2">
+                <h3 id="_style_bindings">Style bindings</h3>
+                <div class="paragraph">
+                  <p>
+                    To style specific attributes of the default style defined above using business
+                    data, use <em>style</em> <em>bindings.</em> In this example, we bind the stroke
+                    and thickness of the <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a> to the
+                    <code>currency</code> property of the displayed data item.
+                  </p>
+                </div>
+                <div class="admonitionblock note">
+                  <table>
+                    <tr>
+                      <td class="icon">
+                        <div class="title">Note</div>
+                      </td>
+                      <td class="content">
+                        <div class="paragraph">
+                          <p>
+                            When using <em>style bindings</em>, it is important that the default
+                            styles are not shared. Otherwise, the same style is going to be used for
+                            all nodes.
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// disable sharing of styles</span>
+nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>
+
+nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">styleBindings</span>.<span class="hljs-title function_">addBinding</span>(
+  <span class="hljs-string">&#x27;stroke&#x27;</span>,
+  <span class="hljs-function">(<span class="hljs-params">entityData: EntityData</span>) =&gt;</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stroke</span>({
+      <span class="hljs-attr">fill</span>: entityData.<span class="hljs-property">currency</span> === <span class="hljs-string">&#x27;EUR&#x27;</span> ? darkBlue : red,
+      <span class="hljs-attr">thickness</span>: <span class="hljs-number">3</span>
+    })
+  }
+)</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="sect2">
+                <h3 id="_style_providers">Style providers</h3>
+                <div class="paragraph">
+                  <p>
+                    In contrast to a style <em>binding</em>, a <em>style provider</em> returns
+                    complete <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>s, usually involving some calculations with
+                    the provided node data. In this example, different
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a>s are returned depending on the
+                    <code>type</code> of entity represented by the node:
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript">nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">styleProvider</span> = (
+  <span class="hljs-attr">entityData</span>: <span class="hljs-title class_">EntityData</span>
+): <span class="hljs-title class_">ShapeNodeStyle</span> | <span class="hljs-function"><span class="hljs-params">undefined</span> =&gt;</span> {
+  <span class="hljs-keyword">if</span> (entityData.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Branch&#x27;</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({
+      <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;round-rectangle&#x27;</span>,
+      <span class="hljs-attr">fill</span>: gold
+    })
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (entityData.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Corporation&#x27;</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({
+      <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;octagon&#x27;</span>,
+      <span class="hljs-attr">fill</span>: green
+    })
+  }
+}</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_edge_styling">Edge styling</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  For edge styling, default styles, bindings and providers work the same way as for
+                  node styling. In this example we only use an edge style <em>provider</em> that
+                  styles ownership edges with more than 50% <code>ownership</code> in red and edges
+                  without ownership data in grey with a dashed stroke:
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">edgesSource.<span class="hljs-property">edgeCreator</span>.<span class="hljs-property">styleProvider</span> = (
+  <span class="hljs-attr">connectionData</span>: <span class="hljs-title class_">ConnectionData</span>
+): <span class="hljs-function"><span class="hljs-params">PolylineEdgeStyle</span> =&gt;</span> {
+  <span class="hljs-keyword">if</span> (connectionData.<span class="hljs-property">ownership</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PolylineEdgeStyle</span>({
+      <span class="hljs-attr">stroke</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stroke</span>({
+        <span class="hljs-attr">fill</span>: connectionData.<span class="hljs-property">ownership</span> &gt; <span class="hljs-number">50</span> ? red : <span class="hljs-string">&#x27;black&#x27;</span>,
+        <span class="hljs-attr">thickness</span>: <span class="hljs-number">3</span>
+      })
+    })
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PolylineEdgeStyle</span>({
+      <span class="hljs-attr">stroke</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stroke</span>({
+        <span class="hljs-attr">fill</span>: gray,
+        <span class="hljs-attr">thickness</span>: <span class="hljs-number">3</span>,
+        <span class="hljs-attr">dashStyle</span>: <span class="hljs-string">&#x27;dash&#x27;</span>
+      })
+    })
+  }
+}</code></pre>
+                </div>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          Please have a look in this tutorial step’s demo code in
+                          <code>configure-styles.ts</code> and play around with the different ways
+                          to style the nodes.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-graph-builder/07-create-labels-sources/index.html'><span>07 Create Labels Sources</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

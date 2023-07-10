@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,11 +37,9 @@ import {
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutSubcomponentDescriptor,
-  ICommand,
   IEnumerable,
   IGraph,
   ILayoutAlgorithm,
-  IList,
   INode,
   LayoutOrientation,
   License,
@@ -55,13 +53,13 @@ import {
   TreeReductionStage
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import {
   applyDemoTheme,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 // We need to load the 'router-polyline' module explicitly to prevent tree-shaking
 // tools it from removing this dependency which is needed for subcomponents layout.
@@ -114,9 +112,7 @@ async function run() {
 
   registerSelectionListener(graphComponent)
 
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  initializeUI(graphComponent)
 }
 
 /**
@@ -142,7 +138,7 @@ function runLayout(graphComponent) {
     // specify a subcomponent with the descriptor
     const subcomponent = hierarchicLayoutData.subcomponents.add(descriptor)
     // and assign the nodes to this subcomponent
-    subcomponent.items = IList.from(component.nodes)
+    subcomponent.items = component.nodes
   }
 
   return graphComponent.morphLayout(
@@ -367,19 +363,11 @@ function registerSelectionListener(graphComponent) {
   const selectedNodes = graphComponent.selection.selectedNodes
   selectedNodes.addItemSelectionChangedListener(() => {
     if (graphComponent.selection.selectedNodes.size === 0) {
-      document
-        .querySelector("button[data-command='CreateSubcomponent']")
-        .setAttribute('disabled', 'disabled')
-      document
-        .querySelector("button[data-command='RemoveSubcomponent']")
-        .setAttribute('disabled', 'disabled')
+      document.querySelector('#create-subcomponent').setAttribute('disabled', 'disabled')
+      document.querySelector('#remove-subcomponent').setAttribute('disabled', 'disabled')
     } else {
-      document
-        .querySelector("button[data-command='CreateSubcomponent']")
-        .removeAttribute('disabled')
-      document
-        .querySelector("button[data-command='RemoveSubcomponent']")
-        .removeAttribute('disabled')
+      document.querySelector('#create-subcomponent').removeAttribute('disabled')
+      document.querySelector('#remove-subcomponent').removeAttribute('disabled')
     }
   })
 }
@@ -388,17 +376,14 @@ function registerSelectionListener(graphComponent) {
  * Binds actions to the controls in the demo's toolbar.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-
+function initializeUI(graphComponent) {
   const selectOrientation = document.querySelector('#orientation-select')
-  bindChangeListener("select[data-command='SelectLayout']", value => {
+  document.querySelector('#layout-select').addEventListener('change', evt => {
+    const value = evt.target.value
     selectOrientation.disabled = value !== 'tree' && value !== 'hierarchic'
   })
 
-  bindAction("button[data-command='CreateSubcomponent']", () => {
+  document.querySelector('#create-subcomponent').addEventListener('click', () => {
     const selectedNodes = graphComponent.selection.selectedNodes
     if (selectedNodes.size === 0) {
       return
@@ -413,7 +398,7 @@ function registerCommands(graphComponent) {
 
     runLayout(graphComponent)
   })
-  bindAction("button[data-command='RemoveSubcomponent']", () => {
+  document.querySelector('#remove-subcomponent').addEventListener('click', () => {
     const selectedNodes = graphComponent.selection.selectedNodes
     if (selectedNodes.size === 0) {
       return
@@ -422,8 +407,9 @@ function registerCommands(graphComponent) {
     runLayout(graphComponent)
   })
 
-  bindAction("button[data-command='Layout']", () => runLayout(graphComponent))
+  document
+    .querySelector('#layout-button')
+    .addEventListener('click', () => runLayout(graphComponent))
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

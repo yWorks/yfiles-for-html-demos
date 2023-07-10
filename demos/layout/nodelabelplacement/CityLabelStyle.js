@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,16 +50,21 @@ import {
  * For each label, an edge is created that connects the label to its owner node.
  */
 export default class CityLabelStyle extends LabelStyleBase {
+  connectorEdgeStyle = new PolylineEdgeStyle({ stroke: '#662b00' })
+  ownerPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+  labelPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+
+  /**
+   * The style that will be use for the label rendering
+   */
+  innerLabelStyle
+
   /**
    * Initializes a new instance of CityLabelStyle.
    * @param {!ILabelStyle} innerLabelStyle
    */
   constructor(innerLabelStyle) {
     super()
-    this.connectorEdgeStyle = new PolylineEdgeStyle({ stroke: '#662b00' })
-    this.ownerPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    this.labelPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    // The style that will be use for the label rendering
     this.innerLabelStyle = innerLabelStyle
   }
 

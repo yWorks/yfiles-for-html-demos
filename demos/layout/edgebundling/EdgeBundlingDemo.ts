@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,7 +44,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
+  GraphSelectionIndicatorManager,
   IEdge,
   IGraph,
   ILayoutAlgorithm,
@@ -64,20 +64,13 @@ import {
   TreeLayout,
   TreeLayoutEdgeRoutingStyle,
   TreeReductionStage,
-  TreeReductionStageData
+  TreeReductionStageData,
+  VoidEdgeStyle,
+  VoidNodeStyle
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle, HighlightManager } from './DemoStyles'
-import { ContextMenu } from '../../utils/ContextMenu'
-import {
-  addClass,
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  removeClass,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app'
+import { ContextMenu } from 'demo-utils/ContextMenu'
 import BalloonSampleData from './resources/balloon'
 import BccCircularSampleData from './resources/bccCircular'
 import CircularSampleData from './resources/circular'
@@ -85,8 +78,9 @@ import RadialSampleData from './resources/radial'
 import TreeSampleData from './resources/tree'
 import RoutingSampleData from './resources/routing'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
 
 type NodeData = {
   id: number
@@ -136,7 +130,6 @@ const bundlesMap = new Mapper<IEdge, boolean>()
 
 // inits the UI's elements
 const samplesComboBox = document.getElementById('sample-combo-box')! as HTMLSelectElement
-addNavigationButtons(samplesComboBox)
 const bundlingStrengthSlider = document.getElementById(
   'bundling-strength-slider'
 ) as HTMLInputElement
@@ -158,10 +151,7 @@ async function run(): Promise<void> {
   await onSampleChanged()
 
   // wire up the UI
-  registerCommands()
-
-  // initialize the demo
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -371,9 +361,11 @@ function initializeGraph(): void {
   graph.edgeDefaults.style = new DemoEdgeStyle()
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
 
-  // hide the selection decorator
-  graph.decorator.nodeDecorator.selectionDecorator.hideImplementation()
-  graph.decorator.edgeDecorator.selectionDecorator.hideImplementation()
+  // hide the selection indication
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    nodeStyle: VoidNodeStyle.INSTANCE,
+    edgeStyle: VoidEdgeStyle.INSTANCE
+  })
 
   // initialize the edge highlight manager
   graphComponent.highlightIndicatorManager = new HighlightManager()
@@ -719,15 +711,8 @@ function calculateConnectedComponents(): void {
 /**
  * Wires up the UI.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindChangeListener("select[data-command='SampleSelectionChanged']", onSampleChanged)
+function initializeUI(): void {
+  addNavigationButtons(samplesComboBox).addEventListener('change', onSampleChanged)
 
   bundlingStrengthSlider.addEventListener(
     'change',
@@ -757,9 +742,9 @@ async function applyLayout(): Promise<void> {
 async function setBusy(isBusy: boolean): Promise<void> {
   ;(graphComponent.inputMode as GraphEditorInputMode).enabled = !isBusy
   if (isBusy) {
-    addClass(graphComponent.div, 'gc-busy')
+    graphComponent.div.classList.add('gc-busy')
   } else {
-    removeClass(graphComponent.div, 'gc-busy')
+    graphComponent.div.classList.remove('gc-busy')
   }
   setUIDisabled(isBusy)
   await showLoadingIndicator(isBusy)
@@ -785,5 +770,4 @@ enum LayoutAlgorithm {
   ROUTER = 5
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

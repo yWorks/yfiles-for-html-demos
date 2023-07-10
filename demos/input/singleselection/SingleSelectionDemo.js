@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,10 +28,10 @@
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, IGraph, License, Point, Rect, Size } from 'yfiles'
 
-import { bindChangeListener, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { disableSingleSelection, enableSingleSelection } from './SingleSelectionHelper.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Changes the selection mode.
@@ -67,13 +67,12 @@ async function run() {
   graphComponent.fitGraphBounds()
 
   // wire up the UI
-  bindChangeListener("input[data-command='ToggleSingleSelection']", checked =>
-    toggleSingleSelection(graphComponent, checked)
-  )
+  const singleSelection = document.querySelector('#toggle-single-selection')
+  singleSelection.addEventListener('change', evt => {
+    toggleSingleSelection(graphComponent, singleSelection.checked)
+  })
 
   toggleSingleSelection(graphComponent)
-
-  showApp(graphComponent)
 }
 
 const sampleNodeLocations = [
@@ -119,5 +118,4 @@ function createSampleGraph(graph) {
   graph.undoEngine.clear()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

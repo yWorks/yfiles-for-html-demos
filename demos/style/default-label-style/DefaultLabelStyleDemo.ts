@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HorizontalTextAlignment,
-  ICommand,
   IGraph,
   ILabelModelParameter,
   Insets,
@@ -46,16 +45,16 @@ import {
 } from 'yfiles'
 
 import { configureToolTips } from './ToolTipHelper'
-import { bindCommand, showApp } from '../../resources/demo-app'
-import type { ColorSetName } from '../../resources/demo-styles'
+import type { ColorSetName } from 'demo-resources/demo-styles'
 import {
   applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Runs the demo.
@@ -77,8 +76,6 @@ async function run(): Promise<void> {
 
   // Initialize the UI and show the demo
   graphComponent.fitGraphBounds()
-  initializeUI(graphComponent)
-  showApp(graphComponent)
 }
 
 /**
@@ -448,15 +445,4 @@ function configureInteraction(graphComponent: GraphComponent): void {
   graphComponent.inputMode = inputMode
 }
 
-/**
- * Initializes the UI elements.
- */
-function initializeUI(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

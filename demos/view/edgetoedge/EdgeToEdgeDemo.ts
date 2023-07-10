@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Color,
   CreateEdgeInputMode,
   EdgePathPortLocationModel,
   EventRecognizers,
@@ -36,7 +35,6 @@ import {
   GraphSnapContext,
   GridConstraintProvider,
   GridInfo,
-  ICommand,
   IEdge,
   IEdgePortHandleProvider,
   IEdgeReconnectionPortCandidateProvider,
@@ -52,15 +50,14 @@ import {
   PolylineEdgeStyle,
   PortRelocationHandleProvider,
   ShapeNodeStyle,
-  SolidColorFill,
   Stroke,
   Visualization
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -91,9 +88,7 @@ async function run(): Promise<void> {
 
   createSampleGraph()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -105,9 +100,7 @@ function initializeGraph(): void {
   graph.undoEngineEnabled = true
 
   initDemoStyles(graph)
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: new Stroke(new SolidColorFill(Color.from('#662b00')), 1.5)
-  })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '1.5px #662b00' })
   graph.edgeDefaults.shareStyleInstance = false
 
   // assign a port style for the ports at the edges
@@ -217,35 +210,17 @@ function createSampleGraph(): void {
 /**
  * Wires up the UI.
  */
-function registerCommands(): void {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    graphComponent.fitGraphBounds()
-  })
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
-
-  bindAction('#demo-snapping-button', () => {
-    const snappingButton = document.querySelector('#demo-snapping-button') as HTMLInputElement
+function initializeUI(): void {
+  const snappingButton = document.querySelector<HTMLInputElement>('#demo-snapping-button')!
+  snappingButton.addEventListener('click', evt => {
     const inputMode = graphComponent.inputMode as GraphEditorInputMode
     inputMode.snapContext!.enabled = snappingButton.checked
   })
 
-  bindAction('#demo-orthogonal-editing-button', () => {
-    const orthogonalEditingButton = document.querySelector(
-      '#demo-orthogonal-editing-button'
-    ) as HTMLInputElement
+  const orthogonalEditingButton = document.querySelector<HTMLInputElement>(
+    '#demo-orthogonal-editing-button'
+  )!
+  orthogonalEditingButton.addEventListener('click', () => {
     const inputMode = graphComponent.inputMode as GraphEditorInputMode
     inputMode.orthogonalEdgeEditingContext!.enabled = orthogonalEditingButton.checked
   })
@@ -266,5 +241,4 @@ function setRandomEdgeColor(edge: IEdge): void {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

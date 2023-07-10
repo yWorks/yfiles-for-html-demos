@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutLayeringStrategy,
-  ICommand,
   IIncrementalHintsFactory,
   IList,
   IModelItem,
@@ -49,14 +48,6 @@ import {
 } from 'yfiles'
 
 import SamplesData from './samples.js'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  reportDemoError,
-  showApp
-} from '../../resources/demo-app.js'
 import { EdgesSourceDialog, NodesSourceDialog } from './EditSourceDialog.js'
 import { SourcesListBox } from './SourcesListBox.js'
 import {
@@ -66,7 +57,9 @@ import {
   NodesSourceDefinitionBuilderConnector,
   SourcesFactory
 } from './ModelClasses.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /**
  * @typedef {Object} GraphBuilderSample
@@ -74,7 +67,7 @@ import { fetchLicense } from '../../resources/fetch-license.js'
  * @property {Array.<NodesSourceDefinition>} nodesSources
  * @property {Array.<EdgesSourceDefinition>} edgesSources
  */
-const samplesComboBox = document.getElementById('samplesComboBox')
+const samplesComboBox = document.getElementById('samples-combobox')
 
 const samples = SamplesData
 
@@ -108,6 +101,8 @@ async function run() {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
+
   const graph = graphComponent.graph
 
   graph.nodeDefaults.size = new Size(150, 60)
@@ -127,33 +122,27 @@ async function run() {
   // noinspection JSIgnoredPromiseFromCall
   buildGraphFromData(false)
 
-  // register toolbar and other GUI element commands
-  registerCommands()
-
-  // initialize the demo
-  showApp(graphComponent)
+  // register toolbar and other GUI element actions
+  initializeUI()
 }
 
 /**
- * Bind various UI elements to the appropriate commands
+ * Bind various UI elements to the appropriate actions.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-
-  bindAction("button[data-command='BuildGraph']", async () => {
+function initializeUI() {
+  document.getElementById('build-graph-button').addEventListener('click', async () => {
     samplesComboBox.disabled = true
     await buildGraphFromData(false)
     samplesComboBox.disabled = false
   })
-  bindAction("button[data-command='UpdateGraph']", async () => {
+
+  document.getElementById('update-graph-button').addEventListener('click', async () => {
     samplesComboBox.disabled = true
     await buildGraphFromData(true)
     samplesComboBox.disabled = false
   })
-  bindChangeListener("select[data-command='SetSampleData']", async () => {
+
+  samplesComboBox.addEventListener('change', async () => {
     const i = samplesComboBox.selectedIndex
     if (samples && samples[i]) {
       samplesComboBox.disabled = true
@@ -162,6 +151,7 @@ function registerCommands() {
       samplesComboBox.disabled = false
     }
   })
+
   addNavigationButtons(samplesComboBox)
 }
 
@@ -218,8 +208,6 @@ async function applyLayout(update) {
   layouting = true
   try {
     await graphComponent.morphLayout(layout, '1s', layoutData)
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     layouting = false
   }
@@ -264,7 +252,7 @@ function loadSample(sample) {
 function initializeSamplesComboBox() {
   for (let i = 0; i < samples.length; i++) {
     const option = document.createElement('option')
-    option.textContent = samples[i].name
+    option.label = samples[i].name
     option.value = samples[i]
     samplesComboBox.appendChild(option)
   }
@@ -341,5 +329,4 @@ function initializeLayout() {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

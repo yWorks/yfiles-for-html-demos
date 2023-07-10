@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>02 Creating Graph Elements - Basic Features Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-basic-features"> Basic Features Tutorial </a>
+
+        <span>02 Creating Graph Elements</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-yfiles-basic-features/01-graphcomponent/index.html'><span>01 Creating the View</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 2/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 02 Creating Graph Elements</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-yfiles-basic-features/01-graphcomponent/index.html"
+            class="tutorial-dropdown__item"
+            >01 Creating the View</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >02 Creating Graph Elements</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/03-managing-viewport/index.html"
+            class="tutorial-dropdown__item"
+            >03 Managing Viewport</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/04-setting-styles/index.html"
+            class="tutorial-dropdown__item"
+            >04 Setting Styles</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/05-label-placement/index.html"
+            class="tutorial-dropdown__item"
+            >05 Label Placement</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/06-basic-interaction/index.html"
+            class="tutorial-dropdown__item"
+            >06 Basic Interaction</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/07-undo-clipboard-support/index.html"
+            class="tutorial-dropdown__item"
+            >07 Undo Clipboard Support</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/08-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >08 Grouping</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/09-data-binding/index.html"
+            class="tutorial-dropdown__item"
+            >09 Data Binding</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/10-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Layout</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/11-layout-data/index.html"
+            class="tutorial-dropdown__item"
+            >11 Layout Data</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/12-graph-analysis/index.html"
+            class="tutorial-dropdown__item"
+            >12 Analysis Algorithms</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-yfiles-basic-features/03-managing-viewport/index.html'><span>03 Managing Viewport</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Creating Graph Elements</h1>
+          <div class="sect1">
+            <h2 id="_how_to_create_a_graph_programmatically">
+              How to create a graph programmatically
+            </h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  This step shows how to
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-creating_graph_elements" target="_blank">create the basic graph elements</a>
+                  using the core <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">IGraph</a>. Note that depending on your specific
+                  use-case, you will let the user create the elements, interactively, or you might
+                  be using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> to populate your graph. The latter is
+                  covered in the
+                  <strong
+                    ><a
+                      href="../../README.html#tutorial-graph-builder"
+                      target="_blank"
+                      rel="noopener"
+                      >Graph Builder Tutorial</a
+                    ></strong
+                  >. Also consider using the
+                  <strong><a href="https://www.yworks.com/app-generator">App Generator</a></strong>
+                  which can help you load your graphs from a convenient low-code interface.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In this example, we use the low-level <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">IGraph</a> to first create the
+                  nodes. The size is determined by
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/INodeDefaults#INodeDefaults-property-size" target="_blank">the default size</a>.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> node1 = graph.<span class="hljs-title function_">createNode</span>()
+<span class="hljs-keyword">const</span> node2 = graph.<span class="hljs-title function_">createNodeAt</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(<span class="hljs-number">150</span>, <span class="hljs-number">15</span>))</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  The third node is created by specifying the node layout. We use a size of
+                  <code>[60,30]</code>. In this case, the X/Y location describes the upper left
+                  corner of the node bounds.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> node3 = graph.<span class="hljs-title function_">createNode</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Rect</span>(<span class="hljs-number">230</span>, <span class="hljs-number">200</span>, <span class="hljs-number">60</span>, <span class="hljs-number">30</span>))</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>Now, let us add some edges to connect the nodes.</p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-title function_">createEdge</span>(node1, node2)
+<span class="hljs-keyword">const</span> edgeWithBend = graph.<span class="hljs-title function_">createEdge</span>(node2, node3)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>We add a bend to the second edge.</p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-title function_">addBend</span>(edgeWithBend, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(<span class="hljs-number">260</span>, <span class="hljs-number">15</span>))</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>Next, we add two ports to the nodes and connect the ports using an edge.</p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      Edges always start and end at ports. In the above example, where we only
+                      specified the nodes, the ports are created implicitly.
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Create a port in the center of the node layout</span>
+<span class="hljs-keyword">const</span> port1AtNode1 = graph.<span class="hljs-title function_">addPort</span>(
+  node1,
+  <span class="hljs-title class_">FreeNodePortLocationModel</span>.<span class="hljs-property">NODE_CENTER_ANCHORED</span>
+)
+
+<span class="hljs-comment">// Create a port at the middle of the left border</span>
+<span class="hljs-comment">// The location is interpreted as absolute coordinates</span>
+<span class="hljs-keyword">const</span> port1AtNode3 = graph.<span class="hljs-title function_">addPortAt</span>(
+  node3,
+  <span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(node3.<span class="hljs-property">layout</span>.<span class="hljs-property">x</span>, node3.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>.<span class="hljs-property">y</span>)
+)
+
+<span class="hljs-comment">// Create an edge that connects the two ports</span>
+<span class="hljs-keyword">const</span> edgeAtPorts = graph.<span class="hljs-title function_">createEdge</span>(port1AtNode1, port1AtNode3)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>Finally, add labels to the graph items we just created.</p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-title function_">addLabel</span>(node1, <span class="hljs-string">&#x27;n1&#x27;</span>)
+graph.<span class="hljs-title function_">addLabel</span>(node2, <span class="hljs-string">&#x27;n2&#x27;</span>)
+graph.<span class="hljs-title function_">addLabel</span>(node3, <span class="hljs-string">&#x27;n3&#x27;</span>)
+graph.<span class="hljs-title function_">addLabel</span>(edgeAtPorts, <span class="hljs-string">&#x27;Edge at Ports&#x27;</span>)</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-yfiles-basic-features/03-managing-viewport/index.html'><span>03 Managing Viewport</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "selenium-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "mocha tests/yfiles.test.js"
+  },
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "selenium-webdriver": "^4.10.0"
+  },
+  "type": "module"
+}

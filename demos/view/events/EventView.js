@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,12 +30,10 @@
  * This class creates an event log to display messages.
  */
 export default class EventView {
-  constructor() {
-    this._logElement = null
-    this.groupEvents = true
-    this.messages = []
-    this.startDate = new Date()
-  }
+  _logElement = null
+  groupEvents = true
+  messages = []
+  startDate = new Date()
 
   /**
    * Returns the dom element that displays the log message.

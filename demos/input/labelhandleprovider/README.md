@@ -1,12 +1,19 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Label Handle Provider Demo
 
-<img src="../../resources/image/LabelHandleProvider.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/input/labelhandleprovider/index.html).
-
 # Label Handle Provider Demo
 
-This demo shows how to implement custom [IHandle](https://docs.yworks.com/yfileshtml/#/api/IHandle)s that allow interactive resizing and rotation of labels.
+This demo shows how to implement custom [IHandle](https://docs.yworks.com/yfileshtml/#/api/IHandle) s that allow interactive resizing and rotation of labels.
 
 ## Things to Try
 

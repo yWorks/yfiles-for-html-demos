@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,6 @@ import {
   DefaultEdgePathCropper,
   DefaultLabelStyle,
   EdgeSelectionIndicatorInstaller,
-  Fill,
   GraphComponent,
   GraphOverviewCanvasVisualCreator,
   GroupNodeLabelModel,
@@ -47,9 +46,12 @@ import {
   PolylineEdgeStyle,
   RectangleIndicatorInstaller,
   RectangleNodeStyle,
+  ScrollBarVisibility,
   ShapeNodeShape,
+  type ShapeNodeShapeStringValues,
   ShapeNodeStyle,
   Theme,
+  ThemeVariant,
   VerticalTextAlignment
 } from 'yfiles'
 import type { ColorSet as CS, ColorSetName as CSN } from './demo-colors'
@@ -144,7 +146,7 @@ export function createDemoNodeStyle(
  * Creates a new node style with the given shape whose colors match the given well-known CSS style.
  */
 export function createDemoShapeNodeStyle(
-  shape: ShapeNodeShape,
+  shape: ShapeNodeShape | ShapeNodeShapeStringValues,
   colorSetName: ColorSetName = 'demo-orange'
 ): ShapeNodeStyle {
   return new ShapeNodeStyle({
@@ -179,8 +181,8 @@ export function createDemoNodeLabelStyle(
 ): DefaultLabelStyle {
   const labelStyle = new DefaultLabelStyle()
   labelStyle.shape = LabelShape.ROUND_RECTANGLE
-  labelStyle.backgroundFill = Fill.from(colorSets[colorSetName].nodeLabelFill)
-  labelStyle.textFill = Fill.from(colorSets[colorSetName].text)
+  labelStyle.backgroundFill = colorSets[colorSetName].nodeLabelFill
+  labelStyle.textFill = colorSets[colorSetName].text
   labelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   labelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
   labelStyle.insets = new Insets(4, 2, 4, 1)
@@ -195,8 +197,8 @@ export function createDemoEdgeLabelStyle(
 ): DefaultLabelStyle {
   const labelStyle = new DefaultLabelStyle()
   labelStyle.shape = LabelShape.ROUND_RECTANGLE
-  labelStyle.backgroundFill = Fill.from(colorSets[colorSetName].edgeLabelFill)
-  labelStyle.textFill = Fill.from(colorSets[colorSetName].text)
+  labelStyle.backgroundFill = colorSets[colorSetName].edgeLabelFill
+  labelStyle.textFill = colorSets[colorSetName].text
   labelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   labelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
   labelStyle.insets = new Insets(4, 2, 4, 1)
@@ -229,6 +231,7 @@ export function createDemoGroupStyle({
   foldingEnabled?: boolean
 }): GroupNodeStyle {
   return new GroupNodeStyle({
+    cssClass: 'demo-group-style',
     groupIcon: foldingEnabled ? 'minus' : 'none',
     folderIcon: 'plus',
     tabFill: foldingEnabled ? colorSets[colorSetName].nodeLabelFill : colorSets[colorSetName].fill,
@@ -269,12 +272,21 @@ export class DemoStyleOverviewPaintable extends GraphOverviewCanvasVisualCreator
 /**
  * Applies the default demo theme to the {@link GraphComponent}.
  */
-export function applyDemoTheme(graphComponent: GraphComponent): void {
+export function applyDemoTheme(
+  graphComponent: GraphComponent,
+  themeOptions: {
+    variant?: ThemeVariant
+    scale?: number
+    primaryColor?: string
+    backgroundColor?: string
+  } = {}
+): void {
   const theme = new Theme({
     variant: 'simple-round',
     scale: 1.4,
     primaryColor: '#38434f',
-    backgroundColor: '#FFF'
+    backgroundColor: '#FFF',
+    ...themeOptions
   })
   graphComponent.theme = theme
   // use hatch selection for better compatibility with arbitrary item colors
@@ -287,4 +299,7 @@ export function applyDemoTheme(graphComponent: GraphComponent): void {
     theme.hatchRectangle
   )
   graphComponent.resources.set(EdgeSelectionIndicatorInstaller.STROKE_KEY, theme.hatchStroke)
+
+  graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
+  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
 }

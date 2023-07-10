@@ -1,0 +1,191 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.edge.level0 {
+  stroke-width: 3;
+  fill: none;
+  stroke: #47f;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.edge.level1 {
+  stroke-width: 4;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.edge.level2 {
+  stroke-width: 3;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.node-underline.level1 {
+  stroke-linecap: round;
+  stroke-width: 8;
+}
+
+.node-underline.level2 {
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.collapse-button {
+  cursor: pointer;
+}
+
+.contextual-toolbar:focus {
+  outline: 0;
+}
+
+.contextual-toolbar * {
+  user-select: none;
+  vertical-align: middle;
+  color: #666666;
+}
+
+.contextual-toolbar {
+  position: absolute;
+  display: block;
+  opacity: 0;
+  box-sizing: border-box;
+  user-select: none;
+  background-color: #f7f7f7;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.16), 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  transition: opacity 0.2s ease-out, width 0.2s ease-out;
+}
+
+.contextual-toolbar button,
+.contextual-toolbar label {
+  display: inline-block;
+  outline: none;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color: transparent;
+  height: 42px;
+  width: 42px;
+  line-height: 42px;
+  box-sizing: border-box;
+  padding: 0;
+  cursor: pointer;
+}
+
+.contextual-toolbar label {
+  text-align: center;
+  font-size: 16px;
+}
+
+.contextual-toolbar label > svg {
+  margin-bottom: 4px;
+}
+
+.contextual-toolbar .separator {
+  height: 28px;
+  width: 1px;
+  background: #999;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.contextual-toolbar button:hover,
+.contextual-toolbar label:hover,
+#clipboard-actions div:hover {
+  background-color: #dedede;
+}
+.contextual-toolbar button:active,
+.contextual-toolbar label:active {
+  background-color: #b2b2b2;
+}
+
+.contextual-toolbar input.toggle-button:checked:hover + label {
+  background-color: #b2b2b2;
+}
+
+.contextual-toolbar input.toggle-button {
+  display: none !important;
+}
+
+.contextual-toolbar input.toggle-button:checked + label {
+  background-color: #dedede;
+}
+
+.picker-container {
+  position: absolute;
+  background-color: #f7f7f7;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.16), 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  opacity: 0;
+  display: none;
+  transition: opacity 0.2s ease-out;
+  padding: 5px;
+  width: 128px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.picker-container button {
+  width: 32px;
+  height: 32px;
+  margin: 2px;
+}
+
+.picker-container:not(.bottom):after {
+  content: '';
+  position: absolute;
+  display: inline-block;
+  border: 8px solid transparent;
+  border-top-color: #b5b5b5;
+  left: calc(50% - 8px);
+  top: 100%;
+}
+
+.picker-container.bottom:after {
+  content: '';
+  position: absolute;
+  display: inline-block;
+  border: 8px solid transparent;
+  border-bottom-color: #b5b5b5;
+  left: calc(50% - 8px);
+  top: -16px;
+}
+
+.color-picker button {
+  transition: border-radius 0.2s ease;
+}
+
+.state-picker button {
+  transition: border-radius 0.2s ease;
+  background-size: 28px !important;
+}
+
+.color-picker .state-picker button:hover {
+  border-radius: 5px;
+}

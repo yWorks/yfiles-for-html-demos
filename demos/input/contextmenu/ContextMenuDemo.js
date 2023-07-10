@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,10 +37,10 @@ import {
   Point,
   PopulateItemContextMenuEventArgs
 } from 'yfiles'
-import { ContextMenu } from '../../utils/ContextMenu.js'
-import { showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { ContextMenu } from 'demo-utils/ContextMenu'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * @returns {!Promise}
@@ -64,8 +64,6 @@ async function run() {
   createSampleGraph(graphComponent.graph)
 
   graphComponent.fitGraphBounds()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -167,5 +165,4 @@ function createSampleGraph(graph) {
   graph.addLabel(graph.createNodeAt(new Point(320, 100)), '3')
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

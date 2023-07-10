@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,10 @@
  **
  ***************************************************************************/
 import { MarkupLabelStyle, TextEditorInputMode } from 'yfiles'
+import Quill from 'quill'
+
+// Quill snow theme
+import 'quill/dist/quill.snow.css'
 
 /**
  * A custom {@link TextEditorInputMode} which utilizes Quill to provide a WYSIWYG text editor that
@@ -39,7 +43,6 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
    * Wire up Quill with the {@link TextEditorInputMode.editorText}.
    * @yjs:keep = root
    */
-  // @ts-ignore
   get editorText(): string {
     return this.quill.root.innerHTML
   }
@@ -63,7 +66,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
     super(container)
 
     // initialize Quill in the editor container
-    this.quill = new Quill(container.firstElementChild, {
+    this.quill = new Quill(container.firstElementChild!, {
       theme: 'snow',
       modules: {
         toolbar: {
@@ -135,14 +138,11 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
       'pointerdown',
       'pointermove'
     ].forEach(event => {
-      container.addEventListener(event, e => e.stopPropagation(), false)
+      container.addEventListener(event, e => e.stopPropagation(), { passive: false })
     })
     return container
   }
 }
-
-// Globally loaded Quill
-declare const Quill: any
 
 // We define some custom elements '<small>' and '<large>' for the MarkupLabelStyle and use them in Quill
 const Inline = Quill.import('blots/inline')

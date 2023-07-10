@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -29,11 +28,11 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Web Worker Demo [yFiles for HTML]</title>
-    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <link rel="stylesheet" href="../../../doc/readme-style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   </head>
   <body>
@@ -42,8 +41,9 @@
       <div class="content-centered">
         <div class="content">
           <div class="breadcrumbs">
-            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Web Worker
-            Demo
+            <a href="../../README.html">yFiles for HTML</a>
+            <span class="angle-right"></span>
+            Web Worker Demo
           </div>
           <h1>Web Worker Demo</h1>
 
@@ -56,9 +56,9 @@
           </p>
           <p>
             The graph, layout, and layout data are configured in the main thread and transferred to
-            the web worker using class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>. The actual layout calculation
-            is performed in <em>WorkerLayout.ts</em> with class
-            <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> on the web worker thread.
+            the web worker using class <a data-api>LayoutExecutorAsync</a>. The actual layout
+            calculation is performed in <em>WorkerLayout.ts</em> with class
+            <a data-api>LayoutExecutorAsyncWorker</a> on the web worker thread.
           </p>
 
           <h2>Build</h2>

@@ -1,15 +1,21 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Structure View Demo
 
-<img src="../../resources/image/structureview.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/view/structureview/index.html).
-
 # Structure View Demo
 
-The Structure View is a self-contained demo component that shows the nesting of the groups and nodes. It is automatically updated with interactive changes to the graph and also allows to select graph items from within the panel.
+The Structure View is a demo component that displays group and node nesting. It updates with interactive graph changes and allows for item selection within the panel.
 
-## Structure View
+## Things to Try
 
-Sync Folding State
-
-Enable this option to synchronize the collapse / expand state between the structure view panel and the graph.
+- **Edit or create** nodes and labels to change the graph. The structure view on the right sidebar will update automatically to reflect any changes you make.
+- Turn on **'Sync Folding State'** and expand or collapse group nodes. This will update the corresponding folders in the structure view. You can also toggle the folder state in the structure view, and the graph will synchronize with the changes.

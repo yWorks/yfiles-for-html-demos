@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   GraphViewerInputMode,
   HierarchicLayout,
   HierarchicLayoutData,
-  ICommand,
   IEdge,
   INode,
   LayeredNodePlacer,
@@ -47,15 +46,9 @@ import {
 
 import PriorityPanel from './PriorityPanel'
 import * as SampleData from './resources/SampleData'
-import { applyDemoTheme, createDemoNodeStyle } from '../../resources/demo-styles'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, createDemoNodeStyle } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The graph component in which the graph is displayed.
@@ -85,9 +78,7 @@ async function run(): Promise<void> {
   initializeInputMode()
   initializePriorityPanel()
   loadGraph(layoutStyle)
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -313,25 +304,22 @@ function initializePriorityPanel(): void {
   })
 }
 
-function registerCommands(): void {
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+function initializeUI(): void {
+  document
+    .querySelector<HTMLButtonElement>('#random-predecessors-paths')!
+    .addEventListener('click', markRandomPredecessorsPaths)
+  document
+    .querySelector<HTMLButtonElement>('#clear-priorities')!
+    .addEventListener('click', clearPriorities)
 
-  bindAction("button[data-command='RandomPredecessorsPaths']", markRandomPredecessorsPaths)
-  bindAction("button[data-command='ClearPriorities']", clearPriorities)
-
-  bindChangeListener("select[data-command='ChangeSample']", value => {
+  addNavigationButtons(
+    document.querySelector<HTMLSelectElement>('#change-sample')!
+  ).addEventListener('change', async evt => {
+    const value = (evt.target as HTMLSelectElement).value
     layoutStyle = value === 'Hierarchic Layout' ? 'hierarchic' : 'tree'
     loadGraph(layoutStyle)
-    runLayout()
+    await runLayout()
   })
-  const samples = document.querySelector("select[data-command='ChangeSample']") as HTMLSelectElement
-  addNavigationButtons(samples)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,31 +30,86 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>WebGL2 Selection Styles Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
-      .gridContainer {
+      .grid-container {
         display: grid;
-        grid-template-columns: 110px 100px;
-        grid-auto-flow: row;
-        margin-bottom: 15px;
-        justify-items: start;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 5px;
+      }
+
+      .second-column {
+        grid-column: 2/3;
+        width: 100%;
+      }
+
+      input[type='color'] {
+        border: none;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>WebGL2 Selection Styles</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button id="reset-button" title="Reset the graph" class="demo-icon-yIconNew"></button>
+      <span class="demo-separator"></span>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button id="select-nodes-button" title="Select all nodes" class="labeled">
+        Select Nodes
+      </button>
+      <button id="select-edges-button" title="Select all edges" class="labeled">
+        Select Edges
+      </button>
+      <button id="select-labels-button" title="Select all labels" class="labeled">
+        Select Labels
+      </button>
+      <button id="clear-selection-button" title="Clear selection" class="labeled">
+        Clear Selection
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>WebGL2 Selection Styles Demo</h1>
 
         <p>
@@ -98,179 +152,140 @@
         </p>
       </div>
     </aside>
-
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content">
-        <h2>Style Properties</h2>
-        <h3>Style Pattern</h3>
-        <p style="font-size: smaller">
-          The style pattern defines the basic rendering of the selection visualization.
-        </p>
-        <div class="gridContainer">
-          Style Pattern
-          <select data-command="ChangeSelectionStyle" style="display: block">
-            <option value="hatch-brush">Hatch</option>
-            <option value="solid" selected>Solid</option>
-            <option value="hairline-border">Hairline Border</option>
-            <option value="outer-border">Solid Outer Border</option>
-            <option value="inner-border">Solid Inner Border</option>
-            <option value="double-line">Double Line</option>
-            <option value="double-border">Double Border</option>
-            <option value="double-border-thin">Double Border Thin</option>
-            <option value="double-border-thick">Double Border Thick</option>
-            <option value="dash">Dash</option>
-            <option value="dot">Dot</option>
-            <option value="dash-dot">Dash Dot</option>
-            <option value="dash-dot-dot">Dash Dot Dot</option>
-            <option value="stripes">Stripes</option>
-            <option value="dotted-hairline-border">Dotted Hairline</option>
-          </select>
-        </div>
-        <h3>Color Scheme</h3>
-        <p style="font-size: smaller">
-          There are two configurable colors for a WebGL2 selection: <em>primary</em> and
-          <em>secondary</em>. The primary color is used for solid strokes, dash patterns and as the
-          inner stroke for border patterns. The secondary stroke is used as the background for
-          dashed patterns and as the outer stroke for border patterns.
-        </p>
-        <div class="gridContainer">
-          Primary
-          <input
-            type="color"
-            data-command="ChangePrimaryColor"
-            value="#fc0335"
-            style="width: 105px; border: none"
-          />
-          <label for="change-primary-transparency">Transparency</label>
-          <input
-            type="range"
-            id="change-primary-transparency"
-            data-command="ChangePrimaryColorTransparency"
-            value="0"
-            min="0"
-            max="100"
-            style="width: 100px"
-          />
-        </div>
-        <div class="gridContainer">
-          Secondary
-          <input
-            type="color"
-            data-command="ChangeSecondaryColor"
-            value="#e3f207"
-            style="width: 105px; border: none"
-          />
-          <label for="change-secondary-transparency">Transparency</label>
-          <input
-            type="range"
-            id="change-secondary-transparency"
-            data-command="ChangeSecondaryColorTransparency"
-            value="0"
-            min="0"
-            max="100"
-            style="width: 100px"
-          />
-        </div>
-        <h3>Thickness and Margins</h3>
-        <div class="gridContainer">
-          <label for="change-thickness">Thickness</label>
-          <input
-            type="range"
-            id="change-thickness"
-            data-command="ChangeThickness"
-            value="3"
-            min="1"
-            max="10"
-            style="width: 100px"
-          />
-          <label for="change-margins">Margins</label>
-          <input
-            type="range"
-            id="change-margins"
-            data-command="ChangeMargins"
-            value="3"
-            min="0"
-            max="30"
-            style="width: 100px"
-          />
-        </div>
-        <h3>Transition and Animation</h3>
-        <p style="font-size: smaller">
-          If <em>transition</em> is activated, the selection is activated and deactivated in a
-          smooth manner. <em>Dash animation</em> activates a "marching ants" animation for dashed or
-          striped styles. Easing configures the course of an animation.
-        </p>
-        <div class="gridContainer">
-          <label for="change-animated">Transition</label>
-          <input type="checkbox" id="change-animated" data-command="ChangeAnimated" checked />
-          <label for="change--dash-animated">Dash Animation</label>
-          <input
-            type="checkbox"
-            id="change--dash-animated"
-            data-command="ChangeDashedAnimated"
-            disabled
-          />
-          Easing
-          <select data-command="ChangeEasing" style="display: block">
-            <option value="linear" selected>Linear</option>
-            <option value="ease">Ease</option>
-            <option value="ease-in">Ease In</option>
-            <option value="ease-out">Ease Out</option>
-            <option value="ease-in-out">Ease In-out</option>
-          </select>
-        </div>
-        <h3>Zoom Policy</h3>
-        <p style="font-size: smaller">
-          The zoom policy determines in which coordinate system the selection visualizations are
-          rendered. <em>Mixed</em> applies a heuristic in which world coordinates are used at large
-          zoom levels and view coordinates are used at small zoom levels.
-        </p>
-        <div class="gridContainer">
-          Zoom Policy
-          <select data-command="ChangeZoomPolicy" style="display: block">
-            <option value="mixed" selected>Mixed</option>
-            <option value="view-coordinates">View Coordinates</option>
-            <option value="world-coordinates">World Coordinates</option>
-          </select>
-        </div>
-      </div>
-    </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="Reset" title="Reset the graph" class="demo-icon-yIconNew"></button>
-        <span class="demo-separator"></span>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-        <button data-command="SelectNodes" title="Select all nodes" class="labeled">
-          Select Nodes
-        </button>
-        <button data-command="SelectEdges" title="Select all edges" class="labeled">
-          Select Edges
-        </button>
-        <button data-command="SelectLabels" title="Select all labels" class="labeled">
-          Select Labels
-        </button>
-        <button data-command="ClearSelection" title="Clear selection" class="labeled">
-          Clear Selection
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Style Properties</h2>
+          <h3>Style Pattern</h3>
+          <p style="font-size: smaller">
+            The style pattern defines the basic rendering of the selection visualization.
+          </p>
+          <div class="grid-container">
+            <label for="change-style-pattern">Style Pattern</label>
+            <select id="change-style-pattern" class="second-column">
+              <option value="hatch-brush">Hatch</option>
+              <option value="solid" selected="">Solid</option>
+              <option value="hairline-border">Hairline Border</option>
+              <option value="outer-border">Solid Outer Border</option>
+              <option value="inner-border">Solid Inner Border</option>
+              <option value="double-line">Double Line</option>
+              <option value="double-border">Double Border</option>
+              <option value="double-border-thin">Double Border Thin</option>
+              <option value="double-border-thick">Double Border Thick</option>
+              <option value="dash">Dash</option>
+              <option value="dot">Dot</option>
+              <option value="dash-dot">Dash Dot</option>
+              <option value="dash-dot-dot">Dash Dot Dot</option>
+              <option value="stripes">Stripes</option>
+              <option value="dotted-hairline-border">Dotted Hairline</option>
+              <option value="halo">Halo</option>
+              <option value="fade">Beacon Fade</option>
+              <option value="no-fade">Beacon No Fade</option>
+              <option value="reverse-fade">Beacon Reverse Fade</option>
+            </select>
+          </div>
+          <h3>Color Scheme</h3>
+          <p style="font-size: smaller">
+            There are two configurable colors for a WebGL2 selection: <em>primary</em> and
+            <em>secondary</em>.
+            <br />
+            The primary color is used for solid strokes, dash patterns, and as the inner stroke for
+            border patterns.
+            <br />
+            The secondary stroke is used as the background for dashed patterns and as the outer
+            stroke for border patterns.
+          </p>
+          <div class="grid-container">
+            <label for="change-primary-color">Primary</label>
+            <input id="change-primary-color" class="second-column" type="color" value="#fc0335" />
+            <label for="change-primary-transparency">Transparency</label>
+            <input
+              class="second-column"
+              type="range"
+              id="change-primary-transparency"
+              value="0"
+              min="0"
+              max="100"
+            />
+            <label for="change-secondary-color">Secondary</label>
+            <input id="change-secondary-color" class="second-column" type="color" value="#e3f207" />
+            <label for="change-secondary-transparency">Transparency</label>
+            <input
+              class="second-column"
+              type="range"
+              id="change-secondary-transparency"
+              value="0"
+              min="0"
+              max="100"
+            />
+          </div>
+          <h3>Thickness and Margins</h3>
+          <div class="grid-container">
+            <label for="change-thickness">Thickness</label>
+            <input
+              class="second-column"
+              type="range"
+              id="change-thickness"
+              value="3"
+              min="1"
+              max="10"
+            />
+            <label for="change-margins">Margins</label>
+            <input
+              class="second-column"
+              type="range"
+              id="change-margins"
+              value="3"
+              min="0"
+              max="30"
+            />
+          </div>
+          <h3>Transition and Animation</h3>
+          <p style="font-size: smaller">
+            If <em>transition</em> is activated, the selection is activated and deactivated in a
+            smooth manner.
+            <br />
+            <em>Dash animation</em> activates a "marching ants" animation for dashed or striped
+            styles.
+            <br />
+            Easing configures the course of an animation.
+          </p>
+          <div class="grid-container">
+            <label for="change-transitioned">Transition</label>
+            <input class="second-column" type="checkbox" id="change-transitioned" checked="" />
+            <label for="change--dash-animated">Dash Animation</label>
+            <input class="second-column" type="checkbox" id="change--dash-animated" disabled="" />
+            <label for="change-easing">Easing</label>
+            <select id="change-easing" class="second-column">
+              <option value="linear" selected="">Linear</option>
+              <option value="ease">Ease</option>
+              <option value="ease-in">Ease In</option>
+              <option value="ease-out">Ease Out</option>
+              <option value="ease-in-out">Ease In-out</option>
+            </select>
+          </div>
+          <h3>Zoom Policy</h3>
+          <p style="font-size: smaller">
+            The zoom policy determines in which coordinate system the selection visualizations are
+            rendered.
+            <br />
+            <em>Mixed</em> applies a heuristic in which world coordinates are used at large zoom
+            levels and view coordinates are used at small zoom levels.
+          </p>
+          <div class="grid-container">
+            <label for="change-zoom-policy">Zoom Policy</label>
+            <select id="change-zoom-policy" class="second-column">
+              <option value="mixed" selected="">Mixed</option>
+              <option value="view-coordinates">View Coordinates</option>
+              <option value="world-coordinates">World Coordinates</option>
+            </select>
+          </div>
+        </div>
+      </aside>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="WebGLSelectionStylesDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="WebGLSelectionStylesDemo.ts" async></script>
   </body>
 </html>

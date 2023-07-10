@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 115.45983 131.72748" height="318.69553" width="481.08261" xmlns="http://www.w3.org/2000/svg">
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.314" x="21.267282"  y="38.276138"  height="12.850427"  width="36.828747"/>
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.148372" x="19.882074" y="24.66242" height="26.516586" width="3.9849613"/>
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.187655" x="-32.480755" y="45.895058" height="47.125229" width="3.5868154"
+        transform="matrix(-0.9858718,-0.16750164,-0.18357663,0.9830054,0,0)" />
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.187673" x="44.789894"  y="59.060528"  height="47.125248" width="3.5874939"
+        transform="matrix(0.98587736,-0.16746889,0.18361233,0.98299873,0,0)" />
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.219282" x="-85.174095" y="-61.800396" height="56.302708" width="4.0993786"
+        transform="matrix(-0.75247364,-0.65862237,0.75247364,-0.65862237,0,0)" />
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.219282" x="-32.894665" y="-114.20457" height="56.302708" width="4.0993786"
+        transform="matrix(0.75247364,-0.65862237,-0.75247364,-0.65862237,0,0)" />
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.204801" x="94.131645"  y="-74" rx="2" ry="2" height="70" width="3.2711849"
+        transform="rotate(90)" />
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.148597" x="54.838676"  y="24.580359" height="26.59853"  width="3.9847364"/>
+  <polygon points="110,50 150,65 70,65 " style="fill:#000000;stroke:#000000;stroke-width:1" transform="matrix(0.68292976,0,0,1.532073,-35.967396,-75.768007)" />
+</svg>

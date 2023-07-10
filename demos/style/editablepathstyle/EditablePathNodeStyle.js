@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -118,6 +118,9 @@ export const EDITABLE_PATH_MEMENTO_SUPPORT = new EditablePathNodeStyleMementoSup
  * adds the option to change the {@link GeneralPath}.
  */
 export default class EditablePathNodeStyle extends NodeStyleBase {
+  $path
+  $pathStyle
+
   /**
    * @param {!object} [options]
    */
@@ -456,6 +459,17 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
  * A {@link IHandle} that allows for changing the path of a {@link EditablePathNodeStyle}.
  */
 export class PathHandle extends BaseClass(IHandle, IPoint) {
+  $type
+  $node
+  $index
+  $x
+  $y
+  $style
+  $origX = 0
+  $origY = 0
+  $copy = null
+  edit = null
+
   /**
    * @param {!EditablePathNodeStyle} style
    * @param {!INode} node
@@ -466,10 +480,6 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
    */
   constructor(style, node, index, x, y, type) {
     super()
-    this.$origX = 0
-    this.$origY = 0
-    this.$copy = null
-    this.edit = null
     this.$x = x
     this.$y = y
     this.$type = type

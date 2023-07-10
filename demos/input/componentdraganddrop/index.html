@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Component Drag and Drop Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <!-- styling for the drag and drop palette -->
+    <style>
+      #palette {
+        bottom: 0;
+        right: 0;
+        width: 170px;
+        border-left: 5px solid #ebeef0;
+        overflow: auto;
+        box-sizing: border-box;
+        z-index: 8;
+      }
+
+      .yfiles-drag {
+        z-index: 15;
+        opacity: 0.35;
+        transition: opacity 0.2s ease-in-out;
+      }
+
+      .yfiles-drag.hidden {
+        opacity: 0;
+      }
+    </style>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Component Drag and Drop</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <input
+        type="checkbox"
+        id="keep-components"
+        title="Components should not be separated while dragging"
+        class="demo-toggle-button labeled"
+      />
+      <label for="keep-components">Keep Components</label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Component Drag and Drop Demo</h1>
+
+        <p>
+          A demo that shows how to make space for components that you can drag from a palette onto
+          the canvas.
+        </p>
+        <p>
+          If a component is dragged from the palette onto the canvas, the <em>ClearAreaLayout</em>
+          algorithm will push away the other elements so there is a free area for the component.
+          This is also the case when dragging a component that is already part of the graph.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Drag a component from the palette onto the canvas and watch the graph give way to it.
+          </li>
+          <li>Drop the dragged component at the desired location.</li>
+          <li>Press the ESC key while dragging to cancel the drag and drop operation.</li>
+          <li>
+            Select the button <em>Keep Components</em> to prevent the components from being changed
+            during the drag and drop operation.
+          </li>
+          <li>
+            Select a component by clicking on a node, drag the component through the remaining
+            graph, and watch how the graph changes to provide space for it.
+          </li>
+        </ul>
+
+        <h2>Related Demos</h2>
+        <ul>
+          <li>
+            <a href="../draganddrop">Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../graph-drag-and-drop">Graph Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../custom-drag-and-drop">Custom Drag and Drop</a>
+          </li>
+          <li>
+            <a href="../../application-features/drag-and-drop/index.html">Simple Drag and Drop</a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <div id="palette"></div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="ComponentDragAndDropDemo.ts" async></script>
+  </body>
+</html>

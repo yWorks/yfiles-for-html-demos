@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,7 +37,7 @@
 }
 
 #popupContentInfo label {
-  width: 58px;
+  width: 65px;
   display: inline-block;
   font-weight: bold;
   vertical-align: middle;
@@ -51,11 +51,11 @@
   vertical-align: middle;
 }
 
-#costMinus {
+#cost-minus {
   background: url('./minus-16.svg') no-repeat;
 }
 
-#costPlus {
+#cost-plus {
   background: url('./plus-16.svg') no-repeat;
 }
 
@@ -76,7 +76,7 @@ img {
 
 #cost-form {
   border: none;
-  width: 16px;
+  width: 20px;
   background-color: transparent;
   vertical-align: middle;
   padding: 1.5px;

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,10 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-#graphComponent {
-  top: 60px;
-}
-
 .freeform-selection-path {
   fill: #67b7dc;
   stroke: #67b7dc;
@@ -113,25 +109,6 @@
   }
 }
 
-#dndPanelContainer {
-  position: absolute;
-  top: 60px;
-  bottom: 0;
-  width: 150px;
-  border-right: 5px solid #ebeef0;
-  overflow: auto;
-  box-sizing: border-box;
-  z-index: 12;
-}
-
-#dndPanel {
-  width: 100%;
-}
-
-.demo-dndPanelItem {
-  margin: 10px auto;
-}
-
 .yfiles-cursor-dragdrop-copy {
   cursor: copy;
 }
@@ -156,17 +133,15 @@
   cursor: no-drop;
 }
 
-.demo-toolbar,
-#graphComponent,
-.demo-left-hidden .demo-toolbar,
-.demo-left-hidden #graphComponent {
-  left: 150px !important;
+.demo-main__graph-component {
+  position: relative;
 }
 
-#cancelButton {
+#cancel-button {
   position: absolute;
-  left: 30px;
-  top: 20px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   color: #5a1225;
   background-color: #f3a2b8;
   border: none;
@@ -176,6 +151,7 @@
   min-width: 100px;
   user-select: none;
   cursor: pointer;
+  z-index: 2;
 }
 
 .demo-button-invisible {
@@ -198,12 +174,12 @@
   opacity: 1;
 }
 
-#panningOptionsDiv {
+#panning-options-div {
   border-bottom: 5px solid #eee;
   padding: 20px 5px;
 }
 
-.panningOptionsBox {
+.panning-options-box {
   background: url('../../resources/icons/arrowheadDownWhite.png') no-repeat 99px 7px;
   height: 29px;
   overflow: hidden;
@@ -213,7 +189,7 @@
   background-color: #0b7189;
 }
 
-.panningOptionsBox select {
+.panning-options-box select {
   background: transparent;
   border: none;
   font-size: 14px;
@@ -223,18 +199,12 @@
   color: #fff;
 }
 
-.panningOptionsBox option {
+.panning-options-box option {
   color: #000;
 }
 
-.panningLabel {
+.panning-label {
   margin: 10px 0 10px 0;
   text-align: center;
   color: #333333;
-}
-
-@media screen and (max-height: 500px) {
-  #dndPanelContainer {
-    top: 30px;
-  }
 }

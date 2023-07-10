@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,17 +32,17 @@ import {
   GraphComponent,
   GraphViewerInputMode,
   HierarchicLayout,
-  ICommand,
   LayoutExecutor,
   LayoutOrientation,
   License
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import { createPortAwareGraphBuilder, setBuilderData } from './GraphBuilder'
 import GraphBuilderData from './graph-builder-data'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -57,6 +57,7 @@ async function run(): Promise<void> {
 
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // We want to keep the unused ports
   graphComponent.graph.nodeDefaults.ports.autoCleanUp = false
@@ -78,10 +79,8 @@ async function run(): Promise<void> {
   // Arrange the graph using a tree layout algorithm
   await arrangeGraph(graphComponent)
 
-  // Register toolbar commands
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  // Register toolbar actions
+  initializeUI(graphComponent)
 }
 
 let builder: GraphBuilder
@@ -130,7 +129,7 @@ async function updateGraph(
  * fashion.
  */
 function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
-  document.querySelector<HTMLButtonElement>("button[data-command='UpdateBuilder']")!.disabled = true
+  document.querySelector<HTMLButtonElement>('#update-builder')!.disabled = true
 
   const algorithm = new HierarchicLayout({
     layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
@@ -148,22 +147,16 @@ function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
   })
     .start()
     .finally(() => {
-      document.querySelector<HTMLButtonElement>("button[data-command='UpdateBuilder']")!.disabled =
-        false
+      document.querySelector<HTMLButtonElement>('#update-builder')!.disabled = false
     })
 }
 
 /**
- * Registers the commands for the toolbar buttons during the creation of this application.
+ * Registers the actions for the toolbar buttons during the creation of this application.
  */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-
+function initializeUI(graphComponent: GraphComponent): void {
   let index = 0
-  bindAction("button[data-command='UpdateBuilder']", async arg => {
+  document.getElementById('update-builder')!.addEventListener('click', async () => {
     // build graph from new data
     const update = ++index % 2 === 1
     const nodeData = update ? GraphBuilderData.updateGates : GraphBuilderData.gates
@@ -172,5 +165,4 @@ function registerCommands(graphComponent: GraphComponent): void {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

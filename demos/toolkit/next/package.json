@@ -1,0 +1,27 @@
+{
+  "name": "nextjs-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@types/node": "20.3.1",
+    "@types/react": "18.2.12",
+    "@types/react-dom": "18.2.5",
+    "demo-resources": "../../resources",
+    "demo-utils": "../../utils",
+    "next": "13.4.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
+  },
+  "devDependencies": {
+    "typescript": "~5.1.6"
+  }
+}

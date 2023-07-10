@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,12 +38,16 @@ import { EdgesSource, GraphBuilder, IGraph, INode, NodesSource } from 'yfiles'
  * A {@link GraphBuilder} that is tailored towards the social network use case in this demo.
  */
 export class SocialNetworkGraphBuilder {
+  _persons = []
+  _seen = new Set()
+  _graphBuilder
+  _nodesSource
+  _edgesSource
+
   /**
    * @param {!IGraph} graph
    */
   constructor(graph) {
-    this._persons = []
-    this._seen = new Set()
     this._graphBuilder = new GraphBuilder(graph)
     // create empty NodesSources whose data will be set on updateGraph
     this._nodesSource = this._graphBuilder.createNodesSource({

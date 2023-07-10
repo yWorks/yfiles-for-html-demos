@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,7 +30,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Label Editing Demo [yFiles for HTML]</title>
@@ -46,27 +45,65 @@
       }
     </style>
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left demo-has-right">
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Label Editing</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
     <!--
   The sidebar for description text
   -->
-    <aside class="demo-sidebar demo-left demo-description">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Label Editing Demo</h1>
 
         <p>
           This demo shows customizations of the interactive label editing. In particular, it shows:
         </p>
         <ul>
-          <li>The related properties of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.</li>
           <li>
-            A <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> that customizes label editing for individual labels and
-            label owners.
+            The related properties of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
+          </li>
+          <li>
+            A <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> that customizes label editing for individual labels and label owners.
           </li>
           <li>Input validation.</li>
           <li>The Instant Typing feature that allows users to start typing immediately.</li>
@@ -75,14 +112,15 @@
         <h2>Thing to Try</h2>
         <ul>
           <li>
-            Edit a selected label by pressing <kbd>F2</kbd>. If no label exists, a new one will be
-            added.
+            Edit a selected label by pressing <kbd>F2</kbd>. If no label exists, a new one will be added.
           </li>
-          <li>Add an additional label to a selected graph item by pressing <kbd>Shift+F2</kbd>.</li>
           <li>
-            Select multiple items (labels and/or label owners) and try to add or edit them by
-            pressing <kbd>Shift+F2</kbd> or <kbd>F2</kbd>, resp. Note that by default, if both
-            labels and other items are selected, editing a label is preferred.
+            Add an additional label to a selected graph item by pressing <kbd>Shift+F2</kbd>.
+          </li>
+          <li>
+            Select multiple items (labels and/or label owners) and try to add or edit them by pressing
+            <kbd>Shift+F2</kbd> or <kbd>F2</kbd>, resp. Note that by default, if both labels and other items are
+            selected, editing a label is preferred.
           </li>
         </ul>
 
@@ -102,8 +140,9 @@
           </dd>
           <dt>Custom Label Helper</dt>
           <dd>
-            Enables a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> for node labels. This helper has the
-            following features:
+            Enables a custom
+            <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a>
+            for node labels. This helper has the following features:
             <ul>
               <li>Each node can have at most two labels.</li>
               <li>
@@ -123,100 +162,77 @@
         </dl>
       </div>
     </aside>
-
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content">
-        <h2>Label Edit Properties</h2>
-
-        <div class="option">
-          <label>
-            <input type="checkbox" id="labelCreation" class="demo-checkbox" checked="" />
-            Label Creation
-          </label>
-        </div>
-        <div class="option">
-          <label>
-            <input type="checkbox" id="labelEditing" class="demo-checkbox" checked="" />
-            Label Editing
-          </label>
-        </div>
-        <div class="option">
-          <label>
-            <input type="checkbox" id="hideLabel" class="demo-checkbox" checked="" />
-            Hide Label during Editing
-          </label>
-        </div>
-        <div class="option">
-          <label>
-            <input type="checkbox" id="instantTyping" class="demo-checkbox" />
-            Instant Typing
-          </label>
-        </div>
-        <div class="option">
-          <label>
-            <input type="checkbox" id="customLabelHelper" class="demo-checkbox" />
-            Custom Label Helper
-          </label>
-        </div>
-
-        <h2>Editable Items</h2>
-
-        <div class="option">
-          <label>
-            <input type="checkbox" id="nodesEnabled" class="demo-checkbox" checked="" />
-            Nodes
-          </label>
-        </div>
-        <div class="option">
-          <label>
-            <input type="checkbox" id="edgesEnabled" class="demo-checkbox" checked="" />
-            Edges
-          </label>
-        </div>
-
-        <h2>Validation</h2>
-
-        <div class="option">
-          <label>
-            <input type="checkbox" id="validationEnabled" class="demo-checkbox" />
-            Enable Validation
-          </label>
-        </div>
-        <div class="option">
-          <label>
-            Pattern
-            <input type="text" id="validationPattern" value="^\w+@\w+\.\w+$" disabled="" />
-          </label>
-        </div>
-      </div>
-    </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-      </div>
-
-      <!--
-    The GraphComponent
-    -->
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-    </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Label Edit Properties</h2>
 
-    <script type="module" crossorigin="anonymous" src="LabelEditingDemo.js"></script>
+          <div class="option">
+            <label>
+              <input type="checkbox" id="labelCreation" class="demo-checkbox" checked="" />
+              Label Creation
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="checkbox" id="labelEditing" class="demo-checkbox" checked="" />
+              Label Editing
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="checkbox" id="hideLabel" class="demo-checkbox" checked="" />
+              Hide Label during Editing
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="checkbox" id="instantTyping" class="demo-checkbox" />
+              Instant Typing
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="checkbox" id="customLabelHelper" class="demo-checkbox" />
+              Custom Label Helper
+            </label>
+          </div>
+
+          <h2>Editable Items</h2>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" id="nodesEnabled" class="demo-checkbox" checked="" />
+              Nodes
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              <input type="checkbox" id="edgesEnabled" class="demo-checkbox" checked="" />
+              Edges
+            </label>
+          </div>
+
+          <h2>Validation</h2>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" id="validationEnabled" class="demo-checkbox" />
+              Enable Validation
+            </label>
+          </div>
+          <div class="option">
+            <label>
+              Pattern
+              <input type="text" id="validationPattern" value="^\w+@\w+\.\w+$" disabled="" />
+            </label>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="LabelEditingDemo.ts" async></script>
   </body>
 </html>

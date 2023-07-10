@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,6 +47,11 @@ import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle.js'
  * {@link ArrowNodeStyle.shaftRatio} interactively.
  */
 export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
+  style
+  xFactor = 0
+  yFactor = 0
+  initialShaftRatio = 0
+
   /**
    * Creates a new instance for the given node.
    * @param {!INode} node The node whose style shall be changed.
@@ -56,9 +61,6 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
     super()
     this.shaftRatioChanged = shaftRatioChanged
     this.node = node
-    this.xFactor = 0
-    this.yFactor = 0
-    this.initialShaftRatio = 0
     this.style = node.style
   }
 

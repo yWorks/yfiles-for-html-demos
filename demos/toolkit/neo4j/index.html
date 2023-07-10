@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,38 +30,14 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Neo4j Integration Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
-
-    <!-- load neo4j driver -->
-    <script src="https://cdn.jsdelivr.net/npm/neo4j-driver@4.2.1/lib/browser/neo4j-web.min.js"></script>
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css"
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/cypher-codemirror@1.1.7/dist/cypher-codemirror-syntax.min.css"
-    />
-
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script>
-      window.codemirror = window.CodeMirror
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/cypher-codemirror@1.1.7/dist/cypher-codemirror.min.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       #propertyTable {
@@ -130,27 +105,77 @@
         margin-top: 10px;
         overflow: auto;
       }
-
-      .left {
-        width: 60%;
-      }
-
-      .right {
-        position: absolute;
-        width: 40%;
-        right: 0;
-        top: 100px;
-        bottom: 0;
-        background-color: #f7f7f7;
-      }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Neo4j</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <span style="margin: 0 10px 0 10px">Maximum Node Count:</span>
+      <input
+        type="range"
+        id="numNodes"
+        value="50"
+        min="50"
+        max="500"
+        step="50"
+        class="custom-slider"
+      />
+      <span id="numNodesLabel">50</span>
+      <span class="demo-separator"></span>
+      <span style="margin: 0 10px 0 10px">Label Diversity:</span>
+      <input type="range" id="numLabels" value="2" min="2" max="5" class="custom-slider" />
+      <span id="numLabelsLabel">2</span>
+      <span>
+        <label>
+          <input type="checkbox" checked="" id="showEdgeLabels" />
+          Show Edge Labels
+        </label>
+      </span>
+      <span class="demo-separator"></span>
+      <button id="reloadDataButton" class="demo-icon-yIconReload labeled" disabled="">
+        Reload Data
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Neo4j Integration Demo</h1>
 
         <p>
@@ -206,9 +231,9 @@
           to connect to a Neo4j database and query it for data.
         </p>
         <p>
-          The query results are then used by a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> with a custom configuration
-          to construct a graph from the data, while assigning different node styles to nodes with
-          different labels.
+          The query results are then used by a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> with a custom
+          configuration to construct a graph from the data, while assigning different node styles to
+          nodes with different labels.
         </p>
         <p>
           The maximum node count setting limits the amount of nodes that are queried from the
@@ -216,14 +241,12 @@
           label sequences that is searched for.
         </p>
         <p>
-          The graph layout is achieved by using <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a> with substructures enabled.
+          The graph layout is achieved by using <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a> with substructures
+          enabled.
         </p>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-
+    <div class="demo-page__main">
       <div id="loginPane">
         <div id="login">
           <h2>Connect to Neo4j database</h2>
@@ -233,11 +256,14 @@
               <input type="text" id="hostInput" value="neo4j+s://demo.neo4jlabs.com:7687" />
             </div>
             <div class="login-form-row" style="font-size: 0.9em; margin-top: 0">
-              (see &nbsp;<a
-                href="https://neo4j.com/docs/driver-manual/current/client-applications/#driver-configuration-examples"
+              (see &nbsp;
+              <a
+                href="https://neo4j.com/docs/getting-started/languages-guides/neo4j-javascript/#driver-configuration"
                 target="_blank"
-                >neo4j docs</a
-              >&nbsp; for example URI schemes)
+              >
+                neo4j docs
+              </a>
+              &nbsp; for URI scheme specs)
             </div>
             <div class="login-form-row">
               <label for="databaseNameInput">Database Name</label>
@@ -267,7 +293,8 @@
               <div id="openInHttp" hidden="">
                 Connections from https to http are forbidden by the browser's security policy. If
                 you can't connect to a non-encrypted database, try clicking the link below to open
-                this tool served on http.<br />
+                this tool served on http.
+                <br />
                 <a>Open in http</a>
               </div>
             </div>
@@ -285,91 +312,48 @@
           <p>To view this demo, please switch to a recent browser.</p>
         </div>
       </div>
-      <div id="graphPane">
-        <div class="demo-toolbar">
-          <button
-            data-command="ZoomIn"
-            title="Zoom In"
-            class="demo-icon demo-icon-yIconZoomIn"
-          ></button>
-          <button
-            data-command="ZoomOriginal"
-            title="Zoom to original size"
-            class="demo-icon-yIconZoomOriginal"
-          ></button>
-          <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-          <button
-            data-command="FitContent"
-            title="Fit Content"
-            class="demo-icon-yIconZoomFit"
-          ></button>
-
-          <span class="demo-separator"></span>
-
-          <span style="margin: 0 10px 0 10px">Maximum Node Count: </span>
-          <input
-            type="range"
-            id="numNodes"
-            value="50"
-            min="50"
-            max="500"
-            step="50"
-            class="custom-slider"
-          />
-          <span id="numNodesLabel">50</span> <span class="demo-separator"></span>
-          <span style="margin: 0 10px 0 10px">Label Diversity: </span>
-          <input type="range" id="numLabels" value="2" min="2" max="5" class="custom-slider" />
-          <span id="numLabelsLabel">2</span>
-          <span
-            ><label
-              ><input type="checkbox" checked="" id="showEdgeLabels" /> Show Edge Labels</label
-            ></span
-          >
-          <span class="demo-separator"></span>
-          <button
-            id="reloadDataButton"
-            data-command="ReloadData"
-            class="demo-icon-yIconReload labeled"
-            disabled
-          >
-            Reload Data
-          </button>
-        </div>
-
-        <div>
-          <div id="graphComponent" class="left">
-            <div id="loadingIndicator">Retrieving data from the Neo4j database...</div>
-          </div>
-          <div class="right">
-            <div style="padding: 10px 29px">
-              <h2>Custom Cypher Query</h2>
-            </div>
-            <div id="cypher-input"></div>
-            <div style="padding: 10px 29px">
-              <button id="run-cypher-button">Run Cypher Query</button>
-              <pre id="queryError"></pre>
-            </div>
-            <div style="padding: 10px 29px">
-              <div id="selected-node-container" hidden="">
-                <h2>Selected Node</h2>
-                <h3>Labels</h3>
-                <p id="labels">None.</p>
-                <h3>Properties</h3>
-                <table id="propertyTable">
-                  <tbody>
-                    <tr>
-                      <th>Name</th>
-                      <th>Value</th>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+      <div id="graphPane" class="demo-main__graph-component" style="visibility: hidden">
+        <div class="demo-main__graph-component">
+          <div id="graphComponent">
+            <div id="loading-indicator">Retrieving data from the Neo4j database...</div>
           </div>
         </div>
       </div>
+      <aside
+        id="queryPane"
+        class="demo-main__sidebar"
+        style="--sidebar-width: 30%; visibility: hidden"
+      >
+        <div class="demo-sidebar__content">
+          <div style="padding: 10px 29px">
+            <h2>Custom Cypher Query</h2>
+          </div>
+          <div id="queryEditorContainer" class="editorText">
+            <textarea id="query-text-area" style="width: 100%; height: 100%"></textarea>
+          </div>
+          <div style="padding: 10px 29px">
+            <button id="run-cypher-button">Run Cypher Query</button>
+            <pre id="queryError"></pre>
+          </div>
+          <div style="padding: 10px 29px">
+            <div id="selected-node-container" hidden="">
+              <h2>Selected Node</h2>
+              <h3>Labels</h3>
+              <p id="labels">None.</p>
+              <h3>Properties</h3>
+              <table id="propertyTable">
+                <tbody>
+                  <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="Neo4jDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="Neo4jDemo.ts" async></script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,8 +28,9 @@
  ***************************************************************************/
 .demo-toolbar {
   display: flex;
-  align-items: center;
   height: 100%;
+  align-items: center;
+  gap: 4px;
 }
 .demo-toolbar button {
   line-height: normal;
@@ -91,7 +92,7 @@
   background: #999;
   display: inline-block;
   vertical-align: middle;
-  margin: 0 10px;
+  margin: 0 2px;
 }
 .demo-icon-yIconReload {
   background-image: url('../assets/reload-16.svg');
@@ -108,13 +109,13 @@
 .demo-icon-yIconZoomFit {
   background-image: url('../assets/fit-16.svg');
 }
-
 .search {
+  margin-left: auto;
   line-height: 20px;
   padding: 4px 8px;
   font-size: 14px;
   letter-spacing: normal;
-  width: 300px;
+  width: 295px;
 }
 
 .search:focus {

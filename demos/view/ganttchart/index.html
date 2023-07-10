@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,7 +30,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Gantt Chart Demo [yFiles for HTML]</title>
@@ -39,17 +38,43 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="resources/gantt-styles.css" />
 
-    <!-- load luxon for date calculations -->
-    <script src="https://cdn.jsdelivr.net/npm/luxon@2.1.1/build/global/luxon.min.js"></script>
-
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Gantt Chart</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Gantt Chart Demo</h1>
 
         <p>The Gantt Chart demo shows how to create a Gantt component from JSON data.</p>
@@ -58,19 +83,14 @@
           is assigned to a task.
         </p>
         <p>
-          An activity has a start and end date, and optionally a lead time and follow-up time. Also
-          an activity can optionally depend on other activities.
+          An activity has a start and an end date, and optionally a lead and/or a follow-up time.
+          Also, an activity can optionally depend on other activities.
         </p>
         <p>
           The activity duration is rendered as a solid area. The lead and follow-up times are
           rendered with a hatch pattern.
         </p>
         <p>The activity dependencies are modeled as edges between the activity nodes.</p>
-        <p>
-          This demo uses
-          <a href="https://moment.github.io/luxon/#/" target="_blank">Luxon</a> to parse,
-          manipulate and calculate dates.
-        </p>
 
         <h2>Things to Try</h2>
 
@@ -78,11 +98,11 @@
           <li>Scroll the tasks using the mouse wheel.</li>
           <li>Scroll the timeline horizontally using shift + mouse wheel.</li>
           <li>Hover over an activity to highlight its dependencies.</li>
-          <li>Hover over a dependency edge to highlight the source and target.</li>
+          <li>Hover over a dependency edge to highlight its source and target.</li>
           <li>Select an activity to display the activity information.</li>
           <li>
             Grab and drag an activity to change the start and end time, or to assign an activity to
-            a different task
+            a different task.
           </li>
           <li>
             Grab the left or right side of the solid area of an activity and drag to change the
@@ -102,28 +122,17 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-
-      <div id="graphComponentContainer">
-        <div id="mainComponent"></div>
-        <div id="timelineComponent"></div>
-        <div id="taskComponent"></div>
+    <div class="demo-page__main">
+      <div id="task-component"></div>
+      <div class="graph-component-container">
+        <div id="timeline-component"></div>
+        <div id="graphComponent"></div>
       </div>
     </div>
 
-    <div id="info" style="display: none"></div>
-    <div id="nodeInfo" style="display: none">
-      <div><span data-name="name"></span></div>
-      <div>Start Time: <span data-name="start"></span></div>
-      <div>End Time: <span data-name="end"></span></div>
-      <div>Lead Time: <span data-name="lead"></span> h</div>
-      <div>Follow-up Time: <span data-name="followUp"></span> h</div>
-      <div>Total Duration: <span data-name="duration"></span> h</div>
-      <div>Task: <span data-name="task"></span></div>
-    </div>
+    <div id="info" class="info elevation-4 hidden"></div>
+    <div id="node-info" class="node-info elevation-8 hidden"></div>
 
-    <script type="module" crossorigin="anonymous" src="GanttChartDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="GanttChartDemo.ts" async></script>
   </body>
 </html>

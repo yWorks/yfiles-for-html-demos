@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   FontWeight,
   GeneralPath,
   Geom,
-  IEnumerable,
   IRectangle,
   IRenderContext,
   IVisualCreator,
@@ -48,7 +47,7 @@ import {
 } from 'yfiles'
 
 import type { VoronoiDiagram } from './VoronoiDiagram'
-import { colorSets } from '../../resources/demo-styles'
+import { colorSets } from 'demo-resources/demo-styles'
 
 const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -163,7 +162,7 @@ export class PolygonVisual
     private clusters: {
       number: number
       clustering: Map<number, IRectangle[]>
-      centroids: IEnumerable<Point>
+      centroids: Iterable<Point>
     }
   ) {
     super()
@@ -228,9 +227,9 @@ export class PolygonVisual
     }
 
     if (this.drawCenter) {
-      this.clusters.centroids.forEach(point => {
+      for (const point of this.clusters.centroids) {
         VoronoiVisual.drawClusterCenter(point, element)
-      })
+      }
     }
 
     return new SvgVisual(element)

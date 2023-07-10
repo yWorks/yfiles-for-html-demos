@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -58,8 +58,7 @@ import {
   TreeLayoutEdgeRoutingStyle
 } from 'yfiles'
 
-import { setComboboxValue } from '../../resources/demo-app.js'
-import { createDemoEdgeStyle } from '../../resources/demo-styles.js'
+import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
 
 /**
  * @typedef {Object} LayerColor
@@ -99,27 +98,27 @@ function createLayerColor(fillColor, strokeColor) {
  * A panel that provides access to customize the node placers for each node.
  */
 export class NodePlacerPanel {
+  graph
+
+  // initialize the preview component where the node placer settings are demonstrated on a small graph
+  previewComponent = new GraphComponent('previewComponent')
+
+  // initializes change listener handling
+  changeListeners = []
+
+  // create node placer configurations
+  nodePlacerConfigurations = new Map()
+  currentNodePlacerConfiguration = null
+
+  // a map which stores the specified node placer for each node
+  nodePlacers = new Mapper()
+
   /**
    * Creates a new instance of NodePlacerPanel.
    * @param {!GraphComponent} graphComponent
    */
   constructor(graphComponent) {
     this.graphComponent = graphComponent
-
-    // initialize the preview component where the node placer settings are demonstrated on a small graph
-    this.previewComponent = new GraphComponent('previewComponent')
-
-    // initializes change listener handling
-    this.changeListeners = []
-
-    // create node placer configurations
-    this.nodePlacerConfigurations = new Map()
-
-    this.currentNodePlacerConfiguration = null
-
-    // a map which stores the specified node placer for each node
-    this.nodePlacers = new Mapper()
-
     this.graph = graphComponent.graph
     createPreviewGraph(this.previewComponent)
     runPreviewLayout(null, this.previewComponent)
@@ -214,7 +213,7 @@ export class NodePlacerPanel {
       referencePlacer = null
     }
     const configurationName = getConfigurationName(referencePlacer)
-    setComboboxValue('select-node-placer', configurationName)
+    document.querySelector('#select-node-placer').value = configurationName
 
     const configuration = this.nodePlacerConfigurations.get(configurationName)
     configuration.adoptSettings(nodePlacers)
@@ -499,6 +498,8 @@ function createPreviewGraph(graphComponent) {
  * {@link ITreeLayoutNodePlacer} and manages the user input.
  */
 class NodePlacerConfiguration {
+  _visible = false
+
   /**
    * Creates a new instance of NodePlacerConfiguration.
    * @param {!HTMLDivElement} div
@@ -507,7 +508,6 @@ class NodePlacerConfiguration {
    */
   constructor(div, nodePlacer, panel) {
     this.div = div
-    this._visible = false
     if (nodePlacer !== null) {
       this.adoptSettings([nodePlacer])
     }
@@ -618,6 +618,10 @@ class NodePlacerConfiguration {
  * It will handle the rotation and spacing properties by default.
  */
 class RotatableNodePlacerConfiguration extends NodePlacerConfiguration {
+  spacing = 20
+  indeterminateSpacing = false
+  modificationMatrix
+
   /**
    * @param {!HTMLDivElement} div
    * @param {!ITreeLayoutNodePlacer} nodePlacer
@@ -625,8 +629,6 @@ class RotatableNodePlacerConfiguration extends NodePlacerConfiguration {
    */
   constructor(div, nodePlacer, panel) {
     super(div, nodePlacer, panel)
-    this.spacing = 20
-    this.indeterminateSpacing = false
     this.modificationMatrix = RotatableNodePlacerMatrix.DEFAULT
   }
 
@@ -681,21 +683,25 @@ class RotatableNodePlacerConfiguration extends NodePlacerConfiguration {
 }
 
 class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
+  childPlacement
+  indeterminateChildPlacement = false
+  routingStyle
+  indeterminateRoutingStyle = false
+  horizontalDistance = 40
+  indeterminateHorizontalDistance = false
+  verticalDistance = 40
+  indeterminateVerticalDistance = false
+  rootAlignment
+  indeterminateRootAlignment = false
+  minimumChannelSegmentDistance = 0
+  indeterminateMinimumChannelSegmentDistance = false
+
   /**
    * Creates a new instance of DefaultNodePlacerConfiguration.
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('default-node-placer-settings'), new DefaultNodePlacer(), panel)
-    this.indeterminateChildPlacement = false
-    this.indeterminateRoutingStyle = false
-    this.horizontalDistance = 40
-    this.indeterminateHorizontalDistance = false
-    this.verticalDistance = 40
-    this.indeterminateVerticalDistance = false
-    this.indeterminateRootAlignment = false
-    this.minimumChannelSegmentDistance = 0
-    this.indeterminateMinimumChannelSegmentDistance = false
     this.childPlacement = ChildPlacement.HORIZONTAL_DOWNWARD
     this.routingStyle = TreeLayoutEdgeRoutingStyle.FORK
     this.rootAlignment = RootAlignment.CENTER
@@ -885,8 +891,8 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
   getDescriptionText() {
     return (
       '<h2>DefaultNodePlacer</h2>' +
-      'This node placer arranges the child nodes horizontally aligned below their root node. It offers options' +
-      ' to change the orientation of the subtree, the edge routing style, and the alignment of the root node.'
+      '<p>This node placer arranges the child nodes horizontally aligned below their root node. It offers options' +
+      ' to change the orientation of the subtree, the edge routing style, and the alignment of the root node.</p>'
     )
   }
 
@@ -1016,18 +1022,19 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
 }
 
 class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
+  createBus = false
+  indeterminateCreateBus = false
+  rootAlignment = RootNodeAlignment.TRAILING
+  indeterminateRootAlignment = false
+  minimumChannelSegmentDistance = 40
+  indeterminateMinimumChannelSegmentDistance = false
+
   /**
    * Creates a new instance of SimpleNodePlacerConfiguration.
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('simple-node-placer-settings'), new SimpleNodePlacer(), panel)
-    this.createBus = false
-    this.indeterminateCreateBus = false
-    this.rootAlignment = RootNodeAlignment.TRAILING
-    this.indeterminateRootAlignment = false
-    this.minimumChannelSegmentDistance = 40
-    this.indeterminateMinimumChannelSegmentDistance = false
   }
 
   createNodePlacer() {
@@ -1142,8 +1149,8 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   getDescriptionText() {
     return (
       '<h2>SimpleNodePlacer</h2>' +
-      'This node placer arranges the child nodes horizontally aligned below their root node. It supports rotated' +
-      'subtrees and offers options to change the alignment of the root node.'
+      '<p>This node placer arranges the child nodes horizontally aligned below their root node. It supports rotated' +
+      'subtrees and offers options to change the alignment of the root node.</p>'
     )
   }
 
@@ -1259,7 +1266,7 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   getDescriptionText() {
     return (
       '<h2>BusNodePlacer</h2>' +
-      'This node placer arranges the child nodes evenly distributed in two lines to the left and right of the root node.'
+      '<p>This node placer arranges the child nodes evenly distributed in two lines to the left and right of the root node.</p>'
     )
   }
 
@@ -1272,16 +1279,17 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 }
 
 class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
+  rootAlignment = GridNodePlacer.BUS_ALIGNED
+  indeterminateRootAlignment = false
+  busPlacement = BusPlacement.LEADING
+  indeterminateBusPlacement = false
+
   /**
    * Creates a new instance of GridNodePlacerConfiguration.
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('grid-node-placer-settings'), new GridNodePlacer(), panel)
-    this.rootAlignment = GridNodePlacer.BUS_ALIGNED
-    this.indeterminateRootAlignment = false
-    this.busPlacement = BusPlacement.LEADING
-    this.indeterminateBusPlacement = false
   }
 
   /**
@@ -1348,8 +1356,8 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   getDescriptionText() {
     return (
       '<h2>GridNodePlacer</h2>' +
-      'This node placer arranges the shapes of the children of a local root in a grid. It supports rotated' +
-      ' subtrees and offers options to change the alignment of the root node .'
+      '<p>This node placer arranges the shapes of the children of a local root in a grid. It supports rotated' +
+      ' subtrees and offers options to change the alignment of the root node.</p>'
     )
   }
 
@@ -1468,6 +1476,9 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 }
 
 class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
+  rootAlignment = RootNodeAlignment.CENTER
+  indeterminateRootAlignment = false
+
   /**
    * Creates a new instance of DoubleLineNodePlacerConfiguration.
    * @param {!NodePlacerPanel} panel
@@ -1478,8 +1489,6 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
       new DoubleLineNodePlacer(),
       panel
     )
-    this.rootAlignment = RootNodeAlignment.CENTER
-    this.indeterminateRootAlignment = false
   }
 
   /**
@@ -1538,8 +1547,8 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
   getDescriptionText() {
     return (
       '<h2>DoubleLineNodePlacer</h2>' +
-      'This node placer arranges the child nodes staggered in two lines below their root node. It supports rotated' +
-      ' subtrees and offers options to change the alignment of the root node.'
+      '<p>This node placer arranges the child nodes staggered in two lines below their root node. It supports rotated' +
+      ' subtrees and offers options to change the alignment of the root node.</p>'
     )
   }
 
@@ -1622,6 +1631,11 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
 }
 
 class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
+  branchCount = 1
+  indeterminateBranchCount = false
+  placeLastOnBottom = true
+  indeterminatePlaceLastOnBottom = false
+
   /**
    * Creates a new instance of LeftRightNodePlacerConfiguration.
    * @param {!NodePlacerPanel} panel
@@ -1632,10 +1646,6 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
       new LeftRightNodePlacer(),
       panel
     )
-    this.branchCount = 1
-    this.indeterminateBranchCount = false
-    this.placeLastOnBottom = true
-    this.indeterminatePlaceLastOnBottom = false
   }
 
   /**
@@ -1701,7 +1711,7 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   getDescriptionText() {
     return (
       '<h2>LeftRightNodePlacer</h2>' +
-      'This node placer arranges the child nodes below their root node, left and right of the downward extending bus-like routing.'
+      '<p>This node placer arranges the child nodes below their root node, left and right of the downward extending bus-like routing.</p>'
     )
   }
 
@@ -1748,6 +1758,17 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
 }
 
 class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
+  aspectRatio = 1
+  indeterminateAspectRatio = false
+  fillStyle = FillStyle.LEADING
+  indeterminateFillStyle = false
+  horizontal = false
+  indeterminateHorizontal = false
+  horizontalDistance = 40
+  indeterminateHorizontalDistance = false
+  verticalDistance = 40
+  indeterminateVerticalDistance = false
+
   /**
    * Creates a new instance of AspectRatioNodePlacerConfiguration.
    * @param {!NodePlacerPanel} panel
@@ -1758,16 +1779,6 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
       new AspectRatioNodePlacer(),
       panel
     )
-    this.aspectRatio = 1
-    this.indeterminateAspectRatio = false
-    this.fillStyle = FillStyle.LEADING
-    this.indeterminateFillStyle = false
-    this.horizontal = false
-    this.indeterminateHorizontal = false
-    this.horizontalDistance = 40
-    this.indeterminateHorizontalDistance = false
-    this.verticalDistance = 40
-    this.indeterminateVerticalDistance = false
   }
 
   /**
@@ -1854,7 +1865,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   getDescriptionText() {
     return (
       '<h2>AspectRatioNodePlacer</h2>' +
-      'This node placer arranges the child nodes such that a given aspect ratio is obeyed.'
+      '<p>This node placer arranges the child nodes such that a given aspect ratio is obeyed.</p>'
     )
   }
 
@@ -1975,6 +1986,9 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
 }
 
 class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
+  childNodePlacer = new SimpleNodePlacer()
+  indeterminateChildNodePlacer = false
+
   /**
    * Creates a new instance of AssistantNodePlacerConfiguration.
    * @param {!NodePlacerPanel} panel
@@ -1985,8 +1999,6 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
       new AssistantNodePlacer(),
       panel
     )
-    this.childNodePlacer = new SimpleNodePlacer()
-    this.indeterminateChildNodePlacer = false
   }
 
   /**
@@ -2044,9 +2056,9 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   getDescriptionText() {
     return (
       '<h2>AssistantNodePlacer</h2>' +
-      'This node placer delegates to two different node placers to arrange the child nodes: Nodes that are marked' +
-      ' as <em>Assistants</em> are placed using the <a href="https://docs.yworks.com/yfileshtml/#/api/LeftRightNodePlacer" target="_blank">LeftRightNodePlacer</a>. The other children are arranged' +
-      ' below the assistant nodes using the child node placer.'
+      '<p>This node placer delegates to two different node placers to arrange the child nodes: Nodes that are marked' +
+      ' as <code>Assistants</code> are placed using the <code>LeftRightNodePlacer</code>. The other children are arranged' +
+      ' below the assistant nodes using the child node placer.</p>'
     )
   }
 
@@ -2113,22 +2125,23 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
 }
 
 class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
+  preferredAspectRatio = 1
+  indeterminatePreferredAspectRatio = false
+  verticalDistance = 40
+  indeterminateVerticalDistance = false
+  horizontalDistance = 40
+  indeterminateHorizontalDistance = false
+  minimumFirstSegmentLength = 10
+  indeterminateMinimumFirstSegmentLength = false
+  minimumLastSegmentLength = 10
+  indeterminateMinimumLastSegmentLength = false
+
   /**
    * Creates a new instance of AspectRatioNodePlacerConfiguration.
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('compact-node-placer-settings'), new CompactNodePlacer(), panel)
-    this.preferredAspectRatio = 1
-    this.indeterminatePreferredAspectRatio = false
-    this.verticalDistance = 40
-    this.indeterminateVerticalDistance = false
-    this.horizontalDistance = 40
-    this.indeterminateHorizontalDistance = false
-    this.minimumFirstSegmentLength = 10
-    this.indeterminateMinimumFirstSegmentLength = false
-    this.minimumLastSegmentLength = 10
-    this.indeterminateMinimumLastSegmentLength = false
   }
 
   /**
@@ -2215,8 +2228,8 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
   getDescriptionText() {
     return (
       '<h2>CompactNodePlacer</h2>' +
-      'This node placer uses a dynamic optimization approach that chooses a placement strategy of the children ' +
-      'of the associated local root such that the overall result is compact with respect to a specified aspect ratio.'
+      '<p>This node placer uses a dynamic optimization approach that chooses a placement strategy of the children ' +
+      'of the associated local root such that the overall result is compact with respect to a specified aspect ratio.</p>'
     )
   }
 
@@ -2353,8 +2366,8 @@ class MultipleNodePlacerConfiguration extends NodePlacerConfiguration {
   getDescriptionText() {
     return (
       '<h2>Multiple Values</h2>' +
-      'You have selected nodes with different <code>NodePlacer</code>s. To assign the same ' +
-      '<code>NodePlacer</code> to all of these nodes, choose one form the selection box.'
+      '<p>You have selected nodes with different <code>NodePlacer</code>s. To assign the same ' +
+      '<code>NodePlacer</code> to all of these nodes, choose one form the selection box.</p>'
     )
   }
 

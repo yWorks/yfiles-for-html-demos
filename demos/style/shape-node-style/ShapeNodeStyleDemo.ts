@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,27 +28,25 @@
  ***************************************************************************/
 import {
   Enum,
-  Font,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IGraph,
   License,
   ShapeNodeShape,
   ShapeNodeStyle
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app'
 import {
   applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeLabelStyle,
   initDemoStyles
-} from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Runs the demo.
@@ -65,8 +63,6 @@ async function run(): Promise<void> {
   configureInteraction(graphComponent)
   graphComponent.fitGraphBounds()
   initializeUI(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -75,34 +71,35 @@ async function run(): Promise<void> {
  */
 function createSampleNodes(graph: IGraph): void {
   // Create the various shape samples
-  const rectangularShapes = [
+  const rectangularShapes: ShapeNodeShape[] = [
     ShapeNodeShape.RECTANGLE,
     ShapeNodeShape.ROUND_RECTANGLE,
     ShapeNodeShape.PILL
   ]
-  const ellipticalShapes = [ShapeNodeShape.ELLIPSE]
-  const skewedShapes = [
+  const ellipticalShapes: ShapeNodeShape[] = [ShapeNodeShape.ELLIPSE]
+  const skewedShapes: ShapeNodeShape[] = [
     ShapeNodeShape.DIAMOND,
     ShapeNodeShape.SHEARED_RECTANGLE,
     ShapeNodeShape.SHEARED_RECTANGLE2,
     ShapeNodeShape.TRAPEZ,
     ShapeNodeShape.TRAPEZ2
   ]
-  const arrowShapes = [ShapeNodeShape.FAT_ARROW, ShapeNodeShape.FAT_ARROW2]
-  const polygonalShapes = [
+  const arrowShapes: ShapeNodeShape[] = [ShapeNodeShape.FAT_ARROW, ShapeNodeShape.FAT_ARROW2]
+  const polygonalShapes: ShapeNodeShape[] = [
     ShapeNodeShape.TRIANGLE,
     ShapeNodeShape.TRIANGLE2,
     ShapeNodeShape.HEXAGON,
     ShapeNodeShape.HEXAGON2,
     ShapeNodeShape.OCTAGON
   ]
-  const starShapes = [
+  const starShapes: ShapeNodeShape[] = [
     ShapeNodeShape.STAR5,
     ShapeNodeShape.STAR5_UP,
     ShapeNodeShape.STAR6,
     ShapeNodeShape.STAR8
   ]
   createShapeSamples(rectangularShapes, 0, graph)
+
   createShapeSamples(ellipticalShapes.concat(arrowShapes), 1, graph)
   createShapeSamples(skewedShapes, 2, graph)
   createShapeSamples(polygonalShapes, 3, graph)
@@ -172,7 +169,7 @@ function initializeStyleDefaults(graph: IGraph): void {
 
   // All node labels share the same style and label model parameter
   const labelStyle = createDemoNodeLabelStyle('demo-palette-58')
-  labelStyle.font = Font.from('24px Arial')
+  labelStyle.font = '24px Arial'
   graph.nodeDefaults.labels.style = labelStyle
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createParameter({
     layoutRatio: [0.5, 0],
@@ -202,14 +199,9 @@ function configureInteraction(graphComponent: GraphComponent): void {
 }
 
 /**
- * Binds actions and commands to the demo's UI controls.
+ * Binds actions to the demo's UI controls.
  */
 function initializeUI(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
   const aspectRatioToggle = document.getElementById(
     'intrinsic-aspect-ratio-button'
   ) as HTMLInputElement
@@ -229,5 +221,4 @@ function initializeUI(graphComponent: GraphComponent): void {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

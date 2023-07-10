@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,20 +27,13 @@
  **
  ***************************************************************************/
 import {
-  Fill,
-  GeneralPath,
   GraphComponent,
-  INode,
-  IRenderContext,
   Matrix,
   NodeStyleBase,
-  Point,
   Rect,
   ShapeNodeStyle,
-  Stroke,
   SvgExport,
-  SvgVisual,
-  Visual
+  SvgVisual
 } from 'yfiles'
 
 const CONTENT_RECT_MARGINS = 50
@@ -51,216 +44,265 @@ const MAX_ZOOM_CHANGE_THRESHOLD = 3
  * This group node style creates a visualization of its children if used in the context of folding.
  * The contents are scaled and rendered within the bounds of the node.
  */
-export default class DeepZoomGroupNodeStyle extends NodeStyleBase {
+export class DeepZoomGroupNodeStyle extends NodeStyleBase {
   /**
-   * Sets the fill for this group node.
-   * @param fill The new fill value
-   * @type {!Fill}
+   * Creates a new group node style with the given backgroundStyle.
+   * @param {!INodeStyle} backgroundStyle
    */
-  set fill(fill) {
-    this.updateBackgroundColors(fill, this._stroke)
-  }
-
-  /**
-   * Sets the stroke for this group node.
-   * @param stroke The new stroke value
-   * @type {!Stroke}
-   */
-  set stroke(stroke) {
-    this.updateBackgroundColors(this._fill, stroke)
-  }
-
-  /**
-   * Creates a new group node style with the given fill and stroke.
-   * @param {!Fill} fill The fill value
-   * @param {!Stroke} stroke The stroke value
-   */
-  constructor(fill, stroke) {
+  constructor(backgroundStyle = new ShapeNodeStyle()) {
     super()
-    this.backGroundStyle = new ShapeNodeStyle()
-    this.updateBackgroundColors(fill, stroke)
-  }
-
-  /**
-   * Updates the style of the group node based on the given fill and stroke.
-   * The backGroundStyle is used for rendering the background shape of the
-   * group node.
-   * @param {!Fill} fill The fill value
-   * @param {!Stroke} stroke The stroke value
-   */
-  updateBackgroundColors(fill, stroke) {
-    this._fill = fill
-    this._stroke = stroke
-    this.backGroundStyle = new ShapeNodeStyle({
-      shape: 'round-rectangle',
-      fill: fill,
-      stroke: stroke
-    })
+    this.backgroundStyle = backgroundStyle
   }
 
   /**
    * Creates a visual of the given node. The visual consists of the background of the node and, if
    * the node has been zoomed out, an image that shows the content of the node.
-   * @param {!IRenderContext} renderContext The renderContext to be used
-   * @param {!INode} node The node to be rendered
-   * @returns {!SvgVisual} {SvgVisual} The SvgVisual for this group node
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
-    const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    const innerGroup = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    const nodeContentsRenderingGroup = window.document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'g'
-    )
+    const outerGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
-    g.appendChild(innerGroup)
-    innerGroup.appendChild(nodeContentsRenderingGroup)
+    const background = this.createBackgroundVisual(node, renderContext)
+    outerGroup.appendChild(background)
+
+    const innerGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     SvgVisual.setTranslate(innerGroup, node.layout.x, node.layout.y)
-    nodeContentsRenderingGroup['data-zoom'] = renderContext.zoom
+    outerGroup.appendChild(innerGroup)
 
-    // if the group node appears large enough, render its contents as svg image
-    if (renderContext.zoom * Math.max(node.layout.width, node.layout.height) > MIN_NODE_SIZE) {
-      const graph = renderContext.canvasComponent.graph
+    const contents = this.createContentsVisual(renderContext, node)
+    innerGroup.appendChild(contents)
 
-      // create a copy of the direct children of this node by using a non-expanded folding view.
-      const tempView = graph.foldingView.manager.createFoldingView(
-        graph.foldingView.getMasterItem(node),
-        () => false
-      )
-
-      const tempGraphComponent = new GraphComponent()
-      tempGraphComponent.graph = tempView.graph
-      tempGraphComponent.updateContentRect({ margins: CONTENT_RECT_MARGINS })
-
-      const allBounds = new Rect(
-        0,
-        0,
-        tempGraphComponent.contentRect.width,
-        tempGraphComponent.contentRect.height
-      )
-
-      // configure a rendering of the groups contents
-      const svgExport = new SvgExport(tempGraphComponent.contentRect)
-
-      // By default, the rendering has a zoom of one and the contained nodes are their 'true' sizes in world coordinates.
-      // Thus, the image needs to be scaled down to the apparent size of the group node
-      svgExport.zoom =
-        renderContext.zoom *
-        Math.max(
-          0.00001,
-          Math.min(node.layout.width / allBounds.width, node.layout.height / allBounds.height)
-        )
-
-      // actually create the svg element
-      const svg = svgExport.exportSvg(tempGraphComponent)
-
-      // clean up
-      tempGraphComponent.cleanUp()
-      tempView.dispose()
-
-      // scale and translate the visual group to fit the displaying node
-      const transform = computeTransform(node, allBounds)
-      transform.applyTo(nodeContentsRenderingGroup)
-      // cache the bounds
-      nodeContentsRenderingGroup['data-allbounds'] = allBounds
-
-      nodeContentsRenderingGroup.appendChild(svg)
-    }
-
-    // create a background visualisation for this group node, i.e. a border around the contents
-    const backgroundVisual = this.backGroundStyle.renderer
-      .getVisualCreator(node, this.backGroundStyle)
-      .createVisual(renderContext)
-
-    const backgroundGroup = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    backgroundGroup.setAttribute('opacity', String(4 / renderContext.zoom - 0.02))
-    backgroundGroup.childVisual = backgroundVisual
-    backgroundGroup.appendChild(backgroundVisual.svgElement)
-    // prepend the background so that it is always drawn behind the group node contents
-    g.prepend(backgroundGroup)
-
-    return new SvgVisual(g)
+    return new SvgVisual(outerGroup)
   }
 
   /**
    * Updates the current visual instead of creating a new one.
-   * @param {!IRenderContext} renderContext The renderContext to be used
-   * @param {!Visual} oldVisual The visual instance to be updated
-   * @param {!INode} node The node to be rendered
-   * @returns {!SvgVisual} {SvgVisual} The SvgVisual for this group node
+   * @param {!IRenderContext} renderContext
+   * @param {!Visual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
-    const container = oldVisual.svgElement
+    const outerGroup = oldVisual.svgElement
 
-    const backgroundGroup = container.firstChild
-    const innerGroup = container.lastElementChild
-    const contentGroup = innerGroup.firstElementChild
+    const background = outerGroup.firstChild
+    const innerGroup = outerGroup.lastElementChild
+    const contents = innerGroup.firstElementChild
 
-    const renderedZoom = contentGroup['data-zoom']
+    const renderedZoom = DeepZoomGroupNodeStyle.readRenderCache(contents, 'data-zoom')
 
     if (
-      renderedZoom > MAX_ZOOM_CHANGE_THRESHOLD * renderContext.zoom ||
-      renderedZoom < renderContext.zoom / MAX_ZOOM_CHANGE_THRESHOLD
+      renderedZoom < renderContext.zoom / MAX_ZOOM_CHANGE_THRESHOLD ||
+      renderedZoom > MAX_ZOOM_CHANGE_THRESHOLD * renderContext.zoom
     ) {
       return this.createVisual(renderContext, node)
     }
-    this.backGroundStyle.renderer
-      .getVisualCreator(node, this.backGroundStyle)
-      .updateVisual(renderContext, backgroundGroup.childVisual)
-
-    if (contentGroup) {
-      const allBounds = contentGroup['data-allbounds']
-      if (allBounds) {
-        const transform = computeTransform(node, allBounds)
-        transform.applyTo(contentGroup)
-      }
-    }
 
     SvgVisual.setTranslate(innerGroup, node.layout.x, node.layout.y)
+
+    this.updateBackgroundVisual(node, renderContext, background)
+    this.updateContentsVisual(contents, node)
 
     return oldVisual
   }
 
   /**
-   * Delegates intersection calculation onto the backgroundStyle that is used for actual drawing.
-   * @param {!INode} node The node that has to be tested for intersections
-   * @param {!Point} inner The first point of the line that is inside the shape
-   * @param {!Point} outer The second point of the line that is outside the shape
-   * @returns {!Point} {Point} The coordinates of the intersection point, if an intersection was found
+   * Delegates intersection calculation to the {@link backgroundStyle}.
+   * @param {!INode} node The node that has to be tested for intersections.
+   * @param {!Point} inner The first point of the line that is inside the shape.
+   * @param {!Point} outer The second point of the line that is outside the shape.
+   * @returns {?Point} The coordinates of the intersection point, if an intersection was found.
    */
   getIntersection(node, inner, outer) {
-    return this.backGroundStyle.renderer
-      .getShapeGeometry(node, this.backGroundStyle)
+    return this.backgroundStyle.renderer
+      .getShapeGeometry(node, this.backgroundStyle)
       .getIntersection(inner, outer)
   }
 
   /**
-   * Delegates outline calculation onto the backgroundStyle that is used for actual drawing.
-   * @returns {?GeneralPath} {GeneralPath | null} The outline or null if no outline can be provided.
+   * Delegates outline calculation to the {@link backgroundStyle}.
+   * @returns {?GeneralPath} The outline or null if no outline can be provided.
    * @param {!INode} node
    */
   getOutline(node) {
-    return this.backGroundStyle.renderer.getShapeGeometry(node, this.backGroundStyle).getOutline()
+    return this.backgroundStyle.renderer.getShapeGeometry(node, this.backgroundStyle).getOutline()
   }
-}
 
-/**
- * Computes the transform for the rendering of the subgraph to fit the node that displays it.
- * @param {!INode} subGraphDisplayNode The group node whom contents have to be scaled
- * @param {!Rect} actualSubGraphBounds The actual bounds of the group node
- * @returns {!Matrix} {Matrix} The transformation matrix
- */
-function computeTransform(subGraphDisplayNode, actualSubGraphBounds) {
-  const layout = subGraphDisplayNode.layout
-  const width = layout.width
-  const height = layout.height
-  const scale = Math.min(width / actualSubGraphBounds.width, height / actualSubGraphBounds.height)
-  return new Matrix(
-    scale,
-    0,
-    0,
-    scale,
-    (width - actualSubGraphBounds.width * scale) * 0.5 - actualSubGraphBounds.x * scale,
-    (height - actualSubGraphBounds.height * scale) * 0.5 - actualSubGraphBounds.y * scale
-  )
+  /**
+   * @param {!INode} node
+   * @param {!IRenderContext} renderContext
+   * @returns {!SVGGElement}
+   */
+  createBackgroundVisual(node, renderContext) {
+    const backgroundVisual = this.backgroundStyle.renderer
+      .getVisualCreator(node, this.backgroundStyle)
+      .createVisual(renderContext)
+
+    const backgroundGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    this.setBackgroundOpacity(renderContext, backgroundGroup)
+    DeepZoomGroupNodeStyle.writeRenderCache(
+      backgroundGroup,
+      'data-background-visual',
+      backgroundVisual
+    )
+    backgroundGroup.appendChild(backgroundVisual.svgElement)
+    return backgroundGroup
+  }
+
+  /**
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SVGGElement}
+   */
+  createContentsVisual(renderContext, node) {
+    const contentsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    DeepZoomGroupNodeStyle.writeRenderCache(contentsGroup, 'data-zoom', renderContext.zoom)
+
+    // if the group node appears large enough, render the contained graph as static svg
+    if (renderContext.zoom * Math.max(node.layout.width, node.layout.height) > MIN_NODE_SIZE) {
+      const [contents, contentsBounds] = this.createScaledContentsVisualization(renderContext, node)
+
+      // scale and translate the visual group to fit the displaying node
+      const transform = DeepZoomGroupNodeStyle.computeTransform(node, contentsBounds)
+      transform.applyTo(contentsGroup)
+
+      // cache the bounds
+      DeepZoomGroupNodeStyle.writeRenderCache(contentsGroup, 'data-contents-bounds', contentsBounds)
+
+      contentsGroup.appendChild(contents)
+    }
+
+    return contentsGroup
+  }
+
+  /**
+   * Creates a static visualization of the contents graph scaled to the container node size.
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} containerNode
+   * @returns {!Array.<SVGElement|Rect>}
+   */
+  createScaledContentsVisualization(renderContext, containerNode) {
+    const graph = renderContext.canvasComponent.graph
+
+    // create a copy of the direct children of this node by using a non-expanded folding view.
+    const tempView = graph.foldingView.manager.createFoldingView(
+      graph.foldingView.getMasterItem(containerNode),
+      () => false
+    )
+
+    const tempGraphComponent = new GraphComponent()
+    tempGraphComponent.graph = tempView.graph
+    tempGraphComponent.updateContentRect({ margins: CONTENT_RECT_MARGINS })
+
+    const allBounds = new Rect(
+      0,
+      0,
+      tempGraphComponent.contentRect.width,
+      tempGraphComponent.contentRect.height
+    )
+
+    // configure a rendering of the groups contents
+    const svgExport = new SvgExport(tempGraphComponent.contentRect)
+
+    // By default, the rendering has a zoom of one and the contained nodes are their 'true' sizes in world coordinates.
+    // Thus, the image needs to be scaled down to the apparent size of the group node
+    svgExport.zoom =
+      renderContext.zoom *
+      Math.max(
+        0.00001,
+        Math.min(
+          containerNode.layout.width / allBounds.width,
+          containerNode.layout.height / allBounds.height
+        )
+      )
+
+    // actually create the svg element
+    const svg = svgExport.exportSvg(tempGraphComponent)
+
+    // clean up
+    tempGraphComponent.cleanUp()
+    tempView.dispose()
+
+    return [svg, allBounds]
+  }
+
+  /**
+   * @param {!SVGGElement} contents
+   * @param {!INode} node
+   */
+  updateContentsVisual(contents, node) {
+    const contentsBounds = DeepZoomGroupNodeStyle.readRenderCache(contents, 'data-contents-bounds')
+    if (contentsBounds) {
+      const transform = DeepZoomGroupNodeStyle.computeTransform(node, contentsBounds)
+      transform.applyTo(contents)
+    }
+  }
+
+  /**
+   * @param {!INode} node
+   * @param {!IRenderContext} renderContext
+   * @param {!SVGElement} background
+   */
+  updateBackgroundVisual(node, renderContext, background) {
+    this.backgroundStyle.renderer
+      .getVisualCreator(node, this.backgroundStyle)
+      .updateVisual(
+        renderContext,
+        DeepZoomGroupNodeStyle.readRenderCache(background, 'data-background-visual')
+      )
+
+    this.setBackgroundOpacity(renderContext, background)
+  }
+
+  /**
+   * @param {!IRenderContext} renderContext
+   * @param {!SVGElement} backgroundGroup
+   */
+  setBackgroundOpacity(renderContext, backgroundGroup) {
+    backgroundGroup.setAttribute('opacity', String(4 / renderContext.zoom - 0.02))
+  }
+
+  /**
+   * Computes the transform for the rendering of the subgraph to fit the node that displays it.
+   * @param {!INode} containerNode The group node whose contents have to be scaled
+   * @param {!Rect} contentsBounds The actual bounds of the group node
+   * @returns {!Matrix} {Matrix} The transformation matrix
+   */
+  static computeTransform(containerNode, contentsBounds) {
+    const layout = containerNode.layout
+    const width = layout.width
+    const height = layout.height
+    const scale = Math.min(width / contentsBounds.width, height / contentsBounds.height)
+    return new Matrix(
+      scale,
+      0,
+      0,
+      scale,
+      (width - contentsBounds.width * scale) * 0.5 - contentsBounds.x * scale,
+      (height - contentsBounds.height * scale) * 0.5 - contentsBounds.y * scale
+    )
+  }
+
+  /**
+   * @param {!unknown} element
+   * @param {!string} key
+   * @param {!unknown} data
+   */
+  static writeRenderCache(element, key, data) {
+    // eslint-disable-next-line
+    element[key] = data
+  }
+
+  /**
+   * @template TCache
+   * @param {!unknown} element
+   * @param {!string} key
+   * @returns {!TCache}
+   */
+  static readRenderCache(element, key) {
+    // eslint-disable-next-line
+    return element[key]
+  }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,15 +57,14 @@ import {
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size,
-  SolidColorFill,
-  TimeSpan
+  SolidColorFill
 } from 'yfiles'
 
 import PartitionGridVisualCreator, { generateGradientColors } from './PartitionGridVisualCreator.js'
 import GraphData from './resources/GraphData.js'
-import { bindAction, bindCommand, reportDemoError, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, createDemoGroupStyle } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, createDemoGroupStyle } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { bindYFilesCommand, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Holds the GraphComponent.
@@ -160,11 +159,9 @@ async function run() {
 
   configureUserInteraction()
 
-  registerCommands()
+  initializeUI()
 
   runLayout()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -372,7 +369,7 @@ function configureUserInteraction() {
 
   // disable visibility buttons if are already enabled
   inputMode.addItemClickedListener((sender, args) => {
-    if (!getElementById('DeleteRow').disabled) {
+    if (!getElementById('delete-row').disabled) {
       toggleDeleteButtonsVisibility(true, Point.ORIGIN)
     }
   })
@@ -466,12 +463,10 @@ async function runLayout(algorithm) {
   try {
     // configure the layout executor and start the layout
     const executor = new CustomLayoutExecutor(graphComponent, layoutAlgorithm)
-    executor.duration = TimeSpan.from('1s')
+    executor.duration = '1s'
     executor.layoutData = partitionGridData
     executor.animateViewport = true
     await executor.start()
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     setUIDisabled(false)
     // adjust the bounds of the graph component so that empty rows/columns are also taken under consideration
@@ -740,7 +735,7 @@ function createPartitionGrid() {
   const minimumColumnWidth = getFloatValue('columnWidth')
   const leftInset = getFloatValue('leftInset')
   const rightInset = getFloatValue('rightInset')
-  const fixedColumnOrder = getElementById('fixColumnOrder').checked
+  const fixedColumnOrder = getElementById('fix-column-order').checked
 
   for (const columnDescriptor of grid.columns) {
     columnDescriptor.minimumWidth = minimumColumnWidth || 0
@@ -784,7 +779,7 @@ function createPartitionGridData() {
           return createNodeCellId(node)
         }
         // we have a group node
-        const stretchGroups = getElementById('stretchGroupNodes').checked
+        const stretchGroups = getElementById('stretch-group-nodes').checked
         if (!stretchGroups || graph.getChildren(node).size === 0) {
           // the group nodes shall not be stretched or the group node has no children so we return null
           // this means the group node will be adjusted to contain its children but has no specific assignment to cells
@@ -802,15 +797,7 @@ function createPartitionGridData() {
 /**
  * Wires up the UI.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
-  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
-
+function initializeUI() {
   // create the new commands and bind them to the keyboard input mode.
   const kim = graphComponent.inputMode.keyboardInputMode
 
@@ -823,11 +810,12 @@ function registerCommands() {
     },
     canExecuteAnyLayout
   )
-  bindCommand(
+  bindYFilesCommand(
     "button[data-command='HierarchicLayout']",
     runHierarchicLayout,
     graphComponent,
-    new HierarchicLayout()
+    new HierarchicLayout(),
+    'Calculates a hierarchic layout'
   )
 
   const runOrganicLayout = ICommand.createCommand()
@@ -839,11 +827,12 @@ function registerCommands() {
     },
     canExecuteOrganicLayout
   )
-  bindCommand(
+  bindYFilesCommand(
     "button[data-command='OrganicLayout']",
     runOrganicLayout,
     graphComponent,
-    new OrganicLayout()
+    new OrganicLayout(),
+    'Calculates an organic layout'
   )
 
   const addRestrictions = ICommand.createCommand()
@@ -855,7 +844,13 @@ function registerCommands() {
     },
     canExecuteAddRestrictions
   )
-  bindCommand("button[data-command='GenerateGridRestrictions']", addRestrictions, graphComponent)
+  bindYFilesCommand(
+    "button[data-command='GenerateGridRestrictions']",
+    addRestrictions,
+    graphComponent,
+    null,
+    'Add Grid Restrictions to Selection'
+  )
 
   const removeRestrictions = ICommand.createCommand()
   kim.addCommandBinding(
@@ -866,9 +861,15 @@ function registerCommands() {
     },
     canExecuteRemoveRestrictions
   )
-  bindCommand("button[data-command='RemoveRestrictions']", removeRestrictions, graphComponent)
+  bindYFilesCommand(
+    "button[data-command='RemoveRestrictions']",
+    removeRestrictions,
+    graphComponent,
+    null,
+    'Remove Restrictions From Selection'
+  )
 
-  bindAction("button[data-command='AddRow']", () => {
+  document.querySelector('#add-row').addEventListener('click', () => {
     rowCount++
     // if the grid does not exist until now, create at least one column
     if (columnCount === 0) {
@@ -879,7 +880,7 @@ function registerCommands() {
     // run the last applied layout algorithm
     runLayout()
   })
-  bindAction("button[data-command='AddColumn']", () => {
+  document.querySelector('#add-column').addEventListener('click', () => {
     columnCount++
     // if the grid does not exist until now, create at least one row
     if (rowCount === 0) {
@@ -890,21 +891,21 @@ function registerCommands() {
     // run the last applied layout algorithm
     runLayout()
   })
-  bindAction("button[data-command='DeleteRow']", () => {
+  document.querySelector('#delete-row').addEventListener('click', () => {
     if (selectedCellId && selectedCellId.rowIndex !== -1) {
       removeRow(selectedCellId.rowIndex)
       updateGridAfterRemove()
     }
   })
 
-  bindAction("button[data-command='DeleteColumn']", () => {
+  document.querySelector('#delete-column').addEventListener('click', () => {
     if (selectedCellId && selectedCellId.columnIndex !== -1) {
       removeColumn(selectedCellId.columnIndex)
       updateGridAfterRemove()
     }
   })
 
-  bindAction("button[data-command='DeleteEmptyRowsColumns']", () => {
+  document.querySelector('#delete-empty-rows-columns').addEventListener('click', () => {
     if (existsPartitionGrid()) {
       for (let i = 0; i < rowCount; i++) {
         const nodes = rows2nodes.get(i)
@@ -1196,9 +1197,9 @@ function generateNodeColors() {
  * @param {boolean} disabled `true` if the UI should be disabled, `false` otherwise.
  */
 function setUIDisabled(disabled) {
-  getElementById('AddRow').disabled = disabled
-  getElementById('AddColumn').disabled = disabled
-  getElementById('DeleteEmptyRowsColumns').disabled = disabled
+  getElementById('add-row').disabled = disabled
+  getElementById('add-column').disabled = disabled
+  getElementById('delete-empty-rows-columns').disabled = disabled
 }
 
 /**
@@ -1207,8 +1208,8 @@ function setUIDisabled(disabled) {
  * @param {!Point} location The location of the last mouse event
  */
 function toggleDeleteButtonsVisibility(disabled, location) {
-  getElementById('DeleteRow').disabled = disabled
-  getElementById('DeleteColumn').disabled = disabled
+  getElementById('delete-row').disabled = disabled
+  getElementById('delete-column').disabled = disabled
 
   if (partitionGridVisualCreator) {
     const cellId = disabled ? null : determineCellIndex(location)
@@ -1256,5 +1257,4 @@ function getElementById(id) {
   return document.getElementById(id)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

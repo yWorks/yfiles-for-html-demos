@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>01 Create a Polyline - Edge Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-edge-style-implementation">
+          Edge Style Implementation Tutorial
+        </a>
+
+        <span>01 Create a Polyline</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 1/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 01 Create a Polyline</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-edge/01-create-a-polyline/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >01 Create a Polyline</a
+          ><a
+            href="../../tutorial-style-implementation-edge/02-crop-the-polyline/index.html"
+            class="tutorial-dropdown__item"
+            >02 Crop the Polyline</a
+          ><a
+            href="../../tutorial-style-implementation-edge/03-create-parallel-polylines/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Parallel Polylines</a
+          ><a
+            href="../../tutorial-style-implementation-edge/04-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >04 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-edge/05-making-the-style-configurable/index.html"
+            class="tutorial-dropdown__item"
+            >05 Making the Style Configurable</a
+          ><a
+            href="../../tutorial-style-implementation-edge/06-data-from-tag/index.html"
+            class="tutorial-dropdown__item"
+            >06 Data from Tag</a
+          ><a
+            href="../../tutorial-style-implementation-edge/07-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >07 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-edge/08-visibility/index.html"
+            class="tutorial-dropdown__item"
+            >08 Item Visibility</a
+          ><a
+            href="../../tutorial-style-implementation-edge/09-bounds/index.html"
+            class="tutorial-dropdown__item"
+            >09 Render Boundaries</a
+          ><a
+            href="../../tutorial-style-implementation-edge/10-bridge-support/index.html"
+            class="tutorial-dropdown__item"
+            >10 Bridge Support</a
+          ><a
+            href="../../tutorial-style-implementation-edge/11-adding-arrows/index.html"
+            class="tutorial-dropdown__item"
+            >11 Adding Arrows</a
+          ><a
+            href="../../tutorial-style-implementation-edge/12-custom-arrow/index.html"
+            class="tutorial-dropdown__item"
+            >12 Custom Arrow</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-edge/02-crop-the-polyline/index.html'><span>02 Crop the Polyline</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Custom edge visualizations</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  yFiles for HTML comes with predefined edge visualizations. However, in some cases, it is
+                  required to create fully custom visualizations based on SVG. This might be the
+                  case if you need edge visualizations that are not available out-of-the-box, or
+                  domain-specific edge visualizations. Also, the rendering of custom visualizations
+                  can be optimized for performance-critical applications.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  This tutorial will guide you through creating your own edge visualizations for
+                  yFiles for HTML with SVG.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      Implementing a custom edge style from scratch is an advanced concept. In a lot
+                      of cases, other approaches like template styles, or decorating built-in styles
+                      with custom elements are sufficient. For more information the topic of styling
+                      graph items, please have a look at
+                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-edge_styles" target="_blank">Edge Styles</a>.
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_subclassing_edgestylebase">Subclassing EdgeStyleBase</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  yFiles for HTML provides an abstract base class which provides the basic functionality
+                  to create a custom edge style. We start with a custom subclass of
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase" target="_blank">EdgeStyleBase</a>.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomEdgeStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">EdgeStyleBase</span> {
+  protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-comment">// TODO - create the SVG element</span>
+  }
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  This code will not produce anything visible, yet. We first have to implement the
+                  <code>createVisual</code> method. This method returns an SVG element, wrapped into
+                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" target="_blank">SvgVisual</a>. Let&#8217;s begin with a polyline, which connects
+                  two nodes via multiple line segments running through its bends. We will switch to
+                  a more complex visualization later on. We use a SVGPathElement to render the
+                  polyline:
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+  <span class="hljs-keyword">const</span> path = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(<span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>, <span class="hljs-string">&#x27;path&#x27;</span>)
+  path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;d&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">createPathData</span>(edge))
+  path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;fill&#x27;</span>, <span class="hljs-string">&#x27;none&#x27;</span>)
+  path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;stroke&#x27;</span>, <span class="hljs-string">&#x27;black&#x27;</span>)
+  path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;stroke-width&#x27;</span>, <span class="hljs-string">&#x27;1&#x27;</span>)
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SvgVisual</span>(path)
+}</code></pre>
+                </div>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      The SVG element returned in <code>createVisual</code> does not necessarily
+                      have to be created using the JavaScript DOM API. You could also create it
+                      using any JavaScript UI framework or API like React, Vuejs, etc.
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="paragraph">
+                <p>
+                  The <code>createPathData</code> method generates the path data for the SVG path
+                  element using the locations of the ports and bends of the edge.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">private <span class="hljs-title function_">createPathData</span>(<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): string {
+  <span class="hljs-keyword">const</span> points = <span class="hljs-title class_">IEdge</span>.<span class="hljs-title function_">getPathPoints</span>(edge).<span class="hljs-title function_">toArray</span>()
+  <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;M &#x27;</span> + points.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">point</span> =&gt;</span> <span class="hljs-string">`<span class="hljs-subst">${point.x}</span> <span class="hljs-subst">${point.y}</span>`</span>).<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27; L &#x27;</span>)
+}</code></pre>
+                </div>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      It&#8217;s important that SvgVisual contains an SVG element in the
+                      'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-edge/02-crop-the-polyline/index.html'><span>02 Crop the Polyline</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

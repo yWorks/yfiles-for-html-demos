@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
   CollapsibleNodeStyleDecorator,
   DefaultLabelStyle,
   ExteriorLabelModel,
@@ -35,14 +34,13 @@ import {
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLIOHandler,
   GraphMLSupport,
-  HandleSerializationEventArgs,
   ICommand,
-  IGraph,
+  Insets,
   InteriorLabelModel,
   InteriorLabelModelPosition,
   License,
+  NodeInsetsProvider,
   Point,
   Rect,
   Size,
@@ -55,22 +53,15 @@ import Sample1LabelStyle from './Sample1LabelStyle.js'
 import Sample1EdgeStyle from './Sample1EdgeStyle.js'
 import Sample1NodeStyle from './Sample1NodeStyle.js'
 import Sample1PortStyle from './Sample1PortStyle.js'
-import {
-  addClass,
-  addNavigationButtons,
-  addOptions,
-  bindAction,
-  bindCommand,
-  removeClass,
-  showApp
-} from '../../resources/demo-app.js'
 import { Sample2GroupNodeStyle, Sample2GroupNodeStyleExtension } from './Sample2GroupNodeStyle.js'
 import { Sample2EdgeStyle, Sample2EdgeStyleExtension } from './Sample2EdgeStyle.js'
 import { Sample2NodeStyle, Sample2NodeStyleExtension } from './Sample2NodeStyle.js'
 import { Sample2Arrow, Sample2ArrowExtension } from './Sample2Arrow.js'
+import { applyDefaultStyles } from './style-utils.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * @returns {!Promise}
@@ -103,8 +94,6 @@ async function run() {
   graphComponent.fitGraphBounds()
 
   initializeUI(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -132,6 +121,11 @@ function applySample1(graph) {
 
   graph.edgeDefaults.style = new Sample1EdgeStyle()
   graph.edgeDefaults.labels.style = new Sample1LabelStyle()
+
+  // add some insets to the group nodes
+  graph.decorator.nodeDecorator.insetsProviderDecorator.setFactory(
+    () => new NodeInsetsProvider(new Insets(10, 30, 10, 25))
+  )
 }
 
 /**
@@ -150,7 +144,9 @@ function applySample2(graph) {
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
   graph.nodeDefaults.ports.style = VoidPortStyle.INSTANCE
 
-  graph.groupNodeDefaults.style = new Sample2GroupNodeStyle()
+  const groupNodeStyle = new Sample2GroupNodeStyle()
+  groupNodeStyle.isCollapsible = true
+  graph.groupNodeDefaults.style = groupNodeStyle
 
   // define the demo edge style using the 'edge-color' css rule
   graph.edgeDefaults.style = new Sample2EdgeStyle('edge-color')
@@ -159,34 +155,11 @@ function applySample2(graph) {
     shape: 'pill',
     insets: 5
   })
-}
 
-/**
- * Applies the default styles to the graph items.
- * @param {!IGraph} graph
- */
-function applyDefaultStyles(graph) {
-  for (const item of graph.nodes) {
-    graph.setStyle(
-      item,
-      graph.isGroupNode(item)
-        ? graph.groupNodeDefaults.getStyleInstance()
-        : graph.nodeDefaults.getStyleInstance()
-    )
-  }
-  for (const item of graph.nodeLabels) {
-    graph.setStyle(item, graph.nodeDefaults.labels.getStyleInstance(item.owner))
-  }
-  for (const item of graph.edges) {
-    graph.setStyle(item, graph.edgeDefaults.getStyleInstance())
-  }
-  for (const item of graph.edgeLabels) {
-    graph.setStyle(item, graph.edgeDefaults.labels.getStyleInstance(item.owner))
-  }
-  for (const item of graph.ports) {
-    graph.setStyle(item, graph.nodeDefaults.ports.getStyleInstance(item.owner))
-  }
-  // There are no ports at edges, and no labels at ports in this demo
+  // add some insets to the group nodes
+  graph.decorator.nodeDecorator.insetsProviderDecorator.setFactory(
+    () => new NodeInsetsProvider(new Insets(10, 30, 10, 25))
+  )
 }
 
 /**
@@ -233,27 +206,27 @@ function enableGraphML(graphComponent) {
 function demoSerializationListener(source, args) {
   const item = args.item
 
-  let markupExtension
+  let markupExtension = null
   let markupExtensionClass = null
   if (item instanceof Sample2NodeStyle) {
     markupExtension = new Sample2NodeStyleExtension()
-    markupExtension.cssClass = item.cssClass
+    markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
     markupExtensionClass = Sample2NodeStyleExtension.$class
   } else if (item instanceof Sample2GroupNodeStyle) {
     markupExtension = new Sample2GroupNodeStyleExtension()
-    markupExtension.cssClass = item.cssClass
+    markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
     markupExtension.isCollapsible = item.isCollapsible
     markupExtension.solidHitTest = item.solidHitTest
     markupExtensionClass = Sample2GroupNodeStyleExtension.$class
   } else if (item instanceof Sample2EdgeStyle) {
     markupExtension = new Sample2EdgeStyleExtension()
-    markupExtension.cssClass = item.cssClass
+    markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
     markupExtension.showTargetArrows = item.showTargetArrows
     markupExtension.useMarkerArrows = item.useMarkerArrows
     markupExtensionClass = Sample2EdgeStyleExtension.$class
   } else if (item instanceof Sample2Arrow) {
     markupExtension = new Sample2ArrowExtension()
-    markupExtension.cssClass = item.cssClass
+    markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
     markupExtensionClass = Sample2ArrowExtension.$class
   }
 
@@ -341,12 +314,8 @@ function createSampleGraph(graph) {
  * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindAction("button[data-command='ModifyColors']", () => {
+  const modifyColors = document.querySelector('#modify-colors-button')
+  modifyColors.addEventListener('click', () => {
     // Set the tag of all non-group nodes to a new color
     graphComponent.graph.nodes
       .filter(node => !graphComponent.graph.isGroupNode(node))
@@ -368,11 +337,10 @@ function initializeUI(graphComponent) {
   )
   for (const selectElement of sampleSelectElements) {
     addOptions(selectElement, 'Sample 1', 'Sample 2')
-    addNavigationButtons(selectElement)
+    addNavigationButtons(selectElement, true, false)
 
     selectElement.addEventListener('change', () => {
       const sampleName = selectElement.value
-      const modifyColorsButton = getElementById('modify-colors-button')
       switch (sampleName) {
         case 'Sample 1':
         default:
@@ -381,7 +349,7 @@ function initializeUI(graphComponent) {
 
           // Update UI accordingly
           updateDescriptionText('sample-1-description', 'sample-2-description')
-          modifyColorsButton.disabled = false
+          modifyColors.disabled = false
           saveButton.disabled = true
           break
         case 'Sample 2':
@@ -390,7 +358,7 @@ function initializeUI(graphComponent) {
 
           // Update UI accordingly
           updateDescriptionText('sample-2-description', 'sample-1-description')
-          modifyColorsButton.disabled = true
+          modifyColors.disabled = true
           saveButton.disabled = false
           break
       }
@@ -412,11 +380,11 @@ function initializeUI(graphComponent) {
  * @param {!string} hiddenId the div element which gets hidden
  */
 function updateDescriptionText(visibleId, hiddenId) {
-  addClass(getElementById(hiddenId), 'hidden')
-  removeClass(getElementById(visibleId), 'hidden')
+  getElementById(hiddenId).classList.add('hidden')
+  getElementById(visibleId).classList.remove('hidden')
   const descriptionContainer = getElementById('sample-description-container')
-  removeClass(descriptionContainer, 'highlight-description')
-  setTimeout(() => addClass(descriptionContainer, 'highlight-description'), 0)
+  descriptionContainer.classList.remove('highlight-description')
+  setTimeout(() => descriptionContainer.classList.add('highlight-description'), 0)
 }
 
 /**
@@ -429,5 +397,4 @@ function getElementById(id) {
   return document.getElementById(id)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+void run().then(finishLoading)

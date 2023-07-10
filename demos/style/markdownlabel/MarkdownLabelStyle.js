@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Font, MarkupLabelStyle, MarkupLabelStyleRenderer, Size, TextWrapping } from 'yfiles'
+import MarkdownIt from 'markdown-it'
 
 /**
  * A label style that renders markdown label text by converting it to HTML markup
@@ -49,17 +50,35 @@ export class MarkdownLabelStyle extends MarkupLabelStyle {
 }
 
 class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
+  /** 
+    the Markdown parser/renderer
+  * @type {MarkdownIt}
+   */
+  static get markdownIt() {
+    if (typeof MarkdownLabelStyleRenderer.$markdownIt === 'undefined') {
+      MarkdownLabelStyleRenderer.$markdownIt = new MarkdownIt()
+    }
+
+    return MarkdownLabelStyleRenderer.$markdownIt
+  }
+
+  /** 
+    the Markdown parser/renderer
+  * @type {MarkdownIt}
+   */
+  static set markdownIt(markdownIt) {
+    MarkdownLabelStyleRenderer.$markdownIt = markdownIt
+  }
+
   /**
-   * Converts the given markdown text into HTML markup.
-   * @param {!string} markdownText The label markdown text
+   * Converts the given Markdown text into HTML markup.
+   * @param {!string} markdownText The label Markdown text
    * @yjs:keep = render
    * @returns {*}
    */
   static getMarkupText(markdownText) {
-    // create markdown parser
-    const md = window.markdownit()
-    // return the markdown text
-    return md.render(markdownText)
+    // return the Markdown text
+    return MarkdownLabelStyleRenderer.markdownIt.render(markdownText)
   }
 
   /**
@@ -72,7 +91,7 @@ class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
    * @returns {!string}
    */
   addTextElements(textElement, font, text, maxSize, wrapping, rightToLeft) {
-    // call the super implementation with the converted markdown text
+    // call the super implementation with the converted Markdown text
     super.addTextElements(
       textElement,
       font,
@@ -91,7 +110,7 @@ class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
    * @returns {!Size}
    */
   measureText(text, font, maximumSize) {
-    // call the super implementation with the converted markdown text
+    // call the super implementation with the converted Markdown text
     return super.measureText(MarkdownLabelStyleRenderer.getMarkupText(text), font, maximumSize)
   }
 }

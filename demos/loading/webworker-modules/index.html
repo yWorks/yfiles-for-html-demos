@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,7 +30,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Web Worker Demo (Modules) [yFiles for HTML]</title>
@@ -50,16 +49,16 @@
       }
 
       #graphComponentStatus {
-        position: relative;
+        position: absolute;
         top: 50%;
-        width: 50%;
-        height: 370px;
         left: 50%;
+        transform: translate(-50%, -50%);
+        width: 450px;
+        height: 370px;
         border: 1px solid #999999;
         line-height: 40px;
         text-align: center;
         font-size: 20px;
-        margin-left: -25%;
         padding-right: 20px;
         background-color: rgba(255, 255, 255, 0.75);
         visibility: hidden;
@@ -82,17 +81,60 @@
         background-color: #38434f;
         margin-left: auto;
         margin-right: auto;
+        cursor: pointer;
       }
     </style>
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Web Worker Modules</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+      <span class="demo-separator"></span>
+      <button id="run-layout" title="Layout" class="demo-icon-yIconLayout labeled" disabled="">
+        Layout
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Web Worker Demo (Modules)</h1>
 
         <p>
@@ -100,12 +142,14 @@
           UI or main thread.
         </p>
         <p>
-          The demo code uses <a href="https://web.dev/module-workers/">module workers</a>, which are
-          not supported in every browser, yet. If your browser does not support module workers,
-          please refer to the <a href="../../loading/webpack/README.html">Webpack Demo</a> for an
-          approach using Web Worker together with webpack, or the
-          <a href="../../loading/webworker-umd/index.html">Web Worker UMD Demo</a> that uses AMD
-          modules to load resources in the Web Worker thread.
+          The demo code uses
+          <a href="https://web.dev/module-workers/">module workers</a>
+          , which are not supported in every browser, yet. If your browser does not support module
+          workers, please refer to the
+          <a href="../../loading/webpack/README.html">Webpack Demo</a>
+          for an approach using Web Worker together with webpack, or the
+          <a href="../../loading/webworker-umd/index.html">Web Worker UMD Demo</a>
+          that uses AMD modules to load resources in the Web Worker thread.
         </p>
 
         <p>
@@ -116,57 +160,27 @@
         <p>See the sources for details.</p>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-        <span class="demo-separator"></span>
-        <button
-          id="layoutBtn"
-          data-command="Layout"
-          title="Layout"
-          class="demo-icon-yIconLayout labeled"
-          disabled=""
-        >
-          Layout
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
-        <div id="graphComponentStatus">
-          <div id="layout-animation"></div>
-          Running Web Worker
-          <div id="cancel-layout" data-command="cancelLayout">Cancel Layout</div>
-        </div>
-        <div style="display: none" id="notSupportedHint">
-          <p>
-            Your browser does not support module web workers. Please refer to the
-            <a href="../../loading/webpack/README.html">Webpack Demo</a> or the
-            <a href="../../loading/webworker-umd/index.html">Webworker UMD Demo</a>
-            instead.
-          </p>
-          <p>Module Workers are currently only supported in Chrome 80+ and Edge</p>
-        </div>
+      </div>
+      <div id="graphComponentStatus">
+        <div id="layout-animation"></div>
+        Running Web Worker
+        <div id="cancel-layout">Cancel Layout</div>
+      </div>
+      <div style="display: none" id="notSupportedHint">
+        <p>
+          Your browser does not support module web workers. Please refer to the
+          <a href="../../loading/webpack/README.html">Webpack Demo</a>
+          or the
+          <a href="../../loading/webworker-umd/index.html">Webworker UMD Demo</a>
+          instead.
+        </p>
+        <p>Module Workers are currently only supported in Chrome 80+ and Edge</p>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="WebWorkerModulesDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="WebWorkerModulesDemo.ts" async></script>
     <script nomodule="">
       // noinspection ES6ConvertVarToLetConst
       document.body.className = document.body.className + ' loaded'

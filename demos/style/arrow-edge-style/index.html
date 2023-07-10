@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,45 +30,58 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Arrow Edge Style Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./resources/settings-panel.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
-
-    <style>
-      .option-element {
-        width: 47%;
-      }
-
-      input[type='range'] {
-        margin: 0;
-        padding: 0;
-        vertical-align: middle;
-      }
-
-      .demo-properties label.option-label {
-        width: 50%;
-      }
-
-      .demo-properties .demo-form-block input[type='range'] {
-        width: 37%;
-      }
-
-      .info-message {
-        margin-top: 20px;
-      }
-    </style>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Arrow Edge Style</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Arrow Edge Style Demo</h1>
 
         <p>
@@ -80,8 +92,8 @@
           For the <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#ARROW" target="_blank">Arrow</a>,
           <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#DOUBLE_ARROW" target="_blank">Double Arrow</a> and
           <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#NOTCHED_ARROW" target="_blank">Notched Arrow</a> shapes, the thickness of the
-          arrow shaft can be defined as a <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowEdgeStyle#shaftRatio" target="_blank">shaft ratio</a> of
-          the edge size.
+          arrow shaft can be defined as a <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowEdgeStyle#shaftRatio" target="_blank">shaft ratio</a>
+          of the edge size.
         </p>
         <p>
           For all shapes, the <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowEdgeStyle#angle" target="_blank">angle</a> of the arrow tip can be
@@ -112,80 +124,83 @@
         </ul>
       </div>
     </aside>
-
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content">
-        <h2>Style Properties</h2>
-        <div class="info-message">Please select an edge to modify its settings.</div>
-        <div class="demo-properties" style="display: none">
-          <div class="demo-form-block">
-            <label for="basic-shape" class="option-label">Basic Shape</label>
-            <select id="basic-shape" class="option-element" disabled>
-              <option value="ARROW">Arrow</option>
-              <option value="DOUBLE_ARROW">Double Arrow</option>
-              <option value="NOTCHED_ARROW">Notched Arrow</option>
-              <option value="TRAPEZOID">Trapezoid</option>
-              <option value="PARALLELOGRAM">Parallelogram</option>
-            </select>
-
-            <label for="thickness-range" class="option-label">Thickness</label>
-            <input
-              type="range"
-              id="thickness-range"
-              min="1"
-              max="100"
-              value="18"
-              step="1"
-              disabled
-            />
-            <label id="thickness-label">18</label>
-
-            <label for="angle-range" class="option-label">Angle</label>
-            <input type="range" id="angle-range" min="0" max="90" value="45" disabled />
-            <label id="angle-label">45</label>
-
-            <label for="shaft-ratio" class="option-label">Shaft Ratio</label>
-            <input type="range" id="shaft-ratio" min="0" max="1" step="0.1" value="0.3" disabled />
-            <label id="shaft-ratio-label">0.3</label>
-
-            <label for="cropping-range" class="option-label">Cropping</label>
-            <input
-              type="range"
-              id="cropping-range"
-              min="0"
-              max="20"
-              step="0.1"
-              value="3"
-              disabled
-            />
-            <label id="cropping-label">3</label>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-    </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <div class="demo-properties__settings">
+            <h2>Style Properties</h2>
 
-    <script type="module" crossorigin="anonymous" src="ArrowEdgeStyleDemo.js"></script>
+            <div class="info-message">Please select an edge to modify its settings.</div>
+            <div class="demo-form-block" style="display: none">
+              <div class="settings-grid">
+                <label for="basic-shape" class="settings-label-row1">Basic Shape</label>
+                <select id="basic-shape" class="settings-editor-row1" disabled="">
+                  <option value="ARROW">Arrow</option>
+                  <option value="DOUBLE_ARROW">Double Arrow</option>
+                  <option value="NOTCHED_ARROW">Notched Arrow</option>
+                  <option value="TRAPEZOID">Trapezoid</option>
+                  <option value="PARALLELOGRAM">Parallelogram</option>
+                </select>
+
+                <label for="thickness-range" class="settings-label-row2">Thickness</label>
+                <input
+                  class="settings-editor-row2"
+                  type="range"
+                  id="thickness-range"
+                  min="1"
+                  max="100"
+                  value="18"
+                  step="1"
+                  disabled=""
+                />
+                <label class="settings-label-value2" id="thickness-label">18</label>
+
+                <label for="angle-range" class="settings-label-row3">Angle</label>
+                <input
+                  class="settings-editor-row3"
+                  type="range"
+                  id="angle-range"
+                  min="0"
+                  max="90"
+                  value="45"
+                  disabled=""
+                />
+                <label class="settings-label-value3" id="angle-label">45</label>
+
+                <label for="shaft-ratio" class="settings-label-row4">Shaft Ratio</label>
+                <input
+                  class="settings-editor-row4"
+                  type="range"
+                  id="shaft-ratio"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value="0.3"
+                  disabled=""
+                />
+                <label class="settings-label-value4" id="shaft-ratio-label">0.3</label>
+
+                <label for="cropping-range" class="settings-label-row5">Cropping</label>
+                <input
+                  class="settings-editor-row5"
+                  type="range"
+                  id="cropping-range"
+                  min="0"
+                  max="20"
+                  step="0.1"
+                  value="3"
+                  disabled=""
+                />
+                <label class="settings-label-value5" id="cropping-label">3</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="ArrowEdgeStyleDemo.ts" async></script>
   </body>
 </html>

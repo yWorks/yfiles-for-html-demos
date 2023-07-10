@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -66,6 +66,17 @@ import {
  * - Collapsing a group node additional fills up vacated space to increase compactness.
  */
 export class ExpandCollapseNavigationHelper {
+  navigationInputMode
+
+  /**
+   * The layout algorithm applied to the subgraph of a folder node before it is expanded.
+   * By default, the {@link HierarchicLayout} is used.
+   * If no layout is set, no new layout for the subgraph is calculated.
+   */
+  subgraphLayout
+
+  interEdgeRouter
+
   /**
    * @param {!NavigationInputMode} navigationInputMode
    */
@@ -84,9 +95,6 @@ export class ExpandCollapseNavigationHelper {
     navigationInputMode.addGroupCollapsingListener(this.onGroupCollapsing.bind(this))
     navigationInputMode.addGroupCollapsedListener(this.onGroupCollapsed.bind(this))
 
-    // The layout algorithm applied to the subgraph of a folder node before it is expanded.
-    // By default, the {@link HierarchicLayout} is used.
-    // If no layout is set, no new layout for the subgraph is calculated.
     this.subgraphLayout = new HierarchicLayout({
       recursiveGroupLayering: false,
       edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({

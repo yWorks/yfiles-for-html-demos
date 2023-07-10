@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,11 +45,8 @@ import {
  * An {@link INodeStyle} rendering a label using the node's tag for the content and placement.
  */
 export class IsometricBarLabelNodeStyle extends NodeStyleBase {
-  constructor() {
-    super()
-    this.svgNS = 'http://www.w3.org/2000/svg'
-    this.font = new Font('Arial', 12, FontStyle.NORMAL, FontWeight.BOLD)
-  }
+  svgNS = 'http://www.w3.org/2000/svg'
+  font = new Font('Arial', 12, FontStyle.NORMAL, FontWeight.BOLD)
 
   /**
    * @param {!IRenderContext} context

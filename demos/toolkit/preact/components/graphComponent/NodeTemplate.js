@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,11 +35,11 @@ import { html } from '../../preact-loader.js'
  * @property {TTag} tag
  */
 
-const NodeTemplate = ({ width, height, tag: { id, state } }) => html`<g
-  class="node ${state ? 'node-enabled' : 'node-disabled'}"
->
-  <rect class="node-rect" rx="3.5" ry="3.5" width="${width}" height="${height}"></rect>
-  <text x="${width * 0.5}" y="${height * 0.5}" class="node-text">${id}</text>
-</g>`
+const NodeTemplate = ({ width, height, tag: { id, state } }) => html`
+  <g class="node ${state ? 'node-enabled' : 'node-disabled'}">
+    <rect class="node-rect" rx="3.5" ry="3.5" width="${width}" height="${height}"></rect>
+    <text x="${width * 0.5}" y="${height * 0.5}" class="node-text">${id}</text>
+  </g>
+`
 
 export default NodeTemplate

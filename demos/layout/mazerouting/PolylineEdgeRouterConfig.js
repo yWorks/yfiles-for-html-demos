@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,7 +48,6 @@ import {
   PenaltySettings,
   PreferredPlacementDescriptor,
   SequentialLayout,
-  TimeSpan,
   YBoolean,
   YNumber,
   YString
@@ -63,11 +62,10 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '../../resources/demo-option-editor.js'
-import { reportDemoError } from '../../resources/demo-app.js'
+} from 'demo-resources/demo-option-editor'
 
 /**
- * Configuration options for the the polyline edge router.
+ * Configuration options for the polyline edge router.
  */
 const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   $meta: [LabelAttribute('PolylineEdgeRouter')],
@@ -139,7 +137,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     })
 
     // set the cancel duration for the layout computation to 20s
-    layoutExecutor.abortHandler.cancelDuration = TimeSpan.from('20s')
+    layoutExecutor.abortHandler.cancelDuration = '20s'
 
     // set the layout data to the LayoutExecutor
     if (layoutData) {
@@ -154,7 +152,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
           'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
         )
       } else {
-        reportDemoError(err)
+        reportError(err)
       }
     } finally {
       this.$layoutRunning = false
@@ -967,9 +965,10 @@ const MonotonyFlags = {
 
 /**
  * Specifies constants for the preferred placement along an edge used by layout configurations.
- * @readonly
+ 
+* @readonly
  * @enum {number}
- */
+*/
 const LabelPlacementAlongEdge = {
   ANYWHERE: 0,
   AT_SOURCE: 1,
@@ -979,9 +978,10 @@ const LabelPlacementAlongEdge = {
 
 /**
  * Specifies constants for the preferred placement at a side of an edge used by layout configurations.
- * @readonly
+ 
+* @readonly
  * @enum {number}
- */
+*/
 const LabelPlacementSideOfEdge = {
   ANYWHERE: 0,
   ON_EDGE: 1,
@@ -992,9 +992,10 @@ const LabelPlacementSideOfEdge = {
 
 /**
  * Specifies constants for the orientation of an edge label used by layout configurations.
- * @readonly
+ 
+* @readonly
  * @enum {number}
- */
+*/
 const LabelPlacementOrientation = {
   PARALLEL: 0,
   ORTHOGONAL: 1,

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,7 +49,6 @@ import {
   ICanvasObjectDescriptor,
   IconLabelStyle,
   IEdge,
-  IEnumerable,
   IGraph,
   IHitTestable,
   IHitTester,
@@ -73,6 +72,7 @@ import {
   Key,
   KeyEventArgs,
   LabelEventArgs,
+  LabelStyleBase,
   ListEnumerable,
   Matrix,
   MatrixOrder,
@@ -93,6 +93,7 @@ import {
   SimpleNode,
   SimplePort,
   Size,
+  Stroke,
   SvgVisual,
   SvgVisualGroup,
   TimeSpan,
@@ -144,10 +145,42 @@ const ButtonTrigger = {
  * called when clicking or touch-clicking the button or starting a mouse-drag.
  *
  * When the {@link GraphComponent} is focused, the {@link Key.TAB} can be used to set a focus
- * the the first button and cycle through all buttons. A focused button can be triggered using
+ * the first button and cycle through all buttons. A focused button can be triggered using
  * {@link Key.ENTER} or {@link Key.SPACE}.
  */
 export class ButtonInputMode extends InputModeBase {
+  buttons = null
+  buttonLabelManager
+  queryButtonsListener = null
+  itemRemovedListener = this.onItemRemoved.bind(this)
+  onMouseMoveListener = this.onMouseMove.bind(this)
+  onMouseDragListener = this.onMouseDrag.bind(this)
+  onMouseClickedListener = this.onMouseClicked.bind(this)
+  onMouseDownListener = this.onMouseDown.bind(this)
+  onTouchClickedListener = this.onTouchClicked.bind(this)
+  onKeyDownListener = this.onKeyDown.bind(this)
+  onKeyPressedListener = this.onKeyPressed.bind(this)
+  graphChangedListener = this.onGraphChanged.bind(this)
+  currentItemChangedListener = this.onCurrentItemChanged.bind(this)
+
+  _cursor
+  _buttonSize = new Size(25, 25)
+  _hoverTime = 750
+  _hideTime = 2000
+  _hoverTooltipTime = 100
+  _buttonTrigger = ButtonTrigger.HOVER
+  _validOwnerTypes = GraphItemTypes.ALL
+  _lastTimeout = undefined
+  buttonOwner = null
+  hoveredOwner = null
+  hoveredButton = null
+  mouseDownButton = null
+  tooltipMode = new MouseHoverInputMode({
+    mouseHoverSize: Size.INFINITE // Ensure that the tooltip doesn't disappear when moving the mouse
+  })
+  _lastTooltipTimeout = undefined
+  _focusedButton = null
+
   /**
    * The cursor displayed when hovering over a {@link Button} when {@link Button.cursor} is not set.
    *
@@ -293,37 +326,6 @@ export class ButtonInputMode extends InputModeBase {
 
   constructor() {
     super()
-    this.buttons = null
-    this.queryButtonsListener = null
-    this.itemRemovedListener = this.onItemRemoved.bind(this)
-    this.onMouseMoveListener = this.onMouseMove.bind(this)
-    this.onMouseDragListener = this.onMouseDrag.bind(this)
-    this.onMouseClickedListener = this.onMouseClicked.bind(this)
-    this.onMouseDownListener = this.onMouseDown.bind(this)
-    this.onTouchClickedListener = this.onTouchClicked.bind(this)
-    this.onKeyDownListener = this.onKeyDown.bind(this)
-    this.onKeyPressedListener = this.onKeyPressed.bind(this)
-    this.graphChangedListener = this.onGraphChanged.bind(this)
-    this.currentItemChangedListener = this.onCurrentItemChanged.bind(this)
-    this._buttonSize = new Size(25, 25)
-    this._hoverTime = 750
-    this._hideTime = 2000
-    this._hoverTooltipTime = 100
-    this._buttonTrigger = ButtonTrigger.HOVER
-    this._validOwnerTypes = GraphItemTypes.ALL
-    this._lastTimeout = undefined
-    this.buttonOwner = null
-    this.hoveredOwner = null
-    this.hoveredButton = null
-    this.mouseDownButton = null
-
-    this.tooltipMode = new MouseHoverInputMode({
-      mouseHoverSize: Size.INFINITE // Ensure that the tooltip doesn't disappear when moving the mouse
-    })
-
-    this._lastTooltipTimeout = undefined
-    this._focusedButton = null
-    this.clearPending = false
     this.priority = 0
     this.exclusive = true
     this.buttonLabelManager = this.createButtonLabelCollectionModel()
@@ -399,6 +401,8 @@ export class ButtonInputMode extends InputModeBase {
   isActive() {
     return this.controller && this.controller.active
   }
+
+  clearPending = false
 
   tryHideButtons() {
     if (this.hoveredButton) {
@@ -888,6 +892,10 @@ export class ButtonInputMode extends InputModeBase {
  * for a specified {@link owner}.
  */
 export class QueryButtonsEvent {
+  _mode
+  _owner
+  _buttons
+
   /**
    * @param {!ButtonInputMode} mode
    * @param {!IModelItem} item
@@ -979,6 +987,17 @@ export class QueryButtonsEvent {
  * that relates to this item.
  */
 export class Button extends YObject {
+  _owner
+  _dummyOwner
+  _onAction
+  _onHoverOver = null
+  _onHoverOut = null
+  _cursor
+  _tooltip
+  _focusable
+
+  _label
+
   /**
    * Creates a new button for the {@link item}.
    *
@@ -1168,12 +1187,25 @@ class ButtonDescriptor extends BaseClass(
   IVisibilityTestable,
   IHitTestable
 ) {
+  // dummy model items used to calculate the view independent bounds of the buttons
+  dummyLabelLayout
+  dummyLabelBounds
+  dummyNode
+  dummyEdge
+  dummySourceNode
+  dummyTargetNode
+  dummyBends
+  dummyBendsBackup
+  dummyLabel
+
+  focusedButton = null
+  focusedButtonStyle
+
+  label = new SimpleLabel()
+  button = null
+
   constructor() {
     super()
-    this.focusedButton = null
-    this.label = new SimpleLabel()
-    this.button = null
-    // dummy model items used to calculate the view independent bounds of the buttons
     this.dummyLabelLayout = new OrientedRectangle()
     this.dummyLabelBounds = new OrientedRectangle()
     this.dummyLabel = new SimpleLabel(
@@ -1190,11 +1222,9 @@ class ButtonDescriptor extends BaseClass(
     })
     this.dummyBends = []
     this.dummyBendsBackup = []
-    this.dummyEdge.bends = new ListEnumerable(IEnumerable.from(this.dummyBends))
+    this.dummyEdge.bends = new ListEnumerable(this.dummyBends)
 
-    this.focusedButtonStyle = new DefaultLabelStyle({
-      backgroundStroke: '3px #FFCF00'
-    })
+    this.focusedButtonStyle = new FocusLabelStyle(Stroke.from('3px #FFCF00'))
   }
 
   /**
@@ -1430,7 +1460,6 @@ class ButtonDescriptor extends BaseClass(
    * @param {!ICanvasContext} ctx
    */
   updateDummyLabelOwner(ctx) {
-    const original = this.label
     const canvas = ctx.canvasComponent
 
     const owner = this.button?.owner
@@ -1590,6 +1619,13 @@ function rotate(vector, angle) {
 }
 
 class DummyContext extends BaseClass(IRenderContext) {
+  innerContext
+  $zoom
+  $transform
+  $viewTransform
+  $intermediateTransform
+  $projection
+
   /**
    * @param {!IRenderContext} innerContext
    * @param {number} zoom
@@ -1699,4 +1735,87 @@ class DummyContext extends BaseClass(IRenderContext) {
     transformed.multiply(this.$transform, MatrixOrder.APPEND)
     return transformed
   }
+}
+
+/**
+ * A style implementation that draws nothing but a border for its associated label.
+ */
+class FocusLabelStyle extends LabelStyleBase {
+  /**
+   * @param {!Stroke} stroke
+   */
+  constructor(stroke) {
+    super()
+    this.stroke = stroke
+  }
+
+  /**
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
+   */
+  createVisual(context, label) {
+    const labelBounds = label.layout.bounds
+    const frame = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    this.stroke.applyTo(frame, context)
+    frame.setAttribute('fill', 'none')
+
+    frame.setAttribute('x', `${labelBounds.x}`)
+    frame.setAttribute('y', `${labelBounds.y}`)
+    frame.setAttribute('width', `${labelBounds.width}`)
+    frame.setAttribute('height', `${labelBounds.height}`)
+    asCacheOwner(frame)['data-renderDataCache'] = {
+      x: labelBounds.x,
+      y: labelBounds.y,
+      width: labelBounds.width,
+      height: labelBounds.height
+    }
+
+    return new SvgVisual(frame)
+  }
+
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
+   */
+  updateVisual(context, oldVisual, label) {
+    const labelBounds = label.layout.bounds
+    const frame = oldVisual.svgElement
+    const cache = asCacheOwner(frame)['data-renderDataCache']
+    if (cache.x != labelBounds.x) {
+      frame.setAttribute('x', `${labelBounds.x}`)
+      cache.x = labelBounds.x
+    }
+    if (cache.y != labelBounds.y) {
+      frame.setAttribute('y', `${labelBounds.y}`)
+      cache.y = labelBounds.y
+    }
+    if (cache.width != labelBounds.width) {
+      frame.setAttribute('width', `${labelBounds.width}`)
+      cache.width = labelBounds.width
+    }
+    if (cache.height != labelBounds.height) {
+      frame.setAttribute('height', `${labelBounds.height}`)
+      cache.height = labelBounds.height
+    }
+    return oldVisual
+  }
+
+  /**
+   * @param {!ILabel} label
+   * @returns {!Size}
+   */
+  getPreferredSize(label) {
+    return new Size(0, 0)
+  }
+}
+
+/**
+ * @param {!SVGElement} element
+ * @returns {!object}
+ */
+function asCacheOwner(element) {
+  return element
 }

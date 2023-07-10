@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { EditorFromTextArea } from 'codemirror'
+import * as CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/mode/xml/xml'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/dialog/dialog'
+
 import type { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses'
 
 /**
@@ -196,7 +202,7 @@ export class EditTreeNodesSourceDialog {
     labelText: string,
     doc: string,
     mode: string | object
-  ): EditorFromTextArea {
+  ): CodeMirror.EditorFromTextArea {
     const container = this.createDescription(labelText, doc)
     const textArea = document.createElement('textarea')
     container.appendChild(textArea)

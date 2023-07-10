@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLSupport,
-  ICommand,
   IEdge,
   License,
   OrthogonalEdgeEditingContext,
@@ -43,16 +42,14 @@ import {
   Size,
   StorageLocation
 } from 'yfiles'
-
-import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
 
-/** @type {HTMLSelectElement} */
-let routingPolicy
+const routingPolicy = document.querySelector('#select-routing-policy')
 
 /**
  * @returns {!Promise}
@@ -66,7 +63,9 @@ async function run() {
   graphComponent.graph.undoEngineEnabled = true
   const manager = new FoldingManager(graphComponent.graph)
   manager.foldingEdgeConverter.reuseMasterPorts = true
-  graphComponent.graph = manager.createFoldingView().graph
+  const foldingView = manager.createFoldingView()
+  foldingView.enqueueNavigationalUndoUnits = true
+  graphComponent.graph = foldingView.graph
 
   // configure interaction
   graphComponent.inputMode = createInputMode()
@@ -79,11 +78,8 @@ async function run() {
   // load the sample graph
   await loadSampleGraph()
 
-  // bind the demo buttons to their commands
-  registerCommands()
-
-  // initialize the demo application's CSS and Javascript for the description
-  showApp(graphComponent)
+  // bind the demo buttons to their functionality
+  initializeUI()
 }
 
 /**
@@ -96,7 +92,7 @@ async function loadSampleGraph() {
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
-  await readGraph(gs.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml')
+  await gs.graphMLIOHandler.readFromURL(graphComponent.graph, 'resources/sample.graphml')
   // when done - fit the bounds
   graphComponent.fitGraphBounds()
   // the sample graph bootstrapping should not be undoable
@@ -161,28 +157,8 @@ async function reRouteEdges() {
   })
 }
 
-function registerCommands() {
-  bindAction("button[data-command='Reload']", () => {
-    loadSampleGraph()
-  })
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
-
-  routingPolicy = document.getElementById('selectRoutingPolicy')
+function initializeUI() {
+  document.querySelector('#reload').addEventListener('click', loadSampleGraph)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

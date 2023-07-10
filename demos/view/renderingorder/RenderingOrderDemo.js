@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphEditorInputMode,
   HierarchicNestingPolicy,
   ICanvasObjectDescriptor,
-  ICommand,
   IRenderContext,
   IVisualCreator,
   LabelLayerPolicy,
@@ -50,15 +49,9 @@ import {
   Visual
 } from 'yfiles'
 
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -84,11 +77,8 @@ async function run() {
   // add a sample graph
   createGraph()
 
-  // bind the buttons to their commands
-  registerCommands()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the buttons to their functionality
+  initializeUI()
 }
 
 /**
@@ -286,7 +276,7 @@ function createOverlappingEdgeSample(origin) {
       new Point(origin.x - 20, origin.y - 20),
       new Size(340, 250),
       new Point(origin.x - 5, origin.y - 30),
-      "Edges on top' or 'Group Nodes"
+      "'Edges on top' or 'Group Nodes'"
     ),
     ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
   )
@@ -353,22 +343,16 @@ function createNestedGroupSample(origin) {
 }
 
 /**
- * Binds the various commands available in yFiles for HTML to the buttons in the demo's toolbar.
+ * Binds the actions to the buttons in the demo's toolbar.
  */
-function registerCommands() {
-  bindAction("button[data-command='ResetGraph']", () => {
-    graphComponent.graph.clear()
-    createGraph()
-  })
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
-  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
-  bindChangeListener("select[data-command='SelectRenderingOrder']", value =>
-    selectRenderingOrder(value)
+function initializeUI() {
+  addNavigationButtons(document.querySelector('#select-rendering-order')).addEventListener(
+    'change',
+    evt => {
+      const value = evt.target.value
+      selectRenderingOrder(value)
+    }
   )
-  addNavigationButtons(document.querySelector("select[data-command='SelectRenderingOrder']"))
 }
 
 /**
@@ -428,5 +412,4 @@ class RectangleBorder extends BaseClass(IVisualCreator) {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

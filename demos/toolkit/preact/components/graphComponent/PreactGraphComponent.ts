@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,12 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
-import type { RefObject } from '../../preact-loader'
-// @ts-ignore
-import { h, html, useEffect, useRef } from '../../preact-loader'
+// @ts-ignore - We have no proper types for preact, here
+import { html, type RefObject, useEffect, useRef } from '../../preact-loader'
 import type { ConnectionItem, DataItem } from '../../PreactDemo'
-import { showApp } from '../../../../resources/demo-app'
 import {
   Class,
   EdgesSource,
@@ -45,6 +42,7 @@ import {
 } from 'yfiles'
 import PreactComponentNodeStyle from './PreactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
+import { finishLoading } from 'demo-resources/demo-page'
 
 Class.ensure(LayoutExecutor)
 
@@ -76,7 +74,7 @@ export default (props: Props) => {
     graphBuilderRef.current = graphBuilder
     graphBuilder.buildGraph()
     doLayout()
-    showApp(graphComponent)
+    finishLoading()
 
     // return a cleanup function (like componentWillUnmount())
     return () => {
@@ -141,5 +139,5 @@ export default (props: Props) => {
     return graphBuilder
   }
 
-  return html`<div class="graph-component" ref=${gcRef} />`
+  return html` <div class="graph-component" ref=${gcRef} /> `
 }

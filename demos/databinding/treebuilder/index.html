@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,28 +30,14 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Tree Builder Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.css"
-    />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       #schemaGraphComponent {
@@ -111,7 +96,7 @@
       }
 
       #editSourceDialog .CodeMirror {
-        height: 200px;
+        height: 190px;
       }
 
       #editSourceDialog input[type='text'] {
@@ -129,19 +114,62 @@
       button.acceptButton {
         margin-right: 0;
       }
+
+      #editSourceDialog button {
+        margin-right: 11px;
+      }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Tree Builder</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+
+      <!-- combo-box for sample data -->
+      <select id="samples"></select>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Tree Builder Demo</h1>
 
         <p>
-          This demo interactively builds and modifies a graph from <b>JSON</b> business data using
-          class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+          This demo interactively builds and modifies a graph from <b>JSON</b> business data using class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
         </p>
 
         <p>
@@ -186,66 +214,34 @@
 
         <p>
           Since this demo evaluates the complete data source texts every time a source is edited,
-          <em>Update Graph</em> works as expected only for node data items of primitive type or if
-          the node id binding resolves to primitive ids. Note that this restriction applies only to
-          the demo, not the class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+          <em>Update Graph</em>
+          works as expected only for node data items of primitive type or if the node id binding
+          resolves to primitive ids. Note that this restriction applies only to the demo, not the
+          class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
         </p>
       </div>
     </aside>
-
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-properties" style="margin: 10px; height: 100%">
-        <h2>Tree Builder Settings</h2>
-
-        <div class="demo-form-block">
-          <button data-command="BuildGraph" title="Build a new graph" id="buildGraphButton">
-            New Graph
-          </button>
-          <button
-            data-command="UpdateGraph"
-            title="Update the current graph"
-            id="updateGraphButton"
-          >
-            Update Graph
-          </button>
-        </div>
-        <div id="schemaGraphComponent"></div>
-      </div>
-    </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-
-        <!-- combo-box for sample data -->
-        <select id="samplesComboBox" data-command="SetSampleData"></select>
-      </div>
-      <!-- The toolbar -->
-
-      <!-- The graph component -->
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-properties__settings" style="margin: 10px; height: 100%">
+          <h2>Tree Builder Settings</h2>
+
+          <div class="demo-form-block">
+            <button title="Build a new graph" id="build-graph-button">New Graph</button>
+            <button title="Update the current graph" id="update-graph-button">Update Graph</button>
+          </div>
+          <div id="schemaGraphComponent"></div>
+        </div>
+      </aside>
     </div>
 
     <div id="editSourceDialogModal" style="display: none">
-      <div id="editSourceDialog" class="demo-properties"></div>
+      <div id="editSourceDialog" class="demo-properties__settings"></div>
     </div>
 
-    <script type="module" crossorigin="anonymous" src="TreeBuilderDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="TreeBuilderDemo.ts" async></script>
   </body>
 </html>

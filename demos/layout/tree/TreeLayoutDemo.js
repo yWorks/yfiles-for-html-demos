@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,7 +29,6 @@
 import {
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   INode,
   ITreeLayoutNodePlacer,
   License,
@@ -50,16 +49,11 @@ import {
 } from './TreeLayoutConfigurations.js'
 import * as TreeData from './resources/TreeData.js'
 import CreateTreeEdgeInputMode from './CreateTreeEdgeInputMode.js'
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
 import { LayerColors, NodePlacerPanel } from './NodePlacerPanel.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The graph component which contains the tree graph.
@@ -96,12 +90,10 @@ async function run() {
 
   // initialize interactive behavior and toolbar buttons
   initializesInputModes()
-  registerCommands()
+  initializeUI()
 
   // load a sample graph
   loadGraph()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -328,7 +320,7 @@ async function loadGraph() {
     style.fill = layerColor.fill
     style.stroke = layerColor.stroke
     if (node.tag.assistant) {
-      style.stroke = Stroke.from('2px dashed black')
+      style.stroke = '2px dashed black'
     }
   })
 
@@ -348,17 +340,11 @@ function setBusy(isBusy) {
 /**
  * Wires up the GUI.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
-
-  bindChangeListener("select[data-command='SelectSample']", loadGraph)
-
-  const samples = document.getElementById('select-sample')
-  addNavigationButtons(samples)
+function initializeUI() {
+  addNavigationButtons(document.querySelector('#select-sample')).addEventListener(
+    'change',
+    loadGraph
+  )
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

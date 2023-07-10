@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -29,11 +28,11 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Webpack Lazy Load yFiles [yFiles for HTML]</title>
-    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <link rel="stylesheet" href="../../../doc/readme-style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   </head>
   <body>
@@ -42,8 +41,9 @@
       <div class="content-centered">
         <div class="content">
           <div class="breadcrumbs">
-            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Webpack Lazy
-            Load yFiles
+            <a href="../../README.html">yFiles for HTML</a>
+            <span class="angle-right"></span>
+            Webpack Lazy Load yFiles
           </div>
 
           <div>
@@ -51,10 +51,11 @@
 
             <p>
               This demo shows how to lazy load yFiles with
-              <a href="https://webpack.js.org/" target="_blank">webpack</a>'s
-              <a href="https://webpack.js.org/guides/code-splitting/" target="_blank"
-                >dynamic import</a
-              >
+              <a href="https://webpack.js.org/" target="_blank">webpack</a>
+              's
+              <a href="https://webpack.js.org/guides/code-splitting/" target="_blank">
+                dynamic import
+              </a>
               feature.
             </p>
             <p>
@@ -76,15 +77,15 @@
             <p>Two fundamental concepts for webpack projects are demonstrated:</p>
             <ul>
               <li>
-                <a href="https://webpack.js.org/guides/code-splitting/" target="_blank"
-                  >Dynamic import of modules</a
-                >
+                <a href="https://webpack.js.org/guides/code-splitting/" target="_blank">
+                  Dynamic import of modules
+                </a>
               </li>
               <li>
                 Separate webpack configurations for development and
-                <a href="https://webpack.js.org/guides/production-build/" target="_blank"
-                  >production</a
-                >
+                <a href="https://webpack.js.org/guides/production-build/" target="_blank">
+                  production
+                </a>
               </li>
             </ul>
           </div>
@@ -95,8 +96,10 @@
               <p>There are two possible approaches:</p>
               <ul>
                 <li>
-                  Create a separate diagram component that imports from the <code>yfiles</code> meta
-                  module.<br />
+                  Create a separate diagram component that imports from the
+                  <code>yfiles</code>
+                  meta module.
+                  <br />
                   This separate diagram component with yFiles can then be loaded dynamically on
                   demand which is demonstrated in this application.
                 </li>
@@ -105,10 +108,12 @@
                   <a
                     href="https://docs.yworks.com/yfileshtml/#/dguide/yfiles-modules#es-modules"
                     target="_blank"
-                    >yFiles ES Module</a
                   >
+                    yFiles ES Module
+                  </a>
                   are loaded when needed, e.g. initially only load the yFiles view but lazy load the
-                  yFiles layout if needed.<br />
+                  yFiles layout if needed.
+                  <br />
                   This approach is shown in a separate webpack demo.
                 </li>
               </ul>
@@ -121,15 +126,15 @@
 
               <p>First, install the required npm modules in the demo directory:</p>
 
-              <code> > npm install </code>
+              <code>> npm install</code>
 
               <h3>Development</h3>
 
               <p>
                 For development, the
-                <a href="https://github.com/webpack/docs/wiki/webpack-dev-server"
-                  >webpack dev server</a
-                >
+                <a href="https://github.com/webpack/docs/wiki/webpack-dev-server">
+                  webpack dev server
+                </a>
                 offers convenient live reloading support to minimize turnaround times.
               </p>
               <p>
@@ -139,11 +144,12 @@
               </p>
               <p>To run the dev server:</p>
 
-              <code> > npm start </code>
+              <code>> npm start</code>
 
               <p>
                 The webpack dev server will create the bundles in memory and launch the
-                <a href="http://localhost:9003/">generated index file</a> in a browser.
+                <a href="http://localhost:9003/">generated index file</a>
+                in a browser.
               </p>
               <p>
                 Note that the npm start script will run webpack once before starting the webpack dev
@@ -152,16 +158,18 @@
               </p>
 
               <p>
-                When the server runs, try making changes to <code>src/webpack-demo.js</code> and see
-                how the app will be updated in the browser immediately.
+                When the server runs, try making changes to
+                <code>src/webpack-demo.js</code>
+                and see how the app will be updated in the browser immediately.
               </p>
 
               <p>
                 Debugging of application files in the browser's developer tools should work fine, as
-                source maps are enabled using webpack's "<a
-                  href="https://webpack.js.org/plugins/source-map-dev-tool-plugin/"
-                  >SourceMapDevToolPlugin</a
-                >".
+                source maps are enabled using webpack's "
+                <a href="https://webpack.js.org/plugins/source-map-dev-tool-plugin/">
+                  SourceMapDevToolPlugin
+                </a>
+                ".
               </p>
 
               <h3>Production</h3>
@@ -179,7 +187,7 @@
 
               <p>To run the production build:</p>
 
-              <code> > npm run production </code>
+              <code>> npm run production</code>
 
               <p>
                 Note that the final minification step of the production build may take some time

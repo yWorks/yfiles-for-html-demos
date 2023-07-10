@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,169 +30,83 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Drag and Drop Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="resources/drag-and-drop-demo.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
-
-    <style>
-      #dndPanelContainer {
-        position: absolute;
-        top: 60px;
-        bottom: 0;
-        width: 150px;
-        border-right: 5px solid #dddfe5;
-        overflow: auto;
-        box-sizing: border-box;
-        z-index: 12;
-      }
-
-      #nativeDndPanelContainer {
-        position: absolute;
-        top: 60px;
-        bottom: 0;
-        right: 0;
-        width: 150px;
-        border-left: 5px solid #dddfe5;
-        overflow: auto;
-        box-sizing: border-box;
-        z-index: 12;
-      }
-
-      @media screen and (max-height: 500px) {
-        #dndPanelContainer,
-        #nativeDndPanelContainer {
-          top: 30px;
-        }
-      }
-
-      #disabled-indicator {
-        background-color: rgba(0, 0, 0, 0.3);
-        position: absolute;
-        top: 40px;
-        bottom: 0;
-        right: 0;
-        width: 150px;
-        display: none;
-      }
-
-      #disabled-message {
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        text-align: center;
-        font-size: 15px;
-        padding: 10px;
-        user-select: none;
-      }
-
-      .dndPanel {
-        width: 100%;
-      }
-
-      .dndPanelItem {
-        margin: 15px auto;
-      }
-
-      .palette-header {
-        background-color: #ebeef0;
-        width: 100%;
-        height: 40px;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 14px;
-        line-height: 40px;
-        display: block;
-      }
-
-      .demo-dndPanelItem {
-        margin: 10px auto;
-      }
-
-      .yfiles-cursor-dragdrop-copy {
-        cursor: copy;
-      }
-
-      .yfiles-cursor-dragdrop-move {
-        cursor: move;
-      }
-
-      .yfiles-cursor-dragdrop-link {
-        cursor: alias;
-      }
-
-      .yfiles-cursor-dragdrop-scroll {
-        cursor: move;
-      }
-
-      .yfiles-cursor-dragdrop-all {
-        cursor: copy;
-      }
-
-      .yfiles-cursor-dragdrop-no-drop {
-        cursor: no-drop;
-      }
-
-      .demo-toolbar,
-      #graphComponent,
-      .demo-left-hidden .demo-toolbar,
-      .demo-left-hidden #graphComponent {
-        left: 150px !important;
-        right: 150px !important;
-      }
-
-      .yfiles-drag {
-        z-index: 15;
-        opacity: 0.35;
-        transition: opacity 0.2s ease-in-out;
-      }
-
-      .yfiles-drag.hidden {
-        opacity: 0;
-      }
-    </style>
   </head>
-  <body class="demo-has-left">
-    <!--
-  The sidebar for the description
--->
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Drag and Drop</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+
+      <label>
+        <input type="checkbox" id="preview-snapping-checkbox" class="demo-checkbox" />
+        Preview Snapping
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!--prettier-ignore-->
+      <div class="demo-description__content">
         <h1>Drag and Drop Demo</h1>
 
         <p>
-          This demo shows how to enable drag and drop functionality for nodes using class
-          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">NodeDropInputMode</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode" target="_blank">LabelDropInputMode</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode" target="_blank">PortDropInputMode</a>
+          This demo shows how to enable drag and drop functionality for nodes using the classes
+          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">NodeDropInputMode</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode" target="_blank">LabelDropInputMode</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode" target="_blank">PortDropInputMode</a>.
+          The demo features two drag and drop panels: the left one uses yFiles drag and drop and
+          the right one uses the browser-native drag and drop.
         </p>
 
         <p>
-          Note that, these specialized input modes offer more features than the generic
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DropInputMode" target="_blank">DropInputMode</a>, namely a preview of the item and a support for snapping while
-          dragging.
+          The difference between the two mechanisms is the way a drag is started. The left panel
+          starts a drag with e.g. <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode#startDrag" target="_blank">NodeDropInputMode.startDrag</a>. The right panel uses
+          the native "dragstart" event to start a drag. The drop input modes
+          are able to react to the native drag events. Unfortunately, snapping is not supported for
+          elements dragged from this palette. Note that the right palette only works with mouse
+          events. Native drag and drop currently cannot handle touch or pen events.
         </p>
 
-        <p>
-          The second palette supports native drag and drop. The drop input modes are able to react
-          to the native drag events. Unfortunately, snapping is not supported for elements dragged
-          from this palette. Note that this palette only works with mouse events. Native drag and
-          drop is currently not able to handle touch or pen events.
-        </p>
-
-        <p>
-          The native drag and drop approach is disabled in Internet Explorer because the HTML5 drag
-          and drop API is only partially supported. See
-          <a href="../../../doc/api/index.html#/dguide/known_issues" target="_blank"
-            >Known Issues</a
-          >
-          for further details.
-        </p>
+        <p>For dragging and dropping edges, the demo uses the custom class <code>EdgeDropInputMode</code>.</p>
 
         <h2>Things to Try</h2>
         <ul>
@@ -204,12 +117,14 @@
           </li>
           <li>Drag an item near a node to see snapping guide lines.</li>
           <li>
-            Drag a node over a group node to see group node highlighting. <br />
+            Drag a node over a group node to see group node highlighting.
+            <br />
             Additionally hold the 'Shift' key, if this node is not dragged from the palette panel.
           </li>
           <li>
-            Drop a node over a group node to place it inside the group. <br />
-            Additionally hold the 'Shift' key, if this node is not dragged from the palette panel.
+            Drop a node over a group node to place it inside the group.
+            <br />
+            If this node is not dragged from the palette panel, additionally hold the 'Shift' key.
           </li>
           <li>
             Drag an edge from the palette onto another node in the canvas to start edge creation
@@ -223,7 +138,7 @@
             Drag an edge from the palette onto another edge to just apply the style of the dragged
             edge.
           </li>
-          <li>Switch off the <em>Preview</em> or the <em>Snapping and Preview</em> features.</li>
+          <li>Toggle the preview snapping in the toolbar.</li>
         </ul>
 
         <h2>Related Demos</h2>
@@ -238,55 +153,30 @@
             <a href="../custom-drag-and-drop">Custom Drag and Drop</a>
           </li>
           <li>
-            <a href="../../03-tutorial-application-features/drag-and-drop/index.html"
-              >Tutorial: Drag and Drop</a
-            >
+            <a href="../../application-features/drag-and-drop/index.html">Simple Drag and Drop</a>
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-
-        <span>Drop Features</span>
-        <select data-command="FeaturesChanged" id="featuresComboBox" title="D'n'D Features">
-          <option>Preview</option>
-          <option>Snapping &amp; Preview</option>
-          <option>None</option>
-        </select>
+    <div class="demo-page__main">
+      <div id="dnd-panel" class="demo-dnd-panel demo-dnd-panel--left">
+        <span class="demo-dnd-panel__header">yFiles Drag and Drop</span>
       </div>
 
-      <div class="demo-content-dynamic">
-        <div id="dndPanelContainer">
-          <span class="palette-header">yFiles Drag and Drop</span>
-          <div id="dndPanel" class="dndPanel"></div>
-        </div>
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
-        <div id="nativeDndPanelContainer">
-          <span class="palette-header">Native Drag and Drop</span>
-          <div id="nativeDndPanel" class="dndPanel"></div>
-          <div id="disabled-indicator">
-            <div id="disabled-message">Snapping is not supported for Native Drag and Drop</div>
+      </div>
+
+      <div id="native-dnd-panel" class="demo-dnd-panel demo-dnd-panel--right">
+        <span class="demo-dnd-panel__header">Native Drag and Drop</span>
+
+        <div id="disabled-indicator" class="disabled-indicator">
+          <div class="disabled-indicator__message">
+            Snapping is not supported for Native Drag and Drop
           </div>
         </div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="DragAndDropDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="DragAndDropDemo.ts" async></script>
   </body>
 </html>

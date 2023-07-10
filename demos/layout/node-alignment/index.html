@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Node Alignment Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../showcase/layoutstyles/resources/styles.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .settings-grid {
+        display: grid;
+        align-items: center;
+        grid-template-areas:
+          'label1 editor1'
+          'label2 editor2'
+          'label3 editor3'
+          'label4 editor4'
+          'button button';
+      }
+
+      .settings-row1 {
+        grid-area: label1;
+      }
+      .settings-row2 {
+        grid-area: label2;
+      }
+      .settings-row3 {
+        grid-area: label3;
+      }
+      .settings-row4 {
+        grid-area: label4;
+      }
+
+      .settings-editor-row1 {
+        grid-area: editor1;
+        justify-self: end;
+        width: initial !important;
+      }
+
+      .settings-editor-row2 {
+        grid-area: editor2;
+        justify-self: end;
+      }
+
+      .settings-editor-row3 {
+        grid-area: editor3;
+        justify-self: end;
+      }
+
+      .settings-editor-row4 {
+        grid-area: editor4;
+        justify-self: end;
+        width: initial !important;
+      }
+
+      .settings-editor-row5 {
+        grid-area: button;
+        justify-self: stretch;
+        margin-top: 12px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: initial !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Node Alignment</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!--prettier-ignore-->
+      <div class="demo-description__content">
+        <h1>Node Alignment Demo</h1>
+
+        <p>
+          This demo shows how to automatically align nodes in rows and columns using the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" target="_blank">AlignmentStage</a> layout algorithm.
+        </p>
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" target="_blank">AlignmentStage</a> assigns nodes to rows and columns and places all nodes in a
+          column/row centered on a vertical/horizontal line.
+          Two nodes belong to the same column/row, if the horizontal/vertical distance between the
+          centers of said nodes is less than or equal to the value of the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage#snapDistance" target="_blank">AlignmentStage.snapDistance</a> property.
+        </p>
+        <p>
+          When aligning nodes, the horizontal distance between nodes in a shared row and the
+          vertical distance between nodes in a shared column can only increase. As a result,
+          reducing the <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage#minimumNodeDistance" target="_blank">minimumNodeDistance</a>
+          will not move existing rows and columns closer together.
+        </p>
+
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Drag a node template from the demo's palette into the demo's graph component.
+            While dragging the template over the graph component, gray columns and rows are shown
+            in the background. These stripes represent the snap distance to the vertical
+            and horizontal lines of alignment for the existing rows. Dragging the mouse into one
+            of these stripe will turn the corresponding stripe into a darker shade of gray.
+            Dropping the template inside a darkened stripe will force the new node and the existing
+            nodes in that stripe to be aligned.
+          </li>
+          <li>
+            Click on free space to create a new node or move a node to another position.
+            If the center of this node is close enough to an existing node, the nodes in the
+            graph will be aligned automatically.
+          </li>
+          <li>
+            Change one of the property values in the <em>Settings</em> panel and observe how the
+            graph is re-aligned.
+            Since <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" target="_blank">AlignmentStage</a> only increases distances between nodes, decreasing the
+            <em>Minimum Node Distance</em> will have no immediate effect.
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div id="dnd-panel" class="demo-dnd-panel demo-dnd-panel--left"></div>
+
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+
+      <div class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2 style="margin-top: 0">Settings</h2>
+
+          <div class="demo-properties__settings">
+            <div class="settings-grid">
+              <label for="cycleStyle" class="settings-row1">Alignment Policy</label>
+              <select
+                class="settings-editor-row1"
+                title="Select an alignment policy"
+                id="alignment-policy"
+              >
+                <option value="SNAP_X">Snap X</option>
+                <option value="SNAP_Y">Snap Y</option>
+                <option value="SNAP_X_Y">Snap XY</option>
+              </select>
+              <label for="starStyle" class="settings-row2"> Minimum Node Distance </label>
+              <input class="settings-editor-row2" id="minimum-node-distance" type="number" />
+              <label for="parallelStyle" class="settings-row3">Snap Distance</label>
+              <input class="settings-editor-row3" id="snap-distance" type="number" />
+              <label for="groupScope" class="settings-row4">Separate Stripes</label>
+              <input class="settings-editor-row4" id="separate-stripes" type="checkbox" />
+
+              <button
+                id="align-nodes-button"
+                class="settings-editor-row5 flat-button"
+                title="Align Nodes (CTRL + Enter)"
+              >
+                <span>Align Nodes</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="NodeAlignmentDemo.ts" async></script>
+  </body>
+</html>

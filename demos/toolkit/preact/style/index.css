@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,27 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-#preact-content {
-  position: absolute;
-  left: 0;
-  top: 60px;
-  right: 0;
-  bottom: 0;
-}
 .preact-app {
   display: flex;
-  position: absolute;
-  top: 60px;
-  width: 100%;
-  height: calc(100% - 60px);
-}
-@media screen and (max-height: 500px) {
-  .preact-app {
-    top: 30px;
-    height: calc(100% - 30px);
-  }
-}
-.graph-component {
   width: 100%;
   height: 100%;
 }

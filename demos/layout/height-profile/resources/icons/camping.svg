@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 115.45983 131.72748" height="318.69553" width="481.08261" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(-8.3811745,-17.466833)">
+    <polygon points="60,0 70,30 50,30 " style="fill:#76b041;stroke:#76b041;stroke-width:1" transform="matrix(1.1068116,0,0,1.1857825,-84.378988,20.252847)" />
+    <rect style="fill:#621b00;stroke:#621b00;stroke-width:1.14562" x="-20.737322" y="57.041504" height="11.857825" width="5.5340581" />
+  </g>
+  <g transform="translate(16.374639,8.8270481)">
+    <polygon points="50,30 60,0 70,30 " style="fill:#76b041;stroke:#76b041;stroke-width:1" transform="matrix(1.1068116,0,0,1.1857825,-84.378988,20.252847)" />
+    <rect style="fill:#621b00;stroke:#621b00;stroke-width:1.14562" x="-20.737322" y="57.041504" height="11.857825" width="5.5340581" />
+  </g>
+  <g transform="translate(161.48399,-17.466833)">
+    <polygon points="60,0 70,30 50,30 " style="fill:#76b041;stroke:#76b041;stroke-width:1" transform="matrix(1.1068116,0,0,1.1857825,-84.378988,20.252847)" />
+    <rect style="fill:#621b00;stroke:#621b00;stroke-width:1.14562" x="-20.737322" y="57.041504" height="11.857825" width="5.5340581" />
+  </g>
+  <g transform="translate(36.752395,-17.466833)">
+    <polygon points="60,0 70,30 50,30 " style="fill:#76b041;stroke:#76b041;stroke-width:1" transform="matrix(1.1068116,0,0,1.1857825,-84.378988,20.252847)" />
+    <rect style="fill:#621b00;stroke:#621b00;stroke-width:1.14562" x="-20.737322" y="57.041504" height="11.857825" width="5.5340581" />
+  </g>
+  <g transform="translate(117.60608,-17.466833)">
+    <polygon points="50,30 60,0 70,30 " style="fill:#76b041;stroke:#76b041;stroke-width:1" transform="matrix(1.1068116,0,0,1.1857825,-84.378988,20.252847)" />
+    <rect style="fill:#621b00;stroke:#621b00;stroke-width:1.14562" x="-20.737322" y="57.041504" height="11.857825" width="5.5340581"/>
+  </g>
+  <g transform="translate(142.7496,11.78511)">
+    <polygon points="50,30 60,0 70,30 " style="fill:#76b041;stroke:#76b041;stroke-width:1" id="polygon11-7-7" transform="matrix(1.1068116,0,0,1.1857825,-84.378988,20.252847)" />
+    <rect style="fill:#621b00;stroke:#621b00;stroke-width:1.14562" x="-20.737322" y="57.041504" height="11.857825" width="5.5340581"/>
+  </g>
+  <polygon points="110,0 190,80 40,80 " style="fill:#000000;stroke:#000000;stroke-width:1" transform="matrix(1.1068116,0,0,1.1857825,-65.480261,19.431163)" />
+  <polygon points="150,80 70,80 110,50 " style="fill:#ffffff;stroke:#ffffff;stroke-width:1" transform="matrix(1.1000379,0,0,1.8962516,-63.081823,-38.261005)" />
+  <rect style="fill:#000000;stroke:#000000;stroke-width:0.4" x="-27.425417" y="115.10651" height="1" width="176.45317"/>
+  <rect style="fill:#000000;stroke:#000000;stroke-width:2" x="-115.7529" y="57.634964" height="0.57476097" width="60.722305" transform="rotate(-90)" />
+</svg>

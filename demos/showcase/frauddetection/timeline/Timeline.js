@@ -1,0 +1,991 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+import {
+  Cursor,
+  delegate,
+  FoldingManager,
+  GraphBuilder,
+  GraphComponent,
+  GraphHighlightIndicatorManager,
+  GraphViewerInputMode,
+  INode,
+  ItemHoverInputMode,
+  List,
+  MouseWheelBehaviors,
+  Point,
+  Rect,
+  ScrollBarVisibility,
+  ShapeNodeStyle,
+  Size
+} from 'yfiles'
+import { TimeframeRectangle } from './TimeframeRectangle.js'
+import { defaultStyling, Styling } from './Styling.js'
+import { AggregationFolderNodeConverter } from './AggregationFolderNodeConverter.js'
+import { days, intervalsIntersect, months, timeframeEquals, weeks, years } from './Utilities.js'
+import { TimeframeAnimation } from './TimeframeAnimation.js'
+import './timeline.css'
+import { aggregateBuckets, getBucket, getItemsFromBucket } from './bucket-aggregation.js'
+import { applyTimelineLayout } from './timeline-layout.js'
+import { initializeToolTips } from '../../networkmonitoring/tooltips.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+
+/**
+ * A time entry specifies the time range or points in time when the corresponding data item should be visible.
+ * @typedef {(object|Array.<object>|Array.<number>)} TimeEntry
+ */
+
+/**
+ * @typedef {function} FilterChangedListener
+ */
+/**
+ * @typedef {function} BarSelectListener
+ */
+/**
+ * @typedef {function} BarHoverListener
+ */
+
+/**
+ * @typedef {Array.<>} TimeInterval
+ */
+/**
+ * @typedef {Array.<>} LabeledTimeInterval
+ */
+
+const UNDEFINED_TIMEFRAME = [new Date(0), new Date(0)]
+
+/**
+ * A timeline component that shows data entries in a bar-chart like visualization.
+ *
+ * The timeline utilizes a GraphComponent to visualize the bar chart with the help of a folded graph.
+ * The folding is mapped to the granularity of the timeline so that collapse/expand automatically hides/shows items
+ * corresponding to the current level.
+ * Entries in the timeline are modelled as INodes and automatically placed with the help of a RecursiveGroupLayout.
+ *
+ * Zooming in-/out of the timeline collapses and expands group nodes to show the nested data.
+ */
+export default class Timeline {
+  graphComponent
+  _items = []
+
+  // [minZoom, maxZoom)
+  minZoom = 1
+  maxZoom = 4
+  zoom = 0
+
+  // NOTE: this granularity is assumed in the tooltip generation, so changing it also needs tooltip adjustments
+  granularities = [
+    days,
+    weeks,
+    months,
+    years
+    /* allTime */
+  ]
+
+  filterChangedListener = null
+  barSelectListener = null
+  barHoverListener = null
+  animationEndListener = null
+
+  graphBuilder
+  buckets = new List()
+
+  timeframeRect
+  _timeframe = UNDEFINED_TIMEFRAME
+
+  styling
+  timeframeAnimation = null
+
+  /**
+   * Instantiates a new timeline.
+   * @param {!string} selector The selector of an existing div-element to which the timeline is added
+   * @param {!function} getTimeEntry The function that extracts the actual date of the data items
+   * @param {!TimelineStyle} style The default timeline style
+   * @param showTimeframeRectangle Whether to show timeframe rectangle to focus on parts of the timeline
+   * @param showPlayButton Whether to display a button to start/stop the timeframe animation
+   * @param {boolean} [showTimeframeRectangle=true]
+   * @param {boolean} [showPlayButton=true]
+   */
+  constructor(
+    selector,
+    getTimeEntry,
+    style = {},
+    showTimeframeRectangle = true,
+    showPlayButton = true
+  ) {
+    this.showPlayButton = showPlayButton
+    this.showTimeframeRectangle = showTimeframeRectangle
+    this.style = style
+    this.getTimeEntry = getTimeEntry
+    this.selector = selector
+    this.graphComponent = new GraphComponent(selector)
+    applyDemoTheme(this.graphComponent)
+    this.initializeUserInteraction()
+    this.initializeFolding()
+    this.initializeGraphBuilder(this.graphComponent.graph.foldingView.manager.masterGraph)
+    this.initializeStyling(style)
+    this.initializeTimeframe(style)
+
+    // the zoom specifies the currently visible granularity
+    this.zoomTo(2)
+    let changeLayout = false
+    this.graphComponent.addSizeChangedListener((sender, evt) => {
+      if (evt.oldSize.height !== this.graphComponent.size.height && !changeLayout) {
+        changeLayout = true
+        setTimeout(() => {
+          changeLayout = false
+          applyTimelineLayout(
+            this.graphComponent,
+            this.styling,
+            this.zoom,
+            this.minZoom,
+            this.maxZoom
+          )
+          this.updateViewPort()
+          this.centerTimeFrame(this.buckets.toArray())
+        }, 500)
+      }
+    })
+
+    if (showPlayButton && showTimeframeRectangle) {
+      this.addPlayButton()
+    }
+  }
+
+  /**
+   * Gets the current data items of the timeline
+   * @type {!Array.<TDataItem>}
+   */
+  get items() {
+    return this._items
+  }
+
+  /**
+   * Sets the data items of the timeline and triggers an update of the timeline.
+   * @type {!Array.<TDataItem>}
+   */
+  set items(items) {
+    this._items = items
+    this.update()
+  }
+
+  /**
+   * Returns all items associated with the currently selected bars.
+   * @type {!Array.<TDataItem>}
+   */
+  get selectedItems() {
+    return this.graphComponent.selection.selectedNodes
+      .toArray()
+      .flatMap(selectedNode => getItemsFromBucket(selectedNode))
+  }
+
+  /**
+   * Returns the filtering function which describes whether the given item is visible in the current timeframe.
+   * @type {!function}
+   */
+  get filter() {
+    return this.filterPredicate.bind(this)
+  }
+
+  /**
+   * Gets the currently selected timespan.
+   * @type {!TimeInterval}
+   */
+  get timeframe() {
+    return this._timeframe
+  }
+
+  /**
+   * Sets the selected timespan in the timeline.
+   * @type {!TimeInterval}
+   */
+  set timeframe(value) {
+    this._timeframe = value
+    if (this.showTimeframeRectangle) {
+      this.updateTimeframeRectFromTimeframe()
+    }
+  }
+
+  /**
+   * @param {!FilterChangedListener.<TDataItem>} listener
+   */
+  addFilterChangedListener(listener) {
+    this.filterChangedListener = delegate.combine(this.filterChangedListener, listener)
+  }
+
+  /**
+   * @param {!FilterChangedListener.<TDataItem>} listener
+   */
+  removeFilterChangedListener(listener) {
+    this.filterChangedListener = delegate.remove(this.filterChangedListener, listener)
+  }
+
+  /**
+   * Registers a click event listener on the bar elements of the timeline.
+   * @param {!BarSelectListener.<TDataItem>} listener
+   */
+  addBarSelectListener(listener) {
+    this.barSelectListener = delegate.combine(this.barSelectListener, listener)
+  }
+
+  /**
+   * De-registers a click event listener on the bar elements of the timeline.
+   * @param {!BarSelectListener.<TDataItem>} listener
+   */
+  removeBarSelectListener(listener) {
+    this.barSelectListener = delegate.remove(this.barSelectListener, listener)
+  }
+
+  /**
+   * Registers a hover event listener on the bar elements of the timeline.
+   * @param {!BarHoverListener.<TDataItem>} listener
+   */
+  addBarHoverListener(listener) {
+    this.barHoverListener = delegate.combine(this.barHoverListener, listener)
+  }
+
+  /**
+   * De-registers a hover event listener on the bar elements of the timeline.
+   * @param {!BarHoverListener.<TDataItem>} listener
+   */
+  removeBarHoverListener(listener) {
+    this.barHoverListener = delegate.remove(this.barHoverListener, listener)
+  }
+
+  /**
+   * Registers a listener that is invoked when the animation ends.
+   * @param {!function} listener
+   */
+  addAnimationEndListener(listener) {
+    this.animationEndListener = delegate.combine(this.animationEndListener, listener)
+  }
+
+  /**
+   * De-registers a listener that is invoked when the animation ends.
+   * @param {!function} listener
+   */
+  removeAnimationEndListener(listener) {
+    this.animationEndListener = delegate.combine(this.animationEndListener, listener)
+  }
+
+  /**
+   * Configures the user interaction on the timeline component.
+   */
+  initializeUserInteraction() {
+    const graphComponent = this.graphComponent
+
+    // the timeline graph cannot be edited interactively
+    const inputMode = new GraphViewerInputMode()
+
+    // limit the viewport of the timeline to the visible content, such that users cannot pan the content out of view.
+    const viewportLimiter = this.graphComponent.viewportLimiter
+    viewportLimiter.honorBothDimensions = true
+    graphComponent.minimumZoom = graphComponent.maximumZoom = graphComponent.zoom = 1
+
+    // this component overwrites the mouse-wheel handling entirely by collapsing / expanding the folded timeline graph
+    graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
+    graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.ALWAYS
+
+    // wire up a custom mousewheel behavior
+    graphComponent.addMouseWheelListener((sender, evt) => {
+      evt.originalEvent?.preventDefault()
+      this.updateZoom(evt)
+    })
+
+    // install a tooltip on the timeline items that reports the content of the possibly aggregated entry
+    initializeToolTips(inputMode, item => {
+      if (item instanceof INode) {
+        const bucket = getBucket(item)
+        if (bucket.label !== undefined) {
+          return this.createTooltipContent(bucket)
+        }
+      }
+      return null
+    })
+
+    // installs the event handlers
+    this.initializeEvents(inputMode)
+
+    // install the configured input mode on the GraphComponent
+    graphComponent.inputMode = inputMode
+  }
+
+  /**
+   * Installs various event handlers.
+   * @param {!GraphViewerInputMode} inputMode
+   */
+  initializeEvents(inputMode) {
+    // bar-chart click listener
+    inputMode.addItemLeftClickedListener((src, args) => {
+      const clickedItem = args.item
+
+      src.clearSelection()
+      src.setSelected(clickedItem, true)
+
+      if (clickedItem instanceof INode) {
+        if (this.barSelectListener) {
+          args.handled = true
+          this.barSelectListener(getItemsFromBucket(clickedItem))
+        }
+      }
+    })
+    inputMode.addCanvasClickedListener(_ => {
+      this.barSelectListener?.([])
+    })
+
+    // bar-chart hover listener
+    const itemHoverInputMode = new (class extends ItemHoverInputMode {
+      /**
+       * @param {!IModelItem} item
+       * @returns {boolean}
+       */
+      isValidHoverItem(item) {
+        // only consider bar-chart elements and ignore the time legend elements
+        if (item instanceof INode) {
+          const graph = this.inputModeContext.graph
+          return !graph.isGroupNode(item)
+        }
+        return false
+      }
+    })()
+    itemHoverInputMode.hoverCursor = Cursor.POINTER
+    itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
+      const highlightManager = sender.inputModeContext.canvasComponent.highlightIndicatorManager
+      highlightManager.clearHighlights()
+
+      let hoveredItems = []
+      if (args.item instanceof INode) {
+        highlightManager.addHighlight(args.item)
+        hoveredItems = getItemsFromBucket(args.item)
+      }
+
+      if (this.barHoverListener) {
+        this.barHoverListener(hoveredItems)
+      }
+    })
+    inputMode.itemHoverInputMode = itemHoverInputMode
+  }
+
+  /**
+   * Creates the tooltip content when hovering an element on the timeline.
+   * @param {!Bucket.<TDataItem>} data
+   * @returns {!HTMLElement}
+   */
+  createTooltipContent(data) {
+    const tooltipContainer = document.createElement('div')
+    if (data.layer === 1) {
+      // tooltip for "day"
+      const dateElement = document.createElement('h3')
+      dateElement.innerText = `${data.start.toDateString()}`
+      const entriesElement = document.createElement('div')
+      entriesElement.innerText = `Entries: ${data.aggregatedValue}`
+      tooltipContainer.appendChild(dateElement)
+      tooltipContainer.appendChild(entriesElement)
+    } else if (data.layer === 2) {
+      // tooltip for "week"
+      const containingMonth = data.parent
+      const containingYear = containingMonth.parent
+      const dateElement = document.createElement('h3')
+      dateElement.innerText = `${containingMonth.label} ${containingYear.label}, Week: #${data.label}`
+      const entriesElement = document.createElement('div')
+      entriesElement.innerText = `Entries: ${data.aggregatedValue}`
+      tooltipContainer.appendChild(dateElement)
+      tooltipContainer.appendChild(entriesElement)
+    } else {
+      const labelElement = document.createElement('h3')
+      labelElement.innerText = data.label ?? ''
+      tooltipContainer.appendChild(labelElement)
+    }
+    return tooltipContainer
+  }
+
+  /**
+   * Changes the detail level of the timeline.
+   * The default mouse-wheel events behavior of the GraphComponent is disabled and overwritten with
+   * this custom behavior that triggers a collapse/expand on the graph that represents the bar chart
+   * of the timeline.
+   * @param {!MouseEventArgs} evt
+   */
+  updateZoom(evt) {
+    if (evt.wheelDelta !== 0) {
+      const mouseLocation = evt.location
+      let closestNode
+      let zoomChanged
+      if (evt.wheelDelta > 0) {
+        closestNode = this.getClosestNode(mouseLocation)
+        zoomChanged = this.zoomIn()
+      } else {
+        zoomChanged = this.zoomOut()
+        closestNode = this.getClosestNode(mouseLocation)
+      }
+
+      if (zoomChanged) {
+        applyTimelineLayout(
+          this.graphComponent,
+          this.styling,
+          this.zoom,
+          this.minZoom,
+          this.maxZoom
+        )
+
+        // update the viewport such that the closest node is fixed in position
+        if (closestNode) {
+          const viewPoint = this.calculateViewPoint(mouseLocation, closestNode)
+          this.updateViewPort(viewPoint.x)
+        } else {
+          this.updateViewPort()
+        }
+
+        // the bounds are now bigger but not due to a changed timeframe, thus keep silent about it
+        this.updateTimeframeRectFromTimeframe(true)
+
+        this.updateStyling()
+      }
+    }
+  }
+
+  /**
+   * The new viewPoint when keeping the node's location fixed.
+   * @param {!Point} mouseLocation
+   * @param {!INode} node
+   * @returns {!Point}
+   */
+  calculateViewPoint(mouseLocation, node) {
+    const mouseView = this.graphComponent.toViewCoordinates(mouseLocation)
+    const nodeCenterView = this.graphComponent.toViewCoordinates(node.layout.center)
+    const newViewpointView = nodeCenterView.subtract(mouseView)
+    return this.graphComponent.toWorldCoordinates(newViewpointView)
+  }
+
+  /**
+   * Determines the closest node to the given location.
+   * @param {!Point} location
+   * @returns {!INode}
+   */
+  getClosestNode(location) {
+    const viewGraph = this.graphComponent.graph
+    const mouseX = location.x
+    let hitNode
+    let minDist = Number.POSITIVE_INFINITY
+    for (const node of viewGraph.nodes) {
+      if (!viewGraph.isGroupNode(node)) {
+        const distToMouse = Math.abs(node.layout.center.x - mouseX)
+        if (distToMouse < minDist) {
+          hitNode = node
+          minDist = distToMouse
+        }
+      }
+    }
+    return hitNode
+  }
+
+  /**
+   * Increase zoom in the timeline.
+   * @returns {boolean}
+   */
+  zoomIn() {
+    return this.zoomTo(Math.max(this.minZoom, this.zoom - 1))
+  }
+
+  /**
+   * Decrease zoom in the timeline.
+   * @returns {boolean}
+   */
+  zoomOut() {
+    return this.zoomTo(Math.min(this.maxZoom - 1, this.zoom + 1))
+  }
+
+  /**
+   * Zooming in-/out of the timeline actually changes the collapse/expand state of the folded graph
+   * that represents the bar chart.
+   * @param {number} zoom The zoom level which specifies to which detail level the graph should be expanded/collapsed.
+   * @returns {boolean}
+   */
+  zoomTo(zoom) {
+    const viewGraph = this.graphComponent.graph
+    const foldingView = viewGraph.foldingView
+    const masterGraph = foldingView.manager.masterGraph
+
+    let zoomChanged = false
+    let zoomChangedInLoop
+    do {
+      zoomChangedInLoop = false
+      const nodesToCollapse = new Set()
+      const nodesToExpand = new Set()
+
+      for (const node of viewGraph.nodes) {
+        const bucket = getBucket(node)
+        if (bucket.layer === zoom && viewGraph.isGroupNode(node)) {
+          nodesToCollapse.add(node)
+        } else if (
+          bucket.layer > zoom &&
+          !viewGraph.isGroupNode(node) &&
+          masterGraph.isGroupNode(foldingView.getMasterItem(node))
+        ) {
+          nodesToExpand.add(node)
+        }
+      }
+
+      for (const node of nodesToCollapse) {
+        if (viewGraph.contains(node)) {
+          foldingView.collapse(node)
+          zoomChangedInLoop = true
+        }
+      }
+
+      for (const node of nodesToExpand) {
+        foldingView.expand(node)
+        zoomChangedInLoop = true
+      }
+
+      if (zoomChangedInLoop) {
+        zoomChanged = true
+      }
+    } while (zoomChangedInLoop)
+
+    this.zoom = zoom
+
+    return zoomChanged
+  }
+
+  /**
+   * The timeline utilizes a folded graph as visualization for the bar chart.
+   */
+  initializeFolding() {
+    const graphComponent = this.graphComponent
+    const foldingManager = new FoldingManager(graphComponent.graph)
+    graphComponent.graph = foldingManager.createFoldingView().graph
+
+    foldingManager.folderNodeConverter = new AggregationFolderNodeConverter({
+      copyFirstLabel: false,
+      folderNodeSize: [20, 50]
+    })
+
+    const inputMode = graphComponent.inputMode
+    inputMode.navigationInputMode.allowEnterGroup = false
+  }
+
+  /**
+   * Populates the internal graph model with the given data.
+   * @param {!IGraph} masterGraph
+   */
+  initializeGraphBuilder(masterGraph) {
+    const graphBuilder = new GraphBuilder(masterGraph)
+    const getBucketId = b => `${b.layer}-${b.start.getTime()}-${b.end.getTime()}`
+    const nodesSource = graphBuilder.createGroupNodesSource({
+      data: this.buckets,
+      id: getBucketId,
+      parentId: b => (b.parent ? getBucketId(b.parent) : null)
+    })
+
+    const nodeCreator = nodesSource.nodeCreator
+    nodeCreator.createLabelsSource({
+      data: b => (b.label != null ? [b] : []),
+      text: 'label'
+    })
+
+    this.graphBuilder = graphBuilder
+  }
+
+  /**
+   * Initializes the timeframe-window element on the timeline.
+   * @param {!TimelineStyle} style
+   */
+  initializeTimeframe(style) {
+    if (!this.showTimeframeRectangle) {
+      return
+    }
+
+    const graphComponent = this.graphComponent
+    const rectangleIndicator = new TimeframeRectangle(graphComponent, style.timeframe)
+
+    rectangleIndicator.setBounds(graphComponent.contentRect)
+    rectangleIndicator.limits = graphComponent.contentRect
+
+    rectangleIndicator.addBoundsChangedListener(bounds => {
+      this.updateTimeframe(bounds)
+    })
+
+    this.timeframeRect = rectangleIndicator
+
+    // initial bounds
+    this.updateTimeframe(rectangleIndicator.bounds)
+  }
+
+  /**
+   * Sets specific bounds for the timeframe-window from which the actual timeframe is deduced.
+   * @param {!Rect} bounds
+   */
+  updateTimeframe(bounds) {
+    const newTimeframe = this.getTimeframeFromBounds(bounds)
+    if (+newTimeframe[0] !== +this._timeframe[0] || +newTimeframe[1] !== +this._timeframe[1]) {
+      this._timeframe = newTimeframe
+      this.onTimeframeChanged()
+    }
+  }
+
+  /**
+   * Helper function to determine the actual timeframe from the given bounds.
+   * @returns {!TimeInterval} A non-empty timeframe or UNDEFINED_TIMEFRAME if there is no data within the given bounds.
+   * @param {!Rect} bounds
+   */
+  getTimeframeFromBounds(bounds) {
+    const graph = this.graphComponent.graph
+    const nodesInFrame = graph.nodes
+      .filter(node => !graph.isGroupNode(node))
+      .filter(node => bounds.contains(node.layout.center))
+
+    if (nodesInFrame.size === 0) {
+      // no nodes in timeframe, this returns an "empty" timeframe to trigger the update
+      return UNDEFINED_TIMEFRAME
+    }
+
+    const frameStart = getBucket(
+      nodesInFrame.reduce((start, current) => {
+        const currentBucket = getBucket(current)
+        const startBucket = getBucket(start)
+        return currentBucket.start < startBucket.start ? current : start
+      })
+    ).start
+
+    const frameEnd = getBucket(
+      nodesInFrame.reduce((end, current) => {
+        const currentBucket = getBucket(current)
+        const endBucket = getBucket(end)
+        return currentBucket.end > endBucket.end ? current : end
+      })
+    ).end
+
+    return [frameStart, frameEnd]
+  }
+
+  /**
+   * Sets the timeframe-window to the currently specified timeframe.
+   * @param silent Whether the change should be notified. For example, the bounds of the visualization may change
+   *  without changing the logical timeframe (e.g. if the zoom on the timeline changes) in which case, certain listeners
+   *  should not be notified.
+   * @param {boolean} [silent=false]
+   */
+  updateTimeframeRectFromTimeframe(silent = false) {
+    if (!this.showTimeframeRectangle) {
+      return
+    }
+
+    const bounds = this.getBoundsFromTimeframe(this._timeframe)
+    this.timeframeRect.setBounds(bounds, silent)
+    this.updateStyling()
+  }
+
+  /**
+   * Helper function that determines the bounds of the timeframe-window from the currently selected timeframe.
+   * @param {!TimeInterval} timeframe
+   * @returns {!Rect}
+   */
+  getBoundsFromTimeframe(timeframe) {
+    const graphComponent = this.graphComponent
+    const graph = graphComponent.graph
+    const nodesInTimeframe = graph.nodes
+      .filter(node => !graph.isGroupNode(node))
+      .filter(node => {
+        const bucket = getBucket(node)
+        return intervalsIntersect(bucket.start, bucket.end, timeframe[0], timeframe[1])
+      })
+
+    if (nodesInTimeframe.size === 0) {
+      return new Rect(
+        graphComponent.contentRect.topLeft,
+        new Size(1, graphComponent.contentRect.height)
+      )
+    }
+
+    let minX = Number.POSITIVE_INFINITY
+    let maxX = Number.NEGATIVE_INFINITY
+    nodesInTimeframe.forEach(current => {
+      minX = Math.min(minX, current.layout.x)
+      maxX = Math.max(maxX, current.layout.maxX)
+    })
+
+    return new Rect(
+      minX,
+      graphComponent.contentRect.y,
+      maxX - minX,
+      graphComponent.contentRect.height
+    )
+  }
+
+  /**
+   * Initialize a default visualization for the timeline component.
+   * @param {!TimelineStyle} style
+   */
+  initializeStyling(style) {
+    this.styling = new Styling(this.graphComponent, style)
+
+    this.graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
+      nodeStyle: new ShapeNodeStyle({
+        shape: 'rectangle',
+        stroke: `2px solid ${style.barHover?.stroke ?? defaultStyling.barHover?.stroke}`,
+        fill: style.barHover?.fill ?? defaultStyling.barHover?.fill
+      })
+    })
+  }
+
+  /**
+   * Applies the styling to the currently selected/highlighted items.
+   */
+  updateStyling() {
+    this.styling.updateStyles(this._timeframe)
+  }
+
+  onTimeframeChanged() {
+    this.updateStyling()
+
+    this.filterChangedListener?.(this.filter)
+  }
+
+  /**
+   * Returns true if the given item is inside the current timeframe, and false otherwise.
+   * @param {!TDataItem} item
+   * @returns {boolean}
+   */
+  filterPredicate(item) {
+    const [startDate, endDate] = this._timeframe
+    const [start, end] = [+startDate, +endDate]
+
+    const timeEntry = this.getTimeEntry(item)
+    if (Array.isArray(timeEntry)) {
+      return timeEntry.some(entry => {
+        if (typeof entry === 'number') {
+          const time = entry
+          return start <= time && time < end
+        } else {
+          if (typeof entry.start === 'undefined' || typeof entry.end === 'undefined') {
+            return true
+          }
+          return intervalsIntersect(entry.start, entry.end, start, end)
+        }
+      })
+    } else if (timeEntry) {
+      if (typeof timeEntry.start === 'undefined' || typeof timeEntry.end === 'undefined') {
+        return true
+      }
+      return intervalsIntersect(timeEntry.start, timeEntry.end, start, end)
+    }
+    return false
+  }
+
+  /**
+   * Updates the entire timeline when the data changes.
+   */
+  update() {
+    const allBuckets = aggregateBuckets(this.items, this.getTimeEntry, this.granularities)
+    this.updateGraph(allBuckets)
+    this.zoomTo(this.zoom)
+    applyTimelineLayout(this.graphComponent, this.styling, this.zoom, this.minZoom, this.maxZoom)
+    // this.applyLayout()
+    this.updateViewPort()
+    this.centerTimeFrame(allBuckets)
+
+    if (this.showTimeframeRectangle) {
+      // The new data may be in an entirely different time slice. If so, update the timeframe to match some data
+      const newTimeFrame = this.getTimeframeFromBounds(this.graphComponent.contentRect)
+      // see if the new data intersects with the timeline - if not - move it into place
+      if (
+        this._timeframe === UNDEFINED_TIMEFRAME ||
+        !timeframeEquals(this._timeframe, newTimeFrame)
+      ) {
+        if (this._timeframe !== UNDEFINED_TIMEFRAME) {
+          if (this._timeframe[1].getTime() < newTimeFrame[0].getTime()) {
+            newTimeFrame[1] = new Date(
+              newTimeFrame[0].getTime() +
+                (this._timeframe[1].getTime() - this._timeframe[0].getTime())
+            )
+          } else if (this._timeframe[0].getTime() > newTimeFrame[1].getTime()) {
+            newTimeFrame[0] = new Date(
+              newTimeFrame[1].getTime() -
+                (this._timeframe[1].getTime() - this._timeframe[0].getTime())
+            )
+          } else {
+            newTimeFrame[0] = this._timeframe[0]
+            newTimeFrame[1] = this._timeframe[1]
+          }
+          this.timeframe = newTimeFrame
+          this.onTimeframeChanged()
+        } else {
+          this.updateTimeframe(this.graphComponent.contentRect)
+          this.updateTimeframeRectFromTimeframe()
+        }
+      } else {
+        // Fire the filter changed listeners to notify about the changed data, even though the timeframe stayed the same.
+        this.onTimeframeChanged()
+        this.filterChangedListener?.(this.filter)
+      }
+    } else {
+      // Set the timeframe to the whole timeline because nothing is out of focus when there is no timeframe rectangle
+      this.timeframe = this.getTimeframeFromBounds(this.graphComponent.contentRect)
+      // Fire the filter changed listeners to notify about the changed data, even though the timeframe stayed the same.
+      this.onTimeframeChanged()
+      this.filterChangedListener?.(this.filter)
+    }
+  }
+
+  /**
+   * @param {!Array.<Bucket.<TDataItem>>} allBuckets
+   */
+  centerTimeFrame(allBuckets) {
+    const halfBuckets = allBuckets.length / 2
+    const offset = allBuckets.length / 10
+    this.timeframe = [
+      allBuckets[Math.floor(halfBuckets - offset)].start,
+      allBuckets[Math.floor(halfBuckets + offset)].end
+    ]
+  }
+
+  /**
+   * Updates the viewport and ViewportLimiter of the timeline.
+   * @param viewPointX Utilizes this x-coordinate as new viewpoint or centers the viewport horizontally if not given
+   * @param {number} [viewPointX]
+   */
+  updateViewPort(viewPointX) {
+    const graphComponent = this.graphComponent
+    graphComponent.updateContentRect(10)
+
+    const contentRect = graphComponent.contentRect
+    graphComponent.viewportLimiter.bounds = contentRect
+
+    if (viewPointX === undefined) {
+      // just center it horizontally
+      viewPointX = contentRect.x + contentRect.width * 0.5 - graphComponent.viewport.width * 0.5
+    }
+
+    graphComponent.viewPoint = new Point(
+      viewPointX,
+      contentRect.maxY - graphComponent.viewport.height
+    )
+
+    const minY = Math.min(contentRect.minY, graphComponent.viewport.minY)
+    const maxY = Math.max(contentRect.maxY, graphComponent.viewport.maxY)
+    graphComponent.contentRect = new Rect(contentRect.x, minY, contentRect.width, maxY - minY)
+
+    if (this.showTimeframeRectangle) {
+      this.timeframeRect.limits = graphComponent.contentRect
+    }
+  }
+
+  /**
+   * Updates the graph model when the data changes.
+   * @param {!Array.<Bucket.<TDataItem>>} buckets
+   */
+  updateGraph(buckets) {
+    this.buckets.clear()
+    this.buckets.addRange(buckets)
+    this.graphBuilder.graph.clear()
+    this.graphBuilder.buildGraph()
+  }
+
+  /**
+   * Disposes the timeline.
+   */
+  cleanUp() {
+    this.timeframeRect.cleanup()
+    this.graphComponent.cleanUp()
+  }
+
+  /**
+   * Creates and returns the timeframe animation for the video.
+   * @returns {!TimeframeAnimation} The timeframe animation
+   */
+  getTimeframeAnimation() {
+    if (
+      this.timeframeAnimation === null ||
+      this.timeframeAnimation.timeframeRect !== this.timeframeRect.rect
+    ) {
+      // create a new animation object if there is none or if the timeframe has changed
+      this.timeframeAnimation = new TimeframeAnimation(this.timeframeRect.rect, this.graphComponent)
+      this.timeframeAnimation.addTimeframeListener(rect => this.updateTimeframe(rect))
+      this.timeframeAnimation.addAnimationEndedListener(() => {
+        // stop the animation and revert the state of the play button
+        if (this.showPlayButton && !(this.timeframeAnimation?.animating ?? false)) {
+          this.stop()
+        }
+        this.animationEndListener?.()
+      })
+    }
+    return this.timeframeAnimation
+  }
+
+  /**
+   * Starts the time-frame animation.
+   */
+  play() {
+    const animation = this.getTimeframeAnimation()
+    animation.stopAnimation()
+    animation.playAnimation()
+
+    const playButton = document.querySelector(`#${this.selector}-video-button`)
+    playButton.classList.add('stop')
+    playButton.classList.remove('play')
+  }
+
+  /**
+   * Stops the time-frame animation.
+   */
+  stop() {
+    this.getTimeframeAnimation().stopAnimation()
+
+    const playButton = document.querySelector(`#${this.selector}-video-button`)
+    playButton.classList.remove('stop')
+    playButton.classList.add('play')
+  }
+
+  /**
+   * Adds a button to play an animation of the timeframe.
+   * The button has the CSS class 'video-button' and is styled in timeline.css.
+   */
+  addPlayButton() {
+    const playButton = document.createElement('button')
+    playButton.classList.add('video-button', 'play')
+    playButton.id = `${this.selector}-video-button`
+    playButton.addEventListener(
+      'click',
+      () => {
+        const animation = this.getTimeframeAnimation()
+        if (!animation.animating) {
+          this.play()
+        } else {
+          this.stop()
+        }
+      },
+      true
+    )
+    playButton.addEventListener('mousedown', evt => {
+      // prevent events to trigger a selection in the timeline
+      evt.stopPropagation()
+    })
+    this.graphComponent.div.appendChild(playButton)
+  }
+}

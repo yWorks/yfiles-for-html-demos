@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,17 +57,27 @@ import {
 } from 'yfiles'
 
 export default class MultiPageIGraphBuilder {
+  // initialize mappers
+  layoutToViewNode = new Mapper()
+  modelToViewPort = new Mapper()
+  viewToLayoutNode = new Mapper()
+  normalEdgeDefaults
+  connectorEdgeDefaults
+  proxyEdgeDefaults
+  proxyReferenceEdgeDefaults
+  normalNodeDefaults
+  groupNodeDefaults
+  connectorNodeDefaults
+  proxyNodeDefaults
+  proxyReferenceNodeDefaults
+  layout
+
   /**
    * Creates a new instance for the given model graph and the given {@link MultiPageLayout}.
    * @param {!MultiPageLayoutResult} layout The holder for the pages created by the
    *   {@link MultiPageLayout}.
    */
   constructor(layout) {
-    // initialize mappers
-    this.layoutToViewNode = new Mapper()
-
-    this.modelToViewPort = new Mapper()
-    this.viewToLayoutNode = new Mapper()
     // initialize the graph item defaults with the null styles
     const normalEdgeDefaults = new EdgeDefaults()
     normalEdgeDefaults.style = NULL_EDGE_STYLE

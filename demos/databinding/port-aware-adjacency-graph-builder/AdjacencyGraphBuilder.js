@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,14 +49,14 @@ import {
   Rect,
   ShapeNodeStyle
 } from 'yfiles'
-import { colorSets } from '../../resources/demo-colors.js'
+import { colorSets } from 'demo-resources/demo-colors'
 
 /*
  This file shows how to configure AdjacencyGraphBuilder to support ports.
  */
 
-// In this sample the data is arranged in the following way.
-// When used in an own sample it has to be adjusted for the source data.
+// In this sample, the data is arranged in the following way.
+// When used in an own sample, it has to be adjusted for the source data.
 
 /**
  * @typedef {Object} PortData
@@ -206,7 +206,7 @@ class PortAwareNodeCreator extends NodeCreator {
    * @param {!INode} parent
    * @param {!Rect} layout
    * @param {!INodeStyle} style
-   * @param {!Object} tag
+   * @param {*} tag
    * @returns {!INode}
    */
   createNodeCore(graph, groupNode, parent, layout, style, tag) {
@@ -426,7 +426,7 @@ class PortAwareEdgeCreator extends EdgeCreator {
       ? target.ports.find(p => p.tag === targetPortId)
       : target.ports.at(0)
 
-    // create the edges between source and target port. If no port is provided add a default port.
+    // create the edges between source and target port. if no port is provided, add a default port.
     return graph.createEdge(
       sourcePort ?? graph.addPort(source),
       targetPort ?? graph.addPort(target),
@@ -437,7 +437,7 @@ class PortAwareEdgeCreator extends EdgeCreator {
 
   /**
    * Updates a given edge. This function is called for edges which already exist in the graph.
-   * Delegates to the base implementation for the actual edge update,
+   * It delegates to the base implementation for the actual edge update,
    * then sets the new ports if needed.
    * @param {!IGraph} graph The graph to operate on.
    * @param {!IEdge} edge The edge to update.

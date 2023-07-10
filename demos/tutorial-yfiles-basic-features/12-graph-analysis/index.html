@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>12 Analysis Algorithms - Basic Features Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-basic-features"> Basic Features Tutorial </a>
+
+        <span>12 Analysis Algorithms</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-yfiles-basic-features/11-layout-data/index.html'><span>11 Layout Data</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 12/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 12 Analysis Algorithms</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-yfiles-basic-features/01-graphcomponent/index.html"
+            class="tutorial-dropdown__item"
+            >01 Creating the View</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html"
+            class="tutorial-dropdown__item"
+            >02 Creating Graph Elements</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/03-managing-viewport/index.html"
+            class="tutorial-dropdown__item"
+            >03 Managing Viewport</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/04-setting-styles/index.html"
+            class="tutorial-dropdown__item"
+            >04 Setting Styles</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/05-label-placement/index.html"
+            class="tutorial-dropdown__item"
+            >05 Label Placement</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/06-basic-interaction/index.html"
+            class="tutorial-dropdown__item"
+            >06 Basic Interaction</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/07-undo-clipboard-support/index.html"
+            class="tutorial-dropdown__item"
+            >07 Undo Clipboard Support</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/08-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >08 Grouping</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/09-data-binding/index.html"
+            class="tutorial-dropdown__item"
+            >09 Data Binding</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/10-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Layout</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/11-layout-data/index.html"
+            class="tutorial-dropdown__item"
+            >11 Layout Data</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/12-graph-analysis/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >12 Analysis Algorithms</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Running Graph Analysis Algorithms</h1>
+          <div class="sect1">
+            <h2 id="_how_to_analyze_the_graph_structure">How to analyze the graph structure.</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  This step shows how to use the
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/analysis" target="_blank">graph analysis algorithms</a> in yFiles for HTML.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  yFiles provides a wide range of graph analysis algorithms that can be used for all
+                  kinds of purposes. The result of an analysis run can be shown directly to the
+                  user, or the results can be used to drive third party systems. They can also be
+                  used as input for layout algorithm configurations. The purpose of this sample is
+                  to demonstrate how to build, configure, and execute graph analysis algorithms and
+                  how to interpret the results. For a more interactive and complete showcase of the
+                  available algorithms, please see the <a href="../../showcase/graphanalysis/index.html" target="_blank">Graph Analysis Demo</a>, the
+                  <a href="../../analysis/clustering/index.html" target="_blank">Clustering Algorithms Demo</a>, the <a href="../../analysis/networkflows/index.html" target="_blank">Network Flows Demo</a>, the
+                  <a href="../../analysis/criticalpathanalysis/index.html" target="_blank">Critical Path Analysis (CPA) Demo</a>, the
+                  <a href="../../analysis/intersection-detection/index.html" target="_blank">Intersection Detection Demo</a>, and the <a href="../../analysis/transitivity/index.html" target="_blank">Transitivity Demo</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_reachability">Reachability</h2>
+            <div class="sectionbody">
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>
+                      Select one or more nodes and click 'Run Reachability' to run a reachability
+                      test. All nodes that can be reached from the currently selected nodes will be
+                      highlighted.
+                    </p>
+                  </li>
+                </ul>
+              </div>
+              <div class="paragraph">
+                <p>
+                  <button id="runReachabilityButton" class="demo-description__button">
+                    Run Reachability
+                  </button>
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// use the selected nodes as start nodes</span>
+<span class="hljs-keyword">const</span> startNodes = graphComponent.<span class="hljs-property">selection</span>.<span class="hljs-property">selectedNodes</span>
+
+<span class="hljs-keyword">const</span> reachability = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Reachability</span>({
+  <span class="hljs-attr">startNodes</span>: startNodes,
+  <span class="hljs-attr">directed</span>: <span class="hljs-literal">true</span> <span class="hljs-comment">// consider edge direction</span>
+})
+<span class="hljs-keyword">const</span> reachabilityResult = reachability.<span class="hljs-title function_">run</span>(graphComponent.<span class="hljs-property">graph</span>)
+
+<span class="hljs-comment">// highlight the reachable nodes</span>
+reachabilityResult.<span class="hljs-property">reachableNodes</span>.<span class="hljs-title function_">forEach</span>((<span class="hljs-attr">n</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+  graphComponent.<span class="hljs-property">highlightIndicatorManager</span>.<span class="hljs-title function_">addHighlight</span>(n)
+})</code></pre>
+                </div>
+              </div>
+              <div class="ulist">
+                <ul>
+                  <li>
+                    <p>
+                      Select two nodes with <code>Ctrl+Click</code> and click 'Run Shortest Path' to
+                      calculate the shortest path. If a path is found, the nodes on the path and the
+                      edges will be highlighted. The distance to the target node will be shown as a
+                      tooltip on the target node.
+                    </p>
+                  </li>
+                </ul>
+              </div>
+              <div class="paragraph">
+                <p>
+                  <button id="runShortestPathButton" class="demo-description__button">
+                    Run Shortest Path
+                  </button>
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> shortestPath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortestPath</span>({
+  <span class="hljs-attr">source</span>: sourceNode,
+  <span class="hljs-attr">sink</span>: sinkNode,
+  <span class="hljs-attr">directed</span>: <span class="hljs-literal">false</span>, <span class="hljs-comment">// don&#x27;t consider edge direction</span>
+  <span class="hljs-comment">// calculate the cost per edge as the distance between source and target node</span>
+  <span class="hljs-attr">costs</span>: (<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-function"><span class="hljs-params">number</span> =&gt;</span>
+    edge.<span class="hljs-property">sourceNode</span>!.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>.<span class="hljs-title function_">subtract</span>(edge.<span class="hljs-property">targetNode</span>!.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>)
+      .<span class="hljs-property">vectorLength</span>
+})
+<span class="hljs-keyword">const</span> shortestPathResult = shortestPath.<span class="hljs-title function_">run</span>(graph)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  The shortest path result contains the distance, nodes and edges of the calculated
+                  path. We use this information to highlight the respective nodes and edges and to
+                  show a tooltip with the distance.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> pathDistance = shortestPathResult.<span class="hljs-property">distance</span>
+<span class="hljs-keyword">const</span> pathNodes = shortestPathResult.<span class="hljs-property">path</span>?.<span class="hljs-property">nodes</span> ?? []
+<span class="hljs-keyword">const</span> endNode = shortestPathResult.<span class="hljs-property">path</span>?.<span class="hljs-property">end</span>
+<span class="hljs-keyword">const</span> pathEdges = shortestPathResult.<span class="hljs-property">edges</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

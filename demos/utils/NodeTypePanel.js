@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,8 +36,6 @@ import {
   SimpleLabel,
   Size
 } from 'yfiles'
-import { addClass, removeClass } from '../resources/demo-app.js'
-import { colorSets } from '../resources/demo-styles.js'
 
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can display arbitrary information
@@ -46,16 +44,20 @@ import { colorSets } from '../resources/demo-styles.js'
  * an {@link ILabelModelParameter} to determine the position of the pop-up.
  */
 export default class NodeTypePanel {
+  div
+  dirty = false
+  _currentItems = null
+
   /**
    * Creates a new instance of {@link NodeTypePanel}.
    * @param {!GraphComponent} graphComponent
-   * @param {!Array.<ColorSetName>} typeColors
+   * @param {!Array.<string>} typeColors
+   * @param {!Record.<string,object>} colorSets
    */
-  constructor(graphComponent, typeColors) {
+  constructor(graphComponent, typeColors, colorSets) {
+    this.colorSets = colorSets
     this.typeColors = typeColors
     this.graphComponent = graphComponent
-    this.dirty = false
-    this._currentItems = null
     this.div = document.getElementById('node-type-panel')
 
     // make the popup invisible
@@ -121,7 +123,7 @@ export default class NodeTypePanel {
       const classes = button.getAttribute('class')
       const type = NodeTypePanel.findType(classes)
       if (type > -1) {
-        button.style.backgroundColor = colorSets[this.typeColors[type]].fill
+        button.style.backgroundColor = this.colorSets[this.typeColors[type]].fill
         this.addClickListener(button, type)
       }
     }
@@ -173,14 +175,13 @@ export default class NodeTypePanel {
     this.div.style.display = 'inline-block'
     this.div.style.opacity = '1'
     for (const btn of this.div.querySelectorAll('.node-type-button')) {
-      removeClass(btn, 'current-type')
+      btn.classList.remove('current-type')
     }
     if (this.currentItems) {
       this.currentItems.forEach(item => {
-        addClass(
-          this.div.querySelector(`.type-${(item.tag && item.tag.type) || 0}`),
-          'current-type'
-        )
+        this.div
+          .querySelector(`.type-${(item.tag && item.tag.type) || 0}`)
+          .classList.add('current-type')
       })
     }
     this.updateLocation()
@@ -235,8 +236,8 @@ export default class NodeTypePanel {
   /**
    * Callback for when the type changed for a specific node
    * @param {!INode} item
-   * @param {*} newType
-   * @param {*} oldType
+   * @param {number} newType
+   * @param {number} oldType
    */
   nodeTypeChanged(item, newType, oldType) {}
 

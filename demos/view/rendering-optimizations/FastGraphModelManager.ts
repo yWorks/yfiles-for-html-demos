@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,6 @@ import {
   BaseClass,
   CanvasComponent,
   Class,
-  Color,
   DefaultGraph,
   GraphComponent,
   GraphModelManager,
@@ -82,7 +81,7 @@ import {
 
 import SvgEdgeStyle from './SvgEdgeStyle'
 import SimpleSvgNodeStyle from './SimpleSvgNodeStyle'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
 
 /**
  * A {@link GraphModelManager} implementation that uses several optimizations
@@ -243,8 +242,8 @@ export class FastGraphModelManager extends GraphModelManager {
     graphComponent.inputModeContextLookupChain.add(this.hitTestInputChainLink)
 
     if (graphComponent.graph != null) {
-      // install the image renderer, if necessary
-      this.updateImageRenderer()
+      // install rendering, if necessary
+      this.updateRendering()
     }
   }
 
@@ -276,10 +275,7 @@ export class FastGraphModelManager extends GraphModelManager {
    */
   set graphOptimizationMode(value: number) {
     this._graphOptimizationMode = value
-    this.updateEffectiveStyles()
-    this.updateShouldUseImage()
-    this.updateImageRenderer()
-    this.updateGraph()
+    this.updateRendering()
   }
 
   /**
@@ -637,6 +633,17 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
+   * Calls {@link updateEffectiveStyles}, {@link updateImageRenderer}, and {@link updateGraph} to
+   * adjust the used styles and the rendering method (image or directly) based on the set
+   * {@link graphOptimizationMode} and the current {@link GraphComponent.zoom zoom} level.
+   */
+  updateRendering() {
+    this.updateEffectiveStyles()
+    this.updateGraph()
+    this.updateImageRenderer()
+  }
+
+  /**
    * Sets the styles to use on the descriptors depending on the current
    * graphOptimizationMode and the zoom level of the GraphComponent
    */
@@ -691,17 +698,14 @@ export class FastGraphModelManager extends GraphModelManager {
    * Called when the {@link FastGraphModelManager.graphComponent}'s zoom factor changes.
    */
   onGraphComponentZoomChanged() {
-    this.updateImageRenderer()
-    this.updateShouldUseImage()
-    this.updateEffectiveStyles()
-    this.updateGraph()
+    this.updateRendering()
   }
 
   /**
    * Called when the {@link FastGraphModelManager.graphComponent}'s graph instance changes.
    */
   onGraphComponentGraphChanged() {
-    this.updateImageRenderer()
+    this.updateRendering()
   }
 }
 
@@ -1099,7 +1103,12 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       this.outer.maximumCanvasSize
     )
     this.drawComplexCanvasImage(
-      (image: HTMLCanvasElement, targetWidth: number, targetHeight: number, exportRect: Rect) => {
+      (
+        image: HTMLCanvasElement | HTMLImageElement,
+        targetWidth: number,
+        targetHeight: number,
+        exportRect: Rect
+      ) => {
         visual.update(image, targetWidth, targetHeight, exportRect, graphComponent.zoom)
         graphComponent.invalidate()
       }
@@ -1114,7 +1123,12 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
   updateComplexDynamicCanvasVisual(oldVisual: CanvasRenderVisual): void {
     const graphComponent = this.outer.graphComponent!
     this.drawComplexCanvasImage(
-      (image: HTMLCanvasElement, viewWidth: number, viewHeight: number, exportRect: Rect) => {
+      (
+        image: HTMLCanvasElement | HTMLImageElement,
+        viewWidth: number,
+        viewHeight: number,
+        exportRect: Rect
+      ) => {
         oldVisual.update(image, viewWidth, viewHeight, exportRect, graphComponent.zoom)
         graphComponent.invalidate()
       }
@@ -1303,7 +1317,14 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
    * @param callback The callback to call if the image has
    *   finished rendering.
    */
-  drawComplexCanvasImage(callback: Function) {
+  drawComplexCanvasImage(
+    callback: (
+      image: HTMLCanvasElement | HTMLImageElement,
+      targetWidth: number,
+      targetHeight: number,
+      exportRect: Rect
+    ) => void
+  ) {
     const graphComponent = this.outer.graphComponent!
     const viewport = graphComponent.viewport
     const zoom = graphComponent.zoom
@@ -1489,7 +1510,7 @@ class GLVisual extends WebGLVisual {
     thickness: 5
   })
   private readonly nodeStyle: WebGLShapeNodeStyle = new WebGLShapeNodeStyle({
-    color: Color.from('#FF6C00')
+    color: '#FF6C00'
   })
   private visuals: WebGLVisual[] | null = null
 
@@ -1552,7 +1573,7 @@ class HitTestInputChainLink extends BaseClass(IContextLookupChainLink) {
    * @param type The type to lookup for
    * @returns the implementation found
    */
-  contextLookup(item: object, type: Class<any>): Object | null {
+  contextLookup(item: object, type: Class<any>): object | null {
     const graph = this.graphComponent.graph
     if (type === IHitTester.$class) {
       return new MyHitTestEnumerator(graph)

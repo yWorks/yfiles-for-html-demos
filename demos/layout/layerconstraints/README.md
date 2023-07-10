@@ -1,12 +1,19 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Layer Constraints Demo
 
-<img src="../../resources/image/layerconstraints.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/layout/layerconstraints/index.html).
-
 # Layer Constraints Demo
 
-Shows how to use layer constraints to restrict the node layering in [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
+Shows how to use layer constraints to restrict the node layering in [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) .
 
 The layer is determined by the model data.
 

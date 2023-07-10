@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,12 +34,16 @@ import { BaseClass, IRenderContext, IVisualCreator, PartitionGrid, SvgVisual, Vi
  */
 export default class SimplePartitionGridVisualCreator extends BaseClass(IVisualCreator) {
   /**
+   * The partition grid to be visualized
+   */
+  grid
+
+  /**
    * Creates a new instance of PartitionGridVisualCreator.
    * @param {!PartitionGrid} grid The partition grid to be visualized
    */
   constructor(grid) {
     super()
-    // The partition grid to be visualized
     this.grid = grid
   }
 

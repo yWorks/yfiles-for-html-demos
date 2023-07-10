@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,7 +30,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Network Flows Demo [yFiles for HTML]</title>
@@ -39,7 +38,7 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="./resources/style.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <style>
       .popupContent {
         position: absolute;
@@ -52,11 +51,9 @@
         opacity: 0; /* will be faded in */
         transition: opacity 0.2s ease-in;
       }
-
       .popupContent.popupContentClone {
         transition: opacity 0.2s ease-out;
       }
-
       .popupContentLeft {
         position: relative;
         float: left;
@@ -66,7 +63,6 @@
         display: inline-block;
         margin-right: 10px;
       }
-
       .popupContentRight {
         position: relative;
         float: left;
@@ -76,13 +72,80 @@
         display: inline-block;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Network Flows</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button id="new-button" data-command="NEW"></button>
+      <button
+        id="reload-button"
+        title="Reload Initial Graph"
+        class="demo-icon-yIconReload"
+      ></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <select title="Select a graph analysis algorithm" id="algorithm-combo-box">
+        <option>Maximum Flow</option>
+        <option>Minimum Cost</option>
+        <option>Maximum Flow/Minimum Cut</option>
+      </select>
+
+      <span class="demo-separator"></span>
+
+      <button id="layout-button" title="Layout" class="demo-icon-yIconLayout labeled">
+        Layout
+      </button>
+
+      <span class="demo-separator"></span>
+
+      <label id="flowInformationLabel" style="display: none"></label>
+      <input id="flowValue" readonly="" />
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Network Flows Demo</h1>
 
         <p>
@@ -117,205 +180,149 @@
         </p>
       </div>
     </aside>
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content">
-        <div id="description">
-          <div id="maxFlowText">
-            <h2>Maximum Flow</h2>
-            The <em>maximum flow</em> problem seeks to determine the maximum load that a network can
-            handle considering a capacity constraint. Applications of the maximum flow algorithm
-            include the following:
-            <ul>
-              <li>
-                Determine the maximum amount of data that can be sent through a computer network.
-              </li>
-              <li>
-                Find the maximum amount of fluids (e.g. water or oil) that a network of pipelines
-                can supply.
-              </li>
-              <li>
-                Calculate the amount of goods that a company can transport from warehouses to stores
-                depending on the number of available trucks and the state of the roads.
-              </li>
-            </ul>
-
-            <h2>Things to Try</h2>
-            <ul>
-              <li>Modify the network's structure by adding or removing nodes and edges.</li>
-              <li>Drag an edge to increase or decrease its capacity.</li>
-              <li>
-                Press button <img src="../../resources/icons/reload-16.svg" /> of the toolbar to
-                load the initial graph.
-              </li>
-              <li>
-                Press button <img src="../../resources/icons/play2-16.svg" /> of the toolbar to
-                layout the existing graph.
-              </li>
-            </ul>
-          </div>
-
-          <div id="minCostFlowText">
-            <h2>Minimum Cost Flow</h2>
-            The <em>minimum cost flow</em> describes the flow through a network that produces the
-            lowest cost. The solution depends on the edges' capacity and cost. Some nodes can supply
-            flow to the network while others can demand flow from the network. Applications of the
-            minimum cost algorithm include the following:
-            <ul>
-              <li>
-                Find the parts in pipelines or data networks that handle the most flow and would
-                affect the flow the most when they fail.
-              </li>
-              <li>
-                Find the most efficient flight passenger lift in which passengers can leave/board
-                the plane at every stop to prevent empty flights.
-              </li>
-              <li>
-                Find the optimal location for facilities based on their connection with the
-                surrounding neighborhood (e.g. hospitals, fire stations).
-              </li>
-              <li>
-                Solve the transportation problem where a certain demand of goods must by satisfied
-                by a number of warehouses such that the transportation costs are minimized.
-              </li>
-            </ul>
-
-            <h2>Things to Try</h2>
-            <ul>
-              <li>Modify the network's structure by adding or removing nodes and edges.</li>
-              <li>Drag an edge to increase/decrease its capacity.</li>
-              <li>
-                Drag the blue-part of a node to increase its supply or demand. The label in the
-                interior of the node indicates the flow that comes across after the algorithm has
-                been applied plus/minus the corresponding supply/demand respectively. Nodes bounded
-                by a green rectangle represent "supply" nodes, while nodes bounded by a red
-                rectangle represent "demand" nodes.
-              </li>
-              <li>
-                Click on a "cost" label and use <img src="resources/plus-16.svg" /> and
-                <img src="resources/minus-16.svg" /> of the popup menu to increase or decrease the
-                edge's cost. Press <img src="resources/apply-16.svg" /> to apply the algorithm.
-              </li>
-              <li>
-                Press button <img src="../../resources/icons/reload-16.svg" /> of the toolbar to
-                load the initial graph.
-              </li>
-              <li>
-                Press button <img src="../../resources/icons/play2-16.svg" /> of the toolbar to
-                layout the existing graph.
-              </li>
-            </ul>
-          </div>
-
-          <div id="maxFlowMinCutText">
-            <h2>Maximum Flow Minimum Cut</h2>
-            The <em>maximum flow minimum cut</em> problem determines the maximum amount of flow that
-            can be sent through the network and calculates the <em>minimum cut</em>. A cut separates
-            the network such that source and sink nodes are disconnected and no flow from the source
-            can reach the sink. The <em>minimum cut</em> is the cut with the minimum capacity and
-            its value equals to the <em>maximum flow</em>. Applications of the maximum flow minimum
-            cut algorithm include the following:
-            <ul>
-              <li>Determine a maximum bipartite matching in a general graph.</li>
-              <li>Calculate the maximum flow of a network.</li>
-              <li>
-                Find a parking spot for each car that minimizes the total time required for all cars
-                to find a spot.
-              </li>
-            </ul>
-
-            <h2>Things to Try</h2>
-            <ul>
-              <li>Modify the network's structure by adding or removing nodes and edges.</li>
-              <li>Drag an edge to increase or decrease its capacity.</li>
-              <li>
-                Take a look at the min-cult line to determine the edges that belong to the cut.
-              </li>
-              <li>
-                Press button <img src="../../resources/icons/reload-16.svg" /> of the toolbar to
-                load the initial graph.
-              </li>
-              <li>
-                Press button <img src="../../resources/icons/play2-16.svg" /> of the toolbar to
-                layout the existing graph.
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button id="newButton" data-command="New" title="New" class="demo-icon-yIconNew"></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-        <span class="demo-separator"></span>
-
-        <select
-          data-command="AlgorithmSelectionChanged"
-          title="Select a graph analysis algorithm"
-          id="algorithmComboBox"
-        >
-          <option>Maximum Flow</option>
-          <option>Minimum Cost</option>
-          <option>Maximum Flow/Minimum Cut</option>
-        </select>
-
-        <span data-type="Separator"></span>
-
-        <button
-          id="reloadButton"
-          data-command="Reload"
-          title="Reload Initial Graph"
-          class="demo-icon-yIconReload"
-        ></button>
-        <button
-          id="layoutButton"
-          data-command="Layout"
-          title="Layout"
-          class="demo-icon-yIconLayout"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <label id="flowInformationLabel" style="display: none"></label>
-        <input id="flowValue" readonly="" />
-      </div>
-
-      <!-- The GraphComponent -->
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent">
           <div id="edgePopupContent" class="popupContent" tabindex="0">
             <!-- The content template for the node popup panel -->
             <div id="popupContentInfo">
-              <label>Cost (€): </label>
-              <button id="costMinus" title="Decrease"></button>
+              <label>Cost (€):</label>
+              <button id="cost-minus" title="Decrease"></button>
               <input type="text" id="cost-form" value="1" min="1" readonly="" />
-              <button id="costPlus" title="Increase"></button>
+              <button id="cost-plus" title="Increase"></button>
               <span class="popupSeparator"></span>
               <button id="apply" title="Apply"></button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <div id="description">
+            <div id="maxFlowText">
+              <h2>Maximum Flow</h2>
+              The <em>maximum flow</em> problem seeks to determine the maximum load that a network
+              can handle considering a capacity constraint. Applications of the maximum flow
+              algorithm include the following:
+              <ul>
+                <li>
+                  Determine the maximum amount of data that can be sent through a computer network.
+                </li>
+                <li>
+                  Find the maximum amount of fluids (e.g. water or oil) that a network of pipelines
+                  can supply.
+                </li>
+                <li>
+                  Calculate the amount of goods that a company can transport from warehouses to
+                  stores depending on the number of available trucks and the state of the roads.
+                </li>
+              </ul>
 
-    <script type="module" crossorigin="anonymous" src="NetworkFlowsDemo.js"></script>
+              <h2>Things to Try</h2>
+              <ul>
+                <li>Modify the network's structure by adding or removing nodes and edges.</li>
+                <li>Drag an edge to increase or decrease its capacity.</li>
+                <li>
+                  Press button <img src="../../resources/icons/reload-16.svg" /> of the toolbar to
+                  load the initial graph.
+                </li>
+                <li>
+                  Press button <img src="../../resources/icons/play2-16.svg" /> of the toolbar to
+                  layout the existing graph.
+                </li>
+              </ul>
+            </div>
+
+            <div id="minCostFlowText">
+              <h2>Minimum Cost Flow</h2>
+              The <em>minimum cost flow</em> describes the flow through a network that produces the
+              lowest cost. The solution depends on the edges' capacity and cost. Some nodes can
+              supply flow to the network while others can demand flow from the network. Applications
+              of the minimum cost algorithm include the following:
+              <ul>
+                <li>
+                  Find the parts in pipelines or data networks that handle the most flow and would
+                  affect the flow the most when they fail.
+                </li>
+                <li>
+                  Find the most efficient flight passenger lift in which passengers can leave/board
+                  the plane at every stop to prevent empty flights.
+                </li>
+                <li>
+                  Find the optimal location for facilities based on their connection with the
+                  surrounding neighborhood (e.g. hospitals, fire stations).
+                </li>
+                <li>
+                  Solve the transportation problem where a certain demand of goods must by satisfied
+                  by a number of warehouses such that the transportation costs are minimized.
+                </li>
+              </ul>
+
+              <h2>Things to Try</h2>
+              <ul>
+                <li>Modify the network's structure by adding or removing nodes and edges.</li>
+                <li>Drag an edge to increase/decrease its capacity.</li>
+                <li>
+                  Drag the blue-part of a node to increase its supply or demand. The label in the
+                  interior of the node indicates the flow that comes across after the algorithm has
+                  been applied plus/minus the corresponding supply/demand respectively. Nodes
+                  bounded by a green rectangle represent "supply" nodes, while nodes bounded by a
+                  red rectangle represent "demand" nodes.
+                </li>
+                <li>
+                  Click on a "cost" label and use <img src="resources/plus-16.svg" /> and
+                  <img src="resources/minus-16.svg" /> of the popup menu to increase or decrease the
+                  edge's cost. Press <img src="resources/apply-16.svg" /> to apply the algorithm.
+                </li>
+                <li>
+                  Press button <img src="../../resources/icons/reload-16.svg" /> of the toolbar to
+                  load the initial graph.
+                </li>
+                <li>
+                  Press button <img src="../../resources/icons/play2-16.svg" /> of the toolbar to
+                  layout the existing graph.
+                </li>
+              </ul>
+            </div>
+
+            <div id="maxFlowMinCutText">
+              <h2>Maximum Flow Minimum Cut</h2>
+              The <em>maximum flow minimum cut</em> problem determines the maximum amount of flow
+              that can be sent through the network and calculates the <em>minimum cut</em>. A cut
+              separates the network such that source and sink nodes are disconnected and no flow
+              from the source can reach the sink. The <em>minimum cut</em> is the cut with the
+              minimum capacity and its value equals to the <em>maximum flow</em>. Applications of
+              the maximum flow minimum cut algorithm include the following:
+              <ul>
+                <li>Determine a maximum bipartite matching in a general graph.</li>
+                <li>Calculate the maximum flow of a network.</li>
+                <li>
+                  Find a parking spot for each car that minimizes the total time required for all
+                  cars to find a spot.
+                </li>
+              </ul>
+
+              <h2>Things to Try</h2>
+              <ul>
+                <li>Modify the network's structure by adding or removing nodes and edges.</li>
+                <li>Drag an edge to increase or decrease its capacity.</li>
+                <li>
+                  Take a look at the min-cult line to determine the edges that belong to the cut.
+                </li>
+                <li>
+                  Press button <img src="../../resources/icons/reload-16.svg" /> of the toolbar to
+                  load the initial graph.
+                </li>
+                <li>
+                  Press button <img src="../../resources/icons/play2-16.svg" /> of the toolbar to
+                  layout the existing graph.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="NetworkFlowsDemo.ts" async></script>
   </body>
 </html>

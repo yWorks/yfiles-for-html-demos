@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,6 +52,21 @@ import {
  */
 export class ClearAreaLayoutHelper {
   /**
+   * Performs the layout and the animation.
+   */
+  executor = null
+
+  /**
+   * Options to control the layout behavior.
+   */
+  options
+
+  /**
+   * The control that displays the graph.
+   */
+  graphComponent
+
+  /**
    * The graph that is displayed.
    * @type {!IGraph}
    */
@@ -60,48 +75,39 @@ export class ClearAreaLayoutHelper {
   }
 
   /**
+   * The graph layout copy that stores the original layout before the marquee rectangle has been dragged.
+   */
+  resetToOriginalGraphStageData = null
+
+  /**
+   * The rectangular area that can be freely moved or resized.
+   */
+  clearRect
+
+  /**
+   * The layout of the rectangular area at the beginning of the gesture. Used for undo/redo.
+   */
+  oldClearRect = null
+
+  /**
+   * The {@link ILayoutAlgorithm} that makes space for the rectangular area
+   */
+  clearAreaLayout = null
+
+  /**
+   * The group node we are currently inside.
+   */
+  groupNode = null
+
+  /**
    * Initializes the helper.
    * @param {!GraphComponent} graphComponent The component that displays the graph.
    * @param {!MutableRectangle} clearRect The rectangle the is dragged.
    * @param {!LayoutOptions} options Options to control the layout behavior
    */
   constructor(graphComponent, clearRect, options) {
-    // Performs the layout and the animation.
-    this.executor = null
-
-    // The graph layout copy that stores the original layout before the marquee rectangle has been dragged.
-    this.resetToOriginalGraphStageData = null
-
-    // The layout of the rectangular area at the beginning of the gesture. Used for undo/redo.
-    this.oldClearRect = null
-
-    // The {@link ILayoutAlgorithm} that makes space for the rectangular area
-    this.clearAreaLayout = null
-
-    // The group node we are currently inside.
-    this.groupNode = null
-
-    // ---------------------------------------------------------------------------- Layout Execution
-    // A lock which prevents re-entrant layout execution.
-    this.layoutIsRunning = false
-
-    // Indicates whether a layout run has been requested while running a layout calculation.
-    this.layoutPending = false
-
-    // Indicates that the gesture has been canceled and the original layout should be restored.
-    this.canceled = false
-
-    // Indicates that the gesture has been finished and the new layout should be applied.
-    this.stopped = false
-
-    // Creates a single unit to undo and redo the complete reparent gesture.
-    this.layoutEdit = null
-
-    // The control that displays the graph.
     this.graphComponent = graphComponent
-    // The rectangular area that can be freely moved or resized.
     this.clearRect = clearRect
-    // Options to control the layout behavior.
     this.options = options
   }
 
@@ -182,6 +188,33 @@ export class ClearAreaLayoutHelper {
 
     return new CompositeLayoutData(this.resetToOriginalGraphStageData, clearAreaLayoutData)
   }
+
+  // ---------------------------------------------------------------------------- Layout Execution
+
+  /**
+   * A lock which prevents re-entrant layout execution.
+   */
+  layoutIsRunning = false
+
+  /**
+   * Indicates whether a layout run has been requested while running a layout calculation.
+   */
+  layoutPending = false
+
+  /**
+   * Indicates that the gesture has been canceled and the original layout should be restored.
+   */
+  canceled = false
+
+  /**
+   * Indicates that the gesture has been finished and the new layout should be applied.
+   */
+  stopped = false
+
+  /**
+   * Creates a single unit to undo and redo the complete reparent gesture.
+   */
+  layoutEdit = null
 
   /**
    * Starts a layout calculation if none is already running.
@@ -298,6 +331,8 @@ export class ClearAreaLayoutHelper {
 }
 
 class AffectedEdgesChannelRouter extends LayoutStageBase {
+  channelEdgeRouter
+
   constructor() {
     super()
     this.channelEdgeRouter = new ChannelEdgeRouter()

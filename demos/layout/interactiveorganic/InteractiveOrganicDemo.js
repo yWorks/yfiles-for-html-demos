@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   GraphConnectivity,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IEnumerable,
   IGraph,
   IInputMode,
@@ -48,10 +47,10 @@ import {
 } from 'yfiles'
 
 import { InteractiveOrganicFastEdgeStyle, InteractiveOrganicFastNodeStyle } from './DemoStyles.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The GraphComponent.
@@ -115,10 +114,6 @@ async function run() {
   wakeUp()
 
   addListeners(graphComponent.graph)
-
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -316,16 +311,6 @@ function onMovedFinished() {
 }
 
 /**
- * Wires up the GUI.
- */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-/**
  * Creates a new layout instance and starts a new execution context for it.
  * @returns {!InteractiveOrganicLayout}
  */
@@ -442,5 +427,4 @@ function createSampleGraph(graph) {
   graph.createEdge(nodes[5], nodes[9])
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

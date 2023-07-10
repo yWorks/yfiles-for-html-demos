@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,14 +34,16 @@ import PropertiesPanelUI from './PropertiesPanelUI.js'
  * A panel that displays custom data associated with the graph and the current item.
  */
 export class PropertiesPanel {
+  itemMap = new HashMap()
+  graphMap = new HashMap()
+  _currentItem = null
+  ui
+  somethingChangedListener = () => {}
+
   /**
    * @param {!HTMLElement} div
    */
   constructor(div) {
-    this.itemMap = new HashMap()
-    this.graphMap = new HashMap()
-    this._currentItem = null
-    this.somethingChangedListener = () => {}
     this.ui = new PropertiesPanelUI(div)
 
     // register the callback that is called when a new item property has been added

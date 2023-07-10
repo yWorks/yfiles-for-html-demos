@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,16 +32,15 @@ import {
   BridgeCrossingStyle,
   BridgeManager,
   EdgeStyleBase,
-  EdgeStyleDecorationInstaller,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphObstacleProvider,
+  GraphSelectionIndicatorManager,
   HierarchicLayout,
   HierarchicLayoutData,
   IArrow,
-  ICommand,
   IEdge,
   IModelItem,
   INode,
@@ -54,27 +53,19 @@ import {
   ShapeNodeShape,
   ShapeNodeStyle,
   SimplexNodePlacer,
-  Size,
   SmoothingPolicy,
   SolidColorFill,
-  StyleDecorationZoomPolicy,
   SvgVisual,
   SvgVisualGroup,
   Visual,
   VoidPortStyle
 } from 'yfiles'
 
-import { ContextMenu } from '../../utils/ContextMenu.js'
+import { ContextMenu } from 'demo-utils/ContextMenu'
 import SampleData from './resources/SampleData.js'
-import {
-  addClass,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
-import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * @typedef {Object} EdgeTag
@@ -97,8 +88,7 @@ async function run() {
   applyDemoTheme(graphComponent)
   configureInteraction()
   createSampleGraph()
-  registerCommands()
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -141,7 +131,7 @@ function createSampleGraph() {
   graph.clear()
   initDemoStyles(graph, { extraCropLength: 0 })
   graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-44')
-  graph.nodeDefaults.size = Size.from([50, 30])
+  graph.nodeDefaults.size = [50, 30]
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #BBBBBB',
     targetArrow: new Arrow({
@@ -152,12 +142,9 @@ function createSampleGraph() {
   })
   graph.edgeDefaults.shareStyleInstance = false
 
-  graph.decorator.edgeDecorator.selectionDecorator.setImplementation(
-    new EdgeStyleDecorationInstaller({
-      edgeStyle: new HighlightEdgeStyle(),
-      zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
-    })
-  )
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    edgeStyle: new HighlightEdgeStyle()
+  })
 
   const bridgeManager = new BridgeManager({
     canvasComponent: graphComponent,
@@ -359,9 +346,9 @@ function populateContextMenu(contextMenu, args) {
         'Source and Target Port Group',
         () => groupEdges('source-and-target', selectedEdges, true)
       )
-      addClass(sourcePortGroupMenuItem, 'source-port-group')
-      addClass(targetPortGroupMenuItem, 'target-port-group')
-      addClass(sourceAndTargetPortGroupMenuItem, 'source-and-target-port-group')
+      sourcePortGroupMenuItem.classList.add('source-port-group')
+      targetPortGroupMenuItem.classList.add('target-port-group')
+      sourceAndTargetPortGroupMenuItem.classList.add('source-and-target-port-group')
     } else {
       const sourceGroupMenuItem = contextMenu.addMenuItem('Source Group', () =>
         groupEdges('source', selectedEdges, true)
@@ -372,9 +359,9 @@ function populateContextMenu(contextMenu, args) {
       const sourceAndTargetGroupMenuItem = contextMenu.addMenuItem('Source and Target Group', () =>
         groupEdges('source-and-target', selectedEdges, true)
       )
-      addClass(sourceGroupMenuItem, 'source-edge-group')
-      addClass(targetGroupMenuItem, 'target-edge-group')
-      addClass(sourceAndTargetGroupMenuItem, 'source-and-target-edge-group')
+      sourceGroupMenuItem.classList.add('source-edge-group')
+      targetGroupMenuItem.classList.add('target-edge-group')
+      sourceAndTargetGroupMenuItem.classList.add('source-and-target-edge-group')
     }
     contextMenu.addMenuItem('Ungroup', () => groupEdges('ungroup', selectedEdges, true))
   } else if (item instanceof INode) {
@@ -400,9 +387,9 @@ function populateContextMenu(contextMenu, args) {
           groupEdges('target', incomingEdges, false)
         }
       )
-      addClass(sourcePortGroupMenuItem, 'source-port-group')
-      addClass(targetPortGroupMenuItem, 'target-port-group')
-      addClass(sourceAndTargetPortGroupMenuItem, 'source-and-target-port-group')
+      sourcePortGroupMenuItem.classList.add('source-port-group')
+      targetPortGroupMenuItem.classList.add('target-port-group')
+      sourceAndTargetPortGroupMenuItem.classList.add('source-and-target-port-group')
     } else {
       const sourceGroupMenuItem = contextMenu.addMenuItem('Group Outgoing Edges', () =>
         groupEdges('source', outgoingEdges, false)
@@ -413,9 +400,9 @@ function populateContextMenu(contextMenu, args) {
       const sourceAndTargetGroupMenuItem = contextMenu.addMenuItem('Group Incident Edges', () =>
         groupEdges('source-and-target', incidentEdges, false)
       )
-      addClass(sourceGroupMenuItem, 'source-edge-group')
-      addClass(targetGroupMenuItem, 'target-edge-group')
-      addClass(sourceAndTargetGroupMenuItem, 'source-and-target-edge-group')
+      sourceGroupMenuItem.classList.add('source-edge-group')
+      targetGroupMenuItem.classList.add('target-edge-group')
+      sourceAndTargetGroupMenuItem.classList.add('source-and-target-edge-group')
     }
     contextMenu.addMenuItem('Ungroup Incident Edges', () =>
       groupEdges('ungroup', incidentEdges, false)
@@ -433,9 +420,9 @@ function populateContextMenu(contextMenu, args) {
         'Source and Target Port Group All Edges',
         () => groupEdges('source-and-target', allEdges, true)
       )
-      addClass(sourcePortGroupMenuItem, 'source-port-group')
-      addClass(targetPortGroupMenuItem, 'target-port-group')
-      addClass(sourceAndTargetPortGroupMenuItem, 'source-and-target-port-group')
+      sourcePortGroupMenuItem.classList.add('source-port-group')
+      targetPortGroupMenuItem.classList.add('target-port-group')
+      sourceAndTargetPortGroupMenuItem.classList.add('source-and-target-port-group')
     } else {
       const sourceGroupMenuItem = contextMenu.addMenuItem('Source Group All Edges', () =>
         groupEdges('source', allEdges, true)
@@ -447,9 +434,9 @@ function populateContextMenu(contextMenu, args) {
         'Source and Target Group All Edges',
         () => groupEdges('source-and-target', allEdges, true)
       )
-      addClass(sourceGroupMenuItem, 'source-edge-group')
-      addClass(targetGroupMenuItem, 'target-edge-group')
-      addClass(sourceAndTargetGroupMenuItem, 'source-and-target-edge-group')
+      sourceGroupMenuItem.classList.add('source-edge-group')
+      targetGroupMenuItem.classList.add('target-edge-group')
+      sourceAndTargetGroupMenuItem.classList.add('source-and-target-edge-group')
     }
     contextMenu.addMenuItem('Ungroup All Edges', () => groupEdges('ungroup', allEdges, true))
   }
@@ -458,14 +445,11 @@ function populateContextMenu(contextMenu, args) {
 /**
  * Binds the various actions to the buttons in the toolbar.
  */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindAction("button[data-command='Layout']", () => runLayout(false))
-  bindAction("button[data-command='Reset']", createSampleGraph)
-  bindChangeListener("select[data-command='TogglePortGroupMode']", value => {
+function initializeUI() {
+  document.querySelector('#layout').addEventListener('click', () => runLayout(false))
+  document.querySelector('#reset').addEventListener('click', createSampleGraph)
+  document.querySelector('#toggle-port-group-mode').addEventListener('change', evt => {
+    const value = evt.target.value
     portGroupMode = value === 'port-grouping'
     graphComponent.graph.edges.forEach(edge => {
       updateStyles(edge)
@@ -479,9 +463,9 @@ function registerCommands() {
  * @param {boolean} disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.querySelector("button[data-command='Reset']").disabled = disabled
-  document.querySelector("button[data-command='Layout']").disabled = disabled
-  document.querySelector("select[data-command='TogglePortGroupMode']").disabled = disabled
+  document.querySelector('#reset').disabled = disabled
+  document.querySelector('#layout').disabled = disabled
+  document.querySelector('#toggle-port-group-mode').disabled = disabled
   graphComponent.inputMode.enabled = !disabled
 }
 
@@ -534,5 +518,4 @@ class HighlightEdgeStyle extends EdgeStyleBase {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,7 +55,6 @@ import {
   ShapeNodeStyle,
   Size,
   StringTemplateNodeStyle,
-  TimeSpan,
   TreeBuilder,
   TreeNodesSource,
   VoidNodeStyle
@@ -68,8 +67,7 @@ import {
 } from './ModelClasses.js'
 import { EditTreeNodesSourceDialog } from './EditTreeNodeSourceDialog.js'
 import { ContentRectViewportLimiter } from './ContentRectViewportLimiter.js'
-import { addClass } from '../../resources/demo-app.js'
-import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles.js'
+import { applyDemoTheme, createDemoEdgeStyle } from 'demo-resources/demo-styles'
 
 /**
  * @typedef {Object} SchemaEdge
@@ -92,6 +90,13 @@ import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles
  * in the schema graph.
  */
 export class SchemaComponent {
+  treeBuilder
+  resultGraph
+  schemaGraphComponent
+
+  newNodesSourcesCounter
+  schemaChangedCallback
+
   /**
    * @param {!string} selector
    * @param {!IGraph} graph
@@ -167,8 +172,8 @@ export class SchemaComponent {
     inputMode.allowCreateBend = false
 
     // configure the tooltips
-    inputMode.mouseHoverInputMode.delay = TimeSpan.from('0.5s')
-    inputMode.mouseHoverInputMode.duration = TimeSpan.from('5m')
+    inputMode.mouseHoverInputMode.delay = '0.5s'
+    inputMode.mouseHoverInputMode.duration = '5m'
 
     // the pointer cursor should be shown when hovering over certain graph items to indicate their clickable
     inputMode.itemHoverInputMode.enabled = true
@@ -274,7 +279,7 @@ export class SchemaComponent {
    */
   static createToolTip(sourceConnector) {
     const toolTip = document.createElement('div')
-    addClass(toolTip, 'toolTip')
+    toolTip.classList.add('toolTip')
 
     const title = document.createElement('b')
     title.innerHTML = 'Data'

@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,7 +30,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Rendering Optimizations Demo [yFiles for HTML]</title>
@@ -39,635 +38,35 @@
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="resources/html-style.css" />
 
-    <style>
-      .nav-buttons {
-        width: 10%;
-      }
-    </style>
-
     <script>
       // run yFiles in production mode for performance reasons
       window.process = { env: { NODE_ENV: 'production' } }
     </script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <!--
-The sidebar for the description text
--->
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Rendering Optimizations</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
-        <h1>Rendering Optimizations Demo</h1>
-
-        <p>
-          This demo illustrates ways to improve the
-          <strong>rendering performance for large graphs</strong> in
-          <a href="https://www.yworks.com/products/yfileshtml/">yFiles for HTML</a>. yFiles' default
-          settings are adequate for graphs up to a few hundred elements. Scaling to several thousand
-          elements is possible with a bit of tweaking, though, as shown in this demo.
-        </p>
-        <p>
-          yFiles comes with a dedicated
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL2-based rendering pipeline</a> that is especially
-          suited for large graphs. This is the easiest way to get good performance for large data
-          sets, but comes with a few drawbacks. This pipeline is enabled with the
-          <strong>WebGL2 rendering</strong> option in the
-          <span class="section-name">GraphModelManager Optimizations</span> section.
-        </p>
-        <p>
-          The other options of this section show approaches to performance tweaking based on the
-          normal yFiles rendering pipeline. All of them are realized in the source code of this
-          demo, and serve as a viable starting point for handling large graphs in your project.
-          However, it might be necessary to apply more use-case specific tweaks. The impact of each
-          option depends on the graph, its layout, and how users interact with it.
-        </p>
-
-        <h2>Settings Sidebar</h2>
-
-        <h3>Samples</h3>
-        <p>
-          Choose different sizes of graphs with or without labels. The graphs are served by an
-          optimized <em>JSON</em> data structure for lower file size and loading times compared to
-          GraphML. Labels are not saved with the graph but generated on demand.
-        </p>
-        <h3>Performance Optimizations</h3>
-        <ul>
-          <li>
-            <span class="section-name">Graph Item Styles</span>:
-            <p>The actual <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a> which is used to render the nodes.</p>
-          </li>
-          <li>
-            <span class="section-name">GraphModelManager Optimizations</span>:
-            <p>
-              The <a href="https://docs.yworks.com/yfileshtml/#/api/GraphModelManager" target="_blank">GraphModelManager</a> (GMM) manages the visual appearance of the graph. A
-              GMM tailored to your use case can have a massive impact on the performance of your
-              application, especially for input gestures like panning, zooming, etc.
-            </p>
-            <p>
-              This demo showcases two different GraphModelManager implementations. The demo's
-              <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2GraphModelManager" target="_blank">WebGL2GraphModelManager</a>-based GMM uses yFiles' WebGL2-based rendering
-              pipeline for the utmost performance gain.
-            </p>
-            <p>
-              On the other hand, <code>FastGraphModelManager</code> (FGMM) shows how to improve
-              performance for yFiles' normal rendering pipeline. This implementation is designed to
-              be plugged right into your application and to work without much additional effort.
-              <br />
-              FGMM switches between different rendering styles at different zoom intervals:
-            </p>
-            <dl>
-              <dt>Detail level</dt>
-              <dd>Default rendering, using the currently selected item style</dd>
-              <dt>Intermediate level</dt>
-              <dd>Simplified rendering, using a basic SVG style</dd>
-              <dt>Overview level</dt>
-              <dd>WebGL rendering, leveraging the power of the graphics card</dd>
-              <dd id="no-webgl-support">
-                This feature is disabled, because your browser does not support WebGL.
-              </dd>
-            </dl>
-            <p>
-              The demo provides eight <strong>optimization modes</strong> that improve rendering
-              performance for different use cases. Hover over each option to get more information on
-              the individual approach and the use cases for which it is intended. Additionally, it
-              is possible to switch back to yFiles' <strong>default rendering</strong> settings to
-              point out the difference between optimized and non-optimized rendering.
-            </p>
-            <p>
-              More adjustments can be made in code, e.g., the maximum size of a pre-rendered canvas,
-              the zoom threshold at which the pre-rendered image is updated for quality, etc. Please
-              see the <code>FastGraphModelManager</code>
-              API for more information.
-            </p>
-          </li>
-          <li>
-            <span class="section-name">Auto Redraw</span>:
-            <p>
-              All except the first two GraphModelManager optimizations use a
-              <strong>static approach</strong>, i.e., the visualization is created once and if ever,
-              only sporadically updated. While this is sufficient for viewer applications, the
-              visualization needs to be refreshed when the graph is edited, e.g., when a node has
-              been moved, resized, created, or deleted.
-              <br />
-              The <strong>automatic redraw</strong> option makes this static approach usable in an
-              application with editor capabilities. If the option is checked, the graph
-              visualization is automatically updated after the graph has been edited. This is not a
-              GraphModelManager feature, but added by the application.
-            </p>
-            <p>Additionally, the graph visualization can be redrawn manually.</p>
-          </li>
-        </ul>
-        <h3>Benchmarking</h3>
-        <p>
-          This section provides means to compare the performance of different graph sizes and
-          settings. The FPS meter is a lightweight implementation and does not have much impact on
-          performance. However, it can be disabled. The FPS meter measures the redraw frequency of
-          the GraphComponent. Thus, if the graph component is idling no new frame is requested and
-          the FPS meter does not show new information.
-        </p>
-        <p>
-          The <span class="section-name">Animations</span> and
-          <span class="section-name">Selection</span> subsections can be used to compare the
-          performance during typical user interactions. The buttons trigger standardized simulated
-          interactions to evaluate the current settings.
-        </p>
-        <h3>Detail Level Indicator</h3>
-        <p>The GraphModelManager's current level of detail is shown below the FPS meter.</p>
-        <h3>Warning Indicators</h3>
-        <p>
-          The combination of interaction mode, graph item styles and GraphModelManager optimizations
-          in conjunction with the graph size results in different usability. To quickly estimate the
-          usability of the chosen settings, we display the following icons:
-        </p>
-        <div class="show-icon"><img class="show-icon" src="./resources/exclamation.svg" /></div>
-        <div class="document-icon">
-          Unrecommended setting because of (possible) slow performance for the typical gestures or
-          because of (possible) memory shortages.
-        </div>
-        <div class="show-icon"><img class="show-icon" src="./resources/warning.svg" /></div>
-        <div class="document-icon">
-          Caution against disabling auto redraw for interaction modes with edit gestures.
-        </div>
-        <p>
-          However, each setting can be tested despite the warnings because the actual performance
-          depends on your system.
-        </p>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
       </div>
-    </aside>
+    </header>
 
-    <!--
-The sidebar for the different settings
--->
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content" style="position: relative">
-        <div class="data-editor-header flat-buttons">
-          <h2>Samples</h2>
-          <div class="content">
-            <select
-              style="width: auto"
-              data-command="GraphChanged"
-              data-name="graphChooserBox"
-              id="graphChooserBox"
-            ></select>
-          </div>
-        </div>
-
-        <div class="fieldset-indent">
-          <div class="vertical-button-list">
-            <input
-              id="nodeLabelsCheckbox"
-              type="checkbox"
-              title="Toggle Node Labels"
-              data-type="CheckBox"
-              data-command="NodeLabelsCheckboxChanged"
-              data-name="nodeLabelsCheckbox"
-            />
-            <label for="nodeLabelsCheckbox" style="display: inline; margin-right: 10px"
-              >Node Labels</label
-            >
-            <input
-              id="edgeLabelsCheckbox"
-              type="checkbox"
-              title="Toggle Edge Labels"
-              data-type="CheckBox"
-              data-command="EdgeLabelsCheckboxChanged"
-              data-name="edgeLabelsCheckbox"
-            />
-            <label for="edgeLabelsCheckbox" style="display: inline">Edge Labels</label>
-          </div>
-        </div>
-
-        <h2>Performance Optimizations</h2>
-
-        <fieldset>
-          <legend>Graph Item Styles</legend>
-          <form id="settingsGraphItemStyles">
-            <div class="vertical-button-list">
-              <input
-                id="simple-svg-radio"
-                type="radio"
-                value="simpleSvgStyles"
-                name="graph-item-styles"
-                class="hasTooltip"
-              />
-              <label for="simple-svg-radio" class="styleSample simpleSvg">Simple SVG Style</label>
-              <input
-                id="complex-svg-radio"
-                type="radio"
-                value="complexSvgStyles"
-                name="graph-item-styles"
-                class="hasTooltip"
-                checked=""
-              />
-              <label for="complex-svg-radio" class="styleSample complexSvg"
-                >Complex SVG Style</label
-              >
-              <input
-                id="simple-canvas-radio"
-                type="radio"
-                value="simpleCanvasStyles"
-                name="graph-item-styles"
-                class="hasTooltip"
-              />
-              <label for="simple-canvas-radio" class="styleSample simpleCanvas"
-                >Simple Canvas Style</label
-              >
-              <input
-                id="complex-canvas-radio"
-                type="radio"
-                value="complexCanvasStyles"
-                name="graph-item-styles"
-                class="hasTooltip"
-              />
-              <label for="complex-canvas-radio" class="styleSample complexCanvas"
-                >Complex Canvas Style</label
-              >
-              <input
-                id="simple-webgl-radio"
-                type="radio"
-                value="WebGLStyles"
-                name="graph-item-styles"
-                class="hasTooltip"
-              />
-              <label for="simple-webgl-radio" class="styleSample simpleWebgl"
-                >Simple WebGL Style</label
-              >
-            </div>
-          </form>
-        </fieldset>
-
-        <fieldset>
-          <legend>Label Models</legend>
-          <form id="settingsLabelModels">
-            <div class="vertical-button-list">
-              <input
-                id="fix-label-positions"
-                type="checkbox"
-                title="Fix Label Positions"
-                class="hasTooltip"
-                data-type="CheckBox"
-                data-command="FixLabelPositionsCheckboxChanged"
-                data-name="fixLabelPositionsCheckbox"
-              />
-              <label for="fix-label-positions">Fix Label Positions</label>
-            </div>
-          </form>
-        </fieldset>
-
-        <fieldset>
-          <legend>GraphModelManager Optimizations</legend>
-          <form id="settingsGmm">
-            <div class="vertical-button-list">
-              <input
-                id="defaultGmm-radio"
-                type="radio"
-                value="default"
-                name="gmm"
-                class="hasTooltip"
-              />
-              <label for="defaultGmm-radio">Default</label>
-              <input
-                id="WebglGmm-radio"
-                type="radio"
-                value="default"
-                name="gmm"
-                class="hasTooltip"
-                checked=""
-              />
-              <label for="WebglGmm-radio" id="WebglGmm-label">WebGL2 rendering</label>
-              <input
-                id="levelOfDetailGmm-radio"
-                type="radio"
-                value="fastSvgStyles"
-                name="gmm"
-                class="hasTooltip"
-              />
-              <label for="levelOfDetailGmm-radio">Level of detail</label>
-              <input
-                id="staticGmm-radio"
-                type="radio"
-                value="static"
-                name="gmm"
-                class="hasTooltip mayHaveWarning"
-              />
-              <label for="staticGmm-radio">Static with default styles</label>
-              <input
-                id="svgImageGmm-radio"
-                type="radio"
-                value="svgImage"
-                name="gmm"
-                class="hasTooltip mayHaveWarning"
-              />
-              <label for="svgImageGmm-radio">Pre-rendered SVG image</label>
-              <input
-                id="CanvasImageWithDrawCallbackGmm-radio"
-                type="radio"
-                value="simpleCanvasImage"
-                name="gmm"
-                class="hasTooltip mayHaveWarning"
-              />
-              <label for="CanvasImageWithDrawCallbackGmm-radio">Simple dynamic Canvas image</label>
-              <input
-                id="CanvasImageWithItemStylesGmm-radio"
-                type="radio"
-                value="canvasImage"
-                name="gmm"
-                class="hasTooltip mayHaveWarning"
-              />
-              <label for="CanvasImageWithItemStylesGmm-radio"
-                >Dynamic Canvas image with item styles</label
-              >
-              <input
-                id="StaticCanvasImageGmm-radio"
-                type="radio"
-                value="svgInCanvasImage"
-                name="gmm"
-                class="hasTooltip mayHaveWarning"
-              />
-              <label for="StaticCanvasImageGmm-radio">Pre-rendered Canvas image of graph</label>
-              <input
-                id="StaticWebglImageGmm-radio"
-                type="radio"
-                value="webgl"
-                name="gmm"
-                class="hasTooltip mayHaveWarning"
-              />
-              <label for="StaticWebglImageGmm-radio">Simple dynamic WebGL rendering of graph</label>
-            </div>
-          </form>
-        </fieldset>
-
-        <fieldset>
-          <legend>Auto Redraw</legend>
-          <form onsubmit="return false;">
-            <div style="display: grid; grid: auto / auto auto">
-              <div class="vertical-button-list">
-                <input
-                  id="autoRedrawCheckbox"
-                  type="checkbox"
-                  title="Toggle Auto Redraw"
-                  data-type="CheckBox"
-                  class="hasTooltip"
-                  data-command="AutoRedrawCheckboxChanged"
-                  data-name="autoRedrawCheckbox"
-                  checked=""
-                />
-                <label for="autoRedrawCheckbox">Enable Auto Redraw</label>
-              </div>
-              <button
-                id="redrawGraphButton"
-                title="Manually redraw the graph"
-                data-command="RedrawGraph"
-                data-name="redrawGraphButton"
-                style="width: auto; float: right"
-              >
-                Manual Redraw
-              </button>
-            </div>
-          </form>
-        </fieldset>
-
-        <h2>Benchmarking</h2>
-        <fieldset>
-          <legend>Information</legend>
-          <div style="overflow: hidden">
-            <div id="fpsDescription">
-              <div class="information">
-                <div class="vertical-button-list">
-                  <input
-                    title="Measure frame rate"
-                    type="checkbox"
-                    data-type="CheckBox"
-                    id="fpsCheckbox"
-                    data-command="FpsCheckboxChanged"
-                    data-name="fpsCheckbox"
-                    checked=""
-                  />
-                  <label for="fpsCheckbox">FPS: <span id="fps"></span></label>
-                </div>
-              </div>
-              <span class="information">Zoom-level: <span id="zoomLevel"></span>%</span>
-              <span class="information">Selected items: <span id="selection"></span></span>
-            </div>
-            <div id="fpsContainer">
-              <canvas id="fpsMeter"></canvas>
-              <div id="gt40">&gt; 40 FPS</div>
-              <div id="lt20">&lt; 20 FPS</div>
-            </div>
-          </div>
-          <div id="detailLevelIndicator"></div>
-        </fieldset>
-        <fieldset>
-          <legend>Animations</legend>
-          <div class="animations-grid">
-            <div class="animations-button">
-              <button
-                id="panAnimationBtn"
-                data-command="PanAnimation"
-                title="Pan Animation"
-                class="control-button"
-              >
-                <span class="button-content">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="64"
-                    height="64"
-                    viewBox="0 0 65 65"
-                    version="1.1"
-                  >
-                    <path
-                      stroke="black"
-                      d="m 32 6.0042738 c -14.305631 0 -25.9812922 11.7045292 -25.9812922 26.0101602 0 14.305631 11.6756612 25.981292 25.9812922 25.981292 14.305631 0 25.981292 -11.675661 25.981292 -25.981292 l -8.314013 0 c 0 9.812405 -7.854874 17.667279 -17.667279 17.667279 -9.812405 0 -17.667279 -7.854874 -17.667279 -17.667279 0 -9.812405 7.854874 -17.696147 17.667279 -17.696147 3.862455 0 7.546507 1.28368 10.565725 3.550777 L 39.823256 19.976435 52.424945 22.901741 53.015979 9.8725995 49.34973 12.701674 C 44.620298 8.4439323 38.469554 6.0042738 32 6.0042738 z"
-                    ></path>
-                  </svg>
-                </span>
-              </button>
-              <span class="control-description">Pan in circle</span>
-            </div>
-            <div class="animations-button">
-              <button
-                id="zoomAnimationBtn"
-                data-command="ZoomAnimation"
-                title="Zoom Animation"
-                class="control-button"
-              >
-                <span class="button-content">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="64"
-                    height="64"
-                    viewBox="0 0 65 65"
-                    version="1.1"
-                  >
-                    <path
-                      stroke="black"
-                      d="m 32.173292 2.4918554 c 0 0 -10.022672 5.90499 -10.022672 5.90499 0 0 4.994041 0.01147 4.994041 0.01147 0 0 -7.003383 36.0945106 -7.003383 36.0945106 0 0 -11.7811574 -0.06402 -11.7811574 -0.06402 0 0 23.3218474 17.069337 23.3218474 17.069337 0 0 23.957911 -16.818923 23.957911 -16.818923 0 0 -11.858798 -0.0644 -11.858798 -0.0644 0 0 -6.635341 -36.193535 -6.635341 -36.193535 0 0 5.004447 0.011501 5.004447 0.011501 0 0 -9.976895 -5.9509323 -9.976895 -5.9509323"
-                    ></path>
-                  </svg>
-                </span>
-              </button>
-              <span class="control-description">Zoom</span>
-            </div>
-            <div class="animations-button">
-              <button
-                id="spiralAnimationBtn"
-                data-command="SpiralAnimation"
-                title="Spiral Animation"
-                class="control-button"
-              >
-                <span class="button-content">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="64"
-                    height="64"
-                    viewBox="0 0 65 65"
-                    version="1.1"
-                  >
-                    <path
-                      stroke="black"
-                      d="m 20.027658 30.466513 c 1.673406 3.215045 6.162171 3.947451 9.416327 2.400931 4.899943 -2.328676 6.006917 -8.2175 3.546529 -12.452279 -3.56982 -6.144313 -12.342975 -7.44977 -18.648804 -4.178484 -8.8703711 4.6017 -10.7606702 15.47465 -5.9152371 23.22535 6.6396701 10.620744 22.0789981 12.759686 33.0838691 6.692996 6.513638 -3.590795 11.172082 -9.617345 13.069219 -16.360875 l 3.596923 0.284906 -9.754136 -12.920611 -11.389992 11.143488 3.581825 0.284824 c 0 0 -3.534659 6.885415 -7.046706 8.821511 -5.933641 3.271058 -14.25827 2.117776 -17.83827 -3.608751 -2.612576 -4.179048 -1.593359 -10.041562 3.189399 -12.522721 3.399996 -1.763823 8.130336 -1.059943 10.055123 2.252968 1.3266 2.283323 0.729738 5.458479 -1.912229 6.714061 -1.754587 0.833859 -4.174855 0.438957 -5.077126 -1.294541 -0.572703 -1.100311 -0.283037 -2.631743 1.01117 -3.167464 l 0.956491 1.057454 0.2615 -3.139272 -3.234255 -0.147273 0.959763 1.055608 c -2.387145 1.002667 -2.97355 3.817474 -1.911383 5.858174 z"
-                    ></path>
-                  </svg>
-                </span>
-              </button>
-              <span class="control-description">Spiral zoom</span>
-            </div>
-            <div class="animations-button">
-              <button
-                id="moveNodeAnimationBtn"
-                data-command="MoveNodeAnimation"
-                title="Move Nodes Animation"
-                class="control-button"
-              >
-                <span class="button-content">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="64"
-                    height="64"
-                    viewBox="0 0 65 65"
-                    version="1.1"
-                  >
-                    <path
-                      stroke="black"
-                      d="m 33.5625 14.959821 -2.53125 4.0625 c 4.266346 2.635565 5.573065 8.171154 2.9375 12.4375 -2.635565 4.266346 -8.171154 5.573065 -12.4375 2.9375 -0.486396 -0.300474 -0.927402 -0.647575 -1.34375 -1.03125 l 1.6875 -0.96875 -8.25 -4.84375 -0.09375 9.59375 2.34375 -1.34375 c 0.915764 1.043001 1.972441 1.956194 3.15625 2.6875 6.473304 3.998928 15.032322 1.973304 19.03125 -4.5 3.998928 -6.473304 1.973304 -15.032322 -4.5 -19.03125 z M 17.571428 13.5 l 4.714286 0 m -8.142857 0 1.714286 0 M 8.9999998 13.5 12 13.5 m -6.4285712 -5.9285717 20.1428562 0 0 11.8571427 -20.1428562 0 z"
-                    ></path>
-                  </svg>
-                </span>
-              </button>
-              <span class="control-description">Move Nodes</span>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Selection</legend>
-          <div class="selection-grid">
-            <!-- row 1 -->
-            <div class="selection-title">&nbsp;</div>
-            <div class="selection-title">Nodes</div>
-            <div class="selection-title">Edges</div>
-            <div class="selection-title">Labels</div>
-            <!-- row 2 -->
-            <button data-command="SelectNothing" title="Deselect anything" class="selection-button">
-              Nothing
-            </button>
-            <button
-              data-command="Select1000Nodes"
-              title="Select 1000 Nodes"
-              class="selection-button"
-            >
-              1000
-            </button>
-            <button
-              data-command="Select1000Edges"
-              title="Select 1000 Edges"
-              class="selection-button"
-            >
-              1000
-            </button>
-            <button
-              data-command="Select1000Labels"
-              title="Select 1000 Labels"
-              class="selection-button"
-            >
-              1000
-            </button>
-            <!-- row 3 -->
-            <button
-              data-command="SelectEverything"
-              title="Select everything"
-              class="selection-button"
-            >
-              Everything
-            </button>
-            <button data-command="SelectAllNodes" title="Select all nodes" class="selection-button">
-              All
-            </button>
-            <button data-command="SelectAllEdges" title="Select all edges" class="selection-button">
-              All
-            </button>
-            <button
-              data-command="SelectAllLabels"
-              title="Select all labels"
-              class="selection-button"
-            >
-              All
-            </button>
-          </div>
-        </fieldset>
-      </div>
-    </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-
-        <span class="demo-separator"></span>
-
-        <select
-          id="modeChooserBox"
-          data-command="SelectMode"
-          data-name="modeChooserBox"
-          title="Choose a Mode"
-        >
-          <option>Graph Viewer Mode</option>
-          <option>Move Only Mode</option>
-          <option>Edit Mode</option>
-        </select>
-      </div>
-
-      <div class="demo-content-dynamic">
-        <div id="tooltip" class="info-hidden"></div>
-        <div id="graphComponent"></div>
-        <div id="detailLevelPopup" style="pointer-events: none"></div>
-        <div id="loadingIndicator">Loading the graph. This may take a while.</div>
-      </div>
-    </div>
-
-    <!--
-Tooltips that are shown on hovering the respective settings.
--->
+    <!-- Tooltips that are shown on hovering the respective settings. -->
     <div style="display: none">
       <div id="simple-svg-radio-info">
         <p>Each node consists of an SVG rectangle with fill and stroke.</p>
@@ -730,7 +129,8 @@ Tooltips that are shown on hovering the respective settings.
         </p>
         <p class="tooltip-lightgray">
           In this case, the simple SVG style is used for intermediate level, and the WebGL style for
-          the overview level.<br />
+          the overview level.
+          <br />
           With this approach, the rendering still makes use of virtualization, i.e., visualizations
           are removed if the item leaves the viewport and re-created if it enters the viewport
           again.
@@ -781,7 +181,8 @@ Tooltips that are shown on hovering the respective settings.
           <em>FastGraphModelManager.ImageSizeFactor</em>.
           <strong>The image is updated for quality</strong> if the bounds of the image are reached
           through panning, or if the zoom level changes by a factor greater than
-          <em>FastGraphModelManager.RefreshImageZoomFactor</em>.<br />
+          <em>FastGraphModelManager.RefreshImageZoomFactor</em>.
+          <br />
           The items in the graph are drawn using <em>FastGraphModelManager.DrawNodeCallback</em>,
           <em>FastGraphModelManager.DrawEdgeCallback</em> etc.
         </p>
@@ -796,7 +197,8 @@ Tooltips that are shown on hovering the respective settings.
       <div id="CanvasImageWithItemStylesGmm-radio-info">
         <p class="tooltip-gray">
           This option creates an <strong>image</strong> of the currently visible part of the graph,
-          using <strong>HTML5 canvas</strong>.<br />
+          using <strong>HTML5 canvas</strong>.
+          <br />
           The items are drawn using the <strong>item styles</strong>.
         </p>
         <p class="tooltip-lightgray">
@@ -808,10 +210,10 @@ Tooltips that are shown on hovering the respective settings.
         </p>
         <p class="tooltip-green">
           This option is suited for scenarios with a large graph where the zoom level changes
-          frequently. In contrast to
-          <em>Simple Dynamic Canvas Image</em>, the actual item styles are used to draw the graph.
-          Based on the style, this can be quite expensive and thus can result in worse image
-          creation performance. Thus, the "hiccups" during zooming and panning can be longer.
+          frequently. In contrast to <em>Simple Dynamic Canvas Image</em>, the actual item styles
+          are used to draw the graph. Based on the style, this can be quite expensive and thus can
+          result in worse image creation performance. Thus, the "hiccups" during zooming and panning
+          can be longer.
         </p>
       </div>
       <div id="StaticCanvasImageGmm-radio-info">
@@ -856,7 +258,8 @@ Tooltips that are shown on hovering the respective settings.
       <div id="webglWarningToolTip" class="warningToolTip">
         <div class="warningIcon" style="height: 60px"><img src="resources/warning.svg" /></div>
         <div id="webgl-warning-text">
-          WebGL2 is not supported by this browser.<br />
+          WebGL2 is not supported by this browser.
+          <br />
           Please use a modern browser like Chrome, Edge, Firefox, or Opera. In Safari and on iOS,
           WebGL2 still marked as an experimental feature that needs to be activated explicitly in
           the settings, first.
@@ -864,7 +267,585 @@ Tooltips that are shown on hovering the respective settings.
       </div>
     </div>
 
-    <script type="module" crossorigin="anonymous" src="RenderingOptimizationsDemo.js"></script>
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="CUT"></button>
+      <button data-command="COPY"></button>
+      <button data-command="PASTE"></button>
+      <button data-command="DELETE"></button>
+
+      <span class="demo-separator"></span>
+
+      <select id="modeChooserBox" data-name="modeChooserBox" title="Choose a Mode">
+        <option>Graph Viewer Mode</option>
+        <option>Move Only Mode</option>
+        <option>Edit Mode</option>
+      </select>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Rendering Optimizations Demo</h1>
+
+        <p>
+          This demo illustrates ways to improve the
+          <strong>rendering performance for large graphs</strong> in
+          <a href="https://www.yworks.com/products/yfileshtml/">yFiles for HTML</a>. yFiles' default
+          settings are adequate for graphs up to a few hundred elements. Scaling to several thousand
+          elements is possible with a bit of tweaking, though, as shown in this demo.
+        </p>
+        <p>
+          yFiles comes with a dedicated
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL2-based rendering pipeline</a> that is especially suited for
+          large graphs. This is the easiest way to get good performance for large data sets, but
+          comes with a few drawbacks. This pipeline is enabled with the
+          <strong>WebGL2 rendering</strong> option in the
+          <span class="section-name">GraphModelManager Optimizations</span> section.
+        </p>
+        <p>
+          The other options of this section show approaches to performance tweaking based on the
+          normal yFiles rendering pipeline. All of them are realized in the source code of this
+          demo, and serve as a viable starting point for handling large graphs in your project.
+          However, it might be necessary to apply more use-case specific tweaks. The impact of each
+          option depends on the graph, its layout, and how users interact with it.
+        </p>
+
+        <h2>Settings Sidebar</h2>
+
+        <h3>Samples</h3>
+        <p>
+          Choose different sizes of graphs with or without labels. The graphs are served by an
+          optimized <em>JSON</em> data structure for lower file size and loading times compared to
+          GraphML. Labels are not saved with the graph but generated on demand.
+        </p>
+        <h3>Performance Optimizations</h3>
+        <ul>
+          <li>
+            <span class="section-name">Graph Item Styles</span>:
+            <p>The actual <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a> which is used to render the nodes.</p>
+          </li>
+          <li>
+            <span class="section-name">GraphModelManager Optimizations</span>:
+            <p>
+              The <a href="https://docs.yworks.com/yfileshtml/#/api/GraphModelManager" target="_blank">GraphModelManager</a> (GMM) manages the visual appearance of the
+              graph. A GMM tailored to your use case can have a massive impact on the performance of
+              your application, especially for input gestures like panning, zooming, etc.
+            </p>
+            <p>
+              This demo showcases two different GraphModelManager implementations. The demo's
+              <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2GraphModelManager" target="_blank">WebGL2GraphModelManager</a>-based GMM uses yFiles' WebGL2-based rendering
+              pipeline for the utmost performance gain.
+            </p>
+            <p>
+              On the other hand, <code>FastGraphModelManager</code> (FGMM) shows how to improve
+              performance for yFiles' normal rendering pipeline. This implementation is designed to
+              be plugged right into your application and to work without much additional effort.
+              <br />
+              FGMM switches between different rendering styles at different zoom intervals:
+            </p>
+            <dl>
+              <dt>Detail level</dt>
+              <dd>Default rendering, using the currently selected item style</dd>
+              <dt>Intermediate level</dt>
+              <dd>Simplified rendering, using a basic SVG style</dd>
+              <dt>Overview level</dt>
+              <dd>WebGL rendering, leveraging the power of the graphics card</dd>
+              <dd class="no-webgl-support">
+                This feature is disabled, because your browser does not support WebGL.
+              </dd>
+            </dl>
+            <p>
+              The demo provides eight <strong>optimization modes</strong> that improve rendering
+              performance for different use cases. Hover over each option to get more information on
+              the individual approach and the use cases for which it is intended. Additionally, it
+              is possible to switch back to yFiles' <strong>default rendering</strong> settings to
+              point out the difference between optimized and non-optimized rendering.
+            </p>
+            <p>
+              More adjustments can be made in code, e.g., the maximum size of a pre-rendered canvas,
+              the zoom threshold at which the pre-rendered image is updated for quality, etc. Please
+              see the <code>FastGraphModelManager</code> API for more information.
+            </p>
+          </li>
+          <li>
+            <span class="section-name">Auto Redraw</span>:
+            <p>
+              All except the first two GraphModelManager optimizations use a
+              <strong>static approach</strong>, i.e., the visualization is created once and if ever,
+              only sporadically updated. While this is sufficient for viewer applications, the
+              visualization needs to be refreshed when the graph is edited, e.g., when a node has
+              been moved, resized, created, or deleted.
+              <br />
+              The <strong>automatic redraw</strong> option makes this static approach usable in an
+              application with editor capabilities. If the option is checked, the graph
+              visualization is automatically updated after the graph has been edited. This is not a
+              GraphModelManager feature, but added by the application.
+            </p>
+            <p>Additionally, the graph visualization can be redrawn manually.</p>
+          </li>
+        </ul>
+        <h3>Benchmarking</h3>
+        <p>
+          This section provides means to compare the performance of different graph sizes and
+          settings. The FPS meter is a lightweight implementation and does not have much impact on
+          performance. However, it can be disabled. The FPS meter measures the redraw frequency of
+          the GraphComponent. Thus, if the graph component is idling no new frame is requested and
+          the FPS meter does not show new information.
+        </p>
+        <p>
+          The <span class="section-name">Animations</span> and
+          <span class="section-name">Selection</span> subsections can be used to compare the
+          performance during typical user interactions. The buttons trigger standardized simulated
+          interactions to evaluate the current settings.
+        </p>
+        <h3>Detail Level Indicator</h3>
+        <p>The GraphModelManager's current level of detail is shown below the FPS meter.</p>
+        <h3>Warning Indicators</h3>
+        <p>
+          The combination of interaction mode, graph item styles and GraphModelManager optimizations
+          in conjunction with the graph size results in different usability. To quickly estimate the
+          usability of the chosen settings, we display the following icons:
+        </p>
+        <div class="show-icon"><img class="show-icon" src="./resources/exclamation.svg" /></div>
+        <div class="document-icon">
+          Unrecommended setting because of (possible) slow performance for the typical gestures or
+          because of (possible) memory shortages.
+        </div>
+        <div class="show-icon"><img class="show-icon" src="./resources/warning.svg" /></div>
+        <div class="document-icon">
+          Caution against disabling auto redraw for interaction modes with edit gestures.
+        </div>
+        <p>
+          However, each setting can be tested despite the warnings because the actual performance
+          depends on your system.
+        </p>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <div id="detailLevelPopup" style="pointer-events: none"></div>
+
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content" style="position: relative">
+          <div class="data-editor-header flat-buttons">
+            <h2>Samples</h2>
+            <div style="display: flex; flex-direction: row; gap: 5px; padding-bottom: 10px">
+              <select style="width: auto" data-name="graphChooserBox" id="graphChooserBox"></select>
+            </div>
+          </div>
+
+          <div class="fieldset-indent">
+            <div class="vertical-button-list">
+              <input
+                id="nodeLabelsCheckbox"
+                type="checkbox"
+                title="Toggle Node Labels"
+                data-type="CheckBox"
+                data-name="nodeLabelsCheckbox"
+              />
+              <label for="nodeLabelsCheckbox" style="display: inline; margin-right: 10px">
+                Node Labels
+              </label>
+              <input
+                id="edgeLabelsCheckbox"
+                type="checkbox"
+                title="Toggle Edge Labels"
+                data-type="CheckBox"
+                data-name="edgeLabelsCheckbox"
+              />
+              <label for="edgeLabelsCheckbox" style="display: inline">Edge Labels</label>
+            </div>
+          </div>
+
+          <h2>Performance Optimizations</h2>
+
+          <fieldset>
+            <legend>Graph Item Styles</legend>
+            <form id="settingsGraphItemStyles">
+              <div class="vertical-button-list">
+                <input
+                  id="simple-svg-radio"
+                  type="radio"
+                  value="simpleSvgStyles"
+                  name="graph-item-styles"
+                  class="hasTooltip"
+                />
+                <label for="simple-svg-radio" class="styleSample simpleSvg">Simple SVG Style</label>
+                <input
+                  id="complex-svg-radio"
+                  type="radio"
+                  value="complexSvgStyles"
+                  name="graph-item-styles"
+                  class="hasTooltip"
+                  checked=""
+                />
+                <label for="complex-svg-radio" class="styleSample complexSvg">
+                  Complex SVG Style
+                </label>
+                <input
+                  id="simple-canvas-radio"
+                  type="radio"
+                  value="simpleCanvasStyles"
+                  name="graph-item-styles"
+                  class="hasTooltip"
+                />
+                <label for="simple-canvas-radio" class="styleSample simpleCanvas">
+                  Simple Canvas Style
+                </label>
+                <input
+                  id="complex-canvas-radio"
+                  type="radio"
+                  value="complexCanvasStyles"
+                  name="graph-item-styles"
+                  class="hasTooltip"
+                />
+                <label for="complex-canvas-radio" class="styleSample complexCanvas">
+                  Complex Canvas Style
+                </label>
+                <input
+                  id="simple-webgl-radio"
+                  type="radio"
+                  value="WebGLStyles"
+                  name="graph-item-styles"
+                  class="hasTooltip"
+                />
+                <label for="simple-webgl-radio" class="styleSample simpleWebgl">
+                  Simple WebGL Style
+                </label>
+              </div>
+            </form>
+          </fieldset>
+
+          <fieldset>
+            <legend>Label Models</legend>
+            <form id="settingsLabelModels">
+              <div class="vertical-button-list">
+                <input
+                  id="fix-label-positions"
+                  type="checkbox"
+                  title="Fix Label Positions"
+                  class="hasTooltip"
+                  data-type="CheckBox"
+                  data-name="fixLabelPositionsCheckbox"
+                />
+                <label for="fix-label-positions">Fix Label Positions</label>
+              </div>
+            </form>
+          </fieldset>
+
+          <fieldset>
+            <legend>GraphModelManager Optimizations</legend>
+            <form id="settingsGmm">
+              <div class="vertical-button-list">
+                <input
+                  id="defaultGmm-radio"
+                  type="radio"
+                  value="default"
+                  name="gmm"
+                  class="hasTooltip"
+                />
+                <label for="defaultGmm-radio">Default</label>
+                <input
+                  id="WebglGmm-radio"
+                  type="radio"
+                  value="default"
+                  name="gmm"
+                  class="hasTooltip"
+                  checked=""
+                />
+                <label for="WebglGmm-radio" id="WebglGmm-label">WebGL2 rendering</label>
+                <input
+                  id="levelOfDetailGmm-radio"
+                  type="radio"
+                  value="fastSvgStyles"
+                  name="gmm"
+                  class="hasTooltip"
+                />
+                <label for="levelOfDetailGmm-radio">Level of detail</label>
+                <input
+                  id="staticGmm-radio"
+                  type="radio"
+                  value="static"
+                  name="gmm"
+                  class="hasTooltip mayHaveWarning"
+                />
+                <label for="staticGmm-radio">Static with default styles</label>
+                <input
+                  id="svgImageGmm-radio"
+                  type="radio"
+                  value="svgImage"
+                  name="gmm"
+                  class="hasTooltip mayHaveWarning"
+                />
+                <label for="svgImageGmm-radio">Pre-rendered SVG image</label>
+                <input
+                  id="CanvasImageWithDrawCallbackGmm-radio"
+                  type="radio"
+                  value="simpleCanvasImage"
+                  name="gmm"
+                  class="hasTooltip mayHaveWarning"
+                />
+                <label for="CanvasImageWithDrawCallbackGmm-radio">
+                  Simple dynamic Canvas image
+                </label>
+                <input
+                  id="CanvasImageWithItemStylesGmm-radio"
+                  type="radio"
+                  value="canvasImage"
+                  name="gmm"
+                  class="hasTooltip mayHaveWarning"
+                />
+                <label for="CanvasImageWithItemStylesGmm-radio">
+                  Dynamic Canvas image with item styles
+                </label>
+                <input
+                  id="StaticCanvasImageGmm-radio"
+                  type="radio"
+                  value="svgInCanvasImage"
+                  name="gmm"
+                  class="hasTooltip mayHaveWarning"
+                />
+                <label for="StaticCanvasImageGmm-radio">Pre-rendered Canvas image of graph</label>
+                <input
+                  id="StaticWebglImageGmm-radio"
+                  type="radio"
+                  value="webgl"
+                  name="gmm"
+                  class="hasTooltip mayHaveWarning"
+                />
+                <label for="StaticWebglImageGmm-radio">
+                  Simple dynamic WebGL rendering of graph
+                </label>
+              </div>
+            </form>
+          </fieldset>
+
+          <fieldset>
+            <legend>Auto Redraw</legend>
+            <form onsubmit="return false;">
+              <div style="display: grid; grid: auto / auto auto">
+                <div class="vertical-button-list">
+                  <input
+                    id="autoRedrawCheckbox"
+                    type="checkbox"
+                    title="Toggle Auto Redraw"
+                    data-type="CheckBox"
+                    class="hasTooltip"
+                    data-name="autoRedrawCheckbox"
+                    checked=""
+                  />
+                  <label for="autoRedrawCheckbox">Enable Auto Redraw</label>
+                </div>
+                <button
+                  id="redrawGraphButton"
+                  title="Manually redraw the graph"
+                  data-name="redrawGraphButton"
+                  style="width: auto; float: right"
+                >
+                  Manual Redraw
+                </button>
+              </div>
+            </form>
+          </fieldset>
+
+          <h2>Benchmarking</h2>
+          <fieldset>
+            <legend>Information</legend>
+            <div
+              style="
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                overflow: hidden;
+                width: 100%;
+              "
+            >
+              <div id="fpsDescription">
+                <div class="information">
+                  <div class="vertical-button-list">
+                    <input
+                      title="Measure frame rate"
+                      type="checkbox"
+                      data-type="CheckBox"
+                      id="fpsCheckbox"
+                      data-name="fpsCheckbox"
+                      checked=""
+                    />
+                    <label for="fpsCheckbox">
+                      FPS:
+                      <span id="fps"></span>
+                    </label>
+                  </div>
+                </div>
+                <span class="information">
+                  Zoom-level:
+                  <span id="zoomLevel"></span>
+                  %
+                </span>
+                <span class="information">
+                  Selected items:
+                  <span id="selection"></span>
+                </span>
+              </div>
+              <div id="fpsContainer">
+                <canvas id="fpsMeter"></canvas>
+                <div id="gt40">&gt; 40 FPS</div>
+                <div id="lt20">&lt; 20 FPS</div>
+              </div>
+            </div>
+            <div id="detailLevelIndicator"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Animations</legend>
+            <div class="animations-grid">
+              <div class="animations-button">
+                <button id="panAnimationBtn" title="Pan Animation" class="control-button">
+                  <span class="button-content">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="64"
+                      height="64"
+                      viewBox="0 0 65 65"
+                      version="1.1"
+                    >
+                      <path
+                        stroke="black"
+                        d="m 32 6.0042738 c -14.305631 0 -25.9812922 11.7045292 -25.9812922 26.0101602 0 14.305631 11.6756612 25.981292 25.9812922 25.981292 14.305631 0 25.981292 -11.675661 25.981292 -25.981292 l -8.314013 0 c 0 9.812405 -7.854874 17.667279 -17.667279 17.667279 -9.812405 0 -17.667279 -7.854874 -17.667279 -17.667279 0 -9.812405 7.854874 -17.696147 17.667279 -17.696147 3.862455 0 7.546507 1.28368 10.565725 3.550777 L 39.823256 19.976435 52.424945 22.901741 53.015979 9.8725995 49.34973 12.701674 C 44.620298 8.4439323 38.469554 6.0042738 32 6.0042738 z"
+                      ></path>
+                    </svg>
+                  </span>
+                </button>
+                <span class="control-description">Pan in circle</span>
+              </div>
+              <div class="animations-button">
+                <button id="zoomAnimationBtn" title="Zoom Animation" class="control-button">
+                  <span class="button-content">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="64"
+                      height="64"
+                      viewBox="0 0 65 65"
+                      version="1.1"
+                    >
+                      <path
+                        stroke="black"
+                        d="m 32.173292 2.4918554 c 0 0 -10.022672 5.90499 -10.022672 5.90499 0 0 4.994041 0.01147 4.994041 0.01147 0 0 -7.003383 36.0945106 -7.003383 36.0945106 0 0 -11.7811574 -0.06402 -11.7811574 -0.06402 0 0 23.3218474 17.069337 23.3218474 17.069337 0 0 23.957911 -16.818923 23.957911 -16.818923 0 0 -11.858798 -0.0644 -11.858798 -0.0644 0 0 -6.635341 -36.193535 -6.635341 -36.193535 0 0 5.004447 0.011501 5.004447 0.011501 0 0 -9.976895 -5.9509323 -9.976895 -5.9509323"
+                      ></path>
+                    </svg>
+                  </span>
+                </button>
+                <span class="control-description">Zoom</span>
+              </div>
+              <div class="animations-button">
+                <button id="spiralAnimationBtn" title="Spiral Animation" class="control-button">
+                  <span class="button-content">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="64"
+                      height="64"
+                      viewBox="0 0 65 65"
+                      version="1.1"
+                    >
+                      <path
+                        stroke="black"
+                        d="m 20.027658 30.466513 c 1.673406 3.215045 6.162171 3.947451 9.416327 2.400931 4.899943 -2.328676 6.006917 -8.2175 3.546529 -12.452279 -3.56982 -6.144313 -12.342975 -7.44977 -18.648804 -4.178484 -8.8703711 4.6017 -10.7606702 15.47465 -5.9152371 23.22535 6.6396701 10.620744 22.0789981 12.759686 33.0838691 6.692996 6.513638 -3.590795 11.172082 -9.617345 13.069219 -16.360875 l 3.596923 0.284906 -9.754136 -12.920611 -11.389992 11.143488 3.581825 0.284824 c 0 0 -3.534659 6.885415 -7.046706 8.821511 -5.933641 3.271058 -14.25827 2.117776 -17.83827 -3.608751 -2.612576 -4.179048 -1.593359 -10.041562 3.189399 -12.522721 3.399996 -1.763823 8.130336 -1.059943 10.055123 2.252968 1.3266 2.283323 0.729738 5.458479 -1.912229 6.714061 -1.754587 0.833859 -4.174855 0.438957 -5.077126 -1.294541 -0.572703 -1.100311 -0.283037 -2.631743 1.01117 -3.167464 l 0.956491 1.057454 0.2615 -3.139272 -3.234255 -0.147273 0.959763 1.055608 c -2.387145 1.002667 -2.97355 3.817474 -1.911383 5.858174 z"
+                      ></path>
+                    </svg>
+                  </span>
+                </button>
+                <span class="control-description">Spiral zoom</span>
+              </div>
+              <div class="animations-button">
+                <button
+                  id="moveNodeAnimationBtn"
+                  title="Move Nodes Animation"
+                  class="control-button"
+                >
+                  <span class="button-content">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="64"
+                      height="64"
+                      viewBox="0 0 65 65"
+                      version="1.1"
+                    >
+                      <path
+                        stroke="black"
+                        d="m 33.5625 14.959821 -2.53125 4.0625 c 4.266346 2.635565 5.573065 8.171154 2.9375 12.4375 -2.635565 4.266346 -8.171154 5.573065 -12.4375 2.9375 -0.486396 -0.300474 -0.927402 -0.647575 -1.34375 -1.03125 l 1.6875 -0.96875 -8.25 -4.84375 -0.09375 9.59375 2.34375 -1.34375 c 0.915764 1.043001 1.972441 1.956194 3.15625 2.6875 6.473304 3.998928 15.032322 1.973304 19.03125 -4.5 3.998928 -6.473304 1.973304 -15.032322 -4.5 -19.03125 z M 17.571428 13.5 l 4.714286 0 m -8.142857 0 1.714286 0 M 8.9999998 13.5 12 13.5 m -6.4285712 -5.9285717 20.1428562 0 0 11.8571427 -20.1428562 0 z"
+                      ></path>
+                    </svg>
+                  </span>
+                </button>
+                <span class="control-description">Move Nodes</span>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Selection</legend>
+            <div class="selection-grid">
+              <!-- row 1 -->
+              <div class="selection-title">&nbsp;</div>
+              <div class="selection-title">Nodes</div>
+              <div class="selection-title">Edges</div>
+              <div class="selection-title">Labels</div>
+              <!-- row 2 -->
+              <button id="selectNothingBtn" title="Deselect anything" class="selection-button">
+                Nothing
+              </button>
+              <button id="select1000NodesBtn" title="Select 1000 Nodes" class="selection-button">
+                1000
+              </button>
+              <button id="select1000EdgesBtn" title="Select 1000 Edges" class="selection-button">
+                1000
+              </button>
+              <button id="select1000LabelsBtn" title="Select 1000 Labels" class="selection-button">
+                1000
+              </button>
+              <!-- row 3 -->
+              <button id="selectEverythingBtn" title="Select everything" class="selection-button">
+                Everything
+              </button>
+              <button id="selectAllNodesBtn" title="Select all nodes" class="selection-button">
+                All
+              </button>
+              <button id="selectAllEdgesBtn" title="Select all edges" class="selection-button">
+                All
+              </button>
+              <button id="selectAllLabelsBtn" title="Select all labels" class="selection-button">
+                All
+              </button>
+            </div>
+          </fieldset>
+        </div>
+      </aside>
+      <div id="loading-indicator">Loading the graph. This may take a while.</div>
+    </div>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="RenderingOptimizationsDemo.ts"
+      async
+    ></script>
+
+    <div id="tooltip" class="info-hidden"></div>
 
     <svg
       version="1.1"

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,7 +39,7 @@ import {
   ScrollBarVisibility
 } from 'yfiles'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 // noinspection CssInvalidFunction
 /**
@@ -47,10 +47,12 @@ import { applyDemoTheme } from '../../resources/demo-styles.js'
  * surroundings.
  */
 export class LensInputMode extends InputModeBase {
+  lensElement
+  lensGraphComponent = null
+  $zoomFactor = 2
+
   constructor() {
     super()
-    this.lensGraphComponent = null
-    this.$zoomFactor = 2
     // The changeable radius of the lens
     const radius = 120
     // The changeable difference between the coordinates of the mouse and the border of the lens

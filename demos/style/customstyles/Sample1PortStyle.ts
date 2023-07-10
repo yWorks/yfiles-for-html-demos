@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ICanvasContext, IPort, IRenderContext, PortStyleBase, Rect, Size, SvgVisual } from 'yfiles'
+import {
+  ICanvasContext,
+  IPort,
+  IRenderContext,
+  PortStyleBase,
+  Rect,
+  Size,
+  SvgVisual,
+  type TypedSvgVisual
+} from 'yfiles'
 import { SVGNS } from './Namespaces'
 
 /** the size of the port rendering */
@@ -34,11 +43,16 @@ const WIDTH = 4
 const HEIGHT = 4
 
 /**
- * This class is an example of a custom port style based on the {@link PortStyleBase} class.
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
+ */
+type Sample1PortStyleVisual = TypedSvgVisual<SVGEllipseElement>
+
+/**
+ * A custom port style based on the {@link PortStyleBase} class.
  * The port is rendered as a circle.
  */
-export default class Sample1PortStyle extends PortStyleBase {
-  createVisual(context: IRenderContext, port: IPort): SvgVisual {
+export default class Sample1PortStyle extends PortStyleBase<Sample1PortStyleVisual> {
+  createVisual(context: IRenderContext, port: IPort): Sample1PortStyleVisual {
     // create the ellipse
     const ellipse = window.document.createElementNS(SVGNS, 'ellipse')
     ellipse.setAttribute('fill', 'none')
@@ -53,10 +67,14 @@ export default class Sample1PortStyle extends PortStyleBase {
     const locationX = portLocation.x - WIDTH * 0.5
     const locationY = portLocation.y - HEIGHT * 0.5
     SvgVisual.setTranslate(ellipse, locationX, locationY)
-    return new SvgVisual(ellipse)
+    return SvgVisual.from(ellipse)
   }
 
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, port: IPort): SvgVisual {
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: Sample1PortStyleVisual,
+    port: IPort
+  ): Sample1PortStyleVisual {
     const ellipse = oldVisual.svgElement
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)
     // arrange the old ellipse

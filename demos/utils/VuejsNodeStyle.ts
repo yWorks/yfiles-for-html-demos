@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 /* eslint-disable no-prototype-builtins */
-/* global Vue */
 import {
   Font,
   FontStyle,
@@ -100,7 +99,7 @@ class ObservedContext {
   /**
    * Resets the context object to an empty object if none of the properties is used.
    */
-  reset(): Object | null {
+  reset(): object | null {
     const oldState = this.observed
     this.observed = {}
     if (

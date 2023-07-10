@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,11 +49,10 @@ import {
   Size,
   VoidPortStyle
 } from 'yfiles'
-import {
-  AndGateNodeStyle,
-  NotNodeStyle,
-  OrNodeStyle
-} from '../../complete/logicgates/DemoStyles.js'
+import { AndGateNodeStyle } from '../../showcase/logicgates/node-styles/AndGateNodeStyle.js'
+import { NotNodeStyle } from '../../showcase/logicgates/node-styles/NotNodeStyle.js'
+import { OrNodeStyle } from '../../showcase/logicgates/node-styles/OrNodeStyle.js'
+import { XOrNodeStyle } from '../../showcase/logicgates/node-styles/XOrNodeStyle.js'
 
 /*
  This file shows how to configure GraphBuilder to support ports.
@@ -65,7 +64,7 @@ import {
 /**
  * @typedef {Object} NodeData
  * @property {string} id
- * @property {('and'|'or'|'not'|'nand'|'nor')} type
+ * @property {('and'|'or'|'not'|'nand'|'nor'|'xor'|'xnor')} type
  */
 /**
  * @typedef {Object} EdgeData
@@ -106,6 +105,26 @@ export function createPortAwareGraphBuilder(graph, sampleNodes, sampleEdges) {
   })
   // change the node creator but keep the original's defaults
   nodesSource.nodeCreator = new TypeAwareNodeCreator({ defaults: nodesSource.nodeCreator.defaults })
+  nodesSource.nodeCreator.styleProvider = nodeData => {
+    switch (nodeData.type) {
+      case 'or':
+        return new OrNodeStyle(false, '#A49966', '#625F50', '#FFFFFF')
+      case 'nor':
+        return new OrNodeStyle(true, '#C7C7A6', '#77776E', '#000000')
+      case 'and':
+        return new AndGateNodeStyle(false, '#363020', '#201F1A', '#FFFFFF')
+      case 'nand':
+        return new AndGateNodeStyle(true, '#605C4E', '#3A3834', '#FFFFFF')
+      case 'xor':
+        return new XOrNodeStyle(false, '#A4778B', '#62555B', '#FFFFFF')
+      case 'xnor':
+        return new XOrNodeStyle(true, '#AA4586', '#66485B', '#FFFFFF')
+      case 'not':
+        return new NotNodeStyle('#177e89', '#093237', '#FFFFFF')
+      default:
+        return new ShapeNodeStyle()
+    }
+  }
 
   nodesSource.nodeCreator.defaults.size = new Size(100, 50)
 
@@ -157,7 +176,7 @@ class TypeAwareNodeCreator extends NodeCreator {
    * @param {!INode} parent
    * @param {!Rect} layout
    * @param {!INodeStyle} style
-   * @param {!Object} tag
+   * @param {*} tag
    * @returns {!INode}
    */
   createNodeCore(graph, groupNode, parent, layout, style, tag) {
@@ -286,6 +305,8 @@ class TypeAwareNodeCreator extends NodeCreator {
       case 'nor':
       case 'and':
       case 'nand':
+      case 'xor':
+      case 'xnor':
         return [
           { id: 'in0', name: 'in0', location: [0, 0.25] },
           { id: 'in1', name: 'in1', location: [0, 0.75] },
@@ -348,29 +369,6 @@ class TypeAwareNodeCreator extends NodeCreator {
   getPortLabel(pin) {
     return pin.name
   }
-
-  /**
-   * Overrides the default implementation to return
-   * a style according to the node's type.
-   * @param {!NodeData} dataItem
-   * @returns {?INodeStyle}
-   */
-  getStyle(dataItem) {
-    switch (dataItem.type) {
-      case 'or':
-        return new OrNodeStyle(false)
-      case 'nor':
-        return new OrNodeStyle(true)
-      case 'and':
-        return new AndGateNodeStyle(false)
-      case 'nand':
-        return new AndGateNodeStyle(true)
-      case 'not':
-        return new NotNodeStyle()
-      default:
-        return new ShapeNodeStyle()
-    }
-  }
 }
 
 /**
@@ -390,7 +388,6 @@ class PortAwareEdgeCreator extends EdgeCreator {
    */
   createEdgeCore(graph, source, target, style, tag) {
     const edgeData = tag
-
     // get the source port: if there is an ID specified (from), get the first with the matching ID
     // if no ID is specified: get the first port
     const sourcePortId = this.getSourcePortId(edgeData)

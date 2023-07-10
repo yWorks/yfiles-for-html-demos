@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -29,11 +28,11 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>WebdriverIO Demo [yFiles for HTML]</title>
-    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <link rel="stylesheet" href="../../../doc/readme-style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   </head>
   <body>
@@ -42,8 +41,9 @@
       <div class="content-centered">
         <div class="content">
           <div class="breadcrumbs">
-            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> WebdriverIO
-            Demo
+            <a href="../../README.html">yFiles for HTML</a>
+            <span class="angle-right"></span>
+            WebdriverIO Demo
           </div>
           <h1>WebdriverIO Demo</h1>
 
@@ -55,6 +55,10 @@
 
           <p>To run the integration tests:</p>
           <ol>
+            <li>
+              Ensure that the demo server is running, see
+              <a data-dguide="demos-server#demos-server">The Demo Server</a>.
+            </li>
             <li>Go to the demo's directory <code>demos-js/testing/wdio</code>.</li>
             <li>Run <code>npm install</code>.</li>
             <li>Run the integration tests with <code>npm run test</code>.</li>
@@ -67,17 +71,19 @@
             items.
           </p>
           <p>
-            Tests are run in both Firefox and Chrome in headless mode. If you want to see the
-            gestures that are being tested, you can disable the "headless" options in
+            Tests are run in both Firefox and Chrome in headless mode. Please note that the tests
+            will fail if the corresponding browser binaries cannot be found on your system. If you
+            want to see the gestures that are being tested, you can disable the "headless" options
+            in
             <code>wdio.conf.js</code> and add an <code>await browser.debug()</code>
             <a target="_blank" href="https://webdriver.io/docs/api/browser/debug.html">statement</a>
             at the end of a test in the spec file.
           </p>
           <p>
             In order to obtain access to the yFiles API, in particular for access to the
-            <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> instance through <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#getComponent" target="_blank">CanvasComponent#getComponent</a>, the
-            server used in this sample injects a variable that causes the application code to expose
-            the yFiles API to the global scope.
+            <a data-api>GraphComponent</a> instance through
+            <a data-api>CanvasComponent#getComponent</a>, the yFiles API is exposed globally when
+            the application runs in the test environment.
           </p>
         </div>
         <!-- populated by readme-style.js -->

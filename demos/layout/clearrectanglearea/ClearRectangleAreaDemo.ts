@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,7 +36,6 @@ import {
   GraphEditorInputMode,
   HandleInputMode,
   HandlePositions,
-  ICommand,
   IHandle,
   IHitTestable,
   IHitTester,
@@ -64,16 +63,10 @@ import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
 import { LayoutOptions } from './LayoutOptions'
 import { RectanglePositionHandler } from './RectanglePositionHandler'
 
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
-
 import SampleData from './resources/SampleData'
-import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 // UI components
 const samplesComboBox = document.getElementById('sample-graph-combobox') as HTMLSelectElement
@@ -128,48 +121,32 @@ async function run(): Promise<void> {
   graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
 
-  registerCommands()
-
   initializeUI()
 
   initializeInputModes()
 
   initializeGraph()
-
-  showApp(graphComponent)
 }
 
 /**
- * Syncs combo box selected index with initially loaded sample and {@link options} set
+ * Syncs combo box selected index with initially loaded sample and {@link options} set.
+ * Also binds actions to toolbars.
  */
 function initializeUI(): void {
   samplesComboBox.selectedIndex = 0
   clearingStrategyComboBox.selectedIndex = options.clearAreaStrategy.valueOf()
   componentAssignmentStrategyComboBox.selectedIndex = options.componentAssignmentStrategy.valueOf()
-}
 
-/**
- * Wires up the UI.
- */
-function registerCommands(): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  addNavigationButtons(samplesComboBox)
-
-  bindChangeListener("select[data-command='SetSampleGraph']", () => {
+  addNavigationButtons(samplesComboBox).addEventListener('change', () => {
     loadGraph(samplesComboBox.options[samplesComboBox.selectedIndex].value)
   })
 
-  bindChangeListener("select[data-command='SetClearingStrategy']", onClearingStrategyChanged)
-  bindChangeListener(
-    "select[data-command='SetComponentAssignmentStrategy']",
-    onComponentAssignmentStrategyChanged
-  )
+  document
+    .querySelector<HTMLSelectElement>('#clearing-strategy-combobox')!
+    .addEventListener('change', onClearingStrategyChanged)
+  document
+    .querySelector<HTMLSelectElement>('#component-assignment-strategy-combobox')!
+    .addEventListener('change', onComponentAssignmentStrategyChanged)
 }
 
 /**
@@ -379,7 +356,7 @@ function isShiftChanged(e: InputModeEventArgs): boolean {
  * Loads the sample graph associated with the given name
  */
 function loadGraph(sampleName: string): void {
-  // @ts-ignore
+  // @ts-ignore We don't have proper types for the sample data
   const data = SampleData[sampleName]
 
   const graph = graphComponent.graph
@@ -417,7 +394,7 @@ function loadGraph(sampleName: string): void {
       graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach((bend: { x: number; y: number }) => {
-      graph.addBend(edge, Point.from(bend))
+      graph.addBend(edge, bend)
     })
   })
 
@@ -456,5 +433,4 @@ class ClearRectTemplate extends BaseClass(IVisualTemplate) {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

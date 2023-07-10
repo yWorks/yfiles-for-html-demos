@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Metabolic Pathways Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+
+    <style>
+      .legend__box {
+        width: 180px;
+        background: white;
+        border: 2px solid #7e7979;
+        border-radius: 4px;
+        margin: auto;
+        padding: 5px;
+      }
+
+      .legend__item {
+        display: grid;
+        grid-template-columns: 30% 70%;
+        padding: 0 5px;
+      }
+
+      .legend__line {
+        margin-right: 10px;
+        height: 16px;
+      }
+
+      .legend__line.product {
+        background-color: #c5e4d1;
+        border: 2px solid #6dbc8d;
+      }
+
+      .legend__line.reactant {
+        background-color: #b3cddb;
+        border: 2px solid #4281a4;
+      }
+
+      .legend__line.enzyme {
+        background-color: #f1b0ae;
+        border: 2px solid #db3a34;
+      }
+
+      .legend__line.co-reactant {
+        background-color: #ffc499;
+        border: 2px solid #ff6c00;
+      }
+
+      .legend__line.other {
+        background-color: #abb8b0;
+        border: 2px solid #2d4d3a;
+      }
+
+      .legend__line.reaction {
+        background: url('resources/reaction-small.svg') no-repeat center;
+      }
+
+      .legend__desc {
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Metabolic Pathways</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
+        <h1>Metabolic Pathways Demo</h1>
+        <p>
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">organic layout</a>
+          for visualizing metabolic pathways.
+        </p>
+        <p>
+          A metabolic path way is a series of enzyme-catalyzed reactions that converts reactants or
+          products into a final product. In this demo, nodes have different types based on their role
+          in the pathway, i.e., products, reactants, reactions, co-reactants, enzymes and other.
+        </p>
+        <div class="legend__box">
+          <div class="legend__item">
+            <span class="legend__line product"></span>
+            <span class="legend__desc">Product</span>
+          </div>
+          <div class="legend__item">
+            <span class="legend__line reactant"></span>
+            <span class="legend__desc">Reactant</span>
+          </div>
+          <div class="legend__item">
+            <span class="legend__line enzyme"></span>
+            <span class="legend__desc">Enzyme</span>
+          </div>
+          <div class="legend__item">
+            <span class="legend__line co-reactant"></span>
+            <span class="legend__desc">Co-reactant</span>
+          </div>
+          <div class="legend__item">
+            <span class="legend__line other"></span>
+            <span class="legend__desc">Other</span>
+          </div>
+          <div class="legend__item">
+            <span class="legend__line reaction"></span>
+            <span class="legend__desc">Reaction</span>
+          </div>
+        </div>
+        <p>
+          Based on the node types, the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">organic layout</a> is configured using constraints such that
+          particular nodes are horizontally/vertically aligned, ordered or placed on a cycle.
+        </p>
+
+        <h2>Things to try</h2>
+
+        <p>
+          Use the combo box in the toolbar to change the data-sample and observe the different node
+          arrangements. In the first sample, i.e., the Pentose Phosphate Pathway, a series of nodes
+          is vertically aligned while co-reactants are placed before their associated reaction and
+          enzymes after it.
+        </p>
+        <p>
+          In the second sample, i.e., the Krebs Cycle, some nodes on the top part are vertically
+          aligned, while the nodes that form a cycle are placed on the boundary of an actual circle.
+          All other remaining nodes e.g., co-reactants, enzymes are forced to be placed either
+          outside or inside the cycle.
+        </p>
+      </div>
+    </aside>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <select id="select-sample" title="Choose from predefined samples">
+        <option value="krebs">Krebs Cycle</option>
+        <option value="pentose">Pentose Phosphate Pathway</option>
+      </select>
+    </div>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="MetabolicPathwaysDemo.ts" async></script>
+  </body>
+</html>

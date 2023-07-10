@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,21 +43,18 @@ import {
   GraphItemTypes,
   HierarchicLayout,
   HierarchicLayoutData,
-  ICommand,
-  ILayoutAlgorithm,
-  INode,
-  LayoutData,
   License,
   NodeTypeAwareSequencer,
   OrganicEdgeRouter,
   OrganicLayout,
   OrganicLayoutData,
+  RadialLayout,
+  RadialLayoutData,
   Size,
   TreeLayout,
   TreeLayoutData,
   TreeReductionStage
 } from 'yfiles'
-import { addNavigationButtons, bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import {
   BalloonSampleData,
   CircularSampleData,
@@ -65,15 +62,18 @@ import {
   ComponentSampleData,
   HierarchicSampleData,
   OrganicSampleData,
+  RadialSampleData,
   TreeSampleData
 } from './resources/SampleData.js'
-import NodeTypePanel from '../../utils/NodeTypePanel.js'
+import NodeTypePanel from 'demo-utils/NodeTypePanel'
 import {
   applyDemoTheme,
+  colorSets,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Type describing a sample graph and the according layout algorithm to run on it.
@@ -81,7 +81,7 @@ import { fetchLicense } from '../../resources/fetch-license.js'
  * @property {string} name
  * @property {ILayoutAlgorithm} layout
  * @property {LayoutData} layoutData
- * @property {*} sampleData
+ * @property {SampleData} sampleData
  * @property {boolean} [directed]
  */
 
@@ -94,6 +94,7 @@ const samples = [
   createTreeSample(),
   createBalloonSample(),
   createCircularSample(),
+  createRadialSample(),
   createComponentSample(),
   createCompactDiskSample()
 ]
@@ -118,18 +119,17 @@ async function run() {
   graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
   configureGraphComponent()
-  registerCommands()
+  initializeUI()
   prepareSampleList()
   initializeTypePanel()
   await loadSample()
-  showApp(graphComponent)
 }
 
 /**
  * Gets the type of the given node from its tag.
  *
  * @param {!INode} node the node to query the type for
- * @returns {*}
+ * @returns {number}
  */
 function getNodeType(node) {
   // The implementation for this demo assumes that on the INode.tag a type property
@@ -144,7 +144,8 @@ function getNodeType(node) {
   // Use the label text of the node as type
   // return node.labels.size > 0 ? node.labels.get(0).text : null
 
-  return (node.tag && node.tag.type) || 0
+  const tag = node.tag
+  return (tag && tag.type) || 0
 }
 
 /**
@@ -291,6 +292,22 @@ function createCompactDiskSample() {
 }
 
 /**
+ * Creates and configures the {@link RadialLayout} and the {@link RadialLayoutData}
+ * such that node types are considered.
+ * @returns {!Sample}
+ */
+function createRadialSample() {
+  //create a compact disk layout with a little additional node distance (since the nodes
+  // are not circles and this algorithm treats them as such)
+  const layout = new RadialLayout({ minimumLayerDistance: 150 })
+
+  // the node types are specified as delegate on the nodeTypes property of the layout data
+  const layoutData = new RadialLayoutData({ nodeTypes: getNodeType })
+
+  return { name: 'Radial Layout', layout, layoutData, sampleData: RadialSampleData }
+}
+
+/**
  * Applies the current layout style to the current graph.
  * @param {boolean} animate
  * @param {boolean} considerTypes
@@ -360,6 +377,7 @@ async function loadSample(previewWithoutNodeTypes = false) {
  * @param {boolean} animate whether the layout should be animated
  * @param {boolean} previewWithoutNodeTypes whether the layout should first run ignoring the node types to make
  *  the difference easily visible
+ * @returns {!Promise}
  */
 async function arrangeGraph(animate, previewWithoutNodeTypes) {
   setUIDisabled(true)
@@ -389,7 +407,7 @@ function configureGraphComponent() {
   const geim = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE
   })
-  geim.nodeCreator = (context, graph, location, parent) => {
+  geim.nodeCreator = (context, graph, location, _) => {
     const node = graph.createNodeAt(location)
     setNodeType(node, 0)
     return node
@@ -419,7 +437,7 @@ function setNodeType(node, type) {
  * Initializes the {@link NodeTypePanel} that allows for changing a node's type.
  */
 function initializeTypePanel() {
-  const typePanel = new NodeTypePanel(graphComponent, typeColors)
+  const typePanel = new NodeTypePanel(graphComponent, typeColors, colorSets)
   typePanel.nodeTypeChanged = (item, newType) => {
     setNodeType(item, newType)
     graphComponent.selection.clear()
@@ -449,17 +467,16 @@ function prepareSampleList() {
 }
 
 /**
- * Binds the various actions to the buttons in the toolbar.
+ * Binds actions to the buttons in the toolbar.
  */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindAction("button[data-command='Layout']", () => arrangeGraph(true, true))
-  bindAction("button[data-command='Reset']", () => loadSample(true))
+function initializeUI() {
+  document.querySelector('#layout-button').addEventListener('click', async () => {
+    await arrangeGraph(true, true)
+  })
+
+  document.querySelector('#reset-button').addEventListener('click', async () => {
+    await loadSample(true)
+  })
 
   const sampleComboBox = document.querySelector('#sample-combo-box')
   sampleComboBox.addEventListener('change', () => loadSample(true))
@@ -471,8 +488,8 @@ function registerCommands() {
  * @param {boolean} disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.querySelector("button[data-command='Reset']").disabled = disabled
-  document.querySelector("button[data-command='Layout']").disabled = disabled
+  document.querySelector('#reset-button').disabled = disabled
+  document.querySelector('#layout-button').disabled = disabled
   document.querySelector('#sample-combo-box').disabled = disabled
   graphComponent.inputMode.enabled = !disabled
 }
@@ -486,10 +503,9 @@ function setUIDisabled(disabled) {
 function updateLayoutPopup(visible, text) {
   const popup = document.querySelector('#loadingPopup')
   popup.className = visible ? 'visible' : ''
-  if (text) {
+  if (text != null) {
     popup.innerHTML = text
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+void run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,14 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-.demo-sidebar.demo-left .demo-sidebar-content {
-  height: 50% !important;
-}
-
-.demo-sidebar.demo-right .demo-sidebar-content {
-  height: 28ex;
-}
-
 #log {
   height: calc(100% - 220px);
   padding: 0 5px;
@@ -225,30 +217,6 @@
   background-color: #eee;
 }
 
-.demo-sidebar.demo-right {
-  width: 420px;
-}
-.demo-right-hidden .demo-sidebar.demo-right {
-  right: -420px;
-}
-@media screen and (max-width: 960px) {
-  .demo-sidebar {
-    width: 100% !important;
-  }
-  .demo-right-hidden .demo-sidebar.demo-right {
-    right: -100% !important;
-  }
-  .demo-left-hidden .demo-sidebar.demo-left {
-    left: -100% !important;
-  }
-  .demo-hide-right-when-small:not(.demo-right-hidden) .demo-content {
-    right: 0;
-  }
-}
-body.demo-has-right:not(.demo-right-hidden) .demo-content-dynamic {
-  right: 420px;
-}
-
 #drag-and-drop-panel {
   background-color: white;
   padding: 10px 0;
@@ -291,4 +259,26 @@ body.demo-has-right:not(.demo-right-hidden) .demo-content-dynamic {
 
 .yfiles-drag.hidden {
   opacity: 0;
+}
+
+.event-demo-side-bar {
+  width: 400px;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #ebeef0;
+  line-height: 140%;
+  border-left: 1px solid #d5d7d8;
+}
+.event-demo-side-bar-content-controls {
+  overflow-y: hidden;
+  padding: 10px 10px 20px;
+}
+
+.event-demo-side-bar-content-controls :first-child {
+  margin-block-start: 0;
+}
+.event-demo-side-bar-content-controls :last-child {
+  margin-block-end: 0;
 }

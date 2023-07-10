@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphEditorInputMode,
   GraphModelManager,
   GroupingNodePositionHandler,
-  ICommand,
   INode,
   INodeSizeConstraintProvider,
   IPositionHandler,
@@ -50,20 +49,15 @@ import {
   Size
 } from 'yfiles'
 
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import SampleData from './resources/SampleData'
 import { NonOverlapPositionHandler } from './NonOverlapPositionHandler'
 import { NonOverlapReshapeHandler } from './NonOverlapReshapeHandler'
 import { LayoutHelper } from './LayoutHelper'
 import { HidingEdgeDescriptor } from './HidingEdgeDescriptor'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -76,11 +70,8 @@ async function run(): Promise<void> {
   initializeInputModes()
   initializeGraph()
 
-  // bind the buttons to their commands
-  registerCommands()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the buttons to their actions
+  initializeUI()
 }
 
 /**
@@ -211,7 +202,7 @@ function initializeGraph(): void {
  * Loads the sample graph associated with the given name
  */
 function loadGraph(sampleName: string): void {
-  // @ts-ignore
+  // @ts-ignore We don't have proper types for the sample data
   const data = SampleData[sampleName]
 
   const graph = graphComponent.graph
@@ -245,7 +236,7 @@ function loadGraph(sampleName: string): void {
       graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach((bend: { x: number; y: number }) => {
-      graph.addBend(edge, Point.from(bend))
+      graph.addBend(edge, bend)
     })
   })
 
@@ -255,20 +246,13 @@ function loadGraph(sampleName: string): void {
 /**
  * Registers commands and actions for the items in the toolbar.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  const sampleGraphs = document.getElementById('sample-graphs') as HTMLSelectElement
-  addNavigationButtons(sampleGraphs)
-  bindChangeListener("select[data-command='SelectSampleGraph']", () => {
+function initializeUI(): void {
+  const sampleGraphs = document.querySelector<HTMLSelectElement>('#sample-graphs')!
+  addNavigationButtons(sampleGraphs).addEventListener('change', () => {
     const selectedIndex = sampleGraphs.selectedIndex
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

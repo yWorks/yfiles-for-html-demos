@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,7 @@ import {
   GraphComponent,
   IEdge,
   ILabelModelParameter,
-  IModelItem,
+  ILabelOwner,
   INode,
   Point,
   SimpleLabel,
@@ -46,6 +46,9 @@ import {
  * position of the pop-up.
  */
 export default class HTMLPopupSupport {
+  _currentItem = null
+  dirty = false
+
   /**
    * Initializes a new HTMLPopupSupport instance for the given graph component, pop-up container
    * div, and pop-up placement parameter.
@@ -58,8 +61,6 @@ export default class HTMLPopupSupport {
     this.labelModelParameter = labelModelParameter
     this.div = div
     this.graphComponent = graphComponent
-    this._currentItem = null
-    this.dirty = false
     // make the popup invisible
     div.style.opacity = '0'
     div.style.display = 'none'
@@ -69,7 +70,7 @@ export default class HTMLPopupSupport {
 
   /**
    * Gets the node or edge to display information for.
-   * @type {?(IEdge|INode)}
+   * @type {?TItem}
    */
   get currentItem() {
     return this._currentItem
@@ -79,7 +80,7 @@ export default class HTMLPopupSupport {
    * Sets the node or edge to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
-   * @type {?(IEdge|INode)}
+   * @type {?TItem}
    */
   set currentItem(value) {
     if (value === this._currentItem) {
@@ -106,7 +107,7 @@ export default class HTMLPopupSupport {
     })
 
     // Adds listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((node, oldLayout) => {
+    this.graphComponent.graph.addNodeLayoutChangedListener((source, node, oldLayout) => {
       const item = this.currentItem
       if (item && (item === node || HTMLPopupSupport.isEdgeConnectedTo(item, node))) {
         this.dirty = true
@@ -188,7 +189,8 @@ export default class HTMLPopupSupport {
 
   /**
    * Determines if the given item is an IEdge connected to the given node.
-   * @param {!IModelItem} item
+   * @template TItem
+   * @param {?TItem} item
    * @param {!INode} node
    * @returns {boolean}
    */

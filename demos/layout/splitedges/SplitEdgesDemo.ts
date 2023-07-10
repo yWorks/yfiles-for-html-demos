@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,15 +31,14 @@ import {
   ArrowType,
   EdgeRouter,
   EdgeStyleBase,
-  EdgeStyleDecorationInstaller,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GraphSelectionIndicatorManager,
   GroupingKeys,
   HierarchicLayout,
   HierarchicLayoutData,
   IArrow,
-  ICommand,
   IEdge,
   IRenderContext,
   LayoutOrientation,
@@ -51,8 +50,6 @@ import {
   Size,
   SmoothingPolicy,
   SolidColorFill,
-  Stroke,
-  StyleDecorationZoomPolicy,
   SvgVisual,
   SvgVisualGroup,
   Visual,
@@ -60,13 +57,13 @@ import {
 } from 'yfiles'
 
 import ContextMenuSupport from './ContextMenuSupport'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import {
   applyDemoTheme,
   createDemoGroupStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -77,8 +74,7 @@ async function run(): Promise<void> {
 
   configureInteraction()
   await createSampleGraph()
-  registerCommands()
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -213,7 +209,7 @@ async function createSampleGraph(): Promise<void> {
     .filter(edge => edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId))
     .forEach(edge => {
       const edgeStyle = edge.style as PolylineEdgeStyle
-      edgeStyle.stroke = Stroke.from(`3px ${edge.tag.color}`)
+      edgeStyle.stroke = `3px ${edge.tag.color}`
       edgeStyle.targetArrow = new Arrow({
         fill: edge.tag.color,
         type: 'triangle',
@@ -246,12 +242,9 @@ function initializeDefaults(): void {
   })
   graph.edgeDefaults.shareStyleInstance = false
 
-  graph.decorator.edgeDecorator.selectionDecorator.setImplementation(
-    new EdgeStyleDecorationInstaller({
-      edgeStyle: new HighlightEdgeStyle(),
-      zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
-    })
-  )
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    edgeStyle: new HighlightEdgeStyle()
+  })
 }
 
 /**
@@ -270,15 +263,9 @@ function configureInteraction(): void {
 /**
  * Binds the various actions to the buttons in the toolbar.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
-  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
-  bindAction("button[data-command='Layout']", () => runLayout())
-  bindAction("button[data-command='Reset']", createSampleGraph)
+function initializeUI(): void {
+  document.querySelector<HTMLButtonElement>('#layout')!.addEventListener('click', runLayout)
+  document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', createSampleGraph)
 }
 
 /**
@@ -286,9 +273,8 @@ function registerCommands(): void {
  * @param disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled: boolean): void {
-  ;(document.querySelector("button[data-command='Layout']") as HTMLButtonElement).disabled =
-    disabled
-  ;(document.querySelector("button[data-command='Reset']") as HTMLButtonElement).disabled = disabled
+  document.querySelector<HTMLButtonElement>('#layout')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#reset')!.disabled = disabled
   ;(graphComponent.inputMode as GraphEditorInputMode).enabled = !disabled
 }
 
@@ -338,5 +324,4 @@ class HighlightEdgeStyle extends EdgeStyleBase {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

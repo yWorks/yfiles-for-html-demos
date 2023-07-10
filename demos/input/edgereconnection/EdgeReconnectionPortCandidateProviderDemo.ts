@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,18 +41,18 @@ import {
   Rect,
   ShapeNodeStyle
 } from 'yfiles'
-import type { ColorSetName } from '../../resources/demo-styles'
+import type { ColorSetName } from 'demo-resources/demo-styles'
 import {
   applyDemoTheme,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles'
-import { showApp } from '../../resources/demo-app'
+} from 'demo-resources/demo-styles'
 import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider'
 import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider'
 import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider'
 import RedEdgePortCandidateProvider from './RedEdgePortCandidateProvider'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Registers a callback function as decorator that provides a custom
@@ -122,8 +122,6 @@ async function run(): Promise<void> {
 
   createSampleGraph(graphComponent)
   graphComponent.updateContentRect()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -191,5 +189,4 @@ function createSubgraph(
   return [n1, n2, n3]
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

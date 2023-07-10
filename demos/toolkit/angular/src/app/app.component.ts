@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,16 +51,13 @@ import { EDGE_DATA, NODE_DATA } from './data'
 import { Person } from './person'
 import { NodeComponentStyle } from './NodeComponentStyle'
 import { GraphComponentService } from './services/graph-component.service'
-import GraphSearch from '../utils/GraphSearch'
-import { BrowserDetection } from '../utils/BrowserDetection'
+// needs .js extension since it resides in node_modules
+import GraphSearch from 'demo-utils/GraphSearch.js'
 import { zoomDetail, zoomIntermediate } from './node.component'
-
-const ieVersion = BrowserDetection.ieVersion
-const useWebWorkerLayout = !ieVersion || ieVersion > 11
 
 // Run layout calculation on a Web Worker
 let layoutWorker: Worker
-if (useWebWorkerLayout && typeof Worker !== 'undefined') {
+if (typeof Worker != 'undefined') {
   // @ts-ignore
   layoutWorker = new Worker(new URL('./layout.worker.ts', import.meta.url), { type: 'module' })
 }

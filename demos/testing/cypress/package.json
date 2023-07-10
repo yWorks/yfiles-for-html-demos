@@ -1,0 +1,16 @@
+{
+  "name": "playwright-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "npx cypress run",
+    "test-ui": "npx cypress open"
+  },
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "devDependencies": {
+    "cypress": "^12.15.0",
+    "typescript": "^5.1.3",
+    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
+  }
+}

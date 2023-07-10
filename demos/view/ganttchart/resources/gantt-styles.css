@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,73 +26,95 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-#mainComponent {
-  position: absolute;
-  left: 150px;
-  top: 70px;
-  right: 0;
-  bottom: 0;
+.graph-component-container {
+  position: relative;
+  display: flex;
+  flex: 1;
+  height: 100%;
+  flex-direction: column;
 }
-#timelineComponent {
-  position: absolute;
+
+#graphComponent {
+  flex: 1;
+}
+
+#timeline-component {
   height: 70px;
-  left: 150px;
-  top: 0;
-  right: 0;
 }
-#taskComponent {
-  position: absolute;
+
+#timeline-component canvas {
+  height: 100%;
+  width: 100%;
+}
+
+#task-component {
+  position: relative;
   width: 150px;
-  top: 70px;
-  left: 0;
-  bottom: 0;
+  overflow: hidden;
 }
-#graphComponentContainer {
+
+.task-list {
   position: absolute;
-  top: 60px;
+  top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
 }
-#info {
+
+.task-list__task {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  color: white;
+  padding: 0.7rem;
+  border-bottom: 1px solid white;
+}
+
+.activity-node {
+  transition: color 0.3s ease;
+}
+
+.info {
   position: absolute;
   min-width: 60px;
   padding: 0 5px;
   height: 25px;
-  background-color: rgba(255, 2555, 255, 0.7);
-  border: 1px solid #444;
+  background-color: white;
+  border-radius: 8px;
   color: #444;
   line-height: 25px;
   text-align: center;
+  white-space: nowrap;
 }
 
-#nodeInfo {
+.node-info {
   position: absolute;
-  min-width: 60px;
-  padding: 20px;
-  background-color: #6991ff;
-  color: #fff;
-  line-height: 25px;
-  text-align: left;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
 }
 
-#nodeInfo span[data-name='name'] {
-  font-size: 12pt;
-  text-decoration: underline;
+.node-info__name {
+  font-weight: bold;
+  font-size: 120%;
+  margin-bottom: 1rem;
 }
 
-#nodeInfo > #background {
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-  background-color: rgb(51, 102, 255);
-  opacity: 0.5;
+.node-info__content {
+  display: table;
+  width: 100%;
+  padding-bottom: 1rem;
 }
 
-@media screen and (max-height: 500px) {
-  #graphComponentContainer {
-    top: 30px;
-  }
+.node-info__row {
+  display: table-row;
+}
+
+.node-info__cell {
+  display: table-cell;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.node-info__cell:last-child {
+  padding-left: 1rem;
 }

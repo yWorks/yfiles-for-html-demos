@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Markdown Label Demo
-
-<img src="../../resources/image/markdownlabel.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/style/markdownlabel/index.html).
 
 # Markdown Label Demo
 
@@ -15,8 +22,8 @@ The label style implementation `MarkdownLabelStyle` uses [markdown-it](https://g
 #### Creating and Editing Labels
 
 - Press the F2 key while an element or connection is selected.
-- Insert markdown text into the editor, i.e. `**Hello World**`
-- Press `Ctrl-Return` to enter a newline
+- Insert markdown text into the editor, i.e. `**Hello World**`.
+- Press `Ctrl-Return` to enter a newline.
 
 #### Supported Markdown
 
@@ -44,7 +51,7 @@ Markdown labels can use line wrapping. In this demo application, the labels use 
 
 ## Related Demos
 
-- [Default Label Style](../default-label-style/index.html)
-- [HTML Label](../htmllabel/index.html)
-- [Rich Text Label](../richtextlabel/index.html)
-- [Tutorial: Custom Label Style](../../02-tutorial-custom-styles/10-custom-label-style/index.html)
+- [Default Label Style](../default-label-style/)
+- [HTML Label Style](../html-label-style/)
+- [Rich Text Label](../richtextlabel/)
+- [Tutorial: Label Style Implementation](../../tutorial-style-implementation-label/01-render-label-text/)

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Vue Template Node Style Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <!-- load Vue.js, a helper package and the demo -->
+    <script src="https://unpkg.com/vue@2.6.12"></script>
+    <script src="https://unpkg.com/jsonlint@1.6.3"></script>
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <style>
+      #graphComponent {
+        background-color: #f7f7f7;
+      }
+
+      .editorText {
+        font-family: 'Consolas', 'Courier New', Courier, mono, serif;
+        font-size: 13px;
+      }
+
+      .heading-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #templateEditorContainer {
+        flex: 2;
+        min-height: 0;
+      }
+
+      #tagEditorContainer {
+        flex: 1;
+        min-height: 0;
+      }
+
+      .CodeMirror {
+        height: 100% !important;
+      }
+
+      .error {
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: bold;
+        vertical-align: baseline;
+        text-align: center;
+        height: 0;
+        box-sizing: border-box;
+        transition: all 0.2s ease-in-out;
+        margin-left: 1ex;
+      }
+
+      #template-text-area-error {
+        bottom: 250px;
+      }
+
+      #tag-text-area-error {
+        bottom: 15px;
+      }
+
+      .apply-button {
+        margin: 1ex 0 1ex 0;
+        padding: 5px 9px 5px 9px;
+        background-color: #1871bd;
+        color: #f7f7f7;
+        border: none;
+        cursor: pointer;
+      }
+
+      .apply-button:hover {
+        background-color: #328ad5;
+      }
+
+      .apply-button:disabled {
+        background-color: #a0a0a0;
+      }
+
+      .open-error {
+        height: 1.5em;
+        background-color: #f44336;
+        padding: 2px 4px;
+      }
+    </style>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Vue Template Node Style</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+      <div class="demo-separator"></div>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button id="reload" title="Reload" class="demo-icon-yIconReload"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
+        <h1>Vue Template Node Style Demo</h1>
+
+        <p>
+          This demo presents the Vue template node style that leverages the powerful data binding
+          and conditional rendering features of the
+          <a href="https://vuejs.org/" target="_blank">Vue framework</a>.
+        </p>
+        <p>
+          With this style, node visualizations are defined by SVG templates, similar to the template
+          styles that are included in the library. However, since the templates of this style can
+          use the powerful data binding of Vue, complex requirements are easier to realize.
+        </p>
+        <p>
+          The section
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles" target="_blank">
+            Using Vue Templates in Node Styles
+          </a>
+          in the Developer's Guide elaborates on how to create template strings and which properties
+          are available for data binding.
+        </p>
+
+        <h2>Things to Try</h2>
+
+        <p>
+          Change the template of one or more nodes. Bind colors or text to properties in the tag.
+          Then, apply the new template by pressing the button. Or modify the tag and see how the
+          style changes.
+        </p>
+
+        <h2>Related Documentation</h2>
+        <ul>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles" target="_blank">
+              Using Vue Templates in Node Styles
+            </a>
+          </li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles" target="_blank">Using SVG Templates in Styles</a>
+          </li>
+        </ul>
+
+        <h2>Related Demos</h2>
+        <ul>
+          <li><a href="../templatestyles/index.html">Template Styles Demo</a></li>
+          <li>
+            <a href="../string-template-node-style/index.html">String Template Node Style Demo</a>
+          </li>
+          <li>
+            <a href="../react-template-node-style/index.html">React JSX Component Style Demo</a>
+          </li>
+          <li>
+            <a href="../lit-template-node-style/index.html">Lit Template Node Style Demo</a>
+          </li>
+        </ul>
+
+        <h2>Additional Tools</h2>
+        <p>
+          Graphs containing template node style are compatible with
+          <a href="https://www.yworks.com/yed-live/" target="_blank">yEd Live</a>.
+        </p>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+
+      <aside
+        data-title="Template Editor"
+        class="demo-main__sidebar"
+        style="--sidebar-width: max(50%, min(100%, 450px))"
+      >
+        <div class="demo-sidebar__content">
+          <div class="heading-row">
+            <h2>Template String</h2>
+            <button
+              id="apply-template-button"
+              class="apply-button"
+              title="Applies the current Template to all selected nodes"
+            >
+              Apply Template
+            </button>
+          </div>
+          <div id="template-text-area-error" class="error">Could not compile template string!</div>
+          <div id="templateEditorContainer" class="editorText">
+            <textarea id="template-text-area" style="width: 100%; height: 100%"></textarea>
+          </div>
+
+          <div class="heading-row">
+            <h2>Tag Object</h2>
+            <button
+              id="apply-tag-button"
+              class="apply-button"
+              title="Applies the current Tag to all selected nodes"
+            >
+              Apply Tag
+            </button>
+          </div>
+          <div id="tag-text-area-error" class="error">Could not parse tag object!</div>
+          <div id="tagEditorContainer" class="editorText">
+            <textarea id="tag-text-area"></textarea>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="VueTemplateNodeStyleDemo.ts" async></script>
+  </body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Organic Substructures Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../showcase/layoutstyles/resources/styles.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <style>
+      #node-type-panel {
+        border: solid lightgray;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 6px;
+        position: relative;
+        display: inline-block;
+        user-select: none;
+        cursor: default;
+      }
+
+      #node-type-panel-heading {
+        font-size: 28px;
+        margin-bottom: 1ex;
+      }
+
+      .node-type-button {
+        cursor: pointer;
+        display: inline-block;
+        font-size: 24px;
+        height: 30px;
+        text-align: center;
+        vertical-align: middle;
+        width: 30px;
+      }
+
+      .current-type {
+        border: thick solid black;
+      }
+
+      .settings-headline {
+        background: #a0a0a0;
+        padding: 8px;
+      }
+
+      .settings-content {
+        background: #ffffff;
+        padding: 8px;
+      }
+
+      .settings-content select {
+        width: 100%;
+      }
+
+      .settings-grid {
+        display: grid;
+        align-items: center;
+      }
+      .settings-label {
+        grid-column: 1;
+      }
+      .settings-editor {
+        grid-column: 2;
+      }
+      input.settings-editor {
+        justify-self: end;
+      }
+      select.settings-editor {
+        width: 100%;
+      }
+
+      .settings-row1 {
+        grid-row: 1;
+      }
+      .settings-row2 {
+        grid-row: 2;
+      }
+      .settings-row3 {
+        grid-row: 3;
+      }
+      .settings-row4 {
+        grid-row: 4;
+      }
+      .settings-row5 {
+        grid-row: 5;
+      }
+      .settings-row6 {
+        grid-row: 6;
+      }
+      .settings-row7 {
+        grid-row: 7;
+      }
+
+      .settings-row2,
+      .settings-row3,
+      .settings-row4,
+      .settings-row5,
+      .settings-row6,
+      .settings-row7 {
+        margin-top: 8px;
+      }
+    </style>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Organic Substructures</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <!--
+The sidebar for the properties and settings
+-->
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Organic Substructures Demo</h1>
+
+        <p>
+          This demo showcases how the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a>
+          algorithm handles substructures and node types, see
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures" target="_blank">Layout of Regular Substructures</a>
+          for more information.
+        </p>
+        <p>
+          The organic layout algorithm is able to identify regular substructures in a graph, like,
+          e.g., chains, stars, cycles, trees, and parallel structures and arrange them in an
+          optimized manner depending on the kind of substructure and user preference. This makes
+          them easily recognizable in the resulting layout. Furthermore, specified node types may
+          influence both substructure detection and placement of elements within the structure.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Load an example graph with the combobox 'Sample'.</li>
+          <li>
+            In the 'Layout Settings' panel on the right, use the combobox of the specific
+            substructures to try out the different styles supported by each of them. Selecting value
+            'Ignore' means that the respective structure is ignored and not handle differently.
+          </li>
+          <li>
+            Use the checkbox 'Use Edge Grouping' to see how edge grouping changes the flavor of
+            parallel and separated radial star substructures.
+          </li>
+          <li>
+            Use the checkbox 'Consider Node Types' to see how considering node types changes
+            substructure detection and layout.
+          </li>
+          <li>
+            The simple example graphs also offer to change the node types (i.e. color) by clicking
+            on the nodes. In addition, most of the samples allow structural changes of the graph
+            (use the "Layout" button to calculate a new layout after modifying the graph structure).
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent">
+          <div id="node-type-panel" class="popupContent" tabindex="0">
+            <div id="node-type-panel-heading">Type</div>
+            <div class="node-type-button type-0"></div>
+            <div class="node-type-button type-1"></div>
+            <div class="node-type-button type-2"></div>
+            <div class="node-type-button type-3"></div>
+            <div class="node-type-button type-4"></div>
+            <div class="node-type-button type-5"></div>
+            <div class="node-type-button type-6"></div>
+            <div class="node-type-button type-7"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <div class="data-editor-header">
+            <h2 style="margin-top: 0">Sample Graph</h2>
+            <div class="content">
+              <select
+                id="sample-combo-box"
+                class="sidebar-select-box"
+                title="Select a sample for the layout algorithm"
+              ></select>
+            </div>
+          </div>
+
+          <div class="data-editor-header">
+            <h2 style="margin-top: 0">Substructure Layout</h2>
+            <div class="settings-grid">
+              <label for="cycleStyle" class="settings-label settings-row1">Cycles</label>
+              <select
+                class="settings-editor settings-row1"
+                title="Select a style for cycle substructures"
+                id="cycleStyle"
+              >
+                <option value="NONE">Ignore</option>
+                <option value="CIRCULAR">Circular</option>
+              </select>
+              <label for="chainStyle" class="settings-label settings-row2">Chains</label>
+              <select
+                class="settings-editor settings-row2"
+                title="Select a style for chain substructures"
+                id="chainStyle"
+              >
+                <option value="NONE">Ignore</option>
+                <option value="DISK">Disk</option>
+                <option value="RECTANGULAR">Rectangular</option>
+                <option value="STRAIGHT_LINE">Straight-Line</option>
+              </select>
+              <label for="starStyle" class="settings-label settings-row3">Star</label>
+              <select
+                class="settings-editor settings-row3"
+                title="Select a style for star substructures"
+                id="starStyle"
+              >
+                <option value="NONE">Ignore</option>
+                <option value="CIRCULAR">Circular</option>
+                <option value="RADIAL">Radial</option>
+                <option value="SEPARATED_RADIAL">Separated Radial</option>
+              </select>
+              <label for="parallelStyle" class="settings-label settings-row4">Parallel</label>
+              <select
+                class="settings-editor settings-row4"
+                title="Select a style for parallel substructures"
+                id="parallelStyle"
+              >
+                <option value="NONE">Ignore</option>
+                <option value="RADIAL">Radial</option>
+                <option value="RECTANGULAR">Rectangular</option>
+                <option value="STRAIGHT_LINE">Straight-Line</option>
+              </select>
+              <label for="treeStyle" class="settings-label settings-row5">Tree</label>
+              <select
+                class="settings-editor settings-row5"
+                title="Select a style for tree substructures"
+                id="treeStyle"
+              >
+                <option value="NONE">Ignore</option>
+                <option value="BALLOON">Balloon</option>
+                <option value="ORIENTED">Oriented</option>
+                <option value="RADIAL">Radial</option>
+              </select>
+              <label for="groupScope" class="settings-label settings-row6">Groups</label>
+              <select
+                class="settings-editor settings-row6"
+                title="Select a scope for group substructures"
+                id="groupScope"
+              >
+                <option value="NO_GROUPS">Ignore</option>
+                <option value="ALL">All Groups</option>
+                <option value="WITHOUT_EDGES">Groups without edges</option>
+                <option value="WITHOUT_INTER_EDGES">Groups without inter-edges</option>
+              </select>
+              <label for="use-edge-grouping" class="settings-label settings-row7">
+                Use Edge Grouping
+              </label>
+              <input class="settings-editor settings-row7" id="use-edge-grouping" type="checkbox" />
+            </div>
+          </div>
+
+          <div class="data-editor-header">
+            <h2 style="margin-top: 0">Node Types</h2>
+            <div class="settings-grid">
+              <label for="consider-node-types" class="settings-label settings-row1">
+                Consider Node Types
+              </label>
+              <input
+                class="settings-editor settings-row1"
+                id="consider-node-types"
+                type="checkbox"
+                checked=""
+              />
+              <label for="separate-parallel" class="settings-label settings-row2">
+                Separate Parallel Structures by Type
+              </label>
+              <input class="settings-editor settings-row2" id="separate-parallel" type="checkbox" />
+              <label for="separate-star" class="settings-label settings-row3">
+                Separate Star Structures by Type
+              </label>
+              <input class="settings-editor settings-row3" id="separate-star" type="checkbox" />
+            </div>
+          </div>
+
+          <div id="data-editor-button-container" class="demo-form-block">
+            <button
+              id="apply-layout-button"
+              class="flat-button"
+              title="Apply the Layout
+(CTRL + Enter)"
+            >
+              <span>Apply Layout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="OrganicSubstructuresDemo.ts" async></script>
+  </body>
+</html>

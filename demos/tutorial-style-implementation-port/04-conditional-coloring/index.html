@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>
+      04 Conditional Port Coloring - Port Style Implementation Tutorial [yFiles for HTML]
+    </title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-port-style-implementation">
+          Port Style Implementation Tutorial
+        </a>
+
+        <span>04 Conditional Port Coloring</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-port/03-render-performance/index.html'><span>03 Render Performance</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 4/6</b
+        ><span class="demo-toolbar__tutorial-step-title">
+          &mdash; 04 Conditional Port Coloring</span
+        >
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-port/01-render-port-shape/index.html"
+            class="tutorial-dropdown__item"
+            >01 Rendering the Port</a
+          ><a
+            href="../../tutorial-style-implementation-port/02-port-size/index.html"
+            class="tutorial-dropdown__item"
+            >02 Port Size</a
+          ><a
+            href="../../tutorial-style-implementation-port/03-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >03 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-port/04-conditional-coloring/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >04 Conditional Port Coloring</a
+          ><a
+            href="../../tutorial-style-implementation-port/05-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >05 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-port/06-edge-cropping/index.html"
+            class="tutorial-dropdown__item"
+            >06 Edge Cropping</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-port/05-hit-testing/index.html'><span>05 Hit-Testing</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Conditional port coloring</h1>
+          <div class="paragraph">
+            <p>
+              In this example, we will fill the port shape with a color that is determined by the
+              number of connected edges. Ports with no connections will be filled green, ports with
+              10 or more connections will be filled red. Values between 0 and 10 will result in the
+              hue blended between green and red. Alternatively, the color from the port&#8217;s tag
+              is used, if defined.
+            </p>
+          </div>
+          <div class="paragraph">
+            <p>
+              We introduce two methods that get the port color from the tag, or calculate the hue
+              based on the port&#8217;s degree. For this purpose, we get the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">graph</a> from the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/IRenderContext" target="_blank">render context</a>.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">private</span> <span class="hljs-title function_">getColor</span>(<span class="hljs-attr">graph</span>: <span class="hljs-title class_">IGraph</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-built_in">string</span> {
+  <span class="hljs-keyword">return</span> port.<span class="hljs-property">tag</span>?.<span class="hljs-property">color</span> ?? <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">calculateColorByDegree</span>(graph, port)
+}</code></pre>
+            </div>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">private</span> <span class="hljs-title function_">calculateColorByDegree</span>(<span class="hljs-attr">graph</span>: <span class="hljs-title class_">IGraph</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-built_in">string</span> {
+  <span class="hljs-comment">// get the number of edges connected to the port</span>
+  <span class="hljs-keyword">const</span> portDegree = graph.<span class="hljs-title function_">degree</span>(port)
+  <span class="hljs-keyword">const</span> ratio = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">min</span>(portDegree / <span class="hljs-number">10</span>, <span class="hljs-number">1</span>)
+  <span class="hljs-keyword">const</span> hue = (<span class="hljs-number">1</span> - ratio) * <span class="hljs-number">100</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-string">`hsl(<span class="hljs-subst">${hue}</span>deg 100% 50%)`</span>
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>Now, we can assign the color to the ellipse element in <code>createVisual</code>.</p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> color = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getColor</span>(graph, port)
+ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;fill&#x27;</span>, color)</code></pre>
+            </div>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  Remove or create edges to observe how the color of the port changes dynamically.
+                  The nodes in the corners have the color defined in the tag and therefore do not
+                  change dynamically.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="paragraph">
+            <p>
+              The color also has to be considered in <code>updateVisual</code>. We add the color in
+              the cache and update the <code>fill</code> property if the color has changed.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// get the graph from the render context</span>
+<span class="hljs-keyword">const</span> graph = (context.<span class="hljs-property">canvasComponent</span> <span class="hljs-keyword">as</span> <span class="hljs-title class_">GraphComponent</span>).<span class="hljs-property">graph</span>
+<span class="hljs-keyword">const</span> color = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getColor</span>(graph, port)
+<span class="hljs-keyword">if</span> (cache.<span class="hljs-property">color</span> !== color) {
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;fill&#x27;</span>, color)
+  cache.<span class="hljs-property">color</span> = color
+}</code></pre>
+            </div>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  You can also use business data that&#8217;s stored in the port&#8217;s
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IPort#ITagOwner-property-tag" target="_blank">tag</a> for conditional styling. This
+                  way, a single style instance that&#8217;s shared between all ports can produce
+                  varying visualizations.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-port/05-hit-testing/index.html'><span>05 Hit-Testing</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeStyle,
-  ICommand,
   IGraph,
   IHitTestable,
   IHitTester,
@@ -53,15 +52,21 @@ import {
   Size
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, colorSets, createDemoEdgeStyle } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, colorSets, createDemoEdgeStyle } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
 
 /** @type {MoveInputMode} */
 let moveUnselectedInputMode
+
+const moveModeSelect = document.querySelector('#move-modes')
+const moveEnabledButton = document.querySelector('#toggle-move-enabled')
+const moveEnabledLabel = document.querySelector('label[for="toggle-move-enabled"]')
+const edgeCreationModeSelect = document.querySelector('#edge-creation-modes')
+const classicModeButton = document.querySelector('#toggle-classic-mode')
 
 /**
  * @returns {!Promise}
@@ -73,14 +78,11 @@ async function run() {
 
   initializeInputModes()
 
-  registerCommands()
+  initializeUI()
 
   // pre-select the 'Drag at Top' mode
-  const moveModeSelect = document.querySelector("select[data-command='moveModeChanged']")
   moveModeSelect.value = 'Drag at Top'
   onMoveModeChanged()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -140,25 +142,22 @@ function initializeInputModes() {
 
 /**
  * Called when the mode combo box has changed:
- * if necessary it changes the hit testable for the move input mode
+ * if necessary, it changes the hit testable for the move input mode
  */
 function onMoveModeChanged() {
-  const moveModeSelect = document.getElementById('moveModeComboBox')
   const selectedIndex = moveModeSelect.selectedIndex
   if (selectedIndex === 2) {
-    // mode 2 (only top region): set a custom hit testable which detects hits only at the top of
+    // mode 2 (only top region): set a custom hit-testable which detects hits only at the top of
     // the nodes
     moveUnselectedInputMode.hitTestable = new TopInsetsHitTestable(
       moveUnselectedInputMode.hitTestable,
       graphComponent.inputMode
     )
   } else if (moveUnselectedInputMode.hitTestable instanceof TopInsetsHitTestable) {
-    // all other modes: if a TopInsetsHitTestable is the current hit testable, restore the original
+    // all other modes: if a TopInsetsHitTestable is the current hit-testable, restore the original
     // hit testable
     moveUnselectedInputMode.hitTestable = moveUnselectedInputMode.hitTestable.original
   }
-  const moveEnabledButton = document.getElementById('toggleMoveEnabled')
-  const moveEnabledLabel = document.querySelector('label[for="toggleMoveEnabled"]')
   const showMoveEnabledButton = selectedIndex === 3
   moveEnabledButton.style.display = showMoveEnabledButton ? 'inline-block' : 'none'
   moveEnabledLabel.style.display = showMoveEnabledButton ? 'inline-block' : 'none'
@@ -169,7 +168,6 @@ function onMoveModeChanged() {
  * Adjusts the edge creation behavior.
  */
 function onEdgeCreationModeChanged() {
-  const edgeCreationModeSelect = document.getElementById('edgeCreationModeComboBox')
   const selectedIndex = edgeCreationModeSelect.selectedIndex
   const geim = graphComponent.inputMode
   if (selectedIndex === 0) {
@@ -195,7 +193,6 @@ function onEdgeCreationModeChanged() {
  */
 function isRecognized(source, args) {
   // return the value according to the Mode combo box
-  const moveModeSelect = document.getElementById('moveModeComboBox')
   switch (moveModeSelect.selectedIndex) {
     case 0: // always
     case 2: // on top (this is handled by custom IHitTestable)
@@ -204,7 +201,7 @@ function isRecognized(source, args) {
     case 1: // shift is not pressed
       return !KeyEventRecognizers.SHIFT_IS_DOWN(source, args)
     case 3: // if enabled
-      return document.getElementById('toggleMoveEnabled').checked
+      return moveEnabledButton.checked
     default:
       return false
   }
@@ -213,15 +210,11 @@ function isRecognized(source, args) {
 /**
  * Wires up the UI.
  */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindChangeListener("select[data-command='moveModeChanged']", onMoveModeChanged)
-  bindChangeListener("select[data-command='edgeCreationModeChanged']", onEdgeCreationModeChanged)
+function initializeUI() {
+  moveModeSelect.addEventListener('change', onMoveModeChanged)
+  edgeCreationModeSelect.addEventListener('change', onEdgeCreationModeChanged)
 
-  bindAction("input[data-command='ToggleClassicMode']", () => {
+  classicModeButton.addEventListener('click', () => {
     const mode = graphComponent.inputMode.moveInputMode
     mode.enabled = !mode.enabled
   })
@@ -230,7 +223,7 @@ function registerCommands() {
 /**
  * An IHitTestable implementation which detects hits only on top insets of a node.
  *
- * This instance keeps a reference to the original hit testable
+ * This instance keeps a reference to the original hit testable,
  * so the original behavior can be restored conveniently.
  */
 class TopInsetsHitTestable extends BaseClass(IHitTestable) {
@@ -242,9 +235,13 @@ class TopInsetsHitTestable extends BaseClass(IHitTestable) {
   constructor(original, inputMode) {
     super()
     this.inputMode = inputMode
-    // Gets the original hit testable.
     this.original = original
   }
+
+  /**
+   * Gets the original hit testable.
+   */
+  original
 
   /**
    * Test whether the given location is a valid hit.
@@ -285,5 +282,4 @@ class TopInsetsHitTestable extends BaseClass(IHitTestable) {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

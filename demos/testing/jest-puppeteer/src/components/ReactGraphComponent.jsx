@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,6 +37,7 @@ import {
   ICommand,
   License,
   PolylineEdgeStyle,
+  ScrollBarVisibility,
   ShapeNodeStyle,
   Size
 } from 'yfiles'
@@ -52,6 +53,8 @@ export default class ReactGraphComponent extends Component {
 
     // Initialize the GraphComponent
     this.graphComponent = new GraphComponent()
+    this.graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
+    this.graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
     this.graphComponent.inputMode = new GraphEditorInputMode()
     this.initializeDefaultStyles()
   }
@@ -88,8 +91,8 @@ export default class ReactGraphComponent extends Component {
 
   render() {
     return (
-      <div>
-        <div className="toolbar">
+      <div className="demo-main">
+        <div className="demo-main__toolbar">
           <DemoToolbar
             resetData={this.props.onResetData}
             zoomIn={() => ICommand.INCREASE_ZOOM.execute(null, this.graphComponent)}
@@ -99,7 +102,7 @@ export default class ReactGraphComponent extends Component {
           />
         </div>
         <div
-          className="graph-component-container"
+          className="demo-main__graph-component"
           ref={node => {
             this.div = node
           }}

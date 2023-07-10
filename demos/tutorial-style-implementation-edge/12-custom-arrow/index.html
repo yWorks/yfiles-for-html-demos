@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>12 Custom Arrow - Edge Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-edge-style-implementation">
+          Edge Style Implementation Tutorial
+        </a>
+
+        <span>12 Custom Arrow</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-edge/11-adding-arrows/index.html'><span>11 Adding Arrows</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 12/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 12 Custom Arrow</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-edge/01-create-a-polyline/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create a Polyline</a
+          ><a
+            href="../../tutorial-style-implementation-edge/02-crop-the-polyline/index.html"
+            class="tutorial-dropdown__item"
+            >02 Crop the Polyline</a
+          ><a
+            href="../../tutorial-style-implementation-edge/03-create-parallel-polylines/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Parallel Polylines</a
+          ><a
+            href="../../tutorial-style-implementation-edge/04-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >04 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-edge/05-making-the-style-configurable/index.html"
+            class="tutorial-dropdown__item"
+            >05 Making the Style Configurable</a
+          ><a
+            href="../../tutorial-style-implementation-edge/06-data-from-tag/index.html"
+            class="tutorial-dropdown__item"
+            >06 Data from Tag</a
+          ><a
+            href="../../tutorial-style-implementation-edge/07-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >07 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-edge/08-visibility/index.html"
+            class="tutorial-dropdown__item"
+            >08 Item Visibility</a
+          ><a
+            href="../../tutorial-style-implementation-edge/09-bounds/index.html"
+            class="tutorial-dropdown__item"
+            >09 Render Boundaries</a
+          ><a
+            href="../../tutorial-style-implementation-edge/10-bridge-support/index.html"
+            class="tutorial-dropdown__item"
+            >10 Bridge Support</a
+          ><a
+            href="../../tutorial-style-implementation-edge/11-adding-arrows/index.html"
+            class="tutorial-dropdown__item"
+            >11 Adding Arrows</a
+          ><a
+            href="../../tutorial-style-implementation-edge/12-custom-arrow/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >12 Custom Arrow</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Custom arrow visualization</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  This step shows how to implement a visualization of a custom arrow that fits the
+                  "parallel line" edge style.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Custom arrow implementations are based on the <a href="https://docs.yworks.com/yfileshtml/#/api/IArrow" target="_blank">IArrow</a> interface.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IArrow" target="_blank">IArrow</a> defines the two methods <code>getVisualCreator</code> and
+                  <code>getBoundsProvider</code>, which return the implementations that create the
+                  visualization and specify the bounds of the arrow. In this sample, we implement
+                  all three interfaces in a single class.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_implementing_iarrow">Implementing IArrow</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In the <code>getVisualCreator</code> method, we store the anchor and direction of
+                  the arrow. Then, we simply return <code>this</code>, since out class itself will
+                  implement the `IVisualCreator`interface.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">getVisualCreator</span>(
+  <span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>,
+  <span class="hljs-attr">atSource</span>: <span class="hljs-built_in">boolean</span>,
+  <span class="hljs-attr">anchor</span>: <span class="hljs-title class_">Point</span>,
+  <span class="hljs-attr">direction</span>: <span class="hljs-title class_">Point</span>
+): <span class="hljs-title class_">IVisualCreator</span> {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">anchor</span> = anchor
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">direction</span> = direction
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In the <code>getBoundsProvider</code> method, we do the same before we return
+                  <code>this</code>.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">getBoundsProvider</span>(
+  <span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>,
+  <span class="hljs-attr">atSource</span>: <span class="hljs-built_in">boolean</span>,
+  <span class="hljs-attr">anchor</span>: <span class="hljs-title class_">Point</span>,
+  <span class="hljs-attr">direction</span>: <span class="hljs-title class_">Point</span>
+): <span class="hljs-title class_">IBoundsProvider</span> {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">anchor</span> = anchor
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">direction</span> = direction
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In the last tutorial step, we used the methods <code>addArrows</code> and
+                  <code>updateArrows</code> to add the arrow visualizations to the edge
+                  visualization. These methods need the length of the arrow to shorten the edge path
+                  accordingly and the crop length to position the arrow exactly at the node. To
+                  achieve this, we implement the according properties in the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IArrow" target="_blank">IArrow</a> interface.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">get</span> <span class="hljs-title function_">length</span>(): <span class="hljs-built_in">number</span> {
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span> * <span class="hljs-number">2</span>
+}
+
+<span class="hljs-keyword">get</span> <span class="hljs-title function_">cropLength</span>(): <span class="hljs-built_in">number</span> {
+  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_implementing_ivisualcreator">Implementing IVisualCreator</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In order to create an arrow visualization, we have to implement the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IVisualCreator" target="_blank">IVisualCreator</a> interface.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  We create the visualization for the arrow in <code>createVisual</code>. If it is
+                  called for the first time, we generate a path for the arrowhead. This path must
+                  point from the right side to the origin (0/0).
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">createArrowPath</span>(<span class="hljs-attr">dist</span>: <span class="hljs-built_in">number</span>): <span class="hljs-title class_">GeneralPath</span> {
+  <span class="hljs-keyword">const</span> path = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GeneralPath</span>()
+  path.<span class="hljs-title function_">moveTo</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(dist * <span class="hljs-number">2</span> + <span class="hljs-number">1</span>, dist * <span class="hljs-number">0.5</span>))
+  path.<span class="hljs-title function_">lineTo</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(dist * <span class="hljs-number">2</span> + <span class="hljs-number">1</span>, dist + <span class="hljs-number">1</span>))
+  path.<span class="hljs-title function_">lineTo</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>))
+  path.<span class="hljs-title function_">lineTo</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(dist * <span class="hljs-number">2</span> + <span class="hljs-number">1</span>, -dist - <span class="hljs-number">1</span>))
+  path.<span class="hljs-title function_">lineTo</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(dist * <span class="hljs-number">2</span> + <span class="hljs-number">1</span>, -dist * <span class="hljs-number">0.5</span>))
+  <span class="hljs-keyword">return</span> path
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Using the anchor and direction, we place the arrow at the correct position with
+                  the appropriate orientation.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>): <span class="hljs-title class_">SvgVisual</span> {
+  <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">arrowPath</span> === <span class="hljs-literal">null</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">arrowPath</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">createArrowPath</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span>)
+  }
+
+  <span class="hljs-keyword">const</span> path = <span class="hljs-variable language_">this</span>.<span class="hljs-property">arrowPath</span>.<span class="hljs-title function_">createSvgPath</span>()
+  path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;fill&#x27;</span>, <span class="hljs-string">&#x27;white&#x27;</span>)
+  path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;stroke&#x27;</span>, <span class="hljs-string">&#x27;black&#x27;</span>)
+  path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;stroke-width&#x27;</span>, <span class="hljs-string">&#x27;1&#x27;</span>)
+  path.<span class="hljs-title function_">setAttribute</span>(
+    <span class="hljs-string">&#x27;transform&#x27;</span>,
+    <span class="hljs-string">`matrix(
+      <span class="hljs-subst">${-<span class="hljs-variable language_">this</span>.direction.x}</span>
+      <span class="hljs-subst">${-<span class="hljs-variable language_">this</span>.direction.y}</span>
+      <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.direction.y}</span>
+      <span class="hljs-subst">${-<span class="hljs-variable language_">this</span>.direction.x}</span>
+      <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.anchor.x}</span>
+      <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.anchor.y}</span>
+    )`</span>
+  )
+
+  <span class="hljs-keyword">const</span> <span class="hljs-attr">svgVisual</span>: <span class="hljs-title class_">Cache</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SvgVisual</span>(path)
+  svgVisual.<span class="hljs-property">cache</span> = {
+    <span class="hljs-attr">distance</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span>
+  }
+  <span class="hljs-keyword">return</span> svgVisual
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  We update the visualization in <code>updateVisual</code> by applying the current
+                  anchor, direction and distance, if modified.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">updateVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">oldVisual</span>: <span class="hljs-title class_">Visual</span>): <span class="hljs-title class_">SvgVisual</span> {
+  <span class="hljs-keyword">const</span> svgVisual = oldVisual <span class="hljs-keyword">as</span> <span class="hljs-title class_">SvgVisual</span> &amp; <span class="hljs-title class_">Cache</span>
+  <span class="hljs-keyword">const</span> cache = svgVisual.<span class="hljs-property">cache</span>!
+  <span class="hljs-keyword">const</span> path = svgVisual.<span class="hljs-property">svgElement</span> <span class="hljs-keyword">as</span> <span class="hljs-title class_">SVGPathElement</span>
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span> !== cache.<span class="hljs-property">distance</span>) {
+    <span class="hljs-keyword">const</span> arrowPath = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">createArrowPath</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span>)
+    path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;d&#x27;</span>, arrowPath.<span class="hljs-title function_">createSvgPathData</span>())
+    cache.<span class="hljs-property">distance</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span>
+  }
+
+  path.<span class="hljs-title function_">setAttribute</span>(
+    <span class="hljs-string">&#x27;transform&#x27;</span>,
+    <span class="hljs-string">`matrix(
+      <span class="hljs-subst">${-<span class="hljs-variable language_">this</span>.direction.x}</span>
+      <span class="hljs-subst">${-<span class="hljs-variable language_">this</span>.direction.y}</span>
+      <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.direction.y}</span>
+      <span class="hljs-subst">${-<span class="hljs-variable language_">this</span>.direction.x}</span>
+      <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.anchor.x}</span>
+      <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.anchor.y}</span>
+    )`</span>
+  )
+  <span class="hljs-keyword">return</span> svgVisual
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_implementing_iboundsprovider">Implementing IBoundsProvider</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In order to calculate the arrow bounds, we have to implement the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IBoundsProvider" target="_blank">IBoundsProvider</a> interface.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      The edge style can consider the arrow bounds in its own bounds calculation.
+                      You could adjust the <code>getBounds</code> method of the edge style
+                      accordingly. However, this is outside the scope of this tutorial.
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In <code>getBounds</code> we use the stored values to calculate the arrow&#8217;s
+                  bounds.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">getBounds</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">ICanvasContext</span>): <span class="hljs-title class_">Rect</span> {
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">createArrowPath</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span>)
+    .<span class="hljs-title function_">getBounds</span>()
+    .<span class="hljs-title function_">getTransformed</span>(
+      <span class="hljs-keyword">new</span> <span class="hljs-title class_">Matrix</span>(
+        -<span class="hljs-variable language_">this</span>.<span class="hljs-property">direction</span>.<span class="hljs-property">x</span>,
+        -<span class="hljs-variable language_">this</span>.<span class="hljs-property">direction</span>.<span class="hljs-property">y</span>,
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">direction</span>.<span class="hljs-property">y</span>,
+        -<span class="hljs-variable language_">this</span>.<span class="hljs-property">direction</span>.<span class="hljs-property">x</span>,
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">anchor</span>.<span class="hljs-property">x</span>,
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">anchor</span>.<span class="hljs-property">y</span>
+      )
+    )
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

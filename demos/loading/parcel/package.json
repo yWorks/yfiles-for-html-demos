@@ -5,18 +5,20 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "build": "parcel build",
+    "build": "parcel build --public-url ./",
     "start": "parcel serve"
   },
   "source": "index.html",
   "alias": {
-    "license": "../../../lib/license.json",
-    "./ylogo.svg": "../../resources/icons/ylogo.svg",
-    "./demo.css": "../../resources/style/demo.css"
+    "license": "../../../lib/license.json"
+  },
+  "dependencies": {
+    "demo-resources": "../../resources",
+    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
   },
   "devDependencies": {
-    "typescript": "4.7.4",
-    "parcel": "^2.8.0",
-    "@parcel/transformer-typescript-tsc": "^2.7.0"
+    "typescript": "~5.1.6",
+    "parcel": "^2.9.2",
+    "@parcel/transformer-typescript-tsc": "^2.9.2"
   }
 }

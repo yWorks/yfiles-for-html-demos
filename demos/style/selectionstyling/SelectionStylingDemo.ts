@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,38 +29,40 @@
 import {
   DefaultLabelStyle,
   EdgePathLabelModel,
-  EdgeStyleDecorationInstaller,
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
+  GraphFocusIndicatorManager,
   GraphItemTypes,
-  ICommand,
-  LabelStyleDecorationInstaller,
+  GraphSelectionIndicatorManager,
+  IndicatorEdgeStyleDecorator,
+  IndicatorLabelStyleDecorator,
+  IndicatorNodeStyleDecorator,
   License,
-  NodeStyleDecorationInstaller,
   Point,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeStyle,
   Size,
-  StyleDecorationZoomPolicy
+  StyleDecorationZoomPolicy,
+  VoidNodeStyle
 } from 'yfiles'
 
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
 import {
   applyDemoTheme,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
-let nodeDecorationInstaller: NodeStyleDecorationInstaller
+let selectionNodeStyle: IndicatorNodeStyleDecorator
 
-let edgeDecorationInstaller: EdgeStyleDecorationInstaller
+let selectionEdgeStyle: IndicatorEdgeStyleDecorator
 
-let labelDecorationInstaller: LabelStyleDecorationInstaller
+let selectionLabelStyle: IndicatorLabelStyleDecorator
 
 let zoomModeComboBox: HTMLSelectElement
 
@@ -87,9 +89,7 @@ async function run(): Promise<void> {
   // initializes the zoom mode decoration
   updateZoomModeDecoration()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -98,7 +98,7 @@ async function run(): Promise<void> {
 function init(): void {
   graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
-  zoomModeComboBox = document.getElementById('zoomModeComboBox') as HTMLSelectElement
+  zoomModeComboBox = document.querySelector<HTMLSelectElement>('#zoom-mode')!
 
   // initialize the helper UI
   const items = ['Mixed', 'Zoom with Graph', 'Always the same size']
@@ -169,52 +169,47 @@ function initializeGraph(): void {
  */
 function initializeDecoration(): void {
   // for nodes...
-  nodeDecorationInstaller = new NodeStyleDecorationInstaller({
+  selectionNodeStyle = new IndicatorNodeStyleDecorator({
     // we choose a shape node style
-    nodeStyle: new ShapeNodeStyle({
+    wrapped: new ShapeNodeStyle({
       shape: 'round-rectangle',
       stroke: '#01BAFF',
       fill: 'transparent'
     }),
     // with a margin for the decoration
-    margins: 8
+    padding: 8
   })
 
   // for edges..
   // just a thick polyline edge style
-  edgeDecorationInstaller = new EdgeStyleDecorationInstaller({
-    edgeStyle: new PolylineEdgeStyle({
+  selectionEdgeStyle = new IndicatorEdgeStyleDecorator({
+    wrapped: new PolylineEdgeStyle({
       stroke: '3px #01BAFF'
     })
   })
 
   // ... and for labels
-  labelDecorationInstaller = new LabelStyleDecorationInstaller({
+  selectionLabelStyle = new IndicatorLabelStyleDecorator({
     // we use a node style with a rounded rectangle adapted as a label style, and we declare a margin for the
     // decoration
-    labelStyle: new DefaultLabelStyle({
+    wrapped: new DefaultLabelStyle({
       shape: 'rectangle',
       backgroundStroke: '#01BAFF',
       textFill: 'transparent'
     }),
-    margins: 5
+    padding: 5
   })
 
-  // now register our implementations
-  // but make it conditional depending on the state of the buttons
-  const decorator = graphComponent.graph.decorator
-
-  const nodeSelection = decorator.nodeDecorator.selectionDecorator
-  nodeSelection.setImplementation(() => nodesSelected, nodeDecorationInstaller)
-
-  const edgeSelection = decorator.edgeDecorator.selectionDecorator
-  edgeSelection.setImplementation(() => edgesSelected, edgeDecorationInstaller)
-
-  const labelSelection = decorator.labelDecorator.selectionDecorator
-  labelSelection.setImplementation(() => labelsSelected, labelDecorationInstaller)
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    nodeStyle: selectionNodeStyle,
+    edgeStyle: selectionEdgeStyle,
+    labelStyle: selectionLabelStyle
+  })
 
   // hide focus indication
-  decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
+  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
+    nodeStyle: VoidNodeStyle.INSTANCE
+  })
 }
 
 /**
@@ -229,9 +224,9 @@ function updateZoomModeDecoration(): void {
   ]
   const selectedZoomMode = zoomModes[zoomModeComboBox.selectedIndex]
 
-  nodeDecorationInstaller.zoomPolicy = selectedZoomMode
-  edgeDecorationInstaller.zoomPolicy = selectedZoomMode
-  labelDecorationInstaller.zoomPolicy = selectedZoomMode
+  selectionNodeStyle.zoomPolicy = selectedZoomMode
+  selectionEdgeStyle.zoomPolicy = selectedZoomMode
+  selectionLabelStyle.zoomPolicy = selectedZoomMode
 }
 
 function selectAllNodes(): void {
@@ -258,30 +253,33 @@ function selectAllLabels(): void {
 /**
  * Wires up the UI.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
+function initializeUI(): void {
+  document
+    .querySelector<HTMLInputElement>('#node-button')!
+    .addEventListener('change', evt =>
+      customNodeDecorationChanged((evt.target as HTMLInputElement).checked)
+    )
+  document
+    .querySelector<HTMLInputElement>('#edge-button')!
+    .addEventListener('change', evt =>
+      customEdgeDecorationChanged((evt.target as HTMLInputElement).checked)
+    )
+  document
+    .querySelector<HTMLInputElement>('#label-button')!
+    .addEventListener('change', evt =>
+      customLabelDecorationChanged((evt.target as HTMLInputElement).checked)
+    )
 
-  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
-  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
-
-  bindChangeListener("input[data-command='UpdateNodeDecorationCommand']", checked =>
-    customNodeDecorationChanged(checked as boolean)
-  )
-  bindChangeListener("input[data-command='UpdateEdgeDecorationCommand']", checked =>
-    customEdgeDecorationChanged(checked as boolean)
-  )
-  bindChangeListener("input[data-command='UpdateLabelDecorationCommand']", checked =>
-    customLabelDecorationChanged(checked as boolean)
-  )
-
-  bindChangeListener("select[data-command='ZoomMode']", zoomModeChanged)
+  document
+    .querySelector<HTMLSelectElement>('#zoom-mode')!
+    .addEventListener('change', zoomModeChanged)
 }
 
 function customNodeDecorationChanged(value: boolean) {
   nodesSelected = value
+  const selectionIndicatorManager =
+    graphComponent.selectionIndicatorManager as GraphSelectionIndicatorManager
+  selectionIndicatorManager.nodeStyle = value ? selectionNodeStyle : null
   // de-select and re-select all nodes to refresh the selection visualization
   graphComponent.selection.selectedNodes.clear()
   selectAllNodes()
@@ -289,6 +287,9 @@ function customNodeDecorationChanged(value: boolean) {
 
 function customEdgeDecorationChanged(value: boolean) {
   edgesSelected = value
+  const selectionIndicatorManager =
+    graphComponent.selectionIndicatorManager as GraphSelectionIndicatorManager
+  selectionIndicatorManager.edgeStyle = value ? selectionEdgeStyle : null
   // de-select and re-select all edges to refresh the selection visualization
   graphComponent.selection.selectedEdges.clear()
   selectAllEdges()
@@ -296,6 +297,9 @@ function customEdgeDecorationChanged(value: boolean) {
 
 function customLabelDecorationChanged(value: boolean) {
   labelsSelected = value
+  const selectionIndicatorManager =
+    graphComponent.selectionIndicatorManager as GraphSelectionIndicatorManager
+  selectionIndicatorManager.labelStyle = value ? selectionLabelStyle : null
   // de-select and re-select all labels to refresh the selection visualization
   graphComponent.selection.selectedLabels.clear()
   selectAllLabels()
@@ -306,5 +310,4 @@ function zoomModeChanged() {
   graphComponent.invalidate()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

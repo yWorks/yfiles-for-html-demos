@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,6 +55,22 @@ import {
  * two layout calculations.
  */
 export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator, IAnimation) {
+  rows = []
+  rowStarts = []
+  rowEnds = []
+  columns = []
+  columnColors = []
+  columnStarts = []
+  columnEnds = []
+  /**
+   * The partition grid to be visualized.
+   */
+  grid = null
+  /**
+   * The selected cell indices.
+   */
+  selectedCellId = null
+
   /**
    * Creates a new instance of PartitionGridVisualCreator.
    * @param {number} rowCount The number of columns of the grid
@@ -64,20 +80,6 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
     super()
     this.columnCount = columnCount
     this.rowCount = rowCount
-    this.rows = []
-    this.rowStarts = []
-    this.rowEnds = []
-    this.columns = []
-    this.columnColors = []
-    this.columnStarts = []
-    this.columnEnds = []
-
-    // The partition grid to be visualized.
-    this.grid = null
-
-    // The selected cell indices.
-    this.selectedCellId = null
-
     this.rowCount = rowCount
     this.columnCount = columnCount
     for (let i = 0; i < rowCount; i++) {

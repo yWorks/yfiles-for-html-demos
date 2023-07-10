@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,9 +40,9 @@ import {
 } from 'yfiles'
 
 import CustomEditLabelHelper from './CustomEditLabelHelper.js'
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The default pattern for label validation.
@@ -94,9 +94,7 @@ async function run() {
 
   createSampleGraph()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -212,26 +210,30 @@ function handleInstantTyping(sender, args) {
 /**
  * Wires up the UI.
  */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+function initializeUI() {
+  const labelCreation = document.querySelector('#labelCreation')
+  labelCreation.addEventListener('change', evt => {
+    graphEditorInputMode.allowAddLabel = labelCreation.checked
+  })
+  const labelEditing = document.querySelector('#labelEditing')
+  labelEditing.addEventListener('change', evt => {
+    graphEditorInputMode.allowEditLabel = labelEditing.checked
+  })
+  const hideLabel = document.querySelector('#hideLabel')
+  hideLabel.addEventListener('change', evt => {
+    graphEditorInputMode.hideLabelDuringEditing = hideLabel.checked
+  })
+  const instantTyping = document.querySelector('#instantTyping')
+  instantTyping.addEventListener('change', evt => (instantTypingEnabled = instantTyping.checked))
+  const customLabelHelper = document.querySelector('#customLabelHelper')
+  customLabelHelper.addEventListener(
+    'change',
+    evt => (customHelperEnabled = customLabelHelper.checked)
+  )
 
-  bindChangeListener('#labelCreation', checked => {
-    graphEditorInputMode.allowAddLabel = checked
-  })
-  bindChangeListener('#labelEditing', checked => {
-    graphEditorInputMode.allowEditLabel = checked
-  })
-  bindChangeListener('#hideLabel', checked => {
-    graphEditorInputMode.hideLabelDuringEditing = checked
-  })
-  bindChangeListener('#instantTyping', checked => (instantTypingEnabled = checked))
-  bindChangeListener('#customLabelHelper', checked => (customHelperEnabled = checked))
-
-  bindChangeListener('#nodesEnabled', val => {
-    if (val) {
+  const nodesEnabled = document.querySelector('#nodesEnabled')
+  nodesEnabled.addEventListener('change', evt => {
+    if (nodesEnabled.checked) {
       graphEditorInputMode.labelEditableItems =
         graphEditorInputMode.labelEditableItems | GraphItemTypes.NODE | GraphItemTypes.NODE_LABEL
     } else {
@@ -239,8 +241,9 @@ function registerCommands() {
         graphEditorInputMode.labelEditableItems & ~(GraphItemTypes.NODE | GraphItemTypes.NODE_LABEL)
     }
   })
-  bindChangeListener('#edgesEnabled', val => {
-    if (val) {
+  const edgesEnabled = document.querySelector('#edgesEnabled')
+  edgesEnabled.addEventListener('change', evt => {
+    if (edgesEnabled.checked) {
       graphEditorInputMode.labelEditableItems =
         graphEditorInputMode.labelEditableItems | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
     } else {
@@ -249,13 +252,16 @@ function registerCommands() {
     }
   })
 
-  bindChangeListener('#validationEnabled', checked => {
+  const validationEnabledElement = document.querySelector('#validationEnabled')
+  const validationPatternElement = document.querySelector('#validationPattern')
+  validationEnabledElement.addEventListener('change', evt => {
+    const checked = validationEnabledElement.checked
     validationEnabled = checked
-    document.querySelector('#validationPattern').disabled = !checked
+    validationPatternElement.disabled = !checked
   })
-  document.querySelector('#validationPattern').addEventListener('input', e => {
+  validationPatternElement.addEventListener('input', e => {
     try {
-      validationPattern = new RegExp(e.target.value)
+      validationPattern = new RegExp(validationPatternElement.value)
     } catch (ex) {
       // invalid or unfinished regex, ignore
     }
@@ -275,5 +281,4 @@ function createSampleGraph() {
   graphComponent.fitGraphBounds()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

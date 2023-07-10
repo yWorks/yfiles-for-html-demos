@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>08 Grouping - Basic Features Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-basic-features"> Basic Features Tutorial </a>
+
+        <span>08 Grouping</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-yfiles-basic-features/07-undo-clipboard-support/index.html'><span>07 Undo Clipboard Support</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 8/12</b><span class="demo-toolbar__tutorial-step-title"> &mdash; 08 Grouping</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-yfiles-basic-features/01-graphcomponent/index.html"
+            class="tutorial-dropdown__item"
+            >01 Creating the View</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html"
+            class="tutorial-dropdown__item"
+            >02 Creating Graph Elements</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/03-managing-viewport/index.html"
+            class="tutorial-dropdown__item"
+            >03 Managing Viewport</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/04-setting-styles/index.html"
+            class="tutorial-dropdown__item"
+            >04 Setting Styles</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/05-label-placement/index.html"
+            class="tutorial-dropdown__item"
+            >05 Label Placement</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/06-basic-interaction/index.html"
+            class="tutorial-dropdown__item"
+            >06 Basic Interaction</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/07-undo-clipboard-support/index.html"
+            class="tutorial-dropdown__item"
+            >07 Undo Clipboard Support</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/08-grouping/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >08 Grouping</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/09-data-binding/index.html"
+            class="tutorial-dropdown__item"
+            >09 Data Binding</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/10-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Layout</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/11-layout-data/index.html"
+            class="tutorial-dropdown__item"
+            >11 Layout Data</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/12-graph-analysis/index.html"
+            class="tutorial-dropdown__item"
+            >12 Analysis Algorithms</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-yfiles-basic-features/09-data-binding/index.html'><span>09 Data Binding</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Grouped Graphs</h1>
+          <div class="paragraph">
+            <p>
+              This step shows how to configure
+              <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-grouping" target="_blank">support for grouped or hierarchically organized graphs</a>.
+            </p>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  Collapse/expand functionality is demonstrated in the
+                  <a
+                    href="./../../application-features/folding/index.html"
+                    target="_blank"
+                    rel="noopener"
+                    >folding demo</a
+                  >.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="paragraph">
+            <p>
+              <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> already provides default gestures for
+              grouping/ungrouping. To use the gesture, we have to enable
+              <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#GraphEditorInputMode-property-allowGroupingOperations" target="_blank">allowGroupingOperations</a>.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript">graphEditorInputMode.<span class="hljs-property">allowGroupingOperations</span> = <span class="hljs-literal">true</span></code></pre>
+            </div>
+          </div>
+          <div class="ulist">
+            <ul>
+              <li>
+                <p>
+                  Press <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>G</kbd></span> to group the
+                  currently selected nodes.
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div class="paragraph">
+            <p>
+              <button id="groupButton" class="demo-description__button">
+                Group Selected Nodes
+              </button>
+            </p>
+          </div>
+          <div class="ulist">
+            <ul>
+              <li>
+                <p>
+                  Select a child node and press
+                  <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>U</kbd></span> to ungroup. Note that
+                  this does not automatically shrink the group node or remove it if it would become
+                  empty.
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div class="paragraph">
+            <p>
+              <button id="ungroupButton" class="demo-description__button">
+                Ungroup Selected Nodes
+              </button>
+            </p>
+          </div>
+          <div class="ulist">
+            <ul>
+              <li>
+                <p>
+                  Press <span class="keyseq"><kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>G</kbd></span> to
+                  shrink a selected group node to its minimum size.
+                </p>
+              </li>
+              <li>
+                <p>
+                  Hold <kbd>Shift</kbd> when dragging nodes into or out of groups to change the
+                  graph hierarchy.
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div class="paragraph">
+            <p>
+              Group nodes can use special styles that are optimized to visualize a group with
+              content. However, a group node can also use a normal node style like
+              <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a>. In this example, we use
+              <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" target="_blank">GroupNodeStyle</a>.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-property">groupNodeDefaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GroupNodeStyle</span>({
+  <span class="hljs-attr">tabFill</span>: <span class="hljs-string">&#x27;#0b7189&#x27;</span>
+})
+
+<span class="hljs-comment">// Set a label style with right-aligned text</span>
+graph.<span class="hljs-property">groupNodeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+  <span class="hljs-attr">horizontalTextAlignment</span>: <span class="hljs-string">&#x27;right&#x27;</span>,
+  <span class="hljs-attr">textFill</span>: <span class="hljs-string">&#x27;white&#x27;</span>
+})
+
+<span class="hljs-comment">// Place the label inside the tab area of the group node</span>
+<span class="hljs-comment">// GroupNodeLabelModel is usually the most appropriate label model for GroupNodeStyle</span>
+graph.<span class="hljs-property">groupNodeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">layoutParameter</span> =
+  <span class="hljs-keyword">new</span> <span class="hljs-title class_">GroupNodeLabelModel</span>().<span class="hljs-title function_">createDefaultParameter</span>()</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>We create some nodes and group them.</p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> n1 = graph.<span class="hljs-title function_">createNodeAt</span>([<span class="hljs-number">30</span>, -<span class="hljs-number">200</span>])
+<span class="hljs-keyword">const</span> n2 = graph.<span class="hljs-title function_">createNodeAt</span>([<span class="hljs-number">170</span>, -<span class="hljs-number">200</span>])
+<span class="hljs-keyword">const</span> n3 = graph.<span class="hljs-title function_">createNodeAt</span>([<span class="hljs-number">30</span>, -<span class="hljs-number">100</span>])
+graph.<span class="hljs-title function_">createEdge</span>(n1, n3)
+<span class="hljs-comment">// Create an edge that crosses the group node boundary</span>
+graph.<span class="hljs-title function_">createEdge</span>(n3, graph.<span class="hljs-property">nodes</span>.<span class="hljs-title function_">first</span>())
+
+<span class="hljs-comment">// Create a group node that encloses n1, n2 and n3</span>
+<span class="hljs-keyword">const</span> groupNode = graph.<span class="hljs-title function_">groupNodes</span>([n1, n2, n3])
+
+graph.<span class="hljs-title function_">addLabel</span>(groupNode, <span class="hljs-string">&#x27;Group Node&#x27;</span>)
+<span class="hljs-comment">// Edges starting from the group node itself are also allowed</span>
+<span class="hljs-keyword">const</span> edgeFromGroup = graph.<span class="hljs-title function_">createEdge</span>(groupNode, graph.<span class="hljs-property">nodes</span>.<span class="hljs-title function_">at</span>(<span class="hljs-number">1</span>)!)</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              If the group content is changed in code, i.e. a child node is added or removed
+              programmatically, the group node size is not adjusted automatically. Instead, we have
+              to call
+              <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph#IGraph-defaultmethod-adjustGroupNodeLayout" target="_blank">adjustGroupNodeLayout</a>.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Get a group node</span>
+<span class="hljs-keyword">const</span> groupNode = graph.<span class="hljs-property">nodes</span>.<span class="hljs-title function_">first</span>(<span class="hljs-function"><span class="hljs-params">node</span> =&gt;</span> graph.<span class="hljs-title function_">isGroupNode</span>(node))
+<span class="hljs-comment">// Create a child node that&#x27;s outside the group bounds</span>
+graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-attr">parent</span>: groupNode, <span class="hljs-attr">layout</span>: [<span class="hljs-number">100</span>, -<span class="hljs-number">60</span>, <span class="hljs-number">30</span>, <span class="hljs-number">30</span>] })
+<span class="hljs-comment">// Adjust the group node layout to contain the new child</span>
+graph.<span class="hljs-title function_">adjustGroupNodeLayout</span>(groupNode)</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              <button id="adjustGroupButton" class="demo-description__button">
+                Add New Node and Adjust Group Node Size
+              </button>
+            </p>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-yfiles-basic-features/09-data-binding/index.html'><span>09 Data Binding</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

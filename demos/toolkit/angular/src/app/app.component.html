@@ -1,4 +1,4 @@
-<div class="demo-toolbar">
+<div class="demo-page__toolbar">
   <button
     (click)="zoomIn()"
     title="Zoom In"
@@ -31,9 +31,10 @@
   />
 </div>
 
-<div class="graph-container">
-  <graph-component></graph-component>
-  <app-graph-overview-component class="graph-overview-component"></app-graph-overview-component>
+<div class="demo-page__main">
+  <app-graph-overview-component class="demo-overlay"></app-graph-overview-component>
+  <div class="demo-main__graph-component">
+    <graph-component></graph-component>
+  </div>
+  <properties-view class="demo-main__sidebar" [person]="currentPerson"></properties-view>
 </div>
-
-<properties-view class="demo-sidebar demo-right" [person]="currentPerson"></properties-view>

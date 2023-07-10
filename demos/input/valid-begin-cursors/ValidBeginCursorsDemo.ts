@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   IEdge,
   IGraph,
   IHitTestable,
@@ -44,9 +43,9 @@ import {
   Rect
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 const lassoCursor: Cursor = new Cursor('resources/lasso.cur', Cursor.CROSSHAIR)
@@ -71,11 +70,6 @@ async function run(): Promise<void> {
   // Create a sample graph
   createSampleGraph(graphComponent.graph)
   graphComponent.fitGraphBounds()
-
-  // Register commands for the buttons in this demo
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -149,16 +143,6 @@ function createEditorMode(): GraphEditorInputMode {
 }
 
 /**
- * Binds the various commands available in yFiles for HTML to the buttons in the demo's toolbar.
- */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-/**
  * Creates the initial graph.
  */
 function createSampleGraph(graph: IGraph): void {
@@ -217,5 +201,4 @@ class EdgeHitTestable extends BaseClass(IHitTestable) implements IHitTestable {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,7 +38,6 @@ import {
   SimpleLabel,
   Size
 } from 'yfiles'
-import { addClass, removeClass } from '../../resources/demo-app.js'
 
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can display arbitrary information
@@ -48,13 +47,16 @@ import { addClass, removeClass } from '../../resources/demo-app.js'
  * the pop-up.
  */
 export default class PriorityPanel {
+  graphComponent
+  div
+  dirty = false
+  _currentItems = null
+
   /**
    * Creates a new instance of {@link PriorityPanel}.
    * @param {!GraphComponent} graphComponent
    */
   constructor(graphComponent) {
-    this.dirty = false
-    this._currentItems = null
     this.graphComponent = graphComponent
     this.div = document.getElementById('priority-panel')
 
@@ -152,14 +154,13 @@ export default class PriorityPanel {
     this.div.style.display = 'inline-block'
     this.div.style.opacity = '1'
     for (let i = 0; i < 6; i++) {
-      removeClass(document.getElementById(`priority-button-${i}`), 'current-priority')
+      document.getElementById(`priority-button-${i}`).classList.remove('current-priority')
     }
     if (this.currentItems) {
       this.currentItems.forEach(item => {
-        addClass(
-          document.getElementById(`priority-button-${item.tag.priority || 0}`),
-          'current-priority'
-        )
+        document
+          .getElementById(`priority-button-${item.tag.priority || 0}`)
+          .classList.add('current-priority')
       })
     }
     this.updateLocation()

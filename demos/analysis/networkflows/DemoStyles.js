@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -64,6 +64,9 @@ function setAttribute(e, name, value) {
  * By setting a tag, the flow can be adjusted for this node.
  */
 export class NetworkFlowNodeStyle extends NodeStyleBase {
+  flowColor1
+  flowColor2
+
   /**
    * Creates a new instance of NetworkFlowNodeStyle.
    * @param {!Color} [color1]
@@ -385,6 +388,8 @@ class NodeRenderDataCache {
 }
 
 export class NetworkFlowEdgeStyle extends EdgeStyleBase {
+  highlightColor
+
   /**
    * Creates a new instance of NetworkFlowEdgeStyle.
    * @param {!Color} [highlightColor]
@@ -721,6 +726,9 @@ function createAnimatedGradient(linearGradient) {
  * Background visual that draws a line visualizing the minimum cut of the flow-network.
  */
 export class MinCutLine extends BaseClass(IVisualCreator) {
+  $bounds
+  $visible
+
   constructor() {
     super()
     this.$bounds = Rect.EMPTY

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -64,25 +64,31 @@ import {
  */
 export class GraphDropInputMode extends ItemDropInputMode {
   /**
+   * Gets or sets a value indicating whether graphs can be dropped on
+   * {@link IFoldingView.collapse collapsed} folder nodes.
+   *
+   * If this property is set to `true`, dropping a graph on collapsed folder nodes
+   * will create the graph inside the folder node in the master graph. In that case the
+   * {@link ItemDropInputMode.addItemCreatedListener ItemCreated} event will yield the items if the
+   * graph in the {@link FoldingManager.masterGraph master graph}. The items of the graph will
+   * not be {@link IGraph.contains contained} in the currently visible graph. By default this
+   * feature is disabled.
+   */
+  allowFolderNodeAsParent
+
+  // The center of the preview graph.
+  center
+
+  // The latest filtered graph.
+  graphWrapper = null
+
+  /**
    * Constructs a new instance of class {@link GraphDropInputMode}.
    */
   constructor() {
     super('graph')
-
-    // The latest filtered graph.
-    this.graphWrapper = null
-
     this.itemCreator = this.createGraph.bind(this)
-    // The center of the preview graph.
     this.center = Point.ORIGIN
-    // Gets or sets a value indicating whether graphs can be dropped on
-    // {@link IFoldingView.collapse collapsed} folder nodes.
-    // If this property is set to `true`, dropping a graph on collapsed folder nodes
-    // will create the graph inside the folder node in the master graph. In that case the
-    // {@link ItemDropInputMode.addItemCreatedListener ItemCreated} event will yield the items if the
-    // graph in the {@link FoldingManager.masterGraph master graph}. The items of the graph will
-    // not be {@link IGraph.contains contained} in the currently visible graph. By default this
-    // feature is disabled.
     this.allowFolderNodeAsParent = false
   }
 

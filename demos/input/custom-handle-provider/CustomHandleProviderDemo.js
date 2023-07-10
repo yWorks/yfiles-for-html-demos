@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,8 +32,8 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GraphSelectionIndicatorManager,
   HandlePositions,
-  ICommand,
   IGraph,
   INode,
   Insets,
@@ -42,12 +42,13 @@ import {
   NodeReshapeHandleProvider,
   Point,
   Rect,
-  Size
+  Size,
+  VoidNodeStyle
 } from 'yfiles'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
-import { colorSets, createDemoNodeLabelStyle } from '../../resources/demo-styles.js'
+import { applyDemoTheme, colorSets, createDemoNodeLabelStyle } from 'demo-resources/demo-styles'
 import ArrowNodeStyleHandleProvider from './ArrowNodeStyleHandleProvider.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Runs this demo.
@@ -57,18 +58,15 @@ async function run() {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeGraph(graphComponent.graph)
 
   initializeInteraction(graphComponent)
 
-  initializeUI(graphComponent)
-
   graphComponent.fitGraphBounds()
 
   graphComponent.selection.setSelected(graphComponent.graph.nodes.first(), true)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -143,7 +141,9 @@ function initializeInteraction(graphComponent) {
   )
 
   // don't show the selection decoration to make the above handles more visible
-  nodeDecorator.selectionDecorator.hideImplementation()
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    nodeStyle: VoidNodeStyle.INSTANCE
+  })
 }
 
 /**
@@ -176,17 +176,6 @@ function styleToText(style) {
 }
 
 /**
- * Binds actions to the toolbar and style property editor.
- * @param {!GraphComponent} graphComponent
- */
-function initializeUI(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-/**
  * Returns the given angle in degrees.
  * @param {number} radians
  * @returns {number}
@@ -195,5 +184,4 @@ function toDegrees(radians) {
   return (radians * 180) / Math.PI
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

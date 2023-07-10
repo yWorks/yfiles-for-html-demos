@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 50.000253 50.000002" height="50" width="50.000252" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(0.47198144,0,0,0.45708233,0,0.05)">
+    <path d="M 2.9684546,39.256025 52.968455,1.2560255 102.96845,39.256025 Z" style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+    <text transform="scale(0.9713925,1.02945)" x="26.264242" y="35.21883" style="font-size:11.6567px;stroke-width:0.971393">
+      <tspan style="font-weight:bold;font-size:13.5995px;font-family:Arial;fill:#808080;stroke-width:0.971393">B A N K</tspan>
+    </text>
+    <rect x="12.968454" y="42.256027" width="81" height="5" style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+    <rect x="22.968454" y="51.256027" width="7" height="40" style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+    <rect x="49.968456" y="51.256027" width="7" height="40" style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+    <rect x="76.968452" y="51.256027" width="7" height="40" style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+    <rect x="7.9684544" y="95.256027" width="91" height="5" style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+    <rect x="2.9684546" y="103.25603" width="100" height="5" style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+  </g>
+</svg>

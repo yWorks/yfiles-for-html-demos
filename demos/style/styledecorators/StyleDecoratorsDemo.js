@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,12 +44,12 @@ import {
   SmartEdgeLabelModel
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import LabelStyleDecorator from './LabelStyleDecorator.js'
 import EdgeStyleDecorator from './EdgeStyleDecorator.js'
 import NodeStyleDecorator from './NodeStyleDecorator.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * @returns {!Promise}
@@ -67,9 +67,7 @@ async function run() {
   createSampleGraph(graphComponent.graph)
   graphComponent.fitGraphBounds()
 
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  initializeUI(graphComponent)
 }
 
 /**
@@ -225,20 +223,15 @@ function addEdge(graph, source, target, type) {
 }
 
 /**
- * Binds actions and commands to the demo's UI controls.
+ * Binds actions to the demo's UI controls.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindAction("button[data-command='Reload']", () => {
+function initializeUI(graphComponent) {
+  document.querySelector('#reload').addEventListener('click', () => {
     graphComponent.graph.clear()
     createSampleGraph(graphComponent.graph)
     ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
   })
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

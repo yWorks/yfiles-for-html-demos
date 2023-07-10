@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,6 +45,10 @@ import {
  * zoom level. The other half of the duration is spent zooming out again.
  */
 export class ZoomInAndBackAnimation extends BaseClass(IAnimation) {
+  targetZoomLog
+  delta = 0
+  initialZoomLog = 0
+
   /**
    * Initializes a new instance of the {@link ZoomInAndBackAnimation} class with the given target
    * zoom factor and preferred duration.
@@ -56,8 +60,6 @@ export class ZoomInAndBackAnimation extends BaseClass(IAnimation) {
     super()
     this.duration = duration
     this.canvas = canvas
-    this.delta = 0
-    this.initialZoomLog = 0
     this.targetZoomLog = Math.log(targetZoom) / Math.log(2)
   }
 
@@ -106,6 +108,9 @@ export class ZoomInAndBackAnimation extends BaseClass(IAnimation) {
  * The animation pans the viewport in a circle with a diameter of half the viewport's width.
  */
 export class CirclePanAnimation extends BaseClass(IAnimation) {
+  lastAngle = 0
+  lastRadius = 0
+
   /**
    * Initializes a new instance of the {@link CirclePanAnimation} class with the given number of
    * revolutions and preferred duration.
@@ -118,8 +123,6 @@ export class CirclePanAnimation extends BaseClass(IAnimation) {
     this.duration = duration
     this.revolutions = revolutions
     this.canvas = canvas
-    this.lastAngle = 0
-    this.lastRadius = 0
   }
 
   /**
@@ -177,6 +180,9 @@ export class CirclePanAnimation extends BaseClass(IAnimation) {
  * An animation that moves nodes in a circular motion.
  */
 export class CircleNodeAnimation extends BaseClass(IAnimation) {
+  nodes
+  startBounds = new List()
+
   /**
    * Initializes a new instance of the {@link CircleNodeAnimation} class with the given graph,
    * nodes, radius, number of revolutions, and preferred duration.
@@ -192,7 +198,6 @@ export class CircleNodeAnimation extends BaseClass(IAnimation) {
     this.revolutions = revolutions
     this.radius = radius
     this.graph = graph
-    this.startBounds = new List()
     this.nodes = nodes.toList()
   }
 

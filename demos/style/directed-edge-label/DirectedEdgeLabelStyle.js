@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,7 +39,7 @@ import {
   TextRenderSupport,
   TextWrapping
 } from 'yfiles'
-import { colorSets } from '../../resources/demo-styles.js'
+import { colorSets } from 'demo-resources/demo-styles'
 
 const HORIZONTAL_INSET = 3
 const VERTICAL_INSET = 2
@@ -52,6 +52,23 @@ const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
  * depending on the 'toSource' setting.
  */
 export class DirectedEdgeLabelStyle extends LabelStyleBase {
+  /** Whether the indicator points to the source */
+  toSource = false
+  /** The text color */
+  textFill = colorSets['demo-palette-31'].text
+  /** The background color */
+  backgroundFill = colorSets['demo-palette-31'].edgeLabelFill
+  /** The fill for the indicator */
+  arrowFill = 'orange'
+  /** The stroke for the indicator */
+  arrowStroke = 'black'
+
+  /** The text font */
+  font = new Font({
+    fontFamily: 'Arial',
+    fontSize: 12
+  })
+
   /**
    * Creates a new instance.
    * @param toSource If set to true the indicator points to the source.
@@ -59,26 +76,6 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
    */
   constructor(toSource = false) {
     super()
-
-    // The text color
-    this.textFill = colorSets['demo-palette-31'].text
-
-    // The background color
-    this.backgroundFill = colorSets['demo-palette-31'].edgeLabelFill
-
-    // The fill for the indicator
-    this.arrowFill = 'orange'
-
-    // The stroke for the indicator
-    this.arrowStroke = 'black'
-
-    // The text font
-    this.font = new Font({
-      fontFamily: 'Arial',
-      fontSize: 12
-    })
-
-    // Whether the indicator points to the source
     this.toSource = toSource
   }
 

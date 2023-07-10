@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,17 +32,16 @@ import {
   GraphViewerInputMode,
   HierarchicLayout,
   ICanvasObjectDescriptor,
-  ICommand,
   INode,
   License,
   PartitionGrid,
   PartitionGridData
 } from 'yfiles'
 import GraphData from './resources/GraphData'
-import { bindCommand, showApp } from '../../resources/demo-app'
 import SimplePartitionGridVisualCreator from './SimplePartitionGridVisualCreator'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Holds the GraphComponent
@@ -79,12 +78,6 @@ async function run(): Promise<void> {
 
   // Run the layout
   runLayout()
-
-  // Bind the demo buttons to their commands
-  registerCommands()
-
-  // Initialize the demo application's CSS and Javascript for the description
-  showApp(graphComponent)
 }
 
 /**
@@ -189,14 +182,4 @@ function loadSampleGraph(): void {
   graphBuilder.buildGraph()
 }
 
-/**
- * Wires up the UI.
- */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

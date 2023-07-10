@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,9 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-declare const neo4j: any
+import neo4j from 'neo4j-driver'
 
-/* global neo4j */
 /**
  * @yjs:keep = types,Node
  */
@@ -50,9 +49,11 @@ export async function connectToDB(
   databaseName: string,
   user: string,
   pass: string
-): Promise<(query: string, params?: {}) => Promise<Result>> {
+): Promise<(query: string, params?: Record<string, any>) => Promise<Result>> {
   // create a new Neo4j driver instance
-  const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass))
+  const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass), {
+    connectionAcquisitionTimeout: 5000
+  })
 
   const runCypherQuery = createCypherQueryRunner(neo4jDriver, databaseName)
 
@@ -71,7 +72,7 @@ function createCypherQueryRunner(neo4jDriver: any, databaseName: string) {
    * Runs the Cypher query.
    * @yjs:keep = run
    */
-  return async (query: string, params: {} = {}): Promise<Result> => {
+  return async (query: string, params: Record<string, any> = {}): Promise<Result> => {
     const session = neo4jDriver.session({
       database: databaseName,
       defaultAccessMode: neo4j.session.READ
@@ -91,7 +92,7 @@ function createCypherQueryRunner(neo4jDriver: any, databaseName: string) {
 export type Node = {
   identity: Integer
   labels: string[]
-  properties: Object
+  properties: object
 }
 
 export type Relationship = {
@@ -99,14 +100,14 @@ export type Relationship = {
   start: Integer
   end: Integer
   type: string
-  properties: Object
+  properties: object
 }
 
 export type Neo4jRecord = {
-  keys: String[]
-  length: Number
-  get: (key: string | Number) => any
-  forEach: (visitor: (value: Object, key: string, record: Neo4jRecord) => void) => void
+  keys: string[]
+  length: number
+  get: (key: string | number) => any
+  forEach: (visitor: (value: object, key: string, record: Neo4jRecord) => void) => void
 }
 
 export type Integer = {

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,19 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphSnapContext,
-  ICommand,
-  License,
-  Rect
-} from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, GraphSnapContext, License, Rect } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import MyMarqueeSelectionInputMode from './MyMarqueeSelectionInputMode.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -61,23 +54,6 @@ async function run() {
 
   // center the graph
   graphComponent.fitGraphBounds()
-
-  // register some basic commands
-  registerCommands()
-
-  // Initialize the demo application's CSS and Javascript for the description
-  showApp(graphComponent)
-}
-
-/**
- * Helper method that binds the various commands available in yFiles for HTML to the buttons
- * in the demo's toolbar.
- */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
 function initializeGraph() {
@@ -127,5 +103,4 @@ function createSampleGraph() {
   graph.createNode(new Rect(284, 200, 50, 30))
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

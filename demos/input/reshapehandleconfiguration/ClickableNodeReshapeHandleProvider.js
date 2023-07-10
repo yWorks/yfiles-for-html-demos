@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,6 +48,8 @@ import {
  * A NodeReshapeHandleProvider for cyan nodes that toggles aspect ratio resizing on and of when clicking on its handles.
  */
 export class ClickableNodeReshapeHandleProvider extends NodeReshapeHandleProvider {
+  state
+
   /**
    * @param {!INode} node
    * @param {!IReshapeHandler} reshapeHandler
@@ -73,6 +75,9 @@ export class ClickableNodeReshapeHandleProvider extends NodeReshapeHandleProvide
 }
 
 class ClickableNodeReshapeHandlerHandle extends BaseClass(IHandle) {
+  state
+  wrapped
+
   /**
    * @param {!ApplicationState} state
    * @param {!NodeReshapeHandlerHandle} wrapped
@@ -156,6 +161,10 @@ export class ApplicationState {
   get keepAspectRatio() {
     return this._keepAspectRatio
   }
+
+  graphEditorInputMode
+
+  _keepAspectRatio = false
 
   /**
    * @param {!GraphEditorInputMode} graphEditorInputMode

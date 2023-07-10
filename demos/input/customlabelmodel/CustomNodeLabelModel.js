@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -59,16 +59,17 @@ export default class CustomNodeLabelModel extends BaseClass(
   ILabelModelParameterProvider,
   ILabelModelParameterFinder
 ) {
-  constructor() {
-    super()
+  /**
+   * The number of discrete label positions around the border.
+   *
+   * A value of 0 signifies that continuous label positions are used.
+   */
+  candidateCount = 8
 
-    // The number of discrete label positions around the border.
-    // A value of 0 signifies that continuous label positions are used.
-    this.candidateCount = 8
-
-    // The offset of the label location, i.e., the distance to the node layout borders.
-    this.offset = 0
-  }
+  /**
+   * The offset of the label location, i.e., the distance to the node layout borders.
+   */
+  offset = 0
 
   /**
    * Returns instances of the support interfaces (which are actually the model instance itself)

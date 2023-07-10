@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,26 +30,23 @@ import {
   CanvasComponent,
   Color,
   EdgeStyleBase,
-  EdgeStyleDecorationInstaller,
   GeneralPath,
   GeomUtilities,
   GraphComponent,
+  GraphHighlightIndicatorManager,
   HierarchicNestingPolicy,
-  HighlightIndicatorManager,
   ICanvasObjectGroup,
-  ICanvasObjectInstaller,
   IEdge,
   IInputModeContext,
   IModelItem,
+  IndicatorEdgeStyleDecorator,
   INode,
   IRectangle,
   IRenderContext,
   List,
   NodeStyleBase,
-  NodeStyleDecorationInstaller,
   PathType,
   Point,
-  StyleDecorationZoomPolicy,
   SvgVisual,
   Visual,
   YObject
@@ -445,8 +442,19 @@ export class DemoNodeStyle extends NodeStyleBase {
  * Install a visual representation of a highlight decoration for the edges such that the edge highlight is drawn
  * below the node group.
  */
-export class HighlightManager extends HighlightIndicatorManager<IModelItem> {
+export class HighlightManager extends GraphHighlightIndicatorManager {
   edgeHighlightGroup: ICanvasObjectGroup | null = null
+
+  /**
+   * Creates a new instance and configures the node and edge styles used for highlighting.
+   */
+  constructor() {
+    super()
+    this.nodeStyle = new DemoNodeStyle(Color.RED)
+    this.edgeStyle = new IndicatorEdgeStyleDecorator({
+      wrapped: new DemoEdgeStyle(6, Color.RED, Color.GOLD)
+    })
+  }
 
   /**
    * Installs the manager on the canvas.
@@ -474,6 +482,7 @@ export class HighlightManager extends HighlightIndicatorManager<IModelItem> {
       this.edgeHighlightGroup = null
     }
   }
+
   /**
    * Retrieves the Canvas Object group to use for the given item.
    * @param item The given item
@@ -483,26 +492,6 @@ export class HighlightManager extends HighlightIndicatorManager<IModelItem> {
       return this.edgeHighlightGroup
     }
     return super.getCanvasObjectGroup(item)!
-  }
-
-  /**
-   * Callback used by install to retrieve the installer for a given item.
-   * @param item The item to find an installer for
-   */
-  getInstaller(item: IModelItem): ICanvasObjectInstaller {
-    if (IEdge.isInstance(item)) {
-      return new EdgeStyleDecorationInstaller({
-        edgeStyle: new DemoEdgeStyle(6, Color.RED, Color.GOLD),
-        zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
-      })
-    } else if (INode.isInstance(item)) {
-      return new NodeStyleDecorationInstaller({
-        nodeStyle: new DemoNodeStyle(Color.RED),
-        margins: 0,
-        zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
-      })
-    }
-    return super.getInstaller(item)!
   }
 }
 

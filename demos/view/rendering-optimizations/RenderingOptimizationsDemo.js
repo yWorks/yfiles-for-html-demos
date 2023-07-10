@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,10 +28,7 @@
  ***************************************************************************/
 import {
   Animator,
-  BaseClass,
-  ClickEventArgs,
   Color,
-  Cursor,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
@@ -43,13 +40,11 @@ import {
   GraphItemTypes,
   GraphModelManager,
   GraphViewerInputMode,
-  HandleTypes,
   IAnimation,
   ICommand,
   IEdge,
   IEdgeStyle,
   IGraph,
-  IHandle,
   IInputMode,
   IInputModeContext,
   ILabel,
@@ -57,7 +52,6 @@ import {
   IModelItem,
   INode,
   INodeStyle,
-  IPoint,
   License,
   Point,
   Rect,
@@ -67,6 +61,7 @@ import {
   TimeSpan,
   WebGL2DefaultLabelStyle,
   WebGL2GraphModelManager,
+  WebGL2GroupNodeStyle,
   WebGL2IconNodeStyle,
   WebGL2PolylineEdgeStyle,
   WebGL2SelectionIndicatorManager,
@@ -87,22 +82,14 @@ import { CircleNodeAnimation, CirclePanAnimation, ZoomInAndBackAnimation } from 
 import SvgEdgeStyle from './SvgEdgeStyle.js'
 import SimpleSvgNodeStyle from './SimpleSvgNodeStyle.js'
 import { FastGraphModelManager, OptimizationMode } from './FastGraphModelManager.js'
-import {
-  addClass,
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  removeClass,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app.js'
 import PreConfigurator from './resources/PreConfigurator.js'
 import samples from './resources/samples.js'
-import { createCanvasContext, createUrlIcon } from '../../utils/IconCreation.js'
+import { createCanvasContext, createUrlIcon } from 'demo-utils/IconCreation'
 import { FPSMeter } from './FPSMeter.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
-import { BrowserDetection } from '../../utils/BrowserDetection.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
+import { addNavigationButtons, finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -161,42 +148,44 @@ const webGLImageData = []
  */
 const edgeThickness = 5
 
-const redrawGraphButton = querySelector('#redrawGraphButton')
+const redrawGraphButton = document.querySelector('#redrawGraphButton')
 // Control for the input mode.
-const modeChooserBox = querySelector('#modeChooserBox')
+const modeChooserBox = document.querySelector('#modeChooserBox')
 // Controls for the sample graphs.
-const graphChooserBox = querySelector('#graphChooserBox')
-const nodeLabelsCheckbox = querySelector('#nodeLabelsCheckbox')
-const edgeLabelsCheckbox = querySelector('#edgeLabelsCheckbox')
-const detailLevelIndicator = querySelector('#detailLevelIndicator')
-const detailLevelPopup = querySelector('#detailLevelPopup')
-const simpleSvgStyle = querySelector('#simple-svg-radio')
-const complexSvgStyle = querySelector('#complex-svg-radio')
-const simpleCanvasStyle = querySelector('#simple-canvas-radio')
-const simpleWebglStyle = querySelector('#simple-webgl-radio')
-const complexCanvasStyle = querySelector('#complex-canvas-radio')
-const defaultGmm = querySelector('#defaultGmm-radio')
-const levelOfDetailGmm = querySelector('#levelOfDetailGmm-radio')
-const staticGmm = querySelector('#staticGmm-radio')
-const svgImageGmm = querySelector('#svgImageGmm-radio')
-const CanvasImageWithDrawCallbackGmm = querySelector('#CanvasImageWithDrawCallbackGmm-radio')
-const CanvasImageWithItemStylesGmm = querySelector('#CanvasImageWithItemStylesGmm-radio')
-const StaticCanvasImageGmm = querySelector('#StaticCanvasImageGmm-radio')
-const StaticWebglImageGmm = querySelector('#StaticWebglImageGmm-radio')
-const fixLabelPositionsCheckbox = querySelector('#fix-label-positions')
-const autoRedrawCheckbox = querySelector('#autoRedrawCheckbox')
-const fpsCheckbox = querySelector('#fpsCheckbox')
-const zoomLevel = querySelector('#zoomLevel')
-const selectionCount = querySelector('#selection')
+const graphChooserBox = document.querySelector('#graphChooserBox')
+const nodeLabelsCheckbox = document.querySelector('#nodeLabelsCheckbox')
+const edgeLabelsCheckbox = document.querySelector('#edgeLabelsCheckbox')
+const detailLevelIndicator = document.querySelector('#detailLevelIndicator')
+const detailLevelPopup = document.querySelector('#detailLevelPopup')
+const simpleSvgStyle = document.querySelector('#simple-svg-radio')
+const complexSvgStyle = document.querySelector('#complex-svg-radio')
+const simpleCanvasStyle = document.querySelector('#simple-canvas-radio')
+const simpleWebglStyle = document.querySelector('#simple-webgl-radio')
+const complexCanvasStyle = document.querySelector('#complex-canvas-radio')
+const defaultGmm = document.querySelector('#defaultGmm-radio')
+const levelOfDetailGmm = document.querySelector('#levelOfDetailGmm-radio')
+const staticGmm = document.querySelector('#staticGmm-radio')
+const svgImageGmm = document.querySelector('#svgImageGmm-radio')
+const CanvasImageWithDrawCallbackGmm = document.querySelector(
+  '#CanvasImageWithDrawCallbackGmm-radio'
+)
+const CanvasImageWithItemStylesGmm = document.querySelector('#CanvasImageWithItemStylesGmm-radio')
+const StaticCanvasImageGmm = document.querySelector('#StaticCanvasImageGmm-radio')
+const StaticWebglImageGmm = document.querySelector('#StaticWebglImageGmm-radio')
+const fixLabelPositionsCheckbox = document.querySelector('#fix-label-positions')
+const autoRedrawCheckbox = document.querySelector('#autoRedrawCheckbox')
+const fpsCheckbox = document.querySelector('#fpsCheckbox')
+const zoomLevel = document.querySelector('#zoomLevel')
+const selectionCount = document.querySelector('#selection')
 
 /**
  * Holds the buttons that need to be disabled during animation
  */
 const disabledButtonsDuringAnimation = [
-  querySelector('#panAnimationBtn'),
-  querySelector('#zoomAnimationBtn'),
-  querySelector('#spiralAnimationBtn'),
-  querySelector('#moveNodeAnimationBtn')
+  document.querySelector('#panAnimationBtn'),
+  document.querySelector('#zoomAnimationBtn'),
+  document.querySelector('#spiralAnimationBtn'),
+  document.querySelector('#moveNodeAnimationBtn')
 ]
 
 /**
@@ -208,12 +197,16 @@ async function run() {
 
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent, { scale: 1 })
 
   graphComponent.minimumZoom = 0.005
 
   // assign the custom GraphModelManager
   fastGraphModelManager = createFastGraphModelManager(graphComponent)
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
+
+  if (BrowserDetection.webGL2) {
+    graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
+  }
 
   await prepareWebGL2Rendering()
 
@@ -224,32 +217,11 @@ async function run() {
 
   preConfigurator = new PreConfigurator(graphComponent)
 
-  initializeUI()
-
-  registerCommands(graphComponent)
+  initializeUI(graphComponent)
 
   registerTooltips()
 
-  showApp(graphComponent)
-
   onGraphChooserSelectionChanged()
-}
-
-/**
- * Initializes the UI elements.
- */
-function initializeUI() {
-  initializeGraphChooserBox()
-
-  modeChooserBox.selectedIndex = 0
-  onModeChanged()
-
-  redrawGraphButton.disabled = true
-  updateOptimizationMode()
-
-  // initialize information fields
-  zoomLevel.textContent = Math.floor(graphComponent.zoom * 100).toString()
-  selectionCount.textContent = graphComponent.selection.size.toString()
 }
 
 /**
@@ -261,8 +233,8 @@ async function prepareWebGL2Rendering() {
     await createWebGLImageData(webGLImageData)
   } else {
     // if the browser does not support WebGL2, disable this option
-    getElementById('WebglGmm-radio').disabled = true
-    getElementById('WebglGmm-label').classList.add('no-webgl-support')
+    document.querySelector('#WebglGmm-radio').disabled = true
+    document.querySelector('#WebglGmm-label').setAttribute('data-no-webgl-support', '')
     levelOfDetailGmm.checked = true
   }
 }
@@ -277,8 +249,8 @@ function registerTooltips() {
     // label listeners
     const labelElement = elements[i].nextElementSibling
     if (labelElement.nodeName === 'LABEL') {
-      labelElement.addEventListener('mouseover', evt => {
-        showTooltip(evt.target.getAttribute('for'))
+      labelElement.addEventListener('mouseover', () => {
+        showTooltip(labelElement.getAttribute('for'))
       })
       labelElement.addEventListener('mouseout', () => {
         hideTooltip()
@@ -286,12 +258,12 @@ function registerTooltips() {
     }
 
     // input element listeners
-    elements[i].addEventListener('mouseover', evt => {
+    const inputElement = elements[i]
+    inputElement.addEventListener('mouseover', () => {
       // the hasTooltip class may be directly on the label element
-      const target = evt.target
-      showTooltip(target.id !== '' ? target.id : target.getAttribute('for'))
+      showTooltip(inputElement.id !== '' ? inputElement.id : inputElement.getAttribute('for'))
     })
-    elements[i].addEventListener('mouseout', () => {
+    inputElement.addEventListener('mouseout', () => {
       hideTooltip()
     })
   }
@@ -304,9 +276,9 @@ function registerTooltips() {
 function showTooltip(id) {
   clearTimeout(tooltipTimer)
 
-  const tooltipDiv = getElementById('tooltip')
-  const srcElement = getElementById(id)
-  const infoElement = getElementById(`${id}-info`)
+  const tooltipDiv = document.querySelector('#tooltip')
+  const srcElement = document.getElementById(id)
+  const infoElement = document.querySelector(`#${id}-info`)
 
   tooltipDiv.innerHTML = ''
 
@@ -321,28 +293,28 @@ function showTooltip(id) {
   if (labelElement.nodeName === 'LABEL') {
     const warning = labelElement.className.indexOf('warning') >= 0
     if (warning) {
-      tooltipDiv.appendChild(getElementById('warningToolTip').cloneNode(true))
+      tooltipDiv.appendChild(document.querySelector('#warningToolTip').cloneNode(true))
     }
-    const webglWarning = labelElement.className.indexOf('no-webgl-support') >= 0
+    const webglWarning = labelElement.hasAttribute('data-no-webgl-support')
     if (webglWarning) {
-      tooltipDiv.appendChild(getElementById('webglWarningToolTip').cloneNode(true))
+      tooltipDiv.appendChild(document.querySelector('#webglWarningToolTip').cloneNode(true))
     }
     const unrecommended = labelElement.className.indexOf('unrecommended') >= 0
     if (unrecommended) {
-      tooltipDiv.appendChild(getElementById('unrecommendedToolTip').cloneNode(true))
+      tooltipDiv.appendChild(document.querySelector('#unrecommendedToolTip').cloneNode(true))
     }
   }
 
   const top =
     srcElement.getBoundingClientRect().top - tooltipDiv.getBoundingClientRect().height * 0.5
-  tooltipDiv.setAttribute('style', `top:${top}px; right: 20px;`)
+  tooltipDiv.setAttribute('style', `top:${top}px; right: 390px; overflow-wrap: break-word;`)
 }
 
 /**
  * Helper method that hides the tooltip.
  */
 function hideTooltip() {
-  const tooltip = getElementById('tooltip')
+  const tooltip = document.querySelector('#tooltip')
   tooltip.setAttribute('class', 'info-hidden arrow')
   tooltipTimer = window.setTimeout(() => {
     tooltip.style.zIndex = '0'
@@ -371,7 +343,7 @@ function createFastGraphModelManager(graphComponent) {
   } else {
     simpleWebglStyle.disabled = true
     StaticWebglImageGmm.disabled = true
-    getElementById('no-webgl-support').style.display = 'block'
+    document.querySelector('.no-webgl-support').style.display = 'block'
   }
   return fastGraphModelManager
 }
@@ -436,11 +408,6 @@ async function loadGraph(fileName) {
   loadGraphCore(graph, graphData)
   graphComponent.graph = graph
 
-  //Make bend handles invisible in WebGL2 mode
-  graphComponent.graph.decorator.bendDecorator.handleDecorator.setImplementationWrapper(
-    () => getGraphOptimizationMode() == null,
-    (bend, coreHandle) => (coreHandle ? new InvisibleHandleWrapper(coreHandle) : null)
-  )
   //Disable moving of individual edge segments in WebGL2 mode
   graphComponent.graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation(
     () => getGraphOptimizationMode() == null
@@ -511,7 +478,7 @@ function loadGraphCore(graph, graphData) {
     const bends = e.b
     if (bends) {
       bends.forEach(bend => {
-        graph.addBend(edge, Point.from(bend))
+        graph.addBend(edge, bend)
       })
     }
   }
@@ -563,8 +530,8 @@ function createEditorInputMode(isMoveMode) {
   }
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
-  if (BrowserDetection.webGL) {
-    graphEditorInputMode.handleInputMode.renderMode = RenderModes.WEB_GL
+  if (BrowserDetection.webGL2) {
+    graphEditorInputMode.handleInputMode.renderMode = RenderModes.WEB_GL2
   }
 
   // assign a random number to each newly created node to determine its random svg image in the detail node style
@@ -761,33 +728,24 @@ function onModeChanged() {
  */
 function updateOptimizationMode() {
   const optimizationMode = getGraphOptimizationMode()
-
-  // if the GMM changes, the styles might need an update, to reflect the current UI settings
-  const styleUpdateNeeded =
-    (optimizationMode != null) ===
-    graphComponent.graphModelManager instanceof WebGL2GraphModelManager
-
-  if (graphComponent.inputMode instanceof GraphEditorInputMode) {
-    updateGraphEditorInputMode(graphComponent.inputMode)
-  }
-
-  if (optimizationMode == null) {
+  const shouldUseWebGL2 = optimizationMode == null
+  const wasUsingWebGL2 = graphComponent.graphModelManager instanceof WebGL2GraphModelManager
+  if (shouldUseWebGL2) {
     graphComponent.graphModelManager = new StyledWebGL2GraphModelManager()
     graphComponent.focusIndicatorManager.enabled = false
-
-    if (styleUpdateNeeded) {
-      updateItemStyles()
-    }
-    graphComponent.invalidate()
   } else {
     graphComponent.focusIndicatorManager.enabled = true
     fastGraphModelManager.graphOptimizationMode = optimizationMode
     graphComponent.graphModelManager = fastGraphModelManager
-    if (styleUpdateNeeded) {
-      updateItemStyles()
-    }
-    graphComponent.invalidate()
   }
+  // if the GMM changes, the styles might need an update, to reflect the current UI settings
+  if (shouldUseWebGL2 !== wasUsingWebGL2) {
+    updateItemStyles()
+  }
+  if (graphComponent.inputMode instanceof GraphEditorInputMode) {
+    updateGraphEditorInputMode(graphComponent.inputMode)
+  }
+  graphComponent.invalidate()
 
   updateRedrawGraphButton()
   updateDetailLevelIndicator()
@@ -850,7 +808,7 @@ function onGraphChooserSelectionChanged() {
   const sampleObject = samples[graphChooserBox.selectedIndex]
   if (sampleObject) {
     // Load the graph from source file
-    loadGraph(sampleObject.fileName)
+    void loadGraph(sampleObject.fileName)
   }
 }
 
@@ -1076,7 +1034,7 @@ function endAnimation() {
 function updateButtonStateAtAnimation(disabled) {
   disabledButtonsDuringAnimation.forEach(button => {
     button.disabled = disabled
-    disabled ? addClass(button, 'disabled-button') : removeClass(button, 'disabled-button')
+    disabled ? button.classList.add('disabled-button') : button.classList.remove('disabled-button')
   })
 }
 
@@ -1207,7 +1165,7 @@ function updateDefaultStyles(graph) {
     edgeStyle = new SvgEdgeStyle(edgeColor, edgeThickness)
     labelStyle = new SvgLabelStyle()
     webGL2NodeStyle = new WebGL2IconNodeStyle({
-      icon: webGLImageData[0],
+      icon: webGLImageData[0] ?? new ImageData(1, 1),
       fill: 'Color.TRANSPARENT',
       stroke: WebGL2Stroke.NONE,
       shape: 'ellipse'
@@ -1233,7 +1191,7 @@ function updateDefaultStyles(graph) {
     edgeStyle = new CanvasEdgeStyle(edgeColor, edgeThickness)
     labelStyle = new CanvasLabelStyle()
     webGL2NodeStyle = new WebGL2IconNodeStyle({
-      icon: webGLImageData[0],
+      icon: webGLImageData[0] ?? new ImageData(1, 1),
       fill: Color.TRANSPARENT,
       stroke: WebGL2Stroke.NONE,
       shape: 'ellipse'
@@ -1397,103 +1355,91 @@ function generateColorShade(color, factor) {
     return color
   }
 }
+
 /**
- * Binds actions and commands to the demo's UI controls.
+ * Binds actions to the demo's UI controls.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+function initializeUI(graphComponent) {
+  initializeGraphChooserBox()
 
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent, null)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent, null)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent, null)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, null)
+  modeChooserBox.selectedIndex = 0
+  onModeChanged()
 
-  bindChangeListener('#graphChooserBox', onGraphChooserSelectionChanged)
-  addNavigationButtons(graphChooserBox, true, 'nav-buttons')
+  redrawGraphButton.disabled = true
+  updateOptimizationMode()
 
-  bindAction("button[data-command='PanAnimation']", onPanAnimationClicked)
-  bindAction("button[data-command='ZoomAnimation']", onZoomAnimationClicked)
-  bindAction("button[data-command='SpiralAnimation']", onSpiralZoomAnimationClicked)
-  bindAction("button[data-command='MoveNodeAnimation']", onNodeAnimationClicked)
+  // initialize information fields
+  zoomLevel.textContent = Math.floor(graphComponent.zoom * 100).toString()
+  selectionCount.textContent = graphComponent.selection.size.toString()
 
-  bindAction("button[data-command='SelectNothing']", onSelectNothingClicked)
-  bindAction("button[data-command='SelectEverything']", onSelectEverythingClicked)
-  bindAction("button[data-command='SelectAllNodes']", onSelectAllNodesClicked)
-  bindAction("button[data-command='SelectAllEdges']", onSelectAllEdgesClicked)
-  bindAction("button[data-command='SelectAllLabels']", onSelectAllLabelsClicked)
-  bindAction("button[data-command='Select1000Nodes']", onSelect1000NodesClicked)
-  bindAction("button[data-command='Select1000Edges']", onSelect1000EdgesClicked)
-  bindAction("button[data-command='Select1000Labels']", onSelect1000LabelsClicked)
+  addNavigationButtons(graphChooserBox, true, true, 'select-button').addEventListener(
+    'change',
+    onGraphChooserSelectionChanged
+  )
 
-  bindAction("input[data-command='FpsCheckboxChanged']", onFpsCheckboxChanged)
+  document.querySelector('#panAnimationBtn').addEventListener('click', onPanAnimationClicked)
+  document.querySelector('#zoomAnimationBtn').addEventListener('click', onZoomAnimationClicked)
+  document
+    .querySelector('#spiralAnimationBtn')
+    .addEventListener('click', onSpiralZoomAnimationClicked)
+  document.querySelector('#moveNodeAnimationBtn').addEventListener('click', onNodeAnimationClicked)
 
-  bindChangeListener("input[data-command='NodeLabelsCheckboxChanged']", () => {
+  document.querySelector('#selectNothingBtn').addEventListener('click', onSelectNothingClicked)
+  document
+    .querySelector('#selectEverythingBtn')
+    .addEventListener('click', onSelectEverythingClicked)
+  document.querySelector('#selectAllNodesBtn').addEventListener('click', onSelectAllNodesClicked)
+  document.querySelector('#selectAllEdgesBtn').addEventListener('click', onSelectAllEdgesClicked)
+  document.querySelector('#selectAllLabelsBtn').addEventListener('click', onSelectAllLabelsClicked)
+  document.querySelector('#select1000NodesBtn').addEventListener('click', onSelect1000NodesClicked)
+  document.querySelector('#select1000EdgesBtn').addEventListener('click', onSelect1000EdgesClicked)
+  document
+    .querySelector('#select1000LabelsBtn')
+    .addEventListener('click', onSelect1000LabelsClicked)
+
+  fpsCheckbox.addEventListener('change', onFpsCheckboxChanged)
+
+  nodeLabelsCheckbox.addEventListener('change', () => {
     onNodeLabelsChanged(graphComponent.graph)
     redrawGraph()
   })
-  bindChangeListener("input[data-command='EdgeLabelsCheckboxChanged']", () => {
+
+  edgeLabelsCheckbox.addEventListener('change', () => {
     onEdgeLabelsChanged(graphComponent.graph)
     redrawGraph()
   })
-  bindAction("button[data-command='RedrawGraph']", redrawGraph)
 
-  bindChangeListener('#modeChooserBox', onModeChanged)
+  redrawGraphButton.addEventListener('click', redrawGraph)
+
+  modeChooserBox.addEventListener('change', onModeChanged)
 
   // register radio buttons
-  bindChangeListener('#simple-svg-radio', updateItemStyles)
-  bindChangeListener('#complex-svg-radio', updateItemStyles)
-  bindChangeListener('#simple-canvas-radio', updateItemStyles)
-  bindChangeListener('#complex-canvas-radio', updateItemStyles)
-  bindChangeListener('#simple-webgl-radio', updateItemStyles)
+  simpleSvgStyle.addEventListener('change', updateItemStyles)
+  complexSvgStyle.addEventListener('change', updateItemStyles)
+  simpleCanvasStyle.addEventListener('change', updateItemStyles)
+  complexCanvasStyle.addEventListener('change', updateItemStyles)
+  simpleWebglStyle.addEventListener('change', updateItemStyles)
 
-  bindChangeListener('#defaultGmm-radio', updateOptimizationMode)
-  bindChangeListener('#WebglGmm-radio', updateOptimizationMode)
-  bindChangeListener('#levelOfDetailGmm-radio', updateOptimizationMode)
-  bindChangeListener('#staticGmm-radio', updateOptimizationMode)
-  bindChangeListener('#svgImageGmm-radio', updateOptimizationMode)
-  bindChangeListener('#CanvasImageWithDrawCallbackGmm-radio', updateOptimizationMode)
-  bindChangeListener('#CanvasImageWithItemStylesGmm-radio', updateOptimizationMode)
-  bindChangeListener('#StaticCanvasImageGmm-radio', updateOptimizationMode)
-  bindChangeListener('#StaticWebglImageGmm-radio', updateOptimizationMode)
+  defaultGmm.addEventListener('change', updateOptimizationMode)
+  document.querySelector('#WebglGmm-radio').addEventListener('change', updateOptimizationMode)
+  levelOfDetailGmm.addEventListener('change', updateOptimizationMode)
+  staticGmm.addEventListener('change', updateOptimizationMode)
+  svgImageGmm.addEventListener('change', updateOptimizationMode)
+  CanvasImageWithDrawCallbackGmm.addEventListener('change', updateOptimizationMode)
+  CanvasImageWithItemStylesGmm.addEventListener('change', updateOptimizationMode)
+  StaticCanvasImageGmm.addEventListener('change', updateOptimizationMode)
+  StaticWebglImageGmm.addEventListener('change', updateOptimizationMode)
 
-  bindChangeListener(
-    "input[data-command='FixLabelPositionsCheckboxChanged']",
-    onFixLabelPositionsChanged
-  )
+  fixLabelPositionsCheckbox.addEventListener('change', onFixLabelPositionsChanged)
 
-  bindChangeListener("input[data-command='AutoRedrawCheckboxChanged']", onAutoRedrawChanged)
+  autoRedrawCheckbox.addEventListener('change', onAutoRedrawChanged)
 }
 
-/**
- * @template {HTMLElement} T
- * @param {!string} id
- * @returns {!T}
- */
-function getElementById(id) {
-  return document.getElementById(id)
-}
-
-/**
- * @template {HTMLElement} T
- * @param {!string} selector
- * @returns {!T}
- */
-function querySelector(selector) {
-  return document.querySelector(selector)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)
 
 class StyledWebGL2GraphModelManager extends WebGL2GraphModelManager {
-  constructor() {
-    super()
-    this._defaultStyles = null
-  }
+  _defaultStyles = null
 
   /**
    * @type {?WebGLStyles}
@@ -1559,7 +1505,7 @@ class StyledWebGL2GraphModelManager extends WebGL2GraphModelManager {
         shape: webGLStyles.nodeStyle.shape,
         fill: webGLStyles.nodeStyle.fill,
         stroke: webGLStyles.nodeStyle.stroke,
-        icon: webGLImageData[Number.isNaN(index) ? 0 : index]
+        icon: webGLImageData[Number.isNaN(index) ? 0 : index] ?? new ImageData(1, 1)
       })
     } else {
       return webGLStyles.nodeStyle
@@ -1568,82 +1514,7 @@ class StyledWebGL2GraphModelManager extends WebGL2GraphModelManager {
 }
 
 /**
- * Simple class that just hides the visualization of handles while keeping their functionality
- * intact.
- */
-class InvisibleHandleWrapper extends BaseClass(IHandle) {
-  /**
-   * @param {!IHandle} coreHandle
-   */
-  constructor(coreHandle) {
-    super()
-    this._coreHandle = coreHandle
-  }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   */
-  cancelDrag(context, originalLocation) {
-    this._coreHandle.cancelDrag(context, originalLocation)
-  }
-
-  /**
-   * @type {!Cursor}
-   */
-  get cursor() {
-    return this._coreHandle.cursor
-  }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   */
-  dragFinished(context, originalLocation, newLocation) {
-    this._coreHandle.dragFinished(context, originalLocation, newLocation)
-  }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   */
-  handleMove(context, originalLocation, newLocation) {
-    this._coreHandle.handleMove(context, originalLocation, newLocation)
-  }
-
-  /**
-   * @param {!IInputModeContext} context
-   */
-  initializeDrag(context) {
-    this._coreHandle.initializeDrag(context)
-  }
-
-  /**
-   * @type {!IPoint}
-   */
-  get location() {
-    return this._coreHandle.location
-  }
-
-  /**
-   * @type {!HandleTypes}
-   */
-  get type() {
-    return HandleTypes.INVISIBLE
-  }
-
-  /**
-   * @param {!ClickEventArgs} evt
-   */
-  handleClick(evt) {
-    this._coreHandle.handleClick(evt)
-  }
-}
-
-/**
- * @typedef {(WebGL2ShapeNodeStyle|WebGL2IconNodeStyle)} WebGL2NodeStyle
+ * @typedef {(WebGL2ShapeNodeStyle|WebGL2IconNodeStyle|WebGL2GroupNodeStyle)} WebGL2NodeStyle
  */
 
 /**

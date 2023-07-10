@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,32 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { LayoutDescriptor } from 'yfiles'
-import { LayoutExecutorAsyncWorker, LayoutGraph, License } from 'yfiles'
-
-const workerSelf = self as unknown as Worker
+import { type LayoutDescriptor, LayoutExecutorAsyncWorker, LayoutGraph, License } from 'yfiles'
 
 export function createLayoutExecutorAsyncWorker(
-  handler: (graph: LayoutGraph, descriptor: LayoutDescriptor) => Promise<void> | void
+  applyLayout: (graph: LayoutGraph, descriptor: LayoutDescriptor) => Promise<void> | void
 ): LayoutExecutorAsyncWorker {
-  const executorWorker = new LayoutExecutorAsyncWorker(handler)
+  // Create a new remote layout executor that parses the serialized graph and layout configuration
+  // sent from the client and calculates the configured layout.
+  const executorWorker = new LayoutExecutorAsyncWorker(applyLayout)
+
+  // keep track of the initialization state of the worker
   let initialized = false
 
   // when a message is received..
-  workerSelf.addEventListener(
+  addEventListener(
     'message',
     e => {
       if (!initialized) {
-        License.value = JSON.parse(e.data)
-        workerSelf.postMessage('started')
+        // The Web Worker is running in a different context, so before calling any yFiles API
+        // we need to set the license. In this case, we send the license string from the client as
+        // initial message.
+        License.value = e.data
+        postMessage('started')
         initialized = true
       } else {
-        // send it to the executor for processing and post the results
-        // back to the caller
+        // Let the LayoutExecutorAsyncWorker handle the serialized graph and layout configuration
+        // and send its result back to the client.
         executorWorker
           .process(e.data)
-          .then(data => workerSelf.postMessage(data))
-          .catch(errorObj => workerSelf.postMessage(errorObj))
+          .then(data => postMessage(data))
+          .catch(errorObj => postMessage(errorObj))
       }
     },
     false

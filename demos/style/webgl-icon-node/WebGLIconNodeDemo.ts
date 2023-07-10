@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,8 +33,6 @@ import {
   ExteriorLabelModel,
   GraphComponent,
   GraphEditorInputMode,
-  GraphItemTypes,
-  ICommand,
   IGraph,
   License,
   Point,
@@ -47,16 +45,16 @@ import {
   WebGL2Stroke,
   WebGL2TextureRendering
 } from 'yfiles'
+import { createCanvasContext, createFontAwesomeIcon, createUrlIcon } from 'demo-utils/IconCreation'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import {
   addNavigationButtons,
   addOptions,
-  bindCommand,
   checkWebGL2Support,
-  showApp,
+  finishLoading,
   showLoadingIndicator
-} from '../../resources/demo-app'
-import { createCanvasContext, createFontAwesomeIcon, createUrlIcon } from '../../utils/IconCreation'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 // Some selected colors to colorize the icons
 const iconColors = [
@@ -84,7 +82,6 @@ const faClasses = [
 // the "graph loading" indicator element
 async function run(): Promise<void> {
   if (!checkWebGL2Support()) {
-    showApp()
     return
   }
 
@@ -92,13 +89,13 @@ async function run(): Promise<void> {
 
   const graphComponent = new GraphComponent('#graphComponent')
 
+  applyDemoTheme(graphComponent)
+
   initializeFastRendering(graphComponent)
 
   configureInteraction(graphComponent)
 
   initializeUI(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -305,10 +302,7 @@ function configureInteraction(graphComponent: GraphComponent) {
 
   const graphEditorInputMode = new GraphEditorInputMode({
     allowCreateEdge: false,
-    allowGroupingOperations: true,
-    marqueeSelectableItems: GraphItemTypes.NODE | GraphItemTypes.BEND,
-    //Completely disable handles for ports and edges
-    showHandleItems: GraphItemTypes.ALL & ~GraphItemTypes.PORT & ~GraphItemTypes.EDGE
+    allowGroupingOperations: true
   })
   // Disable moving of individual edge segments
   graphComponent.graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
@@ -343,12 +337,7 @@ function configureInteraction(graphComponent: GraphComponent) {
  * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
  */
 function initializeUI(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  const sampleSelectElement = document.querySelector<HTMLSelectElement>('#graphChooserBox')!
+  const sampleSelectElement = document.querySelector<HTMLSelectElement>('#graph-chooser-box')!
   addNavigationButtons(sampleSelectElement)
   sampleSelectElement.addEventListener('change', async () => {
     sampleSelectElement.disabled = true
@@ -369,5 +358,4 @@ function initializeUI(graphComponent: GraphComponent): void {
   addOptions(sampleSelectElement, 'Different icon types', 'Large graph')
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

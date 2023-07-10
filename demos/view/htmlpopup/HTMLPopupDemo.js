@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,8 +47,9 @@ import {
 } from 'yfiles'
 
 import HTMLPopupSupport from './HTMLPopupSupport.js'
-import { bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /**
  * Runs the demo.
@@ -58,16 +59,13 @@ async function run() {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   initializeInputMode(graphComponent)
 
   initializePopups(graphComponent)
 
   readSampleGraph(graphComponent)
-
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -152,7 +150,7 @@ function getDiv(id) {
 
 /**
  * Updates the node pop-up content with the elements from the node's tag.
- * @param {!HTMLPopupSupport} nodePopup
+ * @param {!HTMLPopupSupport.<INode>} nodePopup
  * @param {!INode} node
  */
 function updateNodePopupContent(nodePopup, node) {
@@ -176,7 +174,7 @@ function updateNodePopupContent(nodePopup, node) {
 
 /**
  * Updates the edge pop-up content with the elements from the edge's tag.
- * @param {!HTMLPopupSupport} edgePopup
+ * @param {!HTMLPopupSupport.<IEdge>} edgePopup
  * @param {!IEdge} edge
  */
 function updateEdgePopupContent(edgePopup, edge) {
@@ -216,7 +214,7 @@ async function readSampleGraph(graphComponent) {
     // configure to load and save to the file system
     storageLocation: StorageLocation.FILE_SYSTEM
   })
-  await readGraph(gs.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml')
+  await gs.graphMLIOHandler.readFromURL(graphComponent.graph, 'resources/sample.graphml')
   graphComponent.fitGraphBounds()
 }
 
@@ -245,16 +243,4 @@ function initializeInputMode(graphComponent) {
   graphComponent.inputMode = mode
 }
 
-/**
- * Binds commands to the demo's UI controls.
- * @param {!GraphComponent} graphComponent
- */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

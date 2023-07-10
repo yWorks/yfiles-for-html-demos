@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,13 +30,19 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Group Node Style Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <style>
+      #graphComponent.checkerboard {
+        background-color: #ebeef0;
+        background-size: 24px 24px;
+        background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg"><rect fill="rgb(194,196,198)" x="0" y="0" width="12" height="12"/><rect fill="rgb(194,196,198)" x="12" y="12" width="12" height="12"/></svg>');
+      }
+
       /*
        * Slightly increase the size of the expansion state icon if the mouse hovers over it
        */
@@ -90,29 +95,67 @@
       }
     </style>
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Group Node Style</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <select title="Select the type of node style to use" id="styleTypeChooser">
+        <option value="svg">SVG Style</option>
+        <option value="webgl">WebGL2 Style</option>
+      </select>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Group Node Style Demo</h1>
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" target="_blank">GroupNodeStyle</a> is a style primarily intended for groups and folders, i.e.,
-          collapsed groups.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" target="_blank">GroupNodeStyle</a> is a style primarily intended for groups and folders, i.e., collapsed groups.
         </p>
         <p>
-          This style offer many configuration options for customizing its look. Please see chapter
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles#styles-GroupNodeStyle" target="_blank">GroupNodeStyle</a> in the
-          Developer's Guide and the <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" target="_blank">GroupNodeStyle</a> API documentation for more detailed
-          information.
+          This style offers many configuration options for customizing its look. Please see chapter
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles#styles-GroupNodeStyle" target="_blank">GroupNodeStyle</a> in the Developer's Guide and the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" target="_blank">GroupNodeStyle</a> API documentation for more detailed information.
         </p>
         <p>
-          The related <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeLabelModel" target="_blank">GroupNodeLabelModel</a> places node labels inside the tab or the
-          background area next to the tab of a group or folder when used together with
-          <code>GroupNodeStyle</code>.
+          The related <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeLabelModel" target="_blank">GroupNodeLabelModel</a> places node labels inside the tab or the background area next to
+          the tab of a group or folder when used together with <code>GroupNodeStyle</code>.
         </p>
 
         <h2>Things to try</h2>
@@ -120,23 +163,28 @@
           <li>
             Click the expansion state icons
             <br />
-            <img src="../../resources/icons/group-minus-16.svg" alt="Minus" title="Minus" />&nbsp;
-            <img src="../../resources/icons/group-plus-16.svg" alt="Plus" title="Plus" />&nbsp;
+            <img src="../../resources/icons/group-minus-16.svg" alt="Minus" title="Minus" />
+            &nbsp;
+            <img src="../../resources/icons/group-plus-16.svg" alt="Plus" title="Plus" />
+            &nbsp;
             <img
               src="../../resources/icons/group-chevron-down-16.svg"
               alt="Chevron Down"
               title="Chevron Down"
-            />&nbsp;
+            />
+            &nbsp;
             <img
               src="../../resources/icons/group-chevron-up-16.svg"
               alt="Chevron Up"
               title="Chevron Up"
-            />&nbsp;
+            />
+            &nbsp;
             <img
               src="../../resources/icons/group-triangle-down-16.svg"
               alt="Triangle Down"
               title="Triangle Down"
-            />&nbsp;
+            />
+            &nbsp;
             <img
               src="../../resources/icons/group-triangle-up-16.svg"
               alt="Triangle Up"
@@ -156,9 +204,9 @@
             This CSS transition effect is specified in the demo's local &lt;style&gt; definition.
           </li>
           <li>
-            When using SVG styles, collapse a group or expand a folder with a
-            chevron or triangle icon. The expansion state icon will change in an animated fashion in
-            response to the state change.
+            When using SVG styles, collapse a group or expand a folder with a chevron or triangle
+            icon. The expansion state icon will change in an animated fashion in response to the
+            state change.
             <br />
             This CSS transition effect is specified in the demo's local &lt;style&gt; definition.
           </li>
@@ -180,41 +228,18 @@
             <a href="../arrow-node-style/index.html">Arrow Node Style</a>
           </li>
           <li>
-            <a href="../../02-tutorial-custom-styles/01-custom-node-style/index.html"
-              >Tutorial: Custom Node Style</a
-            >
+            <a href="../../tutorial-style-implementation-node/01-create-a-rectangle/index.html">
+              Tutorial: Node Style Implementation
+            </a>
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-        <select title="Select the type of node style to use" id="styleTypeChooser">
-          <option value="svg">SVG Style</option>
-          <option value="webgl">WebGL2 Style</option>
-        </select>
-      </div>
-
-      <div class="demo-content-dynamic">
-        <div id="graphComponent"></div>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent" class="checkerboard"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="GroupNodeStyleDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="GroupNodeStyleDemo.ts" async></script>
   </body>
 </html>

@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,19 +29,26 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Vite Loading Demo [yFiles for HTML]</title>
-
-    <link rel="stylesheet" href="/src/style.css" />
   </head>
-  <body class="demo-has-left demo-hide-left-when-small loaded">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-sidebar-logo"></a>
-      </div>
-      <div class="demo-sidebar-content">
+  <body>
+    <header class="demo-header">
+      <a href="https://www.yworks.com/products/yfiles" class="demo-header__y-logo"></a>
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__breadcrumb demo-header__breadcrumb--link"
+      >
+        yFiles for HTML
+      </a>
+      <div class="demo-header__breadcrumb">Vite Loading Demo</div>
+    </header>
+
+    <aside class="demo-page__description">
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Vite Loading Demo</h1>
         <p>
           This demo shows how to load yFiles for HTML with
@@ -57,8 +62,7 @@
             href="https://vitejs.dev/guide/features.html#web-workers"
             rel="noopener"
             target="_blank"
-            >Vite's built-in support for Web Workers</a
-          >.
+          >Vite's built-in support for Web Workers</a>.
         </p>
         <p>
           Wait for the demo to load and once the layout button has become active (when the Web
@@ -66,9 +70,9 @@
         </p>
         <p>See the sources for details.</p>
         <p>
-          Please note that the hot reloading features of this demo are completely
-          <b>optional</b> and definitely not required when using yFiles for HTML with vite. They are only
-          meant to show a simple example of hot reloading.
+          Please note that the hot reloading features of this demo are completely <b>optional</b>
+          and definitely not required when using yFiles for HTML with vite. They are only meant to show a
+          simple example of hot reloading.
         </p>
         <p>
           The demo code uses
@@ -77,38 +81,25 @@
           some browser (e.g. Chrome). For unsupported browsers, client-sided layout calculation is
           used as fallback.
         </p>
-        <p>Please see the <a href="https://docs.yworks.com/yfileshtml/#/dguide/testing-vitest" target="_blank">Vitest</a>
-          section of the developer's guide for details about using the Vitest framework with your
-          yFiles for HTML application.
+        <p>
+          Please see the <a data-dguide="testing-vitest">Vitest</a> section of the developer's
+          guide for details about using the Vitest framework with your yFiles for HTML application.
         </p>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <div class="demo-header">
-        <a href="https://www.yworks.com" target="_blank"
-          ><img src="./src/resources/ylogo.svg" class="demo-y-logo" />
-        </a>
-        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
-        <a
-          href="../../README.html"
-          style="cursor: pointer"
-          target="_blank"
-          class="demo-header-title"
-          >Demos</a
-        >
-        <span class="demo-header-title">Vite Loading Demo</span>
-      </div>
-      <div class="demo-toolbar">
-        <button disabled data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">
-          Layout
-        </button>
-      </div>
-
-      <div id="graphComponent"></div>
+    <div class="demo-page__toolbar">
+      <button disabled id="layout" title="Layout" class="demo-icon-yIconLayout labeled">
+        Layout
+      </button>
     </div>
 
-    <script type="module" src="/src/main.ts"></script>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts" async></script>
     <script nomodule></script>
   </body>
 </html>

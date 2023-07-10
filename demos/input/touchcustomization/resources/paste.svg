@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -25,7 +25,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
 <svg id="Ebene_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><style>.st1{fill:none;stroke:#000;stroke-width:8;stroke-miterlimit:10}</style><path d="M185.9 102.4h-55.1l-.2 110.1H63.8V55h122l.1 47.4z" stroke="#000" stroke-width="8" stroke-miterlimit="10"/><path class="st1" d="M130.6 212.5l-.1 46h122.3l-.9-102.6-55-53.5h-11"/><path class="st1" d="M251.9 155.9h-55v-53.5"/></svg>

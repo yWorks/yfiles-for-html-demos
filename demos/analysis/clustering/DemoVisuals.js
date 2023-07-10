@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   FontWeight,
   GeneralPath,
   Geom,
-  IEnumerable,
   IRectangle,
   IRenderContext,
   IVisualCreator,
@@ -47,7 +46,7 @@ import {
   YPoint
 } from 'yfiles'
 
-import { colorSets } from '../../resources/demo-styles.js'
+import { colorSets } from 'demo-resources/demo-styles'
 
 const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -139,6 +138,9 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
  * This visual creates a polygon around the nodes that belong to the same cluster.
  */
 export class PolygonVisual extends BaseClass(IVisualCreator) {
+  startColor
+  endColor
+
   /**
    * Creates a new instance.
    * @param {boolean} drawCenter Whether to draw an X at the center.
@@ -212,9 +214,9 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
     }
 
     if (this.drawCenter) {
-      this.clusters.centroids.forEach(point => {
+      for (const point of this.clusters.centroids) {
         VoronoiVisual.drawClusterCenter(point, element)
-      })
+      }
     }
 
     return new SvgVisual(element)
@@ -321,6 +323,8 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
  * This is only used for Hierarchical Clustering.
  */
 export class CutoffVisual extends BaseClass(IVisualCreator) {
+  cutOffValue
+
   /**
    * @param {!IRectangle} rectangle
    * @param {number} maxY

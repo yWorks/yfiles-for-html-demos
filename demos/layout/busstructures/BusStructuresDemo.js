@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   HierarchicLayout,
   HierarchicLayoutBusDescriptor,
   HierarchicLayoutData,
-  ICommand,
   IEdge,
   IGraph,
   License,
@@ -45,21 +44,14 @@ import {
 } from 'yfiles'
 
 import SampleData from './resources/SampleData.js'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  reportDemoError,
-  showApp
-} from '../../resources/demo-app.js'
-import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-const busStructuresToggle = document.getElementById('bus-structures-toggle')
-const beforeBusSlider = document.getElementById('before-bus-slider')
-const afterBusSlider = document.getElementById('after-bus-slider')
-const busPresetSelect = document.getElementById('bus-preset-select')
+const busStructuresToggle = document.querySelector('#bus-structures-toggle')
+const beforeBusSlider = document.querySelector('#before-bus-slider')
+const afterBusSlider = document.querySelector('#after-bus-slider')
+const busPresetSelect = document.querySelector('#bus-preset-select')
 
 /**
  * Displays the demo's graph.
@@ -114,8 +106,7 @@ async function run() {
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode()
 
-  registerCommands()
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -153,8 +144,6 @@ async function runLayout() {
   try {
     // apply the layout
     await graphComponent.morphLayout({ layout, layoutData, morphDuration: '700ms' })
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     layoutRunning = false
     disableUI(false)
@@ -309,11 +298,10 @@ function loadGraph(graph) {
 
 /**
  * Helper function to set a value to a given slider element in the UI.
- * @param {!string} sliderId
+ * @param {!HTMLInputElement} slider
  * @param {number} value
  */
-function setSliderValue(sliderId, value) {
-  const slider = document.getElementById(sliderId)
+function setSliderValue(slider, value) {
   const sliderLabel = slider.nextElementSibling
   slider.value = String(isFinite(value) ? value : 20)
   sliderLabel.textContent = value.toString()
@@ -333,47 +321,43 @@ function disableUI(disabled) {
 }
 
 /**
- * Binds commands to the buttons in the toolbar.
+ * Binds actions to the buttons in the toolbar.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-
-  const busSliders = document.getElementById('bus-sliders')
-  bindChangeListener("input[data-command='ToggleBusStructures']", async useBusStructures => {
+function initializeUI() {
+  const busSliders = document.querySelector('#bus-sliders')
+  busStructuresToggle.addEventListener('change', async () => {
+    const useBusStructures = busStructuresToggle.value
     busSliders.style.opacity = useBusStructures && busPresetSelect.value === 'custom' ? '1' : '0.5'
     await runLayout()
   })
 
-  const beforeBusLabel = document.getElementById('before-bus-label')
-  const afterBusLabel = document.getElementById('after-bus-label')
-  addNavigationButtons(busPresetSelect)
-  bindChangeListener("select[data-command='SelectBusPreset']", async preset => {
+  const beforeBusLabel = document.querySelector('#before-bus-label')
+  const afterBusLabel = document.querySelector('#after-bus-label')
+  addNavigationButtons(busPresetSelect).addEventListener('change', async () => {
+    const preset = busPresetSelect.value
     busSliders.style.opacity = preset === 'custom' ? '1' : '0.5'
     if (preset === 'custom') {
       if (afterBusLabel.textContent === 'Infinity') {
-        setSliderValue('after-bus-slider', 5)
+        setSliderValue(afterBusSlider, 5)
       }
       if (beforeBusLabel.textContent === 'Infinity') {
-        setSliderValue('before-bus-slider', 5)
+        setSliderValue(beforeBusSlider, 5)
       }
     }
     await runLayout()
   })
 
-  bindChangeListener('#before-bus-slider', async () => {
+  beforeBusSlider.addEventListener('change', async () => {
     beforeBusLabel.textContent = beforeBusSlider.value.toString()
     await runLayout()
   })
 
-  bindChangeListener('#after-bus-slider', async () => {
+  afterBusSlider.addEventListener('change', async () => {
     afterBusLabel.textContent = afterBusSlider.value.toString()
     await runLayout()
   })
 
-  bindAction("button[data-command='Layout']", runLayout)
+  document.querySelector('#layout').addEventListener('click', runLayout)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

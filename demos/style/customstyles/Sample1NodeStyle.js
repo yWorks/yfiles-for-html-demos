@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -53,15 +53,19 @@ import Sample1EdgeStyle from './Sample1EdgeStyle.js'
 import { SVGNS, XLINKNS } from './Namespaces.js'
 
 /**
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
+ * @typedef {TaggedSvgVisual.<SVGGElement,NodeRenderDataCache>} Sample1NodeStyleVisual
+ */
+
+/**
  * A custom implementation of an {@link INodeStyle}
  * that uses the convenience class {@link NodeStyleBase}
  * as the base class.
  */
 export default class Sample1NodeStyle extends NodeStyleBase {
-  constructor() {
-    super()
-    this.nodeColor = 'rgba(0,130,180,1)'
-  }
+  static _fillCounter
+
+  nodeColor = 'rgba(0,130,180,1)'
 
   /**
    * Counts the number of gradient fills used to generate a unique id.
@@ -92,32 +96,34 @@ export default class Sample1NodeStyle extends NodeStyleBase {
    * @see Overrides {@link NodeStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!INode} node
-   * @returns {!SvgVisual}
+   * @returns {!Sample1NodeStyleVisual}
    */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
     const g = document.createElementNS(SVGNS, 'g')
     // Get the necessary data for rendering of the edge
     const cache = this.createRenderDataCache(node)
+    // Create a visual that wraps our g element and remembers the render data
+    const visual = SvgVisual.from(g, cache)
     // Render the node
-    Sample1NodeStyle.render(context, node, g, cache)
+    Sample1NodeStyle.render(context, visual, node)
     // set the location
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
-    return new SvgVisual(g)
+    return visual
   }
 
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @see Overrides {@link NodeStyleBase.updateVisual}
    * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
+   * @param {!Sample1NodeStyleVisual} oldVisual
    * @param {!INode} node
-   * @returns {!SvgVisual}
+   * @returns {!Sample1NodeStyleVisual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
-    // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
+    // get the data with which the oldVisual was created
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(node)
 
@@ -128,9 +134,10 @@ export default class Sample1NodeStyle extends NodeStyleBase {
         // remove all children
         container.removeChild(container.lastChild)
       }
-      Sample1NodeStyle.render(context, node, container, newCache)
+      oldVisual.tag = newCache
+      Sample1NodeStyle.render(context, oldVisual, node)
     }
-    // make sure that the location is up to date
+    // make sure that the location is up-to-date
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
     return oldVisual
   }
@@ -142,22 +149,21 @@ export default class Sample1NodeStyle extends NodeStyleBase {
    * {@link Sample1NodeStyle.createVisual} and {@link Sample1NodeStyle.updateVisual} finally arrange the
    * container so that the drawing is translated into the final position.
    * @param {!IRenderContext} context
+   * @param {!Sample1NodeStyleVisual} visual
    * @param {!INode} node
-   * @param {*} container
-   * @param {!NodeRenderDataCache} cache
    */
-  static render(context, node, container, cache) {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
+  static render(context, visual, node) {
+    const container = visual.svgElement
+    const cache = visual.tag
 
     // Create Defs section in container
     const defs = document.createElementNS(SVGNS, 'defs')
     container.appendChild(defs)
 
-    // draw the dropshadow
+    // draw the drop shadow
     Sample1NodeStyle.drawShadow(context, container, cache.size)
     // draw edges to node labels
-    Sample1NodeStyle.renderLabelEdges(node, context, container, cache)
+    Sample1NodeStyle.renderLabelEdges(context, visual, node)
 
     const color = cache.color
     const nodeSize = cache.size
@@ -268,7 +274,7 @@ export default class Sample1NodeStyle extends NodeStyleBase {
     const xScaleFactor = size.width / tileSize
     const yScaleFactor = size.height / tileSize
 
-    // add the dropshadow to the global defs section, if necessary, and get the id
+    // add the drop shadow to the global defs section, if necessary, and get the id
     const defsId = context.getDefsId(dropShadowDefsCreator)
     const use = document.createElementNS(SVGNS, 'use')
     use.href.baseVal = `#${defsId}`
@@ -283,52 +289,55 @@ export default class Sample1NodeStyle extends NodeStyleBase {
 
   /**
    * Draws the edge-like connectors from a node to its labels.
-   * @param {!INode} node
    * @param {!IRenderContext} context
-   * @param {!SVGGElement} container
-   * @param {!NodeRenderDataCache} cache
+   * @param {!Sample1NodeStyleVisual} visual
+   * @param {!INode} node
    */
-  static renderLabelEdges(node, context, container, cache) {
-    if (node.labels.size > 0) {
-      // Create a SimpleEdge which will be used as a dumCustom for the rendering
-      const simpleEdge = new SimpleEdge(null, null)
-      // Assign the style
-      const edgeStyle = new Sample1EdgeStyle()
-      edgeStyle.pathThickness = 2
-      simpleEdge.style = edgeStyle
+  static renderLabelEdges(context, visual, node) {
+    if (node.labels.size === 0) {
+      return
+    }
 
-      // Create a SimpleNode which provides the sourceport for the edge but won't be drawn itself
-      const sourceDumCustomNode = new SimpleNode()
-      sourceDumCustomNode.layout = new Rect(0, 0, node.layout.width, node.layout.height)
-      sourceDumCustomNode.style = node.style
+    const cache = visual.tag
 
-      // Set sourceport to the port of the node using a dumCustom node that is located at the origin.
-      simpleEdge.sourcePort = new SimplePort(
-        sourceDumCustomNode,
-        FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-      )
+    // Create a SimpleEdge which will be used as a dumCustom for the rendering
+    const simpleEdge = new SimpleEdge(null, null)
+    // Assign the style
+    const edgeStyle = new Sample1EdgeStyle()
+    edgeStyle.pathThickness = 2
+    simpleEdge.style = edgeStyle
 
-      // Create a SimpleNode which provides the targetport for the edge but won't be drawn itself
-      const targetDumCustomNode = new SimpleNode()
+    // Create a SimpleNode which provides the source port for the edge but won't be drawn itself
+    const sourceDumCustomNode = new SimpleNode()
+    sourceDumCustomNode.layout = new Rect(0, 0, node.layout.width, node.layout.height)
+    sourceDumCustomNode.style = node.style
 
-      // Create port on targetDumCustomnode for the label target
-      simpleEdge.targetPort = new SimplePort(
-        targetDumCustomNode,
-        FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-      )
+    // Set source port to the port of the node using a dumCustom node that is located at the origin.
+    simpleEdge.sourcePort = new SimplePort(
+      sourceDumCustomNode,
+      FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+    )
 
-      // Render one edge for each label
-      for (const labelLocation of cache.labelLocations) {
-        // move the dumCustom node to the location of the label
-        targetDumCustomNode.layout = new Rect(labelLocation.x, labelLocation.y, 0, 0)
+    // Create a SimpleNode which provides the target port for the edge but won't be drawn itself
+    const targetDumCustomNode = new SimpleNode()
 
-        // now create the visual using the style interface:
-        const renderer = simpleEdge.style.renderer
-        const creator = renderer.getVisualCreator(simpleEdge, simpleEdge.style)
-        const edgeVisual = creator.createVisual(context)
-        if (edgeVisual) {
-          container.appendChild(edgeVisual.svgElement)
-        }
+    // Create port on targetDumCustomNode for the label target
+    simpleEdge.targetPort = new SimplePort(
+      targetDumCustomNode,
+      FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+    )
+
+    // Render one edge for each label
+    for (const labelLocation of cache.labelLocations) {
+      // move the dumCustom node to the location of the label
+      targetDumCustomNode.layout = new Rect(labelLocation.x, labelLocation.y, 0, 0)
+
+      // now create the visual using the style interface:
+      const renderer = simpleEdge.style.renderer
+      const creator = renderer.getVisualCreator(simpleEdge, simpleEdge.style)
+      const edgeVisual = creator.createVisual(context)
+      if (edgeVisual) {
+        visual.svgElement.appendChild(edgeVisual.svgElement)
       }
     }
   }
@@ -375,8 +384,8 @@ export default class Sample1NodeStyle extends NodeStyleBase {
 
   /**
    * Overridden to take the connection lines to the label into account.
-   * Otherwise label intersection lines might not be painted if the node is outside
-   * of the clipping bounds.
+   * Otherwise, label intersection lines might not be painted if the node is outside the
+   * clipping bounds.
    * @see Overrides {@link NodeStyleBase.isVisible}
    * @param {!ICanvasContext} context
    * @param {!Rect} clip
@@ -513,13 +522,12 @@ function createDropShadow() {
   // section every once in a while. In order for {@link SvgDefsManager} to interact with
   // the defs elements, those have to implement {@link ISvgDefsCreator} that offers a
   // defined interface to deal with.
-  // This code uses an anonymous interface implementation of ISvgDefsCreator.
   return ISvgDefsCreator.create({
-    createDefsElement: context => createDropShadowElement(),
+    createDefsElement: () => createDropShadowElement(),
 
     accept: (context, node, id) => ISvgDefsCreator.isUseReference(node, id),
 
-    updateDefsElement: (context, oldElement) => {}
+    updateDefsElement: () => {}
   })
 }
 

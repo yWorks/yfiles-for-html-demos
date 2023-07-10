@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,6 +42,8 @@ import {
  * A visual template that renders labels with a given template string and size.
  */
 export default class HandleTemplate extends BaseClass(IVisualTemplate) {
+  dummyNode
+
   /**
    * Creates a new instance of {@link HandleTemplate}
    * @param {!string} template - The template svg string used to render the handle.

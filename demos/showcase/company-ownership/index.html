@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title id="title">Company Ownership Chart Demo[yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./resources/ownershipstyle.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Company Ownership Chart</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+
+      <select title="Select node style" id="styles">
+        <option value="shapes" data-command="Shapes">Shapes</option>
+        <option value="tables" data-command="Tables">Tables</option>
+      </select>
+
+      <span class="demo-separator"></span>
+
+      <span>
+        Search:
+        <input type="search" id="searchBox" />
+      </span>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Company Ownership Chart Demo</h1>
+        <p>
+          This demo implements an interactive viewer for exploring company ownership hierarchies.
+        </p>
+        <p>
+          The diagram illustrates both the ownership (shareholders, investors, etc) and the
+          management relationships among business entities.
+        </p>
+        <p>
+          Nodes can be shown in two different ways: Either as different shapes and colors per type,
+          or as a table-like overview of the relevant properties.
+        </p>
+        <p>
+          The edges demonstrate either hierarchy/ownership (dark-gray edges) or a simple
+          relationship (orange edges).
+        </p>
+
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Click on the port to hide and show the descendants of a node.
+            <strong>Hide Children</strong> by clicking on
+            <img class="inline-img" src="resources/minus.svg" /> and
+            <strong>Show Children</strong> by clicking on
+            <img class="inline-img" src="resources/plus.svg" />. A node is considered to be visible
+            if at least one of its parents defined by a hierarchy edge (i.e., the dark-gray-colored
+            edges) is visible.
+          </li>
+          <li>
+            <strong>Switch style</strong> between
+            <button class="inline-button" data-command="Shapes">shapes</button> and
+            <button class="inline-button" data-command="Tables">tables</button>.
+          </li>
+          <li>
+            <strong>Click</strong> on a company or a relationship in the chart and show the
+            corresponding data in the Properties View.
+          </li>
+          <li>
+            <strong>Left-click</strong> on an edge or an edge label zooms to the edges target
+            location.
+          </li>
+          <li>
+            <strong>Hover</strong> over a company node to highlight its adjacent relationships.
+            <strong>Hover</strong> over a relationship to highlight its associated label.
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-overlay">
+        <div class="demo-overlay__header">Overview</div>
+        <div id="overviewComponent"></div>
+      </div>
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <div id="propertiesView">
+            <p class="heading-text">
+              Select a company or a relationship in the chart to show its properties.
+            </p>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="CompanyOwnershipDemo.ts" async></script>
+  </body>
+</html>

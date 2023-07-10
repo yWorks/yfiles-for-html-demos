@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { h, html, useEffect, useRef } from '../../preact-loader.js'
-import { showApp } from '../../../../resources/demo-app.js'
+import { html, useEffect, useRef } from '../../preact-loader.js'
 import {
   Class,
   EdgesSource,
@@ -41,6 +40,7 @@ import {
 } from 'yfiles'
 import PreactComponentNodeStyle from './PreactComponentNodeStyle.js'
 import NodeTemplate from './NodeTemplate.js'
+import { finishLoading } from 'demo-resources/demo-page'
 
 Class.ensure(LayoutExecutor)
 
@@ -73,7 +73,7 @@ export default props => {
     graphBuilderRef.current = graphBuilder
     graphBuilder.buildGraph()
     doLayout()
-    showApp(graphComponent)
+    finishLoading()
 
     // return a cleanup function (like componentWillUnmount())
     return () => {
@@ -138,5 +138,5 @@ export default props => {
     return graphBuilder
   }
 
-  return html`<div class="graph-component" ref=${gcRef} />`
+  return html` <div class="graph-component" ref=${gcRef} /> `
 }

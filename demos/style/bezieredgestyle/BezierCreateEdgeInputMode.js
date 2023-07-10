@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -58,6 +58,21 @@ import {
  */
 export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   /**
+   * Re-entrance flag when we are inserting/removing dummy edge bends.
+   */
+  augmenting
+
+  /**
+   * Additional canvas object that highlights the control point sequence.
+   */
+  controlPointHighlight
+
+  /**
+   * Whether we want to create smooth splines.
+   */
+  $createSmoothSplines
+
+  /**
    * Determines whether we want to create smooth splines.
    * If true, each "bend" creation inserts one of the "exterior" control points for a cubic segment, and the point in the middle
    * is created automatically by the mode. Otherwise, each control point must be explicitly created.
@@ -81,15 +96,12 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
 
   constructor() {
     super()
-    // Whether we want to create smooth splines.
     this.$createSmoothSplines = true
     // By default, we can't create orthogonal edges with this mode
     // (what would that look like)
     this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.NEVER
 
-    // Re-entrance flag when we are inserting/removing dummy edge bends.
     this.augmenting = false
-    // Additional canvas object that highlights the control point sequence.
     this.controlPointHighlight = null
 
     this.validBendHitTestable = IHitTestable.create((context, location) => {

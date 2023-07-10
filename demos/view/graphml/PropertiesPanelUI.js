@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,19 +30,21 @@
  * Properties Panel.
  */
 export default class PropertiesPanelUI {
+  graphPropertiesDiv
+  itemPropertiesDiv
+  itemPropertiesPanel
+  reentrantFlag = false
+  // prepare callback hooks, they will be assigned in PropertiesPanel
+  itemPropertyAddedCallback = () => {}
+  graphPropertyAddedCallback = () => {}
+  itemValueChangedCallback = () => {}
+  graphValueChangedCallback = () => {}
+
   /**
    * @param {!HTMLElement} div
    */
   constructor(div) {
     this.div = div
-    this.reentrantFlag = false
-
-    // prepare callback hooks, they will be assigned in PropertiesPanel
-    this.itemPropertyAddedCallback = () => {}
-
-    this.graphPropertyAddedCallback = () => {}
-    this.itemValueChangedCallback = () => {}
-    this.graphValueChangedCallback = () => {}
     this.graphPropertiesDiv = getDiv(div, '#graphPropertiesDiv')
     this.itemPropertiesDiv = getDiv(div, '#itemPropertiesDiv')
     this.itemPropertiesPanel = getDiv(div, '.custom-data-panel.item-data')

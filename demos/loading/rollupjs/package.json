@@ -5,30 +5,23 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
-    "build": "node --max-old-space-size=8000 ./node_modules/grunt/bin/grunt",
-    "production": "node --max-old-space-size=8000 ./node_modules/grunt/bin/grunt production"
+    "watch": "rollup --config rollup.config.mjs --watch",
+    "build": "rollup --config rollup.config.mjs --environment NODE_ENV:production"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.5",
-    "@babel/preset-env": "^7.18.2",
-    "@rollup/plugin-babel": "^5.3.1",
-    "@rollup/plugin-commonjs": "^22.0.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-replace": "^4.0.0",
-    "@yworks/optimizer": "^1.7.3",
-    "fs-extra": "^10.1.0",
-    "grunt": "^1.5.3",
-    "grunt-contrib-clean": "^2.0.1",
-    "grunt-contrib-copy": "^1.0.0",
-    "rollup": "^2.75.7",
-    "rollup-plugin-web-worker-loader": "^1.6.1"
+    "@rollup/plugin-commonjs": "^25.0.2",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "^0.4.3",
+    "@yworks/optimizer": "^1.8.1",
+    "postcss": "^8.4.24",
+    "postcss-url": "^10.1.3",
+    "rollup": "^3.25.1",
+    "rollup-plugin-postcss": "^4.0.2"
   },
   "dependencies": {
-    "core-js": "^3.23.1",
-    "regenerator-runtime": "^0.13.9",
-    "unfetch": "^4.2.0",
-    "yfiles": "../../../lib-dev/yfiles-25.0.4+dev.tgz"
+    "demo-resources": "../../resources",
+    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
   }
 }

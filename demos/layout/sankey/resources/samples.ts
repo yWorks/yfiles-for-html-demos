@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,761 +26,149 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export default {
-  nodes: [
-    {
-      id: 0,
-      label: 'Black Party',
-      x: 0,
-      y: 0,
-      colorId: 0
-    },
-    {
-      id: 1,
-      label: 'Red Party',
-      x: 0,
-      y: 100,
-      colorId: 1
-    },
-    {
-      id: 2,
-      label: 'Yellow Party',
-      x: 0,
-      y: 200,
-      colorId: 2
-    },
-    {
-      id: 3,
-      label: 'Green Party',
-      x: 0,
-      y: 300,
-      colorId: 3
-    },
-    {
-      id: 4,
-      label: 'Purple Party',
-      x: 0,
-      y: 400,
-      colorId: 4
-    },
-    {
-      id: 5,
-      label: 'Black Party',
-      x: 100,
-      y: 0,
-      colorId: 0
-    },
-    {
-      id: 6,
-      label: 'Red Party',
-      x: 100,
-      y: 100,
-      colorId: 1
-    },
-    {
-      id: 7,
-      label: 'Yellow Party',
-      x: 100,
-      y: 200,
-      colorId: 2
-    },
-    {
-      id: 8,
-      label: 'Green Party',
-      x: 100,
-      y: 300,
-      colorId: 3
-    },
-    {
-      id: 9,
-      label: 'Purple Party',
-      x: 100,
-      y: 400,
-      colorId: 4
-    },
-    {
-      id: 10,
-      label: 'Non-voter',
-      x: 100,
-      y: 500,
-      colorId: 6
-    },
-    {
-      id: 11,
-      label: 'Black Party',
-      x: 200,
-      y: 0,
-      colorId: 0
-    },
-    {
-      id: 12,
-      label: 'Red Party',
-      x: 200,
-      y: 100,
-      colorId: 1
-    },
-    {
-      id: 13,
-      label: 'Yellow Party',
-      x: 200,
-      y: 200,
-      colorId: 2
-    },
-    {
-      id: 14,
-      label: 'Green Party',
-      x: 200,
-      y: 300,
-      colorId: 3
-    },
-    {
-      id: 15,
-      label: 'Purple Party',
-      x: 200,
-      y: 400,
-      colorId: 4
-    },
-    {
-      id: 16,
-      label: 'Blue Party',
-      x: 200,
-      y: 500,
-      colorId: 5
-    },
-    {
-      id: 17,
-      label: 'Non-voter',
-      x: 200,
-      y: 600,
-      colorId: 6
-    },
-    {
-      id: 18,
-      label: 'Black Party',
-      x: 300,
-      y: 0,
-      colorId: 0
-    },
-    {
-      id: 19,
-      label: 'Red Party',
-      x: 300,
-      y: 100,
-      colorId: 1
-    },
-    {
-      id: 20,
-      label: 'Yellow Party',
-      x: 300,
-      y: 200,
-      colorId: 2
-    },
-    {
-      id: 21,
-      label: 'Green Party',
-      x: 300,
-      y: 300,
-      colorId: 3
-    },
-    {
-      id: 22,
-      label: 'Purple Party',
-      x: 300,
-      y: 400,
-      colorId: 4
-    },
-    {
-      id: 23,
-      label: 'Blue Party',
-      x: 300,
-      y: 500,
-      colorId: 5
-    },
-    {
-      id: 24,
-      label: 'Non-voter',
-      x: 300,
-      y: 600,
-      colorId: 6
-    },
-    {
-      id: 25,
-      label: 'Black Party',
-      x: 400,
-      y: 0,
-      colorId: 0
-    },
-    {
-      id: 26,
-      label: 'Red Party',
-      x: 400,
-      y: 100,
-      colorId: 1
-    },
-    {
-      id: 27,
-      label: 'Yellow Party',
-      x: 400,
-      y: 200,
-      colorId: 2
-    },
-    {
-      id: 28,
-      label: 'Green Party',
-      x: 400,
-      y: 300,
-      colorId: 3
-    },
-    {
-      id: 29,
-      label: 'Purple Party',
-      x: 400,
-      y: 400,
-      colorId: 4
-    },
-    {
-      id: 30,
-      label: 'Blue Party',
-      x: 400,
-      y: 500,
-      colorId: 5
-    },
-    {
-      id: 31,
-      label: 'Non-voter',
-      x: 400,
-      y: 600,
-      colorId: 6
-    },
-    {
-      id: 32,
-      label: 'Non-voter',
-      x: 0,
-      y: 600,
-      colorId: 6
-    }
+import type { PoliticalParty, VoterShift } from '../data-types'
+
+export const electionData: { parties: PoliticalParty[]; voterShift: VoterShift[] } = {
+  parties: [
+    { id: 0, name: 'Black Party' },
+    { id: 1, name: 'Red Party' },
+    { id: 2, name: 'Yellow Party' },
+    { id: 3, name: 'Green Party' },
+    { id: 4, name: 'Purple Party' },
+    { id: 5, name: 'Black Party' },
+    { id: 6, name: 'Red Party' },
+    { id: 7, name: 'Yellow Party' },
+    { id: 8, name: 'Green Party' },
+    { id: 9, name: 'Purple Party' },
+    { id: 10, name: 'Non-voter' },
+    { id: 11, name: 'Black Party' },
+    { id: 12, name: 'Red Party' },
+    { id: 13, name: 'Yellow Party' },
+    { id: 14, name: 'Green Party' },
+    { id: 15, name: 'Purple Party' },
+    { id: 16, name: 'Blue Party' },
+    { id: 17, name: 'Non-voter' },
+    { id: 18, name: 'Black Party' },
+    { id: 19, name: 'Red Party' },
+    { id: 20, name: 'Yellow Party' },
+    { id: 21, name: 'Green Party' },
+    { id: 22, name: 'Purple Party' },
+    { id: 23, name: 'Blue Party' },
+    { id: 24, name: 'Non-voter' },
+    { id: 25, name: 'Black Party' },
+    { id: 26, name: 'Red Party' },
+    { id: 27, name: 'Yellow Party' },
+    { id: 28, name: 'Green Party' },
+    { id: 29, name: 'Purple Party' },
+    { id: 30, name: 'Blue Party' },
+    { id: 31, name: 'Non-voter' },
+    { id: 32, name: 'Non-voter' }
   ],
 
-  edges: [
-    {
-      from: 0,
-      to: 5,
-      label: '13654'
-    },
-    {
-      from: 0,
-      to: 7,
-      label: '1140'
-    },
-    {
-      from: 0,
-      to: 8,
-      label: '50'
-    },
-    {
-      from: 0,
-      to: 9,
-      label: '40'
-    },
-    {
-      from: 0,
-      to: 10,
-      label: '1080'
-    },
-    {
-      from: 1,
-      to: 5,
-      label: '880'
-    },
-    {
-      from: 1,
-      to: 6,
-      label: '9890'
-    },
-    {
-      from: 1,
-      to: 7,
-      label: '530'
-    },
-    {
-      from: 1,
-      to: 8,
-      label: '870'
-    },
-    {
-      from: 1,
-      to: 9,
-      label: '1100'
-    },
-    {
-      from: 1,
-      to: 10,
-      label: '2040'
-    },
-    {
-      from: 2,
-      to: 7,
-      label: '6278'
-    },
-    {
-      from: 2,
-      to: 10,
-      label: '70'
-    },
-    {
-      from: 3,
-      to: 7,
-      label: '30'
-    },
-    {
-      from: 3,
-      to: 8,
-      label: '3681'
-    },
-    {
-      from: 3,
-      to: 9,
-      label: '140'
-    },
-    {
-      from: 3,
-      to: 10,
-      label: '30'
-    },
-    {
-      from: 4,
-      to: 7,
-      label: '20'
-    },
-    {
-      from: 4,
-      to: 9,
-      label: '3837'
-    },
-    {
-      from: 4,
-      to: 10,
-      label: '300'
-    },
-    {
-      from: 5,
-      to: 11,
-      label: '14685'
-    },
-    {
-      from: 5,
-      to: 16,
-      label: '290'
-    },
-    {
-      from: 6,
-      to: 11,
-      label: '210'
-    },
-    {
-      from: 6,
-      to: 12,
-      label: '9755'
-    },
-    {
-      from: 6,
-      to: 16,
-      label: '180'
-    },
-    {
-      from: 7,
-      to: 11,
-      label: '2110'
-    },
-    {
-      from: 7,
-      to: 12,
-      label: '530'
-    },
-    {
-      from: 7,
-      to: 13,
-      label: '2084'
-    },
-    {
-      from: 7,
-      to: 14,
-      label: '170'
-    },
-    {
-      from: 7,
-      to: 15,
-      label: '90'
-    },
-    {
-      from: 7,
-      to: 16,
-      label: '430'
-    },
-    {
-      from: 7,
-      to: 17,
-      label: '460'
-    },
-    {
-      from: 8,
-      to: 11,
-      label: '420'
-    },
-    {
-      from: 8,
-      to: 12,
-      label: '550'
-    },
-    {
-      from: 8,
-      to: 14,
-      label: '3570'
-    },
-    {
-      from: 8,
-      to: 16,
-      label: '90'
-    },
-    {
-      from: 8,
-      to: 17,
-      label: '40'
-    },
-    {
-      from: 9,
-      to: 11,
-      label: '120'
-    },
-    {
-      from: 9,
-      to: 12,
-      label: '370'
-    },
-    {
-      from: 9,
-      to: 14,
-      label: '40'
-    },
-    {
-      from: 9,
-      to: 15,
-      label: '3780'
-    },
-    {
-      from: 9,
-      to: 16,
-      label: '340'
-    },
-    {
-      from: 9,
-      to: 17,
-      label: '320'
-    },
-    {
-      from: 10,
-      to: 11,
-      label: '1130'
-    },
-    {
-      from: 10,
-      to: 12,
-      label: '360'
-    },
-    {
-      from: 10,
-      to: 16,
-      label: '210'
-    },
-    {
-      from: 10,
-      to: 17,
-      label: '16835'
-    },
-    {
-      from: 11,
-      to: 18,
-      label: '15065'
-    },
-    {
-      from: 11,
-      to: 20,
-      label: '1360'
-    },
-    {
-      from: 11,
-      to: 21,
-      label: '30'
-    },
-    {
-      from: 11,
-      to: 22,
-      label: '90'
-    },
-    {
-      from: 11,
-      to: 23,
-      label: '980'
-    },
-    {
-      from: 11,
-      to: 24,
-      label: '1610'
-    },
-    {
-      from: 12,
-      to: 18,
-      label: '20'
-    },
-    {
-      from: 12,
-      to: 19,
-      label: '9276'
-    },
-    {
-      from: 12,
-      to: 20,
-      label: '450'
-    },
-    {
-      from: 12,
-      to: 21,
-      label: '380'
-    },
-    {
-      from: 12,
-      to: 22,
-      label: '430'
-    },
-    {
-      from: 12,
-      to: 23,
-      label: '470'
-    },
-    {
-      from: 13,
-      to: 20,
-      label: '2115'
-    },
-    {
-      from: 13,
-      to: 23,
-      label: '40'
-    },
-    {
-      from: 14,
-      to: 20,
-      label: '110'
-    },
-    {
-      from: 14,
-      to: 21,
-      label: '3545'
-    },
-    {
-      from: 14,
-      to: 22,
-      label: '170'
-    },
-    {
-      from: 14,
-      to: 23,
-      label: '40'
-    },
-    {
-      from: 15,
-      to: 20,
-      label: '60'
-    },
-    {
-      from: 15,
-      to: 22,
-      label: '3365'
-    },
-    {
-      from: 15,
-      to: 23,
-      label: '400'
-    },
-    {
-      from: 16,
-      to: 23,
-      label: '2793'
-    },
-    {
-      from: 17,
-      to: 18,
-      label: '380'
-    },
-    {
-      from: 17,
-      to: 19,
-      label: '360'
-    },
-    {
-      from: 17,
-      to: 20,
-      label: '700'
-    },
-    {
-      from: 17,
-      to: 21,
-      label: '230'
-    },
-    {
-      from: 17,
-      to: 22,
-      label: '270'
-    },
-    {
-      from: 17,
-      to: 23,
-      label: '1200'
-    },
-    {
-      from: 17,
-      to: 24,
-      label: '13072'
-    },
-    {
-      from: 18,
-      to: 25,
-      label: '11050'
-    },
-    {
-      from: 18,
-      to: 26,
-      label: '1530'
-    },
-    {
-      from: 18,
-      to: 27,
-      label: '490'
-    },
-    {
-      from: 18,
-      to: 28,
-      label: '920'
-    },
-    {
-      from: 18,
-      to: 31,
-      label: '50'
-    },
-    {
-      from: 19,
-      to: 26,
-      label: '8760'
-    },
-    {
-      from: 19,
-      to: 28,
-      label: '260'
-    },
-    {
-      from: 20,
-      to: 26,
-      label: '180'
-    },
-    {
-      from: 20,
-      to: 27,
-      label: '4160'
-    },
-    {
-      from: 20,
-      to: 28,
-      label: '240'
-    },
-    {
-      from: 21,
-      to: 28,
-      label: '5257'
-    },
-    {
-      from: 22,
-      to: 25,
-      label: '20'
-    },
-    {
-      from: 22,
-      to: 26,
-      label: '640'
-    },
-    {
-      from: 22,
-      to: 27,
-      label: '110'
-    },
-    {
-      from: 22,
-      to: 28,
-      label: '480'
-    },
-    {
-      from: 22,
-      to: 29,
-      label: '2267'
-    },
-    {
-      from: 22,
-      to: 30,
-      label: '90'
-    },
-    {
-      from: 22,
-      to: 31,
-      label: '320'
-    },
-    {
-      from: 23,
-      to: 25,
-      label: '80'
-    },
-    {
-      from: 23,
-      to: 26,
-      label: '260'
-    },
-    {
-      from: 23,
-      to: 27,
-      label: '210'
-    },
-    {
-      from: 23,
-      to: 28,
-      label: '60'
-    },
-    {
-      from: 23,
-      to: 30,
-      label: '4675'
-    },
-    {
-      from: 23,
-      to: 31,
-      label: '180'
-    },
-    {
-      from: 24,
-      to: 26,
-      label: '520'
-    },
-    {
-      from: 24,
-      to: 27,
-      label: '300'
-    },
-    {
-      from: 24,
-      to: 31,
-      label: '13584'
-    },
-    {
-      from: 32,
-      to: 10,
-      label: '14645'
-    }
+  voterShift: [
+    { source: 0, target: 5, voters: 13654 },
+    { source: 0, target: 7, voters: 1140 },
+    { source: 0, target: 8, voters: 50 },
+    { source: 0, target: 9, voters: 40 },
+    { source: 0, target: 10, voters: 1080 },
+    { source: 1, target: 5, voters: 880 },
+    { source: 1, target: 6, voters: 9890 },
+    { source: 1, target: 7, voters: 530 },
+    { source: 1, target: 8, voters: 870 },
+    { source: 1, target: 9, voters: 1100 },
+    { source: 1, target: 10, voters: 2040 },
+    { source: 2, target: 7, voters: 6278 },
+    { source: 2, target: 10, voters: 70 },
+    { source: 3, target: 7, voters: 30 },
+    { source: 3, target: 8, voters: 3681 },
+    { source: 3, target: 9, voters: 140 },
+    { source: 3, target: 10, voters: 30 },
+    { source: 4, target: 7, voters: 20 },
+    { source: 4, target: 9, voters: 3837 },
+    { source: 4, target: 10, voters: 300 },
+    { source: 5, target: 11, voters: 14685 },
+    { source: 5, target: 16, voters: 290 },
+    { source: 6, target: 11, voters: 210 },
+    { source: 6, target: 12, voters: 9755 },
+    { source: 6, target: 16, voters: 180 },
+    { source: 7, target: 11, voters: 2110 },
+    { source: 7, target: 12, voters: 530 },
+    { source: 7, target: 13, voters: 2084 },
+    { source: 7, target: 14, voters: 170 },
+    { source: 7, target: 15, voters: 90 },
+    { source: 7, target: 16, voters: 430 },
+    { source: 7, target: 17, voters: 460 },
+    { source: 8, target: 11, voters: 420 },
+    { source: 8, target: 12, voters: 550 },
+    { source: 8, target: 14, voters: 3570 },
+    { source: 8, target: 16, voters: 90 },
+    { source: 8, target: 17, voters: 40 },
+    { source: 9, target: 11, voters: 120 },
+    { source: 9, target: 12, voters: 370 },
+    { source: 9, target: 14, voters: 40 },
+    { source: 9, target: 15, voters: 3780 },
+    { source: 9, target: 16, voters: 340 },
+    { source: 9, target: 17, voters: 320 },
+    { source: 10, target: 11, voters: 1130 },
+    { source: 10, target: 12, voters: 360 },
+    { source: 10, target: 16, voters: 210 },
+    { source: 10, target: 17, voters: 16835 },
+    { source: 11, target: 18, voters: 15065 },
+    { source: 11, target: 20, voters: 1360 },
+    { source: 11, target: 21, voters: 30 },
+    { source: 11, target: 22, voters: 90 },
+    { source: 11, target: 23, voters: 980 },
+    { source: 11, target: 24, voters: 1610 },
+    { source: 12, target: 18, voters: 20 },
+    { source: 12, target: 19, voters: 9276 },
+    { source: 12, target: 20, voters: 450 },
+    { source: 12, target: 21, voters: 380 },
+    { source: 12, target: 22, voters: 430 },
+    { source: 12, target: 23, voters: 470 },
+    { source: 13, target: 20, voters: 2115 },
+    { source: 13, target: 23, voters: 40 },
+    { source: 14, target: 20, voters: 110 },
+    { source: 14, target: 21, voters: 3545 },
+    { source: 14, target: 22, voters: 170 },
+    { source: 14, target: 23, voters: 40 },
+    { source: 15, target: 20, voters: 60 },
+    { source: 15, target: 22, voters: 3365 },
+    { source: 15, target: 23, voters: 400 },
+    { source: 16, target: 23, voters: 2793 },
+    { source: 17, target: 18, voters: 380 },
+    { source: 17, target: 19, voters: 360 },
+    { source: 17, target: 20, voters: 700 },
+    { source: 17, target: 21, voters: 230 },
+    { source: 17, target: 22, voters: 270 },
+    { source: 17, target: 23, voters: 1200 },
+    { source: 17, target: 24, voters: 13072 },
+    { source: 18, target: 25, voters: 11050 },
+    { source: 18, target: 26, voters: 1530 },
+    { source: 18, target: 27, voters: 490 },
+    { source: 18, target: 28, voters: 920 },
+    { source: 18, target: 31, voters: 50 },
+    { source: 19, target: 26, voters: 8760 },
+    { source: 19, target: 28, voters: 260 },
+    { source: 20, target: 26, voters: 180 },
+    { source: 20, target: 27, voters: 4160 },
+    { source: 20, target: 28, voters: 240 },
+    { source: 21, target: 28, voters: 5257 },
+    { source: 22, target: 25, voters: 20 },
+    { source: 22, target: 26, voters: 640 },
+    { source: 22, target: 27, voters: 110 },
+    { source: 22, target: 28, voters: 480 },
+    { source: 22, target: 29, voters: 2267 },
+    { source: 22, target: 30, voters: 90 },
+    { source: 22, target: 31, voters: 320 },
+    { source: 23, target: 25, voters: 80 },
+    { source: 23, target: 26, voters: 260 },
+    { source: 23, target: 27, voters: 210 },
+    { source: 23, target: 28, voters: 60 },
+    { source: 23, target: 30, voters: 4675 },
+    { source: 23, target: 31, voters: 180 },
+    { source: 24, target: 26, voters: 520 },
+    { source: 24, target: 27, voters: 300 },
+    { source: 24, target: 31, voters: 13584 },
+    { source: 32, target: 10, voters: 14645 }
   ]
 }

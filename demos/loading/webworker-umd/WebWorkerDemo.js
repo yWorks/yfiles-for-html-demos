@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,7 @@ require.config({
   packages: [
     {
       name: 'yfiles-umd',
-      location: './node_modules/yfiles-umd/',
+      location: '../../../node_modules/yfiles-umd/',
       main: 'complete'
     }
   ]
@@ -69,7 +69,7 @@ require([
   } = yfiles
   let graphComponent = null
 
-  const layoutButton = document.getElementById('layoutBtn')
+  const layoutButton = document.getElementById('layout-button')
 
   let executor = null
   const worker = new Worker('./WorkerLayout.js')
@@ -92,7 +92,7 @@ require([
     createSampleGraph(graphComponent.graph)
     graphComponent.fitGraphBounds()
 
-    registerCommands()
+    initializeUI()
   }
 
   /**
@@ -164,7 +164,7 @@ require([
    */
   function createLayoutData() {
     return new HierarchicLayoutData({
-      nodeHalos: node => NodeHalo.create(10),
+      nodeHalos: () => NodeHalo.create(10),
       targetGroupIds: edge => edge.targetNode
     })
   }
@@ -202,49 +202,41 @@ require([
   }
 
   /**
-   * Registers the JavaScript commands for the GUI elements, typically the
-   * tool bar buttons, during the creation of this application.
+   * Registers the actions for the GUI elements, typically the
+   * toolbar buttons, during the creation of this application.
    */
-  function registerCommands() {
-    function bindCommand(selector, command, parameter = null) {
-      const element = document.querySelector(selector)
-      command.addCanExecuteChangedListener(() => {
-        if (command.canExecute(parameter, graphComponent)) {
-          element.removeAttribute('disabled')
-        } else {
-          element.setAttribute('disabled', 'disabled')
-        }
-      })
-      element.addEventListener('click', e => {
-        if (command.canExecute(parameter, graphComponent)) {
-          command.execute(parameter, graphComponent)
-        }
-      })
-    }
+  function initializeUI() {
+    document.querySelector("[data-command='INCREASE_ZOOM']").addEventListener('click', () => {
+      ICommand.INCREASE_ZOOM.execute(null, graphComponent)
+    })
 
-    bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-    bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-    bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-    bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-    bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-    bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
+    document.querySelector("[data-command='ZOOM_ORIGINAL']").addEventListener('click', () => {
+      ICommand.ZOOM.execute(1.0, graphComponent)
+    })
+
+    document.querySelector("[data-command='DECREASE_ZOOM']").addEventListener('click', () => {
+      ICommand.DECREASE_ZOOM.execute(null, graphComponent)
+    })
+
+    document.querySelector("[data-command='FIT_GRAPH_BOUNDS']").addEventListener('click', () => {
+      ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    })
+
+    document.querySelector("[data-command='UNDO']").addEventListener('click', () => {
+      ICommand.UNDO.execute(null, graphComponent)
+    })
+
+    document.querySelector("[data-command='REDO']").addEventListener('click', () => {
+      ICommand.REDO.execute(null, graphComponent)
+    })
+
+    document.querySelector('#layout-button').addEventListener('click', async () => {
+      await runWebWorkerLayout(false)
+    })
+
     document
-      .querySelector("button[data-command='WebWorkerLayout']")
-      .addEventListener('click', () => {
-        runWebWorkerLayout(false)
-      })
-
-    function bindAction(selector, action) {
-      const element = document.querySelector(selector)
-      if (!element) {
-        return
-      }
-      element.addEventListener('click', e => {
-        action(e)
-      })
-    }
-
-    bindAction("div[data-command='cancelLayout']", () => cancelWebWorkerLayout())
+      .querySelector('#cancel-layout')
+      .addEventListener('click', () => cancelWebWorkerLayout())
   }
 
   /**

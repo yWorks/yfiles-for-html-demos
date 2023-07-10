@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,108 +30,140 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Sankey Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../view/contextualtoolbar/resources/contextual-toolbar.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
 
     <style>
-      .popupContent {
-        position: absolute;
-        display: none; /* during runtime, the display value is overridden by class HTMLPopupSupport */
-        border: 2px solid lightgray;
-        padding: 5px;
-        overflow: hidden;
-        background: rgba(255, 255, 255, 0.85);
-      }
-
-      div.colorButton {
-        width: 50px;
-        height: 15px;
-        margin-bottom: 2px;
-        border: 1px solid black;
+      .picker-container button {
+        width: 25px;
+        height: 25px;
+        margin: 2px;
       }
     </style>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Sankey Diagram</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Nodes determine the color of
+        <select id="colorDirection">
+          <option>outgoing</option>
+          <option>incoming</option>
+        </select>
+        edges
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!--prettier-ignore -->
+      <div class='demo-description__content'>
         <h1>Sankey Demo</h1>
 
         <p>
-          Sankey diagrams are used for visualizing flow information in which the thickness of the
-          edges is proportional to the flow quantity. Such diagrams can be produced by means of the
-          hierarchic layout algorithm (see
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>).
+          Sankey diagrams are used for visualizing flow information in which the thickness of the edges is proportional
+          to the flow quantity. Such diagrams can be produced by means of the hierarchic layout algorithm (see <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>).
         </p>
         <p>
-          The example diagram shows a voters' migration flow between different political parties
-          over the course of three elections (each column represents an election). The flow is
-          depicted from left to right.
+          The example diagram shows a voters' migration flow between different political parties over the course of
+          four elections (each column represents an election). The flow is depicted from left to right.
+        </p>
+        <p>
+          The political parties in each layer (excluding the non-voter) are sorted by their voters in each election. The
+          non-voter is always placed at the bottom each layer.
         </p>
 
         <h2>Things to Try</h2>
-        <p>
-          Change the number displayed in each edge label to modify the thickness of a particular
-          edge.
-        </p>
-        <p>Right-click on a node to modify its color.</p>
-        <p>Use the dropdown to switch how the colors of edges are determined:</p>
         <ul>
-          <li>With the 'outgoing' setting, it is easier to see where edges come from.</li>
-          <li>With the 'incoming' setting, it is easier to see where edges go to.</li>
+          <li>
+            Change the number displayed in each edge label to modify the thickness of a particular edge.
+          </li>
+          <li>Move a node along its layer to run a new layout that will consider the new layer ordering.</li>
+          <li>Click on a node to modify its color through a popup menu.</li>
+          <li>Use the dropdown to switch how the colors of edges are determined. Selecting the 'outgoing' setting, it is
+            easier to see where edges come from while selecting the 'incoming' setting, it is easier to see where edges go
+            to.
+          </li>
+          <li>Hover over an edge to highlight the edge and its associated labels.</li>
+          <li>Hover over an edge label to highlight the label and its associated edge.</li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-        <span class="demo-separator"></span>
-
-        <span
-          >Nodes determine the color of
-          <select id="colorDirection">
-            <option>outgoing</option>
-            <option>incoming</option>
-          </select>
-          edges</span
-        >
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent">
-          <div id="nodeColorPopupContent" class="popupContent" tabindex="0"></div>
-          <div id="edgeColorPopupContent" class="popupContent" tabindex="0"></div>
+          <div id="contextualToolbar" class="contextual-toolbar" tabindex="0">
+            <div id="toolbar-ui">
+              <input
+                type="checkbox"
+                id="color-picker"
+                class="toggle-button"
+                data-container-id="color-picker-colors"
+              />
+              <label id="color-picker-label" for="color-picker" title="Select node color">
+                <span class="fa-layers fa-fw">
+                  <i class="fa-solid fa-paint-brush"></i>
+                  <i
+                    class="fa-solid fa-sm fa-caret-right"
+                    data-fa-transform="right-14 down-12 rotate-45"
+                  ></i>
+                </span>
+              </label>
+            </div>
+
+            <div id="color-picker-colors" class="picker-container color-picker"></div>
+          </div>
         </div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="SankeyDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="SankeyDemo.ts" async></script>
   </body>
 </html>

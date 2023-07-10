@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -86,6 +86,16 @@ import {
  * Supports two different resize modes: 'resize' and 'scale'.
  */
 export class NodeSelectionResizingInputMode extends InputModeBase {
+  $margins
+  $mode
+
+  handleInputMode
+
+  moveHandleOrthogonalHelper
+  rectangle
+  rectCanvasObject
+  ignoreSingleSelectionEvents
+
   /**
    * Gets the margins between the handle rectangle and the bounds of the selected nodes.
    * @type {!Insets}
@@ -383,7 +393,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
 
   /**
    * @param {!HandlePositions} position
-   * @param {!Function} reshapeHandlerFactory
+   * @param {!function} reshapeHandlerFactory
    * @returns {!IHandle}
    */
   createHandle(position, reshapeHandlerFactory) {
@@ -415,6 +425,8 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
  * events.
  */
 class OrthogonalEdgeEditingHelper {
+  editingContext
+
   constructor() {
     this.editingContext = null
   }
@@ -533,6 +545,12 @@ function isAnyEast(position) {
  * {@link reshape reshaped}.
  */
 class EncompassingRectangle extends BaseClass(IRectangle) {
+  $nodes
+  $margins
+  rectangle
+  tightRect
+  invalid
+
   /**
    * @param {!IEnumerable.<INode>} nodes
    * @param {!Insets} margins
@@ -643,6 +661,19 @@ class EncompassingRectangle extends BaseClass(IRectangle) {
  * and snapping, and contains code common to both modes.
  */
 class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
+  // dictionaries storing the original layout, reshape handler and snap result provider of the reshape nodes
+  originalNodeLayouts
+  reshapeHandlers
+  reshapeSnapResultProviders
+  orthogonalEdgeDragHandlers
+
+  compoundEdit
+
+  rectangle
+
+  $originalBounds
+  $handle
+
   /**
    * Gets a view of the bounds of the item.
    * @type {!IRectangle}
@@ -689,7 +720,6 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   constructor(rectangle) {
     super()
     this.rectangle = rectangle
-    // dictionaries storing the original layout, reshape handler and snap result provider of the reshape nodes
     this.originalNodeLayouts = new Map()
     this.reshapeHandlers = new Map()
     this.reshapeSnapResultProviders = new Map()
@@ -1209,6 +1239,12 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
  * {@link EncompassingRectangle.margins} for the calculation of its {@link IDragHandler.location}.
  */
 class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
+  reshapeHandlerHandle
+  $location
+
+  context
+  margins
+
   /**
    * @param {!IInputModeContext} context
    * @param {!HandlePositions} position
@@ -1376,6 +1412,9 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
  * zoom-dependent offset.
  */
 class HandleLocation extends BaseClass(IPoint) {
+  offset
+  outerThis
+
   /**
    * @param {!NodeSelectionReshapeHandle} nodeSelectionReshapeHandle
    */

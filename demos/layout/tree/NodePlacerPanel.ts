@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -58,8 +58,7 @@ import {
   TreeLayoutEdgeRoutingStyle
 } from 'yfiles'
 
-import { setComboboxValue } from '../../resources/demo-app'
-import { createDemoEdgeStyle } from '../../resources/demo-styles'
+import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
 
 type LayerColor = {
   fill: Fill
@@ -207,7 +206,7 @@ export class NodePlacerPanel {
       referencePlacer = null
     }
     const configurationName = getConfigurationName(referencePlacer)
-    setComboboxValue('select-node-placer', configurationName)
+    document.querySelector<HTMLSelectElement>('#select-node-placer')!.value = configurationName
 
     const configuration = this.nodePlacerConfigurations.get(configurationName)!
     configuration.adoptSettings(nodePlacers)
@@ -856,8 +855,8 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
   getDescriptionText(): string {
     return (
       '<h2>DefaultNodePlacer</h2>' +
-      'This node placer arranges the child nodes horizontally aligned below their root node. It offers options' +
-      ' to change the orientation of the subtree, the edge routing style, and the alignment of the root node.'
+      '<p>This node placer arranges the child nodes horizontally aligned below their root node. It offers options' +
+      ' to change the orientation of the subtree, the edge routing style, and the alignment of the root node.</p>'
     )
   }
 
@@ -1108,8 +1107,8 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   getDescriptionText(): string {
     return (
       '<h2>SimpleNodePlacer</h2>' +
-      'This node placer arranges the child nodes horizontally aligned below their root node. It supports rotated' +
-      'subtrees and offers options to change the alignment of the root node.'
+      '<p>This node placer arranges the child nodes horizontally aligned below their root node. It supports rotated' +
+      'subtrees and offers options to change the alignment of the root node.</p>'
     )
   }
 
@@ -1214,7 +1213,7 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   getDescriptionText(): string {
     return (
       '<h2>BusNodePlacer</h2>' +
-      'This node placer arranges the child nodes evenly distributed in two lines to the left and right of the root node.'
+      '<p>This node placer arranges the child nodes evenly distributed in two lines to the left and right of the root node.</p>'
     )
   }
 
@@ -1224,9 +1223,9 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 }
 
 class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
-  private rootAlignment = GridNodePlacer.BUS_ALIGNED
+  private rootAlignment: RootNodeAlignment = GridNodePlacer.BUS_ALIGNED
   private indeterminateRootAlignment = false
-  private busPlacement = BusPlacement.LEADING
+  private busPlacement: BusPlacement = BusPlacement.LEADING
   private indeterminateBusPlacement = false
 
   /**
@@ -1294,8 +1293,8 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   getDescriptionText(): string {
     return (
       '<h2>GridNodePlacer</h2>' +
-      'This node placer arranges the shapes of the children of a local root in a grid. It supports rotated' +
-      ' subtrees and offers options to change the alignment of the root node .'
+      '<p>This node placer arranges the shapes of the children of a local root in a grid. It supports rotated' +
+      ' subtrees and offers options to change the alignment of the root node.</p>'
     )
   }
 
@@ -1472,8 +1471,8 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
   getDescriptionText(): string {
     return (
       '<h2>DoubleLineNodePlacer</h2>' +
-      'This node placer arranges the child nodes staggered in two lines below their root node. It supports rotated' +
-      ' subtrees and offers options to change the alignment of the root node.'
+      '<p>This node placer arranges the child nodes staggered in two lines below their root node. It supports rotated' +
+      ' subtrees and offers options to change the alignment of the root node.</p>'
     )
   }
 
@@ -1623,7 +1622,7 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   getDescriptionText(): string {
     return (
       '<h2>LeftRightNodePlacer</h2>' +
-      'This node placer arranges the child nodes below their root node, left and right of the downward extending bus-like routing.'
+      '<p>This node placer arranges the child nodes below their root node, left and right of the downward extending bus-like routing.</p>'
     )
   }
 
@@ -1666,7 +1665,7 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
 class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   private aspectRatio = 1
   private indeterminateAspectRatio = false
-  private fillStyle = FillStyle.LEADING
+  private fillStyle: FillStyle = FillStyle.LEADING
   private indeterminateFillStyle = false
   private horizontal = false
   private indeterminateHorizontal = false
@@ -1760,7 +1759,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   getDescriptionText(): string {
     return (
       '<h2>AspectRatioNodePlacer</h2>' +
-      'This node placer arranges the child nodes such that a given aspect ratio is obeyed.'
+      '<p>This node placer arranges the child nodes such that a given aspect ratio is obeyed.</p>'
     )
   }
 
@@ -1940,9 +1939,9 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   getDescriptionText(): string {
     return (
       '<h2>AssistantNodePlacer</h2>' +
-      'This node placer delegates to two different node placers to arrange the child nodes: Nodes that are marked' +
-      ' as <em>Assistants</em> are placed using the <a href="https://docs.yworks.com/yfileshtml/#/api/LeftRightNodePlacer" target="_blank">LeftRightNodePlacer</a>. The other children are arranged' +
-      ' below the assistant nodes using the child node placer.'
+      '<p>This node placer delegates to two different node placers to arrange the child nodes: Nodes that are marked' +
+      ' as <code>Assistants</code> are placed using the <code>LeftRightNodePlacer</code>. The other children are arranged' +
+      ' below the assistant nodes using the child node placer.</p>'
     )
   }
 
@@ -2099,8 +2098,8 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
   getDescriptionText(): string {
     return (
       '<h2>CompactNodePlacer</h2>' +
-      'This node placer uses a dynamic optimization approach that chooses a placement strategy of the children ' +
-      'of the associated local root such that the overall result is compact with respect to a specified aspect ratio.'
+      '<p>This node placer uses a dynamic optimization approach that chooses a placement strategy of the children ' +
+      'of the associated local root such that the overall result is compact with respect to a specified aspect ratio.</p>'
     )
   }
 
@@ -2233,8 +2232,8 @@ class MultipleNodePlacerConfiguration extends NodePlacerConfiguration {
   getDescriptionText(): string {
     return (
       '<h2>Multiple Values</h2>' +
-      'You have selected nodes with different <code>NodePlacer</code>s. To assign the same ' +
-      '<code>NodePlacer</code> to all of these nodes, choose one form the selection box.'
+      '<p>You have selected nodes with different <code>NodePlacer</code>s. To assign the same ' +
+      '<code>NodePlacer</code> to all of these nodes, choose one form the selection box.</p>'
     )
   }
 

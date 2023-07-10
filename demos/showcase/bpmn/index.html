@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>BPMN Graph Editor [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <style>
+      .nodeInfo :first-child {
+        margin-top: 0 !important;
+      }
+
+      #style-panel-container {
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 200px;
+        border-left: 5px solid #eee;
+        overflow: auto;
+        box-sizing: border-box;
+        z-index: 12;
+      }
+
+      .demo-dialog {
+        padding: 10px;
+        cursor: default;
+      }
+
+      .demo-popup {
+        display: none;
+        border-radius: 15px;
+      }
+
+      .demo-error-dialog {
+        display: block;
+      }
+
+      .popup-header {
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 1.2em;
+      }
+
+      .demo-dialog label,
+      .demo-dialog select {
+        display: block;
+        margin-top: 5px;
+      }
+
+      .yfiles-cursor-dragdrop-copy {
+        cursor: copy;
+      }
+
+      .yfiles-cursor-dragdrop-move {
+        cursor: move;
+      }
+
+      .yfiles-cursor-dragdrop-link {
+        cursor: alias;
+      }
+
+      .yfiles-cursor-dragdrop-scroll {
+        cursor: move;
+      }
+
+      .yfiles-cursor-dragdrop-all {
+        cursor: copy;
+      }
+
+      .yfiles-cursor-dragdrop-no-drop {
+        cursor: no-drop;
+      }
+
+      .demo-popup .close-popup-button {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        width: 15px;
+        height: 15px;
+        background-color: transparent;
+        border-style: none;
+        cursor: pointer;
+      }
+
+      .yfiles-drag {
+        z-index: 15;
+        opacity: 0.35;
+        transition: opacity 0.2s ease-in-out;
+      }
+
+      .yfiles-drag.hidden {
+        opacity: 0;
+      }
+    </style>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>BPMN Editor</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button class="demo-icon-yIconNew" id="new-button"></button>
+      <button
+        title="Open a GraphML or BPMN file"
+        class="demo-icon-yIconOpen"
+        onclick="document.getElementById('file-input').click();"
+      ></button>
+      <input type="file" id="file-input" style="display: none" />
+      <button data-command="SAVE"></button>
+      <span class="demo-separator"></span>
+      <select title="Select a sample graph" id="sample-combobox">
+        <option value="business">Business</option>
+        <option value="collaboration">Collaboration</option>
+        <option value="different_exception_flows">Different Exception Flows</option>
+        <option value="expanded_subprocess">Expanded Subprocess</option>
+        <option value="lanes_segment">Lanes Segment</option>
+        <option value="lanes_with_information_systems">Lanes With Information Systems</option>
+        <option value="matrix_lanes">Matrix Lanes</option>
+        <option value="process_normal_flow">Process Normal Flow</option>
+        <option value="project_application">Project Application</option>
+        <option value="simple_bpmn_model">Simple BPMN Model</option>
+        <option value="vertical_swimlanes">Vertical Swimlanes</option>
+        <option value="bpmn_di_sample" data-type="bpmn-di">BPMN DI Sample</option>
+      </select>
+      <span class="demo-separator"></span>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button data-command="CUT"></button>
+      <button data-command="COPY"></button>
+      <button data-command="PASTE"></button>
+      <button data-command="DELETE"></button>
+      <span class="demo-separator"></span>
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+      <span class="demo-separator"></span>
+      <button id="layout-button" title="Apply Layout" class="demo-icon-yIconLayout labeled">
+        Layout
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>BPMN Graph Editor</h1>
+
+        <p>An editor for Business Process Diagrams (BPMN).</p>
+        <p>
+          You can interactively modify the diagram and automatically arrange it with the specialized
+          BPMN layout algorithm.
+        </p>
+
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Choose a sample diagram from the toolbar combo box.</li>
+          <li>
+            Drag node templates from the palette to the canvas to create different BPMN items.
+          </li>
+          <li>Connect the items by dragging from an unselected node to another one.</li>
+          <li>Auto-arrange the changed diagram with the BPMN layout algorithm.</li>
+          <li>
+            Open a popup menu that allows you to customize the item by double-click a node, edge or
+            boundary event. Double-clicking on an empty space closes any open popup.
+          </li>
+          <li>
+            Open a context menu by right-clicking a node or edge. The menu provides different
+            actions depending on the clicked item.
+          </li>
+          <li>
+            Edit the label of a selected node or edge by pressing <code>F2</code>. Note that you can
+            also select the label directly using the detail selection ( <code>SHIFT + Click</code>).
+          </li>
+          <li>
+            Add an additional label to a selected node or edge by pressing <code>SHIFT + F2</code>.
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-overlay">
+        <div class="demo-overlay__header">Overview</div>
+        <div id="overviewComponent"></div>
+      </div>
+      <div class="demo-main__graph-component">
+        <div id="graphComponent">
+          <!-- The content templates for the popup panels -->
+          <div id="gateway-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">Gateway</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              Gateway Type
+              <select id="gateway-type-box"></select>
+            </label>
+          </div>
+
+          <div id="event-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">Event</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              Event Characteristic
+              <select id="event-characteristic-box"></select>
+            </label>
+            <label>
+              Event Type
+              <select id="event-type-box"></select>
+            </label>
+          </div>
+
+          <div id="activity-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">Activity</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              Activity Type
+              <select id="activity-type-box"></select>
+            </label>
+            <label>
+              <input type="checkbox" id="activity-ad-hoc-checkbox" />
+              Ad Hoc
+            </label>
+            <label>
+              <input type="checkbox" id="activity-compensation-checkbox" />
+              Compensation
+            </label>
+            <label>
+              Loop Characteristic
+              <select id="activity-loop-characteristic-box"></select>
+            </label>
+            <label>
+              Sub-State
+              <select id="activity-sub-state-box"></select>
+            </label>
+            <label>
+              Task Type
+              <select id="activity-task-type-box"></select>
+            </label>
+            <label>
+              Trigger Event Characteristic
+              <select id="activity-trigger-event-characteristic-box"></select>
+            </label>
+            <label>
+              Trigger Event Type
+              <select id="activity-trigger-event-type-box"></select>
+            </label>
+          </div>
+
+          <div id="conversation-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">Conversation</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              Type
+              <select id="conversation-type-box"></select>
+            </label>
+          </div>
+
+          <div id="choreography-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">Choreography</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              Choreography Type
+              <select id="choreography-type-box"></select>
+            </label>
+            <label>
+              <input type="checkbox" id="choreography-initiating-at-top-checkbox" />
+              Initiating At Top
+            </label>
+            <label>
+              <input type="checkbox" id="choreography-initiating-message-checkbox" />
+              Initiating Message
+            </label>
+            <label>
+              <input type="checkbox" id="choreography-response-message-checkbox" />
+              Response Message
+            </label>
+            <label>
+              Loop Characteristic
+              <select id="choreography-loop-characteristic-box"></select>
+            </label>
+            <label>
+              Sub-State
+              <select id="choreography-sub-state-box"></select>
+            </label>
+          </div>
+
+          <div id="data-object-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">DataObject</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              Type
+              <select id="data-object-type-box"></select>
+            </label>
+            <label>
+              <input type="checkbox" id="data-object-collection-checkbox" />
+              Collection
+            </label>
+          </div>
+
+          <div id="pool-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">Pool</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              <input type="checkbox" id="pool-multiple-checkbox" />
+              Multiple Instance
+            </label>
+          </div>
+
+          <div id="edge-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">Edge</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              Type
+              <select id="edge-type-box"></select>
+            </label>
+          </div>
+
+          <div id="port-popup-content" class="demo-dialog demo-popup">
+            <div class="popup-header">Boundary Event</div>
+            <button
+              title="Close the Popup"
+              class="close-popup-button demo-icon-yIconDelete"
+            ></button>
+            <label>
+              Event Characteristic
+              <select id="port-event-characteristic-box"></select>
+            </label>
+            <label>
+              Event Type
+              <select id="port-event-type-box"></select>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div id="style-panel-container">
+        <div class="demo-dnd-panel"></div>
+      </div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="BpmnEditorDemo.ts" async></script>
+  </body>
+</html>

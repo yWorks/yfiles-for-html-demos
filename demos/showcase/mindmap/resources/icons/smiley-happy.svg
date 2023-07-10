@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="16"
+  height="16"
+  viewBox="0 0 16 16">
+  <ellipse
+    style="fill:#ffdf00;fill-opacity:1;stroke:#002000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.91372549"
+    cx="7.9970393"
+    cy="8.0285549"
+    rx="7.3140392"
+    ry="7.2774453"/>
+  <path
+    d=""
+    style="fill:#ffc219;fill-opacity:1;stroke:#002000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.91372549"/>
+  <rect
+    style="fill:#000000;fill-opacity:1;stroke:#002000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.91372549"
+    width="0.84626693"
+    height="0.86279303"
+    x="4.7086172"
+    y="5.1112084"/>
+  <rect
+    style="fill:#000000;fill-opacity:1;stroke:#002000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.91372549"
+    width="0.84626693"
+    height="0.86279303"
+    x="10.409947"
+    y="5.0842481"/>
+  <path
+    style="fill:none;fill-opacity:1;stroke:#002000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.91372549"
+    d="M 12.109546,9.3306721 A 4.2476525,4.0326581 0 0 1 8.0704092,12.451406 4.2476525,4.0326581 0 0 1 3.8828417,9.5123062"/>
+</svg>

@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,49 +30,58 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Rectangle Node Style Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./resources/settings-panel.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
-
-    <style>
-      .option-element {
-        width: 47%;
-      }
-
-      .yfiles-handle-template.yfiles-handle-rotate-template {
-        transform: scale(2, 2);
-      }
-
-      input[type='range'] {
-        margin: 0;
-        padding: 0;
-        vertical-align: middle;
-      }
-
-      .demo-properties label.option-label {
-        width: 50%;
-      }
-
-      .demo-properties .demo-form-block input[type='range'] {
-        width: 37%;
-      }
-
-      .info-message {
-        margin-top: 20px;
-      }
-    </style>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Rectangle Node Style</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Rectangle Node Style Demo</h1>
 
         <p>
@@ -96,8 +104,7 @@
           </li>
           <li>
             Resize a selected node via its round handles and see how the shape changes based on the
-            value of
-            <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle#scaleCornerSize" target="_blank">Scale Corner Size</a>.
+            value of <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle#scaleCornerSize" target="_blank">Scale Corner Size</a>.
           </li>
           <li>
             Drag the rectangular handle of a selected node to change its
@@ -119,73 +126,81 @@
             <a href="../arrow-node-style/index.html">Arrow Node Style</a>
           </li>
           <li>
-            <a href="../../02-tutorial-custom-styles/01-custom-node-style/index.html"
-              >Tutorial: Custom Node Style</a
-            >
+            <a href="../../tutorial-style-implementation-node/01-create-a-rectangle/index.html">
+              Tutorial: Node Style Implementation
+            </a>
           </li>
         </ul>
       </div>
     </aside>
-
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content">
-        <h2>Style Properties</h2>
-
-        <div class="info-message">Please select a node to modify its settings.</div>
-        <div class="demo-properties" style="display: none">
-          <div class="demo-form-block">
-            <label for="corner-style" class="option-label">Corner Style</label>
-            <select id="corner-style" class="option-element" disabled>
-              <option value="rounded">Rounded</option>
-              <option value="cut">Cut</option>
-            </select>
-
-            <label for="corner-size-scaling" class="option-label">Corner Size Scaling</label>
-            <select id="corner-size-scaling" class="option-element" disabled>
-              <option value="absolute">Absolute</option>
-              <option value="relative">Relative</option>
-            </select>
-
-            <h3>Affected Corners</h3>
-
-            <label for="corner-top-left" class="option-label">Top-left</label>
-            <input type="checkbox" id="corner-top-left" class="option-element" disabled />
-
-            <label for="corner-top-right" class="option-label">Top-right</label>
-            <input type="checkbox" id="corner-top-right" class="option-element" disabled />
-
-            <label for="corner-bottom-left" class="option-label">Bottom-left</label>
-            <input type="checkbox" id="corner-bottom-left" class="option-element" disabled />
-
-            <label for="corner-bottom-right" class="option-label">Bottom-right</label>
-            <input type="checkbox" id="corner-bottom-right" class="option-element" disabled />
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-    </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Style Properties</h2>
+          <div class="demo-properties__settings">
+            <div class="info-message">Please select a node to modify its settings.</div>
+            <div class="demo-form-block" style="display: none">
+              <div class="settings-grid">
+                <label for="corner-style" class="settings-label-row1">Corner Style</label>
+                <select id="corner-style" class="settings-editor-row1 option-element" disabled="">
+                  <option value="rounded">Rounded</option>
+                  <option value="cut">Cut</option>
+                </select>
 
-    <script type="module" crossorigin="anonymous" src="RectangleNodeStyleDemo.js"></script>
+                <label for="corner-size-scaling" class="settings-label-row2">
+                  Corner Size Scaling
+                </label>
+                <select
+                  id="corner-size-scaling"
+                  class="settings-editor-row2 option-element"
+                  disabled=""
+                >
+                  <option value="absolute">Absolute</option>
+                  <option value="relative">Relative</option>
+                </select>
+
+                <p class="settings-legend1">Affected Corners</p>
+
+                <label for="corner-top-left" class="settings-label-row3">Top-left</label>
+                <input
+                  type="checkbox"
+                  id="corner-top-left"
+                  class="settings-editor-row3 option-element"
+                  disabled=""
+                />
+
+                <label for="corner-top-right" class="settings-label-row4">Top-right</label>
+                <input
+                  type="checkbox"
+                  id="corner-top-right"
+                  class="settings-editor-row4 option-element"
+                  disabled=""
+                />
+
+                <label for="corner-bottom-left" class="settings-label-row5">Bottom-left</label>
+                <input
+                  type="checkbox"
+                  id="corner-bottom-left"
+                  class="settings-editor-row5 option-element"
+                  disabled=""
+                />
+
+                <label for="corner-bottom-right" class="settings-label-row6">Bottom-right</label>
+                <input
+                  type="checkbox"
+                  id="corner-bottom-right"
+                  class="settings-editor-row6 option-element"
+                  disabled=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="RectangleNodeStyleDemo.ts" async></script>
   </body>
 </html>

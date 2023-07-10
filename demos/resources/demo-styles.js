@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,6 @@ import {
   DefaultEdgePathCropper,
   DefaultLabelStyle,
   EdgeSelectionIndicatorInstaller,
-  Fill,
   GraphComponent,
   GraphOverviewCanvasVisualCreator,
   GroupNodeLabelModel,
@@ -47,9 +46,11 @@ import {
   PolylineEdgeStyle,
   RectangleIndicatorInstaller,
   RectangleNodeStyle,
+  ScrollBarVisibility,
   ShapeNodeShape,
   ShapeNodeStyle,
   Theme,
+  ThemeVariant,
   VerticalTextAlignment
 } from 'yfiles'
 import { colorSets as cs } from './demo-colors.js'
@@ -141,7 +142,7 @@ export function createDemoNodeStyle(colorSetName = 'demo-orange') {
 
 /**
  * Creates a new node style with the given shape whose colors match the given well-known CSS style.
- * @param {!ShapeNodeShape} shape
+ * @param {!(ShapeNodeShape|ShapeNodeShapeStringValues)} shape
  * @param {!ColorSetName} [colorSetName=demo-orange]
  * @returns {!ShapeNodeStyle}
  */
@@ -174,8 +175,8 @@ export function createDemoEdgeStyle({ colorSetName = 'demo-orange', showTargetAr
 export function createDemoNodeLabelStyle(colorSetName = 'demo-orange') {
   const labelStyle = new DefaultLabelStyle()
   labelStyle.shape = LabelShape.ROUND_RECTANGLE
-  labelStyle.backgroundFill = Fill.from(colorSets[colorSetName].nodeLabelFill)
-  labelStyle.textFill = Fill.from(colorSets[colorSetName].text)
+  labelStyle.backgroundFill = colorSets[colorSetName].nodeLabelFill
+  labelStyle.textFill = colorSets[colorSetName].text
   labelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   labelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
   labelStyle.insets = new Insets(4, 2, 4, 1)
@@ -190,8 +191,8 @@ export function createDemoNodeLabelStyle(colorSetName = 'demo-orange') {
 export function createDemoEdgeLabelStyle(colorSetName = 'demo-orange') {
   const labelStyle = new DefaultLabelStyle()
   labelStyle.shape = LabelShape.ROUND_RECTANGLE
-  labelStyle.backgroundFill = Fill.from(colorSets[colorSetName].edgeLabelFill)
-  labelStyle.textFill = Fill.from(colorSets[colorSetName].text)
+  labelStyle.backgroundFill = colorSets[colorSetName].edgeLabelFill
+  labelStyle.textFill = colorSets[colorSetName].text
   labelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   labelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
   labelStyle.insets = new Insets(4, 2, 4, 1)
@@ -220,6 +221,7 @@ export function createDemoGroupLabelStyle(colorSetName = 'demo-palette-12') {
  */
 export function createDemoGroupStyle({ colorSetName = 'demo-palette-12', foldingEnabled = false }) {
   return new GroupNodeStyle({
+    cssClass: 'demo-group-style',
     groupIcon: foldingEnabled ? 'minus' : 'none',
     folderIcon: 'plus',
     tabFill: foldingEnabled ? colorSets[colorSetName].nodeLabelFill : colorSets[colorSetName].fill,
@@ -270,13 +272,15 @@ export class DemoStyleOverviewPaintable extends GraphOverviewCanvasVisualCreator
 /**
  * Applies the default demo theme to the {@link GraphComponent}.
  * @param {!GraphComponent} graphComponent
+ * @param {!object} themeOptions
  */
-export function applyDemoTheme(graphComponent) {
+export function applyDemoTheme(graphComponent, themeOptions = {}) {
   const theme = new Theme({
     variant: 'simple-round',
     scale: 1.4,
     primaryColor: '#38434f',
-    backgroundColor: '#FFF'
+    backgroundColor: '#FFF',
+    ...themeOptions
   })
   graphComponent.theme = theme
   // use hatch selection for better compatibility with arbitrary item colors
@@ -289,4 +293,7 @@ export function applyDemoTheme(graphComponent) {
     theme.hatchRectangle
   )
   graphComponent.resources.set(EdgeSelectionIndicatorInstaller.STROKE_KEY, theme.hatchStroke)
+
+  graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
+  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
 }

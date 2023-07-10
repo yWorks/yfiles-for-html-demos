@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,115 +30,124 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Structure View Demo [yFiles for HTML]</title>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link href="../../resources/style/demo.css" rel="stylesheet" />
+    <link href="./resources/structure-view.css" rel="stylesheet" />
 
-    <link rel="stylesheet" href="./resources/structure-view.css" />
-
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
-
-    <style>
-      #structure-view {
-        background-color: #fff;
-        border-radius: 2px;
-        padding: 5px 15px;
-        max-height: calc(100% - 280px);
-      }
-    </style>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Structure View</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="CUT"></button>
+      <button data-command="COPY"></button>
+      <button data-command="PASTE"></button>
+      <button data-command="DELETE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="GROUP_SELECTION"></button>
+      <button data-command="UNGROUP_SELECTION"></button>
+      <button data-command="ENTER_GROUP"></button>
+      <button data-command="EXIT_GROUP"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Structure View Demo</h1>
 
         <p>
-          The Structure View is a self-contained demo component that shows the nesting of the groups
-          and nodes. It is automatically updated with interactive changes to the graph and also
-          allows to select graph items from within the panel.
+          The Structure View is a demo component that displays group and node nesting. It updates
+          with interactive graph changes and allows for item selection within the panel.
         </p>
 
-        <h2>Structure View</h2>
-
-        <input
-          type="checkbox"
-          id="sync-folding-state"
-          class="demo-toggle-button labeled"
-          title="Sync folding state between graph and structure view"
-        />
-        <label for="sync-folding-state">Sync Folding State</label>
-
-        <p style="margin-top: 5px; margin-bottom: 2em; padding-left: 24px">
-          Enable this option to synchronize the collapse / expand state between the structure view
-          panel and the graph.
-        </p>
-        <div id="structure-view"></div>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            <strong>Edit or create</strong>
+            nodes and labels to change the graph. The structure view on the right sidebar will
+            update automatically to reflect any changes you make.
+          </li>
+          <li>
+            Turn on
+            <strong>'Sync Folding State'</strong>
+            and expand or collapse group nodes. This will update the corresponding folders in the
+            structure view. You can also toggle the folder state in the structure view, and the
+            graph will synchronize with the changes.
+          </li>
+        </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          data-command="GroupSelection"
-          title="Group selected element"
-          class="demo-icon-yIconGroup"
-        ></button>
-        <button
-          data-command="UngroupSelection"
-          title="Ungroup selected element"
-          class="demo-icon-yIconUngroup"
-        ></button>
-        <button
-          data-command="EnterGroup"
-          title="Enter group"
-          class="demo-icon-yIconEnterGroup"
-        ></button>
-        <button
-          data-command="ExitGroup"
-          title="Leave group"
-          class="demo-icon-yIconExitGroup"
-        ></button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Structure View</h2>
+          <label for="sync-folding-state">
+            <input
+              id="sync-folding-state"
+              class="demo-toggle-button labeled"
+              title="Sync folding state between graph and structure view"
+              type="checkbox"
+            />
+            Sync Folding State
+          </label>
+          <p style="margin-top: 5px; margin-bottom: 2em; padding-left: 24px">
+            Enable this option to synchronize the collapse / expand state between the structure view
+            panel and the graph.
+          </p>
+          <div id="structure-view"></div>
+        </div>
+      </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="StructureViewDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="StructureViewDemo.ts" async></script>
   </body>
 </html>

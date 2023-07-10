@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,12 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { addClass } from '../../resources/demo-app.js'
+import * as CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/mode/xml/xml'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/dialog/dialog'
 
 /**
- * Abstract base class for a node-/edge- source editing dialog
+ * Abstract base class for a node-/edge-source editing dialog
  */
 export class SourceDialog {
+  dialogContainerModal
+  dialogContainer
+  acceptCallback
+
   /**
    * @param {!function} acceptCallback
    */
@@ -55,7 +64,7 @@ export class SourceDialog {
         this.initialize()
 
         const buttonsContainer = document.createElement('div')
-        addClass(buttonsContainer, 'buttonsContainer')
+        buttonsContainer.classList.add('buttonsContainer')
 
         const cancelButton = document.createElement('button')
         cancelButton.textContent = 'Cancel'
@@ -127,7 +136,7 @@ export class SourceDialog {
    * @param {!string} labelText the heading label
    * @param {!string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
    * @param {!(string|object)} mode the language syntax configuration object for CodeMirror
-   * @returns {!EditorFromTextArea}
+   * @returns {*}
    */
   createEditorField(labelText, doc, mode) {
     const container = this.createDescription(labelText, doc)
@@ -169,6 +178,13 @@ export class SourceDialog {
  * Editing dialog for nodes sources
  */
 export class NodesSourceDialog extends SourceDialog {
+  nodesSourceConnector
+
+  dataEditor
+  templateEditor
+  idBindingInput
+  nameInput
+
   /**
    * @param {!NodesSourceDefinitionBuilderConnector} nodesSourceConnector
    * @param {!function} acceptCallback
@@ -234,6 +250,14 @@ export class NodesSourceDialog extends SourceDialog {
  * Editing dialog for edges sources
  */
 export class EdgesSourceDialog extends SourceDialog {
+  edgesSourceConnector
+
+  dataEditor
+  sourceBindingInput
+  targetBindingInput
+  labelBindingInput
+  nameInput
+
   /**
    * @param {!EdgesSourceDefinitionBuilderConnector} edgesSourceConnector
    * @param {!function} acceptCallback
@@ -242,6 +266,8 @@ export class EdgesSourceDialog extends SourceDialog {
     super(acceptCallback)
     this.edgesSourceConnector = edgesSourceConnector
   }
+
+  strokeBindingInput
 
   /**
    * creates specialized controls and initializes them with values from the {@link EdgesSourceDefinition}s

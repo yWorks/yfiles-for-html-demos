@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,26 +30,23 @@ import {
   CanvasComponent,
   Color,
   EdgeStyleBase,
-  EdgeStyleDecorationInstaller,
   GeneralPath,
   GeomUtilities,
   GraphComponent,
+  GraphHighlightIndicatorManager,
   HierarchicNestingPolicy,
-  HighlightIndicatorManager,
   ICanvasObjectGroup,
-  ICanvasObjectInstaller,
   IEdge,
   IInputModeContext,
   IModelItem,
+  IndicatorEdgeStyleDecorator,
   INode,
   IRectangle,
   IRenderContext,
   List,
   NodeStyleBase,
-  NodeStyleDecorationInstaller,
   PathType,
   Point,
-  StyleDecorationZoomPolicy,
   SvgVisual,
   Visual,
   YObject
@@ -82,6 +79,10 @@ import {
  * starts from the source node of the edge to blue that ends to the target node of the edge.
  */
 export class DemoEdgeStyle extends EdgeStyleBase {
+  pathThickness
+  startColor
+  endColor
+
   /**
    * Initializes a new instance of the {@link DemoEdgeStyle} class.
    * @param pathThickness The thickness of the edge
@@ -285,6 +286,9 @@ export class DemoEdgeStyle extends EdgeStyleBase {
  * This class draws the nodes in a circular-sector style.
  */
 export class DemoNodeStyle extends NodeStyleBase {
+  color
+  thickness
+
   /**
    * Initializes a new DemoNodeStyle.
    * @param color ? The given color
@@ -449,10 +453,18 @@ export class DemoNodeStyle extends NodeStyleBase {
  * Install a visual representation of a highlight decoration for the edges such that the edge highlight is drawn
  * below the node group.
  */
-export class HighlightManager extends HighlightIndicatorManager {
+export class HighlightManager extends GraphHighlightIndicatorManager {
+  edgeHighlightGroup = null
+
+  /**
+   * Creates a new instance and configures the node and edge styles used for highlighting.
+   */
   constructor() {
     super()
-    this.edgeHighlightGroup = null
+    this.nodeStyle = new DemoNodeStyle(Color.RED)
+    this.edgeStyle = new IndicatorEdgeStyleDecorator({
+      wrapped: new DemoEdgeStyle(6, Color.RED, Color.GOLD)
+    })
   }
 
   /**
@@ -483,6 +495,7 @@ export class HighlightManager extends HighlightIndicatorManager {
       this.edgeHighlightGroup = null
     }
   }
+
   /**
    * Retrieves the Canvas Object group to use for the given item.
    * @param {!IModelItem} item The given item
@@ -493,27 +506,6 @@ export class HighlightManager extends HighlightIndicatorManager {
       return this.edgeHighlightGroup
     }
     return super.getCanvasObjectGroup(item)
-  }
-
-  /**
-   * Callback used by install to retrieve the installer for a given item.
-   * @param {!IModelItem} item The item to find an installer for
-   * @returns {!ICanvasObjectInstaller}
-   */
-  getInstaller(item) {
-    if (IEdge.isInstance(item)) {
-      return new EdgeStyleDecorationInstaller({
-        edgeStyle: new DemoEdgeStyle(6, Color.RED, Color.GOLD),
-        zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
-      })
-    } else if (INode.isInstance(item)) {
-      return new NodeStyleDecorationInstaller({
-        nodeStyle: new DemoNodeStyle(Color.RED),
-        margins: 0,
-        zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
-      })
-    }
-    return super.getInstaller(item)
   }
 }
 

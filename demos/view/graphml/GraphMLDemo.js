@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,12 +55,12 @@ import {
 
 import { SimpleOutputHandler } from './SimpleOutputHandler.js'
 import { SimpleInputHandler } from './SimpleInputHandler.js'
-import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
 import { PropertiesPanel } from './PropertiesPanel.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { EditorSync } from './EditorSync.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
-import { createConfiguredGraphMLIOHandler } from '../../utils/FaultTolerantGraphMLIOHandler.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { createConfiguredGraphMLIOHandler } from 'demo-utils/FaultTolerantGraphMLIOHandler'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -106,7 +106,7 @@ async function run() {
   applyDemoTheme(graphComponent)
   editorSync = new EditorSync()
 
-  registerCommands()
+  initializeUI()
 
   // Initialize IO
   graphmlSupport = new GraphMLSupport({
@@ -166,8 +166,6 @@ async function run() {
 
   // clear the undo engine to prevent undoing of the graph creation.
   graphComponent.graph.undoEngine?.clear()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -523,7 +521,7 @@ async function loadSampleGraph(graph) {
   // serialized repeatedly while loading.
   graphModifiedListener = () => {}
 
-  await readGraph(graphmlSupport.graphMLIOHandler, graph, 'resources/sample-graph.graphml')
+  await graphmlSupport.graphMLIOHandler.readFromURL(graph, 'resources/sample-graph.graphml')
   // when done - fit the bounds
   graphComponent.fitGraphBounds()
   // Trigger synchronization of the GraphML editor
@@ -561,29 +559,16 @@ function getMasterItem(item) {
 }
 
 /**
- * Registers commands for the toolbar buttons.
+ * Registers JavaScript commands for various GUI elements.
  */
-function registerCommands() {
-  bindAction("button[data-command='New']", clearGraph)
-  bindAction("button[data-command='Open']", onOpenCommandExecuted)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
-
-  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
-  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
+function initializeUI() {
+  document
+    .querySelector('button[data-command="NEW"]')
+    .addEventListener('click', evt => clearGraph())
+  const openButton = document.querySelector('button[data-command="OPEN"]')
+  openButton.addEventListener('click', evt => onOpenCommandExecuted())
+  // prevent auto-registering the OPEN command by finishLoading
+  openButton.setAttribute('data-command-registered', 'true')
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

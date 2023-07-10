@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>01 Creating the View - Basic Features Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-basic-features"> Basic Features Tutorial </a>
+
+        <span>01 Creating the View</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 1/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 01 Creating the View</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-yfiles-basic-features/01-graphcomponent/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >01 Creating the View</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html"
+            class="tutorial-dropdown__item"
+            >02 Creating Graph Elements</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/03-managing-viewport/index.html"
+            class="tutorial-dropdown__item"
+            >03 Managing Viewport</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/04-setting-styles/index.html"
+            class="tutorial-dropdown__item"
+            >04 Setting Styles</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/05-label-placement/index.html"
+            class="tutorial-dropdown__item"
+            >05 Label Placement</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/06-basic-interaction/index.html"
+            class="tutorial-dropdown__item"
+            >06 Basic Interaction</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/07-undo-clipboard-support/index.html"
+            class="tutorial-dropdown__item"
+            >07 Undo Clipboard Support</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/08-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >08 Grouping</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/09-data-binding/index.html"
+            class="tutorial-dropdown__item"
+            >09 Data Binding</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/10-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Layout</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/11-layout-data/index.html"
+            class="tutorial-dropdown__item"
+            >11 Layout Data</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/12-graph-analysis/index.html"
+            class="tutorial-dropdown__item"
+            >12 Analysis Algorithms</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html'><span>02 Creating Graph Elements</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Creating the View</h1>
+          <div class="sect1">
+            <h2 id="_how_to_create_a_basic_view">How to create a basic view.</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  This step introduces class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>, which is the
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-application" target="_blank">central UI element for working with graphs</a>. The app does not provide any interactive features except mouse wheel zooming,
+                  which is enabled by default. It is merely meant as a very basic example of how to
+                  display a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> within a web page.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  This is the minimal code that&#8217;s needed to display a graph on a web page
+                  using yFiles for HTML.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  First we make sure that there is a <code>div</code> element on the HTML page in
+                  the document. It will host the graph component visualization.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-html" data-lang="html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;graphComponent&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  We also need to make sure that the <code>div</code> actually has a positive size.
+                  We can do this via CSS, but any technique that assigns a positive size to the
+                  element would work:
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-css" data-lang="css"><span class="hljs-selector-id">#graphComponent</span> {
+  <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span>;
+  <span class="hljs-attribute">height</span>: <span class="hljs-number">100%</span>;
+  <span class="hljs-attribute">background-color</span>: white;
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Now, in the code we can initialize the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> and wire it
+                  up with the existing <code>div</code>.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create a new graph component in the div element specified via the CSS selector</span>
+<span class="hljs-keyword">const</span> graphComponent = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GraphComponent</span>(<span class="hljs-string">&#x27;#graphComponent&#x27;</span>)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  And just to make this a little less boring and so that we can see something in the
+                  view, we add a node with a label and center it in the view. This, of course, is
+                  purely optional.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create a single node as an example</span>
+<span class="hljs-keyword">const</span> node = graphComponent.<span class="hljs-property">graph</span>.<span class="hljs-title function_">createNode</span>()
+<span class="hljs-comment">// and add a label</span>
+graphComponent.<span class="hljs-property">graph</span>.<span class="hljs-title function_">addLabel</span>(node, <span class="hljs-string">&#x27;y&#x27;</span>)
+<span class="hljs-comment">// then center the graph in the component</span>
+graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code></pre>
+                </div>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      The yFiles demo and tutorial applications use additional scripts and CSS
+                      (demo-ui) to reduce the amount of boilerplate code that is needed to get a
+                      good-looking demo app that shows the relevant features. All code samples
+                      included in this distribution can be implemented using plain HTML and
+                      TypeScript/JavaScript together with yFiles for HTML.
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="paragraph">
+                <p>
+                  For a minimal example of using yFiles for HTML to display a graph on a web page, please
+                  take a look at the <a href="../../loading/basic-module-loading/index.html" target="_blank">Basic Module Loading Demo</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_app_generator">App Generator</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Alternatively, you may use the
+                  <a
+                    href="https://www.yworks.com/products/app-generator"
+                    target="_blank"
+                    rel="noopener"
+                    >App Generator</a
+                  >
+                  to create visualization prototypes – quickly and easily. It will allow you to
+                  scaffold a working code example using your preferred UI framework (React, Vue,
+                  Angular, Plain, etc.)
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html'><span>02 Creating Graph Elements</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

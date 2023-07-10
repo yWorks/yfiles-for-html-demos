@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import { getLayoutExecutorAsyncMessageHandler } from './message-handler-main-thread'
-import licenseValue from '../../../../lib/license.json'
+import licenseValue from './license.json'
 import type { LayoutDescriptor } from 'yfiles'
 import { GraphComponent, HierarchicLayout, LayoutExecutor, LayoutExecutorAsync } from 'yfiles'
-import { BrowserDetection } from '../../../utils/BrowserDetection'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
 
 let onLayoutClicked: () => void
 let layoutButton: HTMLButtonElement

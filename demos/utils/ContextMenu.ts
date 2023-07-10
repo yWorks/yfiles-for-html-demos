@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -106,7 +106,7 @@ export class ContextMenu {
    */
   addSeparator(): void {
     const separator = document.createElement('div')
-    separator.setAttribute('class', 'demo-separator')
+    separator.setAttribute('class', 'demo-context-menu__separator')
     this.element.appendChild(separator)
   }
 
@@ -115,7 +115,7 @@ export class ContextMenu {
    */
   addMenuItem(label: string, clickListener: ((e: MouseEvent) => void) | null): HTMLElement {
     const menuItem = document.createElement('button')
-    menuItem.setAttribute('class', 'demo-menu-item')
+    menuItem.setAttribute('class', 'demo-context-menu__item')
     menuItem.innerHTML = label
     if (clickListener !== null) {
       menuItem.addEventListener('click', clickListener, false)
@@ -164,7 +164,7 @@ export class ContextMenu {
 
     // trigger enter animation
     setTimeout(() => {
-      this.element.setAttribute('class', `${this.element.getAttribute('class')} visible`)
+      this.element.classList.add('demo-context-menu--visible')
     }, 0)
     ;(this.element.firstElementChild! as HTMLElement).focus()
     this.isOpen = true
@@ -183,27 +183,18 @@ export class ContextMenu {
     if (parentNode) {
       // trigger fade-out animation on a clone
       const contextMenuClone = this.element.cloneNode(true) as HTMLElement
-      contextMenuClone.setAttribute(
-        'class',
-        `${contextMenuClone.getAttribute('class')} demo-context-menu-clone`
-      )
+      contextMenuClone.classList.add('demo-context-menu--clone')
       parentNode.appendChild(contextMenuClone)
       // fade the clone out, then remove it from the DOM. Both actions need to be timed.
       setTimeout(() => {
-        contextMenuClone.setAttribute(
-          'class',
-          contextMenuClone.getAttribute('class')!.replace(/\s?visible/, '')
-        )
+        contextMenuClone.classList.remove('demo-context-menu--visible')
 
         setTimeout(() => {
           parentNode.removeChild(contextMenuClone)
         }, 300)
       }, 0)
 
-      this.element.setAttribute(
-        'class',
-        this.element.getAttribute('class')!.replace(/\s?visible/, '')
-      )
+      this.element.classList.remove('demo-context-menu--visible')
       parentNode.removeChild(this.element)
     }
 

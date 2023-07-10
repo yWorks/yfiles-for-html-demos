@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,6 +44,8 @@ import {
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode.js'
 
 export class BezierGraphEditorInputMode extends GraphEditorInputMode {
+  config
+
   /**
    * @param {!object} config
    */
@@ -167,6 +169,8 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
  * This is to make it easier to unroll the bend creation when the drag is canceled
  */
 class BezierCreateBendInputMode extends CreateBendInputMode {
+  $locationMementos
+
   /**
    * @type {!Map.<IBend,Point>}
    */
@@ -194,6 +198,18 @@ class BezierCreateBendInputMode extends CreateBendInputMode {
 }
 
 class BendCreationHandler {
+  bend
+  graph
+  bendInputMode
+  initialized
+  inputMode
+
+  dragStartedListener
+
+  dragCanceledListener
+
+  dragFinishedListener
+
   /**
    * @param {!IBend} bend
    * @param {!IGraph} graph

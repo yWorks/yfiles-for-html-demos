@@ -1,0 +1,46 @@
+[
+  {
+    "x": 0,
+    "y": 0,
+    "tag": {
+      "name": "Hierarchic Layout",
+      "color": "cyan",
+      "content": "Hierarchical Layout arranges graphs in a hierarchic fashion. The nodes are distributed into layers so that most of the edges point to the main layout direction. The order of the nodes within the layers ensures that the number of edge crossings is as small as possible. There are different edge routing styles available. Edges can be orthogonal, polyline or octilinear.",
+      "image": "./layout-hierarchic.svg",
+      "moreUrl": "https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout"
+    }
+  },
+  {
+    "x": 500,
+    "y": 0,
+    "tag": {
+      "name": "Organic Layout",
+      "color": "amber",
+      "content": "Organic Layouts are characterized by a natural distribution of nodes that exhibits clusters and symmetric properties of the graph. The layout is very compact, where nodes are placed close to their adjacent nodes. Edges maintain uniform lengths and are routed using straight-line segments without bends.",
+      "image": "./layout-organic.svg",
+      "moreUrl": "https://docs.yworks.com/yfileshtml/#/dguide/organic_layout"
+    }
+  },
+  {
+    "x": 250,
+    "y": 300,
+    "tag": {
+      "name": "Circular Layout",
+      "color": "purple",
+      "content": "Circular Layout is suitable to emphasize group and tree structures as well. In contrast to other tree layouts, the circular layout arranges the nodes in circles and stars. Circular layout algorithms find applications in many areas such as social networking, network management, WWW visualization, e-commerce and telecommunications.",
+      "image": "./layout-circular.svg",
+      "moreUrl": "https://docs.yworks.com/yfileshtml/#/dguide/circular_layout"
+    }
+  },
+  {
+    "x": 750,
+    "y": 300,
+    "tag": {
+      "name": "Orthogonal Layout",
+      "color": "teal",
+      "content": "Orthogonal Layouts arrange the nodes of a given graph such that each edge is drawn as an alternating sequence of horizontal and vertical segments. It produces compact drawings with no overlapping nodes, few crossings and few bends and is well suited for small and medium-sized sparse graphs.",
+      "image": "./layout-orthogonal.svg",
+      "moreUrl": "https://docs.yworks.com/yfileshtml/#/dguide/orthogonal_layout"
+    }
+  }
+]

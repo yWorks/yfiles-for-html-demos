@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,9 +40,9 @@ import {
 } from 'yfiles'
 
 import CustomEditLabelHelper from './CustomEditLabelHelper'
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The default pattern for label validation.
@@ -85,9 +85,7 @@ async function run(): Promise<void> {
 
   createSampleGraph()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -198,26 +196,30 @@ function handleInstantTyping(sender: object, args: KeyEventArgs): void {
 /**
  * Wires up the UI.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+function initializeUI(): void {
+  const labelCreation = document.querySelector<HTMLInputElement>('#labelCreation')!
+  labelCreation.addEventListener('change', evt => {
+    graphEditorInputMode.allowAddLabel = labelCreation.checked
+  })
+  const labelEditing = document.querySelector<HTMLInputElement>('#labelEditing')!
+  labelEditing.addEventListener('change', evt => {
+    graphEditorInputMode.allowEditLabel = labelEditing.checked
+  })
+  const hideLabel = document.querySelector<HTMLInputElement>('#hideLabel')!
+  hideLabel.addEventListener('change', evt => {
+    graphEditorInputMode.hideLabelDuringEditing = hideLabel.checked
+  })
+  const instantTyping = document.querySelector<HTMLInputElement>('#instantTyping')!
+  instantTyping.addEventListener('change', evt => (instantTypingEnabled = instantTyping.checked))
+  const customLabelHelper = document.querySelector<HTMLInputElement>('#customLabelHelper')!
+  customLabelHelper.addEventListener(
+    'change',
+    evt => (customHelperEnabled = customLabelHelper.checked)
+  )
 
-  bindChangeListener('#labelCreation', checked => {
-    graphEditorInputMode.allowAddLabel = checked as boolean
-  })
-  bindChangeListener('#labelEditing', checked => {
-    graphEditorInputMode.allowEditLabel = checked as boolean
-  })
-  bindChangeListener('#hideLabel', checked => {
-    graphEditorInputMode.hideLabelDuringEditing = checked as boolean
-  })
-  bindChangeListener('#instantTyping', checked => (instantTypingEnabled = checked as boolean))
-  bindChangeListener('#customLabelHelper', checked => (customHelperEnabled = checked as boolean))
-
-  bindChangeListener('#nodesEnabled', val => {
-    if (val) {
+  const nodesEnabled = document.querySelector<HTMLInputElement>('#nodesEnabled')!
+  nodesEnabled.addEventListener('change', evt => {
+    if (nodesEnabled.checked) {
       graphEditorInputMode.labelEditableItems =
         graphEditorInputMode.labelEditableItems | GraphItemTypes.NODE | GraphItemTypes.NODE_LABEL
     } else {
@@ -225,8 +227,9 @@ function registerCommands(): void {
         graphEditorInputMode.labelEditableItems & ~(GraphItemTypes.NODE | GraphItemTypes.NODE_LABEL)
     }
   })
-  bindChangeListener('#edgesEnabled', val => {
-    if (val) {
+  const edgesEnabled = document.querySelector<HTMLInputElement>('#edgesEnabled')!
+  edgesEnabled.addEventListener('change', evt => {
+    if (edgesEnabled.checked) {
       graphEditorInputMode.labelEditableItems =
         graphEditorInputMode.labelEditableItems | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
     } else {
@@ -235,20 +238,20 @@ function registerCommands(): void {
     }
   })
 
-  bindChangeListener('#validationEnabled', checked => {
-    validationEnabled = checked as boolean
-    ;(document.querySelector('#validationPattern') as HTMLInputElement).disabled = !checked
+  const validationEnabledElement = document.querySelector<HTMLInputElement>('#validationEnabled')!
+  const validationPatternElement = document.querySelector<HTMLInputElement>('#validationPattern')!
+  validationEnabledElement.addEventListener('change', evt => {
+    const checked = validationEnabledElement.checked
+    validationEnabled = checked
+    validationPatternElement.disabled = !checked
   })
-  ;(document.querySelector('#validationPattern') as HTMLInputElement).addEventListener(
-    'input',
-    e => {
-      try {
-        validationPattern = new RegExp((e.target as HTMLInputElement).value)
-      } catch (ex) {
-        // invalid or unfinished regex, ignore
-      }
+  validationPatternElement.addEventListener('input', e => {
+    try {
+      validationPattern = new RegExp(validationPatternElement.value)
+    } catch (ex) {
+      // invalid or unfinished regex, ignore
     }
-  )
+  })
 }
 
 /**
@@ -264,5 +267,4 @@ function createSampleGraph(): void {
   graphComponent.fitGraphBounds()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

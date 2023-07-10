@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>01 Create Graph - Graph Builder Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-graph-builder"> Graph Builder Tutorial </a>
+
+        <span>01 Create Graph</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 1/13</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 01 Create Graph</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-graph-builder/01-create-graph/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >01 Create Graph</a
+          ><a
+            href="../../tutorial-graph-builder/02-create-nodes-sources/index.html"
+            class="tutorial-dropdown__item"
+            >02 Create Nodes Sources</a
+          ><a
+            href="../../tutorial-graph-builder/03-create-edges-sources/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Edges Sources</a
+          ><a
+            href="../../tutorial-graph-builder/04-group-nodes/index.html"
+            class="tutorial-dropdown__item"
+            >04 Group Nodes</a
+          ><a
+            href="../../tutorial-graph-builder/05-implicit-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >05 Implicit Grouping</a
+          ><a
+            href="../../tutorial-graph-builder/06-configure-styles/index.html"
+            class="tutorial-dropdown__item"
+            >06 Configure Styles</a
+          ><a
+            href="../../tutorial-graph-builder/07-create-labels-sources/index.html"
+            class="tutorial-dropdown__item"
+            >07 Create Labels Sources</a
+          ><a
+            href="../../tutorial-graph-builder/08-configure-labels/index.html"
+            class="tutorial-dropdown__item"
+            >08 Configure Labels</a
+          ><a
+            href="../../tutorial-graph-builder/09-configure-tags/index.html"
+            class="tutorial-dropdown__item"
+            >09 Configure Tags</a
+          ><a
+            href="../../tutorial-graph-builder/10-configure-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Configure Layout</a
+          ><a
+            href="../../tutorial-graph-builder/11-update-graph/index.html"
+            class="tutorial-dropdown__item"
+            >11 Update Graph</a
+          ><a
+            href="../../tutorial-graph-builder/12-adjacency-graph-builder/index.html"
+            class="tutorial-dropdown__item"
+            >12 Adjacency Graph Builder</a
+          ><a
+            href="../../tutorial-graph-builder/13-tree-builder/index.html"
+            class="tutorial-dropdown__item"
+            >13 Tree Builder</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-graph-builder/02-create-nodes-sources/index.html'><span>02 Create Nodes Sources</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Creating a graph from business data</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  This tutorial will guide you through configuring <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> to
+                  conveniently transfer business data into a graph that you can display, manage and
+                  explore.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> is a class which supports loading data from
+                  different&#8201;&#8212;&#8201;and even multiple&#8201;&#8212;&#8201;sources. It
+                  uses the data to construct the graph structure and provides multiple options to
+                  assign visualizations to the graph elements and add labels.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Another feature of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> is the possibility to update the
+                  graph when the business data changes. It allows for specific changes without
+                  rebuilding the graph from scratch.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_using_graphbuilder">Using GraphBuilder</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Before starting with <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>, let&#8217;s have a look at some
+                  sample data. It describes two entities representing two persons and a connection
+                  between them.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> data = {
+  <span class="hljs-attr">persons</span>: [
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Erik Joplin&#x27;</span> },
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Melissa Barner&#x27;</span> }
+  ],
+  <span class="hljs-attr">relationships</span>: [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;1&#x27;</span> }]
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In this case, there are two arrays that contain objects with business data which
+                  are associated with an <code>id</code> to be able to reference them in connections
+                  or during updates.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Now, we are using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> to create a graph containing two
+                  nodes that are connected. First, we create an instance of
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> and associate it with an
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">IGraph</a> instance. Most often the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-property-graph" target="_blank">GraphComponent&#8217;s graph</a>
+                  property is used for this purpose. Then, data sources are added for nodes and for
+                  edges. Finally, <code>buildGraph()</code> creates the graph.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// use the graph from the graph component, for example</span>
+<span class="hljs-keyword">const</span> graph = graphComponent.<span class="hljs-property">graph</span>
+
+<span class="hljs-comment">// instantiate the graph builder</span>
+<span class="hljs-keyword">const</span> graphBuilder = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GraphBuilder</span>(graph)
+
+<span class="hljs-comment">// add node and edge data</span>
+graphBuilder.<span class="hljs-title function_">createNodesSource</span>(data.<span class="hljs-property">persons</span>, <span class="hljs-string">&#x27;id&#x27;</span>)
+graphBuilder.<span class="hljs-title function_">createEdgesSource</span>({
+  <span class="hljs-attr">data</span>: data.<span class="hljs-property">relationships</span>,
+  <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;id&#x27;</span>,
+  <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;sourceId&#x27;</span>,
+  <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;targetId&#x27;</span>
+})
+
+<span class="hljs-comment">// create the graph</span>
+graphBuilder.<span class="hljs-title function_">buildGraph</span>()</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>The graph on the right shows the result of this example.</p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          The above code snippets are taken from <code>create-graph.ts</code> which
+                          is part of this tutorial demo code. Try to change the data in the source
+                          file to observe how the graph changes.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_importing_specific_data_structures">Importing specific data structures</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  This tutorial focuses on the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> class which is used when
+                  the data describes a general graph with information about nodes and edges.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  There are two other graph builder classes that are better suited for specific
+                  scenarios: <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a>.
+                  In principle, they work the same as <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. They only differ
+                  in the way the node and edge sources are configured.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> is designed to create a graph from data that has a
+                  tree structure and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> applies when the
+                  connections between the elements are not separately specified in the data.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  See the steps about
+                  <a href="../12-adjacency-graph-builder/">AdjacencyGraphBuilder</a> and
+                  <a href="../13-tree-builder/">TreeBuilder</a> of this tutorial for an explanation
+                  on how these classes work.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-graph-builder/02-create-nodes-sources/index.html'><span>02 Create Nodes Sources</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

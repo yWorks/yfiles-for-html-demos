@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,21 +30,101 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Clear Rectangle Area Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Clear Rectangle Area</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <span>Sample Graph</span>
+
+      <!-- combo-box for sample graphs -->
+      <select title="Sample graph" id="sample-graph-combobox">
+        <option value="hierarchic">Hierarchic</option>
+        <option value="grouping">Grouping</option>
+        <option value="organic">Organic</option>
+        <option value="circular">Circular</option>
+        <option value="tree">Tree</option>
+        <option value="balloon">Balloon</option>
+        <option value="seriesparallel">Series-Parallel</option>
+        <option value="components">Components</option>
+      </select>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Clear Area Strategy
+        <select title="Clearing strategy" id="clearing-strategy-combobox">
+          <option value="LOCAL">Local</option>
+          <option value="LOCAL_UNIFORM">Local Uniform</option>
+          <option value="PRESERVE_SHAPES">Preserve Shapes</option>
+          <option value="PRESERVE_SHAPES_UNIFORM">Preserve Shapes Uniform</option>
+          <option value="GLOBAL">Global</option>
+        </select>
+      </label>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Component Assignment Strategy
+        <select title="Component assignment strategy" id="component-assignment-strategy-combobox">
+          <option value="SINGLE">Single</option>
+          <option value="CONNECTED">Connected</option>
+          <option value="CLUSTERING">Clustering</option>
+        </select>
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Clear Rectangle Area Demo</h1>
 
         <p>
@@ -55,26 +134,32 @@
         </p>
         <p>
           Every time the rectangular area is moved or resized interactively,
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a> will push away the other elements so there is a free area for
-          the rectangle.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a>
+          will push away the other elements so there is a free area for the rectangle.
         </p>
         <p>You can choose between different strategies for clearing the area:</p>
         <ul>
-          <li><strong>Local:</strong> Tries to change the layout rather locally.</li>
           <li>
-            <strong>LocalUniform:</strong> Tries to change the layout rather locally but moving all
-            necessary nodes by a uniform offset.
+            <strong>Local:</strong>
+            Tries to change the layout rather locally.
           </li>
           <li>
-            <strong>PreserveShapes:</strong> Tries to preserve the shape of the existing edge paths.
+            <strong>LocalUniform:</strong>
+            Tries to change the layout rather locally but moving all necessary nodes by a uniform
+            offset.
           </li>
           <li>
-            <strong>PreserveShapesUniform:</strong> Globally partitions the graph into two parts and
-            moves them apart.
+            <strong>PreserveShapes:</strong>
+            Tries to preserve the shape of the existing edge paths.
           </li>
           <li>
-            <strong>Global:</strong> Divides the graph into two partitions somewhere along the area
-            and moves them horizontally or vertically.
+            <strong>PreserveShapesUniform:</strong>
+            Globally partitions the graph into two parts and moves them apart.
+          </li>
+          <li>
+            <strong>Global:</strong>
+            Divides the graph into two partitions somewhere along the area and moves them
+            horizontally or vertically.
           </li>
         </ul>
 
@@ -84,10 +169,17 @@
         </p>
 
         <ul>
-          <li><strong>Single:</strong> Each node is a separate component.</li>
-          <li><strong>Connected:</strong> Components are defined by the connected components.</li>
           <li>
-            <strong>Clustering:</strong> Components are defined by edge betweenness clustering.
+            <strong>Single:</strong>
+            Each node is a separate component.
+          </li>
+          <li>
+            <strong>Connected:</strong>
+            Components are defined by the connected components.
+          </li>
+          <li>
+            <strong>Clustering:</strong>
+            Components are defined by edge betweenness clustering.
           </li>
         </ul>
 
@@ -109,78 +201,11 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-        <span class="demo-separator"></span>
-
-        <span>Sample Graph</span>
-
-        <!-- combo-box for sample graphs -->
-        <select title="Sample graph" id="sample-graph-combobox" data-command="SetSampleGraph">
-          <option value="hierarchic">Hierarchic</option>
-          <option value="grouping">Grouping</option>
-          <option value="organic">Organic</option>
-          <option value="circular">Circular</option>
-          <option value="tree">Tree</option>
-          <option value="balloon">Balloon</option>
-          <option value="seriesparallel">Series-Parallel</option>
-          <option value="components">Components</option>
-        </select>
-
-        <span class="demo-separator"></span>
-
-        <span>Clear Area Strategy</span>
-        <select
-          title="Clearing strategy"
-          id="clearing-strategy-combobox"
-          data-command="SetClearingStrategy"
-        >
-          <option value="LOCAL">Local</option>
-          <option value="LOCAL_UNIFORM">Local Uniform</option>
-          <option value="PRESERVE_SHAPES">Preserve Shapes</option>
-          <option value="PRESERVE_SHAPES_UNIFORM">Preserve Shapes Uniform</option>
-          <option value="GLOBAL">Global</option>
-        </select>
-
-        <span class="demo-separator"></span>
-
-        <span>Component Assignment Strategy</span>
-        <select
-          title="Component assignment strategy"
-          id="component-assignment-strategy-combobox"
-          data-command="SetComponentAssignmentStrategy"
-        >
-          <option value="SINGLE">Single</option>
-          <option value="CONNECTED">Connected</option>
-          <option value="CLUSTERING">Clustering</option>
-        </select>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="ClearRectangleAreaDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="ClearRectangleAreaDemo.ts" async></script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -57,23 +57,23 @@ import {
  * @see {@link createBezierControlPoints}
  */
 export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
-  constructor() {
-    super()
-
-    // The minimum distance between two subsequent nodes.
-    this.minimumNodeDistance = 30
-
-    // Specifies if edge path bends should be calculated as cubic bezier control points.
-    // If this property is set to `true`, edges are routed in such a way that their
-    // bends are control points for cubic bezier curves that approximate semi circles.
-    // If this property is set to `false`, edges are routed with a single bend such that
-    // source node center, target node center, and bend location define a unique semi circle.
-    this.createBezierControlPoints = true
-
-    // Specifies the left-to-right order of nodes.
-    // @see {@link NodeOrder}
-    this.nodeOrder = NodeOrder.AS_IS
-  }
+  /**
+   * The minimum distance between two subsequent nodes.
+   */
+  minimumNodeDistance = 30
+  /**
+   * Specifies if edge path bends should be calculated as cubic bezier control points.
+   * If this property is set to `true`, edges are routed in such a way that their
+   * bends are control points for cubic bezier curves that approximate semi circles.
+   * If this property is set to `false`, edges are routed with a single bend such that
+   * source node center, target node center, and bend location define a unique semi circle.
+   */
+  createBezierControlPoints = true
+  /**
+   * Specifies the left-to-right order of nodes.
+   * @see {@link NodeOrder}
+   */
+  nodeOrder = NodeOrder.AS_IS
 
   /**
    * Arranges the given graph.

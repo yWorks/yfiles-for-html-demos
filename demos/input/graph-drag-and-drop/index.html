@@ -2,11 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -30,22 +29,18 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Graph Drag and Drop Demo [yFiles for HTML]</title>
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <!-- styling for the drag and drop palette -->
     <style>
       #palette {
-        position: absolute;
-        top: 100px;
-        bottom: 0;
-        left: 0;
-        width: 170px;
-        border-right: 5px solid #ebeef0;
+        width: 180px;
+        border-left: 5px solid #ebeef0;
         overflow: auto;
         box-sizing: border-box;
         z-index: 8;
@@ -53,7 +48,7 @@
 
       #palette div {
         width: auto;
-        height: 100px;
+        height: 120px;
         padding: 10px;
         display: flex;
         align-items: center;
@@ -63,19 +58,8 @@
       }
 
       #palette img {
-        width: auto;
-        height: auto;
-      }
-
-      @media screen and (max-height: 500px) {
-        #palette {
-          top: 60px;
-        }
-      }
-
-      #graphComponent,
-      .demo-left-hidden #graphComponent {
-        left: 170px !important;
+        max-width: 100%;
+        max-height: 100%;
       }
 
       .yfiles-drag {
@@ -88,20 +72,91 @@
         opacity: 0;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Graph Drag and Drop</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+      <span class="demo-separator"></span>
+      <button data-command="GROUP_SELECTION"></button>
+      <button data-command="UNGROUP_SELECTION"></button>
+
+      <span class="demo-separator"></span>
+
+      <input
+        type="checkbox"
+        id="show-preview"
+        checked="true"
+        title="Show a preview of the dragged graph during the drag"
+        class="demo-toggle-button labeled"
+      />
+      <label for="show-preview">Preview</label>
+      <input
+        type="checkbox"
+        id="enable-snapping"
+        checked="true"
+        title="Dragged items are snapped"
+        class="demo-toggle-button labeled"
+      />
+      <label for="enable-snapping">Snapping</label>
+
+      <span class="demo-separator"></span>
+
+      <input
+        type="checkbox"
+        id="folders-as-parents"
+        title="Dropping a graph on a collapsed folder node will create the graph inside the folder node"
+        class="demo-toggle-button labeled"
+      />
+      <label for="folders-as-parents">Folders As Parents</label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Graph Drag and Drop Demo</h1>
 
         <p>This demo shows how to add drag and drop of graphs to an app.</p>
         <p>
           yFiles for HTML supports
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-drag_drop" target="_blank">drag and drop of single items</a>
-          out of the box.
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-drag_drop" target="_blank">drag and drop of single
+          items</a> out of the box.
         </p>
         <p>
           This demo contains a custom implementation of a <a href="https://docs.yworks.com/yfileshtml/#/api/DropInputMode" target="_blank">DropInputMode</a>
@@ -132,85 +187,17 @@
             <a href="../custom-drag-and-drop">Custom Drag and Drop</a>
           </li>
           <li>
-            <a href="../../03-tutorial-application-features/drag-and-drop/index.html"
-              >Tutorial: Drag and Drop</a
-            >
+            <a href="../../application-features/drag-and-drop/index.html">Simple Drag and Drop</a>
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-        <span class="demo-separator"></span>
-        <button
-          data-command="Group"
-          title="Group selected element"
-          class="demo-icon-yIconGroup"
-        ></button>
-        <button
-          data-command="Ungroup"
-          title="Ungroup selected element"
-          class="demo-icon-yIconUngroup"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <input
-          type="checkbox"
-          id="show-preview"
-          data-command="ShowPreview"
-          checked="true"
-          title="Show a preview of the dragged graph during the drag"
-          class="demo-toggle-button labeled"
-        />
-        <label for="show-preview">Preview</label>
-        <input
-          type="checkbox"
-          id="enable-snapping"
-          data-command="EnableSnapping"
-          checked="true"
-          title="Dragged items are snapped"
-          class="demo-toggle-button labeled"
-        />
-        <label for="enable-snapping">Snapping</label>
-
-        <span class="demo-separator"></span>
-
-        <input
-          type="checkbox"
-          id="folders-as-parents"
-          data-command="AllowFoldersAsParents"
-          title="Dropping a graph on a collapsed folder node will create the graph inside the folder node"
-          class="demo-toggle-button labeled"
-        />
-        <label for="folders-as-parents">Folders As Parents</label>
-      </div>
-
-      <!-- the panel which contains a palette of graphs to drop into the graph -->
-
-      <div class="demo-content-dynamic">
-        <div id="palette"></div>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="palette"></div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="GraphDragAndDropDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="GraphDragAndDropDemo.ts" async></script>
   </body>
 </html>

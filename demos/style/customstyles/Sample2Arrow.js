@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,21 +44,22 @@ import {
   Visual,
   YString
 } from 'yfiles'
-import { isColorSetName } from '../../resources/demo-styles.js'
+import { isColorSetName } from 'demo-resources/demo-styles'
 
 /**
  * A custom demo arrow style whose colors match the given well-known CSS rule.
  */
 export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+  anchor = null
+  direction = null
+  arrowFigure = null
+
   /**
    * @param {!(string|ColorSetName)} [cssClass]
    */
   constructor(cssClass) {
     super()
     this.cssClass = cssClass
-    this.anchor = null
-    this.direction = null
-    this.arrowFigure = null
   }
 
   /**
@@ -208,9 +209,10 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
 }
 
 export class Sample2ArrowExtension extends MarkupExtension {
+  _cssClass = ''
+
   constructor() {
     super()
-    this._cssClass = ''
   }
 
   /**

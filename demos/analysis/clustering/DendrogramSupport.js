@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,7 +51,6 @@ import {
   ICanvasObjectGroup,
   ICanvasObjectInstaller,
   IEdge,
-  IEnumerable,
   IGraph,
   IHitTestable,
   IInputModeContext,
@@ -76,6 +75,7 @@ import {
   PortConstraintKeys,
   PortSide,
   Rect,
+  ScrollBarVisibility,
   ShapeNodeStyle,
   Size,
   SolidColorFill,
@@ -88,7 +88,7 @@ import {
 } from 'yfiles'
 
 import { AxisVisual, CutoffVisual, generateColors } from './DemoVisuals.js'
-import { colorSets } from '../../resources/demo-styles.js'
+import { colorSets } from 'demo-resources/demo-styles'
 
 const DENDROGRAM_GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -98,33 +98,30 @@ const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
  * This also requires the graph that will be clustered (the original graph).
  */
 export class DendrogramComponent {
+  dendrogramComponent = new GraphComponent('dendrogram-graph-component')
+  defaultNodeStyle = new ShapeNodeStyle()
+  defaultEdgeStyle = new PolylineEdgeStyle()
+  // the idea is to create the hierarchical graph from the dendrogram structure that is returned from the
+  // clustering algorithm
+  dendro2hierarchical = new Mapper()
+  hierarchical2dendro = new Mapper()
+  // determine the maxY coordinate needed for the creation of the visual objects
+  dendrogramMaxY = 0
+  axisCanvasObject = null
+  // create the cut-off visual and add it to the highlight group of the graph component
+  cutOffVisual = null
+  cutOffCanvasObject = null
+  visited = new Set()
+  dragFinishedListener = () => {}
+
   /**
    * Creates a new instance of a dendrogram component.
    * @param {!GraphComponent} graphComponent The {@link GraphComponent} which renders the original graph.
    */
   constructor(graphComponent) {
     this.graphComponent = graphComponent
-    this.dendrogramComponent = new GraphComponent('dendrogramGraphComponent')
-    this.defaultNodeStyle = new ShapeNodeStyle()
-    this.defaultEdgeStyle = new PolylineEdgeStyle()
-
-    // the idea is to create the hierarchical graph from the dendrogram structure that is returned from the
-    // clustering algorithm
-    this.dendro2hierarchical = new Mapper()
-
-    this.hierarchical2dendro = new Mapper()
-
-    // determine the maxY coordinate needed for the creation of the visual objects
-    this.dendrogramMaxY = 0
-
-    this.axisCanvasObject = null
-
-    // create the cut-off visual and add it to the highlight group of the graph component
-    this.cutOffVisual = null
-
-    this.cutOffCanvasObject = null
-    this.visited = new Set()
-    this.dragFinishedListener = () => {}
+    this.dendrogramComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
+    this.dendrogramComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
     this.configureUserInteraction()
 
     this.configureGraph(this.dendrogramComponent.graph)
@@ -331,8 +328,9 @@ export class DendrogramComponent {
     // add the dragging listener that will send the up-to-date cut-off value
     moveInputMode.addDraggingListener(() => {
       if (this.cutOffVisual) {
-        this.cutOffVisual.cutOffValue = Math.ceil(
-          this.dendrogramMaxY - this.cutOffVisual.rectangle.center.y + 1
+        this.cutOffVisual.cutOffValue = Math.max(
+          Math.ceil(this.dendrogramMaxY - this.cutOffVisual.rectangle.center.y + 1),
+          0
         )
       }
     })
@@ -428,13 +426,13 @@ export class DendrogramComponent {
   /**
    * Called when a node of the hierarchical clustered graph is hovered to highlight the corresponding nodes of the
    * original graph.
-   * @param {!IModelItem} item The hovered item
+   * @param {?IModelItem} item The hovered item
    */
   onHoveredItemChanged(item) {
     const highlightIndicatorManager = this.dendrogramComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
-    let nodesToHighlight = IEnumerable.from([])
-    if (item && item instanceof INode) {
+    let nodesToHighlight = []
+    if (item instanceof INode) {
       // highlight the node of the hierarchical clustered graph
       highlightIndicatorManager.addHighlight(item)
 
@@ -457,14 +455,14 @@ export class DendrogramComponent {
 
   /**
    * Highlights the given nodes of the original graph.
-   * @param {!IEnumerable.<INode>} nodes The nodes of the original graph that will be highlighted.
+   * @param {!Iterable.<INode>} nodes The nodes of the original graph that will be highlighted.
    */
   highlightNodes(nodes) {
     const highlightManager = this.graphComponent.highlightIndicatorManager
     highlightManager.clearHighlights()
-    nodes.forEach(node => {
+    for (const node of nodes) {
       highlightManager.addHighlight(node)
-    })
+    }
   }
 
   /**
@@ -534,7 +532,12 @@ export class DendrogramComponent {
    * @param {boolean} showDendrogram True if the component should be visible, false otherwise
    */
   toggleVisibility(showDendrogram) {
-    this.dendrogramComponent.div.style.display = showDendrogram ? 'inline' : 'none'
+    const dendrogramComponentDiv = this.dendrogramComponent.div
+    if (showDendrogram) {
+      dendrogramComponentDiv.classList.remove('hidden')
+    } else {
+      dendrogramComponentDiv.classList.add('hidden')
+    }
   }
 }
 
@@ -546,10 +549,7 @@ export class DendrogramComponent {
  * by the hierarchical clustering algorithm.
  */
 class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
-  constructor() {
-    super()
-    this.maxY = 0
-  }
+  maxY = 0
 
   /**
    * Gets the data provider key for storing the distances between the nodes.
@@ -703,6 +703,10 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
  * Creates the position handles for the timeline component.
  */
 export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
+  rectangle
+  offset = new MutablePoint()
+  boundaryRectangle
+
   /**
    * Creates a position handler for the timeline.
    * @param {!IMutableRectangle} rectangle The rectangle to read and write its location to.
@@ -710,7 +714,6 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
    */
   constructor(rectangle, boundaryRectangle) {
     super()
-    this.offset = new MutablePoint()
     this.rectangle = rectangle
     this.boundaryRectangle = boundaryRectangle
   }
@@ -778,8 +781,8 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
     // check if the next position is within the boundary rectangle borders
     if (nextPositionY <= y1) {
       return y1
-    } else if (nextPositionY + this.rectangle.height >= y2) {
-      return y2 - this.rectangle.height
+    } else if (nextPositionY + 2 * this.rectangle.height >= y2) {
+      return y2 - 2 * this.rectangle.height
     }
 
     return nextPositionY
@@ -790,15 +793,10 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
  * A highlight manager responsible for highlighting the dendrogram elements.
  */
 class HighlightManager extends HighlightIndicatorManager {
-  constructor() {
-    super()
-
-    // the edges' highlight group should be above the nodes
-    this.edgeHighlightGroup = null
-
-    // the nodes' highlight group should be above the nodes
-    this.nodeHighlightGroup = null
-  }
+  // the edges' highlight group should be above the nodes
+  edgeHighlightGroup = null
+  // the nodes' highlight group should be above the nodes
+  nodeHighlightGroup = null
 
   /**
    * Installs the manager on the canvas.

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,172 +27,242 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
+  BaseClass,
+  Cursor,
   GraphModelManager,
-  ICanvasObject,
-  INode,
-  IRenderContext,
-  IVisualTemplate,
-  MarqueeSelectionEventArgs,
-  MarqueeSelectionInputMode,
+  IHitTestable,
+  IListEnumerable,
+  IPositionHandler,
+  MoveInputMode,
+  MutablePoint,
+  Point,
   Rect,
-  SimpleNode,
-  SvgVisual
+  SimpleLabel,
+  SimpleNode
 } from 'yfiles'
 
-import ActivityNodeStyle from './ActivityNodeStyle.js'
-import { GanttMapper } from './GanttMapper.js'
+import { ActivityNodeStyle } from './activity-node/ActivityNodeStyle.js'
+import { getDate, getTaskColor, syncActivityWithNodeLayout } from './gantt-utils.js'
+import { hideInfo, showInfo } from './info-panel.js'
+import { ganttActivityHeight, ganttActivitySpacing, getTask, getTaskY } from './sweepline-layout.js'
 
 /**
- * A customized MarqueeSelectionInputMode that makes it possible to create task nodes.
- * For this purpose, the default template (blue marquee/rubber band rectangle) is switched off.
- * Instead, a temporary dummy node is rendered during task creation. This node is not part of the graph,
- * but only used for pure visualization.
- * When the gesture is finished, a node is created in the area defined by the task and the
- * x-coordinates of the dragged area.
+ * An input mode that allows creating activities by dragging in the viewport.
  */
-export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
-  /**
-   * Creates a new instance.
-   * @param {!GanttMapper} mapper The mapper.
-   * @param {!function} applyCallback The callback that is executed when the gesture is finished.
-   */
-  constructor(mapper, applyCallback) {
+export class CreateActivityInputMode extends MoveInputMode {
+  constructor() {
     super()
+    this.positionHandler = new CreateActivityHandler()
+    this.hitTestable = IHitTestable.ALWAYS
+    this.validBeginCursor = Cursor.DEFAULT
+    this.moveCursor = Cursor.EW_RESIZE
+  }
+}
 
-    this.applyCallback = applyCallback
-    this.mapper = mapper
+/**
+ * A handler that allows for creating a node with a drag gesture.
+ * The drag gesture determines the duration of the activity.
+ */
+class CreateActivityHandler extends BaseClass(IPositionHandler) {
+  locationPoint = new MutablePoint()
+  temporaryNode = null
+  /** Canvas object for the node visualization during the gesture */
+  nodeCanvasObject = null
+  /** Canvas object for the label visualization during the gesture */
+  labelCanvasObject = null
 
-    // The dummy node that is rendered during task creation.
-    this.dummyNode = new SimpleNode()
+  /**
+   * @param {!IInputModeContext} context
+   */
+  initializeDrag(context) {}
 
-    // The task for which a new activity will be created.
-    this.task = null
+  /**
+   * Creates a temporary dummy node that will be converted to a normal node when the drag gesture will
+   * be finished and shows an info popup with the date that corresponds to the mouse location.
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
+   */
+  handleMove(context, originalLocation, newLocation) {
+    if (!this.temporaryNode) {
+      // create a dummy node that does not belong to the graph and add it to
+      // the graphComponent's rendering group
+      this.temporaryNode = this.createTemporaryNode(context, originalLocation, newLocation)
+      this.showTemporaryNode(context)
+    }
+    // update the location of the node
+    this.locationPoint.relocate(newLocation)
+    this.updateTemporaryNode(originalLocation, newLocation)
 
-    // The canvas object in the graph component scene graph that holds the visualization that is
-    // rendered during the task creation.
-    this.canvasObject = null
-
-    // switch off the default template
-    this.template = IVisualTemplate.create({
-      createVisual(_context, _bounds, _data) {
-        return null
-      },
-      updateVisual(_context, _oldVisual, _bounds, _dataObject) {
-        return null
-      }
-    })
+    // Show info text
+    const text = getDate(this.temporaryNode.layout.maxX).format()
+    showInfo(text, this.temporaryNode.layout.topRight, context.canvasComponent)
   }
 
   /**
-   * Creates the dummy node and adds the visualization to the graph control.
-   * @param {!MarqueeSelectionEventArgs} evt The event argument that contains context information.
+   * Creates an actual node in the graph based on the layout, style, label, and tag of the temporary
+   * node.
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
-  onDragStarted(evt) {
-    // get the dragged rectangle
-    const marqueeRectangle = this.selectionRectangle
-    // get the index of the task at the mouse position
-    this.task = this.mapper.getTask(marqueeRectangle.y)
-    // set the dummy node layout
-    const layout = this.getDummyNodeLayout(marqueeRectangle)
-    this.dummyNode.layout = layout
+  dragFinished(context, originalLocation, newLocation) {
+    // update the location of the dummy node
+    this.updateTemporaryNode(originalLocation, newLocation)
+
+    // update the activity with the actual timestamps
+    syncActivityWithNodeLayout(this.temporaryNode)
+
+    // remove the dummy node from the graphComponent's content group and hide the popup info
+    this.hideTemporaryNode()
+    hideInfo()
+
+    // create the new node as part of the actual graph
+    this.createNode(context.graph)
+    this.temporaryNode = null
+  }
+
+  /**
+   * Removes the dummy node from the graph component and hides the popup info.
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   */
+  cancelDrag(context, originalLocation) {
+    this.hideTemporaryNode()
+    this.temporaryNode = null
+    hideInfo()
+  }
+
+  /**
+   * @type {!IPoint}
+   */
+  get location() {
+    return this.locationPoint
+  }
+
+  /**
+   * Creates the node in the graph at the end of the gesture.
+   * The created node reuses the same layout, style, tag, and label
+   * of the temporary node during the gesture.
+   * @param {?IGraph} [graph]
+   */
+  createNode(graph) {
+    if (graph && this.temporaryNode) {
+      const { layout, style, tag } = this.temporaryNode
+      const node = graph.createNode(layout, style, tag)
+      for (const label of this.temporaryNode.labels) {
+        graph.addLabel(
+          node,
+          label.text,
+          label.layoutParameter,
+          label.style,
+          label.preferredSize,
+          label.tag
+        )
+      }
+    }
+  }
+
+  /**
+   * Creates the temporary node with an appropriate layout, style, and tag, so that it looks
+   * just like a normal node.
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
+   * @returns {!SimpleNode}
+   */
+  createTemporaryNode(context, originalLocation, newLocation) {
+    const layout = this.getTemporaryNodeLayout(originalLocation, newLocation)
+    const task = getTask(layout.y)
+
+    // add some initial activity data
     const activity = {
       name: 'New Activity',
-      startDate: this.mapper.getDate(layout.x),
-      endDate: this.mapper.getDate(layout.x + layout.width),
+      startDate: getDate(layout.x).toISOString(),
+      endDate: getDate(layout.x + layout.width).toISOString(),
       leadTime: 0,
-      followUpTime: 0
-    }
-    this.dummyNode.tag = {
-      activity,
-      leadTimeWidth: 0,
-      followUpTimeWidth: 0
+      followUpTime: 0,
+      taskId: task.id
     }
 
-    const task = this.mapper.getTask(layout.y)
-    const graphComponent = this.inputModeContext.canvasComponent
-    this.dummyNode.style = task.color
-      ? new ActivityNodeStyle(task.color)
-      : graphComponent.graph.nodeDefaults.style
+    const graph = context.graph
 
-    // add the dummy node visual to the graph control
-    this.canvasObject = graphComponent.contentGroup.addChild(
-      this.dummyNode,
-      GraphModelManager.DEFAULT_NODE_DESCRIPTOR
-    )
-
-    super.onDragStarted.call(this, evt)
-  }
-
-  /**
-   * Updates the dummy node visualization.
-   * @param {!MarqueeSelectionEventArgs} evt The event argument that contains context information.
-   */
-  onDragging(evt) {
-    // update the dummy node layout
-    const layout = this.getDummyNodeLayout(this.selectionRectangle)
-    this.dummyNode.layout = layout
-    const activity = this.dummyNode.tag.activity
-    activity.startDate = this.mapper.getDate(layout.x)
-    activity.endDate = this.mapper.getDate(layout.x + layout.width)
-
-    super.onDragging(evt)
-  }
-
-  /**
-   * Removes the dummy node visualization and creates a new activity node in
-   * its place.
-   * @param {!MarqueeSelectionEventArgs} evt The event argument that contains context information.
-   */
-  onDragFinished(evt) {
-    // remove the dummy node visual
-    if (this.canvasObject !== null) {
-      this.canvasObject.remove()
-    }
-    const graph = this.inputModeContext.canvasComponent.graph
-    const layout = this.getDummyNodeLayout(this.selectionRectangle)
-    // create a new task
-    const task = this.mapper.getTask(layout.y)
-    const style = task.color ? new ActivityNodeStyle(task.color) : graph.nodeDefaults.style
-    // create a new node with a label
-    const node = graph.createNode({
+    // create a dummy node which is not actually part of the graph
+    const node = new SimpleNode({
       layout,
-      tag: this.dummyNode.tag,
-      labels: [this.dummyNode.tag.activity.name],
-      style
+      style: new ActivityNodeStyle(getTaskColor(task)),
+      tag: activity
     })
+    const label = new SimpleLabel({
+      owner: node,
+      text: activity.name,
+      style: graph.nodeDefaults.labels.getStyleInstance(node),
+      layoutParameter: graph.nodeDefaults.labels.getLayoutParameterInstance(node)
+    })
+    label.adoptPreferredSizeFromStyle()
+    node.labels = IListEnumerable.from([label])
 
-    // apply the graph modifications when a new node has been created
-    if (this.applyCallback) {
-      this.applyCallback(node)
-    }
-
-    super.onDragFinished(evt)
+    return node
   }
 
   /**
-   * Removes the dummy node.
-   * @param {!MarqueeSelectionEventArgs} evt The event argument that contains context information.
+   * Updates the temporary node layout in response to a drag.
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
-  onDragCanceled(evt) {
-    // remove the dummy node visual
-    if (this.canvasObject !== null) {
-      this.canvasObject.remove()
+  updateTemporaryNode(originalLocation, newLocation) {
+    if (this.temporaryNode) {
+      this.temporaryNode.layout = this.getTemporaryNodeLayout(originalLocation, newLocation)
     }
-
-    super.onDragCanceled(evt)
   }
 
   /**
-   * @param {!Rect} marqueeRect
+   * Calculates the temporary node layout based on the current pointer location during a drag.
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    * @returns {!Rect}
    */
-  getDummyNodeLayout(marqueeRect) {
-    const x = marqueeRect.x
-    // get the y coordinate of the task the drag was started in
-    const y = this.mapper.getTaskY(this.task) + GanttMapper.activitySpacing
-    const width = marqueeRect.width
-    const height = GanttMapper.activityHeight
-    return new Rect(x, y, width, height)
+  getTemporaryNodeLayout(originalLocation, newLocation) {
+    const y = getTaskY(getTask(originalLocation.y)) + ganttActivitySpacing
+    return new Rect(
+      new Point(originalLocation.x, y),
+      new Point(newLocation.x, y + ganttActivityHeight)
+    )
+  }
+
+  /**
+   * Shows the temporary node visualization.
+   * Basically, add the node and its label directly to the graphComponent with
+   * the default descriptor for nodes and labels since the dummy node is not actually part of the
+   * graphComponent's graph.
+   * @param {!IInputModeContext} context
+   */
+  showTemporaryNode(context) {
+    // Add the node and its label with the default descriptor for nodes and labels.
+    // Those know how to render graph items with their style.
+    const canvasComponent = context.canvasComponent
+    if (this.temporaryNode && canvasComponent) {
+      this.nodeCanvasObject = canvasComponent.contentGroup.addChild(
+        this.temporaryNode,
+        GraphModelManager.DEFAULT_NODE_DESCRIPTOR
+      )
+      const label = this.temporaryNode.labels.at(0)
+      if (label) {
+        this.labelCanvasObject = canvasComponent.contentGroup.addChild(
+          label,
+          GraphModelManager.DEFAULT_LABEL_DESCRIPTOR
+        )
+      }
+    }
+  }
+
+  /**
+   * Hides the temporary node visualization.
+   */
+  hideTemporaryNode() {
+    this.nodeCanvasObject?.remove()
+    this.nodeCanvasObject = null
+    this.labelCanvasObject?.remove()
+    this.labelCanvasObject = null
   }
 }

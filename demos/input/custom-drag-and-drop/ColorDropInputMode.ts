@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -251,7 +251,7 @@ export class ColorDropInputMode extends DropInputMode {
    */
   public static startDrag(
     dragSource: HTMLElement,
-    color: String,
+    color: string,
     dragDropEffects: DragDropEffects = DragDropEffects.ALL,
     useCssCursors = true,
     dragPreview: HTMLElement | null = null

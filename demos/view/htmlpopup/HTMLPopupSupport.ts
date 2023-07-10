@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,7 @@ import {
   GraphComponent,
   IEdge,
   ILabelModelParameter,
-  IModelItem,
+  ILabelOwner,
   INode,
   Point,
   SimpleLabel,
@@ -45,8 +45,8 @@ import {
  * This implementation uses a {@link ILabelModelParameter label model parameter} to determine the
  * position of the pop-up.
  */
-export default class HTMLPopupSupport {
-  private _currentItem: IEdge | INode | null = null
+export default class HTMLPopupSupport<TItem extends INode | IEdge> {
+  private _currentItem: TItem | null = null
   private dirty = false
 
   /**
@@ -72,7 +72,7 @@ export default class HTMLPopupSupport {
   /**
    * Gets the node or edge to display information for.
    */
-  get currentItem(): IEdge | INode | null {
+  get currentItem(): TItem | null {
     return this._currentItem
   }
 
@@ -81,7 +81,7 @@ export default class HTMLPopupSupport {
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
    */
-  set currentItem(value: IEdge | INode | null) {
+  set currentItem(value: TItem | null) {
     if (value === this._currentItem) {
       return
     }
@@ -106,7 +106,7 @@ export default class HTMLPopupSupport {
     })
 
     // Adds listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((node, oldLayout) => {
+    this.graphComponent.graph.addNodeLayoutChangedListener((source, node, oldLayout) => {
       const item = this.currentItem
       if (item && (item === node || HTMLPopupSupport.isEdgeConnectedTo(item, node))) {
         this.dirty = true
@@ -164,7 +164,11 @@ export default class HTMLPopupSupport {
     const height = this.div.clientHeight
     const zoom = this.graphComponent.zoom
 
-    const dummyLabel = new SimpleLabel(this.currentItem, '', this.labelModelParameter)
+    const dummyLabel = new SimpleLabel(
+      this.currentItem as unknown as ILabelOwner,
+      '',
+      this.labelModelParameter
+    )
     if (this.labelModelParameter.supports(dummyLabel)) {
       dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
       const newLayout = this.labelModelParameter.model.getGeometry(
@@ -189,7 +193,7 @@ export default class HTMLPopupSupport {
   /**
    * Determines if the given item is an IEdge connected to the given node.
    */
-  private static isEdgeConnectedTo(item: IModelItem, node: INode): boolean {
+  private static isEdgeConnectedTo<TItem>(item: TItem | null, node: INode): boolean {
     return (
       item instanceof IEdge && (item.sourcePort!.owner === node || item.targetPort!.owner === node)
     )

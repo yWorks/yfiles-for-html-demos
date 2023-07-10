@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,14 +30,14 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Default Label Style Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       .yfiles-tooltip {
@@ -64,50 +63,86 @@
         margin-bottom: 10px;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Default Label Style</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Default Label Style Demo</h1>
 
         <p>
           This demo shows the most important configuration options for the built-in
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle" target="_blank">DefaultLabelStyle</a> class.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle" target="_blank">DefaultLabelStyle</a>
+          class.
         </p>
 
         <h2>Things to Try</h2>
 
         <ul>
           <li>
-            Observe the various pre-configured label styles that are using different label
-            <em>shapes</em>, different <em>colors</em>, <em>fonts</em> and other settings. Hover
-            over a label to get a tool tip that lists the configured properties.
+            Observe the various pre-configured label styles that are using different label <em>shapes</em>, different
+            <em>colors</em>, <em>fonts</em> and other settings. Hover over a label to get a tool tip that lists the
+            configured properties.
           </li>
           <li>
             Double-click a label of the orange node to change its text and observe the resize
             behavior. Note that all other labels are not editable.
           </li>
           <li>
-            Take a look at labels showing the <em>text alignment</em> features. This comes into play
-            when the preferred size of the label is larger than the size needed for the text.
+            Take a look at labels showing the
+            <em>text alignment</em>
+            features. This comes into play when the preferred size of the label is larger than the
+            size needed for the text.
           </li>
           <li>
-            The three light-blue node labels on the right show the effects of
-            <em>text wrapping</em> and <em>text clipping</em> for labels whose size is smaller than
-            the size needed for displaying the whole text. To learn more about wrapping, please see
-            the
-            <a href="../../03-tutorial-application-features/label-text-wrapping/index.html"
-              >Label Text Wrapping Tutorial</a
-            >.
+            The three light-blue node labels on the right show the effects of <em>text wrapping</em> and <em>text
+            clipping</em> for labels whose size is smaller than the size needed for displaying the whole text. To learn
+            more about wrapping, please see the <a href="../../application-features/label-text-wrapping/index.html">
+            Label Text Wrapping Tutorial</a>.
           </li>
         </ul>
         <h2>Related Demos</h2>
         <ul>
           <li>
-            <a href="../htmllabel/index.html">HTML Label</a>
+            <a href="../html-label-style/">HTML Label</a>
           </li>
           <li>
             <a href="../markdownlabel/index.html">Markdown Label</a>
@@ -116,36 +151,18 @@
             <a href="../richtextlabel/index.html">Rich Text Label</a>
           </li>
           <li>
-            <a href="../../02-tutorial-custom-styles/10-custom-label-style/index.html"
-              >Tutorial: Custom Label Style</a
-            >
+            <a href="../../tutorial-style-implementation-label/01-render-label-text/">
+              Tutorial: Label Style Implementation
+            </a>
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="DefaultLabelStyleDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="DefaultLabelStyleDemo.ts" async></script>
   </body>
 </html>

@@ -101,7 +101,7 @@
           "height": 40
         },
         "label": "Node 4",
-        "parent": 0
+        "parent": 3
       },
       {
         "id": 1,
@@ -112,7 +112,7 @@
           "height": 40
         },
         "label": "Node 5",
-        "parent": 0
+        "parent": 3
       }
     ],
     "edges": [
@@ -128,7 +128,7 @@
     ],
     "groups": [
       {
-        "id": 0,
+        "id": 3,
         "layout": {
           "x": 0,
           "y": 0,

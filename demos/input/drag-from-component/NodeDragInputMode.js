@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,9 +39,10 @@ import {
   ModifierKeys,
   MouseEventArgs,
   NodeEventArgs,
+  Point,
   SvgExport
 } from 'yfiles'
-import { BrowserDetection } from '../../utils/BrowserDetection.js'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
 
 /**
  * An input mode which supports dragging nodes from the component to another HTML element.
@@ -51,17 +52,28 @@ import { BrowserDetection } from '../../utils/BrowserDetection.js'
  * The static method {@link createNodeImage} can be used to create an {@link HTMLImageElement image representation} of the given node.
  */
 export class NodeDragInputMode extends InputModeBase {
+  graphComponent = null
+  node = null
+  oldAutoDrag = null
+  img = null
+
+  onNodeRemovedListeners
+  onMouseDragListener
+  onMouseDownListener
+  onMouseUpListener
+  onDragStartedListener
+  onDragEndListener
+
   constructor() {
     super()
-    this.graphComponent = null
-    this.node = null
-    this.oldAutoDrag = null
-    this.img = null
 
-    //////////////////////////// Node to String handling //////////////////////////////////////
-    this.nodeToId = new Map()
-
-    this.idToNode = new Map()
+    // initializes listener functions in order to install/uninstall them
+    this.onNodeRemovedListeners = (_sender, evt) => this.handleNodeRemoved(evt.item)
+    this.onMouseDragListener = (_sender, _evt) => this.onMouseDrag()
+    this.onMouseDownListener = (_sender, evt) => this.onMouseDown(evt.modifiers, evt.location)
+    this.onMouseUpListener = (_sender, _evt) => this.onMouseUp()
+    this.onDragStartedListener = evt => this.onDragStarted(evt)
+    this.onDragEndListener = _evt => this.onDragEnd()
   }
 
   /////////////////// common input mode handling ///////////////////////
@@ -75,12 +87,12 @@ export class NodeDragInputMode extends InputModeBase {
   install(context, controller) {
     super.install(context, controller)
     this.graphComponent = context.canvasComponent
-    this.graphComponent.graph.addNodeRemovedListener(this.handleNodeRemoved.bind(this))
-    this.graphComponent.addMouseDragListener(this.onMouseDrag.bind(this))
-    this.graphComponent.addMouseDownListener(this.onMouseDown.bind(this))
-    this.graphComponent.addMouseUpListener(this.onMouseUp.bind(this))
-    this.graphComponent.div.addEventListener('dragstart', this.onDragStarted.bind(this))
-    this.graphComponent.div.addEventListener('dragend', this.onDragEnd.bind(this))
+    this.graphComponent.graph.addNodeRemovedListener(this.onNodeRemovedListeners)
+    this.graphComponent.addMouseDragListener(this.onMouseDragListener)
+    this.graphComponent.addMouseDownListener(this.onMouseDownListener)
+    this.graphComponent.addMouseUpListener(this.onMouseUpListener)
+    this.graphComponent.div.addEventListener('dragstart', this.onDragStartedListener)
+    this.graphComponent.div.addEventListener('dragend', this.onDragEndListener)
     this.graphComponent.div.draggable = true
   }
 
@@ -90,12 +102,12 @@ export class NodeDragInputMode extends InputModeBase {
    */
   uninstall(context) {
     super.uninstall(context)
-    this.graphComponent.graph.removeNodeRemovedListener(this.handleNodeRemoved.bind(this))
-    this.graphComponent.removeMouseDragListener(this.onMouseDrag.bind(this))
-    this.graphComponent.removeMouseDownListener(this.onMouseDown.bind(this))
-    this.graphComponent.removeMouseUpListener(this.onMouseUp.bind(this))
-    this.graphComponent.div.removeEventListener('dragstart', this.onDragStarted.bind(this))
-    this.graphComponent.div.removeEventListener('dragend', this.onDragEnd.bind(this))
+    this.graphComponent.graph.removeNodeRemovedListener(this.onNodeRemovedListeners)
+    this.graphComponent.removeMouseDragListener(this.onMouseDragListener)
+    this.graphComponent.removeMouseDownListener(this.onMouseDownListener)
+    this.graphComponent.removeMouseUpListener(this.onMouseUpListener)
+    this.graphComponent.div.removeEventListener('dragstart', this.onDragStartedListener)
+    this.graphComponent.div.removeEventListener('dragend', this.onDragEndListener)
     this.graphComponent.div.draggable = false
     this.graphComponent = null
   }
@@ -135,14 +147,14 @@ export class NodeDragInputMode extends InputModeBase {
 
   /**
    * The actual HTML5 drag has been ended.
-   * Dispatch an mouse up event on the component.
+   * Dispatch a mouse up event on the component.
    */
   onDragEnd() {
     this.cancel()
     // dispatch an artificial mouse up event on the component
     // to fix the internal mouse handling:
     // the mouse up was part of the drag and drop gesture,
-    // therefore yFiles thinks that the mouse is still down
+    // therefore, yFiles thinks that the mouse is still down
     const evt = document.createEvent('MouseEvents')
     evt.initEvent('mouseup', true, true)
     this.graphComponent.div.dispatchEvent(evt)
@@ -158,19 +170,19 @@ export class NodeDragInputMode extends InputModeBase {
   /**
    * Mouse down on the component.
    * If a node is hit "arm" this input mode by setting the node which might be dragged.
-   * Also pre-render the image for the drag.
-   * @param {*} _
-   * @param {!MouseEventArgs} evt
+   * Also, pre-render the image for the drag.
+   * @param {!ModifierKeys} modifiers
+   * @param {!Point} location
    */
-  onMouseDown(_, evt) {
-    if (evt.modifiers !== ModifierKeys.NONE) {
+  onMouseDown(modifiers, location) {
+    if (modifiers !== ModifierKeys.NONE) {
       // To avoid clashes with the CreateEdgeInputMode:
       // Don't arm this mode if shift is held down
       return
     }
     const nodeHitTester = this.inputModeContext.lookup(INodeHitTester.$class)
     if (nodeHitTester) {
-      const node = nodeHitTester.enumerateHits(this.inputModeContext, evt.location).at(0)
+      const node = nodeHitTester.enumerateHits(this.inputModeContext, location).at(0)
       if (node) {
         this.node = node
         // pre-render the image, otherwise it is not shown during the drag
@@ -184,14 +196,14 @@ export class NodeDragInputMode extends InputModeBase {
 
   /**
    * The mouse is dragged on the component.
-   * Request the mutex, i.e. prevent other input modes from, being started.
+   * Request the mutex, i.e., prevent other input modes from being started.
    * The actual drag is started by the dragstart event handled by {@link onDragStarted}.
    */
   onMouseDrag() {
     if (this.node) {
       if (this.canRequestMutex()) {
         this.requestMutex()
-        // disable auto drag. Otherwise the component will scroll if we drag outside it.
+        // Disable auto drag. Otherwise, the component will scroll if we drag outside it.
         this.oldAutoDrag = this.graphComponent.autoDrag
         this.graphComponent.autoDrag = false
       }
@@ -226,9 +238,11 @@ export class NodeDragInputMode extends InputModeBase {
     return img
   }
 
+  static _exportComponent
+
   /**
    * Creates an SVG which shows the node.
-   * Returns it base64 encoded so we can use it as value for an img's src attribute.
+   * Returns it base64 encoded, so we can use it as a value for an img's src attribute.
    * @param {!INode} node
    * @returns {!string}
    */
@@ -284,6 +298,11 @@ export class NodeDragInputMode extends InputModeBase {
     }
   }
 
+  ////////////////////////////  Node to String handling //////////////////////////////////////
+
+  nodeToId = new Map()
+  idToNode = new Map()
+
   /**
    * @param {!INode} node
    * @returns {!string}
@@ -311,14 +330,13 @@ export class NodeDragInputMode extends InputModeBase {
   }
 
   /**
-   * @param {*} _
-   * @param {!NodeEventArgs} evt
+   * @param {!INode} node
    */
-  handleNodeRemoved(_, evt) {
-    const id = this.nodeToId.get(evt.item)
+  handleNodeRemoved(node) {
+    const id = this.nodeToId.get(node)
     if (id) {
       this.idToNode.delete(id)
-      this.nodeToId.delete(evt.item)
+      this.nodeToId.delete(node)
     }
   }
 

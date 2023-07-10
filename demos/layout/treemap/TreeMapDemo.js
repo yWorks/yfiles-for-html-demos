@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,24 +36,23 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphCopier,
+  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
   GroupingKeys,
   HierarchicNestingPolicy,
-  ICommand,
   IGraph,
   ILabel,
+  IndicatorNodeStyleDecorator,
   INode,
   InteriorStretchLabelModel,
   IRenderContext,
   License,
   NodeStyleBase,
-  NodeStyleDecorationInstaller,
   NodeWeightComparer,
   Point,
   ShapeNodeStyle,
   Size,
-  StyleDecorationZoomPolicy,
   SvgVisual,
   TextWrapping,
   TilingPolicy,
@@ -67,8 +66,9 @@ import {
 } from 'yfiles'
 
 import TreeMapData from './resources/TreeMapData.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /**
  * Mapper registry key for node names.
@@ -100,10 +100,10 @@ async function run() {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   initializeGraph()
   initializeInputModes()
-  registerCommands()
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -392,17 +392,14 @@ function updateGraph(root, clickedNode, isDrillDown = false) {
   path.innerHTML = pathString || 'yFiles-for-HTML-Complete'
 
   // register a highlight
-  const decorator = graph.decorator
-  decorator.nodeDecorator.highlightDecorator.setImplementation(
-    new NodeStyleDecorationInstaller({
-      nodeStyle: new ShapeNodeStyle({
+  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
+    nodeStyle: new IndicatorNodeStyleDecorator({
+      wrapped: new ShapeNodeStyle({
         fill: null,
         stroke: '3px crimson'
-      }),
-      margins: 0,
-      zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+      })
     })
-  )
+  })
 
   graphComponent.graph = graph
 
@@ -642,12 +639,7 @@ function updateLabelTextSizes(graph) {
 /**
  * Wires up the toolbar and module elements.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
+function initializeUI() {
   // update the labels of the sliders that show the current value
   bindLabelToInput('aspect-ratio', 'aspect-ratio-label')
   bindLabelToInput('spacing', 'spacing-label')
@@ -655,7 +647,7 @@ function registerCommands() {
   bindLabelToInput('minimum-node-height', 'minimum-node-height-label')
 
   // apply a layout with the current settings
-  bindAction("button[data-command='ApplyLayout']", applyLayout)
+  document.querySelector('#apply-layout').addEventListener('click', () => applyLayout())
 }
 
 /**
@@ -806,5 +798,4 @@ function getElementById(id) {
   return document.getElementById(id)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

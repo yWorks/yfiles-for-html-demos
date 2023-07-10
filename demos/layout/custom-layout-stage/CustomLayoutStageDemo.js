@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   GraphEditorInputMode,
   HierarchicLayout,
   HierarchicLayoutData,
-  ICommand,
   IGraph,
   LayoutData,
   LayoutExecutor,
@@ -44,7 +43,6 @@ import {
   Size
 } from 'yfiles'
 
-import { bindAction, bindActions, bindCommand, showApp } from '../../resources/demo-app.js'
 import MoveNodesAsideStage from './MoveNodesAsideStage.js'
 import AlignmentStage from './AlignmentStage.js'
 import ZigZagEdgesStage from './ZigZagEdgesStage.js'
@@ -52,8 +50,9 @@ import {
   applyDemoTheme,
   createDemoNodeLabelStyle,
   initDemoStyles
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The graph component in which the graph is displayed.
@@ -77,11 +76,8 @@ async function run() {
   // Finally, enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
 
-  // Bind the buttons to their commands
-  registerCommands()
-
-  // Initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // Bind the buttons to their actions
+  initializeUI()
 }
 
 /**
@@ -144,13 +140,13 @@ async function runZigZagLayout() {
 }
 
 /**
- * Applies all custom layout stages at once. Typically layout stages can by chained like this to
+ * Applies all custom layout stages at once. Typically, layout stages can be chained like this to
  * divide responsibilities for different parts of the layout customization into separate stages.
  * @returns {!Promise}
  */
 async function runAllLayouts() {
   // In this case, however, the custom alignment stage must come last, since it explicitly checks
-  // for the core layout to be a hierarchical layout. In many cases the order of stages matters, as
+  // for the core layout to be a hierarchical layout. In many cases, the order of stages matters, as
   // the graph is changed for the next stage, but some stages with changes that don't interfere with
   // each other can also be applied in any order.
   const layout = new ZigZagEdgesStage(
@@ -282,25 +278,21 @@ function createGraph(graph) {
 }
 
 /**
- * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
+ * Binds actions to the buttons in the tutorial's toolbar.
  */
-function registerCommands() {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+function initializeUI() {
+  document.querySelectorAll("button[data-action='RunStage1']").forEach(btn => {
+    btn.addEventListener('click', runMoveAsideLayout)
   })
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindActions("button[data-command='RunStage1']", () => runMoveAsideLayout())
-  bindActions("button[data-command='RunStage2']", () => runAlignNodesLayout())
-  bindActions("button[data-command='RunStage3']", () => runZigZagLayout())
-  bindAction("button[data-command='RunAllStages']", () => runAllLayouts())
+  document.querySelectorAll("button[data-action='RunStage2']").forEach(btn => {
+    btn.addEventListener('click', runAlignNodesLayout)
+  })
+  document.querySelectorAll("button[data-action='RunStage3']").forEach(btn => {
+    btn.addEventListener('click', runZigZagLayout)
+  })
+  document.querySelectorAll("button[data-action='RunAllStages']").forEach(btn => {
+    btn.addEventListener('click', runAllLayouts)
+  })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

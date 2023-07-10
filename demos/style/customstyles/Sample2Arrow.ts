@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,8 +44,7 @@ import {
   Visual,
   YString
 } from 'yfiles'
-import type { ColorSetName } from '../../resources/demo-styles'
-import { isColorSetName } from '../../resources/demo-styles'
+import { type ColorSetName, isColorSetName } from 'demo-resources/demo-styles'
 
 /**
  * A custom demo arrow style whose colors match the given well-known CSS rule.

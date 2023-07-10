@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>WebGL2 Precompilation Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <script src="../../resources/filesystem-warning.js"></script>
+    <style>
+      #graphComponent::after,
+      #graphComponentWithPreload::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 16px;
+        font-size: 20px;
+        pointer-events: none;
+      }
+      #graphComponent::after {
+        content: 'Without Preload';
+      }
+      #graphComponentWithPreload::after {
+        content: 'With Preload';
+      }
+      #graphComponentWithPreload {
+        width: 50%;
+        border-left: 1px solid black;
+      }
+      .webgl-loading {
+        position: absolute;
+        inset: 0 0 0 50%;
+        pointer-events: none;
+        display: flex;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 32px;
+        text-shadow: 0 0 10px black;
+      }
+      .webgl-loading:not(.loading) {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>WebGL2 Precompilation</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button type="button" id="webgl-button" class="labeled" style="width: unset">
+        Enable WebGL2
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>WebGL2 Precompilation Demo</h1>
+
+        <p>
+          This demo shows how to precompile the WebGL2 styles you want to use. By doing this, you
+          can avoid seeing the fallback styles that are used to render the graph while the more
+          elaborate and more expensive to compile styles are being loaded. Instead, a loading
+          indicator is shown while the compilation takes place.
+        </p>
+
+        <p>
+          Initially, the standard SVG rendering is enabled on both graphs. When the "Enable WebGL2"
+          button in the toolbar is clicked, WebGL2 rendering is enabled immediately for the left
+          graph. For the right graph, a loading screen is shown instead while the WebGL2 styles are
+          precompiled. Once the compilation finishes, the loading screen is removed and WebGL2
+          rendering is enabled.
+        </p>
+
+        <p>
+          Note that WebGL2 compilation behavior is influenced by lots of factors that are out of the
+          demo's control, such as different browsers, operating systems, graphics cards, and their
+          drivers. Thus, you might see different outcomes when enabling WebGL2 rendering. Sometimes,
+          the shaders are being cached by the browser/OS, so that you might not see the full effect
+          of precompiling (as they compile instantly, basically).
+        </p>
+
+        <h3>A note on Firefox</h3>
+        <p>
+          Firefox does not support asynchronous compilation of shader programs. When enabling WebGL,
+          the UI will block until all shaders are compiled. Therefore one would usually use a
+          loading indicator as shown in the right graph component to inform the user that the app is
+          currently not available for interaction.
+        </p>
+
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Click the "Enable WebGL2" button to enable WebGL2 rendering.</li>
+          <li>Left-click on a node, edge, or label to select it and see the selection style.</li>
+          <li>
+            Right-click on a node, edge, or label to highlight it and see the highlight style.
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <div id="graphComponentWithPreload"></div>
+      <div class="webgl-loading">Compiling WebGL2 shaders...</div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="WebGLPrecompilationDemo.ts" async></script>
+  </body>
+</html>

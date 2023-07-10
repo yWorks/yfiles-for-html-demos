@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,14 +26,5 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * This is just a helper file to bundle all the preact functionality and 'html'
- * We have to use the @latest version for the preact imports here, because
- * the hooks submodule import preact@latest (see https://github.com/preactjs/preact/issues/1961)
- */
-import { h } from 'https://unpkg.com/preact@latest?module'
-import htm from 'https://unpkg.com/htm@3.1.0?module'
-export * from 'https://unpkg.com/preact@latest?module'
-export * from 'https://unpkg.com/preact@latest/hooks/dist/hooks.module.js?module'
-// Initialize htm with Preact
-export const html = htm.bind(h)
+// This example uses the single-import Preact version from HTML served from esm.sh
+export * from 'https://esm.sh/htm@3.1.1/preact/standalone'

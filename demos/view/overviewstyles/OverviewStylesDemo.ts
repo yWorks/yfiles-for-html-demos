@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,21 +39,16 @@ import {
   PolylineEdgeStyle,
   RenderModes,
   ShowFocusPolicy,
-  TemplateNodeStyle
+  TemplateNodeStyle,
+  WebGL2GraphOverviewVisualCreator
 } from 'yfiles'
 import OverviewCanvasVisualCreator from './OverviewCanvasVisualCreator'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  readGraph,
-  showApp
-} from '../../resources/demo-app'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { OverviewWebGL2VisualCreator } from './OverviewWebGL2VisualCreator'
 
 /**
  * The GraphComponent
@@ -71,7 +66,7 @@ let overviewComponent: GraphOverviewComponent
  */
 let overviewGraphComponent: GraphComponent
 
-const overViewStyleBox = document.getElementById('graphChooserBox') as HTMLSelectElement
+const overViewStyleBox = document.querySelector<HTMLSelectElement>('#graph-chooser-box')!
 
 /**
  * Runs the demo.
@@ -103,25 +98,18 @@ async function run(): Promise<void> {
   initializeConverters()
 
   // load the graph
-  readGraph(new GraphMLIOHandler(), graphComponent.graph, 'resources/graph.graphml').then(() => {
+  new GraphMLIOHandler().readFromURL(graphComponent.graph, 'resources/graph.graphml').then(() => {
     ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
   })
 
-  registerCommands()
+  initializeUI()
 
-  if (!BrowserDetection.webGL) {
-    // remove WebGL option if not supported by client
-    ;(document.getElementById('no-webgl-support') as HTMLElement).style.display = 'block'
-    const webGLOption = overViewStyleBox.querySelector(
-      "option[value='GraphOverviewWebGLVisualCreator']"
-    ) as HTMLOptionElement
-    overViewStyleBox.removeChild(webGLOption)
-  }
+  // disable WebGL parts of the demo if unsupported
+  probeWebGLSupport()
+  probeWebGL2Support()
 
   const initialStyle = overViewStyleBox.value
   overviewStyling(initialStyle)
-
-  showApp(graphComponent, overviewComponent)
 }
 
 /**
@@ -168,8 +156,17 @@ function overviewStyling(styleType: string): void {
       break
     case 'GraphOverviewWebGLVisualCreator':
       overviewComponent.renderMode = RenderModes.WEB_GL
-      // creates the style to the overview using the svg visual creator
-      overviewComponent.graphVisualCreator = getOverviewWebGLVisualCreator()
+
+      // updates the overview component then show the overview graph
+      overviewComponent.updateVisualAsync().then(() => {
+        // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL visual creator
+        overviewGraphComponent.div.style.display = 'none'
+        overviewComponent.div.style.display = 'block'
+      })
+      break
+    case 'WebGL2GraphOverviewVisualCreator':
+      overviewComponent.renderMode = RenderModes.WEB_GL2
+      overviewComponent.graphVisualCreator = getWebGL2GraphOverviewVisualCreator()
 
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
@@ -192,28 +189,49 @@ function getOverviewSvgVisualCreator(): GraphOverviewSvgVisualCreator {
   return overviewSvgVisualCreator
 }
 /**
- * Creates the visual creator that uses WebGL rendering.
- * @returns The visual creator that uses SVG rendering.
+ * Creates the visual creator that uses WebGL2 rendering.
+ * @returns The visual creator that uses WebGL2 rendering.
  */
-function getOverviewWebGLVisualCreator(): GraphOverviewWebGLVisualCreator {
-  return new GraphOverviewWebGLVisualCreator(graphComponent.graph)
+function getWebGL2GraphOverviewVisualCreator(): WebGL2GraphOverviewVisualCreator {
+  return new OverviewWebGL2VisualCreator(graphComponent.graph)
 }
 /**
- * Registers the JavaScript commands for the GUI elements, typically the
- * tool bar buttons, during the creation of this application.
+ * Registers the actions for the GUI elements, typically the
+ * toolbar buttons, during the creation of this application.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindAction("button[data-command='ZoomOriginal']", () => {
-    ICommand.ZOOM.execute(1, graphComponent)
-  })
-
-  bindChangeListener("select[data-command='SelectedStyle']", selectedValue => {
+function initializeUI(): void {
+  addNavigationButtons(overViewStyleBox).addEventListener('change', evt => {
+    const selectedValue = (evt.target as HTMLSelectElement).value
     overviewStyling(selectedValue as string)
   })
-  addNavigationButtons(overViewStyleBox)
+}
+
+/**
+ * Disables WebGL rendering option if unsupported by client.
+ */
+function probeWebGLSupport() {
+  if (!BrowserDetection.webGL) {
+    // remove WebGL option if not supported by client
+    document.querySelector<HTMLElement>('.no-webgl-support')!.style.display = 'block'
+    const webGLOption = overViewStyleBox.querySelector<HTMLOptionElement>(
+      "option[value='GraphOverviewWebGLVisualCreator']"
+    )!
+    overViewStyleBox.removeChild(webGLOption)
+  }
+}
+
+/**
+ * Disables WebGL rendering option if unsupported by client.
+ */
+function probeWebGL2Support() {
+  if (!BrowserDetection.webGL2) {
+    // remove WebGL option if not supported by client
+    document.querySelector<HTMLElement>('.no-webgl-support[data-webgl2]')!.style.display = 'block'
+    const webGLOption = overViewStyleBox.querySelector<HTMLOptionElement>(
+      "option[value='WebGL2GraphOverviewVisualCreator']"
+    )!
+    overViewStyleBox.removeChild(webGLOption)
+  }
 }
 
 /**
@@ -264,5 +282,4 @@ function initializeConverters(): void {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

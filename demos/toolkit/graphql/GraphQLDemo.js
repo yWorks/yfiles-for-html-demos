@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  ICommand,
   IGraph,
   IModelItem,
   INode,
@@ -47,15 +46,15 @@ import {
   PolylineEdgeStyle,
   Size
 } from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import { graphQLQuery } from './GraphQLQuery.js'
 import { SocialNetworkGraphBuilder } from './SocialNetworkGraphBuilder.js'
 import { SocialNetworkNodeStyle } from './SocialNetworkNodeStyle.js'
 import PropertiesPanel from './PropertiesPanel.js'
 import { copyWithFriends } from './Person.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 Class.ensure(LayoutExecutor)
 
@@ -125,9 +124,7 @@ async function run() {
 
   configureInteraction(graphComponent)
   createPropertiesPanel(graphComponent)
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  initializeUI()
 
   await loadSinglePerson(1)
   const initialNode = graphComponent.graph.nodes.at(0)
@@ -314,17 +311,11 @@ async function tryQuery(query, variables = {}) {
 }
 
 /**
- * Binds actions and commands to the demo's UI controls.
- * @param {!GraphComponent} graphComponent
+ * Binds actions to the demo's UI controls.
  */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindAction("button[data-command='Reset']", () => loadSinglePerson(1))
-  bindAction("button[data-command='LoadAll']", () => loadAll())
+function initializeUI() {
+  document.querySelector('#reset-button').addEventListener('click', () => loadSinglePerson(1))
+  document.querySelector('#load-all-button').addEventListener('click', () => loadAll())
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

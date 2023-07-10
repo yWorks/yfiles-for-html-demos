@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -59,6 +59,11 @@ const CORNER_SIZE = 16
 const BUTTON_SIZE = 14
 
 /**
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
+ * @typedef {TaggedSvgVisual.<SVGGElement,NodeRenderDataCache>} Sample1GroupNodeStyleVisual
+ */
+
+/**
  * This group node style creates a visualization that is mainly a round
  * rectangle. Additionally, it displays a textual description in a tab-like
  * fashion on the top left and the toggle button in the lower right corner.
@@ -70,57 +75,57 @@ const BUTTON_SIZE = 14
  * into account.
  */
 export default class Sample1GroupNodeStyle extends NodeStyleBase {
-  constructor() {
-    super()
-    this.nodeColor = 'rgba(0, 130, 180, 1)'
-  }
+  nodeColor = 'rgba(0, 130, 180, 1)'
 
   /**
    * @param {!IRenderContext} renderContext
    * @param {!INode} node
-   * @returns {!SvgVisual}
+   * @returns {!Sample1GroupNodeStyleVisual}
    */
   createVisual(renderContext, node) {
     const g = document.createElementNS(SVGNS, 'g')
-    Sample1GroupNodeStyle.render(g, this.createRenderDataCache(renderContext, node))
+    const cache = this.createRenderDataCache(renderContext, node)
+    const visual = SvgVisual.from(g, cache)
+    Sample1GroupNodeStyle.render(visual)
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
-    return new SvgVisual(g)
+    return visual
   }
 
   /**
    * @param {!IRenderContext} renderContext
-   * @param {!SvgVisual} oldVisual
+   * @param {!Sample1GroupNodeStyleVisual} oldVisual
    * @param {!INode} node
-   * @returns {!SvgVisual}
+   * @returns {!Sample1GroupNodeStyleVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual.svgElement
-    // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
+    // get the data with which the oldVisual was created
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(renderContext, node)
 
     // check if something changed except for the location of the node
     if (!newCache.equals(oldCache)) {
+      oldVisual.tag = newCache
       // something changed - re-render the visual
       while (container.lastChild) {
         // remove all children
         container.removeChild(container.lastChild)
       }
-      Sample1GroupNodeStyle.render(container, newCache)
+      Sample1GroupNodeStyle.render(oldVisual)
     }
-    // make sure that the location is up to date
+    // make sure that the location is up-to-date
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
     return oldVisual
   }
 
   /**
    * Creates the actual visualization of this style and adds it to the given container.
-   * @param {*} container
-   * @param {!NodeRenderDataCache} cache
+   * @param {!Sample1GroupNodeStyleVisual} visual
    */
-  static render(container, cache) {
-    container['data-renderDataCache'] = cache
+  static render(visual) {
+    const cache = visual.tag
+    const container = visual.svgElement
 
     const width = cache.width
     const height = cache.height
@@ -234,7 +239,7 @@ export default class Sample1GroupNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Returns whether or not the given point hits the visualization of the
+   * Returns whether the given point hits the visualization of the
    * given node. This implementation is strict, it returns
    * `true` for the main rectangle and the tab area, but not
    * for the empty space to the left of the tab.
@@ -319,7 +324,7 @@ class NodeRenderDataCache {
 }
 
 /**
- * Returns whether or not the given group node is collapsed.
+ * Returns whether the given group node is collapsed.
  * @param {!IRenderContext} context
  * @param {!INode} node
  * @returns {boolean}

@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # CSS Styling Demo
-
-<img src="../../resources/image/cssstyling.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/style/cssstyling/index.html).
 
 # CSS Styling Demo
 
@@ -27,5 +34,6 @@ There is a separate CSS-stylesheet which contains the more information about thi
 
 ## CSS-Transitions for the following Elements
 
+- Node Creation
 - Tooltips
 - Label editor

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   IArrow,
-  ICommand,
   IGraph,
   IHitTestable,
   INode,
@@ -54,17 +53,17 @@ import {
   Size,
   SolidColorFill
 } from 'yfiles'
-import { bindCommand, showApp } from '../../resources/demo-app'
 import { ListNodeStyle } from './ListNodeStyle'
-import { ContextMenu } from '../../utils/ContextMenu'
+import { ContextMenu } from 'demo-utils/ContextMenu'
 import {
   createPortLocationParameter,
   getPortForData,
   RowPositionHandler
 } from './RowPositionHandler'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -82,10 +81,6 @@ async function run(): Promise<void> {
 
   // configure user interaction
   initializeInteraction(graphComponent)
-
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -456,16 +451,6 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
   })
 }
 
-/**
- * Binds commands to the demo's UI controls.
- */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
 // model data for a node: the node's name and the rows
 export type NodeInfo = {
   draggingIndex: number | null
@@ -478,5 +463,4 @@ export type RowInfo = {
   out?: string
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

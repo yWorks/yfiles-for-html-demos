@@ -1,12 +1,19 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Sequence Constraints Demo
 
-<img src="../../resources/image/sequenceconstraints.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/layout/sequenceconstraints/index.html).
-
 # Sequence Constraints Demo
 
-Shows how to use sequence constraints to restrict the node sequencing in [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
+Shows how to use sequence constraints to restrict the node sequencing in [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) .
 
 The sequence is determined by the model data.
 

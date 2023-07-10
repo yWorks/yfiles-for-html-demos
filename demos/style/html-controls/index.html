@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>HTML Controls Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      :root {
+        --description-width: 400px;
+      }
+    </style>
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>HTML Controls</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button id="layout-btn" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+      <span class="demo-separator"></span>
+      <button id="export-btn" title="Export as SVG" class="demo-icon-yIconSave labeled">
+        Export
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>HTML Controls Demo</h1>
+
+        <p>
+          This demo shows how a custom HTML-based node style can be used to create interactive nodes
+          that use HTML input elements and benefit from CSS responsiveness.
+        </p>
+        <p>
+          Adapting the contents of the node visualization to varying node sizes can often be
+          achieved much easier when using an HTML-based style instead of an SVG visualization.
+        </p>
+        <p>
+          See
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/advanced-html_rendering" target="_blank">HTML Rendering</a>
+          for details about when to prefer HTML- or SVG-based visuals.
+        </p>
+        <p>
+          For rich components and data binding support, you can consider using a framework instead
+          of plain HTML/JS. See the framework-specific demos linked below for examples.
+        </p>
+
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Edit the avatar image, name, date, status, or description in a node. Click the apply
+            button to commit your changes.
+          </li>
+          <li>
+            Select a node to see the corresponding data below. Changes to the node data are
+            reflected here.
+          </li>
+          <li>Resize a node and note how the HTML elements adapt according to the CSS rules.</li>
+          <li>
+            Export the graph to an SVG image. Note that due to the use of HTML this SVG image will
+            not render in standalone image editors.
+          </li>
+        </ul>
+
+        <h2>Selected Node Data</h2>
+        <pre id="userDataLog">Select a node to display the associated data.</pre>
+
+        <h2>Related Demos</h2>
+        <ul>
+          <li><a href="../../../demos-ts/style/react-component-node-style/README.html" target="_blank">React Component Node Style Demo</a></li>
+          <li><a href="../../../demos-ts/style/vue-component-node-style/README.html" target="_blank">Vue Component Node Style Demo</a></li>
+          <li><a href="../../../demos-ts/style/angular-component-node-style/README.html" target="_blank">Angular Component Node Style Demo</a></li>
+          <li><a href="../../style/html-label-style/index.html" target="_blank">HTML Label Style Demo</a></li>
+          <li><a href="../../style/datatable/index.html" target="_blank">Data Table Demo</a></li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="HtmlControlsDemo.ts" async></script>
+  </body>
+</html>

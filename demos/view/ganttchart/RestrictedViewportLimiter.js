@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,32 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CanvasComponent, GraphComponent, Rect, ViewportLimiter } from 'yfiles'
+import { Rect, ViewportLimiter } from 'yfiles'
+import { getTotalTasksHeight } from './sweepline-layout.js'
 
 /**
  * A viewport limiter implementation that forbids scrolling above or below
  * the vertical bounds of the task lanes.
  */
-export default class RestrictedViewportLimiter extends ViewportLimiter {
+export class RestrictedViewportLimiter extends ViewportLimiter {
   /**
-   * @param {!GraphComponent} taskComponent
-   */
-  constructor(taskComponent) {
-    super()
-    this.taskComponent = taskComponent
-  }
-
-  /**
-   * Limits the viewport to the area which contains task nodes.
-   * @param {!CanvasComponent} canvas - The canvas control on which the viewport should be applied.
-   * @param {!Rect} suggestedViewport - The suggested viewport.
+   * Limits the viewport to the area which contains the task nodes.
+   * @param {!CanvasComponent} canvas
+   * @param {!Rect} suggestedViewport
    * @returns {!Rect}
    */
   limitViewport(canvas, suggestedViewport) {
-    const topY = this.taskComponent.contentRect.y
-    const bottomY = this.taskComponent.contentRect.bottomLeft.y
-    const oldY = suggestedViewport.y
-    const newY = Math.max(topY, Math.min(bottomY - suggestedViewport.height, oldY))
+    const newY = Math.max(
+      0,
+      Math.min(getTotalTasksHeight() - suggestedViewport.height, suggestedViewport.y)
+    )
     return new Rect(suggestedViewport.x, newY, suggestedViewport.width, suggestedViewport.height)
   }
 }

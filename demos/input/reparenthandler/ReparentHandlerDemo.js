@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, IGraph, INode, License, Rect } from 'yfiles'
-import { showApp } from '../../resources/demo-app.js'
 import DemoReparentNodeHandler from './DemoReparentNodeHandler.js'
 import {
   applyDemoTheme,
@@ -35,8 +34,9 @@ import {
   createDemoGroupStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Runs the demo.
@@ -75,8 +75,6 @@ async function run() {
   graphComponent.inputMode = graphEditorInputMode
 
   createSampleGraph(graph)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -135,5 +133,4 @@ function createGroupNode(graph, x, y, colorSet, tag, labelText) {
   return groupNode
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

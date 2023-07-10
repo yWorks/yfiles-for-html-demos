@@ -1,17 +1,25 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Overview Styling Demo
-
-<img src="../../resources/image/overview.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/view/overviewstyles/index.html).
 
 # Overview Styling Demo
 
 This demo shows different ways to render and style the overview:
 
-- With HTML Canvas using a [GraphOverviewCanvasVisualCreator](https://docs.yworks.com/yfileshtml/#/api/GraphOverviewCanvasVisualCreator)
-- With SVG using a [GraphOverviewSvgVisualCreator](https://docs.yworks.com/yfileshtml/#/api/GraphOverviewSvgVisualCreator)
-- With WebGL using a [GraphOverviewWebGLVisualCreator](https://docs.yworks.com/yfileshtml/#/api/GraphOverviewWebGLVisualCreator) This options is disabled because your browser does not support WebGL
-- With a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) that uses [OverviewInputMode](https://docs.yworks.com/yfileshtml/#/api/OverviewInputMode)
+- With HTML Canvas using a [GraphOverviewCanvasVisualCreator](https://docs.yworks.com/yfileshtml/#/api/GraphOverviewCanvasVisualCreator).
+- With SVG using a [GraphOverviewSvgVisualCreator](https://docs.yworks.com/yfileshtml/#/api/GraphOverviewSvgVisualCreator).
+- With WebGL using a [GraphOverviewWebGLVisualCreator](https://docs.yworks.com/yfileshtml/#/api/GraphOverviewWebGLVisualCreator). This options is disabled because your browser does not support WebGL.
+- With WebGL2 using a [WebGL2GraphOverviewVisualCreator](https://docs.yworks.com/yfileshtml/#/api/WebGL2GraphOverviewVisualCreator). This options is disabled because your browser does not support WebGL2.
+- With a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) that uses [OverviewInputMode](https://docs.yworks.com/yfileshtml/#/api/OverviewInputMode).
 
 ## Things to Try
 

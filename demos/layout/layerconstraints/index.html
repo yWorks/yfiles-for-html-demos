@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,14 +30,14 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Layer Constraints Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       .button {
@@ -95,107 +94,114 @@
         </g>
       </g>
     </script>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Layer Constraints</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button id="new-button" title="Create Random Graph" class="demo-icon-yIconNew"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button
+        id="enable-all-constraints"
+        title="Add constraints to all nodes"
+        class="demo-icon-yIconShowAll"
+      ></button>
+      <button
+        id="disable-all-constraints"
+        title="Remove constraints from all nodes"
+        class="demo-icon-yIconDelete"
+      ></button>
+
+      <span class="demo-separator"></span>
+
+      <button id="layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">
+        Layout
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class='demo-description__content'>
         <h1>Layer Constraints Demo</h1>
 
-        Shows how to use layer constraints to restrict the node layering in
-        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>.
+        Shows how to use layer constraints to restrict the node layering in <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> .
         <p>The layer is determined by the model data.</p>
         <p>
-          A <em>weight</em> property determines the position of the node. Higher weights will force
-          a placement closer to the bottom. The weight is indicated by the number on the node and
-          its background color. A darker color indicates a low weight, a brighter color a high
-          weight. Red and green indicate that the node will be forced at the first or last position,
-          respectively.
+          A <em>weight</em> property determines the position of the node. Higher weights will force a placement closer
+          to the bottom. The weight is indicated by the number on the node and its background color. A darker color
+          indicates a low weight, a brighter color a high weight. Red and green indicate that the node will be forced at
+          the first or last position, respectively.
         </p>
         <p>The weight can be changed using the buttons on each node.</p>
         <p>
-          A <em>weighted</em> property, controlled by the <b>Constraints</b> button, determines
-          whether the node should be constrained at all.
+          A <em>weighted</em> property, controlled by the <b>Constraints</b> button, determines whether the node should
+          be constrained at all.
         </p>
         <h2>Things to Try</h2>
         <ul>
           <li>Change the weight of the nodes using the buttons on the each node.</li>
           <li>Disable the layer constraints for a node by unchecking the constraints button.</li>
           <li>Run a layout to see how the layer constraints affect the layout.</li>
-          <li>Create a new random graph with the <em>New Graph</em> button.</li>
           <li>
-            Clicking on <img src="../../resources/icons/star-16.svg" /> activates the constraints
-            for each node.
+            Create a new random graph with the <em>New Graph</em> button.
           </li>
           <li>
-            Clicking on <img src="../../resources/icons/delete2-16.svg" /> in the toolbar removes
-            all constraints from the nodes. In this case, integral values between 1 and 100 can be
-            assigned as labels to the edges using the <em>F2</em> key. These values will be
-            interpreted as edge weights during the assignment of the layers. Higher values indicate
-            higher importance. The algorithm tries to minimize the lengths of important edges. Thus,
-            assigning higher edge label values will lead to the adjacent nodes coming closer
-            together with respect to their layering. Although it is possible to assign weights to
-            edges between nodes that have active constraints, constraints always have priority and
-            thus, the result won't be visible as easy.
+            Clicking on <img src='../../resources/icons/star-16.svg' /> activates the constraints for each node.
+          </li>
+          <li>
+            Clicking on <img src='../../resources/icons/delete2-16.svg' /> in the toolbar removes all constraints from
+            the nodes. In this case, integral values between 1 and 100 can be assigned as labels to the edges using the
+            <em>F2</em> key. These values will be interpreted as edge weights during the assignment of the layers.
+            Higher values indicate higher importance. The algorithm tries to minimize the lengths of important edges.
+            Thus, assigning higher edge label values will lead to the adjacent nodes coming closer together with respect
+            to their layering. Although it is possible to assign weights to edges between nodes that have active
+            constraints, constraints always have priority and thus, the result won't be visible as easy.
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button
-          id="newButton"
-          data-command="NewGraph"
-          title="Create Random Graph"
-          class="demo-icon-yIconNew"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          id="enableAllConstraintsButton"
-          data-command="EnableAllConstraints"
-          title="Add constraints to all nodes"
-          class="demo-icon-yIconShowAll"
-        ></button>
-        <button
-          id="disableAllConstraintsButton"
-          data-command="DisableAllConstraints"
-          title="Remove constraints from all nodes"
-          class="demo-icon-yIconDelete"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          id="layoutButton"
-          data-command="Layout"
-          title="Run Hierarchic Layout"
-          class="demo-icon-yIconLayout labeled"
-        >
-          Layout
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="LayerConstraintsDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="LayerConstraintsDemo.ts" async></script>
   </body>
 </html>

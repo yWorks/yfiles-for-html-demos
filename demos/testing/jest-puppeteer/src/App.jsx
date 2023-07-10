@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,21 +35,30 @@ import yLogo from './assets/ylogo.svg'
 export default class App extends Component {
   render() {
     return (
-      <div className="App">
-        <aside className="demo-sidebar left">
+      <div className="demo-page">
+        <aside className="demo-page__description">
           <DemoDescription />
         </aside>
 
-        <div className="demo-content">
+        <div className="demo-page__content">
           <div className="demo-header">
-            <a href="https://www.yworks.com" target="_blank" rel="noopener noreferrer">
-              {' '}
-              <img src={yLogo} className="demo-y-logo" alt="yWorks Logo" />{' '}
-            </a>{' '}
-            <a href="../../../README.html" target="_blank">
-              yFiles for HTML
-            </a>{' '}
-            <span className="demo-title">Jest Puppeteer Demo [yFiles for HTML]</span>
+            <a
+              href="https://www.yworks.com/products/yfiles"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={yLogo} className="demo-header__y-logo" alt="yWorks Logo" />{' '}
+            </a>
+            <div className="demo-header__breadcrumb-wrapper">
+              <a
+                href="../../../README.html"
+                target="_blank"
+                className="demo-header__breadcrumb demo-header__breadcrumb--link"
+              >
+                yFiles for HTML
+              </a>
+              <span className="demo-header__breadcrumb">Jest Puppeteer Demo [yFiles for HTML]</span>
+            </div>
           </div>
 
           <ReactGraphComponent />

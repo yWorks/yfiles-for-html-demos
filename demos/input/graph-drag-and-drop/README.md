@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Graph Drag and Drop Demo
-
-<img src="../../resources/image/graph-drag-and-drop.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/input/graph-drag-and-drop/index.html).
 
 # Graph Drag and Drop Demo
 
@@ -25,4 +32,4 @@ This demo contains a custom implementation of a [DropInputMode](https://docs.ywo
 - [Drag and Drop](../draganddrop)
 - [Drag From Component](../drag-from-component)
 - [Custom Drag and Drop](../custom-drag-and-drop)
-- [Tutorial: Drag and Drop](../../03-tutorial-application-features/drag-and-drop/index.html)
+- [Simple Drag and Drop](../../application-features/drag-and-drop/index.html)

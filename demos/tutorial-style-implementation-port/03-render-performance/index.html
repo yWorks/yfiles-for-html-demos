@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>03 Render Performance - Port Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-port-style-implementation">
+          Port Style Implementation Tutorial
+        </a>
+
+        <span>03 Render Performance</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-port/02-port-size/index.html'><span>02 Port Size</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 3/6</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 03 Render Performance</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-port/01-render-port-shape/index.html"
+            class="tutorial-dropdown__item"
+            >01 Rendering the Port</a
+          ><a
+            href="../../tutorial-style-implementation-port/02-port-size/index.html"
+            class="tutorial-dropdown__item"
+            >02 Port Size</a
+          ><a
+            href="../../tutorial-style-implementation-port/03-render-performance/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >03 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-port/04-conditional-coloring/index.html"
+            class="tutorial-dropdown__item"
+            >04 Conditional Port Coloring</a
+          ><a
+            href="../../tutorial-style-implementation-port/05-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >05 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-port/06-edge-cropping/index.html"
+            class="tutorial-dropdown__item"
+            >06 Edge Cropping</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-port/04-conditional-coloring/index.html'><span>04 Conditional Port Coloring</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Improving rendering performance</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Until now, we have only implemented
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#PortStyleBase-method-createVisual" target="_blank">createVisual</a>,
+                  which creates a new DOM element for each render frame. This is not an efficient
+                  approach and will result in performance issues for large graphs.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  By overriding
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#PortStyleBase-method-updateVisual" target="_blank">updateVisual</a>, we
+                  can optimize the rendering performance in case no visualization-relevant data of
+                  the port has changed. In our case, this means that we only update the location and
+                  radius of the circle if necessary. This approach will greatly improve the
+                  rendering performance for gestures such as panning and zooming the viewport as
+                  well as moving items.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_adjusting_createvisual">Adjusting createVisual</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  As a first step, we modify the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#PortStyleBase-method-createVisual" target="_blank">createVisual</a>
+                  implementation. To be able to update the visualization in
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#PortStyleBase-method-updateVisual" target="_blank">updateVisual</a>, we
+                  have to store the values that we needed for the construction of the port with the
+                  visual. In this case, this is just the port size. To get proper type-checking, we
+                  first declare the type of the data cache. This is where the yFiles' utility type
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual" target="_blank">TaggedSvgVisual</a> comes in handy:
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// the values we use to render the graphics</span>
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">Cache</span> = {
+  <span class="hljs-attr">size</span>: <span class="hljs-built_in">number</span>
+}
+
+<span class="hljs-comment">// the type of visual we create and update in CustomPortStyle</span>
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">CustomPortStyleVisual</span> = <span class="hljs-title class_">TaggedSvgVisual</span>&lt;<span class="hljs-title class_">SVGEllipseElement</span>, <span class="hljs-title class_">Cache</span>&gt;</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  With this type declaration, we can augment the class declaration for our port
+                  style. <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase" target="_blank">PortStyleBase</a> comes with an optional type argument which
+                  specifies the exact type for the visual returned by <code>createVisual</code>.
+                  This type argument ensures that <code>updateVisual</code> expects the type of
+                  visual that is created in <code>createVisual</code>. Although this is not strictly
+                  necessary, it helps with the TypeScript implementation:
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomPortStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">PortStyleBase</span>&lt;<span class="hljs-title class_">CustomPortStyleVisual</span>&gt; {</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  To properly implement the interface and store the cache value with the visual, we
+                  adjust the <code>createVisual</code> method, first.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(
+  <span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>,
+  <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>
+): <span class="hljs-title class_">CustomPortStyleVisual</span> {
+  <span class="hljs-keyword">const</span> ellipseElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(
+    <span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>,
+    <span class="hljs-string">&#x27;ellipse&#x27;</span>
+  )
+  <span class="hljs-keyword">const</span> { x, y } = port.<span class="hljs-property">location</span>
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;cx&#x27;</span>, <span class="hljs-title class_">String</span>(x))
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;cy&#x27;</span>, <span class="hljs-title class_">String</span>(y))
+  <span class="hljs-keyword">const</span> radius = <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span> * <span class="hljs-number">0.5</span>
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;rx&#x27;</span>, <span class="hljs-title class_">String</span>(radius))
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;ry&#x27;</span>, <span class="hljs-title class_">String</span>(radius))
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;fill&#x27;</span>, <span class="hljs-string">&#x27;#6c9f44&#x27;</span>)
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;stroke&#x27;</span>, <span class="hljs-string">&#x27;#e6f8ff&#x27;</span>)
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;stroke-width&#x27;</span>, <span class="hljs-string">&#x27;1&#x27;</span>)
+
+  <span class="hljs-keyword">const</span> cache = { <span class="hljs-attr">size</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span> }
+
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">SvgVisual</span>.<span class="hljs-title function_">from</span>(ellipseElement, cache)
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_implementing_updatevisual">Implementing updateVisual</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Now we are ready to add the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#PortStyleBase-method-updateVisual" target="_blank">updateVisual</a>
+                  implementation. In case the size property has changed, we update the
+                  <code>rx</code> and <code>ry</code> attributes of the ellipse element. Also, we
+                  set the <code>cx</code> and <code>cy</code> attributes to update the location.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">updateVisual</span>(
+  <span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>,
+  <span class="hljs-attr">oldVisual</span>: <span class="hljs-title class_">CustomPortStyleVisual</span>,
+  <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>
+): <span class="hljs-title class_">CustomPortStyleVisual</span> {
+  <span class="hljs-keyword">const</span> { x, y } = port.<span class="hljs-property">location</span>
+  <span class="hljs-comment">// get the ellipse element that needs updating from the old visual</span>
+  <span class="hljs-keyword">const</span> ellipseElement = oldVisual.<span class="hljs-property">svgElement</span>
+  <span class="hljs-comment">// get the cache object we stored in createVisual</span>
+  <span class="hljs-keyword">const</span> cache = oldVisual.<span class="hljs-property">tag</span>
+
+  <span class="hljs-keyword">if</span> (cache.<span class="hljs-property">size</span> !== <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span>) {
+    <span class="hljs-keyword">const</span> radius = <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span> * <span class="hljs-number">0.5</span>
+    ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;rx&#x27;</span>, <span class="hljs-title class_">String</span>(radius))
+    ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;ry&#x27;</span>, <span class="hljs-title class_">String</span>(radius))
+    cache.<span class="hljs-property">size</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span>
+  }
+
+  <span class="hljs-comment">// move the visualization to the port location</span>
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;cx&#x27;</span>, <span class="hljs-title class_">String</span>(x))
+  ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;cy&#x27;</span>, <span class="hljs-title class_">String</span>(y))
+
+  <span class="hljs-keyword">return</span> oldVisual
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  This code re-uses the initial SVG element and only updates the necessary
+                  attributes.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  When the style gets more complex, there may be a point where some updates are
+                  difficult to implement, or are not worth the effort. It is perfectly valid to give
+                  up at some point and call <code>createVisual</code> again if there are too many
+                  changes or the update code gets too complex.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      Although implementing
+                      <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#PortStyleBase-method-updateVisual" target="_blank">updateVisual</a>
+                      is technically optional, it is highly recommended for larger graphs.
+                      Refraining from an efficient implementation may result in low frame rates
+                      during animations and interactive gestures.
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-port/04-conditional-coloring/index.html'><span>04 Conditional Port Coloring</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

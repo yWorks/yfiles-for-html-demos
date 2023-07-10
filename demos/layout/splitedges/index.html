@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,56 +30,95 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Split Edges Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       .demo-context-menu *:focus {
         outline: none;
       }
-
-      .demo-context-menu .demo-menu-item {
+      .demo-context-menu .demo-context-menu__item {
         text-align: start;
       }
-
       .node-color {
         fill: #c1c1c1;
         stroke: #4e4e4e;
       }
-
       .group-border {
         fill: #999999;
         stroke: #4e4e4e;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Split Edges</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button id="reset" title="Reset Graph" class="demo-icon-yIconNew"></button>
+      <span class="demo-separator"></span>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button data-command="GROUP_SELECTION"></button>
+      <button data-command="UNGROUP_SELECTION"></button>
+      <span class="demo-separator"></span>
+      <button id="layout" title="Apply Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Split Edges Demo</h1>
 
         <p>
           This demo shows how to use split ids to align edges outside with edges inside a group
-          nodes in <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a>. In <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a> the routing
-          for inter-edges is sometimes not satisfactory. Inter-edges are edges that connect nodes
-          outside of a group with nodes inside of this group. Since RecursiveGroupLayout routes
-          these edges after the rest of the graph is arranged, they sometimes don't fit into the
-          overall layout style.
+          nodes in <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a>. In <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a> the
+          routing for inter-edges is sometimes not satisfactory. Inter-edges are edges that connect
+          nodes outside of a group with nodes inside of this group. Since RecursiveGroupLayout
+          routes these edges after the rest of the graph is arranged, they sometimes don't fit into
+          the overall layout style.
         </p>
         <p>
           In combination with <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>, inter-edges can be replaced with two
-          edges that are aligned at the group node. <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> provides the option
-          that an edge is routed directly from the border of a group nodes to a node inside of this
-          group node instead of leaving the group node first.
+          edges that are aligned at the group node. <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> provides the
+          option that an edge is routed directly from the border of a group nodes to a node inside
+          of this group node instead of leaving the group node first.
         </p>
 
         <h2>Things to Try</h2>
@@ -112,46 +150,11 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="Reset" title="Reset Graph" class="demo-icon-yIconNew"></button>
-        <span class="demo-separator"></span>
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-        <button
-          data-command="GroupSelection"
-          title="Group selected element"
-          class="demo-icon-yIconGroup"
-        ></button>
-        <button
-          data-command="UngroupSelection"
-          title="Ungroup selected element"
-          class="demo-icon-yIconUngroup"
-        ></button>
-        <span class="demo-separator"></span>
-        <button data-command="Layout" title="Apply Layout" class="demo-icon-yIconLayout labeled">
-          Layout
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="SplitEdgesDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="SplitEdgesDemo.ts" async></script>
   </body>
 </html>

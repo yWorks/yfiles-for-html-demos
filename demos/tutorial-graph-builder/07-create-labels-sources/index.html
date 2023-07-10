@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>07 Create Labels Sources - Graph Builder Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-graph-builder"> Graph Builder Tutorial </a>
+
+        <span>07 Create Labels Sources</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-graph-builder/06-configure-styles/index.html'><span>06 Configure Styles</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 7/13</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 07 Create Labels Sources</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-graph-builder/01-create-graph/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create Graph</a
+          ><a
+            href="../../tutorial-graph-builder/02-create-nodes-sources/index.html"
+            class="tutorial-dropdown__item"
+            >02 Create Nodes Sources</a
+          ><a
+            href="../../tutorial-graph-builder/03-create-edges-sources/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Edges Sources</a
+          ><a
+            href="../../tutorial-graph-builder/04-group-nodes/index.html"
+            class="tutorial-dropdown__item"
+            >04 Group Nodes</a
+          ><a
+            href="../../tutorial-graph-builder/05-implicit-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >05 Implicit Grouping</a
+          ><a
+            href="../../tutorial-graph-builder/06-configure-styles/index.html"
+            class="tutorial-dropdown__item"
+            >06 Configure Styles</a
+          ><a
+            href="../../tutorial-graph-builder/07-create-labels-sources/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >07 Create Labels Sources</a
+          ><a
+            href="../../tutorial-graph-builder/08-configure-labels/index.html"
+            class="tutorial-dropdown__item"
+            >08 Configure Labels</a
+          ><a
+            href="../../tutorial-graph-builder/09-configure-tags/index.html"
+            class="tutorial-dropdown__item"
+            >09 Configure Tags</a
+          ><a
+            href="../../tutorial-graph-builder/10-configure-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Configure Layout</a
+          ><a
+            href="../../tutorial-graph-builder/11-update-graph/index.html"
+            class="tutorial-dropdown__item"
+            >11 Update Graph</a
+          ><a
+            href="../../tutorial-graph-builder/12-adjacency-graph-builder/index.html"
+            class="tutorial-dropdown__item"
+            >12 Adjacency Graph Builder</a
+          ><a
+            href="../../tutorial-graph-builder/13-tree-builder/index.html"
+            class="tutorial-dropdown__item"
+            >13 Tree Builder</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-graph-builder/08-configure-labels/index.html'><span>08 Configure Labels</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Adding labels</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In this tutorial step, you will learn how to configure
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> in order to add labels to the visualization.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          This step is optional when building a graph with
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. If you do not want to add labels to your
+                          graph, you can proceed with the next step.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_loading_node_label_information">Loading node label information</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  There are three ways to add labels to the visualization using
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. You can use <em>bindings</em> or load the labels
+                  from their own <em>sources</em> on the <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator" target="_blank">NodeCreator</a>.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>For this step, we will use a simple company ownership diagram.</p>
+              </div>
+              <div class="sect2">
+                <h3 id="_creating_labels_using_bindings">Creating labels using bindings</h3>
+                <div class="paragraph">
+                  <p>
+                    If you want to create the label text based on the properties of the business
+                    data, you can bind the text to a property in the node&#8217;s data. For example,
+                    in the dataset below, we bind the label text to the <code>name</code> of the
+                    associated node.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [
+  { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Investment Capital&#x27;</span> },
+  { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Melissa Barner&#x27;</span> }
+]
+<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeData, <span class="hljs-string">&#x27;id&#x27;</span>)
+
+<span class="hljs-comment">// create the label binding to the name property</span>
+nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>(<span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">name</span>)</code></pre>
+                  </div>
+                </div>
+                <div class="paragraph">
+                  <p>
+                    The label binding can also be set explicitly using the
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-textProvider" target="_blank">text provider</a>
+                    property. In this example, the label text is converted to upper-case to show
+                    that text can be augmented.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Monster Inc&#x27;</span> }]
+<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeData, <span class="hljs-string">&#x27;id&#x27;</span>)
+
+<span class="hljs-comment">// create the text provider that will return the name of each node</span>
+<span class="hljs-keyword">const</span> labelCreator = nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>()
+labelCreator.<span class="hljs-property">textProvider</span> = (data): <span class="hljs-function"><span class="hljs-params">string</span> =&gt;</span> data.<span class="hljs-property">name</span>.<span class="hljs-title function_">toUpperCase</span>()</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="sect2">
+                <h3 id="_creating_labels_from_their_own_sources">
+                  Creating labels from their own sources
+                </h3>
+                <div class="paragraph">
+                  <p>
+                    If the node data contains a varying number of label data, you can use a
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelsSource" target="_blank">LabelsSource</a> to create the labels. For instance, take a look at
+                    the dataset below where the label information is stored in the
+                    <code>owners</code> property.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [
+  { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;3&#x27;</span>, <span class="hljs-attr">owners</span>: [<span class="hljs-string">&#x27;Local Group&#x27;</span>, <span class="hljs-string">&#x27;Germany&#x27;</span>] },
+  { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;4&#x27;</span>, <span class="hljs-attr">owners</span>: [<span class="hljs-string">&#x27;International Group&#x27;</span>] }
+]</code></pre>
+                  </div>
+                </div>
+                <div class="paragraph">
+                  <p>
+                    In this case, the provider which is given as parameter is expected to return an
+                    enumerable of data items where each item represents one label.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create the label sources based on the `owners` property</span>
+<span class="hljs-keyword">const</span> labelsSource = nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelsSource</span>(
+  <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">owners</span>
+)</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="sect2">
+                <h3 id="_loading_edge_label_information">Loading edge label information</h3>
+                <div class="paragraph">
+                  <p>
+                    Following a similar approach, we can also create labels for the edges. In this
+                    example, we bind the edge label text to the <code>ownership</code> property of
+                    the dataset and we add some more text information.
+                  </p>
+                </div>
+                <div class="listingblock">
+                  <div class="content">
+                    <pre
+                      class="highlight"
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> edgeData = [
+  {
+    <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+    <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;1&#x27;</span>,
+    <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+    <span class="hljs-attr">ownership</span>: <span class="hljs-number">30</span>
+  },
+  {
+    <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>,
+    <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+    <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;2&#x27;</span>,
+    <span class="hljs-attr">ownership</span>: <span class="hljs-number">60</span>
+  },
+  { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;4&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">ownership</span>: <span class="hljs-number">5</span> },
+  { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;3&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;3&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">ownership</span>: <span class="hljs-number">5</span> }
+]
+<span class="hljs-keyword">const</span> edgesSource = graphBuilder.<span class="hljs-title function_">createEdgesSource</span>(
+  edgeData,
+  <span class="hljs-string">&#x27;sourceId&#x27;</span>,
+  <span class="hljs-string">&#x27;targetId&#x27;</span>,
+  <span class="hljs-string">&#x27;id&#x27;</span>
+)
+
+<span class="hljs-comment">// bind the label text data and add some more text information</span>
+edgesSource.<span class="hljs-property">edgeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>(<span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> <span class="hljs-string">`Owns <span class="hljs-subst">${data.ownership}</span>%`</span>)</code></pre>
+                  </div>
+                </div>
+                <div class="admonitionblock note">
+                  <table>
+                    <tr>
+                      <td class="icon">
+                        <div class="title">Note</div>
+                      </td>
+                      <td class="content">
+                        <div class="paragraph">
+                          <p>
+                            Please have a look in this tutorial step’s demo code in
+                            <code>create-labels-sources.ts</code> and play around with the different
+                            ways to add labels to the visualization.
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-graph-builder/08-configure-labels/index.html'><span>08 Configure Labels</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

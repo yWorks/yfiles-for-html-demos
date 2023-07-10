@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,36 +49,45 @@ import {
   Rect,
   SvgVisual,
   TypeAttribute,
-  Visual,
   YBoolean,
   YString
 } from 'yfiles'
-import { isColorSetName } from '../../resources/demo-styles.js'
+import { isColorSetName } from 'demo-resources/demo-styles'
 import { Sample2Arrow } from './Sample2Arrow.js'
 import { SVGNS } from './Namespaces.js'
-import { BrowserDetection } from '../../utils/BrowserDetection.js'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
+
+/**
+ * @typedef {Object} EdgeRenderDataCache
+ * @property {GeneralPath} path
+ * @property {number} obstacleHash
+ */
+
+/**
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
+ * @typedef {TaggedSvgVisual.<(SVGGElement|SVGPathElement),EdgeRenderDataCache>} Sample1EdgeStyleVisual
+ */
 
 /**
  * A custom demo edge style whose colors match the given well-known CSS style.
  */
 export class Sample2EdgeStyle extends EdgeStyleBase {
+  hiddenArrow = new Arrow({
+    type: ArrowType.NONE,
+    cropLength: 6,
+    scale: 1
+  })
+  fallbackArrow = new Sample2Arrow()
+  markerDefsSupport = null
+  showTargetArrows = true
+  useMarkerArrows = true
+
   /**
    * @param {!(string|ColorSetName)} [cssClass]
    */
   constructor(cssClass) {
     super()
     this.cssClass = cssClass
-
-    this.hiddenArrow = new Arrow({
-      type: ArrowType.NONE,
-      cropLength: 6,
-      scale: 1
-    })
-
-    this.fallbackArrow = new Sample2Arrow()
-    this.markerDefsSupport = null
-    this.showTargetArrows = true
-    this.useMarkerArrows = true
   }
 
   /**
@@ -105,7 +114,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
    * Creates the visual for an edge.
    * @param {!IRenderContext} renderContext
    * @param {!IEdge} edge
-   * @returns {?Visual}
+   * @returns {?Sample1EdgeStyleVisual}
    */
   createVisual(renderContext, edge) {
     let renderPath = this.createPath(edge)
@@ -141,31 +150,31 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
           'marker-end',
           'url(#' + renderContext.getDefsId(this.createMarker()) + ')'
         )
-      path['data-renderDataCache'] = {
+
+      return SvgVisual.from(path, {
         path: renderPath,
         obstacleHash: this.getObstacleHash(renderContext)
-      }
-      return new SvgVisual(path)
+      })
     }
 
-    // use yfiles arrows instead of markers
+    // use yFiles arrows instead of markers
     const container = document.createElementNS(SVGNS, 'g')
     container.appendChild(path)
     this.showTargetArrows &&
       super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
-    container['data-renderDataCache'] = {
+
+    return SvgVisual.from(container, {
       path: renderPath,
       obstacleHash: this.getObstacleHash(renderContext)
-    }
-    return new SvgVisual(container)
+    })
   }
 
   /**
    * Re-renders the edge by updating the old visual for improved performance.
    * @param {!IRenderContext} renderContext
-   * @param {!SvgVisual} oldVisual
+   * @param {!Sample1EdgeStyleVisual} oldVisual
    * @param {!IEdge} edge
-   * @returns {?Visual}
+   * @returns {?Sample1EdgeStyleVisual}
    */
   updateVisual(renderContext, oldVisual, edge) {
     if (oldVisual === null) {
@@ -181,7 +190,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     const newObstacleHash = this.getObstacleHash(renderContext)
 
     const path = oldVisual.svgElement
-    const cache = path['data-renderDataCache']
+    const cache = oldVisual.tag
     if (
       renderPath &&
       (!renderPath.hasSameValue(cache.path) || cache.obstacleHash !== newObstacleHash)
@@ -195,7 +204,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
         path.setAttribute('d', pathData)
         return oldVisual
       } else {
-        // update code for yfiles arrows
+        // update code for yFiles arrows
         const container = oldVisual.svgElement
         const path = container.childNodes.item(0)
         path.setAttribute('d', pathData)
@@ -398,7 +407,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * This implementation of the look up provides a custom implementation of the
+   * This implementation of the look-up provides a custom implementation of the
    * {@link IObstacleProvider} to support bridges.
    * @see Overrides {@link EdgeStyleBase.lookup}
    * @param {!IEdge} edge
@@ -499,11 +508,12 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
 }
 
 export class Sample2EdgeStyleExtension extends MarkupExtension {
+  _cssClass = ''
+  _showTargetArrows = true
+  _useMarkerArrows = true
+
   constructor() {
     super()
-    this._cssClass = ''
-    this._showTargetArrows = true
-    this._useMarkerArrows = true
   }
 
   /**
@@ -578,5 +588,4 @@ export class Sample2EdgeStyleExtension extends MarkupExtension {
   }
 }
 
-const isBrowserWithBadMarkerSupport =
-  BrowserDetection.ieVersion > 0 || BrowserDetection.safariVersion > 0
+const isBrowserWithBadMarkerSupport = BrowserDetection.safariVersion > 0

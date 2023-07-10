@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,44 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { fetchLicense } from '../../../resources/fetch-license.js'
-import { GraphComponent, GraphViewerInputMode, ICommand, License } from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../../resources/demo-app.js'
+import { GraphComponent, GraphViewerInputMode, License } from 'yfiles'
 import { createEdge, createNode } from './ItemFactory.js'
-import { initDemoStyles } from '../../../resources/demo-styles'
+import licenseValue from '../../../../lib/license.json'
 
-async function run() {
-  License.value = await fetchLicense()
+function run() {
+  License.value = licenseValue
 
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
 
-  graphComponent.fitGraphBounds()
-
-  initDemoStyles(graphComponent.graph)
-
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
-}
-
-/**
- * Wires up the UI.
- */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindAction('#createNodeButton', () => {
+  document.querySelector('#create-node').addEventListener('click', () => {
     const viewport = graphComponent.viewport
     const x = viewport.x + Math.random() * viewport.width
     const y = viewport.y + Math.random() * viewport.height
     createNode(graphComponent.graph, x, y)
   })
-  bindAction('#createEdgeButton', () => createEdge(graphComponent.graph, graphComponent.selection))
+  document
+    .querySelector('#create-edge')
+    .addEventListener('click', () => createEdge(graphComponent.graph, graphComponent.selection))
 }
 
-// noinspection JSIgnoredPromiseFromCall
 run()

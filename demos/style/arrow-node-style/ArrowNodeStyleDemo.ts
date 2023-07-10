@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,7 +40,6 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   HorizontalTextAlignment,
-  ICommand,
   IGraph,
   INode,
   Insets,
@@ -49,22 +48,18 @@ import {
   Rect,
   Size
 } from 'yfiles'
-import { bindCommand, bindInputListener, showApp } from '../../resources/demo-app'
-import { applyDemoTheme, colorSets, createDemoNodeLabelStyle } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, colorSets, createDemoNodeLabelStyle } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
-const basicShape = document.querySelector<HTMLSelectElement>('#basic-shape') as HTMLSelectElement
-const shapeDirection = document.querySelector<HTMLSelectElement>(
-  '#shape-direction'
-) as HTMLSelectElement
-const angleRange = document.querySelector<HTMLInputElement>('#angle-range') as HTMLInputElement
-const angleLabel = document.querySelector<HTMLLabelElement>('#angle-label') as HTMLLabelElement
-const shaftRatioRange = document.querySelector<HTMLInputElement>('#shaft-ratio') as HTMLInputElement
-const shaftRatioLabel = document.querySelector<HTMLLabelElement>(
-  '#shaft-ratio-label'
-) as HTMLLabelElement
-const propertiesPanel = document.querySelector<HTMLDivElement>('.demo-properties') as HTMLDivElement
-const infoMessage = document.querySelector<HTMLDivElement>('.info-message') as HTMLDivElement
+const basicShape = document.querySelector<HTMLSelectElement>('#basic-shape')!
+const shapeDirection = document.querySelector<HTMLSelectElement>('#shape-direction')!
+const angleRange = document.querySelector<HTMLInputElement>('#angle-range')!
+const angleLabel = document.querySelector<HTMLLabelElement>('#angle-label')!
+const shaftRatioRange = document.querySelector<HTMLInputElement>('#shaft-ratio')!
+const shaftRatioLabel = document.querySelector<HTMLLabelElement>('#shaft-ratio-label')!
+const propertiesPanel = document.querySelector<HTMLDivElement>('.demo-form-block')!
+const infoMessage = document.querySelector<HTMLDivElement>('.info-message')!
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -79,8 +74,6 @@ async function run(): Promise<void> {
   initializeUI(graphComponent)
 
   graphComponent.fitGraphBounds()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -232,11 +225,6 @@ function initializeInteraction(graphComponent: GraphComponent): void {
  * Binds actions to the toolbar and style property editor.
  */
 function initializeUI(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
   basicShape.addEventListener('change', () => {
     const shape = ArrowStyleShape.from(basicShape.value as ArrowStyleShapeStringValues)
     applyStyleSetting(graphComponent, style => (style.shape = shape))
@@ -249,16 +237,17 @@ function initializeUI(graphComponent: GraphComponent): void {
     applyStyleSetting(graphComponent, style => (style.direction = direction))
   })
 
-  bindInputListener(angleRange, value => {
+  angleRange.addEventListener('change', () => {
+    const value = angleRange.value
     const angle = parseFloat(value)
     applyStyleSetting(graphComponent, style => (style.angle = toRadians(angle)))
     angleLabel.innerText = value
   })
 
-  bindInputListener(shaftRatioRange, value => {
+  shaftRatioRange!.addEventListener('change', () => {
     const shaftRatio = parseFloat(shaftRatioRange.value)
     applyStyleSetting(graphComponent, style => (style.shaftRatio = shaftRatio))
-    shaftRatioLabel.innerText = value
+    shaftRatioLabel.innerText = shaftRatioRange.value
   })
 
   // adjust option panel when the selection has been changed
@@ -400,5 +389,4 @@ function toRadians(degrees: number): number {
   return (degrees / 180) * Math.PI
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>10 Visibility - Label Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-label-style-implementation">
+          Label Style Implementation Tutorial
+        </a>
+
+        <span>10 Visibility</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-label/09-hit-testing/index.html'><span>09 Hit-Testing</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 10/11</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 10 Visibility</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-label/01-render-label-text/index.html"
+            class="tutorial-dropdown__item"
+            >01 Rendering the Label Text</a
+          ><a
+            href="../../tutorial-style-implementation-label/02-using-text-utilities/index.html"
+            class="tutorial-dropdown__item"
+            >02 Using Text Utilities</a
+          ><a
+            href="../../tutorial-style-implementation-label/03-add-background-shape/index.html"
+            class="tutorial-dropdown__item"
+            >03 Adding a Background Shape</a
+          ><a
+            href="../../tutorial-style-implementation-label/04-preferred-size/index.html"
+            class="tutorial-dropdown__item"
+            >04 Preferred Label Size</a
+          ><a
+            href="../../tutorial-style-implementation-label/05-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >05 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-label/06-text-alignment/index.html"
+            class="tutorial-dropdown__item"
+            >06 Text Alignment</a
+          ><a
+            href="../../tutorial-style-implementation-label/07-line-wrapping/index.html"
+            class="tutorial-dropdown__item"
+            >07 Line Wrapping</a
+          ><a
+            href="../../tutorial-style-implementation-label/08-data-from-tag/index.html"
+            class="tutorial-dropdown__item"
+            >08 Data From Tag</a
+          ><a
+            href="../../tutorial-style-implementation-label/09-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >09 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-label/10-visibility/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >10 Visibility</a
+          ><a
+            href="../../tutorial-style-implementation-label/11-bounds/index.html"
+            class="tutorial-dropdown__item"
+            >11 Bounds</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-label/11-bounds/index.html'><span>11 Bounds</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Item visibility</h1>
+          <div class="paragraph">
+            <p>
+              yFiles for HTML will only render items that are considered visible in the viewport. Hence,
+              performance usually only depends on the number of items that are in the visible part
+              of the graph.
+            </p>
+          </div>
+          <div class="paragraph">
+            <p>
+              If the label visualization exceeds the label layout, it is considered invisible, even
+              if the overflowing part of the visualization is in the viewport. yFiles for HTML will cause
+              the item to disappear prematurely as it nears the borders of the viewport.
+            </p>
+          </div>
+          <div class="paragraph">
+            <p>
+              To make this more evident, the "tail" of the speech balloon has been made larger in
+              this sample. Observe the animation of the red labels, which flicker when they reach
+              the top border of the viewport. To prevent this, we have to implement
+              <code>isVisible</code>. The yellow labels use an adjusted style and leave/enter the
+              viewport smoothly.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">isVisible</span>(
+  <span class="hljs-attr">context</span>: <span class="hljs-title class_">ICanvasContext</span>,
+  <span class="hljs-attr">rectangle</span>: <span class="hljs-title class_">Rect</span>,
+  <span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>
+): <span class="hljs-built_in">boolean</span> {
+  <span class="hljs-comment">// check the label layout first</span>
+  <span class="hljs-keyword">const</span> labelLayout = label.<span class="hljs-property">layout</span>
+  <span class="hljs-keyword">if</span> (rectangle.<span class="hljs-title function_">intersects</span>(labelLayout)) {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+  }
+  <span class="hljs-comment">// check the tail area</span>
+  <span class="hljs-keyword">const</span> tailArea = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getTailArea</span>(labelLayout)
+  <span class="hljs-keyword">return</span> rectangle.<span class="hljs-title function_">intersects</span>(tailArea)
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              In order to check the tail for visibility, we have to create an
+              <a href="https://docs.yworks.com/yfileshtml/#/api/IOrientedRectangle" target="_blank">IOrientedRectangle</a> that contains the tail triangle.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">private</span> <span class="hljs-title function_">getTailArea</span>(<span class="hljs-attr">labelLayout</span>: <span class="hljs-title class_">IOrientedRectangle</span>): <span class="hljs-title class_">IOrientedRectangle</span> {
+  <span class="hljs-keyword">const</span> w = labelLayout.<span class="hljs-property">width</span> * <span class="hljs-number">0.5</span>
+  <span class="hljs-keyword">const</span> h = -tailHeight
+  <span class="hljs-comment">// calculate the tip point of the tail triangle</span>
+  <span class="hljs-keyword">const</span> tailTipX =
+    labelLayout.<span class="hljs-property">anchorX</span> + labelLayout.<span class="hljs-property">upX</span> * h - labelLayout.<span class="hljs-property">upY</span> * w
+  <span class="hljs-keyword">const</span> tailTipY =
+    labelLayout.<span class="hljs-property">anchorY</span> + labelLayout.<span class="hljs-property">upY</span> * h + labelLayout.<span class="hljs-property">upX</span> * w
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OrientedRectangle</span>({
+    <span class="hljs-attr">anchorX</span>: tailTipX,
+    <span class="hljs-attr">anchorY</span>: tailTipY,
+    <span class="hljs-attr">height</span>: tailHeight,
+    <span class="hljs-attr">width</span>: tailWidth,
+    <span class="hljs-attr">upX</span>: labelLayout.<span class="hljs-property">upX</span>,
+    <span class="hljs-attr">upY</span>: labelLayout.<span class="hljs-property">upY</span>
+  })
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              Implementations for <code>isVisible</code> often delegate to
+              <code>getBounds</code> since both concepts are related in that they act on the visible
+              boundaries of the item.
+            </p>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  Since <code>isVisible</code> is called once for each item on every rendered frame,
+                  the implementation should be fast, even if this means to be inexact. If in doubt,
+                  prefer making the item visible. In this sample, we check the complete rectangular
+                  tail area, instead of making an exact check for the triangle.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-label/11-bounds/index.html'><span>11 Bounds</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

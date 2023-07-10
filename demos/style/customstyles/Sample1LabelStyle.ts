@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,12 +31,12 @@ import {
   Font,
   GraphEditorInputMode,
   ILabel,
-  IOrientedRectangle,
   IRenderContext,
   LabelStyleBase,
   Matrix,
   Size,
   SvgVisual,
+  type TaggedSvgVisual,
   TextRenderSupport,
   TextWrapping
 } from 'yfiles'
@@ -47,13 +47,18 @@ const VERTICAL_INSET = 2
 const BUTTON_SIZE = 16
 
 /**
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
+ */
+type Sample1LabelStyleVisual = TaggedSvgVisual<SVGGElement, LabelRenderDataCache>
+
+/**
  * This class is an example for a custom style based on the {@link LabelStyleBase}.
  * The font for the label text can be set. The label text is drawn with black letters inside a blue
  * rounded rectangle.
- * Also there is a customized button displayed in the label at certain zoom levels that enables
+ * Also, there is a customized button displayed in the label at certain zoom levels that enables
  * editing of the label text.
  */
-export default class Sample1LabelStyle extends LabelStyleBase {
+export default class Sample1LabelStyle extends LabelStyleBase<Sample1LabelStyleVisual> {
   private readonly font: Font = new Font({
     fontFamily: 'Arial',
     fontSize: 12
@@ -70,42 +75,44 @@ export default class Sample1LabelStyle extends LabelStyleBase {
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase.createVisual}
    */
-  createVisual(context: IRenderContext, label: ILabel): SvgVisual {
+  createVisual(context: IRenderContext, label: ILabel): Sample1LabelStyleVisual {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
-    const container = document.createElementNS(SVGNS, 'g') as SVGElement & {
-      'data-item'?: ILabel
-    }
+    const container = document.createElementNS(SVGNS, 'g')
     // Get the necessary data for rendering of the label
     const cache = Sample1LabelStyle.createRenderDataCache(context, label, this.font)
+    // Create a visual that wraps our g element and remembers the render data
+    const visual = SvgVisual.from(container, cache)
     // Render the label
-    this.render(container, label.layout, cache)
+    this.render(context, visual, label)
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(container)
 
     // set data item
     container.setAttribute('data-internalId', 'Sample1Label')
-    container['data-item'] = label
 
-    return new SvgVisual(container)
+    return visual
   }
 
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase.updateVisual}
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): SvgVisual {
-    const container = oldVisual.svgElement as SVGElement & {
-      'data-item'?: ILabel
-      'data-renderDataCache': LabelRenderDataCache
-    }
-    // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: Sample1LabelStyleVisual,
+    label: ILabel
+  ): Sample1LabelStyleVisual {
+    const container = oldVisual.svgElement
+    // get the data with which the oldVisual was created
+    const oldCache = oldVisual.tag
+
     // get the data for the new visual
     const newCache = Sample1LabelStyle.createRenderDataCache(context, label, this.font)
     if (!newCache.equals(oldCache)) {
+      oldVisual.tag = newCache
       // something changed - re-render the visual
-      this.render(container, label.layout, newCache)
+      this.render(context, oldVisual, label)
     }
     // nothing changed, return the old visual
     // arrange because the layout might have changed
@@ -117,13 +124,10 @@ export default class Sample1LabelStyle extends LabelStyleBase {
   /**
    * Creates the visual appearance of a label.
    */
-  private render(
-    container: SVGElement & { 'data-renderDataCache'?: LabelRenderDataCache },
-    labelLayout: IOrientedRectangle,
-    cache: LabelRenderDataCache
-  ): void {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
+  private render(context: IRenderContext, visual: Sample1LabelStyleVisual, label: ILabel): void {
+    const container = visual.svgElement
+    const cache = visual.tag
+    const labelLayout = label.layout
 
     // background rectangle
     let rect: SVGRectElement
@@ -189,7 +193,7 @@ export default class Sample1LabelStyle extends LabelStyleBase {
       ).applyTo(button)
       container.appendChild(button)
 
-      button.addEventListener('click', evt => onMouseDown(evt), false)
+      button.addEventListener('click', () => onMouseDown(context.canvasComponent, label), false)
     }
   }
 
@@ -263,39 +267,8 @@ function createButton(): SVGGElement {
 /**
  * Called when the edit label button inside a label has been clicked.
  */
-function onMouseDown(evt: Event): void {
-  const graphComponentElement = getAncestorElementByAttribute(evt.target!, 'id', 'graphComponent')
-  if (!graphComponentElement) {
-    return
+function onMouseDown(canvasComponent: CanvasComponent | null, label: ILabel): void {
+  if (canvasComponent && canvasComponent.inputMode instanceof GraphEditorInputMode) {
+    void canvasComponent.inputMode.editLabel(label)
   }
-
-  const svgElement = getAncestorElementByAttribute(evt.target!, 'data-internalId', 'Sample1Label')
-  const label = getLabel(svgElement)
-  if (!label) {
-    return
-  }
-
-  const graphComponent = CanvasComponent.getComponent(graphComponentElement)
-  if (graphComponent && graphComponent.inputMode instanceof GraphEditorInputMode) {
-    graphComponent.inputMode.editLabel(label)
-  }
-}
-
-function getAncestorElementByAttribute(
-  descendant: EventTarget,
-  attributeName: string,
-  attributeValue: string
-): Element | null {
-  if (descendant instanceof Element) {
-    let walker: Element | null = descendant
-    while (walker && walker.getAttribute(attributeName) !== attributeValue) {
-      walker = walker.parentNode instanceof Element ? walker.parentNode : null
-    }
-    return walker
-  }
-  return null
-}
-
-function getLabel(element: (Element & { 'data-item'?: ILabel }) | null): ILabel | null {
-  return element && typeof element['data-item'] !== 'undefined' ? element['data-item'] : null
 }

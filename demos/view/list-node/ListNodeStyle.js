@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -72,15 +72,13 @@ const SVGNS = 'http://www.w3.org/2000/svg'
  * Also note that the header text is also rendered as node label.
  */
 export class ListNodeStyle extends NodeStyleBase {
-  constructor() {
-    super()
-    this.borderFill = Fill.from('#2C4B52')
-    this.backgroundFill = Fill.from('#9CC5CF')
-    this.highlightFill = Fill.from('#6aa7b0')
-    this.lineStroke = Stroke.WHITE
-    this.headerHeight = 20
-    this.rowHeight = 20
-  }
+  borderFill = Fill.from('#2C4B52')
+  backgroundFill = Fill.from('#9CC5CF')
+  highlightFill = Fill.from('#6aa7b0')
+  lineStroke = Stroke.WHITE
+
+  headerHeight = 20
+  rowHeight = 20
 
   /**
    * Create a new visual for the node.

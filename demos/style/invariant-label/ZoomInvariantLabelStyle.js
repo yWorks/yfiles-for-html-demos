@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -62,6 +62,14 @@ import {
  * its instances shouldn't be shared between graph items.
  */
 export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
+  innerLabelStyle
+  dummyLabelLayout = new OrientedRectangle()
+  // Provides the oriented rectangle displayed by the selection, based on the last handled item.
+  // Thus, instances of this style shouldn't be shared between graph items.
+  dummyLabelBounds = new OrientedRectangle()
+  dummyLabel
+  zoomThreshold
+
   /**
    * Instantiates a new label style.
    *
@@ -70,12 +78,6 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
    */
   constructor(innerLabelStyle, zoomThreshold) {
     super()
-    this.dummyLabelLayout = new OrientedRectangle()
-
-    // Provides the oriented rectangle displayed by the selection, based on the last handled item.
-    // Thus, instances of this style shouldn't be shared between graph items.
-    this.dummyLabelBounds = new OrientedRectangle()
-
     this.innerLabelStyle = innerLabelStyle
     this.dummyLabel = new SimpleLabel(
       null,
@@ -412,6 +414,13 @@ export class FitOwnerLabelStyle extends ZoomInvariantLabelStyleBase {
 }
 
 class DummyContext extends BaseClass(IRenderContext) {
+  _zoom
+  _transform
+  // multiply all necessary transforms with the given inverse transform to nullify the outer transform
+  _viewTransform
+  _intermediateTransform
+  _projection
+
   /**
    * @param {!IRenderContext} innerContext
    * @param {number} zoom
@@ -423,7 +432,6 @@ class DummyContext extends BaseClass(IRenderContext) {
     this._zoom = zoom
     this._transform = inverseTransform
 
-    // multiply all necessary transforms with the given inverse transform to nullify the outer transform
     // multiply all necessary transforms with the given inverse transform to nullify the outer transform
     this._viewTransform = this.transformMatrix(innerContext.viewTransform)
     this._intermediateTransform = this.transformMatrix(innerContext.intermediateTransform)

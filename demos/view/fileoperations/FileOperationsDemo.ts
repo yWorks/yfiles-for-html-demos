@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,29 +39,22 @@ import {
 
 import OpenFromFileOperation from './OpenFromFileOperation'
 import OpenFromWebStorageOperation from './OpenFromWebStorageOperation'
-import OpenViaServerOperation from './OpenViaServerOperation'
 import SaveToFileOperation from './SaveToFileOperation'
 import SaveToNewWindowOperation from './SaveToNewWindowOperation'
 import SaveToWebStorageOperation from './SaveToWebStorageOperation'
-import SaveViaServerOperation from './SaveViaServerOperation'
-import { bindAction, showApp } from '../../resources/demo-app'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 const STORAGE_LOCATION = StorageLocation.LOCAL_STORAGE
 const STORAGE_URI = 'www.yworks.com/yFilesHTML/GraphML/'
 
-const DEMO_IO_ORIGIN = 'http://localhost:4242'
-const DEMO_IO_ENDPOINT = DEMO_IO_ORIGIN + '/file/'
-
 let openFileReaderOperation: OpenFromFileOperation
 let openFromStorageOperation: OpenFromWebStorageOperation
-let openViaServerOperation: OpenViaServerOperation
 
 let saveToFileOperation: SaveToFileOperation
 let saveToWindowOperation: SaveToNewWindowOperation
 let saveToStorageOperation: SaveToWebStorageOperation
-let saveViaServerOperation: SaveViaServerOperation
 
 let ioh: GraphMLIOHandler
 
@@ -93,9 +86,7 @@ async function run(): Promise<void> {
   graphComponent.graph.foldingView!.manager.masterGraph.undoEngineEnabled = true
 
   // wire up the UI
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  initializeUI(graphComponent)
 }
 
 /**
@@ -120,7 +111,7 @@ async function initializeOperations(): Promise<void> {
   // Initialize OpenFromFileOperation
   openFileReaderOperation = new OpenFromFileOperation()
   if (!openFileReaderOperation.isAvailable()) {
-    querySelector<HTMLButtonElement>('#openFromFileButton').disabled = false
+    querySelector<HTMLButtonElement>('#open-from-file-button').disabled = false
   }
 
   // Initialize OpenFromWebStorageOperation
@@ -136,21 +127,7 @@ async function initializeOperations(): Promise<void> {
   // Initialize SaveToFileOperation
   saveToFileOperation = new SaveToFileOperation()
   if (!saveToFileOperation.isAvailable()) {
-    querySelector<HTMLButtonElement>('#saveToFileButton').disabled = true
-  }
-
-  // Initialize OpenViaServerOperation
-  openViaServerOperation = new OpenViaServerOperation(DEMO_IO_ENDPOINT, DEMO_IO_ORIGIN)
-
-  // Initialize SaveViaServerOperation
-  saveViaServerOperation = new SaveViaServerOperation(DEMO_IO_ENDPOINT)
-  try {
-    // check server availability (default: disabled)
-    const executable = await openViaServerOperation.checkServer()
-    querySelector<HTMLButtonElement>('#openViaServerButton').disabled = !executable
-    querySelector<HTMLButtonElement>('#saveViaServerButton').disabled = !executable
-  } catch (err) {
-    alert(err)
+    querySelector<HTMLButtonElement>('#save-to-file-button').disabled = true
   }
 }
 
@@ -158,9 +135,9 @@ async function initializeOperations(): Promise<void> {
  * Updates the Local storage buttons.
  */
 function updateLocalStorageButtons(): void {
-  querySelector<HTMLButtonElement>('#saveToStorageButton').disabled =
+  querySelector<HTMLButtonElement>('#save-to-storage-button').disabled =
     !saveToStorageOperation.isAvailable()
-  querySelector<HTMLButtonElement>('#openFromStorageButton').disabled =
+  querySelector<HTMLButtonElement>('#open-from-storage-button').disabled =
     !openFromStorageOperation.isAvailable()
 }
 
@@ -199,70 +176,58 @@ function createSampleGraph(graph: IGraph): void {
 /**
  * Binds actions to the demo's UI controls.
  */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    graphComponent.fitGraphBounds()
-  })
-  bindAction("button[data-command='OpenFromFile']", async () => {
-    try {
-      const graphMLText = await openFileReaderOperation.open()
-      await parseGraphMLText(graphComponent, graphMLText)
-    } catch (err) {
-      alert(err)
-    }
-  })
-  bindAction("button[data-command='OpenViaServer']", async () => {
-    try {
-      const graphMLText = await openViaServerOperation.open()
-      await parseGraphMLText(graphComponent, graphMLText)
-    } catch (err) {
-      alert(err)
-    }
-  })
-  bindAction("button[data-command='OpenFromStorage']", async () => {
-    try {
-      const graphMLText = await openFromStorageOperation.open()
-      await parseGraphMLText(graphComponent, graphMLText)
-    } catch (err) {
-      alert(err)
-    }
-  })
-  bindAction("button[data-command='SaveToFile']", async () => {
-    try {
+function initializeUI(graphComponent: GraphComponent): void {
+  document
+    .querySelector<HTMLButtonElement>('#open-from-file-button')!
+    .addEventListener('click', async () => {
+      try {
+        const graphMLText = await openFileReaderOperation.open()
+        await parseGraphMLText(graphComponent, graphMLText)
+      } catch (err) {
+        alert(err)
+      }
+    })
+  document
+    .querySelector<HTMLInputElement>('#open-from-storage-button')!
+    .addEventListener('click', async () => {
+      try {
+        const graphMLText = await openFromStorageOperation.open()
+        await parseGraphMLText(graphComponent, graphMLText)
+      } catch (err) {
+        alert(err)
+      }
+    })
+  document
+    .querySelector<HTMLInputElement>('#save-to-file-button')!
+    .addEventListener('click', async () => {
+      try {
+        const result = await ioh.write(graphComponent.graph)
+        await saveToFileOperation.save(result, 'unnamed.graphml')
+      } catch (err) {
+        alert(err)
+      }
+    })
+  document
+    .querySelector<HTMLInputElement>('#save-to-window-button')!
+    .addEventListener('click', async () => {
       const result = await ioh.write(graphComponent.graph)
-      await saveToFileOperation.save(result, 'unnamed.graphml')
-    } catch (err) {
-      alert(err)
-    }
-  })
-  bindAction("button[data-command='SaveToWindow']", async () => {
-    const result = await ioh.write(graphComponent.graph)
-    await saveToWindowOperation.save(result)
-  })
-
-  bindAction("button[data-command='SaveViaServer']", async () => {
-    try {
-      const result = await ioh.write(graphComponent.graph)
-      await saveViaServerOperation.save(result)
-    } catch (err) {
-      alert(err)
-    }
-  })
-  bindAction("button[data-command='SaveToStorage']", async () => {
-    try {
-      const result = await ioh.write(graphComponent.graph)
-      await saveToStorageOperation.save(result)
-    } catch (err) {
-      alert(err)
-    }
-    updateLocalStorageButtons()
-  })
+      await saveToWindowOperation.save(result)
+    })
+  document
+    .querySelector<HTMLInputElement>('#save-to-storage-button')!
+    .addEventListener('click', async () => {
+      try {
+        const result = await ioh.write(graphComponent.graph)
+        await saveToStorageOperation.save(result)
+      } catch (err) {
+        alert(err)
+      }
+      updateLocalStorageButtons()
+    })
 }
 
 function querySelector<T extends HTMLElement>(selector: string): T {
   return document.querySelector(selector) as T
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

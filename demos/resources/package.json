@@ -1,0 +1,18 @@
+{
+  "name": "demo-resources-ts",
+  "version": "26.0.0-B447",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "exports": {
+    "./*": "./*",
+    "./icons/*": "./icons/*",
+    "./demo.css": "./style/demo.css",
+    "./demo-option-editor.css": "./style/demo-option-editor.css",
+    "./tutorial.css": "./style/tutorial.css"
+  },
+  "dependencies": {
+    "yfiles": "^26.0.0 || ^26.0.0-A",
+    "yfiles-umd": "^26.0.0 || ^26.0.0-A"
+  }
+}

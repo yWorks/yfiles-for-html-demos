@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,6 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   IGraph,
   License,
   PolylineEdgeStyle,
@@ -39,13 +38,12 @@ import {
   ShapeNodeStyle,
   Size
 } from 'yfiles'
-import { bindCommand, showApp } from '../../resources/demo-app'
 import { ColorDropInputMode } from './ColorDropInputMode'
 import SampleData from './resources/SampleData'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 const PALETTE_SIZE = 15
 
@@ -68,10 +66,6 @@ async function run(): Promise<void> {
 
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
-
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -166,13 +160,7 @@ function createPaletteEntry(color: string): HTMLElement {
     const dragPreview = document.createElement('div')
     dragPreview.appendChild(paletteImage.cloneNode(true))
 
-    ColorDropInputMode.startDrag(
-      paletteEntry,
-      color,
-      DragDropEffects.ALL,
-      true,
-      BrowserDetection.pointerEvents ? dragPreview : null
-    )
+    ColorDropInputMode.startDrag(paletteEntry, color, DragDropEffects.ALL, true, dragPreview)
   }
 
   // start the drop input mode when a drag from the palette begins
@@ -188,17 +176,4 @@ function createPaletteEntry(color: string): HTMLElement {
   return paletteEntry
 }
 
-/**
- * Registers commands and actions for the items in the toolbar.
- */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-undef */
-
 import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
+
+import * as d3 from 'd3'
 
 const margin = {
   top: 3,
@@ -85,7 +85,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .data(data)
       .enter()
       .append('rect')
-      .attr('x', (d, i) => xHelper(`${i}`))
+      .attr('x', (d, i) => xHelper(i))
       .attr('y', d => yHelper(d))
       .attr('height', d => yHelper(0) - yHelper(d))
       .attr('width', xHelper.bandwidth())
@@ -137,7 +137,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       dataSelection
         .enter()
         .append('rect')
-        .attr('x', (d, i) => xHelper(`${i}`))
+        .attr('x', (d, i) => xHelper(i))
         .attr('y', d => yHelper(d))
         .attr('height', d => yHelper(0) - yHelper(d))
         .attr('width', xHelper.bandwidth())
@@ -149,7 +149,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
 
       dataSelection
         .transition()
-        .attr('x', (d, i) => xHelper(`${i}`))
+        .attr('x', (d, i) => xHelper(i))
         .attr('width', xHelper.bandwidth())
         .attr('y', d => yHelper(d))
         .attr('fill', d => color(d))

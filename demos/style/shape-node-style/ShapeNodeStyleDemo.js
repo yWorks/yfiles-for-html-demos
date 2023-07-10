@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,27 +28,25 @@
  ***************************************************************************/
 import {
   Enum,
-  Font,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IGraph,
   License,
   ShapeNodeShape,
   ShapeNodeStyle
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app.js'
 import {
   applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeLabelStyle,
   initDemoStyles
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Runs the demo.
@@ -66,8 +64,6 @@ async function run() {
   configureInteraction(graphComponent)
   graphComponent.fitGraphBounds()
   initializeUI(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -104,6 +100,7 @@ function createSampleNodes(graph) {
     ShapeNodeShape.STAR8
   ]
   createShapeSamples(rectangularShapes, 0, graph)
+
   createShapeSamples(ellipticalShapes.concat(arrowShapes), 1, graph)
   createShapeSamples(skewedShapes, 2, graph)
   createShapeSamples(polygonalShapes, 3, graph)
@@ -174,7 +171,7 @@ function initializeStyleDefaults(graph) {
 
   // All node labels share the same style and label model parameter
   const labelStyle = createDemoNodeLabelStyle('demo-palette-58')
-  labelStyle.font = Font.from('24px Arial')
+  labelStyle.font = '24px Arial'
   graph.nodeDefaults.labels.style = labelStyle
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createParameter({
     layoutRatio: [0.5, 0],
@@ -205,15 +202,10 @@ function configureInteraction(graphComponent) {
 }
 
 /**
- * Binds actions and commands to the demo's UI controls.
+ * Binds actions to the demo's UI controls.
  * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
   const aspectRatioToggle = document.getElementById('intrinsic-aspect-ratio-button')
   aspectRatioToggle.addEventListener('change', () => {
     // Change the keep-intrinsic-aspect-ratio behavior of the nodes depending on the state of the
@@ -231,5 +223,4 @@ function initializeUI(graphComponent) {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

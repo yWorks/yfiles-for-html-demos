@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,7 +49,10 @@ import {
   Size,
   VoidPortStyle
 } from 'yfiles'
-import { AndGateNodeStyle, NotNodeStyle, OrNodeStyle } from '../../complete/logicgates/DemoStyles'
+import { AndGateNodeStyle } from '../../showcase/logicgates/node-styles/AndGateNodeStyle'
+import { NotNodeStyle } from '../../showcase/logicgates/node-styles/NotNodeStyle'
+import { OrNodeStyle } from '../../showcase/logicgates/node-styles/OrNodeStyle'
+import { XOrNodeStyle } from '../../showcase/logicgates/node-styles/XOrNodeStyle'
 
 /*
  This file shows how to configure GraphBuilder to support ports.
@@ -58,13 +61,13 @@ import { AndGateNodeStyle, NotNodeStyle, OrNodeStyle } from '../../complete/logi
 // In this sample the data is arranged in the following way.
 // When used in an own sample it has to be adjusted for the source data.
 
-type NodeData = {
+export type NodeData = {
   /** the ID for the node, must be unique for all nodes in the graph */
   id: string
   /** the node type. Determines appearance and ports */
-  type: 'and' | 'or' | 'not' | 'nand' | 'nor'
+  type: 'and' | 'or' | 'not' | 'nand' | 'nor' | 'xor' | 'xnor'
 }
-type EdgeData = {
+export type EdgeData = {
   /** the ID for the edge, must be unique for all edges in the graph */
   id: string
   /** the source port ID as 'nodeID;portID' */
@@ -108,6 +111,26 @@ export function createPortAwareGraphBuilder(
   })
   // change the node creator but keep the original's defaults
   nodesSource.nodeCreator = new TypeAwareNodeCreator({ defaults: nodesSource.nodeCreator.defaults })
+  nodesSource.nodeCreator.styleProvider = nodeData => {
+    switch (nodeData.type) {
+      case 'or':
+        return new OrNodeStyle(false, '#A49966', '#625F50', '#FFFFFF')
+      case 'nor':
+        return new OrNodeStyle(true, '#C7C7A6', '#77776E', '#000000')
+      case 'and':
+        return new AndGateNodeStyle(false, '#363020', '#201F1A', '#FFFFFF')
+      case 'nand':
+        return new AndGateNodeStyle(true, '#605C4E', '#3A3834', '#FFFFFF')
+      case 'xor':
+        return new XOrNodeStyle(false, '#A4778B', '#62555B', '#FFFFFF')
+      case 'xnor':
+        return new XOrNodeStyle(true, '#AA4586', '#66485B', '#FFFFFF')
+      case 'not':
+        return new NotNodeStyle('#177e89', '#093237', '#FFFFFF')
+      default:
+        return new ShapeNodeStyle()
+    }
+  }
 
   nodesSource.nodeCreator.defaults.size = new Size(100, 50)
 
@@ -160,7 +183,7 @@ class TypeAwareNodeCreator extends NodeCreator<NodeData> {
     parent: INode,
     layout: Rect,
     style: INodeStyle,
-    tag: Object
+    tag: any
   ): INode {
     // this assumes that we don't use a custom tag provider,
     // i.e. the tag contains the node data as provided by the node source array
@@ -285,6 +308,8 @@ class TypeAwareNodeCreator extends NodeCreator<NodeData> {
       case 'nor':
       case 'and':
       case 'nand':
+      case 'xor':
+      case 'xnor':
         return [
           { id: 'in0', name: 'in0', location: [0, 0.25] },
           { id: 'in1', name: 'in1', location: [0, 0.75] },
@@ -338,27 +363,6 @@ class TypeAwareNodeCreator extends NodeCreator<NodeData> {
   private getPortLabel(pin: PortData): string | undefined {
     return pin.name
   }
-
-  /**
-   * Overrides the default implementation to return
-   * a style according to the node's type.
-   */
-  protected getStyle(dataItem: NodeData): INodeStyle | null {
-    switch (dataItem.type) {
-      case 'or':
-        return new OrNodeStyle(false)
-      case 'nor':
-        return new OrNodeStyle(true)
-      case 'and':
-        return new AndGateNodeStyle(false)
-      case 'nand':
-        return new AndGateNodeStyle(true)
-      case 'not':
-        return new NotNodeStyle()
-      default:
-        return new ShapeNodeStyle()
-    }
-  }
 }
 
 /**
@@ -383,7 +387,6 @@ class PortAwareEdgeCreator extends EdgeCreator<EdgeData> {
     tag: any
   ): IEdge {
     const edgeData = tag as EdgeData
-
     // get the source port: if there is an ID specified (from), get the first with the matching ID
     // if no ID is specified: get the first port
     const sourcePortId = this.getSourcePortId(edgeData)

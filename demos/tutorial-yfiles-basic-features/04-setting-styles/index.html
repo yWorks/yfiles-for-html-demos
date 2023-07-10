@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>04 Setting Styles - Basic Features Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-basic-features"> Basic Features Tutorial </a>
+
+        <span>04 Setting Styles</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-yfiles-basic-features/03-managing-viewport/index.html'><span>03 Managing Viewport</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 4/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 04 Setting Styles</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-yfiles-basic-features/01-graphcomponent/index.html"
+            class="tutorial-dropdown__item"
+            >01 Creating the View</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html"
+            class="tutorial-dropdown__item"
+            >02 Creating Graph Elements</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/03-managing-viewport/index.html"
+            class="tutorial-dropdown__item"
+            >03 Managing Viewport</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/04-setting-styles/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >04 Setting Styles</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/05-label-placement/index.html"
+            class="tutorial-dropdown__item"
+            >05 Label Placement</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/06-basic-interaction/index.html"
+            class="tutorial-dropdown__item"
+            >06 Basic Interaction</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/07-undo-clipboard-support/index.html"
+            class="tutorial-dropdown__item"
+            >07 Undo Clipboard Support</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/08-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >08 Grouping</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/09-data-binding/index.html"
+            class="tutorial-dropdown__item"
+            >09 Data Binding</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/10-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Layout</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/11-layout-data/index.html"
+            class="tutorial-dropdown__item"
+            >11 Layout Data</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/12-graph-analysis/index.html"
+            class="tutorial-dropdown__item"
+            >12 Analysis Algorithms</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-yfiles-basic-features/05-label-placement/index.html'><span>05 Label Placement</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Customizing Styles</h1>
+          <div class="sect1">
+            <h2 id="_how_to_influence_visual_appearance">How to influence visual appearance.</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  This step shows how to
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-setting_styles" target="_blank">configure the visual appearance of graph elements using styles</a>.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      yFiles for HTML offers a set of predefined and configurable item styles for
+                      various use-cases. The
+                      <a href="../../tutorial-style-implementation-node/01-create-a-rectangle/index.html" target="_blank">Style Implementation tutorials</a>
+                      show in detail how to create a custom style from scratch.
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_default_styles">Default Styles</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Default styles are used for elements that are created without an explicit style.
+                  Default styles can be configured separately for nodes, edges, ports, node and edge
+                  labels. The default node size can also be configured in a similar way.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-property">nodeDefaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({
+  <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;round-rectangle&#x27;</span>,
+  <span class="hljs-attr">fill</span>: <span class="hljs-string">&#x27;#ff6c00&#x27;</span>,
+  <span class="hljs-attr">stroke</span>: <span class="hljs-string">&#x27;1.5px #662f01&#x27;</span>
+})
+<span class="hljs-comment">// Also assign the default node size</span>
+graph.<span class="hljs-property">nodeDefaults</span>.<span class="hljs-property">size</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">40</span>, <span class="hljs-number">40</span>)</code></pre>
+                </div>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-property">edgeDefaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PolylineEdgeStyle</span>({
+  <span class="hljs-attr">stroke</span>: <span class="hljs-string">&#x27;1.5px #662f01&#x27;</span>,
+  <span class="hljs-attr">targetArrow</span>: <span class="hljs-string">&#x27;#662f01 small triangle&#x27;</span>
+})</code></pre>
+                </div>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> defaultLabelStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+  <span class="hljs-attr">font</span>: <span class="hljs-string">&#x27;12px Tahoma&#x27;</span>,
+  <span class="hljs-attr">textFill</span>: <span class="hljs-string">&#x27;black&#x27;</span>,
+  <span class="hljs-attr">backgroundFill</span>: <span class="hljs-string">&#x27;#8fff&#x27;</span>,
+  <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;round-rectangle&#x27;</span>,
+  <span class="hljs-attr">insets</span>: [<span class="hljs-number">2</span>, <span class="hljs-number">5</span>]
+})
+
+<span class="hljs-comment">// Set the defined style as the default for both edge and node labels</span>
+graph.<span class="hljs-property">edgeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">style</span> = defaultLabelStyle
+graph.<span class="hljs-property">nodeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">style</span> = defaultLabelStyle</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_creating_items_with_a_specific_style">Creating items with a specific style</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Styles can be defined as parameters during the creation of an item, if the created
+                  item should use a style different from the default style.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  <button id="createGraphItemsWithStylesButton" class="demo-description__button">
+                    Create Graph Items with Specific Styles
+                  </button>
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> node = graph.<span class="hljs-title function_">createNodeAt</span>({
+  <span class="hljs-attr">location</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(<span class="hljs-number">30</span>, <span class="hljs-number">215</span>),
+  <span class="hljs-attr">style</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">ImageNodeStyle</span>(<span class="hljs-string">&#x27;resources/star-16.svg&#x27;</span>)
+})
+graph.<span class="hljs-title function_">createEdge</span>({
+  <span class="hljs-attr">source</span>: sourceNode,
+  <span class="hljs-attr">target</span>: node,
+  <span class="hljs-attr">style</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">PolylineEdgeStyle</span>({
+    <span class="hljs-attr">targetArrow</span>: <span class="hljs-string">&#x27;#224556 medium triangle&#x27;</span>,
+    <span class="hljs-attr">stroke</span>: <span class="hljs-string">&#x27;2px #224556&#x27;</span>
+  })
+})
+graph.<span class="hljs-title function_">addLabel</span>({
+  <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;New Label&#x27;</span>,
+  <span class="hljs-attr">owner</span>: node,
+  <span class="hljs-attr">style</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({ <span class="hljs-attr">backgroundFill</span>: <span class="hljs-string">&#x27;#a6a6c0&#x27;</span> })
+})</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_changing_the_style_of_a_graph_item">Changing the style of a graph item</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  The styles of graph items can be changed at runtime, after the items have been
+                  created. Click the button below to change the styles of some graph items.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  <button id="changeStylesButton" class="demo-description__button">
+                    Change Styles
+                  </button>
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>This sample shows how to change the styles of nodes:</p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeStyle1 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({
+  <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;ellipse&#x27;</span>,
+  <span class="hljs-attr">fill</span>: <span class="hljs-string">&#x27;#a37ab3&#x27;</span>,
+  <span class="hljs-attr">stroke</span>: <span class="hljs-string">&#x27;2px #433449&#x27;</span>
+})
+graph.<span class="hljs-title function_">setStyle</span>(node1, nodeStyle1)
+
+<span class="hljs-keyword">const</span> nodeStyle2 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RectangleNodeStyle</span>({
+  <span class="hljs-attr">fill</span>: <span class="hljs-string">&#x27;#46a8d5&#x27;</span>,
+  <span class="hljs-attr">stroke</span>: <span class="hljs-string">&#x27;2px #224556&#x27;</span>,
+  <span class="hljs-attr">cornerStyle</span>: <span class="hljs-title class_">RectangleCornerStyle</span>.<span class="hljs-property">CUT</span>
+})
+graph.<span class="hljs-title function_">setStyle</span>(node2, nodeStyle2)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>This sample shows how to change the styles of edges:</p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> edgeStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PolylineEdgeStyle</span>({
+  <span class="hljs-attr">stroke</span>: <span class="hljs-string">&#x27;2px dashed #224556&#x27;</span>,
+  <span class="hljs-attr">sourceArrow</span>: <span class="hljs-string">&#x27;#224556 medium circle&#x27;</span>,
+  <span class="hljs-attr">targetArrow</span>: <span class="hljs-string">&#x27;#224556 medium short&#x27;</span>
+})
+
+graph.<span class="hljs-title function_">setStyle</span>(edge, edgeStyle)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>This sample shows how to change the styles of labels:</p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> labelStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+  <span class="hljs-attr">backgroundStroke</span>: <span class="hljs-string">&#x27;2px #46A8D5&#x27;</span>,
+  <span class="hljs-attr">backgroundFill</span>: <span class="hljs-string">&#x27;#b4dbed&#x27;</span>,
+  <span class="hljs-attr">insets</span>: [<span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>]
+})
+
+graph.<span class="hljs-title function_">setStyle</span>(label, labelStyle)</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-yfiles-basic-features/05-label-placement/index.html'><span>05 Label Placement</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

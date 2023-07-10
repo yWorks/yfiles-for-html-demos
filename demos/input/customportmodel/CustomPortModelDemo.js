@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphMLSupport,
-  ICommand,
   IGraph,
   INode,
   IPortCandidateProvider,
@@ -48,9 +47,9 @@ import {
   CustomNodePortLocationModelParameter,
   PortLocation
 } from './CustomNodePortLocationModel.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -85,11 +84,6 @@ async function run() {
 
   // enable the graphml support
   enableGraphML()
-
-  // bind UI elements to actions
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -168,22 +162,4 @@ function initializeGraph(graph) {
   graph.createEdge(sourcePort, targetPort)
 }
 
-/**
- * Wires up the UI.
- */
-function registerCommands() {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    graphComponent.fitGraphBounds()
-  })
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

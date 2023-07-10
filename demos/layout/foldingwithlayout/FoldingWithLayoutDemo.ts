@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,28 +35,21 @@ import {
   HierarchicLayout,
   HierarchicLayoutEdgeRoutingStyle,
   HierarchicLayoutRoutingStyle,
-  ICommand,
   IGraph,
   LayoutMode,
   License,
   Point,
-  Rect,
   RecursiveEdgeStyle,
   Size
 } from 'yfiles'
 
 import GraphData from './resources/SampleData'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { ExpandCollapseNavigationHelper } from './ExpandCollapseNavigationHandler'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
-
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-let helper: ExpandCollapseNavigationHelper = null
+let graphComponent: GraphComponent = null!
 
 /**
  * A demo that demonstrates how to automatically trigger a layout that clears or fills the space
@@ -69,10 +62,6 @@ async function run(): Promise<void> {
   applyDemoTheme(graphComponent)
 
   initializeGraph()
-
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -88,7 +77,7 @@ function initializeGraph(): void {
   graphComponent.graph = foldingView.graph
 
   const navigationInputMode = inputMode.navigationInputMode
-  helper = new ExpandCollapseNavigationHelper(navigationInputMode)
+  new ExpandCollapseNavigationHelper(navigationInputMode)
 
   // Assign the default demo styles
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
@@ -105,13 +94,6 @@ function initializeGraph(): void {
   graphComponent.fitGraphBounds()
 }
 
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-}
-
 /**
  * Creates and configures the {@link GraphBuilder}.
  * @param masterGraph The master graph of the {@link GraphComponent}
@@ -122,12 +104,12 @@ function createGraphBuilder(masterGraph: IGraph): GraphBuilder {
     data: GraphData.nodesSource,
     id: 'id',
     parentId: 'group',
-    layout: data => Rect.from(data.layout)
+    layout: data => data.layout
   })
   graphBuilder.createGroupNodesSource({
     data: GraphData.groupsSource,
     id: 'id',
-    layout: data => Rect.from(data.layout),
+    layout: data => data.layout,
     labels: ['label'],
     parentId: 'parentGroup'
   })
@@ -151,7 +133,7 @@ function buildGraph(graph: IGraph): void {
   graph.edges.forEach(edge => {
     if (edge.tag.bends) {
       edge.tag.bends.forEach((bend: Point) => {
-        graph.addBend(edge, Point.from(bend))
+        graph.addBend(edge, bend)
       })
     }
     graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
@@ -179,5 +161,4 @@ function buildGraph(graph: IGraph): void {
   graph.applyLayout(hierarchicLayout)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

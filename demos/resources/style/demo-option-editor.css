@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -433,7 +433,7 @@ form.option-ui-spinner div.spinner-container label {
 }
 
 .demo-collapsible-pane-content {
-  padding: 0 0 10px 0;
+  padding: 1px 0 10px 0;
   background: #fff;
 }
 

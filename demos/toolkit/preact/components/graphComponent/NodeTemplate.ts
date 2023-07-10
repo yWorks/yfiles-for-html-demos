@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+// @ts-ignore - We have no proper types for preact, here
 import { html } from '../../preact-loader'
 
 export type NodeTemplateProps<TTag> = {
@@ -38,11 +39,11 @@ const NodeTemplate = ({
   width,
   height,
   tag: { id, state }
-}: NodeTemplateProps<{ state: boolean; id: string }>) => html`<g
-  class="node ${state ? 'node-enabled' : 'node-disabled'}"
->
-  <rect class="node-rect" rx="3.5" ry="3.5" width="${width}" height="${height}"></rect>
-  <text x="${width * 0.5}" y="${height * 0.5}" class="node-text">${id}</text>
-</g>`
+}: NodeTemplateProps<{ state: boolean; id: string }>) => html`
+  <g class="node ${state ? 'node-enabled' : 'node-disabled'}">
+    <rect class="node-rect" rx="3.5" ry="3.5" width="${width}" height="${height}"></rect>
+    <text x="${width * 0.5}" y="${height * 0.5}" class="node-text">${id}</text>
+  </g>
+`
 
 export default NodeTemplate

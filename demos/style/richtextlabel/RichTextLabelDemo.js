@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HorizontalTextAlignment,
-  ICommand,
   InteriorStretchLabelModel,
   License,
   MarkupLabelStyle,
@@ -45,10 +44,10 @@ import {
   TextWrapping
 } from 'yfiles'
 
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { RichTextEditorInputMode } from './RichTextEditorInputMode.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -165,19 +164,6 @@ async function run() {
   )
 
   graphComponent.fitGraphBounds()
-
-  // bind UI elements to actions
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

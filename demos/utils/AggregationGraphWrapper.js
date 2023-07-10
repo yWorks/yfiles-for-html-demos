@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -120,6 +120,30 @@ export const EdgeReplacementPolicy = {
  * {@link AggregationGraphWrapper.dispose} should be called if this instance is not used any more.
  */
 export class AggregationGraphWrapper extends GraphWrapperBase {
+  // This implementation combines a filtered graph (for hiding items) and additional aggregation items contained in
+  // the aggregationNodes and aggregationEdges lists.
+  // Events are forwarded from the wrapped graph to the filtered graph to this graph.
+  // Most IGraph methods are overridden and "multiplex" between the filtered graph and the aggregation items.
+  $filteredGraph
+
+  // the set of hidden nodes and edges
+  $filteredOriginalNodes
+
+  $filteredAggregationItems
+
+  aggregationNodes
+  $aggregationEdges
+
+  // live views of the currently visible items
+  $nodes
+  $edges
+  $labels
+  $ports
+
+  $aggregationNodeDefaults
+  $aggregationEdgeDefaults
+  $lookupDecorator
+
   /**
    * Creates a new instance of this graph wrapper.
    * @param {!IGraph} graph The graph to be wrapped ("original graph").
@@ -132,21 +156,18 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         'ArgumentError: Affected parameter graph: Cannot wrap another AggregationGraphWrapper'
       )
     }
+    this.onGraphChanged(null, this.wrappedGraph)
 
-    // Sets what kind of edges should be created when replacing original edges with aggregation edges.
-    // The default value is {@link EdgeReplacementPolicy.UNDIRECTED}.
     this.edgeReplacementPolicy = EdgeReplacementPolicy.UNDIRECTED
 
     this.$lookupDecorator = new AggregationLookupDecorator(this)
 
-    // the set of hidden nodes and edges
     this.$filteredOriginalNodes = new Set()
 
     this.$filteredAggregationItems = new Set()
     this.aggregationNodes = new List()
     this.$aggregationEdges = new List()
 
-    // live views of the currently visible items
     this.$nodes = new ListEnumerable(
       this.$filteredGraph.nodes.concat(
         this.aggregationNodes.filter(this.$aggregationItemPredicate.bind(this))
@@ -196,6 +217,12 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   get ports() {
     return this.$ports
   }
+
+  /**
+   * Sets what kind of edges should be created when replacing original edges with aggregation edges.
+   * The default value is {@link EdgeReplacementPolicy.UNDIRECTED}.
+   */
+  edgeReplacementPolicy = EdgeReplacementPolicy.NONE
 
   /**
    * @type {!INodeDefaults}
@@ -1236,12 +1263,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       tag = options.tag
     }
 
-    if (!(preferredSize instanceof Size)) {
-      if (Array.isArray(preferredSize)) {
-        preferredSize = new Size(preferredSize[0], preferredSize[1])
-      } else if (preferredSize) {
-        preferredSize = new Size(preferredSize.width, preferredSize.height)
-      }
+    if (preferredSize && !(preferredSize instanceof Size)) {
+      preferredSize = Size.from(preferredSize)
     }
 
     const labelOwner =
@@ -1737,6 +1760,17 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
  * New chain links are added to the chains of this decorator as well as to the decorator of the {@link GraphWrapperBase.wrappedGraph}.
  */
 class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
+  $wrappedDecorator
+
+  $graph
+
+  $graphLookupChain
+  $nodeLookupChain
+  $edgeLookupChain
+  $bendLookupChain
+  $portLookupChain
+  $labelLookupChain
+
   /**
    * @param {!AggregationGraphWrapper} graph
    */
@@ -1885,10 +1919,7 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
 }
 
 class ContextLookupChainLinkBase extends BaseClass(IContextLookupChainLink) {
-  constructor() {
-    super()
-    this.$nextLink = null
-  }
+  $nextLink = null
 
   /**
    * @param {!object} item
@@ -1946,6 +1977,8 @@ class BlockReshapeAndPositionHandlerLookup extends ContextLookupChainLinkBase {
 }
 
 class ItemDefaultLookup extends ContextLookupChainLinkBase {
+  $defaultLookup
+
   /**
    * @param {!IContextLookup} defaultLookup
    */
@@ -1968,6 +2001,18 @@ class ItemDefaultLookup extends ContextLookupChainLinkBase {
  * A simple INode implementation for aggregation nodes.
  */
 class AggregationNode extends BaseClass(INode) {
+  $aggregatedNodes
+  $layout
+  $style
+  $children
+  $parent
+  $graph
+  $tag
+  $labelsEnumerable = null
+  $portsEnumerable = null
+  $labels
+  $ports
+
   /**
    * @type {!IList.<INode>}
    */
@@ -2084,8 +2129,6 @@ class AggregationNode extends BaseClass(INode) {
    */
   constructor(graph, aggregatedNodes, layout, style) {
     super(graph)
-    this.$labelsEnumerable = null
-    this.$portsEnumerable = null
     this.$aggregatedNodes = aggregatedNodes
     this.$layout = layout
     this.$style = style
@@ -2140,6 +2183,19 @@ class AggregationNode extends BaseClass(INode) {
  * A simple IEdge implementation for aggregation edges.
  */
 class AggregationEdge extends BaseClass(IEdge) {
+  $bends
+  $ports
+  $labels
+  $aggregatedEdges
+  $graph
+  $sourcePort
+  $targetPort
+  $style
+  $tag
+  $labelsEnumerable = null
+  $portsEnumerable = null
+  $bendsEnumerable = null
+
   /**
    * @type {boolean}
    */
@@ -2266,9 +2322,6 @@ class AggregationEdge extends BaseClass(IEdge) {
    */
   constructor(graph, sourcePort, targetPort, style) {
     super()
-    this.$labelsEnumerable = null
-    this.$portsEnumerable = null
-    this.$bendsEnumerable = null
     this.$graph = graph
     this.$sourcePort = sourcePort
     this.$targetPort = targetPort
@@ -2341,6 +2394,11 @@ class AggregationEdge extends BaseClass(IEdge) {
  * A simple IBend implementation for bends of {@link AggregationEdge}s.
  */
 class AggregationBend extends BaseClass(IBend) {
+  $owner
+  $location
+  $graph
+  $tag
+
   /**
    * @type {!IEdge}
    */
@@ -2435,6 +2493,14 @@ class AggregationBend extends BaseClass(IBend) {
  * A simple IPort implementation for ports of {@link AggregationNode}, {@link AggregationEdge}, or {@link AggregationPort}.
  */
 class AggregationPort extends BaseClass(IPort) {
+  $owner
+  $style
+  $graph
+  $tag
+  $locationParameter
+  $labelsEnumerable = null
+  $labels
+
   /**
    * @type {!IPortOwner}
    */
@@ -2520,7 +2586,6 @@ class AggregationPort extends BaseClass(IPort) {
    */
   constructor(graph, owner, locationParameter, style) {
     super()
-    this.$labelsEnumerable = null
     this.$owner = owner
     this.$locationParameter = locationParameter
     this.$style = style
@@ -2577,6 +2642,15 @@ class AggregationPort extends BaseClass(IPort) {
  * A simple ILabel implementation for labels of {@link AggregationNode}, {@link AggregationEdge}, or {@link AggregationPort}.
  */
 class AggregationLabel extends BaseClass(ILabel) {
+  $owner
+  $layoutParameter
+  $preferredSize
+  $style
+  $text
+  $graph
+  $tag
+  $layout
+
   /**
    * @type {?ILabelOwner}
    */

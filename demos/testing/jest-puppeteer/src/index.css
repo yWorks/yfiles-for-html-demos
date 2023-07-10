@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+:root {
+  --description-width: 320px;
+  --description-drag-height: 50%;
+  --description-min-width: 0px;
+  --description-max-width: 75vw;
+  --sidebar-width: 320px;
+  --toolbar-color: #ebeef0;
+  --toolbar-border-color: #a4a4a4;
+  --description-color: #e0edf0;
+  --description-color-2: #bdd8e0;
+  --description-text-color: #343f4a;
+  --description-button-color: #bdd8e0;
+  --description-button-text-color: #343f4a;
+  --description-scrollbar-color: #b0bcc2;
+  --description-code-color: #cedbdf;
+}
+
 html,
 body {
   position: fixed;
@@ -38,6 +55,4 @@ body {
   overscroll-behavior-y: contain;
   overflow: hidden;
   font-family: Tahoma, Verdana, sans-serif;
-  font-size: 12px;
-  color: #333333;
 }

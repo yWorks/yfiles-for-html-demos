@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,36 +26,113 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ReactComponentNodeStyle } from './ReactComponentNodeStyle'
-const { createElement } = React
+import type { Size, SizeConvertible } from 'yfiles'
+import { ReactComponentSvgNodeStyle } from './ReactComponentSvgNodeStyle'
+import { ReactComponentSvgLabelStyle } from './ReactComponentSvgLabelStyle'
+import { ReactComponentHtmlNodeStyle } from './ReactComponentHtmlNodeStyle'
+import { ReactComponentHtmlLabelStyle } from './ReactComponentHtmlLabelStyle'
+import { SvgText } from './SvgText'
+import { transform } from '@babel/standalone'
+import * as React from 'react'
 
+// We need a global React at runtime
+window.React = React
+
+/**
+ * The following is a simple "compile" function that is inherently unsafe in that
+ * it executes the code in the string.
+ * Make sure that the code comes from a trusted source.
+ * @param jsx the trusted JSX string that will be compiled by this function
+ */
 function compileRenderFunction(jsx: string): (props: any) => any {
-  const transpiledCode: string = Babel.transform('const renderFunction = ' + jsx, {
+  const transpiledCode: string = transform('const renderFunction = ' + jsx, {
     presets: ['react', 'env']
   }).code
   // eslint-disable-next-line
-  const renderFn = new Function(transpiledCode + '\n return renderFunction')()
+  const renderFn = new Function('SvgText', transpiledCode + '\n return renderFunction')(SvgText)
   return props => {
     try {
       return renderFn(props)
-    } catch (e) {
-      return createElement('text', {}, 'Invalid template')
+    } catch (e: any) {
+      console.log(e)
+      return React.createElement('text', {}, `Invalid template: ${e.message}`)
     }
   }
 }
 
-export type ReactComponentNodeStyleEx<T> = ReactComponentNodeStyle<T> & { jsx: string }
+type JSXCacheType<T> = T & { jsx: string }
+export type ReactComponentSvgNodeStyleEx<T> = JSXCacheType<ReactComponentSvgNodeStyle<T>>
+export type ReactComponentHtmlNodeStyleEx<T> = JSXCacheType<ReactComponentHtmlNodeStyle<T>>
 
-export function isReactComponentNodeStyleEx(o: any): o is ReactComponentNodeStyleEx<unknown> {
-  return o && typeof o.jsx === 'string' && o instanceof ReactComponentNodeStyle
+export type ReactComponentSvgLabelStyleEx<T> = JSXCacheType<ReactComponentSvgLabelStyle<T>>
+export type ReactComponentHtmlLabelStyleEx<T> = JSXCacheType<ReactComponentHtmlLabelStyle<T>>
+
+export function isReactComponentSvgNodeStyleEx(o: any): o is ReactComponentSvgNodeStyleEx<unknown> {
+  return o && typeof o.jsx === 'string' && o instanceof ReactComponentSvgNodeStyle
 }
 
-export function createReactComponentNodeStyleFromJSX(
+export function isReactComponentHtmlNodeStyleEx(
+  o: any
+): o is ReactComponentHtmlNodeStyleEx<unknown> {
+  return o && typeof o.jsx === 'string' && o instanceof ReactComponentHtmlNodeStyle
+}
+
+export function isReactComponentSvgLabelStyleEx(
+  o: any
+): o is ReactComponentSvgLabelStyleEx<unknown> {
+  return o && typeof o.jsx === 'string' && o instanceof ReactComponentSvgLabelStyle
+}
+
+export function isReactComponentHtmlLabelStyleEx(
+  o: any
+): o is ReactComponentHtmlLabelStyleEx<unknown> {
+  return o && typeof o.jsx === 'string' && o instanceof ReactComponentHtmlLabelStyle
+}
+
+export function isReactComponentStyleEx(o: any): o is { jsx: string } {
+  return o && typeof o.jsx === 'string'
+}
+
+export function createReactComponentSvgNodeStyleFromJSX(
   jsx: string
-): ReactComponentNodeStyle<unknown> {
-  const style = new ReactComponentNodeStyle(
+): ReactComponentSvgNodeStyle<unknown> {
+  const style = new ReactComponentSvgNodeStyle(
     compileRenderFunction(jsx)
-  ) as ReactComponentNodeStyleEx<unknown>
+  ) as ReactComponentSvgNodeStyleEx<unknown>
+  style.jsx = jsx
+  return style
+}
+
+export function createReactComponentHtmlNodeStyleFromJSX(
+  jsx: string
+): ReactComponentHtmlNodeStyle<unknown> {
+  const style = new ReactComponentHtmlNodeStyle(
+    compileRenderFunction(jsx)
+  ) as ReactComponentHtmlNodeStyleEx<unknown>
+  style.jsx = jsx
+  return style
+}
+
+export function createReactComponentSvgLabelStyleFromJSX(
+  jsx: string,
+  size: Size | SizeConvertible
+): ReactComponentSvgLabelStyle<unknown> {
+  const style = new ReactComponentSvgLabelStyle(
+    compileRenderFunction(jsx),
+    size
+  ) as ReactComponentSvgLabelStyleEx<unknown>
+  style.jsx = jsx
+  return style
+}
+
+export function createReactComponentHtmlLabelStyleFromJSX(
+  jsx: string,
+  size: Size | SizeConvertible
+): ReactComponentHtmlLabelStyle<any> {
+  const style = new ReactComponentHtmlLabelStyle(
+    compileRenderFunction(jsx),
+    size
+  ) as ReactComponentHtmlLabelStyleEx<unknown>
   style.jsx = jsx
   return style
 }

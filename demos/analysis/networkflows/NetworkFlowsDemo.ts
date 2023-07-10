@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,15 +31,16 @@ import {
   DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  EdgeStyleDecorationInstaller,
   FreeEdgeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
+  GraphFocusIndicatorManager,
+  GraphHighlightIndicatorManager,
   GraphItemTypes,
+  GraphSelectionIndicatorManager,
   HierarchicLayout,
   HierarchicLayoutData,
   ICanvasObjectDescriptor,
-  ICommand,
   ICompoundEdit,
   IEdge,
   IGraph,
@@ -47,7 +48,6 @@ import {
   ILabelOwner,
   IMapper,
   IModelItem,
-  IncrementalHintItemMapping,
   INode,
   ItemClickedEventArgs,
   LabelPlacements,
@@ -63,7 +63,8 @@ import {
   PreferredPlacementDescriptor,
   Rect,
   Size,
-  StyleDecorationZoomPolicy
+  VoidEdgeStyle,
+  VoidLabelStyle
 } from 'yfiles'
 
 import HTMLPopupSupport from './HTMLPopupSupport'
@@ -74,16 +75,10 @@ import {
   TagUndoUnit
 } from './NetworkFlowsHelper'
 import { MinCutLine, NetworkFlowEdgeStyle, NetworkFlowNodeStyle } from './DemoStyles'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The GraphComponent.
@@ -136,18 +131,14 @@ let nodesToChange: INode[] = []
  */
 let compoundEdit: ICompoundEdit
 
-const newButton = document.getElementById('newButton') as HTMLButtonElement
-const algorithmComboBox = document.getElementById('algorithmComboBox') as HTMLSelectElement
-const reloadButton = document.getElementById('reloadButton') as HTMLButtonElement
-const layoutButton = document.getElementById('layoutButton') as HTMLButtonElement
+const newButton = document.getElementById('new-button') as HTMLButtonElement
+const algorithmComboBox = document.getElementById('algorithm-combo-box') as HTMLSelectElement
+const reloadButton = document.getElementById('reload-button') as HTMLButtonElement
+const layoutButton = document.getElementById('layout-button') as HTMLButtonElement
 const edgePopupContent = document.getElementById('edgePopupContent') as HTMLElement
 const costForm = document.getElementById('cost-form') as HTMLInputElement
 const flowLabel = document.getElementById('flowInformationLabel') as HTMLElement
 const flowInput = document.getElementById('flowValue') as HTMLInputElement
-const costPlusButton = document.getElementById('costPlus') as HTMLButtonElement
-const costMinusButton = document.getElementById('costMinus') as HTMLButtonElement
-const applyButton = document.getElementById('apply') as HTMLButtonElement
-
 /**
  * Runs the demo.
  */
@@ -161,9 +152,7 @@ async function run(): Promise<void> {
   createEditorInputMode()
   graphComponent.fitGraphBounds()
   createSampleGraph()
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -190,20 +179,20 @@ function initializeGraph(): void {
     insets: [3, 5, 3, 5]
   })
 
-  const decorator = graph.decorator
-  decorator.nodeDecorator.reshapeHandleProviderDecorator.setImplementation(
+  graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setImplementation(
     new EmptyReshapeHandleProvider()
   )
 
-  const edgeStyleHighlight = new EdgeStyleDecorationInstaller({
-    edgeStyle: new NetworkFlowEdgeStyle(Color.DARK_ORANGE),
-    zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    edgeStyle: VoidEdgeStyle.INSTANCE,
+    labelStyle: VoidLabelStyle.INSTANCE
   })
-  decorator.edgeDecorator.highlightDecorator.setImplementation(edgeStyleHighlight)
-  decorator.edgeDecorator.selectionDecorator.hideImplementation()
-
-  decorator.labelDecorator.selectionDecorator.hideImplementation()
-  decorator.labelDecorator.focusIndicatorDecorator.hideImplementation()
+  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
+    labelStyle: VoidLabelStyle.INSTANCE
+  })
+  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
+    edgeStyle: new NetworkFlowEdgeStyle(Color.DARK_ORANGE)
+  })
 }
 
 /**
@@ -649,7 +638,7 @@ async function runLayout(
         incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
       )
     }
-    layoutData.incrementalHints = IncrementalHintItemMapping.from(incrementalNodesMapper)
+    layoutData.incrementalHints = incrementalNodesMapper
   } else {
     layoutAlgorithm.layoutMode = LayoutMode.FROM_SCRATCH
   }
@@ -878,30 +867,24 @@ function generateColors(startColor: Color, endColor: Color, gradientCount: numbe
 /**
  * Wires up the UI.
  */
-function registerCommands(): void {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    graphComponent.graph.undoEngine!.clear()
-  })
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindChangeListener("select[data-command='AlgorithmSelectionChanged']", onAlgorithmChanged)
-  addNavigationButtons(algorithmComboBox)
-  bindAction("button[data-command='Reload']", () => {
+function initializeUI(): void {
+  addNavigationButtons(algorithmComboBox).addEventListener('change', onAlgorithmChanged)
+
+  reloadButton.addEventListener('click', () => {
     edgePopup.currentItem = null
     createSampleGraph()
   })
-  bindAction("button[data-command='Layout']", () => {
+  layoutButton.addEventListener('click', () => {
     edgePopup.currentItem = null
     runLayout(false)
   })
-  costPlusButton.addEventListener('click', () => updateCostForm(1), true)
-  costMinusButton.addEventListener('click', () => updateCostForm(-1), true)
-  applyButton.addEventListener(
+  document
+    .querySelector<HTMLButtonElement>('#cost-plus')!
+    .addEventListener('click', () => updateCostForm(1), true)
+  document
+    .querySelector<HTMLButtonElement>('#cost-minus')!
+    .addEventListener('click', () => updateCostForm(-1), true)
+  document.querySelector<HTMLButtonElement>('#apply')!.addEventListener(
     'click',
     () => {
       runFlowAlgorithm()
@@ -1161,5 +1144,4 @@ function createSampleGraph(): void {
   onAlgorithmChanged()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

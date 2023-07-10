@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   ICanvasObjectDescriptor,
-  ICommand,
   IEdge,
   IGraph,
   IModelItem,
@@ -44,18 +43,17 @@ import {
   License,
   List,
   Point,
-  Rect,
   ShapeNodeStyle,
   SvgVisual,
   SvgVisualGroup
 } from 'yfiles'
 
 import MazeData from './resources/maze.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
-import { OptionEditor } from '../../resources/demo-option-editor.js'
+import { OptionEditor } from 'demo-resources/demo-option-editor'
 import PolylineEdgeRouterConfig from './PolylineEdgeRouterConfig.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The graph component that displays the demo's graph.
@@ -115,10 +113,7 @@ async function run() {
   initializeUndoEngine(graphComponent.graph)
 
   // wire up the UI
-  registerCommands()
-
-  // initialize the demo
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -329,7 +324,7 @@ function createSampleGraph(graph) {
   builder.createNodesSource({
     data: MazeData.nodes,
     id: 'id',
-    layout: data => Rect.from(data),
+    layout: data => data,
     style: data => {
       if (data.maze) {
         return mazeNodeStyle
@@ -349,7 +344,7 @@ function createSampleGraph(graph) {
     }
 
     for (const bend of edge.tag.bends) {
-      graph.addBend(edge, Point.from(bend))
+      graph.addBend(edge, bend)
     }
   }
 }
@@ -382,23 +377,12 @@ function createMazeVisual() {
 /**
  * Wires up the UI.
  */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+function initializeUI() {
+  document
+    .querySelector('#route-edges-button')
+    .addEventListener('click', () => routeWithSettingsScope())
 
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindAction("button[data-command='RouteEdgesCommand']", () => routeWithSettingsScope())
-
-  bindAction("button[data-command='ResetConfigCommand']", () => {
+  document.querySelector('#reset-button').addEventListener('click', () => {
     optionEditor.reset()
     optionEditor.refresh()
   })
@@ -445,5 +429,4 @@ class MazeVisual extends BaseClass(IVisualCreator) {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

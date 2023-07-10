@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,12 +42,11 @@ import {
   ShapeNodeStyle,
   Size
 } from 'yfiles'
-
-import { readGraph, showApp } from '../../resources/demo-app'
 import { PortReshapeHandleProvider } from './PortReshapeHandlerProvider'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 let graphEditorInputMode: GraphEditorInputMode
@@ -104,10 +103,8 @@ async function run(): Promise<void> {
   registerReshapeHandleProvider(graphComponent.graph)
 
   // create initial graph
-  await readGraph(new GraphMLIOHandler(), graphComponent.graph, 'resources/sample.graphml')
+  await new GraphMLIOHandler().readFromURL(graphComponent.graph, 'resources/sample.graphml')
   graphComponent.fitGraphBounds()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -186,5 +183,4 @@ function onBlur(): void {
   graphEditorInputMode.requeryHandles()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

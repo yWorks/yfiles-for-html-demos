@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,10 +37,12 @@ const MARGIN = 15
  * This class renders a rectangle that represents the page.
  */
 export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
+  pageWidth = 0
+  pageHeight = 0
+  center
+
   constructor() {
     super()
-    this.pageWidth = 0
-    this.pageHeight = 0
     /**
      * Specifies the center of the page.
      */

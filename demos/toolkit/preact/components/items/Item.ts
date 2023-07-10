@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
+// @ts-ignore - We have no proper types for preact, here
 import { h, html } from '../../preact-loader'
 import type { DataItem } from '../../PreactDemo'
 
@@ -38,19 +38,21 @@ interface Props {
 }
 
 export default (props: Props) =>
-  html`<div class="item">
-    <div class="item-row item-head">
-      <h3>Item ${props.data.id}</h3>
-      <button class="remove-button" onClick=${() => props.removeDataItem(props.index)}>
-        remove
-      </button>
+  html`
+    <div class="item">
+      <div class="item-row item-head">
+        <h3>Item ${props.data.id}</h3>
+        <button class="remove-button" onClick=${() => props.removeDataItem(props.index)}>
+          remove
+        </button>
+      </div>
+      <div class="item-row">
+        Enabled
+        <input
+          type="checkbox"
+          checked=${props.data.state}
+          onChange=${() => props.toggleState(props.index)}
+        />
+      </div>
     </div>
-    <div class="item-row">
-      Enabled
-      <input
-        type="checkbox"
-        checked=${props.data.state}
-        onChange=${() => props.toggleState(props.index)}
-      />
-    </div>
-  </div>`
+  `

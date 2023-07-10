@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HandleInputMode,
-  ICommand,
   INode,
   License,
   List,
@@ -54,9 +53,9 @@ import {
 } from 'yfiles'
 
 import EditablePathNodeStyle, { PathHandle, updateHandles } from './EditablePathNodeStyle.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
-import { createDemoEdgeStyle } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, createDemoEdgeStyle } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -67,6 +66,7 @@ let graphComponent = null
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the graph
   initializeGraph()
@@ -76,9 +76,7 @@ async function run() {
 
   graphComponent.fitGraphBounds()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  graphComponent.graph.undoEngine.clear()
 }
 
 /**
@@ -334,14 +332,4 @@ function createSampleGraph() {
   graph.createEdge(n1, n2)
 }
 
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

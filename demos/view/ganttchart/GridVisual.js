@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,46 +26,35 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  CanvasComponent,
-  HtmlCanvasVisual,
-  IRenderContext,
-  IVisualCreator,
-  Visual
-} from 'yfiles'
-import { GanttMapper } from './GanttMapper.js'
+import { BaseClass, HtmlCanvasVisual, IVisualCreator } from 'yfiles'
+import { daysInMonth, ganttDayWidth, getVisualRange } from './gantt-utils.js'
+import { ganttTaskSpacing, getCompleteTaskHeight, getTaskY } from './sweepline-layout.js'
 
 /**
- * Manages and renders the background of the main component.
+ * Manages and renders the background grid of the main component.
  */
-export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
+export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
   /**
-   * Creates a new instance.
-   * @param {!GanttMapper} mapper The mapper to help with converting from coordinate to date.
-   * @param {*} dataModel The model data to create the grid for.
+   * Creates a new grid for the given data model.
+   * @param {!ChartData} dataModel
    */
-  constructor(mapper, dataModel) {
+  constructor(dataModel) {
     super()
     this.dataModel = dataModel
-    this.mapper = mapper
   }
 
   /**
    * Paints the grid visualization.
-   * @param {!IRenderContext} renderContext The render context of the {@link CanvasComponent}
-   * @param {!CanvasRenderingContext2D} renderingContext2D The HTML5 Canvas context to use for rendering.
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} renderingContext2D
    */
   paint(renderContext, renderingContext2D) {
     const { x, width } = renderContext.canvasComponent.viewport
-    const { startDate, endDate, startX, endX } = this.mapper.getVisualRange(
-      x - 100,
-      x + width + 100
-    )
+    const { startDate, startX, endX } = getVisualRange(x - 100, x + width + 100)
 
     this.paintDays(renderContext, renderingContext2D, startX, endX)
     this.paintMonths(renderContext, renderingContext2D, startX, endX, startDate)
-    this.paintTaskSeparators(renderContext, renderingContext2D, startX, endX)
+    this.paintTaskSeparators(renderingContext2D, startX, endX)
   }
 
   /**
@@ -79,7 +68,7 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
     const component = renderContext.canvasComponent
     const y1 = component.viewport.y
     const y2 = component.viewport.bottomLeft.y
-    const width = GanttMapper.dayWidth
+    const width = ganttDayWidth
 
     renderingContext2D.strokeStyle = '#ccc'
     renderingContext2D.lineWidth = 1
@@ -98,13 +87,12 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
    * @param {!CanvasRenderingContext2D} renderingContext2D
    * @param {number} startX
    * @param {number} endX
-   * @param {!Date} startDate
+   * @param {!GanttTimestamp} startDate
    */
   paintMonths(renderContext, renderingContext2D, startX, endX, startDate) {
     const component = renderContext.canvasComponent
     const y1 = component.viewport.y
     const y2 = component.viewport.bottomLeft.y
-    const width = GanttMapper.dayWidth
 
     renderingContext2D.strokeStyle = '#ccc'
     renderingContext2D.lineWidth = 3
@@ -113,11 +101,11 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
     for (
       let x = startX,
         // set date to "1" to make sure we don't get a problem with short months
-        month = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+        month = startDate.firstOfMonth();
       x < endX;
-      x += GanttMapper.dayWidth * GanttMapper.daysInMonth(month),
-        // works because date is set to "1"
-        month.setMonth(month.getMonth() + 1)
+      x += ganttDayWidth * daysInMonth(month),
+        // works because the date is set to "1"
+        month.addDays(daysInMonth(month))
     ) {
       renderingContext2D.moveTo(x, y1)
       renderingContext2D.lineTo(x, y2)
@@ -127,32 +115,21 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
 
   /**
    * Paints the horizontal task lane separators.
-   * @param {!IRenderContext} renderContext
    * @param {!CanvasRenderingContext2D} renderingContext2D
    * @param {number} beginX
    * @param {number} endX
    */
-  paintTaskSeparators(renderContext, renderingContext2D, beginX, endX) {
-    const x1 = beginX
-    const x2 = endX
-
+  paintTaskSeparators(renderingContext2D, beginX, endX) {
     renderingContext2D.save()
     renderingContext2D.strokeStyle = '#ccc'
     renderingContext2D.lineWidth = 1
-    try {
-      renderingContext2D.setLineDash([5, 5])
-    } catch (e) {
-      // Unsupported in IE9 and IE10. Just use solid line then
-    }
+    renderingContext2D.setLineDash([5, 5])
 
     renderingContext2D.beginPath()
     this.dataModel.tasks.forEach(task => {
-      const y =
-        this.mapper.getTaskY(task) +
-        this.mapper.getCompleteTaskHeight(task) +
-        GanttMapper.taskSpacing * 0.5
-      renderingContext2D.moveTo(x1, y)
-      renderingContext2D.lineTo(x2, y)
+      const y = getTaskY(task) + getCompleteTaskHeight(task) + ganttTaskSpacing * 0.5
+      renderingContext2D.moveTo(beginX, y)
+      renderingContext2D.lineTo(endX, y)
     })
     renderingContext2D.stroke()
     renderingContext2D.restore()

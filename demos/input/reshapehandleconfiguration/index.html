@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,87 +30,125 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Reshape Handle Provider Configuration Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Reshape Handle Provider Configuration</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Reshape Handle Provider Configuration Demo</h1>
 
         <p>This demo shows how resizing of nodes can be customized.</p>
 
         <p>
           This is done with custom configurations of the default
-          <a href="https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider" target="_blank">IReshapeHandleProvider</a> that are added to the lookup of the nodes.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider" target="_blank">IReshapeHandleProvider</a>
+          that are added to the lookup of the nodes.
         </p>
 
         <h2>Things to Try</h2>
 
         <ul>
           <li>Select and resize the nodes.</li>
-          <li>Hold <kbd>Shift</kbd> to keep the aspect ratio for any node.</li>
-          <li>Hold <kbd>Alt</kbd> to resize around the node's center.</li>
+          <li>
+            Hold
+            <kbd>Shift</kbd>
+            to keep the aspect ratio for any node.
+          </li>
+          <li>
+            Hold
+            <kbd>Alt</kbd>
+            to resize around the node's center.
+          </li>
         </ul>
 
         <h2>Node Types</h2>
         <ul>
           <li>
-            <em class="demo-bold">Red nodes</em> cannot be resized. They don't display resize
-            handles.
+            <em class="demo-bold">Red nodes</em>
+            cannot be resized. They don't display resize handles.
           </li>
           <li>
-            <em class="demo-bold">Green nodes</em> show only four handles at the corners. During
-            resizing, these handles always maintain the aspect ratio of the node.
+            <em class="demo-bold">Green nodes</em>
+            show only four handles at the corners. During resizing, these handles always maintain
+            the aspect ratio of the node.
           </li>
           <li>
-            <em class="demo-bold">Dark blue nodes</em> show only one handle in the bottom right
-            corner. During resizing, this handle always maintains the center of the node.
+            <em class="demo-bold">Dark blue nodes</em>
+            show only one handle in the bottom right corner. During resizing, this handle always
+            maintains the center of the node.
           </li>
           <li>
-            <em class="demo-bold">Purple nodes</em> show four handles at the corners and four
-            different handles at the sides. During resizing, the corner handles always maintain the
-            aspect ratio of the node while the border handles don't.
+            <em class="demo-bold">Purple nodes</em>
+            show four handles at the corners and four different handles at the sides. During
+            resizing, the corner handles always maintain the aspect ratio of the node while the
+            border handles don't.
           </li>
           <li>
-            <em class="demo-bold">Orange nodes</em> cannot extend beyond the black rectangle. Note
-            that orange nodes can only be resized so that the new bounding box stays withing the
-            bounding black rectangle.
+            <em class="demo-bold">Orange nodes</em>
+            cannot extend beyond the black rectangle. Note that orange nodes can only be resized so
+            that the new bounding box stays withing the bounding black rectangle.
           </li>
           <li>
-            <em class="demo-bold">Light blue nodes</em> combine the behavior of the orange and green
-            nodes.
+            <em class="demo-bold">Light blue nodes</em>
+            combine the behavior of the orange and green nodes.
           </li>
           <li>
-            <em class="demo-bold">Golden nodes</em> maintain their aspect ratio depending on some
-            application state. This state can be toggled by clicking one of the handles of a golden
-            node.
+            <em class="demo-bold">Golden nodes</em>
+            maintain their aspect ratio depending on some application state. This state can be
+            toggled by clicking one of the handles of a golden node.
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
     <script
       type="module"
       crossorigin="anonymous"
-      src="ReshapeHandleProviderConfigurationDemo.js"
+      src="ReshapeHandleProviderConfigurationDemo.ts"
+      async
     ></script>
   </body>
 </html>

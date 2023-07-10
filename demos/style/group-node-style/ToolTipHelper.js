@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,7 +39,6 @@ import {
   Point,
   TimeSpan
 } from 'yfiles'
-import { addClass } from '../../resources/demo-app.js'
 
 /**
  * Configures the given input mode to show tool tips for group nodes and folder nodes.
@@ -83,7 +82,7 @@ function createToolTipContent(node) {
   title.innerHTML = 'GroupNodeStyle Properties'
 
   const grid = document.createElement('div')
-  addClass(grid, 'tooltip-content')
+  grid.classList.add('tooltip-content')
   addToToolTipGrid(
     grid,
     'Folder Icon',
@@ -120,7 +119,7 @@ function createToolTipContent(node) {
 
   // build the tooltip container
   const toolTip = document.createElement('div')
-  addClass(toolTip, 'tooltip-container')
+  toolTip.classList.add('tooltip-container')
   toolTip.appendChild(title)
   toolTip.appendChild(grid)
   return toolTip
@@ -141,7 +140,7 @@ function addToToolTipGrid(grid, key, value) {
   if (typeof value === 'string') {
     valueSpan.innerHTML = value
   } else if (value) {
-    addClass(valueSpan, 'color')
+    valueSpan.classList.add('color')
     valueSpan.setAttribute('style', `background-color: ${fillToHexString(value)};`)
   } else {
     valueSpan.style.fontStyle = 'italic'

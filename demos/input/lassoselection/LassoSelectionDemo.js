@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,9 +39,9 @@ import {
   TouchEventRecognizers
 } from 'yfiles'
 
-import { bindChangeListener, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -70,9 +70,7 @@ async function run() {
 
   configureLassoSelection()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -118,7 +116,6 @@ function setSelectionStyle(style) {
       lassoSelectionInputMode.dragFreeRecognizer = MouseEventRecognizers.LEFT_DRAG
       // always start a segment for polyline lasso selection
       lassoSelectionInputMode.startSegmentRecognizer = EventRecognizers.ALWAYS
-      // end a segment with click
       lassoSelectionInputMode.endSegmentRecognizer = EventRecognizers.createOrRecognizer(
         MouseEventRecognizers.LEFT_DOWN,
         MouseEventRecognizers.LEFT_UP
@@ -129,7 +126,6 @@ function setSelectionStyle(style) {
       lassoSelectionInputMode.dragFreeRecognizerTouch = TouchEventRecognizers.TOUCH_MOVE_PRIMARY
       // always start a segment for polyline lasso selection
       lassoSelectionInputMode.startSegmentRecognizerTouch = EventRecognizers.ALWAYS
-      // end a segment with tap
       lassoSelectionInputMode.endSegmentRecognizerTouch = EventRecognizers.createOrRecognizer(
         TouchEventRecognizers.TOUCH_DOWN_PRIMARY,
         TouchEventRecognizers.TOUCH_UP_PRIMARY
@@ -228,17 +224,19 @@ function createSampleGraph(graph) {
 /**
  * Binds actions to the toolbar elements.
  */
-function registerCommands() {
-  bindChangeListener("select[data-command='ChooseSelectionStyle']", value =>
-    setSelectionStyle(value)
-  )
-  bindChangeListener("input[data-command='ChooseFinishRadius']", value =>
-    setFinishRadius(Number.parseFloat(value))
-  )
-  bindChangeListener("select[data-command='ChooseLassoTestable']", value =>
-    setLassoTestables(value)
-  )
+function initializeUI() {
+  const selectionStyles = document.querySelector('#selection-styles')
+  selectionStyles.addEventListener('change', evt => {
+    setSelectionStyle(selectionStyles.value)
+  })
+  const selectFinishRadius = document.querySelector('#select-finish-radius')
+  selectFinishRadius.addEventListener('change', evt => {
+    setFinishRadius(Number.parseFloat(selectFinishRadius.value))
+  })
+  const lassoTestable = document.querySelector('#choose-lasso-testable')
+  lassoTestable.addEventListener('change', evt => {
+    setLassoTestables(lassoTestable.value)
+  })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

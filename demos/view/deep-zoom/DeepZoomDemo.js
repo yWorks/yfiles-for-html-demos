@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,27 +27,28 @@
  **
  ***************************************************************************/
 import {
+  Class,
   FoldingManager,
-  FreeNodePortLocationModel,
-  GraphBuilder,
   GraphComponent,
-  GraphEditorInputMode,
-  IArrow,
-  ICommand,
+  GraphViewerInputMode,
+  LayoutExecutor,
   License,
-  Point,
   ScrollBarVisibility,
   ShapeNodeStyle,
-  Size,
-  SolidColorFill,
-  Stroke,
-  ViewportChanges
+  Size
 } from 'yfiles'
 
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import DeepZoomGroupNodeStyle from './DeepZoomGroupNodeStyle.js'
-import { deepZoomViewportListener } from './DeepZoomViewportListener.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { DeepZoomGroupNodeStyle } from './DeepZoomGroupNodeStyle.js'
+import { fitContent, initializeDeepZoom, zoomToOriginal } from './deep-zoom-update.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { loadSampleGraph } from './model/load-sample-graph.js'
+import { applyDeepZoomLayout } from './deep-zoom-layout.js'
+import { createDemoShapeNodeStyle } from 'demo-resources/demo-styles'
+
+// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
+// tools it from removing this dependency which is needed for 'applyLayout'.
+Class.ensure(LayoutExecutor)
 
 /**
  * Bootstraps the demo.
@@ -61,154 +62,47 @@ async function run() {
   graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.NEVER
   graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.NEVER
 
-  // enable smooth scrolling
-  graphComponent.animatedViewportChanges = ViewportChanges.ALL
-
-  // initialize the graph
-  initializeGraph(graphComponent)
+  initializeGraphStyles(graphComponent)
   await loadSampleGraph(graphComponent)
 
-  // Enable a managed view on the graph, instead of displaying all elements
+  // Enable a managed folding view on the graph, instead of displaying all elements
   enableFolding(graphComponent)
 
-  // initialize the input mode
-  graphComponent.inputMode = createEditorMode()
+  // apply different layouts to the individual layers
+  applyDeepZoomLayout(graphComponent.graph.foldingView)
 
-  // connects the toolbar buttons
-  registerCommands(graphComponent)
+  // initialize the input mode
+  graphComponent.inputMode = new GraphViewerInputMode()
+
+  initializeUI(graphComponent)
 
   // attach a viewport listener that adjusts the viewport and visible graph depending on zoom level
-  graphComponent.addViewportChangedListener(deepZoomViewportListener)
+  initializeDeepZoom(graphComponent)
 
   graphComponent.fitGraphBounds()
-
-  showApp(graphComponent)
 }
 
 /**
- * Sets a custom node style for the group nodes of the graph and initializes the styles for the normal nodes.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * Sets a custom node style for the group nodes of the graph and
+ * initializes the styles for the normal nodes.
+ * @param {!GraphComponent} graphComponent
  */
-function initializeGraph(graphComponent) {
+function initializeGraphStyles(graphComponent) {
   const graph = graphComponent.graph
 
   graph.groupNodeDefaults.style = new DeepZoomGroupNodeStyle(
-    new SolidColorFill('#fff'),
-    new Stroke('2.5px #996d4d')
+    new ShapeNodeStyle({ fill: '#fff', stroke: '2.5px #996d4d', shape: 'round-rectangle' })
   )
   graph.groupNodeDefaults.size = new Size(50, 50)
 
   graph.nodeDefaults.size = new Size(50, 50)
-  graph.nodeDefaults.style = new ShapeNodeStyle({ shape: 'round-rectangle', fill: 'lightblue' })
-}
-
-/**
- * Creates the default input mode for the graphComponent.
- * @returns {!GraphEditorInputMode}
- */
-function createEditorMode() {
-  return new GraphEditorInputMode({
-    allowEditLabel: true,
-    hideLabelDuringEditing: false,
-    allowGroupingOperations: true,
-    allowCreateEdge: false
-  })
-}
-
-/**
- * Loads the initial sample graph.
- * @param {!GraphComponent} graphComponent The given graphComponent
- * @returns {!Promise}
- */
-async function loadSampleGraph(graphComponent) {
-  const graph = graphComponent.graph
-
-  const graphBuilder = new GraphBuilder(graph)
-
-  // node creation
-  graph.nodeDefaults.shareStyleInstance = false
-  const response = await fetch('./resources/SampleGraph.json')
-  const sampleData = await response.json()
-  const nodesData = sampleData['nodes']
-  const nodesSource = graphBuilder.createNodesSource({
-    data: nodesData,
-    id: 'id',
-    parentId: 'parentId'
-  })
-  nodesSource.nodeCreator.styleBindings.addBinding('fill', data => data.fill)
-  nodesSource.nodeCreator.styleBindings.addBinding('stroke', data => `1.5px ${data.stroke}`)
-  nodesSource.nodeCreator.layoutBindings.addBinding('x', data => data.x)
-  nodesSource.nodeCreator.layoutBindings.addBinding('y', data => data.y)
-
-  // group node creation
-  graph.groupNodeDefaults.shareStyleInstance = false
-  const groupSource = graphBuilder.createGroupNodesSource({
-    data: sampleData['groupNodes'],
-    id: 'id',
-    parentId: 'parentId'
-  })
-  groupSource.nodeCreator.styleBindings.addBinding('fill', data => data.fill)
-  groupSource.nodeCreator.styleBindings.addBinding('stroke', data => `2.5px ${data.stroke}`)
-  groupSource.nodeCreator.layoutBindings.addBinding('x', data => data.x)
-  groupSource.nodeCreator.layoutBindings.addBinding('y', data => data.y)
-
-  // edge creation
-  graph.edgeDefaults.shareStyleInstance = false
-  const edgesSource = graphBuilder.createEdgesSource({
-    data: sampleData['edges'],
-    sourceId: 'from',
-    targetId: 'to',
-    bends: 'bends'
-  })
-
-  edgesSource.edgeCreator.styleBindings.addBinding('stroke', data => `1.5px ${data.color}`)
-  edgesSource.edgeCreator.styleBindings.addBinding('targetArrow', data =>
-    IArrow.from(`${data.color} medium triangle`)
-  )
-
-  // adjust source and target location of edges
-  function createParameter(node, location) {
-    return FreeNodePortLocationModel.INSTANCE.createParameter(
-      node,
-      new Point(location[0], location[1])
-    )
-  }
-
-  // adjust edge ports - if already included in the data used it, otherwise take the nodes' center
-  edgesSource.edgeCreator.addEdgeCreatedListener((sender, evt) => {
-    const sourceNode = evt.item.sourceNode
-    const targetNode = evt.item.targetNode
-    const sourceLocation = evt.dataItem.sourceLocation
-      ? evt.dataItem.sourceLocation
-      : [sourceNode.layout.center.x, sourceNode.layout.center.y]
-    const targetLocation = evt.dataItem.targetLocation
-      ? evt.dataItem.targetLocation
-      : [targetNode.layout.center.x, targetNode.layout.center.y]
-    graph.setPortLocationParameter(evt.item.sourcePort, createParameter(sourceNode, sourceLocation))
-    graph.setPortLocationParameter(evt.item.targetPort, createParameter(targetNode, targetLocation))
-  })
-
-  // actually create the graph
-  graphBuilder.buildGraph()
-}
-
-/**
- * Binds UI elements to actions.
- * @param {!GraphComponent} graphComponent The given graphComponent
- */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-
-  bindChangeListener("input[data-command='ToggleSmoothScrolling']", enabled => {
-    graphComponent.animatedViewportChanges = enabled ? ViewportChanges.ALL : ViewportChanges.NONE
-  })
+  graph.nodeDefaults.style = createDemoShapeNodeStyle('round-rectangle')
 }
 
 /**
  * Enables folding - changes the graphComponent's graph to a managed view
  * that provides the actual collapse/expand state.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param {!GraphComponent} graphComponent
  */
 function enableFolding(graphComponent) {
   // Creates the folding manager
@@ -217,5 +111,25 @@ function enableFolding(graphComponent) {
   graphComponent.graph = foldingManager.createFoldingView({ isExpanded: () => false }).graph
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+/**
+ * Registers special click listeners to the "zoom to original" and "fit content" buttons.
+ * @param {!GraphComponent} graphComponent
+ */
+function initializeUI(graphComponent) {
+  // Since setting the zoom to 1 or calling fitContent doesn't suffice in this scenario,
+  // register custom event listeners to the "zoom to original" and "fit content" buttons.
+  document
+    .querySelector('.demo-icon-yIconZoomOriginal')
+    .addEventListener('click', () => zoomToOriginal(graphComponent))
+  document
+    .querySelector('#description-button-zoom-original')
+    .addEventListener('click', () => zoomToOriginal(graphComponent))
+  document
+    .querySelector('.demo-icon-yIconZoomFit')
+    .addEventListener('click', () => fitContent(graphComponent))
+  document
+    .querySelector('#description-button-fit-content')
+    .addEventListener('click', () => fitContent(graphComponent))
+}
+
+void run().then(finishLoading)

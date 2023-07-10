@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,7 @@ import {
   Enum,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
+  GraphSelectionIndicatorManager,
   IGraph,
   INode,
   IReshapeHandler,
@@ -41,16 +41,17 @@ import {
   RectangleCorners,
   RectangleCornerStyle,
   RectangleNodeStyle,
-  Size
+  Size,
+  VoidNodeStyle
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app.js'
 import CornerSizeHandleProvider from './CornerSizeHandleProvider.js'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
-import { colorSets } from '../../resources/demo-colors.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { colorSets } from 'demo-resources/demo-colors'
+import { finishLoading } from 'demo-resources/demo-page'
 
 const [yellow, orange, green, blue, gray] = [
   colorSets['demo-palette-71'],
@@ -76,8 +77,6 @@ async function run() {
   graphComponent.fitGraphBounds()
 
   initializeUI(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -200,7 +199,9 @@ function initializeInteraction(graphComponent) {
       ])
   )
 
-  nodeDecorator.selectionDecorator.hideImplementation()
+  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
+    nodeStyle: VoidNodeStyle.INSTANCE
+  })
 }
 
 /**
@@ -285,7 +286,7 @@ function updateStyleProperties(graphComponent) {
  * @param {boolean} disabled
  */
 function setPropertiesViewState(disabled) {
-  document.querySelector('.demo-properties').style.display = disabled ? 'none' : 'inline-block'
+  document.querySelector('.demo-form-block').style.display = disabled ? 'none' : ''
   document.querySelector('.info-message').style.display = disabled ? 'inline-block' : 'none'
 }
 
@@ -344,11 +345,6 @@ function cornerValueToText(corner) {
  * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
   for (const element of document.getElementsByClassName('option-element')) {
     element.addEventListener('change', () => updateStyleProperties(graphComponent))
   }
@@ -383,5 +379,4 @@ function setComboBoxState(id, disabled, value) {
   comboBox.value = value
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

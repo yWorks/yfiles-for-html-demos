@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,8 +32,7 @@ import { GraphComponentService } from '../services/graph-component.service'
 
 @Component({
   selector: 'app-graph-overview-component',
-  templateUrl: './graph-overview-component.component.html',
-  styleUrls: ['./graph-overview-component.component.css']
+  templateUrl: './graph-overview-component.component.html'
 })
 export class GraphOverviewComponentComponent implements AfterViewInit {
   @ViewChild('graphOverviewComponentRef') graphOverviewComponentRef!: ElementRef

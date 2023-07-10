@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,7 +36,6 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   IInputModeContext,
   INode,
   INodeHitTester,
@@ -52,22 +51,15 @@ import {
   SvgVisual
 } from 'yfiles'
 
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
 import SampleData from './resources/SampleData'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
-import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent = null!
 
-// @ts-ignore
-let layoutHelper: ClearAreaLayoutHelper = null
+let layoutHelper: ClearAreaLayoutHelper = null!
 
 let componentAssignmentStrategy: ComponentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
 
@@ -84,11 +76,8 @@ async function run(): Promise<void> {
 
   graphComponent.graph.undoEngine!.clear()
 
-  // bind the buttons to their commands
-  registerCommands()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the buttons to their actions
+  initializeUI()
 }
 
 /**
@@ -212,7 +201,7 @@ function getHitGroupNode(context: IInputModeContext, location: Point): INode | n
  * Loads the sample graph associated with the given name
  */
 function loadGraph(sampleName: string): void {
-  // @ts-ignore
+  // @ts-ignore We don't have proper types for the sample data
   const data = SampleData[sampleName]
 
   const graph = graphComponent.graph
@@ -250,7 +239,7 @@ function loadGraph(sampleName: string): void {
       graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach((bend: { x: number; y: number }) => {
-      graph.addBend(edge, Point.from(bend))
+      graph.addBend(edge, bend)
     })
   })
 
@@ -258,28 +247,20 @@ function loadGraph(sampleName: string): void {
 }
 
 /**
- * Registers commands and actions for the items in the toolbar.
+ * Registers actions for the items in the toolbar.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  const sampleGraphs = document.getElementById('sample-graphs') as HTMLSelectElement
-  addNavigationButtons(sampleGraphs)
-  bindChangeListener("select[data-command='SelectSampleGraph']", () => {
+function initializeUI(): void {
+  const sampleGraphs = document.querySelector<HTMLSelectElement>('#sample-graphs')!
+  addNavigationButtons(sampleGraphs).addEventListener('change', () => {
     const selectedIndex = sampleGraphs.selectedIndex
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
   })
 
-  const assignmentStrategies = document.getElementById(
-    'component-assignment-strategies'
-  ) as HTMLSelectElement
-  bindChangeListener("select[data-command='SelectAssignmentStrategy']", () => {
+  const assignmentStrategies = document.querySelector<HTMLSelectElement>(
+    '#component-assignment-strategies'
+  )!
+  assignmentStrategies.addEventListener('change', () => {
     const selectedOption = assignmentStrategies.options[assignmentStrategies.selectedIndex]
     switch (selectedOption.value) {
       case 'single':
@@ -294,8 +275,8 @@ function registerCommands(): void {
     }
   })
 
-  const clearAreaStrategies = document.getElementById('clear-area-strategies') as HTMLSelectElement
-  bindChangeListener("select[data-command='SelectClearAreaStrategy']", () => {
+  const clearAreaStrategies = document.querySelector<HTMLSelectElement>('#clear-area-strategies')!
+  clearAreaStrategies.addEventListener('change', () => {
     const selectedOption = clearAreaStrategies.options[clearAreaStrategies.selectedIndex]
     switch (selectedOption.value) {
       case 'local':
@@ -317,5 +298,4 @@ function registerCommands(): void {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,38 +43,43 @@ import {
   GraphItemTypes,
   HierarchicLayout,
   HierarchicLayoutData,
-  ICommand,
-  ILayoutAlgorithm,
-  INode,
-  LayoutData,
+  type ILayoutAlgorithm,
+  type INode,
+  type LayoutData,
   License,
   NodeTypeAwareSequencer,
   OrganicEdgeRouter,
   OrganicLayout,
   OrganicLayoutData,
+  RadialLayout,
+  RadialLayoutData,
   Size,
   TreeLayout,
   TreeLayoutData,
   TreeReductionStage
 } from 'yfiles'
-import { addNavigationButtons, bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import {
   BalloonSampleData,
   CircularSampleData,
   CompactDiskSampleData,
   ComponentSampleData,
   HierarchicSampleData,
+  type NodeData,
   OrganicSampleData,
+  RadialSampleData,
+  type SampleData,
   TreeSampleData
 } from './resources/SampleData'
-import NodeTypePanel from '../../utils/NodeTypePanel'
-import type { ColorSetName } from '../../resources/demo-styles'
+import NodeTypePanel from 'demo-utils/NodeTypePanel'
+import type { ColorSetName } from 'demo-resources/demo-styles'
 import {
   applyDemoTheme,
+  colorSets,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Type describing a sample graph and the according layout algorithm to run on it.
@@ -83,19 +88,20 @@ type Sample = {
   name: string
   layout: ILayoutAlgorithm
   layoutData: LayoutData
-  sampleData: any
+  sampleData: SampleData
   directed?: boolean
 }
 
 /**
  * Initialization of the seven samples.
  */
-const samples: Sample[] = [
+const samples = [
   createHierarchicSample(),
   createOrganicSample(),
   createTreeSample(),
   createBalloonSample(),
   createCircularSample(),
+  createRadialSample(),
   createComponentSample(),
   createCompactDiskSample()
 ]
@@ -118,11 +124,10 @@ async function run(): Promise<void> {
   graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
   configureGraphComponent()
-  registerCommands()
+  initializeUI()
   prepareSampleList()
   initializeTypePanel()
   await loadSample()
-  showApp(graphComponent)
 }
 
 /**
@@ -130,7 +135,7 @@ async function run(): Promise<void> {
  *
  * @param node the node to query the type for
  */
-function getNodeType(node: INode): any {
+function getNodeType(node: INode): number {
   // The implementation for this demo assumes that on the INode.tag a type property
   // (a number) exists. Note though that for the layout's node type feature arbitrary objects from
   // an arbitrary sources may be used. In other applications one could, for example, use the color
@@ -143,7 +148,8 @@ function getNodeType(node: INode): any {
   // Use the label text of the node as type
   // return node.labels.size > 0 ? node.labels.get(0).text : null
 
-  return (node.tag && node.tag.type) || 0
+  const tag = node.tag as { type: number } | null
+  return (tag && tag.type) || 0
 }
 
 /**
@@ -203,6 +209,7 @@ function createTreeSample(): Sample {
   const edgeRouter = new EdgeRouter({ scope: 'route-affected-edges' })
   const reductionStage = new TreeReductionStage({
     nonTreeEdgeRouter: edgeRouter,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     nonTreeEdgeSelectionKey: edgeRouter.affectedEdgesDpKey
   })
   layout.prependStage(reductionStage)
@@ -283,6 +290,21 @@ function createCompactDiskSample(): Sample {
 }
 
 /**
+ * Creates and configures the {@link RadialLayout} and the {@link RadialLayoutData}
+ * such that node types are considered.
+ */
+function createRadialSample(): Sample {
+  //create a compact disk layout with a little additional node distance (since the nodes
+  // are not circles and this algorithm treats them as such)
+  const layout = new RadialLayout({ minimumLayerDistance: 150 })
+
+  // the node types are specified as delegate on the nodeTypes property of the layout data
+  const layoutData = new RadialLayoutData({ nodeTypes: getNodeType })
+
+  return { name: 'Radial Layout', layout, layoutData, sampleData: RadialSampleData }
+}
+
+/**
  * Applies the current layout style to the current graph.
  */
 async function applyCurrentLayout(animate: boolean, considerTypes: boolean): Promise<void> {
@@ -313,7 +335,7 @@ async function loadSample(previewWithoutNodeTypes = false): Promise<void> {
     id: 'id',
     layout: 'layout',
     tag: 'tag',
-    style: (dataItem: any) => {
+    style: (dataItem: NodeData) => {
       if (dataItem.tag) {
         // Create node style depending on type tag
         return createDemoNodeStyle(typeColors[dataItem.tag.type])
@@ -348,7 +370,7 @@ async function loadSample(previewWithoutNodeTypes = false): Promise<void> {
  * @param previewWithoutNodeTypes whether the layout should first run ignoring the node types to make
  *  the difference easily visible
  */
-async function arrangeGraph(animate: boolean, previewWithoutNodeTypes: boolean) {
+async function arrangeGraph(animate: boolean, previewWithoutNodeTypes: boolean): Promise<void> {
   setUIDisabled(true)
   // Run a layout without considering the node types
   if (previewWithoutNodeTypes) {
@@ -376,7 +398,7 @@ function configureGraphComponent(): void {
   const geim = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE
   })
-  geim.nodeCreator = (context, graph, location, parent) => {
+  geim.nodeCreator = (context, graph, location, _): INode => {
     const node = graph.createNodeAt(location)
     setNodeType(node, 0)
     return node
@@ -404,13 +426,13 @@ function setNodeType(node: INode, type: number): void {
  * Initializes the {@link NodeTypePanel} that allows for changing a node's type.
  */
 function initializeTypePanel(): void {
-  const typePanel = new NodeTypePanel(graphComponent, typeColors)
-  typePanel.nodeTypeChanged = (item, newType) => {
+  const typePanel = new NodeTypePanel(graphComponent, typeColors, colorSets)
+  typePanel.nodeTypeChanged = (item, newType): void => {
     setNodeType(item, newType)
     graphComponent.selection.clear()
   }
 
-  typePanel.typeChanged = async () => {
+  typePanel.typeChanged = async (): Promise<void> => {
     await arrangeGraph(true, false)
   }
 
@@ -434,17 +456,20 @@ function prepareSampleList(): void {
 }
 
 /**
- * Binds the various actions to the buttons in the toolbar.
+ * Binds actions to the buttons in the toolbar.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindAction("button[data-command='Layout']", () => arrangeGraph(true, true))
-  bindAction("button[data-command='Reset']", () => loadSample(true))
+function initializeUI(): void {
+  document
+    .querySelector<HTMLButtonElement>('#layout-button')!
+    .addEventListener('click', async (): Promise<void> => {
+      await arrangeGraph(true, true)
+    })
+
+  document
+    .querySelector<HTMLButtonElement>('#reset-button')!
+    .addEventListener('click', async (): Promise<void> => {
+      await loadSample(true)
+    })
 
   const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
   sampleComboBox.addEventListener('change', () => loadSample(true))
@@ -456,8 +481,8 @@ function registerCommands(): void {
  * @param disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled: boolean): void {
-  document.querySelector<HTMLButtonElement>("button[data-command='Reset']")!.disabled = disabled
-  document.querySelector<HTMLButtonElement>("button[data-command='Layout']")!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#reset-button')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#layout-button')!.disabled = disabled
   document.querySelector<HTMLSelectElement>('#sample-combo-box')!.disabled = disabled
   ;(graphComponent.inputMode as GraphEditorInputMode).enabled = !disabled
 }
@@ -467,13 +492,12 @@ function setUIDisabled(disabled: boolean): void {
  * @param visible true if the popup should be visible, false otherwise
  * @param text the desired text
  */
-function updateLayoutPopup(visible: boolean, text?: string) {
+function updateLayoutPopup(visible: boolean, text?: string): void {
   const popup = document.querySelector('#loadingPopup')!
   popup.className = visible ? 'visible' : ''
-  if (text) {
+  if (text != null) {
     popup.innerHTML = text
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+void run().then(finishLoading)

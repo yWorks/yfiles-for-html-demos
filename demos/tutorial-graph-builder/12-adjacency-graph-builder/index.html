@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>12 Adjacency Graph Builder - Graph Builder Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-graph-builder"> Graph Builder Tutorial </a>
+
+        <span>12 Adjacency Graph Builder</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-graph-builder/11-update-graph/index.html'><span>11 Update Graph</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 12/13</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 12 Adjacency Graph Builder</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-graph-builder/01-create-graph/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create Graph</a
+          ><a
+            href="../../tutorial-graph-builder/02-create-nodes-sources/index.html"
+            class="tutorial-dropdown__item"
+            >02 Create Nodes Sources</a
+          ><a
+            href="../../tutorial-graph-builder/03-create-edges-sources/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Edges Sources</a
+          ><a
+            href="../../tutorial-graph-builder/04-group-nodes/index.html"
+            class="tutorial-dropdown__item"
+            >04 Group Nodes</a
+          ><a
+            href="../../tutorial-graph-builder/05-implicit-grouping/index.html"
+            class="tutorial-dropdown__item"
+            >05 Implicit Grouping</a
+          ><a
+            href="../../tutorial-graph-builder/06-configure-styles/index.html"
+            class="tutorial-dropdown__item"
+            >06 Configure Styles</a
+          ><a
+            href="../../tutorial-graph-builder/07-create-labels-sources/index.html"
+            class="tutorial-dropdown__item"
+            >07 Create Labels Sources</a
+          ><a
+            href="../../tutorial-graph-builder/08-configure-labels/index.html"
+            class="tutorial-dropdown__item"
+            >08 Configure Labels</a
+          ><a
+            href="../../tutorial-graph-builder/09-configure-tags/index.html"
+            class="tutorial-dropdown__item"
+            >09 Configure Tags</a
+          ><a
+            href="../../tutorial-graph-builder/10-configure-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Configure Layout</a
+          ><a
+            href="../../tutorial-graph-builder/11-update-graph/index.html"
+            class="tutorial-dropdown__item"
+            >11 Update Graph</a
+          ><a
+            href="../../tutorial-graph-builder/12-adjacency-graph-builder/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >12 Adjacency Graph Builder</a
+          ><a
+            href="../../tutorial-graph-builder/13-tree-builder/index.html"
+            class="tutorial-dropdown__item"
+            >13 Tree Builder</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-graph-builder/13-tree-builder/index.html'><span>13 Tree Builder</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Building a graph with the AdjacencyGraphBuilder</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In this tutorial step we show how to use <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> to
+                  build a graph from data, where the relationship information between the nodes is
+                  part of the node data entry.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_the_data">The data</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Consider the following list of data objects, which represents a basic organization
+                  chart. In this example, every data object has an <code>id</code> and
+                  <em>optionally</em> a <code>colleagues</code> property. The
+                  <code>colleagues</code> property, if available, contains a list with the
+                  <code>id</code>s of the <em>colleagues</em> of the associated node object.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre class="highlight"><code class="language-javascript" data-lang="javascript">{
+  <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
+  <span class="hljs-attr">position</span>: <span class="hljs-string">&#x27;Chief Executive Officer&#x27;</span>,
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Eric Joplin&#x27;</span>,
+  <span class="hljs-attr">colleagues</span>: [<span class="hljs-string">&#x27;0_0&#x27;</span>, <span class="hljs-string">&#x27;0_1&#x27;</span>]
+},
+{
+  <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0_0&#x27;</span>,
+  <span class="hljs-attr">position</span>: <span class="hljs-string">&#x27;Chief Executive Assistant&#x27;</span>,
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Gary Roberts&#x27;</span>,
+  <span class="hljs-attr">colleagues</span>: [<span class="hljs-string">&#x27;0_0_0&#x27;</span>, <span class="hljs-string">&#x27;0_0_1&#x27;</span>]
+},
+{
+  <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0_0_0&#x27;</span>,
+  <span class="hljs-attr">position</span>: <span class="hljs-string">&#x27;Senior Executive Assistant&#x27;</span>,
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Alexander Burns&#x27;</span>
+},
+{
+  <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0_0_1&#x27;</span>,
+  <span class="hljs-attr">position</span>: <span class="hljs-string">&#x27;Junior Executive Assistant&#x27;</span>,
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Linda Newland&#x27;</span>
+},
+{
+  <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0_1&#x27;</span>,
+  <span class="hljs-attr">position</span>: <span class="hljs-string">&#x27;Vice President of Production&#x27;</span>,
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Amy Kain&#x27;</span>,
+  <span class="hljs-attr">colleagues</span>: [<span class="hljs-string">&#x27;0_1_0&#x27;</span>]
+},
+{
+  <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0_1_0&#x27;</span>,
+  <span class="hljs-attr">position</span>: <span class="hljs-string">&#x27;Production Supervisor&#x27;</span>,
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Kathy Maxwell&#x27;</span>
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_building_the_graph">Building the graph</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In the first step, we instantiate the <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> and
+                  configure an
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyNodesSource(TDataItem)" target="_blank">AdjacencyNodesSource</a>.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> adjacencyGraphBuilder = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AdjacencyGraphBuilder</span>(graph)
+
+<span class="hljs-keyword">const</span> adjacencyNodesSource = adjacencyGraphBuilder.<span class="hljs-title function_">createNodesSource</span>(
+  nodesData,
+  <span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">id</span>
+)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In the second step, we configure the <em>colleagues</em> or <em>successors</em> on
+                  the <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyNodesSource(TDataItem)" target="_blank">AdjacencyNodesSource</a>. For
+                  edge creation, we use an <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeCreator" target="_blank">EdgeCreator</a> with a default configuration.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">adjacencyNodesSource.<span class="hljs-title function_">addSuccessorIds</span>(
+  <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">colleagues</span>,
+  <span class="hljs-keyword">new</span> <span class="hljs-title class_">EdgeCreator</span>({ <span class="hljs-attr">defaults</span>: graph.<span class="hljs-property">edgeDefaults</span> })
+)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Finally, we add labels to the graph building process by providing a label binding
+                  for the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a>'s <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator" target="_blank">NodeCreator</a>.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript">adjacencyNodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>({
+  <span class="hljs-attr">text</span>: <span class="hljs-function"><span class="hljs-params">dataItem</span> =&gt;</span> dataItem.<span class="hljs-property">name</span>
+})</code></pre>
+                </div>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> supports the same labeling
+                          functionality as the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In this tutorial step, we built a graph with
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> using the <code>id</code>s provided by the
+                  data entries for the calculation of <em>successors.</em> Of course, it is also
+                  possible to define <em>predecessors</em> in a similar manner.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Yet another functionality of <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> is to use
+                  predecessor/successor <em>sources</em>. See the
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder Developer&#8217;s Guide</a>
+                  for an in-depth discussion.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          Please have a look in this tutorial step’s demo code in
+                          <code>adjacency-graph-building.ts</code> and play around with the
+                          different ways to import business data.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-graph-builder/13-tree-builder/index.html'><span>13 Tree Builder</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

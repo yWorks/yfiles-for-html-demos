@@ -1,0 +1,102 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.highlight-description {
+  animation-name: highlight-animation;
+  animation-duration: 3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes highlight-animation {
+  0% {
+    background-color: #c8dce1;
+  }
+  20% {
+    background-color: #ff9800;
+  }
+  100% {
+    background-color: #c8dce1;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.demo-left-hidden #sample-selection--toolbar {
+  display: inline-block;
+}
+
+.demo-description__content {
+  scrollbar-gutter: stable;
+}
+
+#sample-description-container {
+  background-color: #c8dce1;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 0 -8px;
+}
+
+#sample-selection--sidebar {
+  display: grid;
+  margin-bottom: 8px;
+  grid-template-columns: [start] 25px [mid] auto [end] 25px;
+  justify-items: center;
+}
+
+#sample-selection--sidebar button {
+  display: inline-block;
+  outline: none;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color: transparent;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  line-height: 24px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+#sample-selection--sidebar button:disabled {
+  opacity: 0.5;
+}
+
+#sample-selection--sidebar button:not(:disabled):hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+#sample-select--sidebar {
+  font-size: 14px;
+  width: 95%;
+  margin: 0 4px;
+}

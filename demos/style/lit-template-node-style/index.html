@@ -2,11 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -30,44 +29,21 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Lit Template Node Style Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/lint.min.css"
-    />
-
-    <!-- a helper package and the demo -->
+    <!-- a helper package needed for CodeMirror linting -->
     <script src="https://unpkg.com/jsonlint@1.6.3"></script>
 
-    <!-- load Codemirror resources -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/search.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/searchcursor.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/json-lint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/lint/lint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/xml/xml.min.js"></script>
-
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       #graphComponent {
-        background-color: #eeeeee;
+        background-color: #f7f7f7;
       }
 
       .editorText {
@@ -75,46 +51,24 @@
         font-size: 13px;
       }
 
-      .right h2 {
-        margin: 1ex 1em 1ex 1ex;
-        display: inline-block;
-      }
-
-      .left {
-        width: 50%;
-        top: 60px;
-        position: absolute;
-        bottom: 0;
-        border-right: 4px solid #f7f7f7;
-      }
-
-      .right {
-        width: 49.8%;
-        position: absolute;
-        top: 100px;
-        bottom: 0;
-        right: 0;
-        background-color: #f7f7f7;
-        padding-right: 10px;
-        box-sizing: border-box;
-      }
-
-      @media screen and (max-height: 500px) {
-        .right {
-          top: 60px;
-        }
+      .heading-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       #templateEditorContainer {
-        height: 70%;
+        flex: 2;
+        min-height: 0;
       }
 
       #tagEditorContainer {
-        height: 20%;
+        flex: 1;
+        min-height: 0;
       }
 
       .CodeMirror {
-        height: 100%;
+        height: 100% !important;
       }
 
       .error {
@@ -138,7 +92,6 @@
       }
 
       .apply-button {
-        float: right;
         margin: 1ex 0 1ex 0;
         padding: 5px 9px 5px 9px;
         background-color: #1871bd;
@@ -161,13 +114,54 @@
         padding: 2px 4px;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Lit Template Node Style</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+      <div class="demo-separator"></div>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button id="reload" title="Reload" class="demo-icon-yIconReload"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Lit Template Node Style Demo</h1>
 
         <p>
@@ -191,88 +185,64 @@
 
         <h2>Related Demos</h2>
         <ul>
-          <li><a href="../../style/templatestyles/index.html">Template Styles Demo</a></li>
+          <li><a href="../../style/templatestyles/">Template Styles Demo</a></li>
           <li>
-            <a href="../../style/vuejstemplatenodestyle/index.html"
-              >Vue.js Template Node Style Demo</a
-            >
+            <a href="../../style/vue-template-node-style/">
+              Vue.js Template Node Style Demo
+            </a>
           </li>
           <li>
-            <a href="../string-template-node-style/index.html">String Template Node Style Demo</a>
+            <a href="../string-template-node-style/">String Template Node Style Demo</a>
           </li>
           <li>
-            <a href="../react-template-node-style/index.html"
-              >React JSX Component Node Style Demo</a
-            >
+            <a href="../react-template-node-style/">React JSX Component Style Demo</a>
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button
-          data-command="Open"
-          title="Open from GraphML File"
-          class="demo-icon-yIconOpen"
-        ></button>
-        <button
-          data-command="Save"
-          title="Save to GraphML File"
-          class="demo-icon-yIconSave"
-        ></button>
-        <div class="demo-separator"></div>
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-        <button data-command="Reload" title="Reload" class="demo-icon-yIconReload"></button>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
       </div>
 
-      <div class="demo-content-dynamic">
-        <div id="graphComponent" class="left"></div>
-        <div class="right">
-          <h2>Template String</h2>
-          <button
-            data-command="ApplyTemplate"
-            id="apply-template-button"
-            class="apply-button"
-            title="Applies the current Template to all selected nodes"
-          >
-            Apply Template
-          </button>
+      <aside
+        data-title="Template Editor"
+        class="demo-main__sidebar"
+        style="--sidebar-width: max(50%, min(100%, 450px))"
+      >
+        <div class="demo-sidebar__content">
+          <div class="heading-row">
+            <h2>Template String</h2>
+            <button
+              id="apply-template-button"
+              class="apply-button"
+              title="Applies the current Template to all selected nodes"
+            >
+              Apply Template
+            </button>
+          </div>
           <div id="template-text-area-error" class="error">Could not compile template string!</div>
           <div id="templateEditorContainer" class="editorText">
             <textarea id="template-text-area" style="width: 100%; height: 100%"></textarea>
           </div>
 
-          <h2>Tag Object</h2>
-          <button
-            data-command="ApplyTag"
-            id="apply-tag-button"
-            class="apply-button"
-            title="Applies the current Tag to all selected nodes"
-          >
-            Apply Tag
-          </button>
+          <div class="heading-row">
+            <h2>Tag Object</h2>
+            <button
+              id="apply-tag-button"
+              class="apply-button"
+              title="Applies the current Tag to all selected nodes"
+            >
+              Apply Tag
+            </button>
+          </div>
           <div id="tag-text-area-error" class="error">Could not parse tag object!</div>
           <div id="tagEditorContainer" class="editorText">
             <textarea id="tag-text-area"></textarea>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="LitTemplateNodeStyleDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="LitTemplateNodeStyleDemo.ts" async></script>
   </body>
 </html>

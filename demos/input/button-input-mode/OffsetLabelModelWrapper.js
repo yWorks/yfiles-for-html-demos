@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -180,6 +180,13 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
 }
 
 class OffsetLabelModelWrapperParameter extends BaseClass(ILabelModelParameter) {
+  _model
+  wrappedRatio
+  labelRatio
+  wrappedParameter
+  offset
+  wrappedSize
+
   /**
    * @param {!OffsetLabelModelWrapper} model
    * @param {!ILabelModelParameter} wrappedParameter

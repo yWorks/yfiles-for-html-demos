@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,22 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+export type FullNodeData = {
+  position: string
+  name: string
+  email: string
+  phone: string
+  fax: string
+  businessUnit: string
+  status: 'unavailable' | 'travel' | 'busy' | 'present'
+  icon: string
+  assistant?: boolean
+  layout: { x: number; y: number }
+  id: string
+}
+
+export type NodeData = Omit<FullNodeData, 'layout' | 'id'>
+
 export default {
   nodes: [
     {
@@ -101,7 +117,7 @@ export default {
       layout: { x: 310, y: 281 },
       assistant: true
     }
-  ],
+  ] satisfies FullNodeData[],
 
   edges: [
     {

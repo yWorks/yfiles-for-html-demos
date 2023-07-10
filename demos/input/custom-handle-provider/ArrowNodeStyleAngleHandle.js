@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,6 +52,24 @@ import {
  * {@link ArrowNodeStyle.angle} interactively.
  */
 export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
+  handleOffset = 15.0
+  style
+
+  // x and y factors that are used to translate the mouse delta to the relative handle movement
+  xFactor = 0
+  yFactor = 0
+  arrowSideWidth = 0
+  initialAngle = 0
+  initialHandleOffset = 0
+  handleOffsetToHeadLengthForPositiveAngles = 0
+  handleOffsetToHeadLengthForNegativeAngles = 0
+
+  // minimum and maximum handle offsets that result in the minimum and maximum allowed angles
+  handleOffsetForMinAngle = 0
+  handleOffsetForMaxAngle = 0
+
+  angleLineCanvasObject
+
   /**
    * Creates a new instance for the given node.
    * @param {!INode} node The node whose style shall be changed.
@@ -61,22 +79,6 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     super()
     this.angleChanged = angleChanged
     this.node = node
-    this.handleOffset = 15.0
-
-    // x and y factors that are used to translate the mouse delta to the relative handle movement
-    this.xFactor = 0
-
-    this.yFactor = 0
-    this.arrowSideWidth = 0
-    this.initialAngle = 0
-    this.initialHandleOffset = 0
-    this.handleOffsetToHeadLengthForPositiveAngles = 0
-    this.handleOffsetToHeadLengthForNegativeAngles = 0
-
-    // minimum and maximum handle offsets that result in the minimum and maximum allowed angles
-    this.handleOffsetForMinAngle = 0
-
-    this.handleOffsetForMaxAngle = 0
     this.style = node.style
   }
 

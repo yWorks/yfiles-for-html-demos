@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>08 Edge Cropping - Node Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-node-style-implementation">
+          Node Style Implementation Tutorial
+        </a>
+
+        <span>08 Edge Cropping</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-node/07-hit-testing/index.html'><span>07 Hit-Testing</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 8/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 08 Edge Cropping</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-node/01-create-a-rectangle/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create A Rectangle</a
+          ><a
+            href="../../tutorial-style-implementation-node/02-create-a-custom-shape/index.html"
+            class="tutorial-dropdown__item"
+            >02 Create A Custom Shape</a
+          ><a
+            href="../../tutorial-style-implementation-node/03-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >03 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-node/04-making-the-style-configurable/index.html"
+            class="tutorial-dropdown__item"
+            >04 Making the Style Configurable</a
+          ><a
+            href="../../tutorial-style-implementation-node/05-data-from-tag/index.html"
+            class="tutorial-dropdown__item"
+            >05 Data from Tag</a
+          ><a
+            href="../../tutorial-style-implementation-node/06-render-text/index.html"
+            class="tutorial-dropdown__item"
+            >06 Rendering Text</a
+          ><a
+            href="../../tutorial-style-implementation-node/07-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >07 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-node/08-edge-cropping/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >08 Edge Cropping</a
+          ><a
+            href="../../tutorial-style-implementation-node/09-visibility/index.html"
+            class="tutorial-dropdown__item"
+            >09 Item Visibility</a
+          ><a
+            href="../../tutorial-style-implementation-node/10-bounds/index.html"
+            class="tutorial-dropdown__item"
+            >10 Render Boundaries</a
+          ><a
+            href="../../tutorial-style-implementation-node/11-group-node-style/index.html"
+            class="tutorial-dropdown__item"
+            >11 Group Node Style</a
+          ><a
+            href="../../tutorial-style-implementation-node/12-group-node-style-behavior/index.html"
+            class="tutorial-dropdown__item"
+            >12 Group Node Style Behavior</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-node/09-visibility/index.html'><span>09 Item Visibility</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Cropping edges at the node outline</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  So far there have been no edges in the graph, but if we add one, we notice that
+                  the edge won&#8217;t start/end at the custom outline, but rather at the boundaries
+                  of the node itself.
+                </p>
+              </div>
+              <div id="old-state" class="inline-graph-component"></div>
+              <div class="paragraph">
+                <p>
+                  To crop edges correctly at the node outline, we override <code>getOutline</code>,
+                  which returns a suitable <a href="https://docs.yworks.com/yfileshtml/#/api/GeneralPath" target="_blank">GeneralPath</a> representing the node
+                  outline.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">getOutline</span>(<span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-title class_">GeneralPath</span> | <span class="hljs-literal">null</span> {
+  <span class="hljs-comment">// Use the node&#x27;s layout, and enlarge it with</span>
+  <span class="hljs-comment">// half the stroke width to ensure that the</span>
+  <span class="hljs-comment">// arrow ends exactly at the outline</span>
+  <span class="hljs-keyword">const</span> { x, y, width, height } = node.<span class="hljs-property">layout</span>.<span class="hljs-title function_">toRect</span>().<span class="hljs-title function_">getEnlarged</span>(<span class="hljs-number">0.5</span>)
+  <span class="hljs-keyword">const</span> path = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GeneralPath</span>()
+  path.<span class="hljs-title function_">moveTo</span>(x, y)
+  path.<span class="hljs-title function_">lineTo</span>(x + tabWidth, y)
+  path.<span class="hljs-title function_">lineTo</span>(x + tabWidth, y + tabHeight)
+  path.<span class="hljs-title function_">lineTo</span>(x + width, y + tabHeight)
+  path.<span class="hljs-title function_">lineTo</span>(x + width, y + height)
+  path.<span class="hljs-title function_">lineTo</span>(x, y + height)
+  path.<span class="hljs-title function_">close</span>()
+  <span class="hljs-keyword">return</span> path
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_performance_improvements">Performance improvements</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  Note that this outline path is not cached and instead re-created multiple times
+                  for every single edge, which can be wasteful. If the node shape is simple enough
+                  so that it&#8217;s easy to check whether a point is inside or outside the shape,
+                  consider overriding <code>isInside</code> and <code>getIntersection</code> as an
+                  optimization. For this shape an implementation could look as follows.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  <code>isInside</code> determines whether a given point lies inside the node shape.
+                  This is used for finding an edge segment that crosses the node outline.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">isInside</span>(<span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>, <span class="hljs-attr">location</span>: <span class="hljs-title class_">Point</span>): <span class="hljs-built_in">boolean</span> {
+  <span class="hljs-comment">// Check for bounding box</span>
+  <span class="hljs-keyword">if</span> (!node.<span class="hljs-property">layout</span>.<span class="hljs-title function_">contains</span>(location)) {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+  }
+  <span class="hljs-keyword">const</span> { x, y } = location
+  <span class="hljs-keyword">const</span> { <span class="hljs-attr">y</span>: ly } = node.<span class="hljs-property">layout</span>
+
+  <span class="hljs-comment">// Check for the upper-right corner, which is empty</span>
+  <span class="hljs-keyword">if</span> (x &gt; x + tabWidth &amp;&amp; y &lt; ly + tabHeight) {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+  }
+  <span class="hljs-comment">// all other points are either inside the tab</span>
+  <span class="hljs-comment">// or the rest of the node</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  <code>getIntersection</code> calculates the intersection point between the node
+                  and the given line segment. This method is used to crop edges at the node outline.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">getIntersection</span>(
+  <span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>,
+  <span class="hljs-attr">inner</span>: <span class="hljs-title class_">Point</span>,
+  <span class="hljs-attr">outer</span>: <span class="hljs-title class_">Point</span>
+): <span class="hljs-title class_">Point</span> | <span class="hljs-literal">null</span> {
+  <span class="hljs-keyword">const</span> layout = node.<span class="hljs-property">layout</span>.<span class="hljs-title function_">toRect</span>()
+
+  <span class="hljs-keyword">const</span> emptyRect = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rect</span>(
+    layout.<span class="hljs-property">x</span> + tabWidth,
+    layout.<span class="hljs-property">y</span>,
+    layout.<span class="hljs-property">width</span> - tabWidth,
+    tabHeight
+  )
+  <span class="hljs-keyword">if</span> (emptyRect.<span class="hljs-title function_">intersectsLine</span>(inner, outer)) {
+    <span class="hljs-comment">// Intersection with the empty rectangle: find intersection with the actual segments of the outline</span>
+    <span class="hljs-keyword">const</span> <span class="hljs-attr">segment1</span>: [<span class="hljs-title class_">Point</span>, <span class="hljs-title class_">Point</span>] = [
+      <span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(layout.<span class="hljs-property">x</span> + tabWidth, layout.<span class="hljs-property">y</span>),
+      <span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(layout.<span class="hljs-property">x</span> + tabWidth, layout.<span class="hljs-property">y</span> + tabHeight)
+    ]
+    <span class="hljs-keyword">const</span> <span class="hljs-attr">segment2</span>: [<span class="hljs-title class_">Point</span>, <span class="hljs-title class_">Point</span>] = [
+      <span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(layout.<span class="hljs-property">x</span> + tabWidth, layout.<span class="hljs-property">y</span> + tabHeight),
+      <span class="hljs-keyword">new</span> <span class="hljs-title class_">Point</span>(layout.<span class="hljs-property">maxX</span>, layout.<span class="hljs-property">y</span> + tabHeight)
+    ]
+    <span class="hljs-keyword">const</span> intersection1 = <span class="hljs-title function_">findLineIntersection</span>(segment1, [inner, outer])
+    <span class="hljs-keyword">const</span> intersection2 = <span class="hljs-title function_">findLineIntersection</span>(segment2, [inner, outer])
+
+    <span class="hljs-keyword">if</span> (intersection1 === <span class="hljs-literal">null</span> || intersection2 === <span class="hljs-literal">null</span>) {
+      <span class="hljs-keyword">return</span> intersection1 ?? intersection2
+    }
+  }
+
+  <span class="hljs-keyword">return</span> layout.<span class="hljs-title function_">findLineIntersection</span>(inner, outer)
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-node/09-visibility/index.html'><span>09 Item Visibility</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,6 @@
   width: 400px;
   height: 340px;
   transition: width 1s, height 1s;
-  font-family: 'Consolas', 'Courier New', Courier, mono, serif;
   font-size: 13px;
 }
 #data-view.collapsed {
@@ -39,5 +38,6 @@
 }
 
 #data-view .CodeMirror {
+  font-family: 'Consolas', 'Courier New', Courier, monospace;
   height: 300px;
 }

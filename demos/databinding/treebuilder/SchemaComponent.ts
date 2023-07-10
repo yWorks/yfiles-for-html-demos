@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,7 +55,6 @@ import {
   ShapeNodeStyle,
   Size,
   StringTemplateNodeStyle,
-  TimeSpan,
   TreeBuilder,
   TreeNodesSource,
   VoidNodeStyle
@@ -68,8 +67,7 @@ import {
 } from './ModelClasses'
 import { EditTreeNodesSourceDialog } from './EditTreeNodeSourceDialog'
 import { ContentRectViewportLimiter } from './ContentRectViewportLimiter'
-import { addClass } from '../../resources/demo-app'
-import { applyDemoTheme, createDemoEdgeStyle } from '../../resources/demo-styles'
+import { applyDemoTheme, createDemoEdgeStyle } from 'demo-resources/demo-styles'
 
 type SchemaEdge = { parentSource: string; childSource: string; childBinding: string }
 
@@ -163,8 +161,8 @@ export class SchemaComponent {
     inputMode.allowCreateBend = false
 
     // configure the tooltips
-    inputMode.mouseHoverInputMode.delay = TimeSpan.from('0.5s')
-    inputMode.mouseHoverInputMode.duration = TimeSpan.from('5m')
+    inputMode.mouseHoverInputMode.delay = '0.5s'
+    inputMode.mouseHoverInputMode.duration = '5m'
 
     // the pointer cursor should be shown when hovering over certain graph items to indicate their clickable
     inputMode.itemHoverInputMode.enabled = true
@@ -271,7 +269,7 @@ export class SchemaComponent {
     sourceConnector: TreeNodesSourceDefinitionBuilderConnector
   ): HTMLElement {
     const toolTip = document.createElement('div')
-    addClass(toolTip, 'toolTip')
+    toolTip.classList.add('toolTip')
 
     const title = document.createElement('b')
     title.innerHTML = 'Data'

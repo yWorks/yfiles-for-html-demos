@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,12 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { ConcurrencyController, IEdgeStyle, IGraph, IInputModeContext } from 'yfiles'
 import {
+  DefaultPortCandidate,
   GraphEditorInputMode,
   GraphItemTypes,
   IEdge,
-  IGraph,
   IModelItem,
+  INode,
   ItemDropInputMode,
   Point,
   Rect,
@@ -40,29 +42,81 @@ import {
 
 /**
  * An edge drop input mode to manage the edge preview and dropping onto the canvas.
+ *
+ * Should be added to a {@link GraphEditorInputMode} using {@link GraphEditorInputMode.add}.
  */
-export default class EdgeDropInputMode extends ItemDropInputMode<IEdge> {
-  private previewNodeOffset = new Point(20, 10)
-  private previewBendOffset = new Point(0, 10)
+export class EdgeDropInputMode extends ItemDropInputMode<IEdge> {
+  private readonly previewNodeOffset = new Point(20, 10)
+  private readonly previewBendOffset = new Point(0, 10)
 
   constructor() {
     super(IEdge.$class.name)
   }
 
-  get draggedItem(): IEdge {
-    return this.dropData
+  install(context: IInputModeContext, controller: ConcurrencyController): void {
+    super.install(context, controller)
+    let originalEdgeDefaultStyle: IEdgeStyle | null
+
+    this.itemCreator = (ctx, graph, draggedItem, dropTarget, dropLocation): IEdge | null => {
+      if (!(draggedItem instanceof IEdge)) {
+        return null
+      }
+      // Use the dropped edge style for changed/created edges.
+      const style = draggedItem.style
+
+      if (dropTarget instanceof IEdge) {
+        // Set the style of the edge at the drop location to the dropped style.
+        graph.setStyle(dropTarget, style)
+      } else {
+        // Look for a node at the drop location.
+        const node = dropTarget instanceof INode ? dropTarget : graph.createNodeAt(dropLocation)
+        // Start the creation of an edge from the node at a suitable port candidate
+        // for the drop location with the dropped edge style.
+        const candidateLocation = graph.nodeDefaults.ports.getLocationParameterInstance(node)
+        const candidate = new DefaultPortCandidate(node, candidateLocation)
+
+        const graphEditorInputMode = ctx.canvasComponent!.inputMode as GraphEditorInputMode
+        const createEdgeInputMode = graphEditorInputMode.createEdgeInputMode
+
+        // store the previous edge style
+        originalEdgeDefaultStyle = createEdgeInputMode.edgeDefaults.style
+        // change the edge style only for the one dropped onto the canvas
+        createEdgeInputMode.edgeDefaults.style = style
+        // change the edge style only for the one dropped onto the canvas
+        createEdgeInputMode.dummyEdgeGraph.setStyle(createEdgeInputMode.dummyEdge, style)
+
+        void createEdgeInputMode.doStartEdgeCreation(candidate)
+      }
+      ctx.canvasComponent!.focus()
+      return null
+    }
+
+    const graphEditorInputMode = context.parentInputMode! as GraphEditorInputMode
+    const createEdgeInputMode = graphEditorInputMode.createEdgeInputMode
+    const resetEdgeDefaultStyle = (): void => {
+      if (originalEdgeDefaultStyle) {
+        createEdgeInputMode.edgeDefaults.style = originalEdgeDefaultStyle
+        originalEdgeDefaultStyle = null
+      }
+    }
+    createEdgeInputMode.addGestureFinishedListener(resetEdgeDefaultStyle)
+    createEdgeInputMode.addGestureCanceledListener(resetEdgeDefaultStyle)
+  }
+
+  protected get draggedItem(): IEdge {
+    return this.dropData as IEdge
   }
 
   /**
-   * @param dragLocation - The location to return the drop target for.
+   * @param dragLocation The location to return the drop target for.
    */
-  getDropTarget(dragLocation: Point): IModelItem | null {
+  protected getDropTarget(dragLocation: Point): IModelItem | null {
     if (
       this.inputModeContext &&
       this.inputModeContext.parentInputMode instanceof GraphEditorInputMode
     ) {
-      const parentMode = this.inputModeContext.parentInputMode
-      const hitItems = parentMode.findItems(dragLocation, [
+      const parentInputMode = this.inputModeContext.parentInputMode
+      const hitItems = parentInputMode.findItems(dragLocation, [
         GraphItemTypes.NODE,
         GraphItemTypes.EDGE
       ])
@@ -73,49 +127,42 @@ export default class EdgeDropInputMode extends ItemDropInputMode<IEdge> {
     return null
   }
 
-  initializePreview(): void {
-    if (this.dropData.style == null) {
-      // when using the native drag-and-drop approach, the data will be a string and not an IModelItem
-      // and we will not populate the preview graph
+  protected initializePreview(): void {
+    if (!(this.dropData instanceof IModelItem)) {
+      // When using the native drag-and-drop approach, the data will
+      // be a string and not an IModelItem and we will not populate the preview graph.
       return
     }
     super.initializePreview()
   }
 
   /**
-   * @param previewGraph - The preview graph to fill.
+   * @param previewGraph The preview graph to fill.
    */
-  populatePreviewGraph(previewGraph: IGraph): void {
+  protected populatePreviewGraph(previewGraph: IGraph): void {
     const graph = previewGraph
     graph.nodeDefaults.style = VoidNodeStyle.INSTANCE
     const dummyEdge = graph.createEdge(
       graph.createNode(new Rect(10, 10, 0, 0)),
       graph.createNode(new Rect(50, 30, 0, 0)),
-      this.dropData.style
+      this.draggedItem.style
     )
     graph.addBend(dummyEdge, new Point(30, 10))
     graph.addBend(dummyEdge, new Point(30, 30))
   }
 
   /**
-   * @param previewGraph - The preview graph to update.
-   * @param dragLocation - The current drag location.
+   * @param previewGraph The preview graph to update.
+   * @param dragLocation The current drag location.
    */
-  updatePreview(previewGraph: IGraph, dragLocation: Point): void {
-    previewGraph.setNodeCenter(
-      previewGraph.nodes.first(),
-      dragLocation.subtract(this.previewNodeOffset)
-    )
-
-    previewGraph.setNodeCenter(previewGraph.nodes.at(1)!, dragLocation.add(this.previewNodeOffset))
-
+  protected updatePreview(previewGraph: IGraph, dragLocation: Point): void {
     const edge = previewGraph.edges.first()
-    previewGraph.clearBends(edge)
-    previewGraph.addBend(edge, dragLocation.subtract(this.previewBendOffset))
-    previewGraph.addBend(edge, dragLocation.add(this.previewBendOffset))
+    previewGraph.setNodeCenter(edge.sourceNode!, dragLocation.subtract(this.previewNodeOffset))
+    previewGraph.setNodeCenter(edge.targetNode!, dragLocation.add(this.previewNodeOffset))
 
-    if (this.inputModeContext && this.inputModeContext.canvasComponent) {
-      this.inputModeContext.canvasComponent.invalidate()
-    }
+    previewGraph.setBendLocation(edge.bends.at(0)!, dragLocation.subtract(this.previewBendOffset))
+    previewGraph.setBendLocation(edge.bends.at(1)!, dragLocation.add(this.previewBendOffset))
+
+    this.inputModeContext?.canvasComponent?.invalidate()
   }
 }

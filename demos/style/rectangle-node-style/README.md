@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Rectangle Node Style Demo
-
-<img src="../../resources/image/rectangle-node-style.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/style/rectangle-node-style/index.html).
 
 # Rectangle Node Style Demo
 
@@ -21,4 +28,4 @@ This is made possible by numerous configuration options for the representation o
 - [Shape Node Style](../shape-node-style/index.html)
 - [Group Node Style](../group-node-style/index.html)
 - [Arrow Node Style](../arrow-node-style/index.html)
-- [Tutorial: Custom Node Style](../../02-tutorial-custom-styles/01-custom-node-style/index.html)
+- [Tutorial: Node Style Implementation](../../tutorial-style-implementation-node/01-create-a-rectangle/index.html)

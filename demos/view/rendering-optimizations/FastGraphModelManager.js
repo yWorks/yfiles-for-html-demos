@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,6 @@ import {
   BaseClass,
   CanvasComponent,
   Class,
-  Color,
   DefaultGraph,
   GraphComponent,
   GraphModelManager,
@@ -82,7 +81,7 @@ import {
 
 import SvgEdgeStyle from './SvgEdgeStyle.js'
 import SimpleSvgNodeStyle from './SimpleSvgNodeStyle.js'
-import { BrowserDetection } from '../../utils/BrowserDetection.js'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
 
 /**
  * A {@link GraphModelManager} implementation that uses several optimizations
@@ -131,6 +130,41 @@ import { BrowserDetection } from '../../utils/BrowserDetection.js'
  * @see {@link OptimizationMode}
  */
 export class FastGraphModelManager extends GraphModelManager {
+  _graphComponent
+
+  // create the custom descriptors for graph items
+  fastNodeDescriptor = new AutoSwitchDescriptor(GraphModelManager.DEFAULT_NODE_DESCRIPTOR, this)
+  fastEdgeDescriptor = new AutoSwitchDescriptor(GraphModelManager.DEFAULT_EDGE_DESCRIPTOR, this)
+  fastLabelDescriptor = new AutoSwitchDescriptor(GraphModelManager.DEFAULT_LABEL_DESCRIPTOR, this)
+  fastPortDescriptor = new AutoSwitchDescriptor(GraphModelManager.DEFAULT_PORT_DESCRIPTOR, this)
+
+  _overviewNodeStyle
+  _overviewEdgeStyle
+
+  // set default values
+  _intermediateZoomThreshold = 1
+  _overviewZoomThreshold = 0.1
+  _refreshImageZoomFactor = 0.5
+  _imageSizeFactor = 2
+  _maximumCanvasSize = new Size(3000, 2000)
+  _dirty = false
+  _drawNodeCallback = null
+  _drawEdgeCallback = null
+  _drawNodeLabelCallback = null
+  _drawEdgeLabelCallback = null
+
+  // create the image renderer
+  _imageRendererCanvasObject = null
+  imageRenderer
+
+  // add a chain link to the graphComponent's lookup that customizes item hit test
+  hitTestInputChainLink = null
+
+  _graphOptimizationMode = OptimizationMode.DEFAULT
+
+  zoomChangedHandler
+  graphChangedHandler
+
   /**
    * Creates a new instance of this class.
    * @param {!GraphComponent} graphComponent The {@link GraphComponent} that uses this instance.
@@ -138,47 +172,6 @@ export class FastGraphModelManager extends GraphModelManager {
    */
   constructor(graphComponent, contentGroup) {
     super(graphComponent, contentGroup)
-
-    // create the custom descriptors for graph items
-    this.fastNodeDescriptor = new AutoSwitchDescriptor(
-      GraphModelManager.DEFAULT_NODE_DESCRIPTOR,
-      this
-    )
-
-    this.fastEdgeDescriptor = new AutoSwitchDescriptor(
-      GraphModelManager.DEFAULT_EDGE_DESCRIPTOR,
-      this
-    )
-
-    this.fastLabelDescriptor = new AutoSwitchDescriptor(
-      GraphModelManager.DEFAULT_LABEL_DESCRIPTOR,
-      this
-    )
-
-    this.fastPortDescriptor = new AutoSwitchDescriptor(
-      GraphModelManager.DEFAULT_PORT_DESCRIPTOR,
-      this
-    )
-
-    // set default values
-    this._intermediateZoomThreshold = 1
-
-    this._overviewZoomThreshold = 0.1
-    this._refreshImageZoomFactor = 0.5
-    this._imageSizeFactor = 2
-    this._maximumCanvasSize = new Size(3000, 2000)
-    this._dirty = false
-    this._drawNodeCallback = null
-    this._drawEdgeCallback = null
-    this._drawNodeLabelCallback = null
-    this._drawEdgeLabelCallback = null
-
-    // create the image renderer
-    this._imageRendererCanvasObject = null
-
-    // add a chain link to the graphComponent's lookup that customizes item hit test
-    this.hitTestInputChainLink = null
-
     this._graphComponent = graphComponent
     this._graphOptimizationMode = OptimizationMode.DEFAULT
 
@@ -233,8 +226,8 @@ export class FastGraphModelManager extends GraphModelManager {
     graphComponent.inputModeContextLookupChain.add(this.hitTestInputChainLink)
 
     if (graphComponent.graph != null) {
-      // install the image renderer, if necessary
-      this.updateImageRenderer()
+      // install rendering, if necessary
+      this.updateRendering()
     }
   }
 
@@ -273,10 +266,7 @@ export class FastGraphModelManager extends GraphModelManager {
    */
   set graphOptimizationMode(value) {
     this._graphOptimizationMode = value
-    this.updateEffectiveStyles()
-    this.updateShouldUseImage()
-    this.updateImageRenderer()
-    this.updateGraph()
+    this.updateRendering()
   }
 
   /**
@@ -658,6 +648,17 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
+   * Calls {@link updateEffectiveStyles}, {@link updateImageRenderer}, and {@link updateGraph} to
+   * adjust the used styles and the rendering method (image or directly) based on the set
+   * {@link graphOptimizationMode} and the current {@link GraphComponent.zoom zoom} level.
+   */
+  updateRendering() {
+    this.updateEffectiveStyles()
+    this.updateGraph()
+    this.updateImageRenderer()
+  }
+
+  /**
    * Sets the styles to use on the descriptors depending on the current
    * graphOptimizationMode and the zoom level of the GraphComponent
    */
@@ -712,17 +713,14 @@ export class FastGraphModelManager extends GraphModelManager {
    * Called when the {@link FastGraphModelManager.graphComponent}'s zoom factor changes.
    */
   onGraphComponentZoomChanged() {
-    this.updateImageRenderer()
-    this.updateShouldUseImage()
-    this.updateEffectiveStyles()
-    this.updateGraph()
+    this.updateRendering()
   }
 
   /**
    * Called when the {@link FastGraphModelManager.graphComponent}'s graph instance changes.
    */
   onGraphComponentGraphChanged() {
-    this.updateImageRenderer()
+    this.updateRendering()
   }
 }
 
@@ -857,6 +855,12 @@ export const OptimizationMode = {
  * that switches between default and optimized styles.
  */
 class AutoSwitchDescriptor extends BaseClass(ICanvasObjectDescriptor) {
+  // whether we are using an image for the rendering and should thus not normally be considered dirty
+  shouldUseImage = false
+  effectiveStyle = null
+  _intermediateStyle = null
+  _overviewStyle = null
+
   /**
    * Creates a new instance of AutoSwitchDescriptor.
    * @param {!ICanvasObjectDescriptor} backingInstance The ICanvasObjectDescriptor implementation
@@ -866,13 +870,6 @@ class AutoSwitchDescriptor extends BaseClass(ICanvasObjectDescriptor) {
     super()
     this.manager = manager
     this.backingInstance = backingInstance
-
-    // whether we are using an image for the rendering and should thus not normally be considered dirty
-    this.shouldUseImage = false
-
-    this.effectiveStyle = null
-    this._intermediateStyle = null
-    this._overviewStyle = null
   }
 
   /**
@@ -1356,7 +1353,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
 
   /**
    * Draws the graph into an image using the item styles. Calls the given callback if finished.
-   * @param {!Function} callback The callback to call if the image has
+   * @param {!function} callback The callback to call if the image has
    *   finished rendering.
    */
   drawComplexCanvasImage(callback) {
@@ -1448,6 +1445,9 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
  * A render visual that draws a given canvas element in canvas.
  */
 class CanvasRenderVisual extends HtmlCanvasVisual {
+  initialArea = new Rect(new Point(0, 0), new Size(0, 0))
+  canvas
+
   /**
    * Creates a new CanvasRenderVisual instance.
    * @param {number} refreshImageZoomFactor The factor by which the zoom factor has to change
@@ -1459,7 +1459,6 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
     this.maxCanvasSize = maxCanvasSize
     this.initialZoom = initialZoom
     this.refreshImageZoomFactor = refreshImageZoomFactor
-    this.initialArea = new Rect(new Point(0, 0), new Size(0, 0))
     this.canvas = document.createElement('canvas')
   }
 
@@ -1535,6 +1534,14 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
  * A render visual that draws a given graph in a canvas using WebGL item styles.
  */
 class GLVisual extends WebGLVisual {
+  edgeStyle = new WebGLPolylineEdgeStyle({
+    thickness: 5
+  })
+  nodeStyle = new WebGLShapeNodeStyle({
+    color: '#FF6C00'
+  })
+  visuals = null
+
   /**
    * Creates a new GLVisual.
    * @param {!IGraph} graph The graph to render.
@@ -1542,16 +1549,6 @@ class GLVisual extends WebGLVisual {
   constructor(graph) {
     super()
     this.graph = graph
-
-    this.edgeStyle = new WebGLPolylineEdgeStyle({
-      thickness: 5
-    })
-
-    this.nodeStyle = new WebGLShapeNodeStyle({
-      color: Color.from('#FF6C00')
-    })
-
-    this.visuals = null
   }
 
   /**
@@ -1585,6 +1582,8 @@ class GLVisual extends WebGLVisual {
  * and simply iterate over the corresponding model items in the graph of the link's graph component.
  */
 class HitTestInputChainLink extends BaseClass(IContextLookupChainLink) {
+  next = null
+
   /**
    * Constructs a new instance of HitTestInputChainLink.
    * @param {!GraphComponent} graphComponent The graph component whose elements will be enumerated.
@@ -1592,14 +1591,13 @@ class HitTestInputChainLink extends BaseClass(IContextLookupChainLink) {
   constructor(graphComponent) {
     super()
     this.graphComponent = graphComponent
-    this.next = null
   }
 
   /**
    * Retrieves an implementation of the given type for a given item.
    * @param {!object} item The item to lookup for
    * @param {!Class} type The type to lookup for
-   * @returns {?Object} the implementation found
+   * @returns {?object} the implementation found
    */
   contextLookup(item, type) {
     const graph = this.graphComponent.graph

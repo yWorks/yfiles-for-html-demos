@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Drag From Component
-
-<img src="../../resources/image/drag-from-component.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/input/drag-from-component/index.html).
 
 # Drag From Component
 
@@ -22,4 +29,4 @@ This demo shows how to use the HTML5 Drag and Drop support to drag graph items f
 - [Drag and Drop](../draganddrop)
 - [Graph Drag and Drop](../graph-drag-and-drop)
 - [Custom Drag and Drop](../custom-drag-and-drop)
-- [Tutorial: Drag and Drop](../../03-tutorial-application-features/drag-and-drop/index.html)
+- [Simple Drag and Drop](../../application-features/drag-and-drop/index.html)

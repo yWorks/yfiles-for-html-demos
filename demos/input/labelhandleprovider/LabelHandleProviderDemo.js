@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   ILabel,
   InteriorLabelModel,
   LabelStyleDecorationInstaller,
@@ -47,13 +46,13 @@ import {
 } from 'yfiles'
 
 import LabelHandleProvider from './LabelHandleProvider.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
 import {
   applyDemoTheme,
   createDemoNodeLabelStyle,
   initDemoStyles
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -69,10 +68,6 @@ async function run() {
   initializeGraph()
 
   initializeInputMode()
-
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -190,15 +185,4 @@ function initializeInputMode() {
   graphComponent.inputMode = mode
 }
 
-/**
- * Wires up the UI.
- */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

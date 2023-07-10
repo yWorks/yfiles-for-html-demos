@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,48 +34,47 @@ import {
   CycleSubstructureStyle,
   DefaultLabelStyle,
   EdgePathLabelModel,
-  EdgeStyleDecorationInstaller,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   GraphBuilder,
   GraphComponent,
+  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   IModelItem,
+  IndicatorEdgeStyleDecorator,
+  IndicatorNodeStyleDecorator,
   INode,
   LayoutExecutor,
   License,
-  NodeStyleDecorationInstaller,
   OrganicLayout,
+  OrganicLayoutStarSubstructureStyle,
   ParallelEdgeRouter,
   ParallelSubstructureStyle,
   PolylineEdgeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
-  StarSubstructureStyle,
   Stroke,
-  StyleDecorationZoomPolicy,
   VoidLabelStyle
 } from 'yfiles'
+
+import * as CodeMirror from 'codemirror'
+import 'codemirror/mode/cypher/cypher'
+import 'codemirror/lib/codemirror.css'
 
 import {
   applyDemoTheme,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles.js'
-import {
-  bindAction,
-  bindCommand,
-  reportDemoError,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app.js'
+} from 'demo-resources/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder.js'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
+
+let editor
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -93,14 +92,14 @@ let nodes = []
 let edges = []
 
 // get hold of some UI elements
-const labelsContainer = document.getElementById('labels')
-const selectedNodeContainer = document.getElementById('selected-node-container')
-const propertyTable = document.getElementById('propertyTable')
+const labelsContainer = document.querySelector('#labels')
+const selectedNodeContainer = document.querySelector('#selected-node-container')
+const propertyTable = document.querySelector('#propertyTable')
 const propertyTableHeader = propertyTable.firstElementChild
-const numNodesInput = document.getElementById('numNodes')
-const numLabelsInput = document.getElementById('numLabels')
-const showEdgeLabelsCheckbox = document.getElementById('showEdgeLabels')
-const queryErrorContainer = document.getElementById('queryError')
+const numNodesInput = document.querySelector('#numNodes')
+const numLabelsInput = document.querySelector('#numLabels')
+const showEdgeLabelsCheckbox = document.querySelector('#showEdgeLabels')
+const queryErrorContainer = document.querySelector('#queryError')
 
 /**
  * Runs the demo.
@@ -110,9 +109,8 @@ async function run() {
   License.value = await fetchLicense()
   if (!('WebSocket' in window)) {
     // early exit the application if WebSockets are not supported
-    document.getElementById('login').hidden = true
-    document.getElementById('noWebSocketAPI').hidden = false
-    showApp()
+    document.querySelector('#login').hidden = true
+    document.querySelector('#noWebSocketAPI').hidden = false
     return
   }
 
@@ -122,8 +120,7 @@ async function run() {
   initializeGraphDefaults()
   initializeHighlighting()
   createInputMode()
-  registerCommands()
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -156,35 +153,30 @@ function initializeHighlighting() {
   const orangeRed = Color.ORANGE_RED
   const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
 
-  const decorator = graphComponent.graph.decorator
-
-  const highlightShape = new ShapeNodeStyle({
-    shape: ShapeNodeShape.ROUND_RECTANGLE,
-    stroke: orangeStroke,
-    fill: null
+  const nodeStyleHighlight = new IndicatorNodeStyleDecorator({
+    wrapped: new ShapeNodeStyle({
+      shape: ShapeNodeShape.ROUND_RECTANGLE,
+      stroke: orangeStroke,
+      fill: null
+    }),
+    padding: 5
   })
-
-  const nodeStyleHighlight = new NodeStyleDecorationInstaller({
-    nodeStyle: highlightShape,
-    margins: 5,
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
-  })
-  decorator.nodeDecorator.highlightDecorator.setImplementation(nodeStyleHighlight)
 
   const dummyCroppingArrow = new Arrow({
     type: ArrowType.NONE,
     cropLength: 5
   })
-  const edgeStyle = new PolylineEdgeStyle({
-    stroke: orangeStroke,
-    targetArrow: dummyCroppingArrow,
-    sourceArrow: dummyCroppingArrow
+  const edgeStyleHighlight = new IndicatorEdgeStyleDecorator({
+    wrapped: new PolylineEdgeStyle({
+      stroke: orangeStroke,
+      targetArrow: dummyCroppingArrow,
+      sourceArrow: dummyCroppingArrow
+    })
   })
-  const edgeStyleHighlight = new EdgeStyleDecorationInstaller({
-    edgeStyle,
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
+    nodeStyle: nodeStyleHighlight,
+    edgeStyle: edgeStyleHighlight
   })
-  decorator.edgeDecorator.highlightDecorator.setImplementation(edgeStyleHighlight)
 
   graphComponent.addCurrentItemChangedListener(() => onCurrentItemChanged())
 }
@@ -339,7 +331,7 @@ async function loadGraph() {
 /**
  * This method will be called whenever the mouse moves over a different item. We show a highlight
  * indicator to make it easier for the user to understand the graph's structure.
- * @param {!IModelItem} hoveredItem The currently hovered item
+ * @param {?IModelItem} hoveredItem The currently hovered item
  */
 function onHoveredItemChanged(hoveredItem) {
   // we use the highlight manager of the GraphComponent to highlight related items
@@ -348,19 +340,19 @@ function onHoveredItemChanged(hoveredItem) {
   // first remove previous highlights
   manager.clearHighlights()
   // then see where we are hovering over, now
-  if (hoveredItem) {
-    // we highlight the item itself
-    manager.addHighlight(hoveredItem)
-    if (hoveredItem instanceof INode) {
-      // and if it's a node, we highlight all adjacent edges, too
-      graphComponent.graph.edgesAt(hoveredItem).forEach(edge => {
-        manager.addHighlight(edge)
-      })
-    } else if (hoveredItem instanceof IEdge) {
-      // if it's an edge - we highlight the adjacent nodes
-      manager.addHighlight(hoveredItem.sourceNode)
-      manager.addHighlight(hoveredItem.targetNode)
-    }
+  if (!hoveredItem) {
+    return
+  }
+  manager.addHighlight(hoveredItem)
+  if (hoveredItem instanceof INode) {
+    // and if it's a node, we highlight all adjacent edges, too
+    graphComponent.graph.edgesAt(hoveredItem).forEach(edge => {
+      manager.addHighlight(edge)
+    })
+  } else if (hoveredItem instanceof IEdge) {
+    // if it's an edge - we highlight the adjacent nodes
+    manager.addHighlight(hoveredItem.sourceNode)
+    manager.addHighlight(hoveredItem.targetNode)
   }
 }
 
@@ -374,7 +366,7 @@ async function doLayout() {
   organicLayout.chainSubstructureStyle = ChainSubstructureStyle.STRAIGHT_LINE
   organicLayout.cycleSubstructureStyle = CycleSubstructureStyle.CIRCULAR
   organicLayout.parallelSubstructureStyle = ParallelSubstructureStyle.STRAIGHT_LINE
-  organicLayout.starSubstructureStyle = StarSubstructureStyle.CIRCULAR
+  organicLayout.starSubstructureStyle = OrganicLayoutStarSubstructureStyle.CIRCULAR
   organicLayout.minimumNodeDistance = 60
   organicLayout.considerNodeLabels = true
   organicLayout.considerNodeSizes = true
@@ -390,8 +382,6 @@ async function doLayout() {
       duration: '1s',
       animateViewport: true
     }).start()
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     setUIDisabled(false)
   }
@@ -402,21 +392,17 @@ async function doLayout() {
  * @param {boolean} value Whether the elements should be disabled.
  */
 function setUIDisabled(value) {
-  document.getElementById('reloadDataButton').disabled = value
-  document.getElementById('numNodes').disabled = value
-  document.getElementById('numLabels').disabled = value
+  document.querySelector('#reloadDataButton').disabled = value
+  numNodesInput.disabled = value
+  numLabelsInput.disabled = value
 }
 
 /**
  * Wires up the UI.
  * @yjs:keep = setValue,getValue
  */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindAction("button[data-command='ReloadData']", loadGraph)
+function initializeUI() {
+  document.querySelector('#reloadDataButton').addEventListener('click', () => loadGraph())
 
   // toggle edge label display
   showEdgeLabelsCheckbox.addEventListener('input', () => {
@@ -434,7 +420,7 @@ function registerCommands() {
   const passwordEl = document.querySelector('#passwordInput')
   const databaseEl = document.querySelector('#databaseNameInput')
 
-  document.getElementById('login-form').addEventListener('submit', async e => {
+  document.querySelector('#login-form').addEventListener('submit', async e => {
     e.preventDefault()
     let url = hostEl.value
     if (url.indexOf('://') < 0) {
@@ -448,7 +434,8 @@ function registerCommands() {
 
       // hide the login form and show the graph component
       document.querySelector('#loginPane').setAttribute('style', 'display: none;')
-      document.querySelector('#graphPane').removeAttribute('style')
+      document.querySelector('#graphPane').style.visibility = 'visible'
+      document.querySelector('#queryPane').style.visibility = 'visible'
       await loadGraph()
     } catch (e) {
       document.querySelector('#connectionError').innerHTML = `An error occurred: ${e}`
@@ -465,7 +452,7 @@ function registerCommands() {
   numNodesInput.addEventListener(
     'input',
     () => {
-      document.getElementById('numNodesLabel').textContent = numNodesInput.value.toString()
+      document.querySelector('#numNodesLabel').textContent = numNodesInput.value.toString()
     },
     true
   )
@@ -473,22 +460,19 @@ function registerCommands() {
   numLabelsInput.addEventListener(
     'input',
     () => {
-      document.getElementById('numLabelsLabel').textContent = numLabelsInput.value.toString()
+      document.querySelector('#numLabelsLabel').textContent = numLabelsInput.value.toString()
     },
     true
   )
 
   // create cypher query editor
-  const cypherInput = document.getElementById('cypher-input')
-  const { editor } = window.CypherCodeMirror.createCypherEditor(cypherInput, {
-    mode: 'cypher',
-    theme: 'cypher',
-    lineNumbers: true
+  editor = CodeMirror.fromTextArea(document.querySelector('#query-text-area'), {
+    lineNumbers: true,
+    mode: 'cypher'
   })
-  // sample query
   editor.setValue('MATCH (n)-[e]-(m)\nRETURN * LIMIT 150')
 
-  bindAction('#run-cypher-button', async () => {
+  document.querySelector('#run-cypher-button').addEventListener('click', async () => {
     const query = editor.getValue()
     let result
     try {
@@ -517,5 +501,4 @@ function registerCommands() {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

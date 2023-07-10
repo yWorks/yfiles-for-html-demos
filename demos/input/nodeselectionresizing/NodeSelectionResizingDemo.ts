@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
-  ICommand,
   Insets,
   License,
   NodeSizeConstraintProvider,
@@ -42,16 +41,14 @@ import {
   Size
 } from 'yfiles'
 import { NodeSelectionResizingInputMode } from './NodeSelectionResizingInputMode'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent = null!
 
-// @ts-ignore
-let nodeSelectionResizingInputMode: NodeSelectionResizingInputMode = null
+let nodeSelectionResizingInputMode: NodeSelectionResizingInputMode = null!
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -78,9 +75,7 @@ async function run(): Promise<void> {
   // load sample graph
   loadSampleGraph()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 function initializeInputMode(): void {
@@ -128,30 +123,26 @@ function loadSampleGraph(): void {
   graphComponent.graph.undoEngine!.clear()
 }
 
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-
-  const snappingButton = document.querySelector('#demo-snapping-button') as HTMLInputElement
-  bindAction('#demo-snapping-button', () => {
+function initializeUI(): void {
+  const snappingButton = document.querySelector<HTMLInputElement>('#demo-snapping-button')!
+  snappingButton.addEventListener('click', () => {
     ;(graphComponent.inputMode as GraphEditorInputMode).snapContext!.enabled =
       snappingButton.checked
   })
-  const orthogonalEditingButton = document.querySelector(
+  const orthogonalEditingButton = document.querySelector<HTMLInputElement>(
     '#demo-orthogonal-editing-button'
-  ) as HTMLInputElement
-  bindAction('#demo-orthogonal-editing-button', () => {
+  )!
+  orthogonalEditingButton.addEventListener('click', () => {
     ;(graphComponent.inputMode as GraphEditorInputMode).orthogonalEdgeEditingContext!.enabled =
       orthogonalEditingButton.checked
   })
 
-  bindChangeListener("select[data-command='ChangeResizeMode']", value => {
+  const changeResizeModeButton = document.querySelector<HTMLSelectElement>('#change-resize-mode')!
+  changeResizeModeButton.addEventListener('change', evt => {
     if (nodeSelectionResizingInputMode) {
-      nodeSelectionResizingInputMode.mode = value as 'scale' | 'resize'
+      nodeSelectionResizingInputMode.mode = changeResizeModeButton.value as 'scale' | 'resize'
     }
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

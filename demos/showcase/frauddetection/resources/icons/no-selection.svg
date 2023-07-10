@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg width="55mm" height="55mm" viewBox="0 0 55 55" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(-45.101522,-45.341497)">
+    <rect
+       style="fill:none;stroke:#b7babd;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+       width="38.072266" height="38.072266" x="53.565392" y="53.805363" />
+    <rect
+       style="fill:none;stroke:#b7babd;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:2.21816, 2.21816;stroke-dashoffset:1.99634;stroke-opacity:1;paint-order:fill markers stroke"
+       width="52.781841" height="52.781841" x="46.210602" y="46.450577" />
+  </g>
+</svg>

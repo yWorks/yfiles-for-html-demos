@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,6 +32,10 @@ import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from 'y
  * An {@link IPositionHandler} used to move {@link AdditionalSnapLineVisualCreator} instances.
  */
 export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandler) {
+  line
+  mouseDeltaFromStart
+  startFrom = null
+
   /**
    * Creates a new handler for the given `line`.
    * @param {!AdditionalSnapLineVisualCreator} line The additional snap line to move.
@@ -39,7 +43,6 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
    */
   constructor(line, mouseLocation) {
     super()
-    this.startFrom = null
     this.line = line
     this.mouseDeltaFromStart = new Point(
       mouseLocation.x - line.from.x,

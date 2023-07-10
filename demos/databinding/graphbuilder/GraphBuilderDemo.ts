@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutLayeringStrategy,
-  ICommand,
   IIncrementalHintsFactory,
   IList,
   IModelItem,
@@ -49,14 +48,6 @@ import {
 } from 'yfiles'
 
 import SamplesData from './samples'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  reportDemoError,
-  showApp
-} from '../../resources/demo-app'
 import { EdgesSourceDialog, NodesSourceDialog } from './EditSourceDialog'
 import { SourcesListBox } from './SourcesListBox'
 import {
@@ -66,14 +57,16 @@ import {
   NodesSourceDefinitionBuilderConnector,
   SourcesFactory
 } from './ModelClasses'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 interface GraphBuilderSample {
   name: string
   nodesSources: NodesSourceDefinition[]
   edgesSources: EdgesSourceDefinition[]
 }
-const samplesComboBox = document.getElementById('samplesComboBox') as HTMLSelectElement
+const samplesComboBox = document.getElementById('samples-combobox') as HTMLSelectElement
 
 const samples: GraphBuilderSample[] = SamplesData
 
@@ -101,6 +94,8 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
+
   const graph = graphComponent.graph
 
   graph.nodeDefaults.size = new Size(150, 60)
@@ -120,33 +115,31 @@ async function run(): Promise<void> {
   // noinspection JSIgnoredPromiseFromCall
   buildGraphFromData(false)
 
-  // register toolbar and other GUI element commands
-  registerCommands()
-
-  // initialize the demo
-  showApp(graphComponent)
+  // register toolbar and other GUI element actions
+  initializeUI()
 }
 
 /**
- * Bind various UI elements to the appropriate commands
+ * Bind various UI elements to the appropriate actions.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
+function initializeUI(): void {
+  document
+    .getElementById('build-graph-button')!
+    .addEventListener('click', async (): Promise<void> => {
+      samplesComboBox.disabled = true
+      await buildGraphFromData(false)
+      samplesComboBox.disabled = false
+    })
 
-  bindAction("button[data-command='BuildGraph']", async (): Promise<void> => {
-    samplesComboBox.disabled = true
-    await buildGraphFromData(false)
-    samplesComboBox.disabled = false
-  })
-  bindAction("button[data-command='UpdateGraph']", async (): Promise<void> => {
-    samplesComboBox.disabled = true
-    await buildGraphFromData(true)
-    samplesComboBox.disabled = false
-  })
-  bindChangeListener("select[data-command='SetSampleData']", async (): Promise<void> => {
+  document
+    .getElementById('update-graph-button')!
+    .addEventListener('click', async (): Promise<void> => {
+      samplesComboBox.disabled = true
+      await buildGraphFromData(true)
+      samplesComboBox.disabled = false
+    })
+
+  samplesComboBox.addEventListener('change', async (): Promise<void> => {
     const i = samplesComboBox.selectedIndex
     if (samples && samples[i]) {
       samplesComboBox.disabled = true
@@ -155,6 +148,7 @@ function registerCommands(): void {
       samplesComboBox.disabled = false
     }
   })
+
   addNavigationButtons(samplesComboBox)
 }
 
@@ -209,8 +203,6 @@ async function applyLayout(update: boolean): Promise<void> {
   layouting = true
   try {
     await graphComponent.morphLayout(layout, '1s', layoutData)
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     layouting = false
   }
@@ -255,8 +247,8 @@ function loadSample(sample: GraphBuilderSample): void {
 function initializeSamplesComboBox(): void {
   for (let i = 0; i < samples.length; i++) {
     const option = document.createElement('option')
-    option.textContent = samples[i].name
-    // @ts-ignore
+    option.label = samples[i].name
+    // @ts-ignore The value should be a string, but this seems to work, anyway.
     option.value = samples[i]
     samplesComboBox.appendChild(option)
   }
@@ -321,7 +313,7 @@ function initializeLayout() {
   preferredPlacementDescriptor.freeze()
 
   layoutData = new HierarchicLayoutData({
-    incrementalHints: (item: IModelItem, hintsFactory: IIncrementalHintsFactory): Object | null => {
+    incrementalHints: (item: IModelItem, hintsFactory: IIncrementalHintsFactory): object | null => {
       if (item instanceof INode && !existingNodes.includes(item)) {
         return hintsFactory.createLayerIncrementallyHint(item)
       }
@@ -331,5 +323,4 @@ function initializeLayout() {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

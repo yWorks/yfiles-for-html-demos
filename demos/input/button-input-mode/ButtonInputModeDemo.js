@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,16 +47,15 @@ import {
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size,
-  StringTemplateLabelStyle,
-  Stroke
+  StringTemplateLabelStyle
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import { ButtonInputMode, ButtonTrigger, QueryButtonsEvent } from './ButtonInputMode.js'
 import { OffsetLabelModelWrapper } from './OffsetLabelModelWrapper.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 const BUTTON_OUT_VALUE = 'button'
 const BUTTON_OVER_VALUE = 'button hovered'
@@ -120,7 +119,7 @@ function createButtonInputMode() {
     } else if (queryEvent.owner instanceof IBend) {
       // for bends we add a button that splits the edge at the bend location
       queryEvent.addButton({
-        icon: '../../resources/icons/cut2-16.svg',
+        icon: 'demo-resources/icons/cut2-16.svg',
         layoutParameter: FreeNodeLabelModel.INSTANCE.createParameter({
           angle: -Math.PI * 0.75,
           labelRatio: [0.5, 0],
@@ -212,7 +211,7 @@ function addEdgeColorButton(queryEvent, fill, offset) {
     EdgeSides.ABOVE_EDGE
   )
 
-  const button = queryEvent.addButton({
+  queryEvent.addButton({
     style: new DefaultLabelStyle({
       autoFlip: false,
       backgroundFill: fill,
@@ -220,7 +219,7 @@ function addEdgeColorButton(queryEvent, fill, offset) {
     }),
     onAction: button => {
       const edgeStyle = queryEvent.owner.style
-      edgeStyle.stroke = Stroke.from('1.5px ' + fill)
+      edgeStyle.stroke = '1.5px ' + fill
       edgeStyle.targetArrow = new Arrow({ fill: fill, type: 'triangle' })
       graphComponent.graphModelManager.update(queryEvent.owner)
       graphComponent.invalidate()
@@ -273,7 +272,7 @@ function initGraphDefaults() {
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: Stroke.from('1.5px #363020'),
+    stroke: '1.5px #363020',
     targetArrow: new Arrow({ fill: '#363020', type: 'triangle' })
   })
   graph.edgeDefaults.shareStyleInstance = false
@@ -328,23 +327,12 @@ function createGraph() {
 }
 
 /**
- * Binds the various commands available in yFiles for HTML to the buttons in the toolbar.
+ * Binds the buttons in the toolbar to their functionality.
  */
-function registerCommands() {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-  })
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindChangeListener("select[data-command='ButtonTriggerChanged']", () =>
-    onButtonTriggerChanged(graphComponent)
-  )
+function initializeUI() {
+  document
+    .querySelector('#button-trigger-combo-box')
+    .addEventListener('change', () => onButtonTriggerChanged(graphComponent))
 }
 
 /**
@@ -352,7 +340,7 @@ function registerCommands() {
  * @param {!GraphComponent} graphComponent
  */
 function onButtonTriggerChanged(graphComponent) {
-  const featureComboBox = document.getElementById('buttonTriggerComboBox')
+  const featureComboBox = document.querySelector('#button-trigger-combo-box')
   switch (featureComboBox.selectedIndex) {
     case 1: // CurrentItem
       buttonInputMode.buttonTrigger = ButtonTrigger.CURRENT_ITEM
@@ -393,12 +381,8 @@ async function run() {
   // add a sample graph
   createGraph()
 
-  // bind the toolbar buttons to their commands
-  registerCommands()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the toolbar buttons to their actions
+  initializeUI()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,11 +27,19 @@
  **
  ***************************************************************************/
 export class FPSMeter {
+  _enabled
+  scale
+  frameCache
+  fpsHistory
+  fpsSpan
+  canvasCtx
+  cacheSize
+  timerId = 0
+
   /**
    * Initializes a new FPS counter.
    */
   constructor() {
-    this.timerId = 0
     this.scale = Math.floor(65.0 / 60.0)
     this.frameCache = []
     this.fpsHistory = []

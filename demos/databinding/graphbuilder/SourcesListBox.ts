@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import type { SourceDialog } from './EditSourceDialog'
 import type { SourceDefinition, SourceDefinitionBuilderConnector } from './ModelClasses'
-import { addClass } from '../../resources/demo-app'
 
 /**
  * Control containing a list of sub controls for every {link SourceDefinition} added to it
@@ -97,13 +96,13 @@ export class SourcesListBox<
     this.sources.push(newDefinition)
 
     const container = document.createElement('div')
-    addClass(container, 'sourceCard')
+    container.classList.add('sourceCard')
 
     const label = document.createElement('span')
     label.textContent = newDefinition.sourceDefinition.name
 
     const editButton = document.createElement('button')
-    addClass(editButton, 'editButton')
+    editButton.classList.add('editButton')
     editButton.addEventListener('click', () => {
       new this.DialogFactory(newDefinition, () => {
         label.textContent = newDefinition.sourceDefinition.name
@@ -113,7 +112,7 @@ export class SourcesListBox<
     editButton.textContent = 'Edit'
 
     const removeButton = document.createElement('button')
-    addClass(removeButton, 'removeButton')
+    removeButton.classList.add('removeButton')
     removeButton.addEventListener('click', () => this.removeDefinition(newDefinition, container))
     removeButton.textContent = 'Remove'
 

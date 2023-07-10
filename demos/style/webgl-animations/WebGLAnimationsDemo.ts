@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -63,15 +63,10 @@ import {
   WebGL2Stroke
 } from 'yfiles'
 
-import {
-  bindChangeListener,
-  bindCommand,
-  checkWebGL2Support,
-  reportDemoError,
-  showApp
-} from '../../resources/demo-app'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper'
+import { checkWebGL2Support, finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 type BaseAnimation =
   | 'pulse'
@@ -106,12 +101,13 @@ let currentSelectedItem: IModelItem | undefined
  */
 async function run(): Promise<void> {
   if (!checkWebGL2Support()) {
-    showApp()
     return
   }
 
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
+
+  applyDemoTheme(graphComponent)
 
   graphComponent.graphModelManager = new WebGL2GraphModelManager()
   graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager({
@@ -132,29 +128,27 @@ async function run(): Promise<void> {
   configureInteraction(graphComponent)
 
   configureUI(graphComponent)
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
 }
 
 /**
  * Configures the UI elements.
  */
 function configureUI(graphComponent: GraphComponent) {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindChangeListener("input[data-command='useLabelsChanged']", value => {
-    changeLabels(graphComponent, value as boolean)
+  document.querySelector('#use-labels')!.addEventListener('change', e => {
+    changeLabels(graphComponent, (e.target as HTMLInputElement).checked)
   })
 
-  bindChangeListener("select[data-command='ShapeChanged']", value => {
-    setWebGLStyles(graphComponent, connectedComponents, value as WebGL2ShapeNodeShapeStringValues)
+  document.querySelector('#shape-select')!.addEventListener('change', e => {
+    setWebGLStyles(
+      graphComponent,
+      connectedComponents,
+      (e.target as HTMLSelectElement).value as WebGL2ShapeNodeShapeStringValues
+    )
     graphComponent.invalidate()
   })
 
   document
-    .getElementById('animationConfiguration')!
+    .getElementById('animation-configuration')!
     .querySelectorAll<HTMLSelectElement>('select')
     .forEach(element => {
       element.addEventListener('change', () => {
@@ -162,13 +156,14 @@ function configureUI(graphComponent: GraphComponent) {
       })
     })
 
-  const animationDurationSelect = document.querySelector<HTMLSelectElement>('#animationDuration')!
-  const iterationCountSelect = document.querySelector<HTMLSelectElement>('#iterationCount')!
-  const animationDirectionSelect = document.querySelector<HTMLSelectElement>('#animationDirection')!
-  const animationEasingSelect = document.querySelector<HTMLSelectElement>('#animationEasing')!
-  const beaconPulseCountSelect = document.querySelector<HTMLSelectElement>('#pulseCount')!
-  const beaconPulseWidthSelect = document.querySelector<HTMLSelectElement>('#pulseWidth')!
-  const beaconSmoothCheckbox = document.querySelector<HTMLInputElement>('#beaconSmooth')!
+  const animationDurationSelect = document.querySelector<HTMLSelectElement>('#animation-duration')!
+  const iterationCountSelect = document.querySelector<HTMLSelectElement>('#iteration-count')!
+  const animationDirectionSelect =
+    document.querySelector<HTMLSelectElement>('#animation-direction')!
+  const animationEasingSelect = document.querySelector<HTMLSelectElement>('#animation-easing')!
+  const beaconPulseCountSelect = document.querySelector<HTMLSelectElement>('#pulse-count')!
+  const beaconPulseWidthSelect = document.querySelector<HTMLSelectElement>('#pulse-width')!
+  const beaconSmoothCheckbox = document.querySelector<HTMLInputElement>('#beacon-smooth')!
 
   const animations: BaseAnimation[] = ['fade', 'pulse', 'beacon', 'scale', 'shake']
   const options: Map<BaseAnimation, HTMLDivElement> = new Map<BaseAnimation, HTMLDivElement>(
@@ -190,24 +185,24 @@ function configureUI(graphComponent: GraphComponent) {
     '#use-view-coordinates-options'
   )!
 
-  const pulseTypeSelect = document.querySelector<HTMLSelectElement>('#pulseType')!
+  const pulseTypeSelect = document.querySelector<HTMLSelectElement>('#pulse-type')!
   pulseTypeSelect.addEventListener('change', e => {
     const select = e.target as HTMLSelectElement
     updateMagnitudeOptions(select.value as PulseType)
   })
 
-  const scaleTypeSelect = document.querySelector<HTMLSelectElement>('#scaleType')!
+  const scaleTypeSelect = document.querySelector<HTMLSelectElement>('#scale-type')!
   scaleTypeSelect.addEventListener('change', e => {
     const select = e.target as HTMLSelectElement
     updateMagnitudeOptions(select.value as PulseType)
   })
 
-  const baseAnimationSelect = document.querySelector<HTMLSelectElement>('#baseAnimation')!
+  const baseAnimationSelect = document.querySelector<HTMLSelectElement>('#base-animation')!
   baseAnimationSelect.addEventListener('change', e => {
     const select = e.target as HTMLSelectElement
     const animationType = select.value as BaseAnimation
     const animationMagnitudeSelect =
-      document.querySelector<HTMLSelectElement>('#animationMagnitude')!
+      document.querySelector<HTMLSelectElement>('#animation-magnitude')!
 
     // hide all specific options
     for (const value of options.values()) {
@@ -306,7 +301,7 @@ function configureUI(graphComponent: GraphComponent) {
         animatedElementOptions.style.display = 'none'
         animationMagnitudeSelect.value = '20'
         beaconSmoothCheckbox.checked = true
-        ;(document.getElementById('beaconColor') as HTMLInputElement).style.display = 'block'
+        ;(document.getElementById('beacon-color') as HTMLInputElement).style.display = 'block'
         animationDurationSelect.value = '500ms'
         iterationCountSelect.value = '1'
         animationDirectionSelect.value = 'normal'
@@ -344,7 +339,8 @@ function updateMagnitudeOptions(type: PulseType | ScaleType): any {
       break
   }
 
-  const animationMagnitudeSelect = document.querySelector<HTMLSelectElement>('#animationMagnitude')!
+  const animationMagnitudeSelect =
+    document.querySelector<HTMLSelectElement>('#animation-magnitude')!
 
   for (let i = animationMagnitudeSelect.options.length - 1; i >= 0; i--) {
     animationMagnitudeSelect.options.remove(i)
@@ -453,12 +449,14 @@ function getComponentForItem(item: IModelItem | null | undefined): null | Compon
  */
 function startNewAnimation(graphComponent: GraphComponent, component: Component) {
   const applyToComponentMembers =
-    document.querySelector<HTMLInputElement>('input[name="animatedElements"]:checked')!.id ===
-    'componentMembers'
+    document.querySelector<HTMLInputElement>('input[name="animated-elements"]:checked')!.id ===
+    'component-members'
   const animateNodes = getAnimateNodes()
-  const animateEdges = document.querySelector<HTMLInputElement>('input[id="animateEdges"]')!.checked
+  const animateEdges = document.querySelector<HTMLInputElement>(
+    'input[id="animate-edges"]'
+  )!.checked
   const animateLabels = document.querySelector<HTMLInputElement>(
-    'input[id="animateLabels"]'
+    'input[id="animate-labels"]'
   )!.checked
   if (!animateNodes && !animateEdges && !animateLabels) {
     return Promise.resolve(false)
@@ -505,8 +503,6 @@ function startNewAnimation(graphComponent: GraphComponent, component: Component)
  * Configures the interaction behaviour.
  */
 function configureInteraction(graphComponent: GraphComponent) {
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
-
   // Allow only viewing of the graph
   const gvim = new GraphViewerInputMode({
     selectableItems: 'node',
@@ -626,7 +622,7 @@ function removeAnimation(graphComponent: GraphComponent, animation: WebGL2Animat
  * Returns whether to animate nodes.
  */
 function getAnimateNodes(): boolean {
-  const checkBox = document.querySelector('input[id="animateNodes"]') as HTMLInputElement
+  const checkBox = document.querySelector('input[id="animate-nodes"]') as HTMLInputElement
   const config = getAnimationConfiguration()
   const alwaysNode =
     config.baseAnimation == 'pulse-effect' ||
@@ -704,9 +700,9 @@ function getAnimationType(
  * Gets the colors from the fade to color pickers
  */
 function getConfiguredFadeColors(): { color1: Color; color2: Color } {
-  const color1pickerValue = (document.getElementById('fadeColor1') as HTMLInputElement).value
-  const color2pickerValue = (document.getElementById('fadeColor2') as HTMLInputElement).value
-  const chosenFadeType = (document.getElementById('fadeType') as HTMLSelectElement)
+  const color1pickerValue = (document.getElementById('fade-color1') as HTMLInputElement).value
+  const color2pickerValue = (document.getElementById('fade-color2') as HTMLInputElement).value
+  const chosenFadeType = (document.getElementById('fade-type') as HTMLSelectElement)
     .value as FadeType
   const isSemiTransparent =
     chosenFadeType === 'from semi-transparent' || chosenFadeType === 'to semi-transparent'
@@ -740,7 +736,7 @@ function getAnimationConfiguration(): {
   pulseDistance: number
   smooth: boolean
 } {
-  const baseAnimation = document.querySelector<HTMLSelectElement>('#baseAnimation')!
+  const baseAnimation = document.querySelector<HTMLSelectElement>('#base-animation')!
     .value as BaseAnimation
 
   const colors = getConfiguredFadeColors()
@@ -751,41 +747,41 @@ function getAnimationConfiguration(): {
     case 'pulse':
     case 'pulse-effect':
       animationType = getAnimationType(
-        document.querySelector<HTMLSelectElement>('#pulseType')!.value as AnimationType
+        document.querySelector<HTMLSelectElement>('#pulse-type')!.value as AnimationType
       )
       break
     case 'fade':
     case 'fade-effect':
       animationType = getAnimationType(
-        document.querySelector<HTMLSelectElement>('#fadeType')!.value as AnimationType
+        document.querySelector<HTMLSelectElement>('#fade-type')!.value as AnimationType
       )
       break
     case 'shake':
       animationType = getAnimationType(
-        document.querySelector<HTMLSelectElement>('#shakeType')!.value as AnimationType
+        document.querySelector<HTMLSelectElement>('#shake-type')!.value as AnimationType
       )
       break
     case 'beacon':
       animationType = getAnimationType(
-        document.querySelector<HTMLSelectElement>('#beaconType')!.value as AnimationType
+        document.querySelector<HTMLSelectElement>('#beacon-type')!.value as AnimationType
       )
       break
     case 'scale':
     case 'scale-effect':
       animationType = getAnimationType(
-        document.querySelector<HTMLSelectElement>('#scaleType')!.value as AnimationType
+        document.querySelector<HTMLSelectElement>('#scale-type')!.value as AnimationType
       )
       break
   }
   const animationMagnitude = Number(
-    document.querySelector<HTMLSelectElement>('#animationMagnitude')!.value
+    document.querySelector<HTMLSelectElement>('#animation-magnitude')!.value
   )
-  const animationDuration = document.querySelector<HTMLSelectElement>('#animationDuration')!.value
-  const count = document.querySelector<HTMLSelectElement>('#iterationCount')!.value
+  const animationDuration = document.querySelector<HTMLSelectElement>('#animation-duration')!.value
+  const count = document.querySelector<HTMLSelectElement>('#iteration-count')!.value
   const iterationCount = count === 'infinity' ? 255 : parseInt(count)
 
   let animationDirection
-  const direction = document.querySelector<HTMLSelectElement>('#animationDirection')!.value
+  const direction = document.querySelector<HTMLSelectElement>('#animation-direction')!.value
   switch (direction) {
     default:
     case 'normal':
@@ -803,7 +799,7 @@ function getAnimationConfiguration(): {
   }
 
   let easing
-  const easingValue = document.querySelector<HTMLSelectElement>('#animationEasing')!.value
+  const easingValue = document.querySelector<HTMLSelectElement>('#animation-easing')!.value
   switch (easingValue) {
     default:
     case 'linear':
@@ -843,16 +839,16 @@ function getAnimationConfiguration(): {
     color1: colorFade
       ? colors.color1
       : baseAnimation === 'beacon'
-      ? Color.from((document.getElementById('beaconColor') as HTMLInputElement).value)
+      ? Color.from((document.getElementById('beacon-color') as HTMLInputElement).value)
       : null,
     color2: colorFade ? colors.color2 : null,
-    count: Number((document.getElementById('pulseCount') as HTMLSelectElement).value),
-    pulseWidth: Number((document.getElementById('pulseWidth') as HTMLSelectElement).value),
-    pulseDistance: Number((document.getElementById('pulseDistance') as HTMLSelectElement).value),
+    count: Number((document.getElementById('pulse-count') as HTMLSelectElement).value),
+    pulseWidth: Number((document.getElementById('pulse-width') as HTMLSelectElement).value),
+    pulseDistance: Number((document.getElementById('pulse-distance') as HTMLSelectElement).value),
     viewCoordinates: Boolean(
-      (document.getElementById('viewCoordinates') as HTMLInputElement).checked
+      (document.getElementById('view-coordinates') as HTMLInputElement).checked
     ),
-    smooth: Boolean((document.getElementById('beaconSmooth') as HTMLInputElement).checked)
+    smooth: Boolean((document.getElementById('beacon-smooth') as HTMLInputElement).checked)
   }
 }
 
@@ -945,13 +941,9 @@ function getAnimation(gmm: WebGL2GraphModelManager): WebGL2Animation {
  * Loads the graph sample.
  */
 async function loadGraph(graphComponent: GraphComponent) {
-  try {
-    const graph = graphComponent.graph
-    const graphMLIOHandler = new GraphMLIOHandler()
-    await graphMLIOHandler.readFromURL(graph, 'resources/graph.graphml')
-  } catch (error) {
-    reportDemoError(error)
-  }
+  const graph = graphComponent.graph
+  const graphMLIOHandler = new GraphMLIOHandler()
+  await graphMLIOHandler.readFromURL(graph, 'resources/graph.graphml')
 }
 
 /**
@@ -970,8 +962,8 @@ function changeLabels(graphComponent: GraphComponent, showLabels: boolean) {
         idx++
       })
     })
-    const shape = document.querySelector<HTMLSelectElement>('#shapeSelect')!.value
-    // @ts-ignore
+    const shape = document.querySelector<HTMLSelectElement>('#shape-select')!
+      .value as WebGL2ShapeNodeShapeStringValues
     setWebGLStyles(graphComponent, connectedComponents, shape)
   }
 }
@@ -1014,8 +1006,7 @@ function collectComponent(graph: IGraph, node: INode): Component {
   return component
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)
 
 /**
  * A data holder for the nodes and edges that belong to a connected component.

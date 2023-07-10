@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,7 @@ const path = require('path')
 const uriToBuffer = require('data-uri-to-buffer')
 
 async function exportPng(svg, w, h, margin) {
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch({ headless: 'new' })
   const page = await browser.newPage()
   await page.goto(path.join(__dirname, 'index.html'), {
     waitUntil: 'domcontentloaded'

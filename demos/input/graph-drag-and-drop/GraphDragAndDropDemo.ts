@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,7 +39,6 @@ import {
   GraphEditorInputMode,
   GraphSnapContext,
   GridSnapTypes,
-  ICommand,
   IGraph,
   ILabelModelParameter,
   Insets,
@@ -47,10 +46,9 @@ import {
   SvgExport
 } from 'yfiles'
 import { GraphDropInputMode } from './GraphDropInputMode'
-import { addClass, bindCommand, removeClass, showApp } from '../../resources/demo-app'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -76,9 +74,7 @@ async function run(): Promise<void> {
 
   await initializePalette()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -151,15 +147,15 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
       graph,
       DragDropEffects.ALL,
       true,
-      BrowserDetection.pointerEvents ? dragPreview : null
+      dragPreview
     )
 
     dragSource.addQueryContinueDragListener((src, args) => {
       // hide the preview if there is currently to valid drop target
       if (args.dropTarget) {
-        addClass(dragPreview, 'hidden')
+        dragPreview.classList.add('hidden')
       } else {
-        removeClass(dragPreview, 'hidden')
+        dragPreview.classList.remove('hidden')
       }
     })
   }
@@ -181,7 +177,7 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
       startDrag()
       event.preventDefault()
     },
-    BrowserDetection.passiveEventListeners ? { passive: false } : false
+    { passive: false }
   )
 
   return paletteEntry
@@ -286,21 +282,12 @@ function toSvg(graph: IGraph): string {
 }
 
 /**
- * Registers commands and actions for the items in the toolbar.
+ * Registers actions for the demo-specific items in the toolbar.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindCommand("button[data-command='Group']", ICommand.GROUP_SELECTION, graphComponent, null)
-  bindCommand("button[data-command='Ungroup']", ICommand.UNGROUP_SELECTION, graphComponent, null)
-
-  const previewButton = document.querySelector('#show-preview') as HTMLInputElement
-  const snappingButton = document.querySelector('#enable-snapping') as HTMLInputElement
-  const folderButton = document.querySelector('#folders-as-parents') as HTMLInputElement
+function initializeUI(): void {
+  const previewButton = document.querySelector<HTMLInputElement>('#show-preview')!
+  const snappingButton = document.querySelector<HTMLInputElement>('#enable-snapping')!
+  const folderButton = document.querySelector<HTMLInputElement>('#folders-as-parents')!
 
   // button to enable or disable the preview shown during the drag and drop operation
   previewButton.addEventListener('click', () => {
@@ -324,5 +311,4 @@ function registerCommands(): void {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

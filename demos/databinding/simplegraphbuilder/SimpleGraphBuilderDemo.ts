@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   GraphComponent,
   GraphViewerInputMode,
   HierarchicLayout,
-  ICommand,
   IGraph,
   LayoutExecutor,
   LayoutOrientation,
@@ -48,15 +47,11 @@ import TreeBuilderDataJson from './tree-builder-data-json'
 import TreeBuilderDataArray from './tree-builder-data-array'
 import AdjacentBuilderIdDataArray from './adjacent-builder-id-data-array'
 import GraphBuilderData from './graph-builder-data'
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
+import GraphBuilderWithImplicitGroupsData from './graph-builder-with-grouping-data'
 import { initDataView, updateDataView } from './data-view'
-import { initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
 // tools from removing this dependency which is needed for 'morphLayout'.
@@ -66,6 +61,11 @@ Class.ensure(LayoutExecutor)
  * Specifier that indicates using a {@link GraphBuilder}.
  */
 const TYPE_GRAPH_BUILDER = 'Graph Builder'
+
+/**
+ * Specifier that indicates using a {@link GraphBuilder} with child lists.
+ */
+const TYPE_GRAPH_BUILDER_PARENTS_AND_CHILDREN = 'Graph Builder (Implicit Grouping)'
 
 /**
  * Specifier that indicates using a {@link TreeBuilder} with an array input.
@@ -87,9 +87,7 @@ const TYPE_ADJACENT_NODES_BUILDER = 'Adjacent Nodes Graph Builder'
  */
 const TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY = 'Adjacent Nodes Graph Builder (with IDs)'
 
-const selectBox = document.querySelector(
-  "select[data-command='SelectBuilder']"
-) as HTMLSelectElement
+const selectBox = document.querySelector<HTMLSelectElement>('#select-builder')!
 
 /**
  * This demo shows how to automatically build a graph from business data.
@@ -99,6 +97,7 @@ async function run(): Promise<void> {
 
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // use the viewer input mode since this demo should not allow interactive graph editing
   graphComponent.inputMode = new GraphViewerInputMode()
@@ -114,10 +113,8 @@ async function run(): Promise<void> {
 
   arrangeGraph(graphComponent)
 
-  // register toolbar commands
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  // register toolbar actions
+  initializeUI(graphComponent)
 }
 
 /**
@@ -152,7 +149,8 @@ function createGraphBuilder(graph: IGraph): GraphBuilder {
     // identifies the property of a node object that contains its group's id
     parentId: 'group'
   })
-  graphBuilder.createGroupNodesSource({
+  // This sample provides explicit objects for the groups
+  const groupsSource = graphBuilder.createGroupNodesSource({
     // stores the group nodes of the graph
     data: GraphBuilderData.groupsSource,
     // identifies the id property of a group node object
@@ -160,9 +158,72 @@ function createGraphBuilder(graph: IGraph): GraphBuilder {
     // identifies the property of a group node object that contains its parent group id
     parentId: 'parentGroup'
   })
+  // Add some labels to the group nodes
+  groupsSource.nodeCreator.createLabelBinding(group => group.id)
+
   graphBuilder.createEdgesSource({
     // stores the edges of the graph
     data: GraphBuilderData.edgesSource,
+    // identifies the property of an edge object that contains the source node's id
+    sourceId: 'fromNode',
+    // identifies the property of an edge object that contains the target node's id
+    targetId: 'toNode'
+  })
+
+  return graphBuilder
+}
+
+/**
+ * Creates and configures the {@link GraphBuilder} defining children and parents of a {@link NodesSource}.
+ */
+function createGraphBuilderWithImplicitGrouping(graph: IGraph): GraphBuilder {
+  // Choose the right source data
+  // update the data view with the current data
+  updateDataView(
+    GraphBuilderWithImplicitGroupsData.nodesSource,
+    null,
+    GraphBuilderWithImplicitGroupsData.edgesSource
+  )
+  const graphBuilder = new GraphBuilder(graph)
+
+  // In this sample, our core objects are the groups, that have
+  // both a list of members (employees) and an additional attribute specifying the
+  // location which gets turned into another hierarchy
+  const nodesSource = graphBuilder.createNodesSource({
+    // stores the nodes of the graph
+    data: GraphBuilderWithImplicitGroupsData.nodesSource,
+    // identifies the id property of a node object
+    id: 'id'
+  })
+
+  // The children of each group are defined directly in the data
+  const childSource = nodesSource.createChildNodesSource(
+    // specifies how to retrieve the children for each group
+    group => group.members,
+    // specifies how the child nodes are identified globally
+    item => item.id
+  )
+  // And the groups are additionally grouped again by location
+  const parentSource = nodesSource.createParentNodesSource(group => group.location)
+
+  // We want to set up reasonable defaults for the styles.
+  // Since the entities in the nodesSource and the parentsSource are both group nodes, they
+  // are styled with a group node
+  nodesSource.nodeCreator.defaults.style = parentSource.nodeCreator.defaults.style =
+    graph.groupNodeDefaults.style
+  // We also show labels for the groups
+  nodesSource.nodeCreator.createLabelBinding(group => group.id)
+  parentSource.nodeCreator.createLabelBinding(location => location)
+  nodesSource.nodeCreator.defaults.labels = parentSource.nodeCreator.defaults.labels =
+    graph.groupNodeDefaults.labels
+  // The nodes in the childSource are just plain leaf nodes and are styles with a normal node style
+  childSource.nodeCreator.defaults.style = graph.nodeDefaults.style
+
+  // The edges are defined as for the sample with explicit groups
+  // even though the objects don't appear in the nodesSource
+  graphBuilder.createEdgesSource({
+    // stores the edges of the graph
+    data: GraphBuilderWithImplicitGroupsData.edgesSource,
     // identifies the property of an edge object that contains the source node's id
     sourceId: 'fromNode',
     // identifies the property of an edge object that contains the target node's id
@@ -245,6 +306,8 @@ function buildGraph(graph: IGraph, builderType: string): void {
   let builder: GraphBuilder | AdjacencyGraphBuilder | TreeBuilder
   if (builderType === TYPE_GRAPH_BUILDER) {
     builder = createGraphBuilder(graph)
+  } else if (builderType === TYPE_GRAPH_BUILDER_PARENTS_AND_CHILDREN) {
+    builder = createGraphBuilderWithImplicitGrouping(graph)
   } else if (
     builderType === TYPE_ADJACENT_NODES_BUILDER ||
     builderType === TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY
@@ -277,22 +340,18 @@ async function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
 }
 
 /**
- * Registers the commands for the tool bar buttons during the creation of this application.
+ * Registers the actions for the toolbar buttons during the creation of this application.
  */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindChangeListener("select[data-command='SelectBuilder']", async selectedValue => {
+function initializeUI(graphComponent: GraphComponent): void {
+  selectBox.addEventListener('change', async e => {
     // build graph from new data
     selectBox.disabled = true
-    buildGraph(graphComponent.graph, selectedValue as string)
+    buildGraph(graphComponent.graph, (e.target as HTMLSelectElement).value)
     await arrangeGraph(graphComponent)
     selectBox.disabled = false
   })
+
   addNavigationButtons(selectBox)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

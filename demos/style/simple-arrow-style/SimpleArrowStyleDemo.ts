@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,11 +41,11 @@ import {
   Stroke
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import { TaperedArrow, TaperedArrowExtension } from './TaperedArrow'
-import { colorSets } from '../../resources/demo-colors'
+import { colorSets } from 'demo-resources/demo-colors'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Runs the demo.
@@ -69,9 +69,7 @@ async function run(): Promise<void> {
   // create the sample graph
   createSampleGraph(graphComponent)
 
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  initializeUI(graphComponent)
 }
 
 /**
@@ -160,20 +158,13 @@ function createSampleGraph(graphComponent: GraphComponent): void {
 }
 
 /**
- * Binds actions and commands to the demo's UI controls.
- * @param graphComponent The given graphComponent
+ * Binds actions to the demo's UI controls.
  */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindAction("button[data-command='New']", () => {
+function initializeUI(graphComponent: GraphComponent): void {
+  document.querySelector<HTMLButtonElement>('#reload')!.addEventListener('click', () => {
+    graphComponent.graph.clear()
     createSampleGraph(graphComponent)
   })
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

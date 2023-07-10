@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Layout Styles Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../resources/style/demo-option-editor.css" />
+    <link rel="stylesheet" href="./resources/styles.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <!-- load Angular for the settings panel of the layouts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.9/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.7.9/angular-sanitize.min.js"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Layout Styles</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <!--
+  The sidebar for description text
+  -->
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Layout Styles Demo</h1>
+
+        <p>
+          This demo showcases the most used layout algorithms of yFiles, including hierarchic,
+          organic, orthogonal, tree, circular, balloon, and several edge routing styles.
+        </p>
+
+        <p>
+          The configuration panel provides access to the settings of each algorithm. Typically, an
+          algorithm allows even more options in code.
+        </p>
+
+        <p>
+          Since not every layout style works well for every type of graph, we provide several
+          suitable sample graphs.
+        </p>
+
+        <p>
+          The interactive editing capabilities of the graph component of this demo are explained in
+          the <a href="../../view/grapheditor/index.html">Graph Editor Demo</a>.
+        </p>
+
+        <h2>Things to Try</h2>
+
+        <ul>
+          <li>Browse the <em>Layout Algorithms</em> and <em>Sample Graphs</em>.</li>
+          <li>Explore and apply the settings of the layout algorithms.</li>
+          <li>Try a preset configuration to explore different aspects of the layout algorithms.</li>
+        </ul>
+
+        <div id="layout-description-container">
+          <h2 id="layout-title">Layout Description</h2>
+          <div id="layout-description"></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__toolbar">
+      <button data-command="NEW"></button>
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="CUT"></button>
+      <button data-command="COPY"></button>
+      <button data-command="PASTE"></button>
+      <button data-command="DELETE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <input type="checkbox" id="snapping-button" class="demo-toggle-button" />
+      <label for="snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
+      <input type="checkbox" id="orthogonal-editing-button" class="demo-toggle-button" />
+      <label
+        for="orthogonal-editing-button"
+        class="demo-icon-yIconOrthogonal"
+        title="Enable Orthogonal Edges"
+      ></label>
+      <span class="demo-separator"></span>
+
+      <button data-command="GROUP_SELECTION"></button>
+      <button data-command="UNGROUP_SELECTION"></button>
+
+      <span class="demo-separator"></span>
+      <button
+        id="generate-node-labels"
+        title="Generate random node labels"
+        class="demo-icon-yIconNodeLabel"
+      ></button>
+      <button
+        id="generate-edge-labels"
+        title="Generate random edge labels"
+        class="demo-icon-yIconEdgeLabel"
+      ></button>
+      <button id="remove-labels" title="Remove all labels" class="demo-icon-yIconDelete"></button>
+      <span class="demo-separator"></span>
+      <button
+        id="generate-edge-thickness-button"
+        title="Generate random edge thicknesses"
+        class="demo-icon-yIconEdgeThickness"
+      ></button>
+      <button
+        id="reset-edge-thickness-button"
+        title="Reset all edge thicknesses"
+        class="demo-icon-yIconDelete"
+      ></button>
+      <span class="demo-separator"></span>
+      <button
+        id="generate-edge-direction-button"
+        title="Generate random edge directions"
+        class="demo-icon-yIconEdgeDirection"
+      ></button>
+      <button
+        id="reset-edge-direction-button"
+        title="Reset all directions"
+        class="demo-icon-yIconDelete"
+      ></button>
+    </div>
+    <div class="demo-page__main">
+      <div class="demo-overlay">
+        <div class="demo-overlay__header">Overview</div>
+        <div id="overviewComponent"></div>
+      </div>
+
+      <div class="demo-main__graph-component">
+        <!-- The GraphComponent -->
+        <div id="graphComponent"></div>
+      </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content" style="padding: 0 0 70px 0">
+          <div class="data-editor-header">
+            <h2 style="margin-top: 8px">Layout Algorithm</h2>
+            <div class="content">
+              <select
+                tabindex="1"
+                id="layout-select-box"
+                title="Select a layout algorithm"
+              ></select>
+            </div>
+          </div>
+
+          <div class="data-editor-header">
+            <h2 style="margin-top: 0">Sample Graph</h2>
+            <div class="content">
+              <select
+                tabindex="2"
+                id="sample-select-box"
+                title="Select a sample for the layout algorithm"
+              ></select>
+              <button
+                data-command="OpenInSidebar"
+                title="Open a GraphML file"
+                class="sidebar-button open-button demo-icon-yIconOpen"
+              ></button>
+            </div>
+          </div>
+
+          <div class="data-editor-header">
+            <h2 style="margin-top: 0">Settings</h2>
+          </div>
+
+          <div class="data-editor-tab" style="margin-top: 12px">
+            <div class="data-editor-tab-title">
+              <span class="presets-icon"></span>
+              <span>Presets</span>
+            </div>
+            <div id="data-presets"></div>
+          </div>
+
+          <div id="data-editor">
+            <!-- Begin Templates -->
+            <script type="text/ng-template" id="./templates/option-ui.html">
+              <div class="option-ui-content-container">
+                <div class="option-ui-content">
+                  <div data-option-ui-form data-accordeon data-members="config.membersArray" data-preset-name="config._preset"></div>
+                </div>
+              </div>
+            </script>
+
+            <script type="text/ng-template" id="./templates/option-ui-form.html">
+              <form name="form" class="option-ui-form" novalidate>
+                <div data-ng-repeat-start="member in members" data-ng-if="member.type==='group'">
+                  <div class="option-ui-form-group" data-ng-class="{hidden: member._member._isHidden, 'aria-disabled': member._recIsDisabled, collapsed: member._isCollapsed}">
+                    <div data-option-ui-button data-click-callback="toggleCollapsed(member, members)" data-label="::member._member.label" data-icon="member._isCollapsed ? 'chevronDown': 'chevronRight'"></div><br>
+                    <div option-ui-collapse class="option-ui-form-section" data-collapsed="member._isCollapsed">
+                      <div data-option-ui-form data-members="member.members" data-preset-name="presetName"></div>
+                    </div>
+                  </div>
+                </div>
+                <div data-ng-repeat-end data-ng-if="member.type==='option'" style="position: relative">
+                  <div
+                    data-option-ui-item data-option="member._member"
+                    data-disabled="member._recIsDisabled"
+                    data-ng-class="{disabled: member._recIsDisabled, 'value-changed': member._isChanged, hidden: member._isHidden}"></div>
+                  <span data-ng-if="!member._isHidden && member._isChanged && $parent.presetName!== null" class="value-changed-icon" title="Applied by {{$parent.presetName}} preset"></span>
+                  <span data-ng-if="!member._isHidden && member._isChanged && $parent.presetName === null" class="value-changed-icon" title="Setting differs from the default configuration"></span>
+                </div>
+              </form>
+            </script>
+
+            <script type="text/ng-template" id="./templates/option-ui-item.html">
+              <div class="item" data-ng-switch data-on="::option.component" data-ng-class="{hidden: option._isHidden}">
+                <div data-ng-switch-when="checkbox" data-option-ui-checkbox data-option="::option" data-disabled="disabled"></div>
+                <div data-ng-switch-when="spinner" data-option-ui-spinner data-option="::option" data-disabled="disabled"></div>
+                <div data-ng-switch-when="slider" data-option-ui-slider data-option="::option" data-disabled="disabled"></div>
+                <div data-ng-switch-when="text" data-option-ui-text data-option="::option" data-disabled="disabled"></div>
+                <div data-ng-switch-when="combobox" data-option-ui-combobox data-option="::option" data-options="::option.options" data-disabled="disabled"></div>
+                <div data-ng-switch-when="htmlblock" data-option-ui-htmlblock data-option="::option"></div>
+                <div ng-switch-default>{{::option.component}}</div>
+              </div>
+            </script>
+
+            <script type="text/ng-template" id="./templates/option-ui-revert.html">
+              <!--div data-option-ui-button data-click-callback="clickCallback()" data-icon="'undo'"></div-->
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-button/option-ui-button.html"
+            >
+              <div class="option-ui-button" data-ng-click="!disabled && clickCallback()" data-ng-disabled="disabled">
+                <span class="icon" data-ng-show="!!icon"></span>
+                <span class="label" data-ng-show="!!label">{{::label}}</span>
+              </div>
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-checkbox/option-ui-checkbox.html"
+            >
+              <form class="option-ui-checkbox">
+                <div class="checkbox-container">
+                  <label  class="option-ui-checkbox" title="{{::option.label}}">
+                    {{::option.label}}
+                    <div style="display: inline"> <a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a> </div>
+                  </label>
+                  <div class="vcenter-container">
+                    <input type="checkbox" data-ng-model="option.value" data-ng-disabled="disabled" />
+                  </div>
+                </div>
+              </form>
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-collapse/option-ui-collapse.html"
+            >
+              <div  class="option-ui-collapse demo-collapsible-pane-content" data-ng-transclude data-ng-if="!collapsed">
+              </div>
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-combobox/option-ui-combobox.html"
+            >
+              <form class="option-ui-combobox">
+                <div class="combobox-container">
+                  <label class="option-ui-combobox" title="{{::option.label}}">
+                    {{::option.label}}
+                    <div style="display: inline"> <a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a> </div>
+                  </label>
+                  <div class="vcenter-container">
+                    <select size="1" data-ng-model="option.value" data-ng-disabled="disabled" ng-options="option.value as option.name for option in options"></select>
+                  </div>
+                </div>
+              </form>
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-dropdown/option-ui-dropdown.html"
+            >
+              <div  class="option-ui-dropdown">
+                <div class="option-ui-selectionlist">
+                  <select size="1" data-ng-model="currentSelected">
+                    <option data-ng-repeat="option in options" value="{{::$index}}">{{::option.label}}</option>
+                  </select>
+                  <div class="selectionBar" data-ng-style="slide"></div>
+                </div>
+              </div>
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-slider/option-ui-slider.html"
+            >
+              <form class="option-ui-slider" name="ctrlForm">
+                <div>
+                  <label class="option-ui-slider" title="{{::option.label}}">
+                    {{::option.label}}
+                    <div style="display: inline"> <a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a> </div>
+                  </label>
+                </div>
+
+                <div class="slider-container">
+                  <div class="range-container">
+                    <input class="noselect" type="range" data-option-ui-number-parser min="{{::option.min}}" max="{{::option.max}}" step="{{::option.step}}" data-ng-model="option.value" data-ng-disabled="disabled" option-ui-validate />
+                  </div>
+                  <div class="number-container">
+                    <input type="number" min="{{::option.min}}" max="{{::option.max}}" step="{{::option.step}}" data-ng-model="option.value" data-ng-disabled="disabled" name="input" option-ui-validate required/>
+                  </div>
+                </div>
+                <div class="form-error-container">
+                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.min">
+                    <div class="arrow-top"></div>
+                    <div class="label"> &lt; {{option.min}}</div>
+                  </div>
+                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.max">
+                    <div class="arrow-top"></div>
+                    <div class="label"> &gt; {{option.max}}</div>
+                  </div>
+                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.number || ctrlForm.input.$error.required">
+                    <div class="arrow-top"></div>
+                    <div class="label">Invalid number</div>
+                  </div>
+                </div>
+              </form>
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-spinner/option-ui-spinner.html"
+            >
+              <form class="option-ui-spinner" name="ctrlForm">
+                <div class="spinner-container">
+                  <label class="option-ui-spinner" title="{{::option.label}}">{{::option.label}}</label>
+                  <div style="display: inline"> <a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a> </div>
+                  <div class="vcenter-container">
+                    <input class="spinner" type="number" min="{{::option.min}}" max="{{::option.max}}" step="{{::option.step}}" name="input" data-ng-model="option.value" data-ng-disabled="disabled" required  option-ui-validate />
+                  </div>
+                </div>
+                <div class="form-error-container">
+                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.min">
+                    <div class="arrow-top"></div>
+                    <div class="label"> &lt; {{option.min}}</div>
+                  </div>
+                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.max">
+                    <div class="arrow-top"></div>
+                    <div class="label"> &gt; {{option.max}}</div>
+                  </div>
+                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.number || ctrlForm.input.$error.required">
+                    <div class="arrow-top"></div>
+                    <div class="label">Invalid number</div>
+                  </div>
+                </div>
+              </form>
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-tabbar/option-ui-tabbar.html"
+            >
+              <div>
+                <div role="tablist" class="option-ui-tablist">
+                  <div class="tabsContainer" data-ng-mousedown="moveSlider()">
+                    <div class="option-ui-tab relative" role="tab" data-ng-mousedown="setCurrentTab($index)" data-ng-class="{active: isCurrentTab($index)}" data-ng-repeat="tab in tabs" data-ng-style="{'width': 100/tabs.length+'%'}" title="{{::tab.label}}">
+                      <div class="tabContainer fit">
+                        <div class="tab-content" data-ng-bind="::tab.label|camelcase"></div>
+                      </div>
+                    </div>
+                    <div class="selectionBar" data-ng-style="slide"></div>
+                  </div>
+                </div>
+              </div>
+            </script>
+
+            <script type="text/ng-template" id="./components/option-ui-text/option-ui-text.html">
+              <label>
+                {{::option.label}}<br />
+                <input type="text" minlength="{{::option.minLength}}" maxlength="{{::option.maxLength}}" data-ng-model="option.value" data-ng-disabled="disabled" />
+              </label>
+            </script>
+
+            <script
+              type="text/ng-template"
+              id="./components/option-ui-htmlblock/option-ui-htmlblock.html"
+            >
+              <div class="option-ui-htmlblock"></div>
+            </script>
+            <!-- End Templates -->
+          </div>
+          <div id="data-editor-button-container" class="demo-form-block">
+            <button
+              id="apply-layout-button"
+              class="flat-button"
+              title="Apply the Layout
+(CTRL + Enter)"
+            >
+              <span>Apply Layout</span>
+            </button>
+          </div>
+
+          <div id="preset-tooltip">
+            <span class="triangle"></span>
+            <div class="content"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!--
+The sidebar for the properties and settings
+-->
+
+    <script type="module" crossorigin="anonymous" src="LayoutStylesDemo.ts" async></script>
+  </body>
+</html>

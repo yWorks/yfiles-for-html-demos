@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Selenium WebDriver Testing Demo [yFiles for HTML]</title>
+    <link rel="stylesheet" href="../../../doc/readme-style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  </head>
+  <body>
+    <div id="header" class="simple-header">Selenium WebDriver Testing Demo</div>
+    <main>
+      <div class="content-centered">
+        <div class="content">
+          <div class="breadcrumbs">
+            <a href="../../README.html">yFiles for HTML</a>
+            <span class="angle-right"></span>
+            Selenium WebDriver Testing Demo
+          </div>
+          <h1>Selenium WebDriver Testing Demo</h1>
+          <p>
+            This demo shows how to use
+            <a
+              href="https://www.selenium.dev/documentation/webdriver/"
+              rel="noopener"
+              target="_blank"
+              >Selenium WebDriver</a
+            >
+            for testing a yFiles for HTML web application.
+          </p>
+          <p>
+            The application under test is the
+            <a href="../application-under-test/index.html">Simple Testable App</a>.
+          </p>
+          <p>To run the test:</p>
+          <ol>
+            <li>Start the <a data-dguide="demos-server#demos-server">Demo Server</a>.</li>
+            <li>Go to the demo's directory <code>demos-ts/testing/selenium-webdriver</code>.</li>
+            <li>Run <code>npm install</code>.</li>
+            <li>Run the test with <code>npm run test</code>.</li>
+          </ol>
+          <p>
+            The test is run in Chrome and Firefox in headless mode. Please note that the tests will
+            fail if the corresponding browser binaries cannot be found on your system.
+          </p>
+          <p>
+            Selenium WebDriver is a general-purpose browser automation framework that does not come
+            with a framework for running integration tests or unit tests. Therefore, this demo uses
+            the <a href="https://mochajs.org/" rel="noopener" target="_blank">Mocha</a> test runner
+            and the <a href="https://www.chaijs.com/" rel="noopener" target="_blank">Chai</a>
+            assertion framework. However, Selenium WebDriver may be used with any other testing
+            framework, too.
+          </p>
+        </div>
+        <!-- populated by readme-style.js -->
+        <div id="footer-detailed"></div>
+      </div>
+    </main>
+    <script src="../../../doc/readme-style.js"></script>
+  </body>
+</html>

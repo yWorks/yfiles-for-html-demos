@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,11 @@
  **
  ***************************************************************************/
 export default class PreConfigurator {
+  graphItemStylesSettings
+  warningRadios
+  graphComponent
+  modeMapping = ['view', 'move', 'edit']
+
   /**
    * These limits define up to which node count the specific setting is considered as practical.
    * It also defines a fall-back GraphModelManager setting that is used, if the default GMM
@@ -278,7 +283,6 @@ export default class PreConfigurator {
    * @param {!GraphComponent} graphComponent
    */
   constructor(graphComponent) {
-    this.modeMapping = ['view', 'move', 'edit']
     this.graphItemStylesSettings = document.getElementById('settingsGraphItemStyles')
     this.warningRadios = document.getElementsByClassName('mayHaveWarning')
     const radioButtons = this.graphItemStylesSettings.getElementsByTagName('input')

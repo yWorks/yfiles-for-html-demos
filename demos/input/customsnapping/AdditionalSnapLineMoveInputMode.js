@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,13 +42,15 @@ import { AdditionalSnapLinePositionHandler } from './AdditionalSnapLinePositionH
  * This input mode allows moving free snaplines using a drag gesture.
  */
 export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
+  snapLineCreators
+  handler = null
+
   /**
    * Creates a new instance of {@link AdditionalSnapLineMoveInputMode}
    * @param {!List.<AdditionalSnapLineVisualCreator>} snapLineCreators
    */
   constructor(snapLineCreators) {
     super()
-    this.handler = null
     this.snapLineCreators = snapLineCreators
     this.positionHandler = null
     this.hitTestable = IHitTestable.create(this.isValidHit.bind(this))

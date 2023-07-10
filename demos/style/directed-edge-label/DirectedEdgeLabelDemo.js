@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IEdge,
   IGraph,
   License,
@@ -40,10 +39,10 @@ import {
   Point,
   Size
 } from 'yfiles'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { DirectedEdgeLabelStyle } from './DirectedEdgeLabelStyle.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * @returns {!Promise}
@@ -71,10 +70,6 @@ async function run() {
   // Create some graph elements
   createSampleGraph(graphComponent.graph)
   graphComponent.fitGraphBounds()
-
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
 }
 
 const toSourceStyle = new DirectedEdgeLabelStyle(true)
@@ -133,15 +128,4 @@ function createSampleGraph(graph) {
   })
 }
 
-/**
- * @param {!GraphComponent} graphComponent
- */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

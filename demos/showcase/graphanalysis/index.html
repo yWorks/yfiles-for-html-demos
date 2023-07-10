@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Graph Analysis Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <style>
+      .demo-page__description #algorithm-description-container {
+        background-color: #c8dce1;
+        border-radius: 8px;
+        padding: 2px 0;
+        margin: 0 -8px;
+      }
+
+      .demo-page__description #algorithm-description-container h2,
+      .demo-page__description #algorithm-description-container #algorithm-description p {
+        padding: 0 16px;
+      }
+
+      .demo-page__description #algorithm-description-container #algorithm-description ul,
+      .demo-page__description #algorithm-description-container #algorithm-description ol {
+        padding: 0 30px;
+      }
+
+      .highlight-description {
+        animation-name: highlight-animation;
+        animation-duration: 3s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes highlight-animation {
+        0% {
+          background-color: #c8dce1;
+        }
+        20% {
+          background-color: #ff9800;
+        }
+        100% {
+          background-color: #c8dce1;
+        }
+      }
+    </style>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Graph Analysis</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button id="clear-graph" class="demo-icon-yIconNew"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <select title="Select a sample graph" id="samples"></select>
+      <select id="algorithms" title="Select a graph analysis algorithm"></select>
+
+      <span class="demo-separator"></span>
+
+      <select id="uniform-edge-weights"></select>
+      <select id="directions"></select>
+
+      <span class="demo-separator"></span>
+
+      <button title="Layout" id="layout-button" class="demo-icon-yIconLayout labeled">
+        Layout
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Graph Analysis Demo</h1>
+
+        <p>This demo showcases a selection of algorithms to analyse the structure of a graph.</p>
+
+        <p>The toolbar provides access to the most important settings of the algorithms.</p>
+
+        <p>
+          Since not every algorithm presents well for every type of graph, we provide several
+          suitable sample graphs.
+        </p>
+        <p>
+          The interactive editing capabilities of the graph component of this demo are explained in
+          the <a href="../../view/grapheditor/">Graph Editor demo</a>.
+        </p>
+
+        <h3>Things to Try</h3>
+
+        <ul>
+          <li>Browse the <em>Sample Graphs</em> and <em>Graph Algorithms</em>.</li>
+          <li>Explore the <em>options</em> of the algorithms.</li>
+          <li>
+            Modify the graph by adding or removing nodes and edges. Observe how it affects result of
+            the current algorithm.
+          </li>
+          <li>
+            Run a graph algorithm with the selected settings by pressing the <em>Layout</em> button.
+          </li>
+        </ul>
+
+        <div id="algorithm-description-container">
+          <h2 id="algorithm-title">Algorithm Description</h2>
+          <div id="algorithm-description"></div>
+        </div>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Graph Structure</h2>
+          <p>
+            The <a href="https://docs.yworks.com/yfileshtml/#/api/GraphStructureAnalyzer" target="_blank">GraphStructureAnalyzer</a> provides options to evaluate the structural
+            characteristics of a graph.
+          </p>
+          <p>Observe how the results change when the graph is modified.</p>
+
+          <div class="description-content">
+            <div id="graph-structure-information">
+              <div id="graph-elements"></div>
+              <div id="structure-analysis"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="GraphAnalysisDemo.ts" async></script>
+  </body>
+</html>

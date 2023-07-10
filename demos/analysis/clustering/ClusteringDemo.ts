@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,15 +38,15 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  GraphHighlightIndicatorManager,
   GraphItemTypes,
   HierarchicalClustering,
   HierarchicalClusteringResult,
   ICanvasObject,
   ICanvasObjectDescriptor,
-  ICommand,
   IEdge,
-  IEnumerable,
   IGraph,
+  IndicatorNodeStyleDecorator,
   INode,
   Insets,
   IRectangle,
@@ -59,8 +59,6 @@ import {
   LinkageMethod,
   LouvainModularityClustering,
   LouvainModularityClusteringResult,
-  NodeStyleDecorationInstaller,
-  Point,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeShape
@@ -71,18 +69,12 @@ import { VoronoiDiagram } from './VoronoiDiagram'
 import { PolygonVisual, VoronoiVisual } from './DemoVisuals'
 import { DendrogramComponent } from './DendrogramSupport'
 import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app'
-import {
   applyDemoTheme,
   createDemoEdgeStyle,
   createDemoShapeNodeStyle
-} from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The {@link GraphComponent} which contains the {@link IGraph}.
@@ -145,7 +137,7 @@ async function run(): Promise<void> {
   applyDemoTheme(graphComponent)
 
   // initialize the default styles
-  configureGraph(graphComponent.graph)
+  configureGraph(graphComponent)
 
   // create the input mode
   configureUserInteraction(graphComponent)
@@ -159,16 +151,14 @@ async function run(): Promise<void> {
   onAlgorithmChanged()
 
   // wire up the UI
-  registerCommands()
-
-  // show the demo
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
  * Initializes the default styles and the highlight style.
  */
-function configureGraph(graph: IGraph): void {
+function configureGraph(graphComponent: GraphComponent): void {
+  const graph = graphComponent.graph
   graph.nodeDefaults.style = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE, 'demo-palette-401')
 
   // sets the default edge style as 'undirected'
@@ -201,12 +191,14 @@ function configureGraph(graph: IGraph): void {
   graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createDefaultParameter()
 
   // highlight node style
-  const nodeHighlight = new NodeStyleDecorationInstaller({
-    nodeStyle: createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE, 'demo-palette-23'),
+  const nodeHighlight = new IndicatorNodeStyleDecorator({
+    wrapped: createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE, 'demo-palette-23'),
     zoomPolicy: 'mixed',
-    margins: 3
+    padding: 3
   })
-  graph.decorator.nodeDecorator.highlightDecorator.setImplementation(nodeHighlight)
+  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
+    nodeStyle: nodeHighlight
+  })
 }
 
 /**
@@ -378,7 +370,7 @@ function runKMeansClustering(): void {
 
   // get the algorithm preferences from the right panel
   let distanceMetric: DistanceMetric
-  switch (getElementById<HTMLSelectElement>('distanceMetricComboBox').selectedIndex) {
+  switch (getElementById<HTMLSelectElement>('distance-metrics').selectedIndex) {
     default:
     case 0:
       distanceMetric = DistanceMetric.EUCLIDEAN
@@ -412,7 +404,7 @@ function runHierarchicalClustering(cutoff?: number): void {
   const graph = graphComponent.graph
   // get the algorithm preferences from the right panel
   let linkage: LinkageMethod
-  switch (getElementById<HTMLSelectElement>('linkageComboBox').selectedIndex) {
+  switch (getElementById<HTMLSelectElement>('linkage').selectedIndex) {
     default:
     case 0:
       linkage = LinkageMethod.SINGLE
@@ -510,7 +502,7 @@ function visualizeClusteringResult(): void {
         const clusters = {
           number: clustering.size,
           clustering,
-          centroids: IEnumerable.from<Point>([])
+          centroids: []
         }
         clusterVisual = new PolygonVisual(false, clusters)
         break
@@ -555,7 +547,7 @@ function visualizeClusteringResult(): void {
  * Called when the clustering algorithm changes
  */
 function onAlgorithmChanged() {
-  const algorithmsComboBox = getElementById<HTMLSelectElement>('algorithmsComboBox')
+  const algorithmsComboBox = getElementById<HTMLSelectElement>('algorithms')
   selectedAlgorithm = algorithmsComboBox.selectedIndex
 
   // determine the file name that will be used for loading the graph
@@ -564,7 +556,6 @@ function onAlgorithmChanged() {
   // Adjusts the window appearance. This method is needed since when the selected clustering algorithm is
   // HIERARCHICAL, the window has to be split to visualize the dendrogram.
   const showDendrogram = selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL
-  graphComponent.div.style.height = showDendrogram ? '44%' : 'calc(100% - 100px)'
   dendrogramComponent.toggleVisibility(showDendrogram)
   graphComponent.fitGraphBounds(new Insets(10))
 
@@ -625,41 +616,34 @@ function loadGraph(sampleData: any): void {
 /**
  * Wires up the UI.
  */
-function registerCommands(): void {
+function initializeUI(): void {
   const graph = graphComponent.graph
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
 
-  const samplesComboBox = getElementById<HTMLSelectElement>('algorithmsComboBox')
-  addNavigationButtons(samplesComboBox)
-  bindChangeListener("select[data-command='AlgorithmSelectionChanged']", onAlgorithmChanged)
-  bindAction("button[data-command='RunAlgorithm']", runAlgorithm)
+  const samplesComboBox = getElementById<HTMLSelectElement>('algorithms')
+  addNavigationButtons(samplesComboBox).addEventListener('change', onAlgorithmChanged)
 
   // edge-betweenness menu
   const minInput = getElementById<HTMLInputElement>('ebMinClusterNumber')
   minInput.addEventListener('change', input => {
-    const target = input.target as HTMLInputElement
-    const value = parseFloat(target.value)
+    const value = parseFloat(minInput.value)
     const maximumClusterNumber = parseFloat(
       getElementById<HTMLInputElement>('ebMaxClusterNumber').value
     )
     if (isNaN(value) || value < 1) {
       alert('Number of clusters should be non-negative.')
-      target.value = '1'
+      minInput.value = '1'
       return
     } else if (value > maximumClusterNumber) {
       alert(
         'Desired minimum number of clusters cannot be larger than the desired maximum number of clusters.'
       )
-      target.value = maximumClusterNumber.toString()
+      minInput.value = maximumClusterNumber.toString()
       return
     } else if (value > graph.nodes.size) {
       alert(
         'Desired minimum number of clusters cannot be larger than the number of nodes in the graph.'
       )
-      target.value = graph.nodes.size.toString()
+      minInput.value = graph.nodes.size.toString()
       return
     }
     runAlgorithm()
@@ -667,8 +651,7 @@ function registerCommands(): void {
 
   const maxInput = getElementById<HTMLInputElement>('ebMaxClusterNumber')
   maxInput.addEventListener('change', input => {
-    const target = input.target as HTMLInputElement
-    const value = parseFloat(target.value)
+    const value = parseFloat(maxInput.value)
     const minimumClusterNumber = parseFloat(
       getElementById<HTMLInputElement>('ebMinClusterNumber').value
     )
@@ -678,7 +661,7 @@ function registerCommands(): void {
           ? 'Desired maximum number of clusters cannot be smaller than the desired minimum number of clusters.'
           : 'Number of clusters should be non-negative.'
       alert(message)
-      target.value = minimumClusterNumber.toString()
+      maxInput.value = minimumClusterNumber.toString()
       return
     }
     runAlgorithm()
@@ -714,32 +697,31 @@ function registerCommands(): void {
   })
 
   // k-Means
-  bindChangeListener("select[data-command='distanceMetricComboBox']", runAlgorithm)
+  const distanceCombobox = getElementById<HTMLSelectElement>('distance-metrics')
+  distanceCombobox.addEventListener('change', runAlgorithm)
   const kmeansInput = getElementById<HTMLInputElement>('kMeansMaxClusterNumber')
   kmeansInput.addEventListener('change', input => {
-    const target = input.target as HTMLInputElement
-    const value = parseFloat(target.value)
+    const value = parseFloat(kmeansInput.value)
     if (isNaN(value) || value < 1) {
       alert('Desired maximum number of clusters should be greater than zero.')
-      target.value = '1'
+      kmeansInput.value = '1'
       return
     }
     runAlgorithm()
   })
-  const iterationsInput = getElementById<HTMLInputElement>('iterations')
-  iterationsInput.addEventListener('change', input => {
-    const target = input.target as HTMLInputElement
-    const value = parseFloat(target.value)
+  const iterationInput = getElementById<HTMLInputElement>('iterations')
+  iterationInput.addEventListener('change', input => {
+    const value = parseFloat(iterationInput.value)
     if (isNaN(value) || value < 0) {
       alert('Desired maximum number of iterations should be non-negative.')
-      target.value = '0'
+      iterationInput.value = '0'
       return
     }
     runAlgorithm()
   })
 
   // hierarchical
-  bindChangeListener("select[data-command='linkageComboBox']", runAlgorithm)
+  document.querySelector('#linkage')?.addEventListener('change', runAlgorithm)
 }
 
 /**
@@ -782,7 +764,7 @@ function getEdgeWeight(edge: IEdge): number {
  * Updates the elements of the UI's state and checks whether the buttons should be enabled or not.
  */
 function setUIDisabled(disabled: boolean): void {
-  const samplesComboBox = getElementById<HTMLSelectElement>('algorithmsComboBox')
+  const samplesComboBox = getElementById<HTMLSelectElement>('algorithms')
   samplesComboBox.disabled = disabled
   ;(graphComponent.inputMode as GraphEditorInputMode).waiting = disabled
   busy = disabled
@@ -812,5 +794,4 @@ enum ClusteringAlgorithm {
   LABEL_PROPAGATION = 5
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

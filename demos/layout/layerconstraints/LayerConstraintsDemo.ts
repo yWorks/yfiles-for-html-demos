@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphItemTypes,
   HierarchicLayout,
   HierarchicLayoutData,
-  ICommand,
   IEdge,
   IGraph,
   IInputModeContext,
@@ -49,11 +48,11 @@ import {
   TemplateNodeStyle
 } from 'yfiles'
 
-import RandomGraphGenerator from '../../utils/RandomGraphGenerator'
-import { bindAction, bindCommand, reportDemoError, showApp } from '../../resources/demo-app'
+import RandomGraphGenerator from 'demo-utils/RandomGraphGenerator'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -64,17 +63,18 @@ async function run(): Promise<void> {
   initializeInputMode(graphComponent)
   initializeGraph(graphComponent.graph)
 
-  createGraph(graphComponent.graph)
-
-  runLayout(graphComponent)
-
   initializeConverters()
 
-  registerCommands(graphComponent)
+  createGraph(graphComponent.graph)
 
-  showApp(graphComponent)
+  await runLayout(graphComponent)
+
+  initializeUI(graphComponent)
 }
 
+/**
+ * @yjs:keep = constraints
+ */
 async function runLayout(graphComponent: GraphComponent): Promise<void> {
   // create a new layout algorithm
   const hierarchicLayout = new HierarchicLayout({
@@ -109,8 +109,6 @@ async function runLayout(graphComponent: GraphComponent): Promise<void> {
   setUIDisabled(true)
   try {
     await graphComponent.morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     setUIDisabled(false)
   }
@@ -122,10 +120,10 @@ async function runLayout(graphComponent: GraphComponent): Promise<void> {
  * @param disabled true if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled: boolean): void {
-  ;(document.getElementById('newButton') as HTMLButtonElement).disabled = disabled
-  ;(document.getElementById('enableAllConstraintsButton') as HTMLButtonElement).disabled = disabled
-  ;(document.getElementById('disableAllConstraintsButton') as HTMLButtonElement).disabled = disabled
-  ;(document.getElementById('layoutButton') as HTMLButtonElement).disabled = disabled
+  document.querySelector<HTMLButtonElement>('#new-button')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#enable-all-constraints')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#disable-all-constraints')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#layout')!.disabled = disabled
 }
 
 /**
@@ -146,6 +144,7 @@ function getEdgeWeight(edge: IEdge): number {
 
 /**
  * Initializes the input mode for interaction.
+ * @yjs:keep = constraints
  */
 function initializeInputMode(graphComponent: GraphComponent): void {
   const inputMode = new GraphEditorInputMode({
@@ -172,14 +171,14 @@ function initializeInputMode(graphComponent: GraphComponent): void {
     if (args.item instanceof INode) {
       const node = args.item
       const location = args.location
-      const layout = node.layout
+      const { x, y, width, height } = node.layout
       const constraints = node.tag
       if (constraints instanceof LayerConstraintsData) {
         if (constraints.constraints) {
-          if (location.y > layout.y + layout.height * 0.5) {
-            if (location.x < layout.x + layout.width * 0.3) {
+          if (location.y > y + height * 0.5) {
+            if (location.x < x + width * 0.3) {
               constraints.value = Math.max(0, constraints.value - 1)
-            } else if (location.x > layout.x + layout.width * 0.7) {
+            } else if (location.x > x + width * 0.7) {
               constraints.value = Math.min(7, constraints.value + 1)
             } else {
               constraints.constraints = !constraints.constraints
@@ -241,25 +240,24 @@ function createGraph(graph: IGraph): void {
 }
 
 /**
- * Binds commands to the buttons in the toolbar.
+ * Binds actions to the buttons in the toolbar.
  */
-function registerCommands(graphComponent: GraphComponent): void {
+function initializeUI(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
 
-  bindAction("button[data-command='NewGraph']", () => {
+  document.querySelector<HTMLButtonElement>('#new-button')!.addEventListener('click', async () => {
     createGraph(graph)
-    runLayout(graphComponent)
+    await runLayout(graphComponent)
   })
-  bindAction("button[data-command='EnableAllConstraints']", () =>
-    setConstraintsEnabled(graph, true)
-  )
-  bindAction("button[data-command='DisableAllConstraints']", () =>
-    setConstraintsEnabled(graph, false)
-  )
-  bindAction("button[data-command='Layout']", () => runLayout(graphComponent))
+  document
+    .querySelector<HTMLButtonElement>('#enable-all-constraints')!
+    .addEventListener('click', () => setConstraintsEnabled(graph, true))
+  document
+    .querySelector<HTMLButtonElement>('#disable-all-constraints')!
+    .addEventListener('click', () => setConstraintsEnabled(graph, false))
+  document
+    .querySelector<HTMLButtonElement>('#layout')!
+    .addEventListener('click', async () => await runLayout(graphComponent))
 }
 
 /**
@@ -280,6 +278,7 @@ function createNodeCallback(
 
 /**
  * Enables or disables all constraints for the graph's nodes.
+ * @yjs:keep = constraints
  */
 function setConstraintsEnabled(graph: IGraph, enabled: boolean): void {
   for (const node of graph.nodes) {
@@ -351,6 +350,7 @@ const CONSTRAINTS_CHANGED_EVENT_ARGS = new PropertyChangedEventArgs('constraints
 /**
  * A business object that represents the weight (through property "Value") of the node and whether or not its weight
  * should be taken into account as a layer constraint.
+ * @yjs:keep = constraints
  */
 class LayerConstraintsData extends BaseClass(IPropertyObservable) {
   private _value: number
@@ -440,5 +440,4 @@ class LayerConstraintsData extends BaseClass(IPropertyObservable) {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

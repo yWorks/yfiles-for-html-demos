@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,21 +30,81 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Node Selection Resizing Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Node Selection Resizing</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" />
+      <label for="demo-snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
+      <input
+        type="checkbox"
+        id="demo-orthogonal-editing-button"
+        class="demo-toggle-button"
+        checked=""
+      />
+      <label
+        for="demo-orthogonal-editing-button"
+        class="demo-icon-yIconOrthogonal"
+        title="Orthogonal Edge Editing"
+      ></label>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Resize Mode
+        <select id="change-resize-mode">
+          <option value="resize">Resize Nodes</option>
+          <option value="scale">Scale Locations</option>
+        </select>
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Node Selection Resizing Demo</h1>
 
         <p>
@@ -55,32 +114,31 @@
         </p>
         <ul>
           <li>
-            <b>Resize Nodes:</b> Scales the selected items uniformly by scaling both the locations
-            and the node sizes.
+            <b>Resize Nodes:</b> Scales the selected items uniformly by scaling both the locations and the node sizes.
           </li>
-          <li><b>Scale Locations:</b> Scales the item locations while preserving node sizes.</li>
+          <li>
+            <b>Scale Locations:</b> Scales the item locations while preserving node sizes.
+          </li>
         </ul>
         <h2>Things to Try</h2>
         <ul>
           <li>Select a single item to get the default move and resize behavior.</li>
-          <li>Select <em>multiple nodes</em> and drag the handles to resize the selection.</li>
           <li>
-            Hold down the <code>SHIFT</code> key while resizing to preserve the aspect ratio. Hold
-            down the <code>ALT</code>
-            key to resize around the center. You can do both at the same time.
+            Select <em>multiple nodes</em> and drag the handles to resize the selection.
+          </li>
+          <li>
+            Hold down the <code>SHIFT</code> key while resizing to preserve the aspect ratio. Hold down the
+            <code>ALT</code> key to resize around the center. You can do both at the same time.
           </li>
           <li>Switch between the two resize modes in the toolbar to see their effect.</li>
           <li>
-            Turn on <em>orthogonal edge editing</em> in the toolbar to see how it affects bend
-            movement.
+            Turn on <em>orthogonal edge editing</em> in the toolbar to see how it affects bend movement.
           </li>
           <li>
-            Turn on <em>snapping</em> in the toolbar to let the selected nodes snap to other items
-            in the graph.
+            Turn on <em>snapping</em> in the toolbar to let the selected nodes snap to other items in the graph.
           </li>
           <li>
-            Make the selection rectangle very small or very large to see how resizing respects
-            <em>size constraints</em>.
+            Make the selection rectangle very small or very large to see how resizing respects <em>size constraints</em>.
           </li>
         </ul>
         <p>
@@ -89,50 +147,11 @@
         </p>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" />
-        <label for="demo-snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
-        <input
-          type="checkbox"
-          id="demo-orthogonal-editing-button"
-          class="demo-toggle-button"
-          checked=""
-        /><label
-          for="demo-orthogonal-editing-button"
-          class="demo-icon-yIconOrthogonal"
-          title="Orthogonal Edge Editing"
-        ></label>
-
-        <span class="demo-separator"></span>
-
-        <span>Resize Mode</span>
-        <select data-command="ChangeResizeMode" id="change-resize-mode">
-          <option value="resize">Resize Nodes</option>
-          <option value="scale">Scale Locations</option>
-        </select>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="NodeSelectionResizingDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="NodeSelectionResizingDemo.ts" async></script>
   </body>
 </html>

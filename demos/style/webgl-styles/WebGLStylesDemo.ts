@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,7 +42,6 @@ import {
   GroupNodeStyleIconType,
   GroupNodeStyleTabPosition,
   IArrow,
-  ICommand,
   IGraph,
   INode,
   Insets,
@@ -68,28 +67,25 @@ import {
   WebGL2TextureRendering
 } from 'yfiles'
 
-import {
-  bindChangeListener,
-  bindCommand,
-  checkWebGL2Support,
-  configureTwoPointerPanning,
-  showApp
-} from '../../resources/demo-app'
-import { createCanvasContext, createFontAwesomeIcon } from '../../utils/IconCreation'
-import { fetchLicense } from '../../resources/fetch-license'
+import { createCanvasContext, createFontAwesomeIcon } from 'demo-utils/IconCreation'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import { configureEditor, getNumber, getStroke, getValue, updateEditor } from './PropertiesEditor'
+import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
+import { checkWebGL2Support, finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 let fontAwesomeIcons: ImageData[]
 let foldingManager: FoldingManager
 
 async function run(): Promise<void> {
   if (!checkWebGL2Support()) {
-    showApp()
     return
   }
 
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
+
+  applyDemoTheme(graphComponent)
 
   enableWebGLRendering(graphComponent)
   configureDefaultStyles(graphComponent.graph)
@@ -108,11 +104,8 @@ async function run(): Promise<void> {
   // center the graph in the visible area
   graphComponent.fitGraphBounds()
 
-  // bind the buttons to their commands
-  registerCommands(graphComponent)
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the buttons to their functionality
+  initializeUI(graphComponent)
 }
 
 /**
@@ -332,8 +325,8 @@ function getConfiguredGroupNodeStyle() {
   const tabPosition = getConfiguredTabPosition()
   const iconPosition = getIconPosition(tabPosition)
 
-  let groupIcon = GroupNodeStyleIconType.NONE
-  let folderIcon = GroupNodeStyleIconType.NONE
+  let groupIcon: GroupNodeStyleIconType = GroupNodeStyleIconType.NONE
+  let folderIcon: GroupNodeStyleIconType = GroupNodeStyleIconType.NONE
   switch (getValue('groupNodeIcon')) {
     case 'PLUSMINUS':
       groupIcon = GroupNodeStyleIconType.MINUS
@@ -621,12 +614,12 @@ function createGraph(graphComponent: GraphComponent) {
     WebGL2Effect.AMBIENT_STROKE_COLOR
   ]
 
-  const effect2arrow = new Map([
+  const effect2arrow: Map<WebGL2Effect, WebGL2ArrowType> = new Map([
     [WebGL2Effect.NONE, WebGL2ArrowType.NONE],
     [WebGL2Effect.SHADOW, WebGL2ArrowType.POINTED],
     [WebGL2Effect.AMBIENT_FILL_COLOR, WebGL2ArrowType.TRIANGLE],
     [WebGL2Effect.AMBIENT_STROKE_COLOR, WebGL2ArrowType.DEFAULT]
-  ])
+  ] as [WebGL2Effect, WebGL2ArrowType][])
 
   const nodeSize = 70
   const nodeDistance = 150
@@ -793,31 +786,16 @@ function getModelManager(graphComponent: GraphComponent): WebGL2GraphModelManage
 }
 
 /**
- * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
+ * Binds actions to the buttons in the tutorial's toolbar.
  */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
-  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent, null)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent, null)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent, null)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent, null)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent, null)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, null)
-
+function initializeUI(graphComponent: GraphComponent): void {
   configureEditor(type => updateSelectedItems(graphComponent, type))
 
   // enable height property only when the edge style supports it
-  const height = document.getElementById('height') as HTMLInputElement
-  bindChangeListener('#edgeStyle', value => {
-    height.disabled = value === 'Default'
+  const height = document.querySelector<HTMLInputElement>('#height')!
+  document.querySelector('#edgeStyle')!.addEventListener('change', e => {
+    height.disabled = (e.target as HTMLSelectElement).value === 'Default'
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

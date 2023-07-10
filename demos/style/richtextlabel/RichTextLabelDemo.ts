@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HorizontalTextAlignment,
-  ICommand,
   InteriorStretchLabelModel,
   License,
   MarkupLabelStyle,
@@ -45,13 +44,12 @@ import {
   TextWrapping
 } from 'yfiles'
 
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { RichTextEditorInputMode } from './RichTextEditorInputMode'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent = null!
 
 /**
  * Simple demo that shows how to use MarkupLabelStyle to render labels.
@@ -164,19 +162,6 @@ async function run(): Promise<void> {
   )
 
   graphComponent.fitGraphBounds()
-
-  // bind UI elements to actions
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

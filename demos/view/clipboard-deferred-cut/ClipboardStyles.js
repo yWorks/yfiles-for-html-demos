@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -52,6 +52,8 @@ import { DeferredCutClipboard } from './DeferredCutClipboard.js'
  * if the node is marked as "to be cut" in the {@link DeferredCutClipboard}.
  */
 export class ClipboardNodeStyle extends NodeStyleBase {
+  _wrapped
+
   /**
    * Wrap the given node style.
    * @param {!INodeStyle} wrapped
@@ -100,6 +102,8 @@ export class ClipboardNodeStyle extends NodeStyleBase {
  * if the edge is marked as "to be cut" in the {@link DeferredCutClipboard}.
  */
 export class ClipboardEdgeStyle extends EdgeStyleBase {
+  _wrapped
+
   /**
    * Wraps the given style.
    * @param {!IEdgeStyle} wrapped
@@ -157,6 +161,8 @@ export class ClipboardEdgeStyle extends EdgeStyleBase {
  * if the label is marked as "to be cut" in the {@link DeferredCutClipboard}.
  */
 export class ClipboardLabelStyle extends LabelStyleBase {
+  _wrapped
+
   /**
    * Wraps the given style.
    * @param {!ILabelStyle} wrapped

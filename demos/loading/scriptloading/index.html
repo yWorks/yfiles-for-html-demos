@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,63 +30,66 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Script Loading Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
   </head>
-  <body class="demo-has-left demo-hide-left-when-small loaded">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body class="loaded">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Script Loading</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button id="layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+    </div>
+    <!-- prettier-ignore -->
+    <aside class="demo-page__description">
+<div class="demo-description__header">
+    <a href="https://www.yworks.com/products/yfiles" class="demo-description__logo"
+            title='Visit yFiles product details' target="_blank"></a>
+</div>
+<div class="demo-description__toggle-button" title="Toggle description"></div>
+<div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Script Loading Demo</h1>
 
-        <p>This demo loads the yFiles modules using <em>&lt;script&gt;</em> tags.</p>
+        <p>
+          This demo loads the yFiles modules using <em>&lt;script&gt;</em> tags.
+        </p>
 
         <p>
           With script-tags, dependencies between the yFiles modules are not resolved automatically.
           Therefore, all modules that are used by an application have to be loaded separately and in
-          the correct order, as shown in this
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/introduction-modules" target="_blank">yFiles modules dependency diagram</a>.
-        </p>
-
-        <h2>Deployment Tool</h2>
-
-        <p>
-          yFiles comes with a <a href="https://docs.yworks.com/yfileshtml/#/dguide/deployment_tool" target="_blank">deployment tool</a> that can
-          combine the yFiles modules into fewer or optionally even a single file. See the tool's
-          documentation for details.
+          the correct order, as shown in this <a href="https://docs.yworks.com/yfileshtml/#/dguide/introduction-modules" target="_blank">yFiles modules dependency diagram</a>.
         </p>
 
         <p>
-          In order to improve code completion, install the UMD variant of yFiles locally as npm
-          module.
+          In order to improve code completion, install the UMD variant of yFiles locally as npm module.
         </p>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <div class="demo-toolbar">
-        <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">
-          Layout
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
-        <div class="demo-header">
-          <a href="https://www.yworks.com" target="_blank">
-            <img src="../../resources/icons/ylogo.svg" class="demo-y-logo" />
-          </a>
-          <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
-          <a href="../../README.html" style="cursor: pointer" target="_blank" class="demo-title"
-            >Demos</a
-          >
-          <span class="demo-title">Script Loading Demo</span>
-        </div>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
@@ -95,44 +97,44 @@
     <!-- Script loading of all modules in correct order -->
 
     <!-- Core Modules-->
-    <script src="../../node_modules/yfiles-umd/impl/lang.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/core-lib.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/lang.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/core-lib.js"></script>
 
     <!-- Viewer Modules-->
-    <script src="../../node_modules/yfiles-umd/impl/graph-core.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-binding.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-styles-core.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-styles-default.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-styles-group.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-styles-other.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-styles-template.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-input.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-webgl.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-folding.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-table.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-styles-table.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-input-table.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/graph-graphml.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-core.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-binding.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-styles-core.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-styles-default.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-styles-group.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-styles-other.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-styles-template.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-input.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-webgl.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-folding.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-table.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-styles-table.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-input-table.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-graphml.js"></script>
 
     <!-- Layout Modules-->
-    <script src="../../node_modules/yfiles-umd/impl/algorithms.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-core.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-hierarchic.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-organic.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-tree.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-polyline.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-router.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-router-bus.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-orthogonal.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-orthogonal-compact.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-seriesparallel.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-radial.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-cactus.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-familytree.js"></script>
-    <script src="../../node_modules/yfiles-umd/impl/layout-multipage.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/algorithms.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-core.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-hierarchic.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-organic.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-tree.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-polyline.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-router.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-router-bus.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-orthogonal.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-orthogonal-compact.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-seriesparallel.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-radial.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-cactus.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-familytree.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/layout-multipage.js"></script>
 
     <!-- Viewer-Layout-Bridge Module -->
-    <script src="../../node_modules/yfiles-umd/impl/graph-layout-bridge.js"></script>
+    <script src="../../../node_modules/yfiles-umd/impl/graph-layout-bridge.js"></script>
 
     <!-- Load demo-->
     <script src="ScriptLoadingDemo.js"></script>

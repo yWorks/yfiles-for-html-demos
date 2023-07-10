@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 120 124"
+  height="120"
+  width="124">
+  <g>
+
+    <rect style="fill:#00000;stroke:#000000;" x="0" y="2" height="82" width="120" />
+    <rect style="fill:#ffffff;stroke:#000000;" x="0" y="4" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="20" y="4" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="40" y="4" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="60" y="4" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="80" y="4" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="100" y="4" height="20" width="20"/>
+
+    <rect style="fill:#00000;stroke:#000000;" x="0" y="24" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="20" y="24" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="40" y="24" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="60" y="24" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="80" y="24" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="100" y="24" height="20" width="20"/>
+
+    <rect style="fill:#ffffff;stroke:#000000;" x="0" y="44" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="20" y="44" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="40" y="44" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="60" y="44" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="80" y="44" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="100" y="44" height="20" width="20"/>
+
+    <rect style="fill:#00000;stroke:#000000;" x="0" y="64" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="20" y="64" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="40" y="64" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="60" y="64" height="20" width="20"/>
+    <rect style="fill:#00000;stroke:#000000;" x="80" y="64" height="20" width="20"/>
+    <rect style="fill:#ffffff;stroke:#000000;" x="100" y="64" height="20" width="20"/>
+
+    <rect style="fill:#00000;stroke:#000000;" x="0" y="2" height="120" width="2"/>
+    <rect style="fill:#00000;stroke:#000000;" x="2" y="84" height="2" width="120"/>
+    <rect style="fill:#00000;stroke:#000000;" x="120" y="2" height="82" width="2"/>
+
+
+  </g>
+</svg>

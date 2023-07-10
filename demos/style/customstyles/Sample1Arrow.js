@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,16 +50,17 @@ import { SVGNS } from './Namespaces.js'
  * A demo IArrow implementation that renders the arrow as a custom filled shape.
  */
 export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+  anchor = Point.ORIGIN
+  direction = Point.ORIGIN
+  thickness = 2.0
+  arrowThickness = 0
+  arrowFigure = null
+
   /**
    * Initializes a new instance of the {@link Sample1Arrow} class.
    */
   constructor() {
     super()
-    this.anchor = Point.ORIGIN
-    this.direction = Point.ORIGIN
-    this.thickness = 2.0
-    this.arrowThickness = 0
-    this.arrowFigure = null
   }
 
   /**

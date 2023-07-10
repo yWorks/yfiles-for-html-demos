@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,13 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import * as CodeMirror from 'codemirror'
+import 'codemirror/mode/xml/xml'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/search/search'
+import 'codemirror/addon/search/searchcursor'
+import 'codemirror/addon/dialog/dialog'
+import 'codemirror/addon/lint/lint'
+import 'codemirror/addon/lint/json-lint'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/addon/lint/lint.css'
+
 import {
   GraphBuilder,
   GraphComponent,
   GraphMLSupport,
   GraphViewerInputMode,
   IArrow,
-  ICommand,
   IGraph,
   License,
   PolylineEdgeStyle,
@@ -44,13 +55,14 @@ import {
 } from 'yfiles'
 
 import SampleData from './resources/SampleData'
-import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
-import type { EditorConfiguration, EditorFromTextArea } from 'codemirror'
-import { fetchLicense } from '../../resources/fetch-license'
 
-let templateEditor: EditorFromTextArea
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
-let tagEditor: EditorFromTextArea
+let templateEditor: CodeMirror.EditorFromTextArea
+
+let tagEditor: CodeMirror.EditorFromTextArea
 
 let graphMLSupport: GraphMLSupport
 
@@ -58,6 +70,8 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
+
   graphComponent.inputMode = new GraphViewerInputMode()
 
   initializeEditors(graphComponent)
@@ -67,9 +81,7 @@ async function run(): Promise<void> {
 
   resetSampleGraph(graphComponent)
 
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  initializeUI(graphComponent)
 }
 
 /**
@@ -84,14 +96,14 @@ function initializeEditors(graphComponent: GraphComponent): void {
       mode: 'application/xml',
       gutters: ['CodeMirror-lint-markers'],
       lint: true
-    } as EditorConfiguration
+    } as CodeMirror.EditorConfiguration
   )
   tagEditor = CodeMirror.fromTextArea(getElementById<HTMLTextAreaElement>('tag-text-area'), {
     lineNumbers: true,
     mode: 'application/json',
     gutters: ['CodeMirror-lint-markers'],
     lint: true
-  } as EditorConfiguration)
+  } as CodeMirror.EditorConfiguration)
 
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
@@ -278,12 +290,12 @@ function applyTemplate(graphComponent: GraphComponent): void {
       graphComponent.graph.setStyle(node, style)
     }
 
-    removeClass(getElementById('template-text-area-error'), 'open-error')
+    getElementById('template-text-area-error').classList.remove('open-error')
   } catch (err) {
     const errorArea = getElementById('template-text-area-error')
     const errorString = (err as Error).toString().replace(templateText, '...template...')
     errorArea.setAttribute('title', errorString)
-    addClass(errorArea, 'open-error')
+    errorArea.classList.add('open-error')
   }
 }
 
@@ -306,11 +318,11 @@ function applyTag(graphComponent: GraphComponent): void {
       node.tag = tag
     }
 
-    removeClass(getElementById('tag-text-area-error'), 'open-error')
+    getElementById('tag-text-area-error').classList.remove('open-error')
   } catch (err) {
     const errorArea = getElementById('tag-text-area-error')
     errorArea.setAttribute('title', (err as Error).toString())
-    addClass(errorArea, 'open-error')
+    errorArea.classList.add('open-error')
   }
 
   // Unlike replacing a node's style, replacing a node's tag does not automatically repaint
@@ -332,20 +344,20 @@ async function openFile(graphComponent: GraphComponent): Promise<void> {
 }
 
 /**
- * Binds actions and commands to the demo's UI controls.
+ * Binds actions to the demo's UI controls.
  */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindAction("button[data-command='Open']", async () => openFile(graphComponent))
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+function initializeUI(graphComponent: GraphComponent): void {
+  document
+    .querySelector('#apply-template-button')!
+    .addEventListener('click', () => applyTemplate(graphComponent))
 
-  bindAction("button[data-command='ApplyTemplate']", () => applyTemplate(graphComponent))
-  bindAction("button[data-command='ApplyTag']", () => applyTag(graphComponent))
+  document
+    .querySelector('#apply-tag-button')!
+    .addEventListener('click', () => applyTag(graphComponent))
 
-  bindAction("button[data-command='Reload']", () => resetSampleGraph(graphComponent))
+  document
+    .querySelector('#reload')!
+    .addEventListener('click', () => resetSampleGraph(graphComponent))
 }
 
 /**
@@ -356,5 +368,4 @@ function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

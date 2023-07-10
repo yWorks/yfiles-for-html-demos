@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,16 +50,16 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import { ContextMenu } from '../../utils/ContextMenu'
+import { ContextMenu } from 'demo-utils/ContextMenu'
 import {
-  bindAction,
-  bindCommand,
-  configureTwoPointerPanning,
-  showApp
-} from '../../resources/demo-app'
-import { DemoStyleOverviewPaintable, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+  applyDemoTheme,
+  DemoStyleOverviewPaintable,
+  initDemoStyles
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { BrowserDetection } from 'demo-utils/BrowserDetection'
+import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -73,6 +73,8 @@ async function run(): Promise<void> {
 
   // Initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent, { scale: 1 })
+
   overviewComponent = new GraphOverviewComponent('overviewComponent')
   overviewComponent.graphComponent = graphComponent
 
@@ -86,7 +88,7 @@ async function run(): Promise<void> {
   // Styling for the overviewComponent
   overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graph)
 
-  // Setup the default styles for the graph
+  // Set up the default styles for the graph
   setDefaultStyles(graph)
 
   // Enable GraphML support
@@ -105,10 +107,8 @@ async function run(): Promise<void> {
   // Enable the undo engine on the master graph
   foldingManager.masterGraph.undoEngineEnabled = true
 
-  // Register commands for the buttons in this demo
-  registerCommands(graphComponent)
-
-  showApp(graphComponent, overviewComponent)
+  // Register functionality for the buttons in this demo
+  initializeUI(graphComponent)
 }
 
 /**
@@ -134,11 +134,11 @@ function createEditorMode(): GraphEditorInputMode {
   mode.createBendInputMode.priority = mode.moveInputMode.priority - 1
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
-  if (BrowserDetection.webGL) {
-    mode.handleInputMode.renderMode = RenderModes.WEB_GL
+  if (BrowserDetection.webGL2) {
+    mode.handleInputMode.renderMode = RenderModes.WEB_GL2
   }
 
-  // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
+  // Create a context menu. In this demo, we use our sample context menu implementation, but you can use any other
   // context menu widget as well. See the Context Menu demo for more details about working with context menus.
   const contextMenu = new ContextMenu(graphComponent)
 
@@ -225,57 +225,22 @@ function setDefaultStyles(graph: IGraph): void {
 }
 
 /**
- * Binds the various commands available in yFiles for HTML to the buttons in the demo's toolbar.
+ * Binds various actions to buttons in the demo's toolbar.
  */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    graphComponent.fitGraphBounds()
-  })
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent, null)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent, null)
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent, null)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent, null)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent, null)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent, null)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent, null)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, null)
-
-  bindCommand(
-    "button[data-command='GroupSelection']",
-    ICommand.GROUP_SELECTION,
-    graphComponent,
-    null
-  )
-  bindCommand(
-    "button[data-command='UngroupSelection']",
-    ICommand.UNGROUP_SELECTION,
-    graphComponent,
-    null
-  )
-  bindCommand("button[data-command='EnterGroup']", ICommand.ENTER_GROUP, graphComponent, null)
-  bindCommand("button[data-command='ExitGroup']", ICommand.EXIT_GROUP, graphComponent, null)
-
+function initializeUI(graphComponent: GraphComponent): void {
   const geim = graphComponent.inputMode as GraphEditorInputMode
-  bindAction('#demo-snapping-button', () => {
-    geim.snapContext!.enabled = (
-      document.querySelector('#demo-snapping-button') as HTMLInputElement
-    ).checked
-    geim.labelSnapContext!.enabled = (
-      document.querySelector('#demo-snapping-button') as HTMLInputElement
-    ).checked
+
+  const snappingButton = document.querySelector<HTMLInputElement>('#demo-snapping-button')!
+  snappingButton.addEventListener('click', () => {
+    geim.snapContext!.enabled = snappingButton.checked
+    geim.labelSnapContext!.enabled = snappingButton.checked
   })
-  bindAction('#demo-orthogonal-editing-button', () => {
-    geim.orthogonalEdgeEditingContext!.enabled = (
-      document.querySelector('#demo-orthogonal-editing-button') as HTMLInputElement
-    ).checked
+
+  const orthogonalEditingButton = document.querySelector<HTMLInputElement>(
+    '#demo-orthogonal-editing-button'
+  )!
+  orthogonalEditingButton.addEventListener('click', () => {
+    geim.orthogonalEdgeEditingContext!.enabled = orthogonalEditingButton.checked
   })
 }
 
@@ -300,7 +265,7 @@ function populateContextMenu(
 ): void {
   // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
   // for this item (or more generally, the location provided by the event args).
-  // If you don't want to show a context menu for some locations, set 'false' in this cases.
+  // If you don't want to show a context menu for some locations, set 'false' in these cases.
   args.showMenu = true
 
   contextMenu.clearItems()
@@ -409,5 +374,4 @@ function createSampleGraph(graph: IGraph): void {
   graph.createEdge(n12, n15)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

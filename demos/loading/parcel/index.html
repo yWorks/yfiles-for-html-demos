@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,19 +30,27 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Parcel Loading Demo [yFiles for HTML]</title>
 
-    <link rel="stylesheet" href="./demo.css" />
+    <link rel="stylesheet" href="./node_modules/demo-resources/style/loading-demo.css" />
   </head>
-  <body class="demo-has-left demo-hide-left-when-small loaded">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
-      </div>
-      <div class="demo-sidebar-content">
+  <body>
+    <header class="demo-header">
+      <a href="https://www.yworks.com/products/yfiles" class="demo-header__y-logo"></a>
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__breadcrumb demo-header__breadcrumb--link"
+      >
+        yFiles for HTML
+      </a>
+      <div class="demo-header__breadcrumb">Parcel Loading Demo</div>
+    </header>
+
+    <aside class="demo-page__description">
+      <div class="demo-description__content">
         <h1>Parcel Loading Demo</h1>
         <p>
           This demo loads the yFiles module using version 2 of
@@ -66,33 +73,22 @@
             target="_blank"
             >dependency resolution</a
           >
-          resolution support and aliases, the license and other dependencies are configured without
-          affecting the sources code.
+          resolution support and aliases, the license is and other dependencies are configured
+          without affecting the sources code.
         </p>
       </div>
     </aside>
 
-    <div class="demo-content">
-      <div class="demo-header">
-        <a href="https://www.yworks.com" target="_blank">
-          <img src="./ylogo.svg" class="demo-y-logo" />
-        </a>
-        <a href="https://www.yworks.com/yfileshtml" target="_blank">yFiles for HTML</a>
-        <a href="./README.html" style="cursor: pointer" target="_blank" class="demo-title">Demos</a>
-        <span class="demo-title">Parcel Loading Demo [yFiles for HTML]</span>
-      </div>
+    <div class="demo-page__toolbar">
+      <button id="LayoutButton" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+    </div>
 
-      <div class="demo-toolbar">
-        <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">
-          Layout
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
 
-    <script src="/src/ParcelDemo.js" type="module" crossorigin="anonymous"></script>
+    <script src="/src/ParcelDemo.ts" type="module" crossorigin="anonymous"></script>
   </body>
 </html>

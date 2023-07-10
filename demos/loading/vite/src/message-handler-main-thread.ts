@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,14 +26,27 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import LayoutWorker from './layout-worker?worker'
+
 function getWebWorkerMessageHandler(
   licenseString: Record<string, unknown>
 ): Promise<typeof webWorkerMessageHandler> {
   // see https://vitejs.dev/guide/features.html#web-workers for details
   // on how to load workers with Vite
-  const worker = new Worker(new URL('./layout-worker.ts', import.meta.url), {
-    type: 'module'
-  })
+
+  // Create a new module web worker
+  // (Usually one would instantiate a module worker as follows:
+  //
+  // const worker = new Worker(new URL('./layout-worker.ts', import.meta.url), {
+  //    type: 'module'
+  // })
+  //
+  // as this is the most portable way and works in all browsers supporting
+  // module workers. This also works in a vite production build.
+  //
+  // It does *not* work in the vite dev-server, however. We have therefore
+  // to fall back to the import of the worker above.)
+  const worker = new LayoutWorker()
 
   // The Web Worker is running yFiles in a different context, therefore, we need to register the
   // yFiles license in the Web Worker as well.
@@ -49,7 +62,7 @@ function getWebWorkerMessageHandler(
   }
 
   return new Promise<typeof webWorkerMessageHandler>((resolve, reject) => {
-    worker.onmessage = ev => {
+    worker.onmessage = (ev: any) => {
       if (ev.data === 'started') {
         resolve(webWorkerMessageHandler)
       } else {

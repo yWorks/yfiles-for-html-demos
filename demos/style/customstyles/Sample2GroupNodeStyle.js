@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+// eslint-disable-next-line import/no-named-as-default
 import yfiles, {
   CanvasComponent,
   Class,
@@ -65,27 +66,41 @@ const BORDER_THICKNESS2 = BORDER_THICKNESS + BORDER_THICKNESS
 const HEADER_THICKNESS = 22
 
 /**
+ * @typedef {Object} GroupNodeStyleCache
+ * @property {boolean} isCollapsible
+ * @property {boolean} collapsed
+ * @property {number} width
+ * @property {number} height
+ */
+
+/**
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
+ * @typedef {TaggedSvgVisual.<SVGGElement,GroupNodeStyleCache>} Sample2GroupNodeStyleVisual
+ */
+
+/**
  * A custom demo group style whose colors match the given well-known CSS rule.
  */
 export class Sample2GroupNodeStyle extends NodeStyleBase {
+  isCollapsible = false
+  solidHitTest = false
+  borderColor = '#0B7189'
+  folderFrontColor = '#9CC5CF'
+  folderBackColor = '#0B7189'
+
   /**
    * @param {?string} [cssClass=null]
    */
   constructor(cssClass = null) {
     super()
     this.cssClass = cssClass
-    this.isCollapsible = false
-    this.solidHitTest = false
-    this.borderColor = '#0B7189'
-    this.folderFrontColor = '#9CC5CF'
-    this.folderBackColor = '#0B7189'
   }
 
   /**
    * Creates the visual for a collapsed or expanded group node.
    * @param {!IRenderContext} renderContext
    * @param {!INode} node
-   * @returns {!SvgVisual}
+   * @returns {!Sample2GroupNodeStyleVisual}
    */
   createVisual(renderContext, node) {
     const gc = renderContext.canvasComponent
@@ -93,33 +108,42 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
     const container = document.createElementNS(SVGNS, 'g')
     // avoid defs support recursion - nothing to see here - move along!
     container.setAttribute('data-referencesafe', 'true')
-    if (this.isCollapsed(node, gc)) {
-      this.renderFolder(node, container, renderContext)
+    const collapsed = this.isCollapsed(node, gc)
+    const visual = SvgVisual.from(container, {
+      width: node.layout.width,
+      height: node.layout.height,
+      collapsed,
+      isCollapsible: this.isCollapsible
+    })
+
+    if (collapsed) {
+      this.renderFolder(renderContext, visual, node)
     } else {
-      this.renderGroup(node, container, renderContext)
+      this.renderGroup(renderContext, visual, node)
     }
-    container.setAttribute('transform', `translate(${layout.x} ${layout.y})`)
-    return new SvgVisual(container)
+    SvgVisual.setTranslate(container, layout.x, layout.y)
+    return visual
   }
 
   /**
    * Re-renders the group node by updating the old visual for improved performance.
    * @param {!IRenderContext} renderContext
-   * @param {!SvgVisual} oldVisual
+   * @param {!Sample2GroupNodeStyleVisual} oldVisual
    * @param {!INode} node
-   * @returns {!SvgVisual}
+   * @returns {!Sample2GroupNodeStyleVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
-    const container = oldVisual.svgElement
-    const cache = container['data-renderDataCache']
+    const cache = oldVisual.tag
     if (!cache) {
       return this.createVisual(renderContext, node)
     }
-    if (this.isCollapsed(node, renderContext.canvasComponent)) {
-      this.updateFolder(node, container, renderContext)
+    const collapsed = this.isCollapsed(node, renderContext.canvasComponent)
+    if (collapsed) {
+      this.updateFolder(renderContext, oldVisual, node)
     } else {
-      this.updateGroup(node, container, renderContext)
+      this.updateGroup(renderContext, oldVisual, node)
     }
+    SvgVisual.setTranslate(oldVisual.svgElement, node.layout.x, node.layout.y)
     return oldVisual
   }
 
@@ -156,12 +180,12 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
 
   /**
    * Helper function to create a collapsed group node visual inside the given container.
+   * @param {!IRenderContext} context
+   * @param {!Sample2GroupNodeStyleVisual} visual
    * @param {!INode} node
-   * @param {!Element} container
-   * @param {!IRenderContext} ctx
    */
-  renderFolder(node, container, ctx) {
-    const { x, y, width, height } = node.layout
+  renderFolder(context, visual, node) {
+    const { width, height } = visual.tag
     const nodeRounding = 3.5
 
     const backgroundRect = document.createElementNS(SVGNS, 'rect')
@@ -177,11 +201,17 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
     folderPath.setAttribute('d', path)
     folderPath.setAttribute('fill', this.folderFrontColor)
 
+    const container = visual.svgElement
+
     container.appendChild(backgroundRect)
     container.appendChild(folderPath)
 
     const expandButton = this.createButton(false)
-    CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(expandButton, node, ctx)
+    CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(
+      expandButton,
+      node,
+      context
+    )
     expandButton.svgElement.setAttribute('transform', `translate(${width - 17} 5)`)
     container.appendChild(expandButton.svgElement)
 
@@ -191,27 +221,22 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
       backgroundRect.setAttribute('class', 'folder-background')
       folderPath.setAttribute('class', 'folder-foreground')
     }
-
-    container['data-renderDataCache'] = {
-      isCollapsible: this.isCollapsible,
-      collapsed: true,
-      width,
-      height,
-      x,
-      y
-    }
   }
 
   /**
    * Helper function to update the visual of a collapsed group node.
+   * @param {!IRenderContext} context
+   * @param {!Sample2GroupNodeStyleVisual} visual
    * @param {!INode} node
-   * @param {!SVGGElement} container
-   * @param {!IRenderContext} ctx
    */
-  updateFolder(node, container, ctx) {
-    const cache = container['data-renderDataCache']
-    if (!cache || this.isCollapsible !== cache.isCollapsible) {
-      this.renderFolder(node, container, ctx)
+  updateFolder(context, visual, node) {
+    const container = visual.svgElement
+    const cache = visual.tag
+    if (!cache || !cache.isCollapsible) {
+      cache.collapsed = true
+      cache.isCollapsible = this.isCollapsible
+      clear(visual.svgElement)
+      this.renderFolder(context, visual, node)
       return
     }
 
@@ -275,23 +300,16 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
       cache.width = width
       cache.height = height
     }
-
-    const { x, y } = node.layout
-    if (cache.x !== x || cache.y !== y) {
-      container.transform.baseVal.getItem(0).setTranslate(x, y)
-      cache.x = x
-      cache.y = y
-    }
   }
 
   /**
    * Helper function to create an expanded group node visual inside the given container.
+   * @param {!IRenderContext} context
+   * @param {!Sample2GroupNodeStyleVisual} visual
    * @param {!INode} node
-   * @param {!Element} container
-   * @param {!IRenderContext} ctx
    */
-  renderGroup(node, container, ctx) {
-    const layout = node.layout
+  renderGroup(context, visual, node) {
+    const container = visual.svgElement
     const { width, height } = node.layout
     const nodeRounding = '3.5'
 
@@ -321,7 +339,7 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
       CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(
         collapseButton,
         node,
-        ctx
+        context
       )
       collapseButton.svgElement.setAttribute('transform', `translate(${width - 17} 5)`)
       container.appendChild(collapseButton.svgElement)
@@ -332,29 +350,25 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
       container.setAttribute('class', attribute)
       outerRect.setAttribute('class', 'group-border')
     }
-
-    container['data-renderDataCache'] = {
-      isCollapsible: this.isCollapsible,
-      collapsed: false,
-      width: width,
-      x: layout.x,
-      y: layout.y,
-      height: height
-    }
   }
 
   /**
    * Helper function to update the visual of an expanded group node.
+   * @param {!IRenderContext} context
+   * @param {!Sample2GroupNodeStyleVisual} visual
    * @param {!INode} node
-   * @param {!SVGGElement} container
-   * @param {!IRenderContext} ctx
    */
-  updateGroup(node, container, ctx) {
-    const cache = container['data-renderDataCache']
-    if (!cache || this.isCollapsible !== cache.isCollapsible) {
-      this.renderGroup(node, container, ctx)
+  updateGroup(context, visual, node) {
+    const cache = visual.tag
+    if (!cache || cache.isCollapsible !== this.isCollapsible) {
+      cache.collapsed = false
+      cache.isCollapsible = this.isCollapsible
+      clear(visual.svgElement)
+      this.renderGroup(context, visual, node)
       return
     }
+
+    const container = visual.svgElement
 
     const { width, height } = node.layout
     let backgroundRect
@@ -381,9 +395,14 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
 
       container.replaceChild(innerRect, container.childNodes.item(1))
 
-      // + to -
       const buttonGroup = container.childNodes.item(2)
-      buttonGroup.removeChild(buttonGroup.childNodes.item(2))
+      if (this.isCollapsible) {
+        // change expand icon to collapse icon
+        buttonGroup.removeChild(buttonGroup.childNodes.item(2))
+      } else {
+        // remove expand button
+        container.removeChild(buttonGroup)
+      }
 
       if (this.cssClass) {
         const attribute = `${this.cssClass}-expanded`
@@ -417,12 +436,6 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
 
       cache.width = width
       cache.height = height
-    }
-    const { x, y } = node.layout
-    if (cache.x !== x || cache.y !== y) {
-      container.transform.baseVal.getItem(0).setTranslate(x, y)
-      cache.x = x
-      cache.y = y
     }
   }
 
@@ -487,7 +500,7 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
   lookup(node, type) {
     if (type === ILassoTestable.$class) {
       const insetsProvider = node.lookup(INodeInsetsProvider.$class)
-      if (insetsProvider instanceof INodeInsetsProvider) {
+      if (insetsProvider != null) {
         return ILassoTestable.create((context, lassoPath) => {
           const path = new GeneralPath()
           const insets = insetsProvider.getInsets(node)
@@ -577,7 +590,7 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Returns whether or not the given group node is collapsed.
+   * Returns whether the given group node is collapsed.
    * @param {!INode} node
    * @param {?CanvasComponent} gc
    * @returns {boolean}
@@ -596,12 +609,22 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
   }
 }
 
+/**
+ * @param {!SVGElement} container
+ */
+function clear(container) {
+  while (container.lastChild) {
+    container.removeChild(container.lastChild)
+  }
+}
+
 export class Sample2GroupNodeStyleExtension extends MarkupExtension {
+  cssClass = ''
+  isCollapsible = false
+  solidHitTest = false
+
   constructor() {
     super()
-    this.cssClass = ''
-    this.isCollapsible = false
-    this.solidHitTest = false
   }
 
   /**

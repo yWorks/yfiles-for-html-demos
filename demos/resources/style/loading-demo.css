@@ -1,0 +1,509 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+[data-command='ZOOM_ORIGINAL'],
+.demo-icon-yIconZoomOriginal {
+  background-image: url('../icons/zoom-original3-16.svg');
+}
+[data-command='INCREASE_ZOOM'],
+.demo-icon-yIconZoomIn {
+  background-image: url('../icons/magnify-16.svg');
+}
+[data-command='DECREASE_ZOOM'],
+.demo-icon-yIconZoomOut {
+  background-image: url('../icons/demagnify-16.svg');
+}
+[data-command='FIT_GRAPH_BOUNDS'],
+.demo-icon-yIconZoomFit {
+  background-image: url('../icons/fit-16.svg');
+}
+[data-command='COPY'],
+.demo-icon-yIconCopy {
+  background-image: url('../icons/copy-16.svg');
+}
+[data-command='CUT'],
+.demo-icon-yIconCut {
+  background-image: url('../icons/cut2-16.svg');
+}
+[data-command='PASTE'],
+.demo-icon-yIconPaste {
+  background-image: url('../icons/paste-16.svg');
+}
+[data-command='DELETE'],
+.demo-icon-yIconDelete {
+  background-image: url('../icons/delete2-16.svg');
+}
+.demo-icon-yIconTrashcan {
+  background-image: url('../icons/delete3-16.svg');
+}
+[data-command='NEW'],
+.demo-icon-yIconNew {
+  background-image: url('../icons/new-document-16.svg');
+}
+[data-command='OPEN'],
+.demo-icon-yIconOpen {
+  background-image: url('../icons/open-16.svg');
+}
+[data-command='SAVE'],
+.demo-icon-yIconSave {
+  background-image: url('../icons/save-16.svg');
+}
+.demo-icon-yIconPrint {
+  background-image: url('../icons/print-16.svg');
+}
+.demo-icon-yIconPlay {
+  background-image: url('../icons/play2-16.svg');
+}
+.demo-icon-yIconLayout {
+  background-image: url('../icons/play2-16.svg');
+}
+.demo-icon-yIconLayoutHierarchic {
+  background-image: url('../icons/layout-hierarchic-16.svg');
+}
+.demo-icon-yIconLayoutOrganic {
+  background-image: url('../icons/layout-organic-16.svg');
+}
+.demo-icon-yIconLayoutTree {
+  background-image: url('../icons/layout-tree-16.svg');
+}
+.demo-icon-yIconProperties {
+  background-image: url('../icons/settings-16.svg');
+}
+[data-command='REDO'],
+.demo-icon-yIconRedo {
+  background-image: url('../icons/redo-16.svg');
+}
+[data-command='UNDO'],
+.demo-icon-yIconUndo {
+  background-image: url('../icons/undo-16.svg');
+}
+[data-command='GROUP_SELECTION'],
+.demo-icon-yIconGroup {
+  background-image: url('../icons/group-16.svg');
+}
+[data-command='UNGROUP_SELECTION'],
+.demo-icon-yIconUngroup {
+  background-image: url('../icons/ungroup-16.svg');
+}
+[data-command='ENTER_GROUP'],
+.demo-icon-yIconEnterGroup {
+  background-image: url('../icons/enter-group-16.svg');
+}
+[data-command='EXIT_GROUP'],
+.demo-icon-yIconExitGroup {
+  background-image: url('../icons/exit-group-16.svg');
+}
+.demo-icon-yIconSnapping {
+  background-image: url('../icons/snap-16.svg');
+}
+.demo-icon-yIconGrid {
+  background-image: url('../icons/grid-16.svg');
+}
+.demo-icon-yIconOrthogonal {
+  background-image: url('../icons/orthogonal-editing-16.svg');
+}
+.demo-icon-yIconNext {
+  background-image: url('../icons/arrow-right-16.svg');
+}
+.demo-icon-yIconPrevious {
+  background-image: url('../icons/arrow-left-16.svg');
+}
+.demo-icon-yIconShowParent {
+  background-image: url('../icons/arrow-up-16.svg');
+}
+.demo-icon-yIconHideParent {
+  background-image: url('../icons/arrow-down-16.svg');
+}
+.demo-icon-yIconShowChildren {
+  background-image: url('../icons/plus-16.svg');
+}
+.demo-icon-yIconHideChildren {
+  background-image: url('../icons/minus-16.svg');
+}
+.demo-icon-yIconShowAll {
+  background-image: url('../icons/star-16.svg');
+}
+.demo-icon-yIconReload {
+  background-image: url('../icons/reload-16.svg');
+}
+.demo-icon-yIconNodeLabel {
+  background-image: url('../icons/nodelabel-16.svg');
+}
+.demo-icon-yIconEdgeLabel {
+  background-image: url('../icons/edgelabel-16.svg');
+}
+.demo-icon-yIconEdgeThickness {
+  background-image: url('../icons/edge-thickness-16.svg');
+}
+.demo-icon-yIconEdgeDirection {
+  background-image: url('../icons/edge-direction-16.svg');
+}
+.demo-icon-yIconZOrderUp {
+  background-image: url('../icons/z-order-up-16.svg');
+}
+.demo-icon-yIconZOrderDown {
+  background-image: url('../icons/z-order-down-16.svg');
+}
+.demo-icon-yIconZOrderTop {
+  background-image: url('../icons/z-order-top-16.svg');
+}
+.demo-icon-yIconZOrderBottom {
+  background-image: url('../icons/z-order-bottom-16.svg');
+}
+.demo-icon-yIconAlignBottom {
+  background-image: url('../icons/align-bottom-16.svg');
+}
+.demo-icon-yIconAlignHorizontal {
+  background-image: url('../icons/align-horizontal-16.svg');
+}
+.demo-icon-yIconAlignLeft {
+  background-image: url('../icons/align-left-16.svg');
+}
+.demo-icon-yIconAlignRight {
+  background-image: url('../icons/align-right-16.svg');
+}
+.demo-icon-yIconAlignTop {
+  background-image: url('../icons/align-top-16.svg');
+}
+.demo-icon-yIconAlignVertical {
+  background-image: url('../icons/align-vertical-16.svg');
+}
+.demo-icon-yIconDistributeHorizontally {
+  background-image: url('../icons/distribute-horizontal-16.svg');
+}
+.demo-icon-yIconDistributeVertically {
+  background-image: url('../icons/distribute-vertical-16.svg');
+}
+:root {
+  --description-width: 320px;
+  --description-drag-height: 50%;
+  --description-min-width: 0px;
+  --description-max-width: 75vw;
+  --description-padding: 16px;
+  --sidebar-width: 320px;
+  --toolbar-color: #ebeef0;
+  --toolbar-border-color: #a4a4a4;
+  --description-color: #e0edf0;
+  --description-color-2: #bdd8e0;
+  --description-text-color: #343f4a;
+  --description-button-color: #bdd8e0;
+  --description-button-text-color: #343f4a;
+  --description-scrollbar-color: #b0bcc2;
+  --description-code-color: #cedbdf;
+}
+.demo-tutorial {
+  --tutorial-accent-color: #37815d;
+}
+.demo-tutorial.theme-light {
+  --description-color: #ebeef0;
+  --description-color-2: white;
+  --description-text-color: #38434f;
+  --description-note-background: #e2f2f8;
+  --description-button-color: #35404b;
+  --description-button-text-color: #ebeef0;
+  --description-scrollbar-color: #c2c2c2;
+  --description-kbd-background: #fafafa;
+  --description-kbd-border-color: #c1c1c1;
+}
+.demo-tutorial.theme-dark {
+  --description-color: #2b2b2b;
+  --description-color-2: #393939;
+  --description-text-color: #cecece;
+  --description-note-background: #2f373a;
+  --description-button-color: #76818c;
+  --description-button-text-color: #ebeef0;
+  --description-scrollbar-color: #676767;
+  --description-kbd-background: #676767;
+  --description-kbd-border-color: #444;
+}
+body {
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 14px;
+  color: #343f4a;
+}
+h1 {
+  font-size: 170%;
+  line-height: 150%;
+  margin: 1.2rem 0;
+}
+h2 {
+  font-size: 140%;
+  line-height: 130%;
+}
+h2,
+h3,
+h4 {
+  margin: 1.5rem 0 1rem;
+}
+.text-medium {
+  font-size: 130%;
+  line-height: 140%;
+}
+ul {
+  padding-left: 1.3em;
+}
+p,
+dl,
+ul,
+ul.paragraph-style li {
+  margin: 1rem 0;
+}
+li {
+  margin: 0.5rem 0;
+}
+.tutorial-about {
+  font-size: 130%;
+  line-height: 140%;
+}
+p a,
+dl a,
+ul a,
+.note a,
+p a:visited,
+dl a:visited,
+ul a:visited,
+.note a:visited {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 0.5px solid;
+}
+p a:hover,
+dl a:hover,
+ul a:hover,
+.note a:hover {
+  border-bottom: 2px solid;
+}
+dt {
+  font-weight: bold;
+  color: #333;
+  margin-top: 4px;
+}
+dd {
+  margin-left: 10px;
+}
+fieldset {
+  border: 0 none;
+  background: unset;
+  padding: 0 0 1.5ex;
+  margin: 0;
+}
+fieldset legend {
+  font-weight: bold;
+  padding: 0 0 0.5ex;
+}
+html,
+body {
+  /* make the body expand to fill the visible window */
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  overflow: hidden;
+}
+body {
+  display: grid;
+  grid-template-columns: var(--description-width) 1fr;
+  grid-template-rows: 60px auto 1fr;
+  grid-template-areas: 'sidebar header' 'sidebar toolbar' 'sidebar content';
+}
+.demo-page__main {
+  position: relative;
+  grid-area: content;
+  display: flex;
+  border-left: 1px solid #d5d7d8;
+  border-right: 1px solid #d5d7d8;
+  overflow: hidden;
+}
+.demo-main__graph-component {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+.yfiles-canvascomponent {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+.demo-header {
+  grid-area: header;
+  background: linear-gradient(to right, #29323c 0%, #38434f 100%);
+  position: relative;
+  display: flex;
+  height: 100%;
+  font-size: 1.1rem;
+  line-height: 0.9;
+  color: white;
+  container-type: size;
+  container-name: header;
+}
+.demo-header__y-logo {
+  width: 60px;
+  height: 100%;
+  border-color: transparent;
+  background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 113.39 113.39' %3E%3Cpath d='M12.39 47.29l.1 19.3a27.74 27.74 0 0 0 13.9 23.8l16.8 9.6a27.32 27.32 0 0 0 27.5-.2L87.39 90A27.44 27.44 0 0 0 101 66.09l-.1-19.4A27.86 27.86 0 0 0 87 22.89l-16.7-9.5a27.32 27.32 0 0 0-27.5.2l-16.7 9.8a27.5 27.5 0 0 0-13.7 23.9' fill='%23fff'/%3E%3Cpath d='M66.39 75.79a13.53 13.53 0 0 1 2 3.1 5.64 5.64 0 0 1-.9 6.2 5.54 5.54 0 0 1-7.4.7 6 6 0 0 1-2.2-5 10.86 10.86 0 0 1 1.1-3.9 25.54 25.54 0 0 0 1.4-3.5 14.12 14.12 0 0 0 .4-4.6c-.1-1.6-.3-3.1-.5-4.7a11.49 11.49 0 0 0-2.8-6 14.65 14.65 0 0 0-5.2-3.4c-.9-.4-1.7-.8-2.6-1.1a13.45 13.45 0 0 0-6.3-.9c-1.4.1-2.7.4-4.1.4a6.21 6.21 0 0 1-4.4-1.5 5.48 5.48 0 0 1-1.1-7 5.55 5.55 0 0 1 7.8-1.7 8 8 0 0 1 2.3 2.2l1.7 2.3a12.94 12.94 0 0 0 3.3 3.3 14 14 0 0 0 3 1.5c1 .4 2 .9 3 1.3a11.55 11.55 0 0 0 5.5.8 12.46 12.46 0 0 0 4.6-1.5c1.2-.7 2.3-1.6 3.5-2.4a13.43 13.43 0 0 0 3.2-3.1 14.59 14.59 0 0 0 1.7-3 15.9 15.9 0 0 1 2.1-4.1 6.14 6.14 0 0 1 3.8-2.5 5.2 5.2 0 0 1 5 1.6 5.26 5.26 0 0 1 1.4 4.6 5.74 5.74 0 0 1-3 4.1 13.58 13.58 0 0 1-4.9 1.2 15.19 15.19 0 0 0-5.1 1.2c-.6.3-1.1.6-1.6.9a38.77 38.77 0 0 0-3.3 2.3 14.06 14.06 0 0 0-3.6 3.7 12.57 12.57 0 0 0-1.5 3.8 17 17 0 0 0 0 4.5 22.26 22.26 0 0 0 .5 3.6 13 13 0 0 0 1.8 4.6c.5.7 1 1.4 1.4 2' fill='%2329323c'/%3E%3Cpath d='M71.39 64a13.54 13.54 0 0 1 3.6.8 5.85 5.85 0 0 1 3.8 5 5.39 5.39 0 0 1-4.7 5.7 5.79 5.79 0 0 1-5.1-2 10 10 0 0 1-1.9-3.5 36.83 36.83 0 0 0-1.5-3.5 10.88 10.88 0 0 0-2.9-3.5c-1.2-1-2.4-2-3.7-2.9a11.46 11.46 0 0 0-6.2-2.3 13.93 13.93 0 0 0-6.1 1.3 27.73 27.73 0 0 1-2.6 1A13.93 13.93 0 0 0 39 64c-.9 1.1-1.7 2.2-2.6 3.2a7 7 0 0 1-4.2 2.1 5.47 5.47 0 0 1-5.7-4.2 5.54 5.54 0 0 1 4.3-6.7 8.55 8.55 0 0 1 3.2-.1c.9.1 1.9.3 2.8.4a18.48 18.48 0 0 0 4.7 0 19.66 19.66 0 0 0 3.2-1l3-1.2a12.23 12.23 0 0 0 4.5-3.3 11.72 11.72 0 0 0 2.2-4.3c.3-1.4.5-2.8.7-4.2a17 17 0 0 0 .1-4.5 17.83 17.83 0 0 0-.9-3.3 32.55 32.55 0 0 1-1.5-4.4 6.49 6.49 0 0 1 .9-4.5 5.19 5.19 0 0 1 4.7-2.4 5.36 5.36 0 0 1 4.3 2.3 5.56 5.56 0 0 1 .8 5 12.06 12.06 0 0 1-2.7 4.3 15.66 15.66 0 0 0-2.8 4.4 12.09 12.09 0 0 0-.5 1.8c-.3 1.3-.5 2.6-.7 4a13 13 0 0 0 .1 5.2 12.45 12.45 0 0 0 1.7 3.7 23.45 23.45 0 0 0 3.1 3.2 32.53 32.53 0 0 0 2.9 2.3 13 13 0 0 0 4.5 2 19.53 19.53 0 0 1 2.3.2' fill='%2329323c'/%3E%3C/svg%3E");
+  background-size: 85% 85%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.demo-header__breadcrumb {
+  padding: 23px 5px 0 30px;
+  /* TODO: why the 23px ? */
+  color: white;
+  letter-spacing: 1px;
+  background: url('../icons/header-angle.svg') no-repeat 5px 50%;
+  background-size: 20px 20px;
+  white-space: nowrap;
+}
+.demo-header__breadcrumb:nth-child(1 of .demo-header__breadcrumb) {
+  background: none;
+  padding-left: 5px;
+}
+.demo-header__breadcrumb--link {
+  text-decoration: none;
+  cursor: pointer;
+}
+.demo-page__description {
+  display: flex;
+  flex-direction: column;
+  grid-area: sidebar;
+  height: 100%;
+  width: 100%;
+  line-height: 140%;
+  min-width: var(--description-width);
+  background-color: var(--description-color);
+}
+.demo-page__description__content {
+  position: relative;
+  margin-inline-end: 2px;
+  padding: 16px;
+  overflow-y: auto;
+}
+.demo-page__description__content :first-child {
+  margin-block-start: 0;
+}
+.demo-page__description__content :last-child {
+  margin-block-end: 0;
+}
+.demo-description__content {
+  position: relative;
+  margin-inline-end: 2px;
+  padding: 16px;
+  overflow-y: auto;
+}
+.demo-description__content :first-child {
+  margin-block-start: 0;
+}
+.demo-description__content :last-child {
+  margin-block-end: 0;
+}
+.demo-page__toolbars {
+  display: flex;
+  grid-area: toolbar;
+}
+.demo-page__toolbar {
+  flex: 1;
+  position: relative;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  grid-area: toolbar;
+  height: 40px;
+  width: 100%;
+  line-height: 40px;
+  padding: 0 5px;
+  user-select: none;
+  background-color: var(--toolbar-color);
+  border-left: 1px solid #d5d7d8;
+  border-bottom: 1px solid #d5d7d8;
+}
+.demo-page__toolbar button:active,
+.demo-page__toolbar > label:active,
+.demo-page__toolbar .demo-toggle-button:checked:active + label {
+  background-color: #b2b2b2;
+}
+.demo-page__toolbar button:disabled,
+.demo-page__toolbar > .demo-toggle-button:disabled + label {
+  opacity: 0.5;
+  cursor: default;
+  background-color: transparent;
+}
+button {
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 14px;
+  color: #343f4a;
+  line-height: normal;
+  height: 24px;
+}
+button,
+label[class^='demo-icon-'] {
+  display: inline-block;
+  outline: none;
+  border: none;
+  height: 24px;
+  width: 24px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color: transparent;
+  line-height: 24px;
+  box-sizing: border-box;
+  padding: 0;
+  cursor: pointer;
+  color: #343f4a;
+}
+button:hover,
+label[class^='demo-icon-']:hover {
+  background-color: #dedede;
+}
+button:active,
+label[class^='demo-icon-']:active {
+  background-color: #b2b2b2;
+}
+button.labeled {
+  background-position-x: left;
+  width: auto;
+  padding: 0 2px;
+}
+button.labeled:not([class^='demo-icon']) {
+  border: 1px solid #d1d1d1;
+  padding-left: 1ex;
+  padding-right: 1ex;
+  border-radius: 2px;
+}
+button.labeled:not([class^='demo-icon']):hover {
+  background-color: #dedede;
+}
+button.labeled:not([class^='demo-icon']):active {
+  background-color: #b2b2b2;
+}
+button.labeled[class^='demo-icon'] {
+  padding-left: 24px;
+  background-position-x: 2px;
+  width: unset;
+}

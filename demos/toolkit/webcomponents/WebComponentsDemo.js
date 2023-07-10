@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,17 +27,17 @@
  **
  ***************************************************************************/
 import { GraphEditorInputMode, IGraph, IInputMode, License, Rect, ShapeNodeStyle } from 'yfiles'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
 
 import './GraphComponentElement.js'
-import { createDemoEdgeStyle } from '../../resources/demo-styles.js'
+import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
 
 // wait for the custom graph-component element to be defined
 if (window.customElements) {
   window.customElements.whenDefined('graph-component').then(run)
 } else {
   const warningDiv = document.createElement('div')
-  document.querySelector('.demo-content').appendChild(warningDiv)
+  document.querySelector('.demo-page__main').appendChild(warningDiv)
   warningDiv.outerHTML = `
     <div style="padding: 50px; margin-top: 100px;">
       <p style="font-size: 2rem;">Your browser does not support Web Components.</p>
@@ -62,14 +62,14 @@ async function run() {
   const graphComponent = document.createElement('graph-component')
   graphComponent.setAttribute('id', 'graphComponent')
 
-  document.querySelector('.demo-content').appendChild(graphComponent)
+  document.querySelector('.demo-page__main').appendChild(graphComponent)
 
   graphComponent.editMode = new GraphEditorInputMode()
 
   // initialize graph
   initializeGraph(graphComponent.graph)
 
-  registerCommands(graphComponent)
+  initializeUI(graphComponent)
 
   // center graph
   graphComponent.fitGraphBounds()
@@ -85,7 +85,7 @@ function initializeGraph(graph) {
   graph.nodeDefaults.style = new ShapeNodeStyle({ fill: 'orange' })
   graph.edgeDefaults.style = createDemoEdgeStyle()
 
-  // create small sample graph
+  // create a small sample graph
   const node1 = graph.createNode(new Rect(50, 50, 30, 30))
   const node2 = graph.createNode(new Rect(0, 150, 30, 30))
   const node3 = graph.createNode(new Rect(100, 150, 30, 30))
@@ -97,17 +97,17 @@ function initializeGraph(graph) {
  * Binds actions to demo's UI controls.
  * @param {!GraphComponentElementType} graphComponent
  */
-function registerCommands(graphComponent) {
-  addClickListener("button[data-command='ZoomIn']", () => {
+function initializeUI(graphComponent) {
+  addClickListener("button[data-command='INCREASE_ZOOM']", () => {
     graphComponent.zoom *= 1.25
   })
-  addClickListener("button[data-command='ZoomOut']", () => {
+  addClickListener("button[data-command='DECREASE_ZOOM']", () => {
     graphComponent.zoom *= 0.8
   })
-  addClickListener("button[data-command='FitContent']", () => {
+  addClickListener("button[data-command='FIT_GRAPH_BOUNDS']", () => {
     graphComponent.fitGraphBounds()
   })
-  addClickListener("button[data-command='ZoomOriginal']", () => {
+  addClickListener("button[data-command='ZOOM_ORIGINAL']", () => {
     // Demonstrates how changing the 'zoom' HTML attribute of a custom 'graph-component' element
     // will change the 'zoom' property of the corresponding yFiles GraphComponent instance.
     // This approach is meant as a proof-of-concept for reflecting GraphComponent properties as

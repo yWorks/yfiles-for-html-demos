@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import 'demo-resources/style/loading-demo.css'
 import {
   GraphComponent,
   GraphEditorInputMode,
@@ -34,10 +35,9 @@ import {
   Rect,
   ShapeNodeStyle
 } from 'yfiles'
-import license from './license.json'
-import LayoutWorker from './LayoutWorker.js'
+import license from '../../../../lib/license.json'
 
-const layoutWorker = new LayoutWorker()
+const layoutWorker = new Worker(new URL('./LayoutWorker.js', import.meta.url), { type: 'module' })
 
 License.value = license
 
@@ -55,7 +55,7 @@ graph.nodeDefaults.style = new ShapeNodeStyle({
 
 // Create small sample graph
 initializeGraph(graph)
-registerCommands()
+initializeUI()
 
 // Enable undo and center the graph in the view
 graph.undoEngineEnabled = true
@@ -69,8 +69,8 @@ function initializeGraph(graph) {
   graph.createEdge(node1, node3)
 }
 
-function registerCommands() {
-  document.querySelector("button[data-command='Layout']").addEventListener('click', runLayout)
+function initializeUI() {
+  document.querySelector('#layout').addEventListener('click', runLayout)
 }
 
 /**

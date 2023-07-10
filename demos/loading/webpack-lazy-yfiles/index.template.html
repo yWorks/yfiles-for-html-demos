@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,7 +30,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Webpack Lazy Load yFiles [yFiles for HTML]</title>
@@ -43,15 +42,19 @@
 
       #graphComponent.inactive {
         background-color: #eeeeee;
+        height: 100%;
       }
 
       #load-yfiles-note {
+        position: absolute;
         margin: 50px;
-        width: 200px;
+        width: 250px;
         line-height: 150%;
       }
 
       #load-diagram-component-btn {
+        width: 220px;
+        height: 60px;
         outline: none;
         cursor: pointer;
         background: white;
@@ -71,18 +74,27 @@
         color: white;
         background-color: #04d8fd;
         border-color: #04d8fd;
-        transition: all 2s;
+        transition: all 0.3s;
       }
     </style>
   </head>
 
-  <body class="demo-hide-left-when-small demo-has-left loaded">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
-      </div>
-      <div class="demo-sidebar-content">
-        <h1>Webpack Lazy Load yFile</h1>
+  <body class="loaded">
+    <header class="demo-header">
+      <a href="https://www.yworks.com/products/yfiles" class="demo-header__y-logo"></a>
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__breadcrumb demo-header__breadcrumb--link"
+      >
+        yFiles for HTML
+      </a>
+
+      <div class="demo-header__breadcrumb">Webpack Lazy Load yFiles</div>
+    </header>
+
+    <aside class="demo-page__description">
+      <div class="demo-description__content">
+        <h1>Webpack Lazy Load yFiles</h1>
         <p>
           This demo shows how to lazy load yFiles with
           <a href="https://webpack.js.org/" target="_blank">webpack</a>'s
@@ -107,9 +119,9 @@
         <p>Two fundamental concepts for webpack projects are demonstrated:</p>
         <ul>
           <li>
-            <a href="https://webpack.js.org/guides/code-splitting/" target="_blank"
-              >Dynamic import of modules</a
-            >
+            <a href="https://webpack.js.org/guides/code-splitting/" target="_blank">
+              Dynamic import of modules
+            </a>
           </li>
           <li>
             Separate webpack configurations for development and
@@ -121,8 +133,10 @@
         <p>There are two possible approaches:</p>
         <ul>
           <li>
-            Create a separate diagram component that imports from the <code>yfiles</code> meta
-            module.<br />
+            Create a separate diagram component that imports from the
+            <code>yfiles</code>
+            meta module.
+            <br />
             This separate diagram component with yFiles can then be loaded dynamically on demand
             which is demonstrated in this application.
           </li>
@@ -134,7 +148,8 @@
               >yFiles ES modules</a
             >
             are loaded when needed, e.g. initially only load the yFiles view, but lazy load the
-            yFiles layout if needed.<br />
+            yFiles layout if needed.
+            <br />
             This approach is shown in a separate webpack demo.
           </li>
         </ul>
@@ -143,7 +158,7 @@
 
         <p>First, install the required npm modules in the demo directory:</p>
 
-        <code> > npm install </code>
+        <code>> npm install</code>
 
         <h3>Development</h3>
 
@@ -154,7 +169,7 @@
           >:
         </p>
 
-        <code> > npm start </code>
+        <code>> npm start</code>
 
         <h3>Production</h3>
 
@@ -166,50 +181,44 @@
           webpack plugin:
         </p>
 
-        <code> > npm run production </code>
+        <code>> npm run production</code>
       </div>
     </aside>
-    <div class="demo-content">
-      <header class="demo-header">
-        <a href="https://www.yworks.com/" target="_blank"
-          ><img src="<%=require('../../resources/icons/ylogo.svg')%>" class="demo-y-logo"
-        /></a>
-        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
-        <a href="../../README.html" style="cursor: pointer" target="_blank" class="demo-title"
-          >Demos</a
-        >
-        <span class="demo-title demo-breadcrumb">Webpack Lazy Load yFiles</span>
-      </header>
-      <div class="demo-toolbar">
-        <button disabled class="demo-icon-yIconZoomIn" title="Zoom In" id="zoom-in-btn"></button>
-        <button
-          disabled
-          class="demo-icon-yIconZoomOriginal"
-          title="Reset Zoom"
-          id="reset-zoom-btn"
-        ></button>
-        <button disabled class="demo-icon-yIconZoomOut" title="Zoom Out" id="zoom-out-btn"></button>
-        <button
-          disabled
-          class="demo-icon-yIconZoomFit"
-          title="Fit Diagram"
-          id="fit-zoom-btn"
-        ></button>
-        <span class="demo-separator"></span>
-        <button
-          disabled
-          class="demo-icon-yIconLayout labeled"
-          title="Apply Layout"
-          id="apply-layout-btn"
-        >
-          Apply Layout
-        </button>
-      </div>
-      <div id="graphComponent" class="inactive">
-        <div id="load-yfiles-note">
-          <button id="load-diagram-component-btn">&#9654; Lazy Load yFiles</button>
-          <p>yFiles is currently not loaded yet.</p>
-          <p>Press this button to load yFiles and instantiate a GraphComponent.</p>
+
+    <div class="demo-page__toolbar">
+      <button disabled class="demo-icon-yIconZoomIn" title="Zoom In" id="zoom-in-btn"></button>
+      <button
+        disabled
+        class="demo-icon-yIconZoomOriginal"
+        title="Reset Zoom"
+        id="reset-zoom-btn"
+      ></button>
+      <button disabled class="demo-icon-yIconZoomOut" title="Zoom Out" id="zoom-out-btn"></button>
+      <button
+        disabled
+        class="demo-icon-yIconZoomFit"
+        title="Fit Diagram"
+        id="fit-zoom-btn"
+      ></button>
+      <span class="demo-separator"></span>
+      <button
+        disabled
+        class="demo-icon-yIconLayout labeled"
+        title="Apply Layout"
+        id="apply-layout-btn"
+      >
+        Apply Layout
+      </button>
+    </div>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent" class="inactive">
+          <div id="load-yfiles-note">
+            <button id="load-diagram-component-btn">&#9654; Lazy Load yFiles</button>
+            <p>yFiles is currently not loaded yet.</p>
+            <p>Press this button to load yFiles and instantiate a GraphComponent.</p>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,6 +34,7 @@ import {
   EdgeStyleDecorationInstaller,
   FoldingManager,
   GraphComponent,
+  GraphHighlightIndicatorManager,
   GraphInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
@@ -46,11 +47,11 @@ import {
   IInputModeContext,
   IMapper,
   IModelItem,
+  IndicatorNodeStyleDecorator,
   INode,
   License,
   Mapper,
   ModifierKeys,
-  NodeStyleDecorationInstaller,
   Point,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
@@ -60,23 +61,15 @@ import {
   Stroke,
   StyleDecorationZoomPolicy,
   TemplateNodeStyle,
-  TimeSpan,
   YString
 } from 'yfiles'
 
-import GraphSearch from '../../utils/GraphSearch'
+import GraphSearch from 'demo-utils/GraphSearch'
 import FastCanvasStyles from './FastCanvasStyles'
-import { ContextMenu } from '../../utils/ContextMenu'
-import {
-  addClass,
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  readGraph,
-  showApp
-} from '../../resources/demo-app'
-import { applyDemoTheme, DemoStyleOverviewPaintable } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { ContextMenu } from 'demo-utils/ContextMenu'
+import { applyDemoTheme, DemoStyleOverviewPaintable } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -90,12 +83,12 @@ let graphDescriptionMapper: Mapper<IGraph, string>
 let graphSearch: CustomGraphSearch
 
 // get hold of some UI elements
-const graphChooserBox = document.getElementById('graphChooserBox') as HTMLSelectElement
-const graphDescription = document.getElementById('graphInfoContent') as HTMLElement
-const nodeInfo = document.getElementById('nodeInfoLabel') as HTMLElement
-const nodeInfoDescription = document.getElementById('nodeInfoDescription') as HTMLElement
-const nodeInfoUrl = document.getElementById('nodeInfoUrl') as HTMLElement
-const searchBox = document.getElementById('searchBox') as HTMLInputElement
+const graphChooserBox = document.querySelector<HTMLSelectElement>('#graph-chooser')!
+const graphDescription = document.querySelector<HTMLElement>('#graph-info-content')!
+const nodeInfo = document.querySelector<HTMLElement>('#node-info-label')!
+const nodeInfoDescription = document.querySelector<HTMLElement>('#node-info-description')!
+const nodeInfoUrl = document.querySelector<HTMLElement>('#node-info-url')!
+const searchBox = document.querySelector<HTMLInputElement>('#search-box')!
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -105,8 +98,8 @@ async function run(): Promise<void> {
   applyDemoTheme(graphComponent)
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
 
-  // bind toolbar commands
-  registerCommands()
+  // bind toolbar functionality
+  initializeUI()
 
   // initializes converters for org chart style
   initConverters()
@@ -145,9 +138,6 @@ async function run(): Promise<void> {
   // initialize the GraphViewerInputMode which is available in 'yfiles/view-component'
   // and does not require 'yfiles/view-editor' in contrast to GraphEditorInputMode
   initializeInputMode()
-
-  // initialize the demo
-  showApp(graphComponent, overviewComponent)
 }
 
 /**
@@ -184,9 +174,6 @@ function initializeHighlightStyles(): void {
   const orangeRed = Color.ORANGE_RED
   const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
 
-  // now decorate the nodes and edges with custom hover highlight styles
-  const decorator = graphComponent.graph.decorator
-
   // nodes should be given a rectangular orange rectangle highlight shape
   const highlightShape = new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
@@ -194,18 +181,19 @@ function initializeHighlightStyles(): void {
     fill: null
   })
 
-  const nodeStyleHighlight = new NodeStyleDecorationInstaller({
-    nodeStyle: highlightShape,
+  const nodeStyleHighlight = new IndicatorNodeStyleDecorator({
+    wrapped: highlightShape,
     // that should be slightly larger than the real node
-    margins: 5,
+    padding: 5,
     // but have a fixed size in the view coordinates
     zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
   })
 
-  // register it as the default implementation for all nodes
-  decorator.nodeDecorator.highlightDecorator.setImplementation(nodeStyleHighlight)
+  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
+    nodeStyle: nodeStyleHighlight
+  })
 
-  // a similar style for the edges, however cropped by the highlight's insets
+  // a similar style for the edges, however, cropped by the highlight's insets
   const dummyCroppingArrow = new Arrow({
     type: ArrowType.NONE,
     cropLength: 5
@@ -231,7 +219,7 @@ function initializeHighlightStyles(): void {
     zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
   })
 
-  decorator.edgeDecorator.highlightDecorator.setFactory(edge =>
+  graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setFactory(edge =>
     edge.style instanceof BezierEdgeStyle ? bezierEdgeStyleHighlight : edgeStyleHighlight
   )
 }
@@ -289,7 +277,7 @@ function initializeInputMode(): void {
   // slightly offset the tooltip so that it does not interfere with the mouse
   graphViewerInputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(0, 10)
   // we show the tooltip for a very long time...
-  graphViewerInputMode.mouseHoverInputMode.duration = TimeSpan.from('10s')
+  graphViewerInputMode.mouseHoverInputMode.duration = '10s'
 
   // if we click on an item we want to perform a custom action, so register a callback
   graphViewerInputMode.addItemClickedListener((sender, evt) => onItemClicked(evt.item))
@@ -352,27 +340,26 @@ function initializeContextMenu(inputMode: GraphInputMode): void {
  * This method will be called whenever the mouse moves over a different item. We show a highlight
  * indicator to make it easier for the user to understand the graph's structure.
  */
-function onHoveredItemChanged(item: IModelItem): void {
+function onHoveredItemChanged(item: IModelItem | null): void {
   // we use the highlight manager of the GraphComponent to highlight related items
   const manager = graphComponent.highlightIndicatorManager
 
   // first remove previous highlights
   manager.clearHighlights()
   // then see where we are hovering over, now
-  const newItem = item
-  if (newItem !== null) {
-    // we highlight the item itself
-    manager.addHighlight(newItem)
-    if (newItem instanceof INode) {
-      // and if it's a node, we highlight all adjacent edges, too
-      for (const edge of graphComponent.graph.edgesAt(newItem)) {
-        manager.addHighlight(edge)
-      }
-    } else if (newItem instanceof IEdge) {
-      // if it's an edge - we highlight the adjacent nodes
-      manager.addHighlight(newItem.sourceNode!)
-      manager.addHighlight(newItem.targetNode!)
+  if (item == null) {
+    return
+  }
+  manager.addHighlight(item)
+  if (item instanceof INode) {
+    // and if it's a node, we highlight all adjacent edges, too
+    for (const edge of graphComponent.graph.edgesAt(item)) {
+      manager.addHighlight(edge)
     }
+  } else if (item instanceof IEdge) {
+    // if it's an edge - we highlight the adjacent nodes
+    manager.addHighlight(item.sourceNode!)
+    manager.addHighlight(item.targetNode!)
   }
 }
 
@@ -499,7 +486,7 @@ function createTooltipContent(toolTipText: string): HTMLElement {
   const text = document.createElement('p')
   text.innerHTML = toolTipText
   const tooltip = document.createElement('div')
-  addClass(tooltip, 'tooltip')
+  tooltip.classList.add('tooltip')
   tooltip.appendChild(text)
   return tooltip
 }
@@ -517,7 +504,7 @@ async function readSampleGraph() {
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   const fileName = `resources/${selectedItem}.graphml`
   // then load the graph
-  await readGraph(createGraphMLIOHandler(), graphComponent.graph, fileName)
+  await createGraphMLIOHandler().readFromURL(graphComponent.graph, fileName)
   // when done - fit the bounds
   graphComponent.fitGraphBounds()
   // and update the graph description pane
@@ -583,31 +570,22 @@ function createGraphMLIOHandler(): GraphMLIOHandler {
  */
 function initializeGraphSearch(): void {
   graphSearch = new CustomGraphSearch(graphComponent)
-  graphSearch.highlightDecoration = new NodeStyleDecorationInstaller({
-    nodeStyle: new ShapeNodeStyle({
+  graphSearch.highlightStyle = new IndicatorNodeStyleDecorator({
+    wrapped: new ShapeNodeStyle({
       shape: ShapeNodeShape.ROUND_RECTANGLE,
       stroke: '3px limegreen',
       fill: null
     }),
-    margins: 5,
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+    padding: 5
   })
   GraphSearch.registerEventListener(searchBox, graphSearch)
 }
 
 /**
- * Registers the commands to the toolbar elements.
+ * Registers actions to the toolbar elements.
  */
-function registerCommands(): void {
-  // called by the demo framework initially so that the button commands can be bound to actual commands and actions
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent, null)
-
-  bindChangeListener("select[data-command='SelectedFileChanged']", readSampleGraph)
-  addNavigationButtons(graphChooserBox)
+function initializeUI(): void {
+  addNavigationButtons(graphChooserBox).addEventListener('change', readSampleGraph)
 }
 
 /**
@@ -683,5 +661,4 @@ class CustomGraphSearch extends GraphSearch {
   }
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

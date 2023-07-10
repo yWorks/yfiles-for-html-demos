@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,14 +37,12 @@ import { GraphClipboard, IGraph, IModelItem, INode, Point } from 'yfiles'
  * Note that this implementation supports copying from multiple graphs. *
  */
 export class DeferredCutClipboard extends GraphClipboard {
-  constructor() {
-    super()
-
-    // The collection of elements to cut.
-    // To support multiple source graphs this is implemented
-    // as a map which maps elements to their source graph.
-    this._elementsToBeCut = new Map()
-  }
+  /**
+   * The collection of elements to cut.
+   * To support multiple source graphs this is implemented
+   * as a map which maps elements to their source graph.
+   */
+  _elementsToBeCut = new Map()
 
   /**
    * Whether the given element is marked as "to be cut".

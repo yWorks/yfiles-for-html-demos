@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,6 +49,29 @@ import {
  * An arrow that appears like the edge tapers to a point.
  */
 export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+  // these variables hold the state for the flyweight pattern
+  // they are populated in getVisualCreator and used in the implementations of the IVisualCreator interface.
+  anchor = Point.ORIGIN
+  direction = Point.ORIGIN
+
+  // the un-rotated bounds of the arrow
+  bounds = null
+  // backing field properties width, length
+  _width
+  _length
+
+  // The shape of the arrow's path.
+  // We draw in a normalized coordinate system where the edge is horizontal and meets the target at (0,0)
+  // The path is just a simple triangle with length and width 1 - the actual adjustment is done by simply scaling everything later.
+  // We create a tiny overlap between the edge and the arrow by painting a fraction over the edge.
+  // This avoids anti-aliasing artifacts where the edge meets the arrow.
+  _pathShape = 'M -1.1,-0.5 L -1,-0.5 L 0,0 L -1,0.5 L -1.1,0.5 Z'
+
+  /**
+   * The fill of this arrow
+   */
+  fill
+
   /**
    * Initializes a new instance of the {@link TaperedArrow} class.
    * @param width The width of the arrow
@@ -59,28 +82,9 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
    */
   constructor(width = 2, length = 0, fill = Fill.BLACK) {
     super()
-
-    // these variables hold the state for the flyweight pattern
-    // they are populated in getVisualCreator and used in the implementations of the IVisualCreator interface.
-    this.anchor = Point.ORIGIN
-
-    this.direction = Point.ORIGIN
-
-    // the un-rotated bounds of the arrow
-    this.bounds = null
-
-    // The shape of the arrow's path.
-    // We draw in a normalized coordinate system where the edge is horizontal and meets the target at (0,0)
-    // The path is just a simple triangle with length and width 1 - the actual adjustment is done by simply scaling everything later.
-    // We create a tiny overlap between the edge and the arrow by painting a fraction over the edge.
-    // This avoids anti-aliasing artifacts where the edge meets the arrow.
-    this._pathShape = 'M -1.1,-0.5 L -1,-0.5 L 0,0 L -1,0.5 L -1.1,0.5 Z'
-
-    // backing field properties width, length
     this._width = width
     this._length = length
     this.updateBounds()
-    // The fill of this arrow
     this.fill = fill
   }
 
@@ -257,12 +261,9 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
  * A markup extension class used for (de-)serializing the custom arrow style to GraphML.
  */
 export class TaperedArrowExtension extends MarkupExtension {
-  constructor() {
-    super()
-    this._width = 2
-    this._length = 0
-    this._fill = Fill.BLACK
-  }
+  _width = 2
+  _length = 0
+  _fill = Fill.BLACK
 
   /**
    * @type {number}

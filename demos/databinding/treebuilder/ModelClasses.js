@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,6 +36,11 @@ import { StringTemplateNodeStyle, TreeBuilder, TreeNodesSource } from 'yfiles'
  * Defines a tree node source consisting of data and bindings
  */
 export class TreeNodesSourceDefinition {
+  name
+  data
+  idBinding
+  template
+
   constructor() {
     this.name = ''
     this.data = ''
@@ -48,6 +53,10 @@ export class TreeNodesSourceDefinition {
  * Connector for {@link TreeNodesSource}s, {@link TreeNodesSourceDefinition}s and {@link TreeBuilder}
  */
 export class TreeNodesSourceDefinitionBuilderConnector {
+  sourceDefinition
+  nodesSource
+  graphBuilder
+
   /**
    * @param {!TreeNodesSourceDefinition} nodesSourceDefinition the {@link TreeNodesSourceDefinition} to connect
    * @param {!TreeNodesSource} nodesSource the {@link TreeNodesSource} to connect

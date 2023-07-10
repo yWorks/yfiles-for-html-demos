@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title id="title">Organization Chart Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="resources/orgchart-style.css" />
+
+    <!-- load Vue.js, a helper package and the demo -->
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="https://unpkg.com/vue@2.6.11"></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Organization Chart</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+      <button id="show-all-button" class="demo-icon-yIconShowAll demo-toolbar-button"></button>
+
+      <span class="demo-separator"></span>
+
+      <button
+        id="print-button"
+        title="Print"
+        class="demo-icon-yIconPrint demo-toolbar-button"
+      ></button>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Search:
+        <input type="search" id="searchBox" style="vertical-align: initial" />
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
+        <h1>Organization Chart Demo</h1>
+
+        <div>
+          <p>This demo shows how to create an interactive organization chart from JSON data.</p>
+          <p>
+            The source data is easily converted to a yFiles graph using class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+          </p>
+          <p>
+            The visualization of the employee is defined by an svg-template which is interpreted by the node style using
+            the <a href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue.js-framework</a>.
+          </p>
+          <p>
+            The demo also shows how a <a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" target="_blank">FilteredGraphWrapper</a> can be used to display a subgraph of the model
+            graph.
+          </p>
+
+          <h2>Automatic Layout</h2>
+          <p>
+            The organization chart is arranged automatically with the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a> and the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactNodePlacer" target="_blank">CompactNodePlacer</a>
+            which determines the best arrangement strategy for each node in order to achieve a compact and clear layout.
+          </p>
+
+          <h2>Organization Chart View</h2>
+
+          <dl>
+            <dt>Mouse Wheel</dt>
+            <dd>Changes the zoom level of the view.</dd>
+            <dt>Click on Employee</dt>
+            <dd>
+              Selects the employee in the chart and shows the corresponding data in the properties
+              view.
+            </dd>
+          </dl>
+
+          <h2>Properties View</h2>
+
+          <p>
+            Click on a superior, subordinate, or colleague link to select and zoom to the
+            corresponding node in the organization chart.
+          </p>
+
+          <h2>Things to Try</h2>
+          <ul>
+            <li>
+              Click on the port to hide and show the children, you can <strong>hide children</strong> by clicking on
+              <img src="resources/minus.svg" alt="hide children" /> and you can <strong>show children</strong> by
+              clicking on <img src="resources/plus.svg" alt="show children" />.
+            </li>
+            <li>
+              Right click on the node to see the <strong>context menu</strong>. For the selected node you can:
+            </li>
+            <li>
+              <ul>
+                <li>Hide parent: hides the parent of the currently selected employee.</li>
+                <li>Show parent: shows the parent of the currently selected employee.</li>
+                <li>Hide children: hides the children of the currently selected employee.</li>
+                <li>Show children: Shows the children of the currently selected employee.</li>
+                <li>Show all: show all employees</li>
+              </ul>
+            </li>
+            <li>
+              In the Toolbar, you can <strong>Show All</strong> nodes by clicking on <img src="../../resources/icons/star-16.svg" alt="show all" />.
+            </li>
+          </ul>
+
+          <h2>Developer Information</h2>
+          <ul>
+            <li>
+              To load your own data into the demo, replace the data in the <code>./model/orgchart-data.ts</code> file.
+              If your data is structured differently, change the <code>buildGraph()</code> function in the <code>./model/data-loading.ts</code>
+              file and/or the <code>Employee</code> type.
+            </li>
+            <li>
+              To disable interactivity, remove the <code>initializeInteractivity()</code> call in
+              <code>./input.ts.</code>
+            </li>
+            <li>
+              To use the collapsing feature in your own application, copy the <code>./CollapsibleTree.ts</code> file
+              and, for interactivity, the <code>./input.ts</code> and <code>./ui/orgchart-context-menu.ts</code> files.
+            </li>
+            <li>
+              To use the search feature in your own application, copy the <code>./OrgChartGraphSearch.ts</code> and
+              <code>../utils/GraphSearch.ts</code> files.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-overlay">
+        <div class="demo-overlay__header">Overview</div>
+        <div id="overviewComponent"></div>
+      </div>
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Employee Details</h2>
+
+          <div id="properties-view">
+            <p>Select an employee in the organization chart to show his properties.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="OrgChartDemo.ts" async></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,6 @@ import {
   DefaultNodePlacer,
   GraphComponent,
   GraphViewerInputMode,
-  ICommand,
   IGraph,
   InsideOutsidePortLabelModel,
   LayoutExecutor,
@@ -41,11 +40,12 @@ import {
   TreeLayout
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import { createPortAwareTreeBuilder, setBuilderData } from './TreeBuilder.js'
 import TreeData from './tree-builder-data.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider.js'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -61,6 +61,7 @@ async function run() {
 
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   setGraphDefaults(graphComponent.graph)
 
   // Use the viewer input mode since this demo should not allow interactive graph editing
@@ -76,10 +77,8 @@ async function run() {
   // Arrange the graph using a tree layout algorithm
   await arrangeGraph(graphComponent)
 
-  // Register toolbar commands
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  // Register toolbar actions
+  initializeUI(graphComponent)
 }
 
 /** @type {TreeBuilder} */
@@ -129,7 +128,7 @@ async function updateGraph(graphComponent, nodesSource) {
  * @returns {!Promise}
  */
 function arrangeGraph(graphComponent) {
-  document.querySelector("button[data-command='UpdateBuilder']").disabled = true
+  document.querySelector('#update-builder').disabled = true
 
   const algorithm = new TreeLayout({
     defaultNodePlacer: new DefaultNodePlacer({
@@ -149,7 +148,7 @@ function arrangeGraph(graphComponent) {
   })
     .start()
     .finally(() => {
-      document.querySelector("button[data-command='UpdateBuilder']").disabled = false
+      document.querySelector('#update-builder').disabled = false
     })
 }
 
@@ -173,22 +172,16 @@ function setGraphDefaults(graph) {
 }
 
 /**
- * Registers the commands for the toolbar buttons during the creation of this application.
+ * Registers the actions for the toolbar buttons during the creation of this application.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-
+function initializeUI(graphComponent) {
   let index = 0
-  bindAction("button[data-command='UpdateBuilder']", async () => {
+  document.getElementById('update-builder').addEventListener('click', async () => {
     // build graph from new data
     const data = ++index % 2 === 1 ? TreeData.updateNodesSource : TreeData.nodesSource
     await updateGraph(graphComponent, data)
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

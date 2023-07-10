@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,22 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { GraphComponent, INode } from 'yfiles'
 import {
   Color,
-  HighlightIndicatorManager,
+  GraphHighlightIndicatorManager,
+  IndicatorNodeStyleDecorator,
+  INodeStyle,
   Insets,
-  NodeStyleDecorationInstaller,
   Point,
   Rect,
   ShapeNodeStyle,
   Stroke,
   StyleDecorationZoomPolicy
 } from 'yfiles'
-import type { GraphComponent, ICanvasObjectInstaller, INode } from 'yfiles'
 
 export default class GraphSearch {
   graphComponent: GraphComponent
-  searchHighlightIndicatorInstaller: SearchHighlightIndicatorManager
+  searchHighlightIndicatorManager: GraphHighlightIndicatorManager
   matchingNodes: INode[] = []
 
   /**
@@ -81,7 +82,7 @@ export default class GraphSearch {
         e.inputType === 'insertReplacementText' /* Firefox */
       ) {
         // Determine whether we actually selected an element from the list
-        if (hasSelectedElementFromDatalist(input, searchText, graphSearch)) {
+        if (hasSelectedElementFromDatalist(input, searchText)) {
           graphSearch.zoomToSearchResult()
         }
       }
@@ -110,23 +111,34 @@ export default class GraphSearch {
    */
   constructor(graphComponent: GraphComponent) {
     this.graphComponent = graphComponent
-    this.searchHighlightIndicatorInstaller = new SearchHighlightIndicatorManager()
-    this.searchHighlightIndicatorInstaller.install(graphComponent)
+    // initialize the default highlight style
+    const highlightColor = Color.TOMATO
+    this.searchHighlightIndicatorManager = new GraphHighlightIndicatorManager({
+      nodeStyle: new IndicatorNodeStyleDecorator({
+        wrapped: new ShapeNodeStyle({
+          stroke: new Stroke(highlightColor.r, highlightColor.g, highlightColor.b, 220, 3),
+          fill: null
+        }),
+        padding: 3,
+        zoomPolicy: StyleDecorationZoomPolicy.MIXED
+      })
+    })
+    this.searchHighlightIndicatorManager.install(graphComponent)
   }
 
   /**
-   * Gets the decoration installer used for highlighting the matching nodes.
+   * Gets the decoration style used for highlighting the matching nodes.
    */
-  get highlightDecoration(): NodeStyleDecorationInstaller {
-    return this.searchHighlightIndicatorInstaller.nodeHighlightDecoration
+  get highlightStyle(): INodeStyle | null {
+    return this.searchHighlightIndicatorManager.nodeStyle
   }
 
   /**
-   * Sets the decoration installer used for highlighting the matching nodes.
-   * @param highlightDecoration The given highlight style
+   * Sets the decoration style used for highlighting the matching nodes.
+   * @param highlightStyle The given highlight style
    */
-  set highlightDecoration(highlightDecoration: NodeStyleDecorationInstaller) {
-    this.searchHighlightIndicatorInstaller.nodeHighlightDecoration = highlightDecoration
+  set highlightStyle(highlightStyle: INodeStyle | null) {
+    this.searchHighlightIndicatorManager.nodeStyle = highlightStyle
   }
 
   /**
@@ -135,7 +147,7 @@ export default class GraphSearch {
    */
   updateSearch(searchText: string): void {
     // we use the search highlight manager to highlight matching items
-    const manager = this.searchHighlightIndicatorInstaller
+    const manager = this.searchHighlightIndicatorManager
 
     // first remove previous highlights
     manager.clearHighlights()
@@ -213,59 +225,7 @@ export default class GraphSearch {
   }
 }
 
-/**
- * A {@link HighlightIndicatorManager} that uses the given decoration installer to highlight nodes of
- * the graph.
- */
-class SearchHighlightIndicatorManager extends HighlightIndicatorManager<INode> {
-  private $decorationInstaller: NodeStyleDecorationInstaller
-
-  /**
-   * Creates the SearchHighlightIndicatorManager.
-   */
-  constructor() {
-    super()
-    // initialize the default highlight style
-    const highlightColor = Color.TOMATO
-    this.$decorationInstaller = new NodeStyleDecorationInstaller({
-      nodeStyle: new ShapeNodeStyle({
-        stroke: new Stroke(highlightColor.r, highlightColor.g, highlightColor.b, 220, 3),
-        fill: null
-      }),
-      margins: 3,
-      zoomPolicy: StyleDecorationZoomPolicy.MIXED
-    })
-  }
-
-  /**
-   * Gets the highlight decoration used for the nodes.
-   */
-  get nodeHighlightDecoration(): NodeStyleDecorationInstaller {
-    return this.$decorationInstaller
-  }
-
-  /**
-   * Sets the highlight decoration used for the nodes.
-   * @param highlightDecoration The given highlight style
-   */
-  set nodeHighlightDecoration(highlightDecoration: NodeStyleDecorationInstaller) {
-    this.$decorationInstaller = highlightDecoration
-  }
-
-  /**
-   * Callback used by install to retrieve the installer for a given item.
-   * @param item The item to find an installer for.
-   */
-  getInstaller(item: INode): ICanvasObjectInstaller {
-    return this.$decorationInstaller
-  }
-}
-
-function hasSelectedElementFromDatalist(
-  input: HTMLInputElement,
-  searchText: string,
-  graphSearch: GraphSearch
-) {
+function hasSelectedElementFromDatalist(input: HTMLInputElement, searchText: string) {
   if (input.list) {
     for (const option of Array.from(input.list.children)) {
       if (option instanceof HTMLOptionElement && option.value === searchText) {

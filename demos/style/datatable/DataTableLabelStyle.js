@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,66 +26,59 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ILabel, IRenderContext, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from 'yfiles'
-import { DataTableRenderSupport, RenderDataCache, SVGNS } from './DataTableRenderSupport.js'
+import { HtmlVisual, ILabel, IRenderContext, LabelStyleBase, Size } from 'yfiles'
+import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSupport.js'
 
 /**
  * A label style to display data in a tabular fashion.
- * This style uses SVG paths and an SVG text element to create a table-like
- * visualization similar to, for example, a HTML table.
+ * The style uses the {@link HtmlVisual} and an HTML table to render the visual
  */
 export default class DataTableLabelStyle extends LabelStyleBase {
-  /**
-   * Creates a new instance of this style.
-   */
-  constructor() {
-    super()
-    this.renderSupport = new DataTableRenderSupport('myTableLabel', false)
-  }
+  renderSupport = new DataTableRenderSupport()
 
   /**
    * Creates the visual for the given label.
    * @see Overrides {@link LabelStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!ILabel} label
-   * @returns {!SvgVisual}
+   * @returns {!HtmlVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
-    const g = document.createElementNS(SVGNS, 'g')
+    const divElement = document.createElement('div')
     // Get the necessary data for rendering of the label
-    const cache = new RenderDataCache(label.owner.tag, this.renderSupport.font)
+    const cache = new RenderDataCache(label.owner.tag)
+
     // Render the label
-    this.renderSupport.render(g, label.layout.toSize(), cache)
+    this.renderSupport.render(divElement, cache, 'data-table-label')
 
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
-    transform.applyTo(g)
+    transform.applyTo(divElement)
 
-    return new SvgVisual(g)
+    return new HtmlVisual(divElement)
   }
 
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase.updateVisual}
    * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
+   * @param {!HtmlVisual} oldVisual
    * @param {!ILabel} label
-   * @returns {!SvgVisual}
+   * @returns {!HtmlVisual}
    */
   updateVisual(context, oldVisual, label) {
-    const container = oldVisual.svgElement
+    const container = oldVisual.element
     // Get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']
     // Get the data for the new visual
-    const newCache = new RenderDataCache(label.owner.tag, this.renderSupport.font)
+    const newCache = new RenderDataCache(label.owner.tag)
+
     if (!newCache.equals(oldCache)) {
-      // The data or font changed, create a new visual
-      newCache.adoptValues(oldCache)
-      this.renderSupport.render(container, label.layout.toSize(), newCache)
+      // The data changed, create a new visual
+      this.renderSupport.render(container, newCache, 'data-table-label')
     }
 
-    // nothing changed, return the old visual
     // arrange because the layout might have changed
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(container)
@@ -94,39 +87,12 @@ export default class DataTableLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * Callback that returns the preferred {@link Size size} of the label.
+   * Returns the preferred size of the label.
+   * @see Overrides {@link LabelStyleBase.getPreferredSize}
    * @param {!ILabel} label The label to which this style instance is assigned.
    * @returns {!Size} The preferred size.
    */
   getPreferredSize(label) {
-    const data = label.owner.tag
-    if (!data) {
-      return Size.EMPTY
-    }
-
-    const font = this.renderSupport.font
-
-    const propertyNames = Object.keys(data)
-    let labelColumnWidth = 0.0
-    let valueColumnWidth = 0.0
-    for (let i = 0; i < propertyNames.length; i++) {
-      const propertyName = propertyNames[i]
-      labelColumnWidth = Math.max(
-        labelColumnWidth,
-        TextRenderSupport.measureText(propertyName, font).width
-      )
-      valueColumnWidth = Math.max(
-        valueColumnWidth,
-        TextRenderSupport.measureText(data[propertyName], font).width
-      )
-    }
-
-    const lineHeight = TextRenderSupport.measureText('Xg', font).height
-    const tabPad2 = 2 * this.renderSupport.tablePadding
-    const textPad = this.renderSupport.textPadding
-    return new Size(
-      tabPad2 + 4 * textPad + labelColumnWidth + valueColumnWidth,
-      tabPad2 + propertyNames.length * (2 * textPad + lineHeight)
-    )
+    return DataTableRenderSupport.calculateTableSize(label.owner.tag, 'data-table-label')
   }
 }

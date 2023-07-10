@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,13 +48,16 @@ import {
 } from 'yfiles'
 
 export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
+  dummyNode
+
+  // determines in which quadrant the marquee is dragged
+  currentReshapePosition
+
   constructor() {
     super()
-    this.snapContext = null
     this.priority = 50
     this.dummyNode = new SimpleNode()
 
-    // determines in which quadrant the marquee is dragged
     this.currentReshapePosition = HandlePositions.NONE
 
     // customizing the marquee rect visualization to look like the current node
@@ -182,6 +185,8 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
     this.getSnapContext().cancelDrag()
   }
 
+  snapContext = null
+
   /**
    * Looks up the current SnapContext or creates a new one
    */
@@ -224,6 +229,7 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
  * This class wraps the current node style so as to be usable as a template for the marquee rectangle
  */
 class MyMarqueeTemplate extends BaseClass(IVisualTemplate) {
+  dummyNode
   constructor() {
     super()
     this.dummyNode = new SimpleNode()

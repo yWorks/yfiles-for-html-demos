@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,7 +36,8 @@ import {
   Visual
 } from 'yfiles'
 
-// @ts-ignore
+// @ts-ignore Import via URL
+// eslint-disable-next-line import/no-unresolved
 import { svg, render, nothing } from 'https://unpkg.com/lit-html?module'
 
 /**

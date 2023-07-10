@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 47.03226 105.02024"
+   height="254.08124"
+   width="300"
+   xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(38.439115,-19.145654)">
+    <polygon points="50,18 50,38 80,28" style="fill:#ff6c00;stroke:#ff6c00;stroke-width:1" transform="matrix(1.1068116,0,0,1.1857825,-84.378988,20.252847)" />
+  </g>
+  <g transform="translate(-26.48387,29.520246)">
+    <ellipse cx="50" cy="50" rx="50" ry="25" style="fill:#76b041;stroke:#76b041"/>
+  </g>
+  <g transform="translate(-28.281608,30.994294)">
+    <ellipse cx="35" cy="50" rx="8" ry="5" style="fill:#145A32 ;stroke:#145A32 "/>
+  </g>
+  <g transform="matrix(0.36281082,0,0,0.57593476,26.460357,43.638792)">
+    <ellipse cx="35" cy="50" rx="8" ry="5" style="fill:#ffffff;stroke:#ffffff"/>
+  </g>
+  <g transform="translate(-4.2884417,-19.42719)">
+    <rect style="fill:#621b00;stroke:#621b00;stroke-width:1.14562" x="10" y="40" height="60" width="2" rx="1" ry="1" />
+  </g>
+</svg>

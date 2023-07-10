@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,41 +27,11 @@
  **
  ***************************************************************************/
 :host {
-  position: absolute;
-  top: 60px;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  display: grid;
+  grid-area: content;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 'toolbar' 'content';
 }
-
-.demo-toolbar {
-  top: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-}
-
-.demo-y-logo {
-  margin: 0 5px;
-}
-
-@media screen and (max-width: 960px) {
-  .demo-sidebar.demo-right {
-    display: none;
-  }
-}
-
-@media screen and (max-height: 500px) {
-  .demo-sidebar.demo-right {
-    top: 0;
-  }
-  .demo-toolbar {
-    top: -30px;
-    height: 30px;
-    line-height: 30px;
-  }
-}
-
 .demo-separator {
   height: 20px;
   width: 1px;
@@ -69,20 +39,6 @@
   display: inline-block;
   vertical-align: middle;
   margin: 0 10px;
-}
-
-.graph-container {
-  position: absolute;
-  top: 40px;
-  bottom: 0;
-  left: 0;
-  right: 320px;
-}
-
-.graph-overview-component {
-  position: absolute;
-  left: 20px;
-  top: 20px;
 }
 
 .search {

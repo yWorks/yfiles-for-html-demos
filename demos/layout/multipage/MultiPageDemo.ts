@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,7 +37,6 @@ import {
   HierarchicLayout,
   HoveredItemChangedEventArgs,
   ICanvasObjectDescriptor,
-  ICommand,
   IEdge,
   IGraph,
   ILabel,
@@ -62,19 +61,11 @@ import {
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '../../resources/demo-styles'
-import {
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  readGraph,
-  showApp,
-  showLoadingIndicator
-} from '../../resources/demo-app'
+} from 'demo-resources/demo-styles'
 import MultiPageIGraphBuilder from './MultiPageIGraphBuilder'
 import PageBoundsVisualCreator from './PageBoundsVisualCreator'
-import { fetchLicense } from '../../resources/fetch-license'
-import { BrowserDetection } from '../../utils/BrowserDetection'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
@@ -91,12 +82,10 @@ async function run(): Promise<void> {
   applyDemoTheme(modelGraphComponent)
   initDemoStyles(modelGraphComponent.graph, { theme: 'demo-palette-21' })
 
-  registerCommands()
+  initializeUI()
   initializeCoreLayouts()
   initializeInputModes()
   loadModelGraph('Pop Artists')
-
-  showApp(graphComponent)
 }
 
 /**
@@ -241,8 +230,8 @@ async function applyLayoutResult(
     pageBoundsVisualCreator.pageHeight = pageHeight
   }
 
-  ;(document.getElementById('previousPage') as HTMLInputElement).disabled = true
-  ;(document.getElementById('nextPage') as HTMLInputElement).disabled = viewGraphs.length <= 1
+  document.querySelector<HTMLButtonElement>('#previous-page')!.disabled = true
+  document.querySelector<HTMLButtonElement>('#next-page')!.disabled = viewGraphs.length <= 1
 
   await showLoadingIndicator(false)
 }
@@ -252,8 +241,8 @@ function setPageNumber(newPageNumber: number, targetNode: INode | null = null): 
   graphComponent.focusIndicatorManager.focusedItem = null
 
   if (viewGraphs.length <= 0) {
-    ;(document.getElementById('previousPage') as HTMLInputElement).disabled = true
-    ;(document.getElementById('nextPage') as HTMLInputElement).disabled = true
+    document.querySelector<HTMLButtonElement>('#previous-page')!.disabled = true
+    document.querySelector<HTMLButtonElement>('#next-page')!.disabled = true
     return
   }
 
@@ -264,7 +253,7 @@ function setPageNumber(newPageNumber: number, targetNode: INode | null = null): 
       ? viewGraphs.length - 1
       : newPageNumber
 
-  const pageNumberTextBox = document.getElementById('pageNumberTextBox') as HTMLInputElement
+  const pageNumberTextBox = document.getElementById('page-number-text-box') as HTMLInputElement
   pageNumberTextBox.value = (pageNumber + 1).toString()
   pageNumberTextBox.setAttribute('min', '1')
   pageNumberTextBox.setAttribute('max', `${viewGraphs.length}`)
@@ -297,10 +286,10 @@ function setPageNumber(newPageNumber: number, targetNode: INode | null = null): 
     graphComponent.fitGraphBounds()
   }
 
-  ;(document.getElementById('previousPage') as HTMLInputElement).disabled = !checkPageNumber(
+  document.querySelector<HTMLButtonElement>('#previous-page')!.disabled = !checkPageNumber(
     pageNumber - 1
   )
-  ;(document.getElementById('nextPage') as HTMLInputElement).disabled = !checkPageNumber(
+  document.querySelector<HTMLButtonElement>('#next-page')!.disabled = !checkPageNumber(
     pageNumber + 1
   )
 }
@@ -332,43 +321,44 @@ function checkPageNumber(pageNo: any): boolean {
 }
 
 /**
- * Registers the JavaScript commands for the GUI elements, typically the
- * tool bar buttons, during the creation of this application.
+ * Registers the actions for the GUI elements, typically the
+ * toolbar buttons, during the creation of this application.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindAction("button[data-command='PreviousPage']", () => {
+function initializeUI(): void {
+  document.querySelector<HTMLButtonElement>('#previous-page')!.addEventListener('click', () => {
     if (checkPageNumber(pageNumber - 1)) {
       setPageNumber(pageNumber - 1)
     }
   })
-  bindAction("button[data-command='NextPage']", () => {
+  document.querySelector<HTMLButtonElement>('#next-page')!.addEventListener('click', () => {
     if (checkPageNumber(pageNumber + 1)) {
       setPageNumber(pageNumber + 1)
     }
   })
-  bindChangeListener("input[data-command='PageNumberTextBox']", page => {
-    const pageNo = parseInt(page as string) - 1
-    if (!isNaN(pageNo) && checkPageNumber(pageNo)) {
-      setPageNumber(pageNo)
-    }
-  })
+  document
+    .querySelector<HTMLInputElement>('#page-number-text-box')!
+    .addEventListener('change', evt => {
+      const page = (evt.target as HTMLInputElement).value
+      const pageNo = parseInt(page as string) - 1
+      if (!isNaN(pageNo) && checkPageNumber(pageNo)) {
+        setPageNumber(pageNo)
+      }
+    })
 
-  bindChangeListener("select[data-command='SampleComboBox']", value => {
+  document.querySelector<HTMLSelectElement>('#samples')!.addEventListener('change', async evt => {
+    const value = (evt.target as HTMLSelectElement).value
     if (value === 'yFiles Layout Namespaces') {
       ;(document.getElementById('coreLayoutComboBox') as HTMLSelectElement).value = 'Tree'
     }
-    loadModelGraph(value)
+    await loadModelGraph(value)
   })
 
-  bindAction("button[data-command='DoLayout']", async () => {
-    await showLoadingIndicator(true)
-    runMultiPageLayout()
-  })
+  document
+    .querySelector<HTMLButtonElement>('#apply-layout')!
+    .addEventListener('click', async () => {
+      await showLoadingIndicator(true)
+      runMultiPageLayout()
+    })
 }
 
 /**
@@ -405,7 +395,7 @@ function initializeCoreLayouts(): void {
     () => {
       additionalParentCount.disabled = coreLayoutComboBox.value !== 'Tree'
     },
-    BrowserDetection.passiveEventListeners ? { passive: false } : false
+    { passive: false }
   )
 }
 
@@ -487,7 +477,7 @@ async function loadModelGraph(graphId: any) {
       ? 'resources/pop-artists-small.graphml'
       : 'resources/yfiles-layout-namespaces.graphml'
 
-  await readGraph(new GraphMLIOHandler(), modelGraphComponent.graph, filename)
+  await new GraphMLIOHandler().readFromURL(modelGraphComponent.graph, filename)
   // fit model graph to the component
   modelGraphComponent.fitGraphBounds()
 
@@ -498,5 +488,4 @@ async function loadModelGraph(graphId: any) {
   runMultiPageLayout()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

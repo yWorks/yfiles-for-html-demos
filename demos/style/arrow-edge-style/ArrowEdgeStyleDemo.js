@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,20 +34,14 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IEdge,
   IGraph,
   License
 } from 'yfiles'
-import {
-  bindChangeListener,
-  bindCommand,
-  bindInputListener,
-  showApp
-} from '../../resources/demo-app.js'
-import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
 import { SampleGraph } from './resources/SampleGraph.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 const basicShape = document.querySelector('#basic-shape')
 const thicknessRange = document.querySelector('#thickness-range')
@@ -58,7 +52,7 @@ const shaftRatioRange = document.querySelector('#shaft-ratio')
 const shaftRatioLabel = document.querySelector('#shaft-ratio-label')
 const croppingRange = document.querySelector('#cropping-range')
 const croppingLabel = document.querySelector('#cropping-label')
-const propertiesPanel = document.querySelector('.demo-properties')
+const propertiesPanel = document.querySelector('.demo-form-block')
 const infoMessage = document.querySelector('.info-message')
 
 /**
@@ -95,8 +89,6 @@ async function run() {
   initializeUI(graphComponent)
 
   graphComponent.fitGraphBounds()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -152,36 +144,35 @@ function getStyleForOptionsPanel(options) {
  * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindChangeListener('#basic-shape', value => {
+  basicShape.addEventListener('change', () => {
+    const value = basicShape.value
     const shape = ArrowStyleShape.from(value)
     applyStyleSetting(graphComponent, style => (style.shape = shape))
     shaftRatioRange.disabled = value === 'PARALLELOGRAM' || value === 'TRAPEZOID'
   })
 
-  bindInputListener('#thickness-range', value => {
-    const thickness = parseFloat(value)
+  thicknessRange.addEventListener('input', () => {
+    const thickness = parseFloat(thicknessRange.value)
     applyStyleSetting(graphComponent, style => (style.thickness = thickness))
     thicknessRangeLabel.innerText = thickness.toFixed(0)
   })
 
-  bindInputListener(angleRange, value => {
+  angleRange.addEventListener('input', () => {
+    const value = angleRange.value
     const angle = toRadians(parseFloat(value))
     applyStyleSetting(graphComponent, style => (style.angle = angle))
     angleLabel.innerText = value
   })
 
-  bindInputListener('#shaft-ratio', value => {
+  shaftRatioRange.addEventListener('input', () => {
+    const value = shaftRatioRange.value
     const shaftRatio = parseFloat(value)
     applyStyleSetting(graphComponent, style => (style.shaftRatio = shaftRatio))
     shaftRatioLabel.innerText = value
   })
 
-  bindInputListener('#cropping-range', value => {
+  croppingRange.addEventListener('input', () => {
+    const value = croppingRange.value
     const cropping = parseFloat(value)
     applyStyleSetting(graphComponent, style => (style.sourceCropping = cropping))
     applyStyleSetting(graphComponent, style => (style.targetCropping = cropping))
@@ -291,5 +282,4 @@ function toRadians(degrees) {
   return (degrees / 180) * Math.PI
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

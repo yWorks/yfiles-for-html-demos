@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,26 +30,98 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Graph Editor Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Graph Editor</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="NEW"></button>
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="CUT"></button>
+      <button data-command="COPY"></button>
+      <button data-command="PASTE"></button>
+      <button data-command="DELETE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" />
+      <label for="demo-snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
+      <input type="checkbox" id="demo-orthogonal-editing-button" class="demo-toggle-button" />
+      <label
+        for="demo-orthogonal-editing-button"
+        class="demo-icon-yIconOrthogonal"
+        title="Enable Orthogonal Edges"
+      ></label>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="GROUP_SELECTION"></button>
+      <button data-command="UNGROUP_SELECTION"></button>
+      <button data-command="ENTER_GROUP"></button>
+      <button data-command="EXIT_GROUP"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Graph Editor Demo</h1>
 
         <p>
-          The Simple Editor demo exhibits a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> which enables graph editing
-          via the default <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
+          The Simple Editor demo exhibits a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> which enables graph editing via the default
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
         </p>
 
         <h4>Creating Elements (Nodes / Vertices)</h4>
@@ -117,8 +188,12 @@
         <p>Select a node, then drag one of the resizing handles to change the size.</p>
 
         <ul>
-          <li>Hold <kbd>Shift</kbd> to keep the aspect ratio for any node.</li>
-          <li>Hold <kbd>Alt</kbd> to resize around the node's center.</li>
+          <li>
+            Hold <kbd>Shift</kbd> to keep the aspect ratio for any node.
+          </li>
+          <li>
+            Hold <kbd>Alt</kbd> to resize around the node's center.
+          </li>
         </ul>
 
         <h4>Clipboard</h4>
@@ -196,99 +271,15 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-        <button
-          data-command="Open"
-          title="Open a GraphML file"
-          class="demo-icon-yIconOpen"
-        ></button>
-        <button
-          data-command="Save"
-          title="Save a GraphML file"
-          class="demo-icon-yIconSave"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-        <span class="demo-separator"></span>
-
-        <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" /><label
-          for="demo-snapping-button"
-          class="demo-icon-yIconSnapping"
-          title="Snapping"
-        ></label>
-        <input
-          type="checkbox"
-          id="demo-orthogonal-editing-button"
-          class="demo-toggle-button"
-        /><label
-          for="demo-orthogonal-editing-button"
-          class="demo-icon-yIconOrthogonal"
-          title="Enable Orthogonal Edges"
-        ></label>
-
-        <span class="demo-separator"></span>
-
-        <button
-          data-command="GroupSelection"
-          title="Group selected element"
-          class="demo-icon-yIconGroup"
-        ></button>
-        <button
-          data-command="UngroupSelection"
-          title="Ungroup selected element"
-          class="demo-icon-yIconUngroup"
-        ></button>
-        <button
-          data-command="EnterGroup"
-          title="Enter group"
-          class="demo-icon-yIconEnterGroup"
-        ></button>
-        <button
-          data-command="ExitGroup"
-          title="Leave group"
-          class="demo-icon-yIconExitGroup"
-        ></button>
+    <div class="demo-page__main">
+      <div class="demo-overlay">
+        <div class="demo-overlay__header">Overview</div>
+        <div id="overviewComponent"></div>
       </div>
-
-      <div class="demo-content-dynamic">
-        <div id="graphOverviewComponent" class="demo-overview-container">
-          <div class="demo-overview-header">Overview</div>
-          <div id="overviewComponent"></div>
-        </div>
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="GraphEditorDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="GraphEditorDemo.ts" async></script>
   </body>
 </html>

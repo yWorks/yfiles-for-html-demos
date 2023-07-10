@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,29 +32,22 @@ import {
   GraphComponent,
   GraphViewerInputMode,
   GroupNodeStyle,
-  ICommand,
   InteriorLabelModel,
   InteriorStretchLabelModel,
   License,
   RectangleNodeStyle
 } from 'yfiles'
 import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
-import {
   createDefaultHierarchicLayout,
   createTabularGroupsHierarchicLayout
 } from './HierarchicLayoutTabularGroups.js'
-import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-const sortingToggle = document.querySelector('#sortingToggle')
-const tabularGroupsToggle = document.querySelector('#tabularGroupsToggle')
-const distanceSlider = document.querySelector('#childDistanceSlider')
+const sortingToggle = document.querySelector('#sorting-toggle')
+const tabularGroupsToggle = document.querySelector('#tabular-groups-toggle')
+const distanceSlider = document.querySelector('#child-distance-slider')
 const sampleComboBox = document.querySelector('#sample-combo-box')
 const distanceLabel = document.getElementById('childDistanceLabel')
 
@@ -81,8 +74,7 @@ async function run() {
   await runHierarchicLayoutWithTabularGroups()
 
   // bind actions to the buttons in the toolbar
-  registerCommands()
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -250,14 +242,10 @@ function initializeGraph() {
 }
 
 /**
- * Binds the various actions to the buttons in the toolbar.
+ * Binds actions to the buttons in the toolbar.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindAction("input[data-command='TabularGroupsToggle']", async () => {
+function initializeUI() {
+  document.querySelector('#tabular-groups-toggle').addEventListener('click', async () => {
     if (tabularGroupsToggle.checked) {
       // run the hierarchic layout with the tabular groups feature
       sortingToggle.disabled = false
@@ -271,35 +259,37 @@ function registerCommands() {
     }
   })
 
-  bindAction("input[data-command='ToggleSorting']", runHierarchicLayoutWithTabularGroups)
+  document
+    .querySelector('#sorting-toggle')
+    .addEventListener('click', runHierarchicLayoutWithTabularGroups)
 
-  const sampleComboBox = document.querySelector('#sample-combo-box')
-  sampleComboBox.addEventListener('change', async () => {
-    // reset and disable the toolbar ui elements
-    sortingToggle.disabled = true
-    tabularGroupsToggle.disabled = true
-    distanceSlider.disabled = true
-    sortingToggle.checked = false
-    tabularGroupsToggle.checked = true
-    distanceSlider.value = '0'
-    distanceLabel.textContent = '0'
+  addNavigationButtons(document.querySelector('#sample-combo-box')).addEventListener(
+    'change',
+    async () => {
+      // reset and disable the toolbar ui elements
+      sortingToggle.disabled = true
+      tabularGroupsToggle.disabled = true
+      distanceSlider.disabled = true
+      sortingToggle.checked = false
+      tabularGroupsToggle.checked = true
+      distanceSlider.value = '0'
+      distanceLabel.textContent = '0'
 
-    // load new sample and arrange with tabular groups feature
-    await loadSampleGraph()
-    await runHierarchicLayoutWithTabularGroups()
+      // load new sample and arrange with tabular groups feature
+      await loadSampleGraph()
+      await runHierarchicLayoutWithTabularGroups()
 
-    // enable toolbar ui elements
-    sortingToggle.disabled = false
-    tabularGroupsToggle.disabled = false
-    distanceSlider.disabled = false
-  })
-  addNavigationButtons(sampleComboBox)
+      // enable toolbar ui elements
+      sortingToggle.disabled = false
+      tabularGroupsToggle.disabled = false
+      distanceSlider.disabled = false
+    }
+  )
 
-  bindChangeListener('#childDistanceSlider', async value => {
-    distanceLabel.textContent = value
+  document.querySelector('#child-distance-slider').addEventListener('change', async evt => {
+    distanceLabel.textContent = evt.target.value
     await runHierarchicLayoutWithTabularGroups()
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

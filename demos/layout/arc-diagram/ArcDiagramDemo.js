@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,32 +33,24 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IGraph,
   LayoutExecutor,
   License,
   ShapeNodeShape,
   ShapeNodeStyle,
-  Size,
-  Stroke
+  Size
 } from 'yfiles'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
 import { ArcDiagramLayout, NodeOrder } from './ArcDiagramLayout.js'
 import SampleData from './resources/SampleData.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-const chooser = document.getElementById('nodeorder')
+const chooser = document.getElementById('node-order')
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'applyLayout'.
+// tools from removing this dependency which is needed for 'applyLayout'.
 Class.ensure(LayoutExecutor)
 
 /**
@@ -85,10 +77,10 @@ async function run() {
   graphComponent.fitGraphBounds()
 
   // bind the demo's new node alignment and node distribution operations to the demo's UI controls
-  registerCommands(graphComponent)
+  initializeUI(graphComponent)
 
   // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  finishLoading()
 
   // calculate and animate an initial layout for the demo's sample graph
   await graphComponent.morphLayout(new ArcDiagramLayout())
@@ -110,7 +102,7 @@ function configureGraph(graph) {
   })
 
   graph.edgeDefaults.style = new BezierEdgeStyle({
-    stroke: Stroke.from('4px #662b00')
+    stroke: '4px #662b00'
   })
 }
 
@@ -174,20 +166,13 @@ function getNodeOrder() {
  * Binds actions and commands to the demo's UI controls.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindChangeListener('#nodeorder', async () => {
+function initializeUI(graphComponent) {
+  addNavigationButtons(chooser).addEventListener('change', async () => {
     chooser.disabled = true
     await arrange(graphComponent)
     chooser.disabled = false
   })
-  addNavigationButtons(chooser)
-  bindAction('#arrange', () => arrange(graphComponent))
+  document.querySelector('#arrange').addEventListener('click', () => arrange(graphComponent))
 }
 
 // noinspection JSIgnoredPromiseFromCall

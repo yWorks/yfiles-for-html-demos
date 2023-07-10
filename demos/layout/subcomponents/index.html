@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,35 +30,133 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Hierarchic Subcomponents Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
-      .icon-add-component {
+      .demo-icon-add-component {
         background-image: url('../../resources/icons/plus2-16.svg');
         background-repeat: no-repeat;
         background-position: 50% 50%;
       }
 
-      .icon-remove-component {
+      .demo-icon-remove-component {
         background-image: url('../../resources/icons/minus2-16.svg');
         background-repeat: no-repeat;
         background-position: 50% 50%;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Hierarchic Subcomponents</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Layout Algorithm:
+        <select id="layout-select" title="Select the layout of a new subcomponent">
+          <option value="tree">Tree Layout</option>
+          <option value="organic">Organic Layout</option>
+          <option value="orthogonal">Orthogonal Layout</option>
+          <option value="hierarchic">Hierarchic Layout</option>
+        </select>
+      </label>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Layout Orientation:
+        <select id="orientation-select" title="Select the orientation of a new subcomponent">
+          <option value="top-to-bottom">Top to Bottom</option>
+          <option value="bottom-to-top">Bottom to Top</option>
+          <option value="left-to-right">Left to Right</option>
+          <option value="right-to-left">Right to Left</option>
+        </select>
+      </label>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        Subcomponent Placement Policy:
+        <select
+          id="subcomponent-policy-select"
+          title="Select how the subcomponent is placed within the layout context of the remaining graph"
+        >
+          <option value="automatic">Automatic</option>
+          <option value="isolated">Isolated</option>
+          <option value="always-integrated">Always Integrated</option>
+        </select>
+      </label>
+
+      <button
+        id="create-subcomponent"
+        title="Add to a new subcomponent"
+        class="demo-icon-add-component"
+        disabled
+      ></button>
+
+      <span class="demo-separator"></span>
+
+      <button
+        id="remove-subcomponent"
+        title="Remove from subcomponent"
+        class="demo-icon-remove-component"
+        disabled
+      ></button>
+
+      <span class="demo-separator"></span>
+
+      <button
+        id="layout-button"
+        title="Run Hierarchic Layout"
+        class="demo-icon-yIconLayout labeled"
+      >
+        Layout
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Hierarchic Subcomponents Demo</h1>
 
         <p>
@@ -81,9 +178,8 @@
         <ul>
           <li>
             Create a new subcomponent that gets an individual layout by selecting some nodes, choose
-            a layout algorithm and style, and hit
-            <img src="../../resources/icons/plus2-16.svg" />. Then the new subcomponent is marked
-            with a color and the layout is updated.
+            a layout algorithm and style, and hit <img src="../../resources/icons/plus2-16.svg" />.
+            Then the new subcomponent is marked with a color and the layout is updated.
           </li>
           <li>
             Remove nodes from subcomponents. Select some nodes and press
@@ -97,91 +193,11 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <span>Layout Algorithm:</span>
-        <select
-          id="layout-select"
-          data-command="SelectLayout"
-          title="Select the layout of a new subcomponent"
-        >
-          <option value="tree">Tree Layout</option>
-          <option value="organic">Organic Layout</option>
-          <option value="orthogonal">Orthogonal Layout</option>
-          <option value="hierarchic">Hierarchic Layout</option>
-        </select>
-
-        <span class="demo-separator"></span>
-
-        <span>Layout Orientation:</span>
-        <select
-          id="orientation-select"
-          data-command="SelectOrientation"
-          title="Select the orientation of a new subcomponent"
-        >
-          <option value="top-to-bottom">Top to Bottom</option>
-          <option value="bottom-to-top">Bottom to Top</option>
-          <option value="left-to-right">Left to Right</option>
-          <option value="right-to-left">Right to Left</option>
-        </select>
-
-        <span class="demo-separator"></span>
-
-        <span>Subcomponent Placement Policy:</span>
-        <select
-          id="subcomponent-policy-select"
-          data-command="SelectSubcomponentPolicy"
-          title="Select how the subcomponent is placed within the layout context of the remaining graph"
-        >
-          <option value="automatic">Automatic</option>
-          <option value="isolated">Isolated</option>
-          <option value="always-integrated">Always Integrated</option>
-        </select>
-        <button
-          data-command="CreateSubcomponent"
-          title="Add the selected nodes to a new subcomponent"
-          class="icon-add-component"
-          disabled=""
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          data-command="RemoveSubcomponent"
-          title="Remove the selected nodes from their subcomponent"
-          class="icon-remove-component"
-          disabled=""
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          id="layoutButton"
-          data-command="Layout"
-          title="Run Hierarchic Layout"
-          class="demo-icon-yIconLayout labeled"
-        >
-          Layout
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="SubcomponentsDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="SubcomponentsDemo.ts" async></script>
   </body>
 </html>

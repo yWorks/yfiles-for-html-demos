@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import * as CodeMirror from 'codemirror'
+import 'codemirror/mode/xml/xml'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/search/search'
+import 'codemirror/addon/search/searchcursor'
+import 'codemirror/addon/dialog/dialog'
+import 'codemirror/addon/lint/lint'
+import 'codemirror/addon/lint/json-lint'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/addon/lint/lint.css'
+
 import {
   GraphBuilder,
   GraphComponent,
@@ -33,10 +45,7 @@ import {
   GraphMLSupport,
   GraphViewerInputMode,
   IArrow,
-  ICommand,
-  IEnumerable,
   License,
-  Point,
   PolylineEdgeStyle,
   Rect,
   Size,
@@ -44,24 +53,17 @@ import {
 } from 'yfiles'
 
 import SampleData from './resources/sample.js'
-import { LitNodeStyle, createLitNodeStyleFromSource } from './LitNodeStyle.js'
+import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle.js'
 import { registerLitNodeStyleSerialization } from './LitNodeStyleMarkupExtension.js'
-import {
-  addClass,
-  bindAction,
-  bindCommand,
-  removeClass,
-  showApp
-} from '../../resources/demo-app.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /** @type {GraphComponent} */
 let graphComponent
 
-/** @type {EditorFromTextArea} */
 let renderFunctionSourceTextArea
 
-/** @type {EditorFromTextArea} */
 let tagTextArea
 
 /** @type {GraphMLSupport} */
@@ -73,7 +75,10 @@ let graphMLSupport
  */
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
+
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // initialize demo
@@ -81,9 +86,7 @@ async function run() {
   initializeStyles()
   initializeIO()
   loadSampleGraph()
-  registerCommands()
-
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -206,13 +209,12 @@ function loadSampleGraph() {
     data: SampleData.nodes,
     id: 'id',
     // This example uses hard coded locations. If no predefined layout data is given, an automatic layout could have
-    // been applied to the graph after buildGraph, which is a common use case. For example, see the OrgChart Demo
-    // (/demos-js/complete/interactiveorgchart/)
+    // been applied to the graph after buildGraph, which is a common use case. For example, see the Organization Chart Demo
     layout: data =>
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = e =>
-    IEnumerable.from(e.bends ?? []).map(b => new Point(b.x, b.y))
+    e.bends
 
   const graph = graphBuilder.buildGraph()
   graphComponent.fitGraphBounds(30)
@@ -222,10 +224,13 @@ function loadSampleGraph() {
 }
 
 /**
- * Wires up the UI. Buttons are linked with their according actions.
+ * Wires up the UI. Buttons are linked with their respective actions.
  */
-function registerCommands() {
-  bindAction("button[data-command='Open']", async () => {
+function initializeUI() {
+  const openButton = document.querySelector("button[data-command='OPEN']")
+  openButton.setAttribute('data-command-registered', 'true')
+  openButton.setAttribute('title', 'Open a GraphML file')
+  openButton.addEventListener('click', async () => {
     try {
       await graphMLSupport.openFile(graphComponent.graph)
       graphComponent.fitGraphBounds()
@@ -236,13 +241,8 @@ function registerCommands() {
       graphComponent.graph.clear()
     }
   })
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindAction("button[data-command='ApplyTemplate']", () => {
+  document.querySelector('#apply-template-button').addEventListener('click', () => {
     if (graphComponent.selection.selectedNodes.size === 0) {
       return
     }
@@ -258,32 +258,30 @@ function registerCommands() {
         graphComponent.graph.setStyle(node, style)
       })
 
-      removeClass(document.getElementById('template-text-area-error'), 'open-error')
+      document.getElementById('template-text-area-error').classList.remove('open-error')
     } catch (err) {
       const errorArea = document.getElementById('template-text-area-error')
       const errorString = err.toString().replace(renderFunctionSource, '...template...')
       errorArea.setAttribute('title', errorString)
-      addClass(errorArea, 'open-error')
+      errorArea.classList.add('open-error')
     }
   })
-  bindAction("button[data-command='ApplyTag']", () => {
+
+  document.querySelector('#apply-tag-button').addEventListener('click', () => {
     const errorArea = document.getElementById('tag-text-area-error')
     graphComponent.selection.selectedNodes.forEach(node => {
       try {
         node.tag = JSON.parse(tagTextArea.getValue())
-        removeClass(errorArea, 'open-error')
+        errorArea.classList.remove('open-error')
       } catch (err) {
-        addClass(errorArea, 'open-error')
+        errorArea.classList.add('open-error')
         errorArea.setAttribute('title', err.toString())
       }
     })
     graphComponent.invalidate()
   })
 
-  bindAction("button[data-command='Reload']", () => {
-    loadSampleGraph()
-  })
+  document.querySelector('#reload').addEventListener('click', loadSampleGraph)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

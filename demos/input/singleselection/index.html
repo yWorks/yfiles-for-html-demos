@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,26 +30,67 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Single Selection Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="./singleselection.css" />
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Single Selection</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <input
+        type="checkbox"
+        id="toggle-single-selection"
+        class="demo-toggle-button labeled"
+        title="Single Selection"
+        checked=""
+      />
+      <label for="toggle-single-selection">Single Selection</label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Single Selection Demo</h1>
 
         <p>
-          This demo shows how to configure <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> for single selection
-          mode. In this mode, only one graph item can be selected at a time.
+          This demo shows how to configure
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>
+          for single selection mode. In this mode, only one graph item can be selected at a time.
         </p>
 
         <h2>Things to Try</h2>
@@ -58,15 +98,16 @@
         <ul>
           <li>Toggle single selection mode and examine the differences.</li>
           <li>
-            Select a single node and toggle its selection state by pressing <code>Ctrl-Space</code>.
-            This works in both single selection and regular mode due to a custom command binding.
+            Select a single node and toggle its selection state by pressing
+            <code>Ctrl-Space</code>. This works in both single selection and regular mode due to a custom command binding.
           </li>
           <li>
-            Move the node focus (indicated by a thin dashed line) by holding down
-            <code>Ctrl</code> and pressing an arrow key. Toggle the selection state of the focused
-            item by pressing <code>Ctrl-Space</code>.
+            Move the node focus (indicated by a thin dashed line) by holding down <code>Ctrl</code> and pressing an arrow key.
+            Toggle the selection state of the focused item by pressing <code>Ctrl-Space</code>.
           </li>
-          <li>Take a look at the source code, especially method <em>enableSingleSelection</em>.</li>
+          <li>
+            Take a look at the source code, especially method <em>enableSingleSelection</em>.
+          </li>
         </ul>
 
         <h2>Features of Single Selection Mode</h2>
@@ -81,31 +122,16 @@
             key while clicking another node.
           </li>
           <li>
-            <em>Select All</em> is disabled. Try to select all nodes by pressing
-            <code>Ctrl-A</code>.
+            <em>Select All</em> is disabled. Try to select all nodes by pressing <code>Ctrl-A</code>.
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <input
-          type="checkbox"
-          id="toggleSingleSelection"
-          class="demo-toggle-button labeled"
-          title="Single Selection"
-          data-command="ToggleSingleSelection"
-          checked=""
-        /><label for="toggleSingleSelection">Single Selection</label>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="SingleSelectionDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="SingleSelectionDemo.ts" async></script>
   </body>
 </html>

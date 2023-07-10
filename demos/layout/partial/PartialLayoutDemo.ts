@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,7 +38,6 @@ import {
   GraphMLIOHandler,
   GroupNodeLabelModel,
   HierarchicLayout,
-  ICommand,
   IEdge,
   IEdgeStyle,
   ILayoutAlgorithm,
@@ -59,22 +58,13 @@ import {
   SubgraphPlacement,
   YBoolean
 } from 'yfiles'
-
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  readGraph,
-  setComboboxValue,
-  showApp
-} from '../../resources/demo-app'
 import {
   applyDemoTheme,
   createDemoGroupStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 // We need to load the modules 'router-polyline' and 'router-other' explicitly to prevent
 // tree-shaking tools from removing this dependency which is needed for 'PartialLayout'.
@@ -105,12 +95,10 @@ async function run(): Promise<void> {
   initializeInputModes()
 
   // bind toolbar buttons to actions
-  registerCommands()
+  initializeUI()
 
   // load the first scenario
   loadScenario()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -434,26 +422,21 @@ function setSelectionFixed(fixed: boolean): void {
 }
 
 /**
- * Binds commands to the buttons in the toolbar.
+ * Binds actions to the buttons in the toolbar.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-
-  bindAction("button[data-command='LockSelection']", () => {
+function initializeUI(): void {
+  document.querySelector<HTMLButtonElement>('#lock-selection')!.addEventListener('click', () => {
     setSelectionFixed(true)
   })
-  bindAction("button[data-command='UnlockSelection']", () => {
+  document.querySelector<HTMLButtonElement>('#unlock-selection')!.addEventListener('click', () => {
     setSelectionFixed(false)
   })
-  bindAction("button[data-command='Layout']", runLayout)
+  document.querySelector<HTMLButtonElement>('#layout')!.addEventListener('click', runLayout)
 
-  bindChangeListener("select[data-command='SelectSample']", loadScenario)
   addNavigationButtons(
-    document.querySelector("select[data-command='SelectSample']") as HTMLSelectElement
-  )
-  bindAction("button[data-command='Refresh']", loadScenario)
+    document.querySelector<HTMLSelectElement>('#select-sample')!
+  ).addEventListener('change', loadScenario)
+  document.querySelector<HTMLButtonElement>('#refresh')!.addEventListener('click', loadScenario)
 }
 
 /**
@@ -506,7 +489,7 @@ async function loadScenario(): Promise<void> {
   }
 
   const graph = graphComponent.graph
-  await readGraph(ioHandler, graph, path)
+  await ioHandler.readFromURL(graph, path)
   graph.nodes.forEach(node => {
     const fixed = isFixed(node)
     updateStyle(node, fixed)
@@ -530,11 +513,12 @@ function setOptions(
   allowMirroring: boolean,
   nodeSnapping: boolean
 ): void {
-  setComboboxValue('subgraph-layout', subgraphLayout)
-  setComboboxValue('component-assignment', componentAssignmentStrategy)
-  setComboboxValue('subgraph-positioning', subgraphPlacement)
-  setComboboxValue('edge-routing-style', edgeRoutingStrategy)
-  setComboboxValue('layout-orientation', layoutOrientation)
+  document.querySelector<HTMLSelectElement>('#subgraph-layout')!.value = subgraphLayout
+  document.querySelector<HTMLSelectElement>('#component-assignment')!.value =
+    componentAssignmentStrategy
+  document.querySelector<HTMLSelectElement>('#subgraph-positioning')!.value = subgraphPlacement
+  document.querySelector<HTMLSelectElement>('#edge-routing-style')!.value = edgeRoutingStrategy
+  document.querySelector<HTMLSelectElement>('#layout-orientation')!.value = layoutOrientation
   getElementById<HTMLInputElement>('node-distance').value = minimumNodeDistance.toString()
   getElementById<HTMLInputElement>('mirroring').value = allowMirroring.toString()
   getElementById<HTMLInputElement>('snapping').value = nodeSnapping.toString()
@@ -560,5 +544,4 @@ function getElementById<T extends HTMLElement>(id: string): T {
   return document.getElementById(id) as T
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

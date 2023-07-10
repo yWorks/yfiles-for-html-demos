@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Fraud Detection Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Fraud Detection</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <div class="main-view-buttons">
+        <button data-command="INCREASE_ZOOM"></button>
+        <button data-command="ZOOM_ORIGINAL"></button>
+        <button data-command="DECREASE_ZOOM"></button>
+        <button data-command="FIT_GRAPH_BOUNDS"></button>
+        <span class="demo-separator"></span>
+
+        <select id="samples" title="Select a sample graph">
+          <option value="bank-fraud" selected="">First-party Bank Fraud Detection</option>
+          <option value="insurance-fraud">Insurance Fraud Detection</option>
+        </select>
+      </div>
+
+      <button id="layout-button" title="Layout from Scratch" class="demo-icon-yIconLayout labeled">
+        Layout
+      </button>
+      <span class="demo-separator"></span>
+      <div id="fraud-rings">
+        <span>Fraud Rings</span>
+      </div>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Fraud Detection Demo</h1>
+
+        <p>
+          This demo shows how <em>yFiles for HTML</em> can be used for detecting
+          <em>fraud cases</em> in time-dependent data. Fraud affects many companies worldwide
+          causing economic loss and liability issues. Fraud detection relies on the analysis of a
+          huge amount of data-sets and thus, visualizations can be valuable for the quick detection
+          of fraud schemes.
+        </p>
+
+        <h2>Main Graph Component</h2>
+        <ul>
+          <li>Shows the graph according to the current time frame.</li>
+          <li>
+            Provides additional information for the nodes on <em>click</em> (displayed in the
+            right-panel) or on <em>hover</em>.
+          </li>
+          <li>Highlights fraud rings on <em>hover</em>.</li>
+          <li>
+            Graph elements, selection and highlight are rendered using the WebGL2 rendering
+            technique, if this is supported by the browser.
+          </li>
+        </ul>
+
+        <h2>Timeline Component</h2>
+        <ul>
+          <li>
+            Shows the number of node creation/removal events with a bar for each point in time.
+          </li>
+          <li>
+            Contains a time frame rectangle to select which time segment is represented in the main
+            graph by <em>resizing/dragging</em>
+            it.
+          </li>
+          <li>
+            Provides three detail levels (days/months/years) that are switched by
+            <em>scrolling</em> anywhere in the component.
+          </li>
+          <li>
+            Updates the highlights/selection in the main graph when
+            <em>hovering/selecting</em> bars.
+          </li>
+          <li>
+            Offers a
+            <img src="timeline/icons/play.svg" style="vertical-align: bottom" alt="play" />-button
+            to automatically move the time frame to the right while updating the main graph.
+          </li>
+        </ul>
+
+        <h2>Inspection View Component</h2>
+        <ul>
+          <li>
+            Opens an inspection view of a fraud ring when <em>double-clicking</em> on fraud ring
+            elements or the according
+            <img
+              src="resources/icons/fraud-warning.svg"
+              style="vertical-align: bottom"
+              alt="fraud warning"
+            />-symbol in the toolbar. Also, hover on a
+            <img
+              src="resources/icons/fraud-warning.svg"
+              style="vertical-align: bottom"
+              alt="fraud warning"
+            />-symbol animates the viewport to the corresponding fraud component.
+          </li>
+          <li>
+            Shows a single graph component that contains fraud rings along with its own timeline.
+          </li>
+          <li>Updates the layout when <em>clicking</em> the Layout-button in the toolbar.</li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-content__components">
+        <div class="demo-main__graph-component">
+          <div id="graphComponent"></div>
+        </div>
+        <div id="timeline-component"></div>
+
+        <div class="fraud-detection-view">
+          <div class="fraud-detection-view__header">
+            <div id="closeFraudDetection" class="fraud-detection-view__close-button"></div>
+            <label class="fraud-detection-view__title">Fraud Ring</label>
+          </div>
+          <div id="fraud-detection-timeline-component"></div>
+        </div>
+      </div>
+
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Business Data</h2>
+          <div style="width: 100%">
+            <div id="properties-view"></div>
+          </div>
+
+          <div id="bank-fraud-detection">
+            <h2>About First-party Bank Fraud</h2>
+            <p>
+              In a first-party bank fraud scenario, fraudsters request legal products from banks,
+              i.e., new accounts, checks, loans or credit cards. For some period of time, they
+              behave like normal customers and pay their debts. However, suddenly they disappear
+              with the money leaving no trace behind, since they have used fake identities or
+              contact information.
+            </p>
+            <p>
+              In our graph, each person is associated with an address, a phone number, a bank branch
+              and a series of bank products (including possible payments for these products). Each
+              node is visualized in a different manner based on its type and is associated with
+              dates representing the date when an event started and/or finished. For example, when a
+              loan was requested and/or was paid back.
+            </p>
+            <p>
+              A typical fraud-scenario involves <em>two or more persons</em> that share the same
+              <em>fake</em> personal information such as address or phone number and apply for
+              several bank products.
+            </p>
+            <h3>What to look for</h3>
+            <p>
+              Fraud rings, i.e., persons that form <em>cycles</em> and share contact information. In
+              the demo, they are visualized in <em>red color</em>.
+            </p>
+          </div>
+          <div id="insurance-fraud-detection" hidden="hidden">
+            <h2>About Insurance Fraud Detection</h2>
+            <p>
+              In an insurance fraud scenario, fraudsters stage <em>fake car accidents</em> and
+              require reimbursement from the insurance companies for small injuries and damages that
+              cannot be easily confirmed by the companies. Such scenarios may involve some or all
+              passengers of the involved cars, the witnesses of the accidents, doctors or lawyers.
+            </p>
+            <p>
+              In our graph, each "accident" node is connected to the involved "car" nodes and the
+              persons served as "witnesses". Each person in a car has a role (i.e., driver or
+              passenger) and is connected to a "car" node and, maybe, to a "lawyer"/"doctor" node.
+              Each node is also associated with the date of the event. The colors of the edges
+              represent the relation between the connected nodes as follows:
+            </p>
+            <div class="legend__box">
+              <div class="legend__item">
+                <span class="legend__line red"></span>
+                <span class="legend__desc">involves</span>
+              </div>
+              <div class="legend__item">
+                <span class="legend__line light-green"></span>
+                <span class="legend__desc">witness</span>
+              </div>
+              <div class="legend__item">
+                <span class="legend__line green"></span>
+                <span class="legend__desc">drives</span>
+              </div>
+              <div class="legend__item">
+                <span class="legend__line yellow"></span>
+                <span class="legend__desc">isPassenger</span>
+              </div>
+              <div class="legend__item">
+                <span class="legend__line dark-blue"></span>
+                <span class="legend__desc">represents</span>
+              </div>
+              <div class="legend__item">
+                <span class="legend__line blue"></span>
+                <span class="legend__desc">heals</span>
+              </div>
+            </div>
+            <p>
+              A typical-fraud scenario involves the <em>same persons</em> that participate to the
+              <em>same series of accidents</em> playing a <em>different role</em> each time, e.g.,
+              one time driver, one time witness and two times passenger. In such cases, also, the
+              fraudsters can share the <em>same lawyer and/or doctor</em>.
+            </p>
+
+            <h3>What to look for</h3>
+            <p>
+              Fraud rings, i.e., "accident" nodes that form <em>cycles</em> with almost the same
+              participants. In the demo, they are visualized in <em>red color</em> .
+            </p>
+          </div>
+        </div>
+      </aside>
+      <div id="loading-indicator">Loading... This may take a while.</div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="FraudDetectionDemo.ts" async></script>
+  </body>
+</html>

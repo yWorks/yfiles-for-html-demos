@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 /* Graph Components */
-#graphComponent {
+.demo-main__graph-component #graphComponent {
   background-color: #3c4253;
 }
 #graphOverviewComponent {
@@ -267,4 +267,28 @@
 }
 .yfiles-labeleditbox-container-leaving {
   animation: scaleAnimation reverse 0.3s ease-out;
+}
+
+.node-flash {
+  opacity: 0;
+  fill: #85be8a;
+  pointer-events: none;
+  rx: 3.5;
+  ry: 3.5;
+}
+
+.node-created.node-flash {
+  animation: 1s ease-out nodeCreatedAnimation;
+}
+
+@keyframes nodeCreatedAnimation {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0;
+  }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,20 +38,9 @@ const baseConfig = {
   module: {
     rules: [
       {
-        test: /\.m?js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-            plugins: ['@babel/plugin-proposal-object-rest-spread']
-          }
-        }
-      },
-      {
-        test: /\.tsx?$/,
-        use: 'babel-loader',
-        exclude: /node_modules/
+        test: /\.ts$/,
+        loader: 'ts-loader',
+        options: { allowTsInNodeModules: true }
       },
       {
         test: /\.css$/,
@@ -73,7 +62,8 @@ const baseConfig = {
     ]
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
+    symlinks: false
   },
   optimization: {
     // don't split chunks for web worker

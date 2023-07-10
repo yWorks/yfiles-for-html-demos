@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Restricted Editing Demo
-
-<img src="../../resources/image/restricted-editing.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/input/restricted-editing/index.html).
 
 # Restricted Editing Demo
 
@@ -18,7 +25,7 @@ While the above editing schemes are fairly coarse-grained, GraphEditorInputMode 
 
 ## Editing Operations
 
-Choose one of the available editing schemes `None`, `Moving Items`, and `All`.
+Choose one of the available editing schemes `None`,`Moving Items`, and`All`.
 
 None
 

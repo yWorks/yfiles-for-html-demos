@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,14 +34,19 @@ const WIDTH = 4
 const HEIGHT = 4
 
 /**
- * This class is an example of a custom port style based on the {@link PortStyleBase} class.
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
+ * @typedef {TypedSvgVisual.<SVGEllipseElement>} Sample1PortStyleVisual
+ */
+
+/**
+ * A custom port style based on the {@link PortStyleBase} class.
  * The port is rendered as a circle.
  */
 export default class Sample1PortStyle extends PortStyleBase {
   /**
    * @param {!IRenderContext} context
    * @param {!IPort} port
-   * @returns {!SvgVisual}
+   * @returns {!Sample1PortStyleVisual}
    */
   createVisual(context, port) {
     // create the ellipse
@@ -58,14 +63,14 @@ export default class Sample1PortStyle extends PortStyleBase {
     const locationX = portLocation.x - WIDTH * 0.5
     const locationY = portLocation.y - HEIGHT * 0.5
     SvgVisual.setTranslate(ellipse, locationX, locationY)
-    return new SvgVisual(ellipse)
+    return SvgVisual.from(ellipse)
   }
 
   /**
    * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
+   * @param {!Sample1PortStyleVisual} oldVisual
    * @param {!IPort} port
-   * @returns {!SvgVisual}
+   * @returns {!Sample1PortStyleVisual}
    */
   updateVisual(context, oldVisual, port) {
     const ellipse = oldVisual.svgElement

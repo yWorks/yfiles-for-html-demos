@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HandleInputMode,
-  ICommand,
   INode,
   License,
   List,
@@ -54,16 +53,16 @@ import {
 } from 'yfiles'
 
 import EditablePathNodeStyle, { PathHandle, updateHandles } from './EditablePathNodeStyle'
-import { bindCommand, showApp } from '../../resources/demo-app'
-import { createDemoEdgeStyle } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, createDemoEdgeStyle } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
-// @ts-ignore
-let graphComponent: GraphComponent = null
+let graphComponent: GraphComponent = null!
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
 
   // initialize the graph
   initializeGraph()
@@ -73,9 +72,7 @@ async function run(): Promise<void> {
 
   graphComponent.fitGraphBounds()
 
-  registerCommands()
-
-  showApp(graphComponent)
+  graphComponent.graph.undoEngine!.clear()
 }
 
 /**
@@ -87,7 +84,11 @@ function initializeGraph(): void {
 
   graph.undoEngineEnabled = true
 
-  const selectionStroke = new Stroke({ fill: 'black', thickness: 2, dashStyle: DashStyle.DASH }).freeze()
+  const selectionStroke = new Stroke({
+    fill: 'black',
+    thickness: 2,
+    dashStyle: DashStyle.DASH
+  }).freeze()
 
   // Highlight the selected nodes along their outline
   graph.decorator.nodeDecorator.selectionDecorator.setFactory(
@@ -329,14 +330,4 @@ function createSampleGraph(): void {
   graph.createEdge(n1, n2)
 }
 
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

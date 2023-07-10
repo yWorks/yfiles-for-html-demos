@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,7 +45,8 @@ import {
   PolylineEdgeStyle,
   Rect,
   Stroke,
-  SvgVisual
+  SvgVisual,
+  type TaggedSvgVisual
 } from 'yfiles'
 
 import AnimatedLinearGradient from './AnimatedLinearGradient'
@@ -53,9 +54,14 @@ import Sample1Arrow from './Sample1Arrow'
 import { SVGNS } from './Namespaces'
 
 /**
- * This class is an example for a custom edge style based on {@link EdgeStyleBase}.
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
  */
-export default class Sample1EdgeStyle extends EdgeStyleBase {
+type Sample1EdgeStyleVisual = TaggedSvgVisual<SVGGElement, EdgeRenderDataCache>
+
+/**
+ * An example of a custom edge style based on {@link EdgeStyleBase}.
+ */
+export default class Sample1EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
   private arrows: Sample1Arrow = new Sample1Arrow()
   pathThickness = 3
 
@@ -70,26 +76,29 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
    * Creates the visual for an edge.
    * @see Overrides {@link EdgeStyleBase.createVisual}
    */
-  createVisual(context: IRenderContext, edge: IEdge): SvgVisual {
+  createVisual(context: IRenderContext, edge: IEdge): Sample1EdgeStyleVisual {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
     const g = document.createElementNS(SVGNS, 'g')
     // Get the necessary data for rendering of the edge
     const cache = this.createRenderDataCache(context, edge)
+    const visual = SvgVisual.from(g, cache)
     // Render the edge
-    this.render(context, edge, g, cache)
-    return new SvgVisual(g)
+    this.render(context, visual, edge)
+    return visual
   }
 
   /**
    * Re-renders the edge using the old visual for performance reasons.
    * @see Overrides {@link EdgeStyleBase.updateVisual}
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): SvgVisual {
-    const container = oldVisual.svgElement as SVGGElement & {
-      'data-renderDataCache'?: EdgeRenderDataCache
-    }
-    // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: Sample1EdgeStyleVisual,
+    edge: IEdge
+  ): Sample1EdgeStyleVisual {
+    const container = oldVisual.svgElement
+    // get the data with which the oldVisual was created
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(context, edge)
 
@@ -97,13 +106,15 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
     if (!newCache.stateEquals(oldCache)) {
       // more than only the path changed - re-render the visual
       Sample1EdgeStyle.clear(container)
-      this.render(context, edge, container, newCache)
+      oldVisual.tag = newCache
+      this.render(context, oldVisual, edge)
       return oldVisual
     }
 
     if (!newCache.pathEquals(oldCache)) {
+      oldVisual.tag = newCache
       // only the path changed - update the old visual
-      this.updatePath(context, edge, container, newCache)
+      this.updatePath(context, oldVisual, edge)
     }
     return oldVisual
   }
@@ -124,14 +135,9 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
   /**
    * Creates the visual appearance of an edge.
    */
-  private render(
-    context: IRenderContext,
-    edge: IEdge,
-    container: SVGGElement & { 'data-renderDataCache'?: EdgeRenderDataCache },
-    cache: EdgeRenderDataCache
-  ) {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
+  private render(context: IRenderContext, visual: Sample1EdgeStyleVisual, edge: IEdge) {
+    const cache = visual.tag
+    const container = visual.svgElement
 
     if (!cache.path) {
       return
@@ -162,19 +168,18 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
    */
   private updatePath(
     context: IRenderContext,
-    edge: IEdge,
-    container: SVGGElement & { 'data-renderDataCache'?: EdgeRenderDataCache },
-    cache: EdgeRenderDataCache
+    oldVisual: Sample1EdgeStyleVisual,
+    edge: IEdge
   ): void {
+    const container = oldVisual.svgElement
     // The first child must be a path - else re-create the container from scratch
     if (container.childNodes.length === 0 || !(container.childNodes[0] instanceof SVGPathElement)) {
       Sample1EdgeStyle.clear(container)
-      this.render(context, edge, container, cache)
+      this.render(context, oldVisual, edge)
       return
     }
 
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
+    const cache = oldVisual.tag
 
     if (cache.path) {
       const path = container.childNodes[0] as Element
@@ -222,7 +227,7 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
 
   /**
    * Determines whether the edge is visible in the given rectangle.
-   * Overridden method to improve performance of the suprt implementation
+   * Overridden method to improve performance of the super implementation
    * @see Overrides {@link EdgeStyleBase.isVisible}
    */
   isVisible(context: ICanvasContext, rectangle: Rect, edge: IEdge): boolean {
@@ -235,7 +240,7 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * This implementation of the look up provides a custom implementation of the
+   * This implementation of the look-up provides a custom implementation of the
    * {@link ISelectionIndicatorInstaller} interface that better suits to this style.
    * @see Overrides {@link EdgeStyleBase.lookup}
    */

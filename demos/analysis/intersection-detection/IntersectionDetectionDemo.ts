@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,18 +29,16 @@
 import {
   DefaultEdgePathCropper,
   DefaultLabelStyle,
-  EdgeStyleDecorationInstaller,
-  Fill,
   FreeEdgeLabelModel,
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphSnapContext,
   HorizontalTextAlignment,
   ICanvasObjectDescriptor,
-  ICommand,
   IEdge,
   IGraph,
   IModelItem,
@@ -51,26 +49,23 @@ import {
   Intersections,
   LabelPositionHandler,
   LabelSnapContext,
-  LabelStyleDecorationInstaller,
   License,
-  NodeStyleDecorationInstaller,
   OrientedRectangle,
   OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
   QueryItemToolTipEventArgs,
   ShapeNodeStyle,
-  StyleDecorationZoomPolicy,
   TimeSpan,
   VerticalTextAlignment,
   Visualization
 } from 'yfiles'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
 import { IntersectionVisualCreator } from './DemoVisuals'
-import { applyDemoTheme, colorSets, initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
 import GraphData from './resources/GraphData'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import { createToolTipContent } from './TooltipHelper'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The graph component
@@ -119,8 +114,8 @@ async function run(): Promise<void> {
   // initialize the graph and the defaults
   initializeGraph(graphComponent)
 
-  // bind the buttons to their commands
-  registerCommands()
+  // bind the buttons to their change listener
+  initializeUI()
 
   // load a sample graph
   loadSampleGraph(graphComponent.graph)
@@ -130,9 +125,6 @@ async function run(): Promise<void> {
 
   // finally, run the intersection algorithm on it
   runIntersectionAlgorithm()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
 }
 
 /**
@@ -192,7 +184,7 @@ function runIntersectionAlgorithm(): void {
   // run the algorithm and obtain the result
   const intersectionsResult = intersections.run(graphComponent.graph)
 
-  // store information of results in right side panel
+  // store information of results in the right-side panel
   intersectionInfoArray = intersectionsResult.intersections.toArray()
   updateIntersectionInfoPanel(intersectionInfoArray)
 
@@ -347,8 +339,8 @@ function initializeGraph(graphComponent: GraphComponent): void {
   })
 
   const nodeLabelStyle = new DefaultLabelStyle()
-  nodeLabelStyle.backgroundFill = Fill.from(colorSets[theme].nodeLabelFill)
-  nodeLabelStyle.textFill = Fill.from(colorSets[theme].text)
+  nodeLabelStyle.backgroundFill = colorSets[theme].nodeLabelFill
+  nodeLabelStyle.textFill = colorSets[theme].text
   nodeLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   nodeLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
   nodeLabelStyle.insets = new Insets(4, 2, 4, 1)
@@ -356,8 +348,8 @@ function initializeGraph(graphComponent: GraphComponent): void {
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
 
   const edgeLabelStyle = new DefaultLabelStyle()
-  edgeLabelStyle.backgroundFill = Fill.from(colorSets[theme].edgeLabelFill)
-  edgeLabelStyle.textFill = Fill.from(colorSets[theme].text)
+  edgeLabelStyle.backgroundFill = colorSets[theme].edgeLabelFill
+  edgeLabelStyle.textFill = colorSets[theme].text
   edgeLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   edgeLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
   edgeLabelStyle.insets = new Insets(4, 2, 4, 1)
@@ -374,37 +366,27 @@ function initializeGraph(graphComponent: GraphComponent): void {
   })
 
   // add some highlighting for the nodes/edges/labels involved in an intersection
-  graph.decorator.nodeDecorator.highlightDecorator.setImplementation(
-    new NodeStyleDecorationInstaller({
-      nodeStyle: new ShapeNodeStyle({
-        shape: 'rectangle',
-        stroke: '2px #f0c808',
-        fill: 'transparent'
-      }),
-      margins: 0,
-      zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
-    })
-  )
+  const highlightNodeStyle = new ShapeNodeStyle({
+    shape: 'rectangle',
+    stroke: '2px #f0c808',
+    fill: 'transparent'
+  })
 
-  graph.decorator.labelDecorator.highlightDecorator.setImplementation(
-    new LabelStyleDecorationInstaller({
-      labelStyle: new DefaultLabelStyle({
-        shape: 'rectangle',
-        backgroundStroke: '2px #56926e',
-        backgroundFill: 'transparent',
-        textFill: 'transparent'
-      }),
-      margins: 0,
-      zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
-    })
-  )
+  const highlightLabelStyle = new DefaultLabelStyle({
+    shape: 'rectangle',
+    backgroundStroke: '2px #56926e',
+    backgroundFill: 'transparent',
+    textFill: 'transparent'
+  })
 
-  graph.decorator.edgeDecorator.highlightDecorator.setImplementation(new EdgeStyleDecorationInstaller({
-    edgeStyle: new PolylineEdgeStyle({
-      stroke: '2px #ff6c00'
-    }),
-    zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
-  }))
+  const highlightEdgeStyle = new PolylineEdgeStyle({
+    stroke: '2px #ff6c00'
+  })
+  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
+    nodeStyle: highlightNodeStyle,
+    edgeStyle: highlightEdgeStyle,
+    labelStyle: highlightLabelStyle
+  })
 
   graphComponent.selection.addItemSelectionChangedListener(() => {
     if (considerSelectionBox.checked) {
@@ -437,7 +419,8 @@ function initializeInputMode(): void {
   inputMode.handleInputMode.addDraggedListener(runIntersectionAlgorithm)
   inputMode.moveLabelInputMode.addDraggedListener(runIntersectionAlgorithm)
 
-  inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
+  inputMode.itemHoverInputMode.hoverItems =
+    GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
   inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
     const item = args.item
     const highlightIndicatorManager = graphComponent.highlightIndicatorManager
@@ -458,39 +441,28 @@ function initializeInputMode(): void {
 }
 
 /**
- * Wires the GUI elements with the corresponding commands.
+ * Wires the GUI elements with the corresponding functionality.
  */
-function registerCommands(): void {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-  })
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent, null)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent, null)
-
-  bindChangeListener(
-    "input[data-command='ConsiderSourceTargetNodeIntersections']",
-    runIntersectionAlgorithm
-  )
-  bindChangeListener(
-    "input[data-command='ConsiderGroupContentIntersections']",
-    runIntersectionAlgorithm
-  )
-  bindChangeListener(
-    "input[data-command='ConsiderLabelOwnerIntersections']",
-    runIntersectionAlgorithm
-  )
-  bindChangeListener("input[data-command='ConsiderItemGeometry']", runIntersectionAlgorithm)
-  bindChangeListener("input[data-command='ConsiderOnlySelection']", runIntersectionAlgorithm)
+function initializeUI(): void {
+  document
+    .querySelector<HTMLInputElement>('#consider-source-target-node-intersections')!
+    .addEventListener('change', runIntersectionAlgorithm)
+  document
+    .querySelector<HTMLInputElement>('#consider-group-content-intersections')!
+    .addEventListener('change', runIntersectionAlgorithm)
+  document
+    .querySelector<HTMLInputElement>('#consider-label-owner-intersections')!
+    .addEventListener('change', runIntersectionAlgorithm)
+  document
+    .querySelector<HTMLInputElement>('#consider-item-geometry')!
+    .addEventListener('change', runIntersectionAlgorithm)
+  document
+    .querySelector<HTMLInputElement>('#consider-only-selection')!
+    .addEventListener('change', runIntersectionAlgorithm)
   consideredItemsSelect.addEventListener('change', runIntersectionAlgorithm)
 
-  bindAction('#snapping-button', () => {
-    const snappingEnabled = (document.querySelector('#snapping-button') as HTMLInputElement).checked
+  document.querySelector<HTMLButtonElement>('#snapping-button')!.addEventListener('click', () => {
+    const snappingEnabled = document.querySelector<HTMLInputElement>('#snapping-button')!.checked
     const geim = graphComponent.inputMode as GraphEditorInputMode
     geim.snapContext!.enabled = snappingEnabled
     geim.labelSnapContext!.enabled = snappingEnabled
@@ -524,5 +496,4 @@ function configureToolTips(inputMode: GraphEditorInputMode): void {
   )
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

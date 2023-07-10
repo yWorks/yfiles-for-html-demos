@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -60,6 +60,12 @@ import {
  * {@link NodeStyleDecorator.isVisible}.
  */
 export default class NodeStyleDecorator extends NodeStyleBase {
+  imageStyle = new ImageNodeStyle()
+  // This dummy node is passed to the image node style to render the decoration image.
+  // Its size is the size of the decoration. Its location is adjusted during each createVisual
+  // and updateVisual.
+  dummyDecorationNode = new SimpleNode()
+
   /**
    * Initializes a new instance of this class.
    * @param {!INodeStyle} baseStyle The base style.
@@ -69,13 +75,6 @@ export default class NodeStyleDecorator extends NodeStyleBase {
     super()
     this.imageUrl = imageUrl
     this.baseStyle = baseStyle
-    this.imageStyle = new ImageNodeStyle()
-
-    // This dummy node is passed to the image node style to render the decoration image.
-    // Its size is the size of the decoration. Its location is adjusted during each createVisual
-    // and updateVisual.
-    this.dummyDecorationNode = new SimpleNode()
-
     this.dummyDecorationNode.layout = new Rect(0, 0, 32, 32)
   }
 

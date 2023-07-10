@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>04 Preferred Label Size - Label Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-label-style-implementation">
+          Label Style Implementation Tutorial
+        </a>
+
+        <span>04 Preferred Label Size</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-label/03-add-background-shape/index.html'><span>03 Adding a Background Shape</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 4/11</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 04 Preferred Label Size</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-label/01-render-label-text/index.html"
+            class="tutorial-dropdown__item"
+            >01 Rendering the Label Text</a
+          ><a
+            href="../../tutorial-style-implementation-label/02-using-text-utilities/index.html"
+            class="tutorial-dropdown__item"
+            >02 Using Text Utilities</a
+          ><a
+            href="../../tutorial-style-implementation-label/03-add-background-shape/index.html"
+            class="tutorial-dropdown__item"
+            >03 Adding a Background Shape</a
+          ><a
+            href="../../tutorial-style-implementation-label/04-preferred-size/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >04 Preferred Label Size</a
+          ><a
+            href="../../tutorial-style-implementation-label/05-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >05 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-label/06-text-alignment/index.html"
+            class="tutorial-dropdown__item"
+            >06 Text Alignment</a
+          ><a
+            href="../../tutorial-style-implementation-label/07-line-wrapping/index.html"
+            class="tutorial-dropdown__item"
+            >07 Line Wrapping</a
+          ><a
+            href="../../tutorial-style-implementation-label/08-data-from-tag/index.html"
+            class="tutorial-dropdown__item"
+            >08 Data From Tag</a
+          ><a
+            href="../../tutorial-style-implementation-label/09-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >09 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-label/10-visibility/index.html"
+            class="tutorial-dropdown__item"
+            >10 Visibility</a
+          ><a
+            href="../../tutorial-style-implementation-label/11-bounds/index.html"
+            class="tutorial-dropdown__item"
+            >11 Bounds</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-label/05-render-performance/index.html'><span>05 Render Performance</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Preferred Label Size</h1>
+          <div class="paragraph">
+            <p>
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" target="_blank">LabelStyleBase</a> provides the abstract method
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-getPreferredSize" target="_blank">getPreferredSize</a>
+              that needs to be implemented to tell the framework how large the label prefers to be.
+            </p>
+          </div>
+          <div class="paragraph">
+            <p>
+              Until now, the label style implementation has returned a fixed preferred size. This
+              means that the label size is not adjusted to shorter or longer texts. Also, the label
+              wouldn&#8217;t grow in height if the text contains a line break.
+            </p>
+          </div>
+          <div id="old-state" class="inline-graph-component"></div>
+          <div class="paragraph">
+            <p>
+              We adjust the implementation of
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-getPreferredSize" target="_blank">getPreferredSize</a>
+              to measure the label text and return the measured size.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#TextRenderSupport-method-measureText" target="_blank">TextRenderSupport.measureText</a>
+              helps us to get the desired size. We add a small padding of 3 for each side.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">getPreferredSize</span>(<span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>): <span class="hljs-title class_">Size</span> {
+  <span class="hljs-comment">// measure the label text using the font</span>
+  <span class="hljs-keyword">const</span> { width, height } = <span class="hljs-title class_">TextRenderSupport</span>.<span class="hljs-title function_">measureText</span>(label.<span class="hljs-property">text</span>, font)
+  <span class="hljs-comment">// return the measured size plus a small padding</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(width + padding + padding, height + padding + padding)
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              To see the labels adjust to different text lengths, select a node or edge and press F2
+              to edit the label. Press Ctrl+Return to insert a line break.
+            </p>
+          </div>
+          <div class="paragraph">
+            <p>
+              We also adjust the translate transform of the text element in
+              <code>createVisual</code> to consider the padding vertically.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-javascript" data-lang="javascript">textElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;transform&#x27;</span>, <span class="hljs-string">`translate(<span class="hljs-subst">${padding}</span> <span class="hljs-subst">${padding}</span>)`</span>)</code></pre>
+            </div>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  The <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" target="_blank">ILabelModel</a> may or may not take the preferred size into
+                  account. Therefore, it is not guaranteed that the label will become as large as
+                  the preferred size. Most label models, like <a href="https://docs.yworks.com/yfileshtml/#/api/ExteriorLabelModel" target="_blank">ExteriorLabelModel</a>,
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/InteriorLabelModel" target="_blank">InteriorLabelModel</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/FreeLabelModel" target="_blank">FreeLabelModel</a> etc. will
+                  respect the value, though. Usually, only stretch label models like
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/InteriorStretchLabelModel" target="_blank">InteriorStretchLabelModel</a>, that fit the content into the owner
+                  node, will result in a different size.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-label/05-render-performance/index.html'><span>05 Render Performance</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

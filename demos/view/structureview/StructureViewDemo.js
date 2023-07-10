@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,18 +27,28 @@
  **
  ***************************************************************************/
 import {
+  Class,
+  DefaultGraph,
   FoldingManager,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  HierarchicLayout,
   ICommand,
-  IGraph,
+  LayoutExecutor,
   License,
-  Rect
+  NodeAlignmentPolicy,
+  StraightLineEdgeRouter
 } from 'yfiles'
-import StructureView from './StructureView.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { StructureView } from './StructureView.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
+import { sampleData } from './resources/structure-view-data.js'
+
+// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
+// tools it from removing this dependency which is needed for 'applyLayout'.
+Class.ensure(LayoutExecutor)
 
 /**
  * Runs the demo.
@@ -46,38 +56,41 @@ import { fetchLicense } from '../../resources/fetch-license.js'
  */
 async function run() {
   License.value = await fetchLicense()
-
-  // setup support for folding
-  const foldingManager = new FoldingManager()
-  const foldingView = foldingManager.createFoldingView()
-  foldingView.enqueueNavigationalUndoUnits = true
-
-  // configure default styles ...
-  initDemoStyles(foldingView.graph, { foldingEnabled: true })
-  // ... and build an initial sample graph
-  createGraph(foldingView.graph)
-
   const graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
-  graphComponent.graph = foldingView.graph
+
+  const graph = new DefaultGraph()
+  // set demo styles ...
+  initDemoStyles(graph, { foldingEnabled: true })
+  // ... and create a sample graph
+  createGraph(graph)
+  graph.undoEngineEnabled = true
+
+  // enable collapsing/expanding group nodes
+  enableFolding(graphComponent, graph)
 
   // enable interactive editing
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = createEditorInputMode()
 
   // center the sample graph in the view
   graphComponent.fitGraphBounds()
 
-  // enable undo and redo
-  foldingManager.masterGraph.undoEngineEnabled = true
-
   // create the structure view
   const structureView = createStructureView(graphComponent)
 
-  registerCommands(graphComponent, structureView)
+  initializeUI(structureView)
+}
 
-  showApp(graphComponent)
+/**
+ * Creates a folding view and sets its graph as the graph component's graph.
+ * @param {!GraphComponent} graphComponent
+ * @param {!IGraph} masterGraph
+ */
+function enableFolding(graphComponent, masterGraph) {
+  const view = new FoldingManager(masterGraph).createFoldingView()
+  view.enqueueNavigationalUndoUnits = true
+
+  graphComponent.graph = view.graph
 }
 
 /**
@@ -86,9 +99,10 @@ async function run() {
  * @returns {!StructureView}
  */
 function createStructureView(graphComponent) {
-  const structureView = new StructureView('#structure-view')
-  structureView.graph = graphComponent.graph
-  structureView.onElementClicked = node => {
+  const structureView = new StructureView('#structure-view', graphComponent.graph)
+
+  // Zoom to the node when clicking on an element in the structure view
+  structureView.elementClickedCallback = node => {
     const viewNode = graphComponent.graph.foldingView
       ? graphComponent.graph.foldingView.getViewItem(node)
       : node
@@ -99,6 +113,7 @@ function createStructureView(graphComponent) {
       ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
     }
   }
+
   return structureView
 }
 
@@ -107,143 +122,58 @@ function createStructureView(graphComponent) {
  * @param {!IGraph} graph
  */
 function createGraph(graph) {
-  const n1 = graph.createNode({
-    layout: new Rect(126, 0, 30, 30),
-    labels: ['N1']
-  })
-  const n2 = graph.createNode({
-    layout: new Rect(126, 72, 30, 30),
-    labels: ['N2']
-  })
-  const n3 = graph.createNode({
-    layout: new Rect(75, 147, 30, 30),
-    labels: ['N3']
-  })
-  const n4 = graph.createNode({
-    layout: new Rect(177.5, 147, 30, 30),
-    labels: ['N4']
-  })
-  const n5 = graph.createNode({
-    layout: new Rect(110, 249, 30, 30),
-    labels: ['N5']
-  })
-  const n6 = graph.createNode({
-    layout: new Rect(177.5, 249, 30, 30),
-    labels: ['N6']
-  })
-  const n7 = graph.createNode({
-    layout: new Rect(110, 299, 30, 30),
-    labels: ['N7']
-  })
-  const n8 = graph.createNode({
-    layout: new Rect(177.5, 299, 30, 30),
-    labels: ['N8']
-  })
-  const n9 = graph.createNode({
-    layout: new Rect(110, 359, 30, 30),
-    labels: ['N9']
-  })
-  const n10 = graph.createNode({
-    layout: new Rect(47.5, 299, 30, 30),
-    labels: ['N10']
-  })
-  const n11 = graph.createNode({
-    layout: new Rect(20, 440, 30, 30),
-    labels: ['N11']
-  })
-  const n12 = graph.createNode({
-    layout: new Rect(110, 440, 30, 30),
-    labels: ['N12']
-  })
-  const n13 = graph.createNode({
-    layout: new Rect(20, 515, 30, 30),
-    labels: ['N13']
-  })
-  const n14 = graph.createNode({
-    layout: new Rect(80, 515, 30, 30),
-    labels: ['N14']
-  })
-  const n15 = graph.createNode({
-    layout: new Rect(140, 515, 30, 30),
-    labels: ['N15']
-  })
-  const n16 = graph.createNode({
-    layout: new Rect(20, 569, 30, 30),
-    labels: ['N16']
+  const graphBuilder = new GraphBuilder(graph)
+
+  // create nodes
+  graphBuilder.createNodesSource({
+    data: sampleData.nodes.filter(item => !item.id.startsWith('Group')),
+    id: item => item.id,
+    parentId: item => item.parentId,
+    labels: ['id']
   })
 
-  const group1 = graph.createGroupNode({
-    layout: new Rect(25, 45, 202.5, 353),
-    labels: ['Group 1']
+  // create group nodes
+  graphBuilder.createGroupNodesSource({
+    data: sampleData.nodes.filter(item => item.id.startsWith('Group')),
+    id: item => item.id,
+    parentId: item => item.parentId,
+    labels: ['id']
   })
-  graph.groupNodes(group1, [n2, n3, n4, n9, n10])
 
-  const group2 = graph.createGroupNode({
-    parent: group1,
-    layout: new Rect(98, 222, 119.5, 116),
-    labels: ['Group 2']
+  // create edges
+  graphBuilder.createEdgesSource({
+    data: sampleData.edges,
+    sourceId: item => item.from,
+    targetId: item => item.to
   })
-  graph.groupNodes(group2, [n5, n6, n7, n8])
 
-  const group3 = graph.createGroupNode({
-    layout: new Rect(10, 413, 170, 141),
-    labels: ['Group 3']
+  graphBuilder.buildGraph()
+
+  // apply initial layout
+  const layout = new HierarchicLayout()
+  layout.minimumLayerDistance = 40
+  graph.applyLayout(new StraightLineEdgeRouter(layout))
+}
+
+/**
+ * @returns {!GraphEditorInputMode}
+ */
+function createEditorInputMode() {
+  const inputMode = new GraphEditorInputMode({
+    allowGroupingOperations: true
   })
-  graph.groupNodes(group3, [n11, n12, n13, n14, n15])
-
-  graph.createEdge(n1, n2)
-  graph.createEdge(n2, n3)
-  graph.createEdge(n2, n4)
-  graph.createEdge(n3, n5)
-  graph.createEdge(n3, n10)
-  graph.createEdge(n5, n7)
-  graph.createEdge(n7, n9)
-  graph.createEdge(n4, n6)
-  graph.createEdge(n6, n8)
-  graph.createEdge(n10, n11)
-  graph.createEdge(n10, n12)
-  graph.createEdge(n11, n13)
-  graph.createEdge(n13, n16)
-  graph.createEdge(n12, n14)
-  graph.createEdge(n12, n15)
+  inputMode.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
+  return inputMode
 }
 
 /**
  * Binds actions to the demo's UI controls.
- * @param {!GraphComponent} graphComponent
  * @param {!StructureView} structureView
  */
-function registerCommands(graphComponent, structureView) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent, null)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent, null)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent, null)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent, null)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent, null)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, null)
-
-  bindCommand(
-    "button[data-command='GroupSelection']",
-    ICommand.GROUP_SELECTION,
-    graphComponent,
-    null
-  )
-  bindCommand(
-    "button[data-command='UngroupSelection']",
-    ICommand.UNGROUP_SELECTION,
-    graphComponent,
-    null
-  )
-  bindCommand("button[data-command='EnterGroup']", ICommand.ENTER_GROUP, graphComponent, null)
-  bindCommand("button[data-command='ExitGroup']", ICommand.EXIT_GROUP, graphComponent, null)
-
-  bindAction('#sync-folding-state', e => (structureView.syncFoldingState = e.target.checked))
+function initializeUI(structureView) {
+  document.getElementById('sync-folding-state').addEventListener('change', e => {
+    structureView.syncFoldingState = e.target.checked
+  })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+void run().then(finishLoading)

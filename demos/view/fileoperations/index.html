@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,29 +30,99 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>File Operations Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <style>
-      #demo-save-form {
-        display: inline-block;
-        line-height: normal;
-        vertical-align: middle;
-      }
-    </style>
-
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left demo-description">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>File Operations</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="NEW"></button>
+
+      <span class="demo-separator"></span>
+
+      <button
+        id="open-from-file-button"
+        title="Open a file using the HTML 5 FileReader API"
+        class="demo-icon-yIconOpen labeled"
+      >
+        File
+      </button>
+
+      <button
+        id="open-from-storage-button"
+        title="Open the last graph that was saved to the local storage"
+        class="demo-icon-yIconOpen labeled"
+        disabled=""
+      >
+        Local Storage
+      </button>
+
+      <span class="demo-separator"></span>
+
+      <button
+        id="save-to-file-button"
+        title="Download using the File API"
+        class="demo-icon-yIconSave labeled"
+      >
+        Download
+      </button>
+
+      <button
+        id="save-to-window-button"
+        title="Save to a new tab or browser window"
+        class="demo-icon-yIconSave labeled"
+      >
+        New Tab
+      </button>
+
+      <button
+        id="save-to-storage-button"
+        title="Save to the local storage"
+        class="demo-icon-yIconSave labeled"
+      >
+        Local Storage
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>File Operations Demo</h1>
 
         <p>This demo shows various ways to open and save a graph as GraphML.</p>
@@ -65,8 +134,6 @@
           <li>Open a previously saved GraphML.</li>
         </ul>
 
-        <p>Buttons of features that are not supported by the current browser are disabled.</p>
-
         <h2>Open</h2>
 
         <p>
@@ -77,35 +144,14 @@
         <h4>File (FileReader)</h4>
 
         <p>
-          Open a file using the
-          <a href="https://caniuse.com/#search=filereader" target="_blank">HTML5 FileReader API</a>.
-          This technique provides a natural file open experience on all modern browsers. For IE 9,
-          the
-          <a
-            href="https://docs.microsoft.com/en-us/previous-versions//z9ty6h50(v=vs.85)"
-            target="_blank"
-            >FileSystem Object</a
-          >
-          is a good workaround.
-        </p>
-
-        <h4>Server</h4>
-
-        <p>
-          Open a file via a dedicated server. This submits a form containing the file content to the
-          server which returns an HTML document with the file's content. To keep this demo open in
-          the current window, the response is targeted to an invisible <code>iframe</code>. See
-          <a href="#server-operations">Server Operations</a> for details on enabling server
-          requests.
+          Open a file using the <a href="https://caniuse.com/#search=filereader" target="_blank">FileReader API</a>.
         </p>
 
         <h4>LocalStorage</h4>
 
         <p>
-          Open the last graph that was saved using the
-          <a href="https://www.html5rocks.com/en/features/storage" target="_blank"
-            >HTML5 Storage feature</a
-          >.
+          Open the last graph that was saved using the <a href="https://www.html5rocks.com/en/features/storage"
+          target="_blank">Storage feature</a>.
         </p>
 
         <h2>Save</h2>
@@ -113,160 +159,25 @@
         <h4>Download</h4>
 
         <p>
-          Download the graph using the
-          <a href="https://caniuse.com/#search=file" target="_blank">HTML5 File API</a> or the
-          IE-specific
-          <a
-            href="https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/samples/hh779016(v=vs.85)"
-            target="_blank"
-            >msSaveOrOpenBlob
-          </a>
-          function. This provides a natural file download experience in IE 10+, Firefox 28+, Chrome
-          38+, Opera 25+, recent versions of the related mobile browsers and Android Browser 4.4.4.
-          It doesn't work in Safari (neither Mac OS X nor iOS).
+          Download the graph using the <a href="https://caniuse.com/#search=file" target="_blank">File API</a>.
         </p>
 
         <h4>New Tab</h4>
 
         <p>Show the GraphML content in a new browser window.</p>
 
-        <h4>Server</h4>
-
-        <p>
-          Download to a file via a dedicated server. The GraphML content is submitted to the server
-          which responds with a download URL for the respective file. The handling of the download
-          then depends on the user's browser settings. See
-          <a href="#server-operations">Server Operations</a> for details on enabling server
-          requests.
-        </p>
-
         <h4>Local Storage</h4>
 
         <p>
-          Save the graph using the
-          <a href="https://www.html5rocks.com/en/features/storage" target="_blank"
-            >HTML5 Storage feature</a
-          >.
+          Save the graph using the <a href="https://www.html5rocks.com/en/features/storage" target="_blank">Storage feature</a>.
         </p>
-
-        <h2 id="server-operations">Server Operations</h2>
-
-        <p>
-          To enable the open/save via server operations, a server that supports the file load/save
-          requests of this demo has to be running. You can run the Node.js Express
-          <a href="../../demo-server/README.html" target="_blank">Demo Server</a> or the
-          <a href="server-backend/java/README.html" target="_blank">sample Java web application</a>
-          contained in the <code>server-backend</code> directory of this demo to enable the
-          server-based file operations.
-        </p>
-
-        <h3>Server API</h3>
-
-        <p>This demo uses the following server requests:</p>
-        <dl>
-          <dt><code>http://localhost:4242/file/isAlive</code></dt>
-          <dd>
-            <code>GET</code> request to check whether a file load/save server is running (used to
-            enable the corresponding actions if an "OK" (200) response code is received).
-          </dd>
-          <dt><code>http://localhost:4242/file/load</code></dt>
-          <dd>
-            <code>POST</code> request to upload a file from the filesystem and send the file
-            contents to the client.
-          </dd>
-          <dt><code>http://localhost:4242/file/save</code></dt>
-          <dd>
-            <code>POST</code> request to send the current graph to the server and download it as a
-            GraphML file.
-          </dd>
-        </dl>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          data-command="OpenFromFile"
-          id="openFromFileButton"
-          title="Open a file using the HTML 5 FileReader API"
-          class="demo-icon-yIconOpen labeled"
-        >
-          File
-        </button>
-
-        <button
-          data-command="OpenViaServer"
-          id="openViaServerButton"
-          title="Open a file using a server round-trip"
-          class="demo-icon-yIconOpen labeled"
-          disabled=""
-        >
-          Server
-        </button>
-
-        <button
-          data-command="OpenFromStorage"
-          id="openFromStorageButton"
-          title="Open the last graph that was saved to the HTML5 local storage"
-          class="demo-icon-yIconOpen labeled"
-          disabled=""
-        >
-          Local Storage
-        </button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          data-command="SaveToFile"
-          id="saveToFileButton"
-          title="Download using the HTML5 File API"
-          class="demo-icon-yIconSave labeled"
-        >
-          Download
-        </button>
-
-        <button
-          data-command="SaveToWindow"
-          id="saveToWindowButton"
-          title="Save to a new tab or browser window"
-          class="demo-icon-yIconSave labeled"
-        >
-          New Tab
-        </button>
-
-        <form action="" enctype="multipart/form-data" id="demo-save-form" method="POST">
-          <input type="hidden" name="demo-input-graph" id="demo-input-graph" />
-          <button
-            data-command="SaveViaServer"
-            id="saveViaServerButton"
-            title="Download using a server round-trip"
-            class="demo-icon-yIconSave labeled"
-            disabled=""
-          >
-            Server
-          </button>
-        </form>
-
-        <button
-          data-command="SaveToStorage"
-          id="saveToStorageButton"
-          title="Save to the HTML5 local storage"
-          class="demo-icon-yIconSave labeled"
-        >
-          Local Storage
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="FileOperationsDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="FileOperationsDemo.ts" async></script>
   </body>
 </html>

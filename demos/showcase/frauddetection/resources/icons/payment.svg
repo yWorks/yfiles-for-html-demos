@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 50 50"
+   height="50"
+   width="50"
+   xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(0.59459459,0,0,0.59459459,3,0)">
+    <g>
+      <rect x="2" y="2" rx="2" ry="2" width="70" height="80" style="fill:#ffffff;stroke:#808080;stroke-width:4"/>
+      <text x="10" y="16">
+        <tspan style="font-weight:bold;font-size:10px;font-family:Verdana;fill:#808080">Payment</tspan>
+      </text>
+      <text x="28" y="48">
+        <tspan style="font-weight:bold;font-size:30px;font-family:E-font;fill:#808080">€</tspan>
+      </text>
+      <path d="M 17,60 H 58" style="fill:none;stroke:#808080;stroke-width:4"/>
+      <path d="M 17,70 H 58" style="fill:none;stroke:#808080;stroke-width:4"/>
+    </g>
+  </g>
+</svg>

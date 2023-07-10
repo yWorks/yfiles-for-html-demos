@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   GraphMLIOHandler,
   GraphModelManager,
   GraphViewerInputMode,
-  ICommand,
   INode,
   License,
   Matrix,
@@ -42,17 +41,13 @@ import {
   SolidColorFill
 } from 'yfiles'
 
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
 import AugmentationNodeDescriptor from './AugmentationNodeDescriptor.js'
 import NodeGraphModelManager from './NodeGraphModelManager.js'
-import IsometricWebGLNodeStyle from '../../complete/isometricdrawing/IsometricWebGLNodeStyle.js'
+import IsometricWebGLNodeStyle from '../../showcase/isometricdrawing/IsometricWebGLNodeStyle.js'
 import { IsometricBarLabelNodeStyle } from './IsometricBarLabelNodeStyle.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, checkWebGL2Support, finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -74,12 +69,17 @@ let barLabelManager
  * @returns {!Promise}
  */
 async function run() {
+  if (!checkWebGL2Support()) {
+    return
+  }
+
   License.value = await fetchLicense()
-  barDataComboBox = document.getElementById('barDataComboBox')
+  barDataComboBox = document.querySelector('#bar-data')
   addNavigationButtons(barDataComboBox)
 
   // initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   // use an isometric projection and allow fitContent to use a zoom > 1
   graphComponent.projection = Matrix.ISOMETRIC
@@ -91,17 +91,14 @@ async function run() {
   // configure interaction
   graphComponent.inputMode = new GraphViewerInputMode()
 
-  // bind the demo buttons to their commands
-  registerCommands()
+  // bind the demo buttons to their actions
+  initializeUI()
 
   // Read a sample graph from an embedded resource file
   loadSampleGraph().then(() => {
     // Manages the viewport
     graphComponent.fitGraphBounds()
   })
-
-  // Initialize the demo application's CSS and Javascript for the description
-  showApp(graphComponent)
 }
 
 /**
@@ -208,7 +205,7 @@ function getTagData(node) {
  */
 function toggleLabels(enabled) {
   if (barManager.graph != null) {
-    if (!enabled) {
+    if (enabled) {
       barLabelManager.install(graphComponent, graphComponent.graph)
     } else {
       barLabelManager.uninstall(graphComponent)
@@ -243,21 +240,14 @@ async function loadSampleGraph() {
 }
 
 /**
- * Helper method that binds the various commands available in yFiles for HTML to the buttons
- * in the demo's toolbar.
+ * Helper method that binds actions to the buttons in the demo's toolbar.
  */
-function registerCommands() {
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
+function initializeUI() {
+  document.querySelector('#bar-data').addEventListener('change', onBarDataChanged)
 
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindChangeListener("select[data-command='BarDataChanged']", onBarDataChanged)
-  bindChangeListener("input[data-command='ToggleShowLabels']", checked => toggleLabels(checked))
+  document.querySelector('#toggle-labels').addEventListener('change', e => {
+    toggleLabels(e.target.checked)
+  })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

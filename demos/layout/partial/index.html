@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,31 +30,101 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Partial Layout Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
-      .demo-properties label.option-label {
-        width: 55%;
+      .demo-properties__settings {
+        display: grid;
+        gap: 10px;
+        align-items: center;
       }
 
-      .option-element {
-        width: 40%;
+      .option-label {
+        grid-column: 1 / 2;
+        align-self: center;
+      }
+
+      .option-element,
+      input[type='number'],
+      input[type='checkbox'] {
+        grid-column: 2 / 2;
+        align-self: center;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Partial Layout</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button id="lock-selection" title="Fixate selected nodes" class="labeled">
+        Lock Selection
+      </button>
+      <button id="unlock-selection" title="Free selected nodes" class="labeled">
+        Unlock Selection
+      </button>
+
+      <span class="demo-separator"></span>
+
+      <select id="select-sample" title="Choose from predefined samples">
+        <option value="hierarchic">Scenario: Hierarchic</option>
+        <option value="orthogonal">Scenario: Orthogonal</option>
+        <option value="organic">Scenario: Organic</option>
+        <option value="circular">Scenario: Circular</option>
+      </select>
+      <button id="refresh" title="Refresh sample graph" class="demo-icon-yIconReload"></button>
+
+      <span class="demo-separator"></span>
+
+      <button id="layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">
+        Layout
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Partial Layout Demo</h1>
 
         <p>
@@ -81,7 +150,7 @@
           The demo allows for specifying fixed and partial elements. <em>Fixed</em> elements are
           drawn <em>grey</em> and <em>partial</em> elements are <em>colored</em>. To change the
           fixed/partial state of elements, select the corresponding elements and click on the
-          <em>Lock Selected Elements</em> or <em>Unlock Selected Elements</em>-button. The current
+          <em>Lock Selected Elements</em> or <em>Unlock Selected Elements</em> button. The current
           state of the selected elements can be toggled with a mouse-double-click. To start the
           partial layout click on the play button.
         </p>
@@ -93,85 +162,19 @@
         </p>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          id="lock-selection"
-          data-command="LockSelection"
-          title="Fixate selected nodes"
-          class="labeled"
-        >
-          Lock Selection
-        </button>
-        <button
-          id="unlock-selection"
-          data-command="UnlockSelection"
-          title="Free selected nodes"
-          class="labeled"
-        >
-          Unlock Selection
-        </button>
-
-        <span class="demo-separator"></span>
-
-        <select
-          id="select-sample"
-          data-command="SelectSample"
-          title="Choose from predefined samples"
-        >
-          <option value="hierarchic">Scenario: Hierarchic</option>
-          <option value="orthogonal">Scenario: Orthogonal</option>
-          <option value="organic">Scenario: Organic</option>
-          <option value="circular">Scenario: Circular</option>
-        </select>
-        <button
-          id="refresh"
-          data-command="Refresh"
-          title="Refresh sample graph"
-          class="demo-icon-yIconReload"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          id="layout"
-          data-command="Layout"
-          title="Run Hierarchic Layout"
-          class="demo-icon-yIconLayout labeled"
-        >
-          Layout
-        </button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-    </div>
-
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content">
-        <h2>Layout Settings</h2>
-        <div class="demo-properties">
-          <div class="demo-form-block">
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Layout Settings</h2>
+          <div class="demo-properties__settings">
             <label for="component-assignment" class="option-label">Component Assignment</label>
             <select id="component-assignment" class="option-element">
               <option value="single">Single</option>
               <option value="connected">Connected</option>
             </select>
-          </div>
-          <div class="demo-form-block">
             <label for="subgraph-layout" class="option-label">Subgraph Layout</label>
             <select id="subgraph-layout" class="option-element">
               <option value="hierarchic">Hierarchic</option>
@@ -179,15 +182,11 @@
               <option value="organic">Organic</option>
               <option value="circular">Circular</option>
             </select>
-          </div>
-          <div class="demo-form-block">
             <label for="subgraph-positioning" class="option-label">Subgraph Positioning</label>
             <select id="subgraph-positioning" class="option-element">
               <option value="barycenter">Barycenter</option>
               <option value="from-sketch">From Sketch</option>
             </select>
-          </div>
-          <div class="demo-form-block">
             <label for="edge-routing-style" class="option-label">Edge Routing Style</label>
             <select id="edge-routing-style" class="option-element">
               <option value="automatic">Automatic</option>
@@ -196,8 +195,6 @@
               <option value="organic">Organic</option>
               <option value="octilinear">Octilinear</option>
             </select>
-          </div>
-          <div class="demo-form-block">
             <label for="layout-orientation" class="option-label">Layout Orientation</label>
             <select id="layout-orientation" class="option-element">
               <option value="none">None</option>
@@ -207,60 +204,54 @@
               <option value="left-to-right">Left to Right</option>
               <option value="right-to-left">Right to Left</option>
             </select>
-          </div>
-          <div class="demo-form-block">
             <label for="node-distance" class="option-label">Minimum Node Distance</label>
             <input type="number" id="node-distance" value="20" min="0" max="200" />
-          </div>
-          <div class="demo-form-block">
             <label for="mirroring" class="option-label">Allow Mirroring</label>
             <input type="checkbox" id="mirroring" />
-          </div>
-          <div class="demo-form-block">
             <label for="snapping" class="option-label">Node Snapping</label>
             <input type="checkbox" id="snapping" />
           </div>
+
+          <h2>Configuration Options</h2>
+          <!-- prettier-ignore -->
+          <dl>
+            <dt><b>Component Assignment</b></dt>
+            <dd>
+              Partial nodes as <em>single</em> nodes or in <em>connected</em> components with a
+              common subgraph layout.
+            </dd>
+            <dt><b>Subgraph Layout</b></dt>
+            <dd>
+              The layout algorithm to apply to subgraph components: hierarchic, orthogonal, organic
+              or circular. Furthermore, the components can remain <em>Unchanged</em>.
+            </dd>
+            <dt><b>Subgraph Positioning Strategy</b></dt>
+            <dd>
+              Subgraph components can either be close to the <em>barycenter</em> of its graph
+              neighbors or close to its original position (<em>From Sketch</em>).
+            </dd>
+            <dt><b>Edge Routing Style</b></dt>
+            <dd>
+              Partial edges and edges between different subgraph components (so-called inter-edges)
+              are either routed <em>Straightline</em>, <em>Orthogonal</em>, or <em>Organic</em>.
+              <br />
+              The algorithm can also <em>automatically</em> choose a suitable routing strategy.
+            </dd>
+            <dt><b>Layout Orientation</b></dt>
+            <dd>
+              The layout orientation for the layout of subgraph components. <em>Automatic</em>
+              specifies that the orientation should be determined automatically.
+            </dd>
+            <dt><b>Minimum Node Distance</b></dt>
+            <dd>The minimum distance between two adjacent nodes.</dd>
+            <dt><b>Allow Mirroring</b></dt>
+            <dd>Allows mirroring of subgraph components to improve the layout quality.</dd>
+            <dt><b>Node Snapping:</b></dt>
+            <dd>The algorithm tries to align nodes with each other.</dd>
+          </dl>
         </div>
-
-        <h2>Configuration Options</h2>
-        <dl>
-          <dt><b>Component Assignment</b></dt>
-          <dd>
-            Partial nodes as <em>single</em> nodes or in <em>connected</em> components with a common
-            subgraph layout.
-          </dd>
-          <dt><b>Subgraph Layout</b></dt>
-          <dd>
-            The layout algorithm to apply to subgraph components: hierarchic, orthogonal, organic or
-            circular. Furthermore, the components can remain <em>Unchanged</em>.
-          </dd>
-          <dt><b>Subgraph Positioning Strategy</b></dt>
-          <dd>
-            Subgraph components can either be close to the <em>barycenter</em> of its graph
-            neighbors or close to its original position (<em>From Sketch</em>).
-          </dd>
-          <dt><b>Edge Routing Style</b></dt>
-          <dd>
-            Partial edges and edges between different subgraph components (so-called inter-edges)
-            are either routed <em>Straightline</em>, <em>Orthogonal</em> or
-            <em>Organic</em>.<br />The algorithm can also <em>automatically</em> choose a suitable
-            routing strategy.
-          </dd>
-          <dt><b>Layout Orientation</b></dt>
-          <dd>
-            The layout orientation for the layout of subgraph components.
-            <em>Automatic</em> specifies that the orientation should be determined automatically.
-          </dd>
-          <dt><b>Minimum Node Distance</b></dt>
-          <dd>The minimum distance between two adjacent nodes.</dd>
-          <dt><b>Allow Mirroring</b></dt>
-          <dd>Allows mirroring of subgraph components to improve the layout quality.</dd>
-          <dt><b>Node Snapping:</b></dt>
-          <dd>The algorithm tries to align nodes with each other.</dd>
-        </dl>
-      </div>
-    </aside>
-
-    <script type="module" crossorigin="anonymous" src="PartialLayoutDemo.js"></script>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="PartialLayoutDemo.ts" async></script>
   </body>
 </html>

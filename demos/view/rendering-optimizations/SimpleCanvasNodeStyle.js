@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -132,6 +132,8 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
+  color
+
   /**
    * Creates an instance of the render visual.
    * @param {!IRectangle} layout A live view of the layout of a node.

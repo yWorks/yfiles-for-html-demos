@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -53,12 +53,44 @@ import {
  */
 export class ClearAreaLayoutHelper {
   /**
+   * Performs the layout and the animation.
+   */
+  executor
+
+  /**
    * The graph that is displayed.
    * @type {!IGraph}
    */
   get graph() {
     return this.graphComponent.graph
   }
+
+  /**
+   * The control that displays the graph.
+   */
+  graphComponent
+
+  /**
+   * The graph layout copy that stores the original layout before the marquee rectangle has been dragged.
+   */
+  resetToOriginalGraphStageData
+
+  /**
+   * The marquee rectangle.
+   */
+  clearRectangle
+
+  /**
+   * The group node within which the marquee was created, otherwise null.
+   */
+  groupNode
+
+  /**
+   * The {@link ILayoutAlgorithm} that makes space for the marquee rectangle.
+   */
+  clearAreaLayout
+  componentAssignmentStrategy
+  clearAreaStrategy
 
   /**
    * Initializes the helper.
@@ -75,29 +107,18 @@ export class ClearAreaLayoutHelper {
     componentAssignmentStrategy,
     clearAreaStrategy
   ) {
-    // The control that displays the graph.
     this.graphComponent = graphComponent
-    // The marquee rectangle.
     this.clearRectangle = clearRectangle
-    // The group node within which the marquee was created, otherwise null.
     this.groupNode = groupNode
     this.componentAssignmentStrategy = componentAssignmentStrategy
     this.clearAreaStrategy = clearAreaStrategy
-    // Indicates that the gesture has been canceled and the original layout should be restored.
     this.canceled = false
-    // A lock which prevents re-entrant layout execution.
     this.layoutIsRunning = false
-    // Indicates whether a layout run has been requested while running a layout calculation.
     this.layoutPending = false
-    // Indicates that the gesture has been finished and the new layout should be applied.
     this.stopped = false
-    // The {@link ILayoutAlgorithm} that makes space for the marquee rectangle.
     this.clearAreaLayout = null
-    // Creates a single unit to undo and redo the complete reparent gesture.
     this.layoutEdit = null
-    // Performs the layout and the animation.
     this.executor = null
-    // The graph layout copy that stores the original layout before the marquee rectangle has been dragged.
     this.resetToOriginalGraphStageData = null
   }
 
@@ -173,6 +194,31 @@ export class ClearAreaLayoutHelper {
       new ClearAreaLayoutData({ areaGroupNode: node => node === this.groupNode })
     )
   }
+
+  /**
+   * A lock which prevents re-entrant layout execution.
+   */
+  layoutIsRunning
+
+  /**
+   * Indicates whether a layout run has been requested while running a layout calculation.
+   */
+  layoutPending
+
+  /**
+   * Indicates that the gesture has been canceled and the original layout should be restored.
+   */
+  canceled
+
+  /**
+   * Indicates that the gesture has been finished and the new layout should be applied.
+   */
+  stopped
+
+  /**
+   * Creates a single unit to undo and redo the complete reparent gesture.
+   */
+  layoutEdit
 
   /**
    * Starts a layout calculation if none is already running.
@@ -254,6 +300,8 @@ export class ClearAreaLayoutHelper {
 }
 
 class AffectedEdgesChannelRouter extends LayoutStageBase {
+  channelEdgeRouter
+
   constructor() {
     super()
     this.channelEdgeRouter = new ChannelEdgeRouter()

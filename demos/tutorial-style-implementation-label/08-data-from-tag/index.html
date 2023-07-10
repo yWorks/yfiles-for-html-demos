@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>08 Data From Tag - Label Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-label-style-implementation">
+          Label Style Implementation Tutorial
+        </a>
+
+        <span>08 Data From Tag</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-label/07-line-wrapping/index.html'><span>07 Line Wrapping</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 8/11</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 08 Data From Tag</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-label/01-render-label-text/index.html"
+            class="tutorial-dropdown__item"
+            >01 Rendering the Label Text</a
+          ><a
+            href="../../tutorial-style-implementation-label/02-using-text-utilities/index.html"
+            class="tutorial-dropdown__item"
+            >02 Using Text Utilities</a
+          ><a
+            href="../../tutorial-style-implementation-label/03-add-background-shape/index.html"
+            class="tutorial-dropdown__item"
+            >03 Adding a Background Shape</a
+          ><a
+            href="../../tutorial-style-implementation-label/04-preferred-size/index.html"
+            class="tutorial-dropdown__item"
+            >04 Preferred Label Size</a
+          ><a
+            href="../../tutorial-style-implementation-label/05-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >05 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-label/06-text-alignment/index.html"
+            class="tutorial-dropdown__item"
+            >06 Text Alignment</a
+          ><a
+            href="../../tutorial-style-implementation-label/07-line-wrapping/index.html"
+            class="tutorial-dropdown__item"
+            >07 Line Wrapping</a
+          ><a
+            href="../../tutorial-style-implementation-label/08-data-from-tag/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >08 Data From Tag</a
+          ><a
+            href="../../tutorial-style-implementation-label/09-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >09 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-label/10-visibility/index.html"
+            class="tutorial-dropdown__item"
+            >10 Visibility</a
+          ><a
+            href="../../tutorial-style-implementation-label/11-bounds/index.html"
+            class="tutorial-dropdown__item"
+            >11 Bounds</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-label/09-hit-testing/index.html'><span>09 Hit-Testing</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Item-specific customizations</h1>
+          <div class="paragraph">
+            <p>
+              In the last two steps, we&#8217;ve added properties to the style to configure how the
+              style renders a label. Now, we want to be even more versatile and change the
+              visualization based on the data of each visualized label.
+            </p>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  yFiles for HTML provides a tag property for all graph items, which is frequently used to
+                  bind business objects to nodes, edges and labels. The style can make use of this
+                  data and translate it to a visual representation.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="paragraph">
+            <p>
+              In this example, we adjust the style implementation to use an icon url stored in the
+              label’s tag to add an icon next to the label text. Also, we will add an option to set
+              the background color of the label. First, we add labels with different tag objects.
+              Each tag can have an <code>iconUrl</code> and a <code>backgroundColor</code>.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript">graph.<span class="hljs-title function_">addLabel</span>({
+  <span class="hljs-attr">owner</span>: node3,
+  <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;Label with background color and icon&#x27;</span>,
+  <span class="hljs-attr">tag</span>: {
+    <span class="hljs-attr">iconUrl</span>: <span class="hljs-string">&#x27;resources/settings-16.svg&#x27;</span>,
+    <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">&#x27;#9DC6D0&#x27;</span>
+  }
+})</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              We add an <code>iconSize</code> variable to our style that defines how big the icon
+              should be.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> iconSize = <span class="hljs-number">16</span></code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              Since we want to display the icon next to the text, we have to adjust the
+              <code>getPreferredSize</code> to include the icon size, if necessary.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (label.<span class="hljs-property">tag</span>?.<span class="hljs-property">iconUrl</span>) {
+  size = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(
+    size.<span class="hljs-property">width</span> + iconSize + padding,
+    <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">max</span>(size.<span class="hljs-property">height</span>, iconSize + padding + padding)
+  )
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              Then, we can modify <code>createVisual</code> to add an SVG
+              <code>&lt;image&gt;</code> to the visualization, that displays the icon referenced in
+              the tag.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> iconUrl = label.<span class="hljs-property">tag</span>?.<span class="hljs-property">iconUrl</span>
+<span class="hljs-keyword">let</span> <span class="hljs-attr">imageElement</span>: <span class="hljs-title class_">SVGImageElement</span> | <span class="hljs-literal">undefined</span>
+<span class="hljs-keyword">if</span> (iconUrl) {
+  imageElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(
+    <span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>,
+    <span class="hljs-string">&#x27;image&#x27;</span>
+  )
+  imageElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;href&#x27;</span>, iconUrl)
+  imageElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;width&#x27;</span>, <span class="hljs-title class_">String</span>(iconSize))
+  imageElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;height&#x27;</span>, <span class="hljs-title class_">String</span>(iconSize))
+  <span class="hljs-keyword">const</span> translateX = labelSize.<span class="hljs-property">width</span> - iconSize - padding
+  imageElement.<span class="hljs-title function_">setAttribute</span>(
+    <span class="hljs-string">&#x27;transform&#x27;</span>,
+    <span class="hljs-string">`translate(<span class="hljs-subst">${translateX}</span> <span class="hljs-subst">${padding}</span>)`</span>
+  )
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>Finally, we add the image to the <code>&lt;g&gt;</code> element.</p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (imageElement) {
+  gElement.<span class="hljs-title function_">appendChild</span>(imageElement)
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              In order to apply the background color, we have to change how the
+              <code>fill</code> property of the background path is applied.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript">backgroundPathElement.<span class="hljs-title function_">setAttribute</span>(
+  <span class="hljs-string">&#x27;fill&#x27;</span>,
+  label.<span class="hljs-property">tag</span>?.<span class="hljs-property">backgroundColor</span> || <span class="hljs-string">&#x27;#fffecd&#x27;</span>
+)</code></pre>
+            </div>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  If the style uses the tag data to customize the visualization, it is possible to
+                  share a single style instance between multiple items. Using this pattern, the
+                  style can create different visualizations depending on the business data.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-label/09-hit-testing/index.html'><span>09 Hit-Testing</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,22 +30,19 @@ import {
   EdgePathLabelModel,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
-  Fill,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  ICommand,
   Insets,
   InteriorLabelModel,
   License,
-  PolylineEdgeStyle,
-  Stroke
+  PolylineEdgeStyle
 } from 'yfiles'
-import { bindCommand, showApp } from '../../resources/demo-app'
 import GraphData from './resources/GraphData'
 import { calculateCriticalPathEdges, runLayout } from './CriticalPathHelper'
-import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Runs this demo.
@@ -61,9 +58,6 @@ async function run(): Promise<void> {
 
   // calculates the critical path and shows the results
   await calculateCriticalPathAndShowResult(graphComponent)
-
-  registerCommands(graphComponent)
-  showApp(graphComponent)
 }
 
 /**
@@ -102,8 +96,8 @@ function showResult(graphComponent: GraphComponent) {
     targetArrow: '#6C4F77 small triangle'
   })
   const criticalNodeStyle = createDemoNodeStyle()
-  criticalNodeStyle.fill = Fill.from('#C1C1C1')
-  criticalNodeStyle.stroke = Stroke.from('2px #F26419')
+  criticalNodeStyle.fill = '#C1C1C1'
+  criticalNodeStyle.stroke = '2px #F26419'
   const startNodeStyle = createDemoNodeStyle('demo-palette-402')
   const finishNodeStyle = createDemoNodeStyle('demo-palette-403')
 
@@ -193,16 +187,4 @@ function loadSampleGraph(graphComponent: GraphComponent) {
   })
 }
 
-/**
- * Helper method that binds the various commands available in yFiles for HTML to the buttons
- * in the demo's toolbar.
- */
-function registerCommands(graphComponent: GraphComponent): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

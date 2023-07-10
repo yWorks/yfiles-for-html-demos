@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { h, html } from '../../preact-loader.js'
+import { html } from '../../preact-loader.js'
 import Item from './Item.js'
 
 /**
@@ -40,19 +40,23 @@ import Item from './Item.js'
 export default props => {
   const itemElements = props.itemData.map(
     (dataItem, index) =>
-      html`<${Item}
-        data="${dataItem}"
-        key="${index}"
-        index="${index}"
-        toggleState="${props.toggleState}"
-        removeDataItem="${props.removeDataItem}"
-      />`
+      html`
+        <${Item}
+          data="${dataItem}"
+          key="${index}"
+          index="${index}"
+          toggleState="${props.toggleState}"
+          removeDataItem="${props.removeDataItem}"
+        />
+      `
   )
-  return html`<div class="item-list">
-    <h2>Data Items</h2>
-    <div>
-      <button class="add-button" onClick="${props.addDataItem}">Add Item</button>
+  return html`
+    <div class="item-list">
+      <h2>Data Items</h2>
+      <div>
+        <button class="add-button" onClick="${props.addDataItem}">Add Item</button>
+      </div>
+      ${itemElements}
     </div>
-    ${itemElements}
-  </div>`
+  `
 }

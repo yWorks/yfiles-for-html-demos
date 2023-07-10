@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,23 +32,22 @@ import {
   GraphViewerInputMode,
   HierarchicLayout,
   HierarchicLayoutData,
-  ICommand,
   IGraph,
   INode,
   InsideOutsidePortLabelModel,
   InteriorLabelModel,
-  ItemCollection,
   LayoutExecutor,
   License,
   PolylineEdgeStyle,
   Size
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import { createPortAwareAdjacencyGraphBuilder, setBuilderData } from './AdjacencyGraphBuilder.js'
 import GraphData from './graph-builder-data.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider.js'
+import { finishLoading } from 'demo-resources/demo-page'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -65,6 +64,7 @@ async function run() {
 
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
+  applyDemoTheme(graphComponent)
   setGraphDefaults(graphComponent.graph)
 
   // use the viewer input mode since this demo should not allow interactive graph editing
@@ -80,10 +80,8 @@ async function run() {
   // arrange the graph using a hierarchic layout algorithm
   await arrangeGraph(graphComponent, graphComponent.graph.nodes.toArray())
 
-  // register toolbar commands
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  // register toolbar actions
+  initializeUI(graphComponent)
 }
 
 /** @type {AdjacencyGraphBuilder} */
@@ -136,7 +134,7 @@ async function updateGraph(graphComponent, nodesSource) {
  * @returns {!Promise}
  */
 function arrangeGraph(graphComponent, newNodes) {
-  document.querySelector("button[data-command='UpdateBuilder']").disabled = true
+  document.querySelector('#update-builder').disabled = true
 
   const graph = graphComponent.graph
   // if there are less new nodes than there are nodes in total, calculate an incremental layout
@@ -158,7 +156,7 @@ function arrangeGraph(graphComponent, newNodes) {
   // i.e. for which nodes the algorithm needs to calculate layer assignment and sequence order
   // for "old" nodes, the algorithm will determine layer and sequence from their current positions
   if (arrangeIncrementally) {
-    hierarchicLayoutData.incrementalHints.incrementalLayeringNodes = ItemCollection.from(newNodes)
+    hierarchicLayoutData.incrementalHints.incrementalLayeringNodes = newNodes
   }
 
   // arrange the graph with the chosen layout algorithm
@@ -173,7 +171,7 @@ function arrangeGraph(graphComponent, newNodes) {
   })
     .start()
     .finally(() => {
-      document.querySelector("button[data-command='UpdateBuilder']").disabled = false
+      document.querySelector('#update-builder').disabled = false
     })
 }
 
@@ -201,22 +199,16 @@ function setGraphDefaults(graph) {
 }
 
 /**
- * Registers the commands for the toolbar buttons during the creation of this application.
+ * Binds the toolbar buttons to their functionality.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-
+function initializeUI(graphComponent) {
   let index = 0
-  bindAction("button[data-command='UpdateBuilder']", async () => {
+  document.getElementById('update-builder').addEventListener('click', async () => {
     // build graph from new data
     const data = ++index % 2 === 1 ? GraphData.updateNodesSource : GraphData.nodesSource
     await updateGraph(graphComponent, data)
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

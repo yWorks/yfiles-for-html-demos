@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Mind Map Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="resources/mindmapstyle.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Mindmap Editor</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Mind Map Demo</h1>
+
+        <p>
+          This demo shows an interactive mind map application used for organizing information and
+          showing relations between items.
+        </p>
+        <p>
+          The layout is calculated by the tree layout algorithm, and makes use of port constraints
+          and special node placers.
+        </p>
+
+        <h2>Navigation</h2>
+
+        <ul>
+          <li>Navigate between the nodes with the arrow keys.</li>
+          <li>
+            Click the collapse or expand button
+            <img src="resources/icons/arrow-right.svg" />
+            or press the '+' or '-' key to collapse or expand a node's subtree.
+          </li>
+          <li>
+            Please note that the maximum zoom factor as well as the scrollable area are limited.
+          </li>
+        </ul>
+
+        <h2>Editing a Node</h2>
+
+        <ul>
+          <li>
+            Click a node and use the node menu to modify its state icon and color. Also, create
+            children, cross-reference edges or remove the node.
+          </li>
+          <li>Edit a node label with a double click or press 'F2' on a selected node.</li>
+        </ul>
+
+        <h2>Modifying the Mind Map Structure</h2>
+
+        <ul>
+          <li>Change a node's parent by dragging the selected node near other nodes.</li>
+          <li>Drag a node far away from the mind map to delete the node and its subtree.</li>
+          <li>Change the order in a subtree by dragging a node below or above its siblings.</li>
+          <li>Press 'Return' to add a sibling to a selected node.</li>
+          <li>Add a child to a selected node by pressing 'Insert'.</li>
+          <li>Remove a selected node and its subtree with the 'Delete' key.</li>
+        </ul>
+
+        <h2>Cross-Reference Edges</h2>
+        <ul>
+          <li>Start the creation of a cross-reference edge using the up-arrow in the node menu.</li>
+          <li>Finish the edge creation by clicking another node or cancel with a right-click.</li>
+          <li>Click a cross-reference edge to select it.</li>
+          <li>
+            Double click a cross-reference edge or press 'F2' to add a label or to edit an existing
+            label.
+          </li>
+          <li>Drag the height handle of a selected cross-reference edge to change its height.</li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-overlay">
+        <div class="demo-overlay__header">Overview</div>
+        <div id="overviewComponent"></div>
+      </div>
+      <div class="demo-main__graph-component">
+        <div id="graphComponent">
+          <div id="contextualToolbar" class="contextual-toolbar" tabindex="0">
+            <div id="toolbar-ui">
+              <input
+                type="checkbox"
+                id="state-icon-picker"
+                class="toggle-button"
+                data-container-id="state-icon-picker-icons"
+              />
+              <label for="state-icon-picker" title="Select state icon">
+                <span class="fa-layers fa-fw">
+                  <i class="fa-regular fa-face-smile" data-fa-transform="grow-6"></i>
+                  <i
+                    class="fa-solid fa-sm fa-caret-right"
+                    data-fa-transform="right-14 down-12 rotate-45"
+                  ></i>
+                </span>
+              </label>
+              <input
+                type="checkbox"
+                id="color-picker"
+                class="toggle-button"
+                data-container-id="color-picker-colors"
+              />
+              <label id="color-picker-label" for="color-picker" title="Select node color">
+                <span class="fa-layers fa-fw">
+                  <i class="fa-solid fa-paint-brush"></i>
+                  <i
+                    class="fa-solid fa-sm fa-caret-right"
+                    data-fa-transform="right-14 down-12 rotate-45"
+                  ></i>
+                </span>
+              </label>
+              <span class="separator"></span>
+              <input type="checkbox" id="cross-edge-creation" class="toggle-button" />
+              <label for="cross-edge-creation" title="Create Cross Reference">
+                <span class="fa-layers fa-fw">
+                  <i class="fa-solid fa-up-long" data-fa-transform="grow-4"></i>
+                </span>
+              </label>
+              <span class="separator"></span>
+              <input
+                type="checkbox"
+                id="child-creation"
+                data-container-id="child-creation"
+                class="toggle-button"
+              />
+              <label for="child-creation" title="Add child">
+                <span class="fa-layers fa-fw">
+                  <i class="fa-solid fa-plus" data-fa-transform="grow-6"></i>
+                </span>
+              </label>
+              <input type="checkbox" id="node-removal" class="toggle-button" />
+              <label id="node-removal-label" for="node-removal" title="Remove Node">
+                <span class="fa-layers fa-fw">
+                  <i class="fa-solid fa-xmark" data-fa-transform="grow-6"></i>
+                </span>
+              </label>
+            </div>
+
+            <div id="color-picker-colors" class="picker-container color-picker"></div>
+            <div id="state-icon-picker-icons" class="picker-container state-picker"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="MindMapDemo.ts" async></script>
+  </body>
+</html>

@@ -1,5 +1,14 @@
-<img src="../../resources/image/vite.png" alt="demo-thumbnail" height="320"/>
-
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Vite Loading Demo
 
 This demo shows how to load yFiles for HTML with [Vite](https://vitejs.dev/) as a loader for efficient web development and easy builds.

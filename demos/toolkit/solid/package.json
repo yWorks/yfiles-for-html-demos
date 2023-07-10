@@ -1,0 +1,27 @@
+{
+  "name": "solid-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
+    "start": "vite",
+    "dev": "vite",
+    "build": "node --max_old_space_size=8192 node_modules/vite/bin/vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "demo-resources": "../../resources",
+    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz",
+    "solid-js": "~1.7.7"
+  },
+  "devDependencies": {
+    "solid-devtools": "^0.27.3",
+    "typescript": "~5.1.6",
+    "vite": "~4.3.9",
+    "vite-plugin-solid": "~2.7.0",
+    "@yworks/optimizer": "^1.8.1"
+  }
+}

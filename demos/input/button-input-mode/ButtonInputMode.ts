@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,7 +49,6 @@ import {
   ICanvasObjectDescriptor,
   IconLabelStyle,
   IEdge,
-  IEnumerable,
   IGraph,
   IHitTestable,
   IHitTester,
@@ -73,6 +72,7 @@ import {
   Key,
   KeyEventArgs,
   LabelEventArgs,
+  LabelStyleBase,
   ListEnumerable,
   Matrix,
   MatrixOrder,
@@ -93,6 +93,7 @@ import {
   SimpleNode,
   SimplePort,
   Size,
+  Stroke,
   SvgVisual,
   SvgVisualGroup,
   TimeSpan,
@@ -155,7 +156,7 @@ export enum ButtonTrigger {
  * called when clicking or touch-clicking the button or starting a mouse-drag.
  *
  * When the {@link GraphComponent} is focused, the {@link Key.TAB} can be used to set a focus
- * the the first button and cycle through all buttons. A focused button can be triggered using
+ * the first button and cycle through all buttons. A focused button can be triggered using
  * {@link Key.ENTER} or {@link Key.SPACE}.
  */
 export class ButtonInputMode extends InputModeBase {
@@ -1127,11 +1128,9 @@ class ButtonDescriptor extends BaseClass(
     })
     this.dummyBends = []
     this.dummyBendsBackup = []
-    this.dummyEdge.bends = new ListEnumerable(IEnumerable.from(this.dummyBends))
+    this.dummyEdge.bends = new ListEnumerable(this.dummyBends)
 
-    this.focusedButtonStyle = new DefaultLabelStyle({
-      backgroundStroke: '3px #FFCF00'
-    })
+    this.focusedButtonStyle = new FocusLabelStyle(Stroke.from('3px #FFCF00'))
   }
 
   private initialize(forUserObject: any) {
@@ -1334,7 +1333,6 @@ class ButtonDescriptor extends BaseClass(
   }
 
   private updateDummyLabelOwner(ctx: ICanvasContext) {
-    const original = this.label
     const canvas = ctx.canvasComponent!
 
     const owner = this.button?.owner
@@ -1544,5 +1542,79 @@ class DummyContext extends BaseClass<IRenderContext>(IRenderContext) {
     const transformed = matrix.clone()
     transformed.multiply(this.$transform, MatrixOrder.APPEND)
     return transformed
+  }
+}
+
+/**
+ * A style implementation that draws nothing but a border for its associated label.
+ */
+class FocusLabelStyle extends LabelStyleBase {
+  constructor(private stroke: Stroke) {
+    super()
+  }
+
+  protected createVisual(context: IRenderContext, label: ILabel): SvgVisual {
+    const labelBounds = label.layout.bounds
+    const frame = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    this.stroke.applyTo(frame, context)
+    frame.setAttribute('fill', 'none')
+
+    frame.setAttribute('x', `${labelBounds.x}`)
+    frame.setAttribute('y', `${labelBounds.y}`)
+    frame.setAttribute('width', `${labelBounds.width}`)
+    frame.setAttribute('height', `${labelBounds.height}`)
+    asCacheOwner(frame)['data-renderDataCache'] = {
+      x: labelBounds.x,
+      y: labelBounds.y,
+      width: labelBounds.width,
+      height: labelBounds.height
+    }
+
+    return new SvgVisual(frame)
+  }
+
+  protected updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): SvgVisual {
+    const labelBounds = label.layout.bounds
+    const frame = oldVisual.svgElement
+    const cache = asCacheOwner(frame)['data-renderDataCache']
+    if (cache.x != labelBounds.x) {
+      frame.setAttribute('x', `${labelBounds.x}`)
+      cache.x = labelBounds.x
+    }
+    if (cache.y != labelBounds.y) {
+      frame.setAttribute('y', `${labelBounds.y}`)
+      cache.y = labelBounds.y
+    }
+    if (cache.width != labelBounds.width) {
+      frame.setAttribute('width', `${labelBounds.width}`)
+      cache.width = labelBounds.width
+    }
+    if (cache.height != labelBounds.height) {
+      frame.setAttribute('height', `${labelBounds.height}`)
+      cache.height = labelBounds.height
+    }
+    return oldVisual
+  }
+
+  protected getPreferredSize(label: ILabel): Size {
+    return new Size(0, 0)
+  }
+}
+
+function asCacheOwner(element: SVGElement): {
+  'data-renderDataCache': {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+} {
+  return element as SVGElement & {
+    'data-renderDataCache': {
+      x: number
+      y: number
+      width: number
+      height: number
+    }
   }
 }

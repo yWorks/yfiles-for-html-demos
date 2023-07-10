@@ -1,0 +1,235 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+:root {
+  --demo-green: #61a044;
+  --demo-green-dark: #27401b;
+  --demo-green-light: #c0d9b4;
+  --demo-red: #ca0c3b;
+  --demo-purple: #a37ab3;
+}
+
+.editable-node-style,
+.editable-node-style * {
+  box-sizing: border-box;
+}
+
+.editable-node-style {
+  font-size: 14px;
+  font-family: Tahoma, Verdana, sans-serif;
+  height: 100%;
+  padding: 15px 15px 25px 15px;
+  overflow: hidden;
+
+  box-shadow: 5px 5px 2px #27401b22;
+  border: 2px solid var(--demo-green-dark);
+  border-radius: 10px;
+  background-color: white;
+  container: node / inline-size;
+}
+
+.editable-node-style .editable-node-style__form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.editable-node-style__top {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.editable-node-style__input {
+  border: none;
+}
+
+.editable-node-style__submit {
+  position: absolute;
+  bottom: 7px;
+  opacity: 1;
+  transition: opacity 0.3s;
+  align-self: center;
+  padding: 5px 10px;
+  height: auto;
+  color: white;
+  border: 1px solid var(--demo-green-dark);
+  border-radius: 5px;
+  background-color: var(--demo-green);
+  box-shadow: 3px 3px 2px #27401b22;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.editable-node-style__submit:disabled {
+  opacity: 0;
+}
+
+.editable-node-style__header {
+  grid-column: 1 / 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.editable-node-style__details {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 2fr;
+  row-gap: 10px;
+  column-gap: 5px;
+}
+
+.editable-node-style__since {
+  min-width: 110px;
+}
+
+@container node (max-width: 200px) {
+  .editable-node-style__details {
+    grid-template-columns: 1fr;
+  }
+  .editable-node-style__header {
+    grid-column: auto;
+  }
+}
+
+.editable-node-style__description-container {
+  flex-grow: 1;
+}
+
+.editable-node-style__description {
+  width: 100%;
+  height: 100%;
+  resize: none;
+  cursor: auto;
+}
+
+.editable-node-style__avatar {
+  position: relative;
+  text-align: center;
+}
+
+.editable-node-style__avatar-bg {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  background-color: var(--demo-green-light);
+}
+
+.editable-node-style__avatar-image {
+  margin-top: 10px;
+  filter: drop-shadow(3px 3px 2px #27401b33);
+}
+
+.editable-node-style__avatar-select-image {
+  width: 40px;
+  height: auto;
+}
+
+.editable-node-style__avatar-select {
+  min-width: 75px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+}
+
+.editable-node-style__avatar.editable-node-style__avatar-selecting
+  .editable-node-style__avatar-image {
+  display: none;
+}
+
+.editable-node-style__avatar:not(.editable-node-style__avatar-selecting)
+  .editable-node-style__avatar-select {
+  display: none;
+}
+
+.editable-node-style__name {
+  font-weight: bold;
+  font-size: 16px;
+  cursor: text;
+}
+
+.editable-node-style__status-light {
+  min-width: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  align-self: center;
+  justify-self: end;
+}
+
+.editable-node-style--available .editable-node-style__status-light {
+  background-color: var(--demo-green);
+}
+
+.editable-node-style--offline .editable-node-style__status-light {
+  background-color: var(--demo-purple);
+}
+
+.editable-node-style--busy .editable-node-style__status-light {
+  background-color: var(--demo-red);
+}
+
+.editable-node-style--available {
+  border-color: var(--demo-green);
+}
+
+.editable-node-style--offline {
+  border-color: var(--demo-purple);
+}
+
+.editable-node-style--busy {
+  border-color: var(--demo-red);
+}
+
+#userDataLog {
+  white-space: pre-wrap;
+  overflow: auto;
+}
+
+.editable-node-style ::-webkit-scrollbar {
+  width: 10px;
+}
+.editable-node-style ::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+.editable-node-style ::-webkit-scrollbar-thumb {
+  background-clip: content-box;
+  background-color: #cccccc;
+  border-radius: 6px;
+  border: 3px solid transparent;
+}
+.editable-node-style ::-webkit-scrollbar-thumb:hover {
+  background-color: #bbbbbb;
+}

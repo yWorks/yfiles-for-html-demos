@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+<svg id="server" xmlns="http://www.w3.org/2000/svg" height="55.65" width="35.1">
+  <path d="M0 .97h35v53.7H0z" fill="#515151"/>
+  <path d="M5.5.97c7.9-1.3 16-1.3 24 0v53.7c-7.9 1.3-16 1.3-24 0V.98z" fill="#c6c6c6"/>
+  <path d="M5.5 14.68h24v40c-7.9 1.3-16 1.3-24 0v-40z" fill="#515151"/>
+  <path d="M5.5 4.78c8-.6 16-.6 24 0v8.1h-24v-8.1z" opacity=".43" fill="#afafaf"/>
+  <path d="M5.5 4.78c8-.6 16-.6 24 0v8.1h-24v-8.1z" opacity=".43" fill="#4d4d4d"/>
+  <path d="M6.5 5.78l3.4-.2v1.1l-3.4.1z" stroke-miterlimit="10" opacity=".43" fill="#565656" stroke="#4d4d4d" stroke-width=".01"/>
+  <path stroke-miterlimit="10" d="M31.3 2.58H35v1.5h-3.7zm0 3.2H35v1.5h-3.7z" fill="#c8ff00" stroke="#717171" stroke-width=".19"/>
+  <path d="M5.5 14.88v39.7c7.9 1.3 16 1.3 23.9 0v-39.7H5.5zm22.9 3.8h-2.2v-2.9h2.2v2.9zm-12 23.8v-2.9h2.2v2.9h-2.2zm2.2 1.1v2.9h-2.2v-2.9h2.2zm0-15.8v2.9h-2.2v-2.9h2.2zm-2.2-1.1v-2.9h2.2v2.9h-2.2zm0 7.9v-2.9h2.2v2.9h-2.2zm2.2 1.1v2.9h-2.2v-2.9h2.2zm-3.3-5h-2.2v-2.9h2.2v2.9zm0 1v2.9h-2.2v-2.9h2.2zm0 4v2.9c-.7 0-1.5 0-2.2-.1v-2.9c.7.1 1.5.1 2.2.1zm0 3.9v2.9c-.7 0-1.5 0-2.2-.1v-2.9c.7.1 1.5.1 2.2.1zm4.3 0c.7 0 1.5 0 2.2-.1v2.9c-.7 0-1.5.1-2.2.1v-2.9zm0-1v-2.9h2.2v2.9c-.7-.1-1.4 0-2.2 0zm0-4v-2.9h2.2v2.9h-2.2zm0-3.9v-2.9h2.2v2.9c-.7-.1-1.4-.1-2.2 0zm0-4v-2.9h2.2v2.9h-2.2zm0-3.9v-2.9h2.2v2.9h-2.2zm-1 0h-2.2v-2.9h2.2v2.9zm-3.3 0h-2.2v-2.9h2.2v2.9zm0 1v2.9h-2.2v-2.9h2.2zm-3.3 2.9c-.7 0-1.5 0-2.2-.1v-2.8H12v2.9zm0 1v2.9c-.7 0-1.5 0-2.2-.1v-2.9c.8.1 1.5.1 2.2.1zm0 4v2.9c-.7 0-1.5-.1-2.2-.1v-2.9c.8 0 1.5 0 2.2.1zm0 3.9v2.9c-.7 0-1.5-.1-2.2-.1v-2.9c.7 0 1.5.1 2.2.1zm0 3.9v2.9c-.7 0-1.5-.1-2.2-.1v-2.9c.7.1 1.5.1 2.2.1zm0 4v2.9c-.7 0-1.5-.1-2.2-.1v-2.8c.7-.1 1.5-.1 2.2 0zm1.1 0c.7 0 1.5.1 2.2.1v2.9c-.7 0-1.5 0-2.2-.1v-2.9zm2.2 4v2.9c-.7 0-1.5 0-2.2-.1v-2.9c.7.1 1.5.1 2.2.1zm1.1 0h2.2v2.9h-2.2v-2.9zm3.2 0c.7 0 1.5 0 2.2-.1v2.9c-.7 0-1.5.1-2.2.1v-2.9zm0-1v-2.9c.7 0 1.5 0 2.2-.1v2.9c-.7 0-1.4 0-2.2.1zm3.3-3c.7 0 1.5-.1 2.2-.1v2.8c-.7.1-1.5.1-2.2.2v-2.9zm0-1.1v-2.9c.7 0 1.5-.1 2.2-.1v2.9c-.7 0-1.4.1-2.2.1zm0-3.9v-2.9c.7 0 1.5-.1 2.2-.1v2.9c-.7 0-1.4 0-2.2.1zm0-4v-2.9c.7 0 1.5-.1 2.2-.1v2.9c-.7.1-1.5.1-2.2.1zm0-3.9v-2.9c.7 0 1.5 0 2.2-.1v2.9c-.7.1-1.5.1-2.2.1zm0-3.9v-2.9h2.2v2.8c-.7 0-1.5 0-2.2.1zm0-4v-2.9h2.2v2.9h-2.2zm0-3.9v-2.9h2.2v2.9h-2.2zm-1 0h-2.2v-2.9h2.2v2.9zm-3.3 0h-2.2v-2.9h2.2v2.9zm-3.3 0h-2.2v-2.9h2.2v2.9zm-3.3 0H9.8v-2.9H12v2.9zm0 1.1v2.9H9.8v-2.9H12zm-3.2 2.8c-.7 0-1.5 0-2.2-.1v-2.8h2.2v2.9zm0 1v2.8c-.7 0-1.5-.1-2.2-.1v-2.8c.7.1 1.4.1 2.2.1zm0 3.9v2.8c-.7 0-1.5-.1-2.2-.1v-2.8c.7.1 1.4.1 2.2.1zm0 3.9v2.9c-.7 0-1.5-.1-2.2-.1v-2.8h2.2zm0 3.9v2.9c-.7-.1-1.5-.1-2.2-.2v-2.8c.7.1 1.4.1 2.2.1zm0 4v2.9c-.7-.1-1.5-.1-2.2-.2v-2.8c.7-.1 1.4 0 2.2.1zm0 3.9v2.8c-.7-.1-1.5-.1-2.2-.2v-2.8c.7 0 1.4.1 2.2.2zm0 3.8v2.9l-2.2-.3v-2.8c.7.1 1.4.2 2.2.2zm1 .1c.7.1 1.5.1 2.2.2v2.9c-.7 0-1.5-.1-2.2-.2v-2.9zm2.2 4.1v2.9c-.7-.1-1.5-.1-2.2-.2v-2.9c.7.1 1.5.2 2.2.2zm1.1.1c.7 0 1.5.1 2.2.1v2.9c-.7 0-1.5-.1-2.2-.1v-2.9zm3.3.1h2.2v2.9h-2.2v-2.9zm3.2 0c.7 0 1.5 0 2.2-.1v2.9c-.7 0-1.5.1-2.2.1v-2.9zm3.3-.2c.7 0 1.5-.1 2.2-.2v2.9c-.7.1-1.5.1-2.2.2v-2.9zm0-1v-2.9c.7 0 1.5-.1 2.2-.2v2.9c-.7.1-1.4.1-2.2.2zm3.3-3.2c.7-.1 1.5-.1 2.2-.2v2.8l-2.2.3v-2.9zm0-1v-2.8c.7-.1 1.5-.1 2.2-.2v2.8c-.7.1-1.5.1-2.2.2zm0-3.9v-2.8c.7-.1 1.5-.1 2.2-.2v2.8c-.7.1-1.5.1-2.2.2zm0-3.9v-2.9c.7 0 1.5-.1 2.2-.1v2.8c-.7.1-1.5.1-2.2.2zm0-3.9v-2.9c.7 0 1.5-.1 2.2-.1v2.8c-.7.1-1.5.1-2.2.2zm0-3.9v-2.8c.7 0 1.5-.1 2.2-.1v2.8c-.7 0-1.5 0-2.2.1zm0-3.9v-2.8c.7 0 1.5 0 2.2-.1v2.8c-.7 0-1.5 0-2.2.1zm0-3.9v-2.9h2.2v2.8c-.7 0-1.5.1-2.2.1zm-17.4-6.8v2.9H6.6v-2.8c.7-.1 1.4-.1 2.2-.1zm-2.3 34.9l2.2.3v2.9l-2.2-.3v-2.9zm19.7 3.1v-2.9l2.2-.3v2.8c-.7.2-1.5.3-2.2.4z" fill="#c6c6c6"/>
+</svg>

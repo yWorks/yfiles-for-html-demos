@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global neo4j */
+import neo4j from 'neo4j-driver'
+
 /**
  * @yjs:keep = types,Node
  */
@@ -46,7 +47,9 @@ export const Neo4jEdge = neo4j.types.Relationship
  */
 export async function connectToDB(url, databaseName, user, pass) {
   // create a new Neo4j driver instance
-  const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass))
+  const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass), {
+    connectionAcquisitionTimeout: 5000
+  })
 
   const runCypherQuery = createCypherQueryRunner(neo4jDriver, databaseName)
 
@@ -90,7 +93,7 @@ function createCypherQueryRunner(neo4jDriver, databaseName) {
  * @typedef {Object} Node
  * @property {Integer} identity
  * @property {Array.<string>} labels
- * @property {Object} properties
+ * @property {object} properties
  */
 
 /**
@@ -99,13 +102,13 @@ function createCypherQueryRunner(neo4jDriver, databaseName) {
  * @property {Integer} start
  * @property {Integer} end
  * @property {string} type
- * @property {Object} properties
+ * @property {object} properties
  */
 
 /**
  * @typedef {Object} Neo4jRecord
- * @property {Array.<String>} keys
- * @property {Number} length
+ * @property {Array.<string>} keys
+ * @property {number} length
  * @property {function} get
  * @property {function} forEach
  */

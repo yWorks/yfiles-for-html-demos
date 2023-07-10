@@ -1,8 +1,17 @@
-<img src="../../resources/image/webpack.png" alt="demo-thumbnail" height="320"/>
-
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Webpack Lazy Load Layout Modules Demo
 
-This demo shows how to lazy load specific yFiles modules with [webpack](https://webpack.js.org/)'s [dynamic import](https://webpack.js.org/guides/code-splitting/) feature.
+This demo shows how to lazy load specific yFiles modules with [webpack](https://webpack.js.org/) 's [dynamic import](https://webpack.js.org/guides/code-splitting/) feature.
 
 By default, webpack automatically tree-shakes yFiles and only includes the necessary modules in the bundle.
 
@@ -46,7 +55,7 @@ Note that the npm start script will run webpack once before starting the webpack
 
 When the server runs, try making changes to `src/webpack-demo.js` and see how the app will be updated in the browser immediately.
 
-Debugging of application files in the browser's developer tools should work fine, as source maps are enabled using webpack's "[SourceMapDevToolPlugin](https://webpack.js.org/plugins/source-map-dev-tool-plugin/)".
+Debugging of application files in the browser's developer tools should work fine, as source maps are enabled using webpack's " [SourceMapDevToolPlugin](https://webpack.js.org/plugins/source-map-dev-tool-plugin/) ".
 
 ### Production
 

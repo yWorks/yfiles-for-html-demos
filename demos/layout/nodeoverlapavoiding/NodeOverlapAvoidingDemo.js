@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   GraphEditorInputMode,
   GraphModelManager,
   GroupingNodePositionHandler,
-  ICommand,
   INode,
   INodeSizeConstraintProvider,
   IPositionHandler,
@@ -49,20 +48,15 @@ import {
   Size
 } from 'yfiles'
 
-import {
-  addNavigationButtons,
-  bindChangeListener,
-  bindCommand,
-  showApp
-} from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import SampleData from './resources/SampleData.js'
 import { NonOverlapPositionHandler } from './NonOverlapPositionHandler.js'
 import { NonOverlapReshapeHandler } from './NonOverlapReshapeHandler.js'
 import { LayoutHelper } from './LayoutHelper.js'
 import { HidingEdgeDescriptor } from './HidingEdgeDescriptor.js'
 import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -79,11 +73,8 @@ async function run() {
   initializeInputModes()
   initializeGraph()
 
-  // bind the buttons to their commands
-  registerCommands()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the buttons to their actions
+  initializeUI()
 }
 
 /**
@@ -244,7 +235,7 @@ function loadGraph(sampleName) {
       graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach(bend => {
-      graph.addBend(edge, Point.from(bend))
+      graph.addBend(edge, bend)
     })
   })
 
@@ -254,20 +245,13 @@ function loadGraph(sampleName) {
 /**
  * Registers commands and actions for the items in the toolbar.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  const sampleGraphs = document.getElementById('sample-graphs')
-  addNavigationButtons(sampleGraphs)
-  bindChangeListener("select[data-command='SelectSampleGraph']", () => {
+function initializeUI() {
+  const sampleGraphs = document.querySelector('#sample-graphs')
+  addNavigationButtons(sampleGraphs).addEventListener('change', () => {
     const selectedIndex = sampleGraphs.selectedIndex
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

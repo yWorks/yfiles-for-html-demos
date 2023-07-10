@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 /* eslint-disable no-prototype-builtins */
-/* global Vue */
 /* eslint-disable no-undef */
 import {
   Font,
@@ -76,12 +75,17 @@ initializeDesignerVueComponents()
  * but do not necessarily have to be used. We will only check those properties if they were changed.
  */
 class ObservedContext {
+  node
+  graphComponent
+  defsSupport
+  contextZoom
+  observed = {}
+
   /**
    * @param {!INode} node
    * @param {!IRenderContext} renderContext
    */
   constructor(node, renderContext) {
-    this.observed = {}
     this.node = node
     this.graphComponent = renderContext.canvasComponent
     this.defsSupport = renderContext.svgDefsManager
@@ -99,7 +103,7 @@ class ObservedContext {
 
   /**
    * Resets the context object to an empty object if none of the properties is used.
-   * @returns {?Object}
+   * @returns {?object}
    */
   reset() {
     const oldState = this.observed
@@ -288,13 +292,15 @@ class ObservedContext {
  * A node style which uses a Vuejs component to display a node.
  */
 export default class VuejsNodeStyle extends NodeStyleBase {
+  _template = ''
+  _styleTag = null
+  constructorFunction
+
   /**
    * @param {!string} template
    */
   constructor(template) {
     super()
-    this._template = ''
-    this._styleTag = null
     this.template = template
   }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -84,6 +84,21 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     return this.$masterGraph
   }
 
+  tempZOrders
+  zOrderChangedListeners
+
+  $graphComponent = null
+  $masterGraph = null
+  foldingView = null
+  masterGroupingSupport = null
+  zOrders
+  tempParents
+
+  /**
+   * A flag indicating if nodes added to the master group should get a z-order assigned.
+   */
+  addZOrderForNewNodes = false
+
   /**
    * @type {!GraphComponent}
    */
@@ -97,36 +112,6 @@ export class ZOrderSupport extends BaseClass(IComparer) {
    */
   constructor(graphComponent) {
     super()
-
-    ////////////////////////////////////////// Clipboard support /////////////////////////////////////
-    this.$clipboardZOrders = new HashMap()
-
-    this.$newClipboardItems = new List()
-    this.$clipboard = null
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////// Input mode configuration //////////////////////////////
-    this.$inputMode = null
-
-    ////////////////////////////////////////// Delete selection //////////////////////////////////////
-    this.$deleteSelectionNewParents = null
-
-    this.$absOrder = null
-    this.$parentChangedListener = null
-
-    ////////////////////////////////////////// MoveInputMode /////////////////////////////////////////
-    // Moved nodes that might get reparented.
-    this.$movedNodes = new List()
-
-    // A mapping from moved nodes to their original parents
-    this.$oldParents = new Map()
-
-    // the maximum z-order of the children of a group node
-    this.$maxOldZOrder = new Map()
-
-    // the maximum z-order of top-level nodes
-    this.$maxRootZOrder = Number.MIN_VALUE
-
     this.zOrderChangedListeners = []
 
     // initialize maps
@@ -134,7 +119,6 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     this.tempZOrders = new HashMap()
     this.tempParents = new HashMap()
 
-    // A flag indicating if nodes added to the master group should get a z-order assigned.
     this.addZOrderForNewNodes = true
 
     this.initializeGraphComponent(graphComponent, true)
@@ -654,6 +638,12 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     this.setZOrder(node2, zOrder1)
   }
 
+  ////////////////////////////////////////// Clipboard support /////////////////////////////////////
+
+  $clipboardZOrders = new HashMap()
+  $newClipboardItems = new List()
+  $clipboard = null
+
   /**
    * @param {!GraphClipboard} clipboard
    */
@@ -869,6 +859,12 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////// Input mode configuration //////////////////////////////
+
+  $inputMode = null
+
   /** @type {ICommand} */
   static get RAISE() {
     if (typeof ZOrderSupport.$RAISE === 'undefined') {
@@ -1047,6 +1043,12 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     }
   }
 
+  ////////////////////////////////////////// Delete selection //////////////////////////////////////
+
+  $deleteSelectionNewParents = null
+  $absOrder = null
+  $parentChangedListener = null
+
   /**
    * @param {!object} sender
    * @param {!SelectionEventArgs.<IModelItem>} e
@@ -1098,6 +1100,20 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     const newParent = graph.getParent(evt.item)
     this.$deleteSelectionNewParents.add(newParent)
   }
+
+  ////////////////////////////////////////// MoveInputMode /////////////////////////////////////////
+
+  // Moved nodes that might get reparented.
+  $movedNodes = new List()
+
+  // A mapping from moved nodes to their original parents
+  $oldParents = new Map()
+
+  // the maximum z-order of the children of a group node
+  $maxOldZOrder = new Map()
+
+  // the maximum z-order of top-level nodes
+  $maxRootZOrder = Number.MIN_VALUE
 
   /**
    * @param {!GraphEditorInputMode} geim
@@ -1224,6 +1240,10 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 }
 
 export class ZIndexChangedEventArgs extends EventArgs {
+  $item
+  $newZIndex
+  $oldZIndex
+
   /**
    * @param {!IModelItem} item
    * @param {number} newZIndex
@@ -1263,6 +1283,11 @@ export class ZIndexChangedEventArgs extends EventArgs {
  * As the z-order doesn't change for normal move gestures, this class customizes only interactive reparent gestures.
  */
 export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
+  $node
+  $initialParent
+  $currentParent
+  $zOrderSupport
+
   /**
    * @param {!INode} node
    * @param {!ZOrderSupport} zOrderSupport
@@ -1345,6 +1370,8 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
  * An {@link InputHandlerBase input handler} that reads the z-order of nodes, edges and ports.
  */
 class ZOrderInputHandler extends InputHandlerBase {
+  zOrderSupport
+
   /**
    * @param {!ZOrderSupport} zOrderSupport
    */
@@ -1387,6 +1414,8 @@ class ZOrderInputHandler extends InputHandlerBase {
  * An {@link IOutputHandler} that writes the z-order of nodes, edges and ports.
  */
 class ZOrderOutputHandler extends OutputHandlerBase {
+  zOrderSupport
+
   /**
    * @type {!string}
    */
@@ -1491,7 +1520,6 @@ class ZOrderReparentHandler extends BaseClass(IReparentNodeHandler) {
     // cannot be determined anymore after reparenting is done.
     // Being able to determine the master nodes right before reparenting is the whole reason
     // for decorating the default reparent handler here.
-    const support = this.zOrderSupport
     const masterNode = this.zOrderSupport.getMasterNode(node)
     const masterParent = newParent ? this.zOrderSupport.getMasterNode(newParent) : null
 

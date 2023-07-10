@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,7 @@ const OptimizerPlugin = require('@yworks/optimizer/webpack-plugin')
 module.exports = {
   mode: 'production',
   entry: {
-    app: ['core-js/stable', 'regenerator-runtime/runtime', './src/WebWorkerWebpackDemo.ts']
+    app: ['./src/WebWorkerWebpackDemo.ts']
   },
   plugins: [
     new OptimizerPlugin({
@@ -49,7 +49,13 @@ module.exports = {
         'anchorY',
         'upX',
         'upY'
-      ]
+      ],
+      shouldOptimize(module) {
+        return (
+          !/node_modules/.test(module.resource) ||
+          /node_modules[\\/](demo-resources|utils)/.test(module.resource)
+        )
+      }
     }),
 
     // Inject the bundle script tags into the html page

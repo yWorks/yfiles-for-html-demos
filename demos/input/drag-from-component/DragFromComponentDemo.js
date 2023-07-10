@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,8 +29,6 @@
 import {
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
-  ICommand,
   IGraph,
   INode,
   License,
@@ -39,19 +37,18 @@ import {
   MouseEventTypes,
   Point,
   Rect,
-  Size,
-  StorageLocation
+  Size
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { DraggableGraphComponent, NodeDragInputMode } from './NodeDragInputMode.js'
 import {
   applyDemoTheme,
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -73,12 +70,6 @@ async function run() {
   initDefaultStyles(graphComponent.graph)
   createGraph(graphComponent.graph)
   graphComponent.fitGraphBounds()
-
-  // bind the buttons to their commands
-  registerCommands()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
 }
 
 /**
@@ -232,19 +223,4 @@ function createGraph(graph) {
   graph.undoEngine.clear()
 }
 
-/**
- * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
- */
-function registerCommands() {
-  const support = new GraphMLSupport(graphComponent)
-  support.storageLocation = StorageLocation.FILE_SYSTEM
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

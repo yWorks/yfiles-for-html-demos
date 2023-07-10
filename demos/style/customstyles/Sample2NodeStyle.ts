@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,16 +34,27 @@ import {
   MarkupExtension,
   NodeStyleBase,
   SvgVisual,
+  type TaggedSvgVisual,
   TypeAttribute,
   YString
 } from 'yfiles'
-import type { ColorSetName } from '../../resources/demo-styles'
-import { isColorSetName } from '../../resources/demo-styles'
+import { type ColorSetName, isColorSetName } from 'demo-resources/demo-styles'
+
+type Sample2NodeStyleCache = {
+  width: number
+  height: number
+  cssClass?: string
+}
+
+/**
+ * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
+ */
+type Sample2NodeStyleVisual = TaggedSvgVisual<SVGRectElement, Sample2NodeStyleCache>
 
 /**
  * A custom demo node style whose colors match the given well-known CSS rule.
  */
-export class Sample2NodeStyle extends NodeStyleBase {
+export class Sample2NodeStyle extends NodeStyleBase<Sample2NodeStyleVisual> {
   constructor(public cssClass?: string | ColorSetName) {
     super()
   }
@@ -51,7 +62,7 @@ export class Sample2NodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
    */
-  createVisual(renderContext: IRenderContext, node: INode): SvgVisual {
+  createVisual(renderContext: IRenderContext, node: INode): Sample2NodeStyleVisual | null {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const { x, y, width, height } = node.layout
     const nodeRounding = '3.5'
@@ -69,25 +80,25 @@ export class Sample2NodeStyle extends NodeStyleBase {
       rect.setAttribute('class', attribute)
     }
 
-    ;(rect as any)['data-renderDataCache'] = {
-      x,
-      y,
+    SvgVisual.setTranslate(rect, x, y)
+
+    return SvgVisual.from(rect, {
       width,
       height,
       cssClass: this.cssClass
-    }
-
-    rect.setAttribute('transform', `translate(${x} ${y})`)
-
-    return new SvgVisual(rect)
+    })
   }
 
   /**
    * Re-renders the node by updating the old visual for improved performance.
    */
-  updateVisual(renderContext: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
-    const rect = oldVisual.svgElement as SVGRectElement
-    const cache = (rect as any)['data-renderDataCache']
+  updateVisual(
+    renderContext: IRenderContext,
+    oldVisual: Sample2NodeStyleVisual,
+    node: INode
+  ): Sample2NodeStyleVisual | null {
+    const rect = oldVisual.svgElement
+    const cache = oldVisual.tag
     if (!cache) {
       return this.createVisual(renderContext, node)
     }
@@ -103,11 +114,6 @@ export class Sample2NodeStyle extends NodeStyleBase {
       rect.height.baseVal.value = height
       cache.height = height
     }
-    if (cache.x !== x || cache.y !== y) {
-      rect.transform.baseVal.getItem(0).setTranslate(x, y)
-      cache.x = x
-      cache.y = y
-    }
 
     if (cache.cssClass !== this.cssClass) {
       if (this.cssClass) {
@@ -118,6 +124,8 @@ export class Sample2NodeStyle extends NodeStyleBase {
       }
       cache.cssClass = this.cssClass
     }
+
+    SvgVisual.setTranslate(rect, x, y)
 
     return oldVisual
   }

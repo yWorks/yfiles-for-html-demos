@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,38 +30,19 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>GraphML Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.css"
-    />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/search.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/search/searchcursor.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/dialog/dialog.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/mode/xml/xml.min.js"></script>
-
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       .editorText {
         font-family: 'Consolas', 'Courier New', Courier, mono, serif;
         font-size: 13px;
-      }
-
-      .right h2 {
-        margin: 1ex 1em 1ex;
       }
 
       #editorContainer {
@@ -83,7 +63,7 @@
       }
 
       .CodeMirror {
-        height: 100%;
+        height: 100% !important;
       }
 
       .property,
@@ -142,40 +122,76 @@
       .description-highlight {
         color: darkred;
       }
-
-      .left {
-        width: 50%;
-        top: 60px;
-        position: absolute;
-        bottom: 0;
-        border-right: 4px solid #f7f7f7;
-      }
-
-      .right {
-        width: 49.8%;
-        position: absolute;
-        top: 100px;
-        bottom: 0;
-        right: 0;
-        background-color: #f7f7f7;
-      }
-
-      @media screen and (max-height: 500px) {
-        .right {
-          top: 60px;
-        }
-      }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>GraphML</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
     <!--
 The sidebar for the properties panel and description text
 -->
-    <aside class="demo-sidebar demo-left demo-description">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+
+    <div class="demo-page__toolbar">
+      <button data-command="NEW"></button>
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="CUT"></button>
+      <button data-command="COPY"></button>
+      <button data-command="PASTE"></button>
+      <button data-command="DELETE"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="GROUP_SELECTION"></button>
+      <button data-command="UNGROUP_SELECTION"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>GraphML Demo</h1>
 
         <p>
@@ -222,7 +238,7 @@ The sidebar for the properties panel and description text
             Add a new key and value to the custom data panel (press enter to submit): The
             corresponding data is added to the GraphML representation. Note that a new
             <code>&lt;key&gt;</code> element will be added to the top of the GraphML file if the key
-            didn't exist yet.
+            did not exist yet.
           </li>
         </ul>
         <p class="description-highlight">
@@ -251,87 +267,34 @@ The sidebar for the properties panel and description text
         </div>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-        <button
-          data-command="Open"
-          title="Open a GraphML file"
-          class="demo-icon-yIconOpen"
-        ></button>
-        <button
-          data-command="Save"
-          title="Save a GraphML file"
-          class="demo-icon-yIconSave"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-        <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-        <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-        <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-
-        <span class="demo-separator"></span>
-
-        <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-        <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-        <span class="demo-separator"></span>
-
-        <button
-          data-command="GroupSelection"
-          title="Group selected element"
-          class="demo-icon-yIconGroup"
-        ></button>
-        <button
-          data-command="UngroupSelection"
-          title="Ungroup selected element"
-          class="demo-icon-yIconUngroup"
-        ></button>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
       </div>
 
-      <div class="demo-content-dynamic">
-        <div>
-          <div id="graphComponent" class="left"></div>
+      <aside
+        data-title="GraphML Editor"
+        class="demo-main__sidebar"
+        style="--sidebar-width: max(50%, min(100%, 450px))"
+      >
+        <div class="demo-sidebar__content">
+          <h2>GraphML</h2>
 
-          <div class="right">
-            <h2>GraphML</h2>
-
-            <div id="editorContainer" class="editorText">
-              <textarea id="xmlEditor" style="width: 100%; height: 100%"></textarea>
-            </div>
-
-            <h2>Output</h2>
-
-            <textarea
-              id="outputText"
-              data-name="outputText"
-              class="editorText"
-              readonly=""
-            ></textarea>
+          <div id="editorContainer" class="editorText">
+            <textarea id="xmlEditor" style="width: 100%; height: 100%"></textarea>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <script type="module" crossorigin="anonymous" src="GraphMLDemo.js"></script>
+          <h2>Output</h2>
+
+          <textarea
+            id="outputText"
+            data-name="outputText"
+            class="editorText"
+            readonly=""
+          ></textarea>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="GraphMLDemo.ts" async></script>
   </body>
 </html>

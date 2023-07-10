@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,14 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-undef */
 import { MarkupLabelStyle, TextEditorInputMode } from 'yfiles'
+import Quill from 'quill'
+
+// Quill snow theme
+import 'quill/dist/quill.snow.css'
 
 /**
  * A custom {@link TextEditorInputMode} which utilizes Quill to provide a WYSIWYG text editor that
  * allows to easily create labels with the {@link MarkupLabelStyle}.
  */
 export class RichTextEditorInputMode extends TextEditorInputMode {
+  quill
+
   /**
    * Wire up Quill with the {@link TextEditorInputMode.editorText}.
    * @yjs:keep = root
@@ -136,7 +141,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
       'pointerdown',
       'pointermove'
     ].forEach(event => {
-      container.addEventListener(event, e => e.stopPropagation(), false)
+      container.addEventListener(event, e => e.stopPropagation(), { passive: false })
     })
     return container
   }

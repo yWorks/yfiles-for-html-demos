@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Large Graph Aggregation Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./resources/settings-panel.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Large Graph Aggregation</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
+        <h1>Large Graph Aggregation Demo</h1>
+
+        <p>
+          This demo shows how to use the smart <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" target="_blank">NodeAggregation</a> algorithm for drill down
+          exploration of a large graph.
+        </p>
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" target="_blank">NodeAggregation</a> algorithms consolidates nodes of a graph and thus creates
+          cluster of nodes based on user-specified constraints.
+        </p>
+        <p>
+          The demo shows aggregated nodes in a gray style, while original nodes of the data are
+          represented as colored nodes.
+        </p>
+        <p>
+          The configuration panel provides access to the most important settings of the aggregation
+          algorithm.
+        </p>
+        <p>
+          The<em>Aggregation Mode</em> determines if nodes are combined in clusters based on the
+          structure of the graph or based on their geometric locations.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Switch between the <b>two layout styles</b> offered for visualizing the aggregated
+            graph (i.e. <a href="https://docs.yworks.com/yfileshtml/#/api/BalloonLayout" target="_blank">BalloonLayout</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/CactusGroupLayout" target="_blank">CactusGroupLayout</a>). This re-runs
+            the aggregation as well.
+          </li>
+          <li>
+            Click on an aggregated node to <b>show</b> its children in the aggregation hierarchy.
+          </li>
+          <li>
+            Click on a separated node to <b>hide</b> its children in the aggregation hierarchy.
+          </li>
+          <li>
+            Explore the <b>configuration options</b> of the aggregation algorithm.
+          </li>
+          <li>
+            Run the aggregation algorithm with the selected settings by pressing the <b>Run</b>
+            button.
+          </li>
+          <li>
+            Click <b>Switch To Filtered View</b> to hide the aggregation nodes and only show the
+            actual nodes of the graph that are currently explored.
+          </li>
+          <li>
+            Navigate to a node outside the viewport by clicking an edge whose source or target node
+            is not visible at the moment.
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-overlay">
+        <div class="demo-overlay__header">Overview</div>
+        <div id="overviewComponent"></div>
+      </div>
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <div id="calculating-indicator" class="busyIndicator" style="display: none">
+        Calculating... This may take a while.
+      </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <div class="settings-grid">
+            <h2 class="settings-legend1">Layout Properties</h2>
+            <label for="layout-style-select" class="settings-label-row1">Layout Style</label>
+            <select id="layout-style-select" class="settings-editor-row1">
+              <option value="balloon">Balloon</option>
+              <option value="cactus">Cactus</option>
+            </select>
+
+            <h2 class="settings-legend2">Aggregation Properties</h2>
+            <label for="aggregation-mode-select" class="settings-label-row2">
+              Aggregation Mode
+            </label>
+            <select id="aggregation-mode-select" class="settings-editor-row2">
+              <option value="structural">Structural</option>
+              <option value="geometric">Geometric</option>
+            </select>
+
+            <label for="maximum-duration-range" class="settings-label-row3">Maximum Duration</label>
+            <input
+              class="settings-editor-row3"
+              id="maximum-duration-range"
+              type="range"
+              min="0"
+              max="120"
+              value="0"
+            />
+            <label class="settings-label-value3" id="maximum-duration-label">0</label>
+
+            <label for="minimum-cluster-size-range" class="settings-label-row4">
+              Minimum Cluster Size
+            </label>
+            <input
+              class="settings-editor-row4"
+              id="minimum-cluster-size-range"
+              type="range"
+              min="1"
+              max="50"
+              value="5"
+            />
+            <label class="settings-label-value4" id="minimum-cluster-size-label">5</label>
+
+            <label for="maximum-cluster-size-range" class="settings-label-row5">
+              Maximum Cluster Size
+            </label>
+            <input
+              class="settings-editor-row5"
+              id="maximum-cluster-size-range"
+              type="range"
+              min="2"
+              max="100"
+              value="10"
+            />
+            <label class="settings-label-value5" id="maximum-cluster-size-label">10</label>
+          </div>
+          <button id="run-aggregation" class="flat-button">Run</button>
+
+          <h2>Graph Info</h2>
+          <div class="demo-properties__settings">
+            <div class="demo-form-block">
+              <label class="option-label">Original Nodes:</label>
+              <label class="option-element" id="original-nodes">0 / 0</label>
+            </div>
+            <div class="demo-form-block">
+              <label class="option-label">Original Edges:</label>
+              <label class="option-element" id="original-edges">0 / 0</label>
+            </div>
+          </div>
+
+          <h2>Current Node</h2>
+          <div class="demo-properties__settings">
+            <div class="demo-form-block">
+              <label id="current-item" class="option-label" style="display: none"></label>
+            </div>
+            <div class="demo-form-block">
+              <label class="option-label">Descendant Count:</label>
+              <label class="option-element" id="descendant-count">0</label>
+            </div>
+            <div class="demo-form-block">
+              <label class="option-label">Descendant Weight Sum:</label>
+              <label class="option-element" id="descendant-weight-sum">0</label>
+            </div>
+          </div>
+
+          <button id="switch-view" class="flat-button">Switch to Filtered View</button>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="LargeGraphAggregationDemo.ts" async></script>
+  </body>
+</html>

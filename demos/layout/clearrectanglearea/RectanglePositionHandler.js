@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,13 +39,15 @@ import {
  * Simple implementation of an {@link IPositionHandler} that moves an {@link IMutablePoint}
  */
 export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
+  position
+  startPosition = null
+
   /**
    * Creates a position handler that delegates to a mutable position.
    * @param {!IMutablePoint} position The position that will be read and changed.
    */
   constructor(position) {
     super()
-    this.startPosition = null
     this.position = position
   }
 

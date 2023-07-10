@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   IGraph,
   ImageNodeStyle,
   License,
@@ -42,11 +41,11 @@ import {
   Stroke
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app'
 import { LensInputMode } from './LensInputMode'
-import { colorSets, initDemoStyles } from '../../resources/demo-styles'
+import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
 import { deviceIcons, networkData } from './resources/network-sample'
-import { fetchLicense } from '../../resources/fetch-license'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent = null!
 let lensInputMode: LensInputMode = null!
@@ -55,6 +54,7 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
+  applyDemoTheme(graphComponent)
 
   const graphEditorInputMode = new GraphEditorInputMode({
     // Some configurations for a better user experience in this demo.
@@ -78,8 +78,6 @@ async function run(): Promise<void> {
   graphComponent.fitGraphBounds()
 
   initializeUI()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -130,14 +128,7 @@ function populateGraph(graph: IGraph): void {
  * Initializes the UI.
  */
 function initializeUI(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  const zoomSelectElement = document.querySelector<HTMLSelectElement>(
-    "select[data-command='lensZoom']"
-  )!
+  const zoomSelectElement = document.querySelector<HTMLSelectElement>('#lens-zoom')!
   zoomSelectElement.addEventListener('change', evt => {
     lensInputMode.zoomFactor = parseInt(zoomSelectElement.value)
   })
@@ -149,5 +140,4 @@ function initializeUI(): void {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,7 +49,9 @@ import {
   WebGL2Stroke,
   WebGL2TextureRendering
 } from 'yfiles'
-import { addClass, removeClass } from '../../resources/demo-app.js'
+
+import plusIcon from 'demo-resources/icons/plus2-16.svg'
+import minusIcon from 'demo-resources/icons/minus2-16.svg'
 
 /**
  * @typedef {('node'|'edge'|'label'|'group')} ItemType
@@ -354,17 +356,17 @@ function setStrokeSectionActive(type, section) {
   const isNone = 'None' === section
   const isMore = 'More' === section
   if (isNone) {
-    removeClass(getButton(`${type}StrokeButtonSimple`), 'active')
-    removeClass(getButton(`${type}StrokeButtonMore`), 'active')
+    getButton(`${type}StrokeButtonSimple`).classList.remove('active')
+    getButton(`${type}StrokeButtonMore`).classList.remove('active')
   } else if (isMore) {
-    removeClass(getButton(`${type}StrokeButtonNone`), 'active')
-    removeClass(getButton(`${type}StrokeButtonSimple`), 'active')
+    getButton(`${type}StrokeButtonNone`).classList.remove('active')
+    getButton(`${type}StrokeButtonSimple`).classList.remove('active')
   } else {
-    removeClass(getButton(`${type}StrokeButtonNone`), 'active')
-    removeClass(getButton(`${type}StrokeButtonMore`), 'active')
+    getButton(`${type}StrokeButtonNone`).classList.remove('active')
+    getButton(`${type}StrokeButtonMore`).classList.remove('active')
   }
 
-  addClass(getButton(`${type}StrokeButton${section}`), 'active')
+  getButton(`${type}StrokeButton${section}`).classList.add('active')
 
   const contentArea = getBlock(`${type}TabContent`)
   contentArea.style.display = isNone ? 'none' : 'block'
@@ -429,10 +431,10 @@ function toggleSectionButton(button) {
 
   if (section.style.display === 'block') {
     section.style.display = 'none'
-    img.src = '../../resources/icons/plus2-16.svg'
+    img.src = plusIcon
   } else {
     section.style.display = 'block'
-    img.src = '../../resources/icons/minus2-16.svg'
+    img.src = minusIcon
   }
 }
 

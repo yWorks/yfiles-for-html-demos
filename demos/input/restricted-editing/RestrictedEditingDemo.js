@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,14 +31,13 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IGraph,
   License
 } from 'yfiles'
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import SampleData from './resources/SampleData.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Bootstraps this demo.
@@ -66,11 +65,8 @@ async function run() {
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
 
-  // bind the demo's UI controls to their respective commands
-  registerCommands(graphComponent)
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the demo's UI controls to their respective actions
+  initializeUI(graphComponent)
 }
 
 /**
@@ -193,17 +189,14 @@ function allowEditing(geim, enabled) {
 }
 
 /**
- * Binds actions and commands to the demo's UI controls.
+ * Binds actions to the demo's UI controls.
  * @param {!GraphComponent} graphComponent
  */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindChangeListener('#allowedEditingOperations', value => configureEditing(graphComponent, value))
+function initializeUI(graphComponent) {
+  const allowEditing = document.querySelector('#allowed-editing-operations')
+  allowEditing.addEventListener('change', evt =>
+    configureEditing(graphComponent, allowEditing.value)
+  )
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

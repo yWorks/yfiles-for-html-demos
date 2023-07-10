@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   IArrow,
-  ICommand,
   IGraph,
   IHitTestable,
   INode,
@@ -54,17 +53,17 @@ import {
   Size,
   SolidColorFill
 } from 'yfiles'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { ListNodeStyle } from './ListNodeStyle.js'
-import { ContextMenu } from '../../utils/ContextMenu.js'
+import { ContextMenu } from 'demo-utils/ContextMenu'
 import {
   createPortLocationParameter,
   getPortForData,
   RowPositionHandler
 } from './RowPositionHandler.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * @returns {!Promise}
@@ -85,10 +84,6 @@ async function run() {
 
   // configure user interaction
   initializeInteraction(graphComponent)
-
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -453,17 +448,6 @@ function registerContextMenu(graphComponent, geim) {
   })
 }
 
-/**
- * Binds commands to the demo's UI controls.
- * @param {!GraphComponent} graphComponent
- */
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
 // model data for a node: the node's name and the rows
 /**
  * @typedef {Object} NodeInfo
@@ -478,5 +462,4 @@ function registerCommands(graphComponent) {
  * @property {string} [out]
  */
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

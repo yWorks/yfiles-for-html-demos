@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="-60 -20 120 120">
+  <ellipse cx="0" cy="25" rx="45" ry="45" fill="#6cbc8d"/>
+  <path d="M -41 40 L 41 40 L 0 100 Z" fill="#6cbc8d" stroke="#6cbc8d"/>
+  <g transform="rotate(-55 0 25)">
+    <path
+        d="M 5,0 5,10 25,30 25,40 5,25 5,45 15,55 15,60 0,52 -15,60 -15,55 -5,45 -5,25 -25,40 -25,30 -5,10 -5,0 A 5,10 0 0 1 5,0 z"
+        fill="white" stroke="white" stroke-width="2"/>
+  </g>
+</svg>

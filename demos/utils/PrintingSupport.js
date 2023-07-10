@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,29 +46,23 @@ import {
  * feature.
  */
 export default class PrintingSupport {
-  constructor() {
-    // The margins around the whole printed content in page coordinates.
-    this.margin = 5
+  // The margins around the whole printed content in page coordinates.
+  margin = 5
+  // The scale factor to apply to the printed content.
+  scale = 1.0
+  // Whether to print multiple pages if the content does not fit on a single page.
+  tiledPrinting = false
+  // The width of a single tile (page) in pt (1/72 inch).
+  tileWidth = 595
+  // The height of a single tile (page) in pt (1/72 inch).
+  tileHeight = 842
+  // The URL of the print document that's created and then opened.
+  targetUrl = './printdocument.html'
+  // The projection for the print content. When exporting a GraphComponent with a projection
+  // this should be set to the same value.
+  projection = Matrix.IDENTITY
 
-    // The scale factor to apply to the printed content.
-    this.scale = 1.0
-
-    // Whether to print multiple pages if the content does not fit on a single page.
-    this.tiledPrinting = false
-
-    // The width of a single tile (page) in pt (1/72 inch).
-    this.tileWidth = 595
-
-    // The height of a single tile (page) in pt (1/72 inch).
-    this.tileHeight = 842
-
-    // The URL of the print document that's created and then opened.
-    this.targetUrl = './printdocument.html'
-
-    // The projection for the print content. When exporting a GraphComponent with a projection
-    // this should be set to the same value.
-    this.projection = Matrix.IDENTITY
-  }
+  constructor() {}
 
   /**
    * Prints the detail of the given graph that is specified by either a

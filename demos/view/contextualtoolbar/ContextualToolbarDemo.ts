@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   ExteriorLabelModelPosition,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   IEdge,
   IGraph,
   ILabel,
@@ -44,11 +43,11 @@ import {
   SmartEdgeLabelModel
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app'
 import ContextualToolbar from './ContextualToolbar'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 let contextualToolbar: ContextualToolbar
@@ -72,10 +71,6 @@ async function run(): Promise<void> {
   graphComponent.graph.undoEngine!.clear()
 
   graphComponent.fitGraphBounds()
-
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -134,18 +129,6 @@ function initializeInputMode(): void {
       contextualToolbar.selectedItems = newSelection
     }
   })
-}
-
-/**
- * Wires up the UI toolbar buttons with the graph component.
- */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 }
 
 /**
@@ -219,5 +202,4 @@ function createSampleGraph(graph: IGraph): void {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

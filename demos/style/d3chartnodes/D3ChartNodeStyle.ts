@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,10 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-undef */
-
 import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
 import type { NumberValue } from 'd3'
+
+import * as d3 from 'd3'
 
 const margin = {
   top: 3,
@@ -38,7 +38,7 @@ const margin = {
   left: 3
 }
 
-const xHelper = d3.scaleBand().padding(0.1)
+const xHelper = d3.scaleBand<number>().padding(0.1)
 
 const yHelper = d3.scaleLinear().nice()
 
@@ -66,7 +66,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       tag: data
     } = node
 
-    xHelper.domain(d3.range(0, data.length) as Iterable<string>).range([0, width])
+    xHelper.domain(d3.range(0, data.length)).range([0, width])
     yHelper
       .domain([0, d3.max(data)] as Iterable<number>)
       .range([height - margin.bottom, margin.top])
@@ -88,7 +88,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .data(data)
       .enter()
       .append('rect')
-      .attr('x', (d, i) => xHelper(`${i}`) as number)
+      .attr('x', (d, i) => xHelper(i)!)
       .attr('y', d => yHelper(d as NumberValue))
       .attr('height', d => yHelper(0) - yHelper(d as NumberValue))
       .attr('width', xHelper.bandwidth())
@@ -114,7 +114,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       tag: data
     } = node
 
-    xHelper.domain(d3.range(0, data.length) as Iterable<string>).range([0, width])
+    xHelper.domain(d3.range(0, data.length)).range([0, width])
     yHelper
       .domain([0, d3.max(data)] as Iterable<number>)
       .range([height - margin.bottom, margin.top])
@@ -138,7 +138,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       dataSelection
         .enter()
         .append('rect')
-        .attr('x', (d, i) => xHelper(`${i}`) as number)
+        .attr('x', (d, i) => xHelper(i)!)
         .attr('y', d => yHelper(d as NumberValue))
         .attr('height', d => yHelper(0) - yHelper(d as NumberValue))
         .attr('width', xHelper.bandwidth())
@@ -150,7 +150,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
 
       dataSelection
         .transition()
-        .attr('x', (d, i) => xHelper(`${i}`) as number)
+        .attr('x', (d, i) => xHelper(i)!)
         .attr('width', xHelper.bandwidth())
         .attr('y', d => yHelper(d as NumberValue))
         .attr('fill', d => color(d as NumberValue))

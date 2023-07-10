@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   GraphItemTypes,
   GraphMLIOHandler,
   GraphMLSupport,
-  ICommand,
   IGraph,
   INode,
   License,
@@ -44,10 +43,10 @@ import {
   Size,
   StorageLocation
 } from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import { ZIndexChangedEventArgs, ZOrderSupport } from './ZOrderSupport.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { bindYFilesCommand, finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -111,11 +110,8 @@ async function run() {
 
   createGraph(graphComponent.graph)
 
-  // bind the buttons to their commands
-  registerCommands()
-
-  // initialize the application's CSS and JavaScript for the description
-  showApp(graphComponent)
+  // bind the buttons to their functionality
+  initializeUI()
 }
 
 /**
@@ -232,30 +228,37 @@ function enableGroupingOperations() {
 }
 
 /**
- * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
+ * Binds actions to the buttons in the tutorial's toolbar.
  */
-function registerCommands() {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-  })
-  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
-  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
-
-  bindCommand("button[data-command='Raise']", ZOrderSupport.RAISE, graphComponent)
-  bindCommand("button[data-command='Lower']", ZOrderSupport.LOWER, graphComponent)
-  bindCommand("button[data-command='ToFront']", ZOrderSupport.TO_FRONT, graphComponent)
-  bindCommand("button[data-command='ToBack']", ZOrderSupport.TO_BACK, graphComponent)
+function initializeUI() {
+  bindYFilesCommand(
+    "button[data-command='Raise']",
+    ZOrderSupport.RAISE,
+    graphComponent,
+    null,
+    'Raise Selection'
+  )
+  bindYFilesCommand(
+    "button[data-command='Lower']",
+    ZOrderSupport.LOWER,
+    graphComponent,
+    null,
+    'Lower Selection'
+  )
+  bindYFilesCommand(
+    "button[data-command='ToFront']",
+    ZOrderSupport.TO_FRONT,
+    graphComponent,
+    null,
+    'Bring Selection to Front'
+  )
+  bindYFilesCommand(
+    "button[data-command='ToBack']",
+    ZOrderSupport.TO_BACK,
+    graphComponent,
+    null,
+    'Bring Selection to Back'
+  )
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

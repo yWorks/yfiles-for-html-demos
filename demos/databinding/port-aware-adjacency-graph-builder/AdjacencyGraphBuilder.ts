@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,28 +46,28 @@ import {
   NodeCreator,
   NodeStylePortStyleAdapter,
   Point,
-  PointConvertible,
+  type PointConvertible,
   Rect,
   ShapeNodeStyle
 } from 'yfiles'
-import { colorSets } from '../../resources/demo-colors'
+import { colorSets } from 'demo-resources/demo-colors'
 
 /*
  This file shows how to configure AdjacencyGraphBuilder to support ports.
  */
 
-// In this sample the data is arranged in the following way.
-// When used in an own sample it has to be adjusted for the source data.
+// In this sample, the data is arranged in the following way.
+// When used in an own sample, it has to be adjusted for the source data.
 
 type PortData = {
-  /** the ID for the port, must be unique for each owner node */
+  /** the ID for the port, which must be unique for each owner node */
   id: string
   /** the port location relative to the node layout, x and y values are a ratio between 0 and 1*/
   location: Point | PointConvertible
 }
 
 type NodeData = {
-  /** the ID for the node, must be unique for all nodes in the graph */
+  /** the ID for the node, which must be unique for all nodes in the graph */
   id: string
   /** the name of the node, to be used as label */
   name: string
@@ -209,7 +209,7 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
     parent: INode,
     layout: Rect,
     style: INodeStyle,
-    tag: Object
+    tag: any
   ): INode {
     // this assumes that we don't use a custom tag provider,
     // i.e. the tag contains the node data as provided by the node source array
@@ -417,7 +417,7 @@ class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
       ? target.ports.find(p => p.tag === targetPortId)
       : target.ports.at(0)
 
-    // create the edges between source and target port. If no port is provided add a default port.
+    // create the edges between source and target port. if no port is provided, add a default port.
     return graph.createEdge(
       sourcePort ?? graph.addPort(source),
       targetPort ?? graph.addPort(target),
@@ -428,7 +428,7 @@ class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
 
   /**
    * Updates a given edge. This function is called for edges which already exist in the graph.
-   * Delegates to the base implementation for the actual edge update,
+   * It delegates to the base implementation for the actual edge update,
    * then sets the new ports if needed.
    * @param graph The graph to operate on.
    * @param edge The edge to update.

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,6 +48,12 @@ import {
  * A custom {@link IHandle} implementation that allows resizing a label.
  */
 export default class LabelResizeHandle extends BaseClass(IHandle) {
+  sizeIndicator = null
+  handleLocation = new LabelResizeHandleLivePoint(this)
+  emulate = false
+  dummyPreferredSize = null
+  dummyLocation = null
+
   /**
    * Creates a new instance of {@link LabelResizeHandle}.
    * @param {!ILabel} label The label this handle is for
@@ -57,11 +63,6 @@ export default class LabelResizeHandle extends BaseClass(IHandle) {
     super()
     this.symmetricResize = symmetricResize
     this.label = label
-    this.sizeIndicator = null
-    this.handleLocation = new LabelResizeHandleLivePoint(this)
-    this.emulate = false
-    this.dummyPreferredSize = null
-    this.dummyLocation = null
   }
 
   /**

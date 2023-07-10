@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 104.45267 131.842" height="318.9726" width="435.21945" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(0.27081962,-0.42530826,-0.46907335,-0.24555184,24.307402,143.78403)"
+     style="fill:#333333">
+    <rect style="fill:#333333;stroke:#333333" x="0" y="50" height="10" width="140" />
+  </g>
+  <g transform="matrix(-0.27081962,-0.42530826,0.46907335,-0.24555184,73.905436,143.78416)"
+     style="fill:#333333">
+    <rect style="fill:#333333;stroke:#333333" x="0" y="50" height="10" width="140"/>
+  </g>
+  <g transform="matrix(0.63897409,0,0,1.0203848,-20.395493,-6.1811536)">
+    <rect style="stroke:#000000" x="18.443821" y="102.84557" height="10" width="180" rx="5" ry="5"/>
+  </g>
+  <g transform="matrix(0.58577554,0,0,1.0240856,7.8930112,68.38736)">
+    <rect style="stroke:#000000" x="0" y="0" height="10" width="140" rx="5" ry="5" />
+  </g>
+  <g transform="matrix(1.1068116,0,0,1.1857825,-92.291785,38.95238)">
+    <g transform="translate(0,-3.2451791)">
+      <polygon points="70,30 50,30 60,0 " style="fill:#76b041;stroke:#76b041;stroke-width:1"/>
+    </g>
+    <g transform="translate(-2.5,-2.2203857)">
+      <rect style="fill:#621b00;stroke:#621b00" x="60" y="30" height="10" width="5" />
+    </g>
+  </g>
+  <g transform="matrix(1.1068116,0,0,1.1857825,-54.645608,5.8529822)">
+    <g transform="translate(0,-3.2451791)">
+      <polygon points="70,30 50,30 60,0 " style="fill:#76b041;stroke:#76b041;stroke-width:1"/>
+    </g>
+    <g transform="translate(-2.5,-2.2203857)">
+      <rect style="fill:#621b00;stroke:#621b00" x="60" y="30" height="10" width="5"/>
+    </g>
+  </g>
+  <g transform="matrix(1.1068116,0,0,1.1857825,24.88637,5.8529822)">
+    <g transform="translate(0,-3.2451791)">
+      <polygon points="60,0 70,30 50,30 " style="fill:#76b041;stroke:#76b041;stroke-width:1" />
+    </g>
+    <g transform="translate(-2.5,-2.2203857)">
+      <rect style="fill:#621b00;stroke:#621b00" x="60" y="30" height="10" width="5"/>
+    </g>
+  </g>
+  <g transform="matrix(1.1068116,0,0,1.1857825,-15.893002,5.7229633)">
+    <g transform="translate(0,-3.2451791)">
+      <polygon points="60,0 70,30 50,30 " style="fill:#76b041;stroke:#76b041;stroke-width:1"/>
+    </g>
+    <g transform="translate(-2.5,-2.2203857)">
+      <rect style="fill:#621b00;stroke:#621b00" x="60" y="30" height="10" width="5"
+      />
+    </g>
+  </g>
+  <g transform="matrix(1.1068116,0,0,1.1857825,63.927063,38.95238)">
+    <g transform="translate(0,-3.2451791)">
+      <polygon points="70,30 50,30 60,0 " style="fill:#76b041;stroke:#76b041;stroke-width:1"/>
+    </g>
+    <g transform="translate(-2.5,-2.2203857)">
+      <rect style="fill:#621b00;stroke:#621b00" x="60" y="30" height="10" width="5"/>
+    </g>
+  </g>
+</svg>

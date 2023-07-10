@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>Theme Variants Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <style>
+      #graphComponents {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      #graphComponents div {
+        flex: 0 0 50%;
+      }
+
+      .demo-page__toolbar .color-button {
+        width: 100px;
+        margin-right: 10px;
+        border: 1px outset;
+      }
+
+      .demo-page__toolbar .color-button:hover {
+        border: none;
+      }
+
+      .demo-page__toolbar .color-button:active {
+        border: 1px inset;
+      }
+    </style>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Theme Variants</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <div class="demo-separator"></div>
+      <label>
+        Scale:
+        <input
+          title="Theme Scale"
+          type="range"
+          id="scale-slider"
+          min="1"
+          max="4"
+          step="0.5"
+          value="1"
+        />
+      </label>
+      <div class="demo-separator"></div>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
+        <h1>Theme Variants Demo</h1>
+
+        <p>
+          This demo shows various interaction visualization
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_view_theming" target="_blank">themes</a> simultaneously.
+        </p>
+
+        <p>Each graph component uses a different theme variant:</p>
+
+        <dl>
+          <dt>Top-left</dt>
+          <dd><a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#SIMPLE_ROUND" target="_blank">Simple round</a></dd>
+          <dt>Top-right</dt>
+          <dd><a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#SIMPLE_SQUARE" target="_blank">Simple square</a></dd>
+          <dt>Bottom-left</dt>
+          <dd><a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#CLASSIC" target="_blank">Classic with non-default colors</a></dd>
+          <dt>Bottom-right</dt>
+          <dd><a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#CLASSIC" target="_blank">Classic with default colors</a></dd>
+        </dl>
+
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Navigate/edit one graph component to see the changes mirrored in the other components.
+          </li>
+          <li>Choose a different color palette to use as the theme colors.</li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div id="graphComponents"></div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="ThemeVariantsDemo.ts" async></script>
+  </body>
+</html>

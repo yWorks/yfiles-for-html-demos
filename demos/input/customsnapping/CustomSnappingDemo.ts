@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,10 +51,10 @@ import {
 import { AdditionalSnapLineVisualCreator } from './AdditionalSnapLineVisualCreator'
 import { OrthogonalLabelSnapLineProviderWrapper } from './OrthogonalLabelSnapLineProviderWrapper'
 import { ShapeBasedGridNodeSnapResultProvider } from './ShapeBasedGridNodeSnapResultProvider'
-import { showApp } from '../../resources/demo-app'
 import { AdditionalSnapLineMoveInputMode } from './AdditionalSnapLineMoveInputMode'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let grid: GridVisualCreator = null!
 
@@ -108,8 +108,6 @@ async function run(): Promise<void> {
   createSampleGraph(graph)
   // center the sample graph in the demo's GraphComponent
   graphComponent.fitGraphBounds()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -284,5 +282,4 @@ function createSampleGraph(graph: IGraph): void {
   )
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

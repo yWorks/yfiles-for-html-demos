@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Template Styles Demo
-
-<img src="../../resources/image/templatestyles.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/style/templatestyles/index.html).
 
 # Template Styles Demo
 
@@ -25,7 +32,7 @@ The binding context gives you information about the current state, e.g. the zoom
 
 ## Related Demos
 
-- [String Template Node Style Demo](../../style/string-template-node-style/index.html)
-- [Vue.js Template Node Style Demo](../../style/vuejstemplatenodestyle/index.html)
-- [React JSX Component Node Style Demo](../react-template-node-style/index.html)
-- [Lit Template Node Style Demo](../lit-template-node-style/index.html)
+- [String Template Node Style Demo](../../style/string-template-node-style/)
+- [Vue.js Template Node Style Demo](../../style/vue-template-node-style/)
+- [React JSX Component Style Demo](../react-template-node-style/)
+- [Lit Template Node Style Demo](../lit-template-node-style/)

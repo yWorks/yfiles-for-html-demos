@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,6 +48,8 @@ export default class LimitedRectangleDescriptor extends BaseClass(
   ICanvasObjectDescriptor,
   IVisualCreator
 ) {
+  rectangle
+
   /**
    * Gets the {@link IVisualCreator} for a given {@link ICanvasObject}.
    * @param {*} forUserObject

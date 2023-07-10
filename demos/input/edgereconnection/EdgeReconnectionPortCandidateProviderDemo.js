@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,13 +45,13 @@ import {
   applyDemoTheme,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from '../../resources/demo-styles.js'
-import { showApp } from '../../resources/demo-app.js'
+} from 'demo-resources/demo-styles'
 import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider.js'
 import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider.js'
 import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider.js'
 import RedEdgePortCandidateProvider from './RedEdgePortCandidateProvider.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /**
  * Registers a callback function as decorator that provides a custom
@@ -122,8 +122,6 @@ async function run() {
 
   createSampleGraph(graphComponent)
   graphComponent.updateContentRect()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -187,5 +185,4 @@ function createSubgraph(graph, colorSet, tag, yOffset) {
   return [n1, n2, n3]
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,18 +33,16 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   License,
   PolylineEdgeStyle,
-  Rect,
-  Size
+  Rect
 } from 'yfiles'
 import SampleData from './D3ChartNodesData'
 import D3ChartNodeStyle from './D3ChartNodeStyle'
-import { bindCommand, showApp } from '../../resources/demo-app'
 
-import { applyDemoTheme } from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -68,11 +66,6 @@ async function run(): Promise<void> {
 
   // set an interval to randomly change the sparkline data of some nodes
   setInterval(modifyData, 500)
-
-  // set up the UI
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
 /**
@@ -103,7 +96,7 @@ function loadSampleGraph(): void {
   // initialize the graph defaults
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new D3ChartNodeStyle()
-  graph.nodeDefaults.size = Size.from([100, 50])
+  graph.nodeDefaults.size = [100, 50]
   graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
     insets: 3
   }).createParameter(ExteriorLabelModelPosition.NORTH)
@@ -131,15 +124,4 @@ function loadSampleGraph(): void {
   graphComponent.fitGraphBounds()
 }
 
-/**
- * Connects the toolbar buttons with actions.
- */
-function registerCommands(): void {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

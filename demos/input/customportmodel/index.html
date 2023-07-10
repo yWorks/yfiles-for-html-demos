@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,31 +30,72 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Custom Port Location Model Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Custom Port Location Model</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="NEW"></button>
+      <button data-command="OPEN"></button>
+      <button data-command="SAVE"></button>
+      <span class="demo-separator"></span>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Custom Port Location Model Demo</h1>
 
-        <p>This demo shows how to create and use a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IPortLocationModel" target="_blank">IPortLocationModel</a>.</p>
+        <p>
+          This demo shows how to create and use a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IPortLocationModel" target="_blank">IPortLocationModel</a>.
+        </p>
         <h2>Thing to Try</h2>
         <ul>
           <li>
-            Create new nodes in the canvas and connect them with new edges.
-            <br />
-            Note that a specialized set of possible port candidates is shown. The candidates use a
-            custom port location model that offers five possible locations on each node.
+            Create new nodes in the canvas and connect them with new edges. <br /> Note that a specialized set of
+            possible port candidates is shown. The candidates use a custom port location model that offers five possible
+            locations on each node.
           </li>
           <li>
             Click on one of the nodes and then drag the handle that depicts a port. Note that you
@@ -66,49 +106,18 @@
         <h2>Related Demo</h2>
         <ul>
           <li>
-            See the
-            <a href="../customlabelmodel/index.html" target="_blank">Custom Label Model</a> demo to
-            learn how to customize the models for label locations. Note that the code is very
-            similar as the same concepts are being applied.
+            See the <a href="../customlabelmodel/index.html" target="_blank">Custom Label Model</a> demo to learn how to
+            customize the models for label locations. Note that the code is very similar as the same concepts are being
+            applied.
           </li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
-        <button
-          data-command="Open"
-          title="Open a GraphML file"
-          class="demo-icon-yIconOpen"
-        ></button>
-        <button
-          data-command="Save"
-          title="Save a GraphML file"
-          class="demo-icon-yIconSave"
-        ></button>
-        <span class="demo-separator"></span>
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="CustomPortModelDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="CustomPortModelDemo.ts" async></script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -86,14 +86,10 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     (sender: object, eventArgs: ZIndexChangedEventArgs) => void
   >
 
-  // @ts-ignore
-  private $graphComponent: GraphComponent
-  // @ts-ignore
-  private $masterGraph: IGraph
-  // @ts-ignore
-  private foldingView: IFoldingView | null
-  // @ts-ignore
-  private masterGroupingSupport: GroupingSupport
+  private $graphComponent: GraphComponent = null!
+  private $masterGraph: IGraph = null!
+  private foldingView: IFoldingView | null = null
+  private masterGroupingSupport: GroupingSupport = null!
   private zOrders: IMap<INode, number>
   private tempParents: IMap<INode, INode>
 
@@ -1236,7 +1232,6 @@ class ZOrderReparentHandler extends BaseClass<IReparentNodeHandler>(IReparentNod
     // cannot be determined anymore after reparenting is done.
     // Being able to determine the master nodes right before reparenting is the whole reason
     // for decorating the default reparent handler here.
-    const support = this.zOrderSupport
     const masterNode = this.zOrderSupport.getMasterNode(node)
     const masterParent = newParent ? this.zOrderSupport.getMasterNode(newParent) : null
 

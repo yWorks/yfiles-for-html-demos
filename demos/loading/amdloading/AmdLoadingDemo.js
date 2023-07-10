@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,7 @@ require.config({
   packages: [
     {
       name: 'yfiles-umd',
-      location: '../../node_modules/yfiles-umd',
+      location: '../../../node_modules/yfiles-umd',
       main: 'complete'
     }
   ]
@@ -72,7 +72,7 @@ require(['yfiles-umd/view-component'], /** @param {yfiles} yfiles */ yfiles => {
     // center graph
     graphComponent.fitGraphBounds()
 
-    registerCommands()
+    initializeUI()
 
     // load the input module and set the input editor
     require(['yfiles-umd/view-editor'], () => {
@@ -81,7 +81,7 @@ require(['yfiles-umd/view-component'], /** @param {yfiles} yfiles */ yfiles => {
     })
   }
 
-  function registerCommands() {
+  function initializeUI() {
     function bindCommand(selector, command, parameter = null) {
       const element = document.querySelector(selector)
       command.addCanExecuteChangedListener(() => {
@@ -98,26 +98,26 @@ require(['yfiles-umd/view-component'], /** @param {yfiles} yfiles */ yfiles => {
       })
     }
 
-    bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS)
-    bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM)
-    bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM)
-    bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, 1.0)
+    bindCommand("button[data-command='FIT_GRAPH_BOUNDS']", ICommand.FIT_GRAPH_BOUNDS)
+    bindCommand("button[data-command='INCREASE_ZOOM']", ICommand.INCREASE_ZOOM)
+    bindCommand("button[data-command='DECREASE_ZOOM']", ICommand.DECREASE_ZOOM)
+    bindCommand("button[data-command='ZOOM_ORIGINAL']", ICommand.ZOOM, 1.0)
 
-    bindCommand("button[data-command='Cut']", ICommand.CUT)
-    bindCommand("button[data-command='Copy']", ICommand.COPY)
-    bindCommand("button[data-command='Paste']", ICommand.PASTE)
-    bindCommand("button[data-command='Delete']", ICommand.DELETE)
+    bindCommand("button[data-command='CUT']", ICommand.CUT)
+    bindCommand("button[data-command='COPY']", ICommand.COPY)
+    bindCommand("button[data-command='PASTE']", ICommand.PASTE)
+    bindCommand("button[data-command='DELETE']", ICommand.DELETE)
 
-    bindCommand("button[data-command='Undo']", ICommand.UNDO)
-    bindCommand("button[data-command='Redo']", ICommand.REDO)
+    bindCommand("button[data-command='UNDO']", ICommand.UNDO)
+    bindCommand("button[data-command='REDO']", ICommand.REDO)
 
-    document.querySelector("button[data-command='Layout']").addEventListener('click', applyLayout)
+    document.querySelector('#layout-button').addEventListener('click', applyLayout)
   }
 
   function applyLayout() {
     require(['yfiles-umd/layout-hierarchic', 'yfiles-umd/view-layout-bridge'], () => {
       const { HierarchicLayout, MinimumNodeSizeStage } = yfiles
-      const layoutButton = document.getElementById('layoutButton')
+      const layoutButton = document.getElementById('layout-button')
       layoutButton.disabled = true
       const layout = new MinimumNodeSizeStage(new HierarchicLayout())
       graphComponent

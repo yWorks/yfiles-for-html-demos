@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,34 +30,83 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Magnifying Glass Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left demo-description">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
-      </div>
-      <div class="demo-sidebar-content">
-        <h1>Magnifying Glass Demo</h1>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
 
+        <span>Magnifying Glass</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+      <label>
+        Lens Zoom:
+        <select id="lens-zoom" title="Change the zoom level of the lens">
+          <option value="1">1:1</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+          <option value="5">5x</option>
+        </select>
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Magnifying Glass Demo</h1>
         <p>
           This demo shows a floating magnifying glass that magnifies the cursor's surroundings. It
           is implemented as a specialized input mode that can be added to any of yFiles's default
           interactions.
         </p>
         <p>
-          The magnifying lens is visible only at low zoom levels <code>(< 0.7)</code> since
-          otherwise the graph is large enough and details of the elements can be distinguished even
-          without magnification.
+          The magnifying lens is visible only at low zoom levels
+          <code>(&lt; 0.7)</code>
+          since otherwise the graph is large enough and details of the elements can be distinguished
+          even without magnification.
         </p>
-        <p><strong>Current zoom level:</strong> <span id="zoomLabel">0.5</span></p>
+        <p>
+          <strong>Current zoom level:</strong>
+          <span id="zoomLabel">0.5</span>
+        </p>
 
         <h2>Things to Try</h2>
 
@@ -70,35 +118,11 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <div class="demo-toolbar">
-        <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-
-        <span class="demo-separator"></span> <span style="margin: 0 5px 0 0">Lens Zoom:</span>
-
-        <select data-command="lensZoom" title="Change the zoom level of the lens">
-          <option value="1">1:1</option>
-          <option value="2">2x</option>
-          <option value="3">3x</option>
-          <option value="5">5x</option>
-        </select>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
       </div>
-
-      <div id="graphComponent"></div>
     </div>
-
-    <script type="module" crossorigin="anonymous" src="MagnifyingGlassDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="MagnifyingGlassDemo.ts" async></script>
   </body>
 </html>

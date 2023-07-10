@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { addClass } from '../../resources/demo-app'
 import type { INode } from 'yfiles'
 import type { Person } from './Person'
 
@@ -49,13 +48,13 @@ export default class PropertiesPanel {
     const person = node.tag as Person
 
     const heading = document.createElement('div')
-    addClass(heading, 'user-detail')
+    heading.classList.add('user-detail')
     this.element.appendChild(heading)
 
     // The person's icon
     const icon = document.createElement('span')
-    addClass(icon, 'usericon')
-    addClass(icon, person.icon)
+    icon.classList.add('usericon')
+    icon.classList.add(person.icon)
     heading.appendChild(icon)
 
     // The person's name

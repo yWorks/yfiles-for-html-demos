@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Rich Text Label Demo
-
-<img src="../../resources/image/richtextlabel.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/style/richtextlabel/index.html).
 
 # Rich Text Label Demo
 
@@ -50,7 +57,7 @@ Markup labels can use line wrapping. In this demo application, the labels use wo
 
 ## Related Demos
 
-- [Default Label Style](../default-label-style/index.html)
-- [HTML Label](../htmllabel/index.html)
-- [Markdown Label](../markdownlabel/index.html)
-- [Tutorial: Custom Label Style](../../02-tutorial-custom-styles/10-custom-label-style/index.html)
+- [Default Label Style](../default-label-style/)
+- [HTML Label](../html-label-style/)
+- [Markdown Label](../markdownlabel/)
+- [Tutorial: Label Style Implementation](../../tutorial-style-implementation-label/01-render-label-text/)

@@ -1,8 +1,15 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # String Template Node Style Demo
-
-<img src="../../resources/image/string-template-node-style.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/style/string-template-node-style/index.html).
 
 # String Template Node Style Demo
 
@@ -23,10 +30,10 @@ Change the template of one or more nodes. Bind colors or text to properties in t
 
 ## Related Demos
 
-- [Template Styles Demo](../../style/templatestyles/index.html)
-- [Vue.js Template Node Style Demo](../../style/vuejstemplatenodestyle/index.html)
-- [React JSX Component Node Style Demo](../react-template-node-style/index.html)
-- [Lit Template Node Style Demo](../lit-template-node-style/index.html)
+- [Template Styles Demo](../../style/templatestyles/)
+- [Vue.js Template Node Style Demo](../../style/vue-template-node-style/)
+- [React JSX Component Style Demo](../react-template-node-style/)
+- [Lit Template Node Style Demo](../lit-template-node-style/)
 
 ## Additional Tools
 

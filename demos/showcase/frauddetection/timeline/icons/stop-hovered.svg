@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0.5 16.5 16 16">
+
+  <path d="m 9.707737,6.53196 a 2.6007147,3.3797307 0 1 1 -5.2014294,0 2.6007147,3.3797307 0 1 1 5.2014294,0 z"
+      transform="matrix(3.0760775,0,0,2.3670525,-13.361752,9.0385075)"
+      style="fill:#ff8c00;fill-opacity:1;stroke:none"/>
+  <rect width="7" height="7" x="5" y="21" style="fill:#ffffff;fill-opacity:1;stroke:none"/>
+</svg>

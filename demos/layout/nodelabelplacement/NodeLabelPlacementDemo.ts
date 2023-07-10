@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,8 +39,6 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   HorizontalTextAlignment,
-  ICanvasObjectDescriptor,
-  ICommand,
   ILabelModel,
   INode,
   InteriorLabelModel,
@@ -57,19 +55,12 @@ import SampleData from './resources/sample'
 import MapVisualCreator from './MapVisualCreator'
 import CityLabelStyle from './CityLabelStyle'
 import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  reportDemoError,
-  showApp
-} from '../../resources/demo-app'
-import {
   applyDemoTheme,
   createDemoNodeLabelStyle,
   createDemoShapeNodeStyle
-} from '../../resources/demo-styles'
-import { fetchLicense } from '../../resources/fetch-license'
+} from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * The graph component.
@@ -107,10 +98,7 @@ async function run(): Promise<void> {
   await createSampleGraph()
 
   // wire up the UI
-  registerCommands()
-
-  // show the demo
-  showApp(graphComponent)
+  initializeUI()
 }
 
 /**
@@ -162,7 +150,7 @@ function initializeOptions(): void {
     new InteriorLabelModel(),
     new ExteriorLabelModel(),
     new FreeNodeLabelModel(),
-    new SandwichLabelModel(),
+    new SandwichLabelModel({ yOffset: 3 }),
     genericLabelModel
   ]
 }
@@ -183,10 +171,7 @@ function initializeGraph(): void {
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
 
   // add the background visual for the map
-  graphComponent.backgroundGroup.addChild(
-    new MapVisualCreator(),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
-  )
+  graphComponent.backgroundGroup.addChild(new MapVisualCreator())
 }
 
 /**
@@ -213,7 +198,7 @@ async function placeLabels(): Promise<void> {
     return
   }
   // Check if the label size input is valid. Valid inputs are greater than zero and less than 50.
-  const fontSizeElement = document.getElementById('labelFontSizeField') as HTMLInputElement
+  const fontSizeElement = document.querySelector<HTMLInputElement>('#label-font-size')!
   const textSize = parseFloat(fontSizeElement.value)
   if (isNaN(textSize) || textSize <= 0 || textSize > 50) {
     return alert('Label size should be greater than 0 and less than 50.')
@@ -222,7 +207,7 @@ async function placeLabels(): Promise<void> {
   const graph = graphComponent.graph
   setUIDisabled(true)
 
-  const labelModelComboBox = document.getElementById('labelModelComboBox') as HTMLSelectElement
+  const labelModelComboBox = document.querySelector<HTMLSelectElement>('#label-models')!
   const labelModel = labelModels[labelModelComboBox.selectedIndex]
   // sets the label model based on the selected value of the corresponding combo-box
   graph.labels
@@ -271,8 +256,6 @@ async function placeLabels(): Promise<void> {
       duration: '0.5s',
       easedAnimation: true
     }).start()
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     setUIDisabled(false)
   }
@@ -284,25 +267,22 @@ async function placeLabels(): Promise<void> {
  */
 function setUIDisabled(disabled: boolean): void {
   inLayout = disabled
-  ;(document.getElementById('labelModelComboBox') as HTMLSelectElement).disabled = disabled
-  ;(document.getElementById('labelFontSizeField') as HTMLInputElement).disabled = disabled
-  ;(document.getElementById('placeLabels') as HTMLInputElement).disabled = disabled
+  document.querySelector<HTMLSelectElement>('#label-models')!.disabled = disabled
+  document.querySelector<HTMLInputElement>('#label-font-size')!.disabled = disabled
+  document.querySelector<HTMLInputElement>('#place-labels')!.disabled = disabled
 }
 
 /**
  * Wires up the UI.
  */
-function registerCommands(): void {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, 1.0)
-  bindAction("button[data-command='PlaceLabels']", placeLabels)
-  bindChangeListener("select[data-command='labelModelChanged']", placeLabels)
-  document.getElementById('labelFontSizeField')!.addEventListener('change', placeLabels)
-  const labelModelComboBox = document.getElementById('labelModelComboBox') as HTMLSelectElement
-  addNavigationButtons(labelModelComboBox)
+function initializeUI(): void {
+  document.querySelector<HTMLButtonElement>('#place-labels')!.addEventListener('click', placeLabels)
+  document
+    .querySelector<HTMLInputElement>('#label-font-size')!
+    .addEventListener('change', placeLabels)
+  addNavigationButtons(
+    document.querySelector<HTMLSelectElement>('#label-models')!
+  ).addEventListener('change', placeLabels)
 }
 
 /**
@@ -326,5 +306,4 @@ async function createSampleGraph(): Promise<void> {
   await placeLabels()
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

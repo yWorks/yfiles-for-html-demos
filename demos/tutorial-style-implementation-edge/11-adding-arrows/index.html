@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>11 Adding Arrows - Edge Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-edge-style-implementation">
+          Edge Style Implementation Tutorial
+        </a>
+
+        <span>11 Adding Arrows</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-edge/10-bridge-support/index.html'><span>10 Bridge Support</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 11/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 11 Adding Arrows</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-edge/01-create-a-polyline/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create a Polyline</a
+          ><a
+            href="../../tutorial-style-implementation-edge/02-crop-the-polyline/index.html"
+            class="tutorial-dropdown__item"
+            >02 Crop the Polyline</a
+          ><a
+            href="../../tutorial-style-implementation-edge/03-create-parallel-polylines/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Parallel Polylines</a
+          ><a
+            href="../../tutorial-style-implementation-edge/04-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >04 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-edge/05-making-the-style-configurable/index.html"
+            class="tutorial-dropdown__item"
+            >05 Making the Style Configurable</a
+          ><a
+            href="../../tutorial-style-implementation-edge/06-data-from-tag/index.html"
+            class="tutorial-dropdown__item"
+            >06 Data from Tag</a
+          ><a
+            href="../../tutorial-style-implementation-edge/07-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >07 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-edge/08-visibility/index.html"
+            class="tutorial-dropdown__item"
+            >08 Item Visibility</a
+          ><a
+            href="../../tutorial-style-implementation-edge/09-bounds/index.html"
+            class="tutorial-dropdown__item"
+            >09 Render Boundaries</a
+          ><a
+            href="../../tutorial-style-implementation-edge/10-bridge-support/index.html"
+            class="tutorial-dropdown__item"
+            >10 Bridge Support</a
+          ><a
+            href="../../tutorial-style-implementation-edge/11-adding-arrows/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >11 Adding Arrows</a
+          ><a
+            href="../../tutorial-style-implementation-edge/12-custom-arrow/index.html"
+            class="tutorial-dropdown__item"
+            >12 Custom Arrow</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-edge/12-custom-arrow/index.html'><span>12 Custom Arrow</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Adding arrows</h1>
+          <div class="paragraph">
+            <p>
+              Arrows are a decorative element that can be added to both ends of an edge to indicate
+              its direction. They commonly take the form of arrowheads.
+            </p>
+          </div>
+          <div class="admonitionblock note">
+            <table>
+              <tr>
+                <td class="icon">
+                  <div class="title">Note</div>
+                </td>
+                <td class="content">
+                  Note that arrows indicate the direction of edges, but do not define them. The
+                  actual direction in the graph model is determined by the source and target nodes
+                  of the edge.
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="paragraph">
+            <p>
+              In this step, we want to give our edge style the ability to render arrows. To do this,
+              we add two properties to define the arrows: one property for the arrow at the source
+              node and another for the arrow at the target node.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">constructor</span>(<span class="hljs-params">
+  <span class="hljs-keyword">public</span> distance = <span class="hljs-number">1</span>,
+  <span class="hljs-keyword">public</span> sourceArrow = IArrow.NONE,
+  <span class="hljs-keyword">public</span> targetArrow = IArrow.NONE
+</span>) {
+  <span class="hljs-variable language_">super</span>()
+}</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              Now, we can specify the desired arrows when creating an edge style. For this we can
+              use the predefined arrows which are shipped with yFiles for HTML. See also
+              <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-arrows" target="_blank">Decorations: Arrows</a>.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> style = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomEdgeStyle</span>(<span class="hljs-number">2</span>)
+style.<span class="hljs-property">sourceArrow</span> = <span class="hljs-title class_">IArrow</span>.<span class="hljs-property">TRIANGLE</span></code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              In <code>createVisual</code>, we add the arrows to our visualization using the method
+              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#EdgeStyleBase-method-addArrows" target="_blank">addArrows</a> from the base
+              class EdgeStyleBase. For this purpose, we create an own SVG group <code>arrows</code>.
+              The addArrows method adds the arrows to this group. Finally, this group is added to
+              the group with the other edge visualization elements.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> arrows = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(<span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>, <span class="hljs-string">&#x27;g&#x27;</span>)
+<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">addArrows</span>(
+  context,
+  arrows,
+  edge,
+  pathWithBridges,
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">sourceArrow</span>,
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">targetArrow</span>
+)
+group.<span class="hljs-title function_">append</span>(arrows)</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              Additionally, we need to update the visualization of arrows in
+              <code>updateVisual</code> with the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#EdgeStyleBase-method-updateArrows" target="_blank">updateArrows</a> method,
+              if the arrows or edge path have changed since the last call.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> arrows = group.<span class="hljs-property">children</span>[<span class="hljs-number">2</span>] <span class="hljs-keyword">as</span> <span class="hljs-title class_">SVGGElement</span>
+<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">updateArrows</span>(
+  context,
+  arrows,
+  edge,
+  pathWithBridges,
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">sourceArrow</span>,
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">targetArrow</span>
+)
+cache.<span class="hljs-property">sourceArrow</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">sourceArrow</span>
+cache.<span class="hljs-property">targetArrow</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">targetArrow</span></code></pre>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-edge/12-custom-arrow/index.html'><span>12 Custom Arrow</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

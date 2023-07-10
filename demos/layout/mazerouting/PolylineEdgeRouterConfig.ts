@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,7 +48,6 @@ import {
   PenaltySettings,
   PreferredPlacementDescriptor,
   SequentialLayout,
-  TimeSpan,
   YBoolean,
   YNumber,
   YString
@@ -63,11 +62,10 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '../../resources/demo-option-editor'
-import { reportDemoError } from '../../resources/demo-app'
+} from 'demo-resources/demo-option-editor'
 
 /**
- * Configuration options for the the polyline edge router.
+ * Configuration options for the polyline edge router.
  */
 const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
   $meta: [LabelAttribute('PolylineEdgeRouter')],
@@ -139,7 +137,7 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
     })
 
     // set the cancel duration for the layout computation to 20s
-    layoutExecutor.abortHandler.cancelDuration = TimeSpan.from('20s')
+    layoutExecutor.abortHandler.cancelDuration = '20s'
 
     // set the layout data to the LayoutExecutor
     if (layoutData) {
@@ -154,7 +152,7 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
           'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
         )
       } else {
-        reportDemoError(err)
+        reportError(err)
       }
     } finally {
       this.$layoutRunning = false

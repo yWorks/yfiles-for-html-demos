@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,16 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { EditorFromTextArea } from 'codemirror'
+import * as CodeMirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/addon/dialog/dialog.css'
+import 'codemirror/mode/xml/xml'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/addon/dialog/dialog'
 
 import type {
   EdgesSourceDefinitionBuilderConnector,
   NodesSourceDefinitionBuilderConnector
 } from './ModelClasses'
-import { addClass } from '../../resources/demo-app'
 
 /**
- * Abstract base class for a node-/edge- source editing dialog
+ * Abstract base class for a node-/edge-source editing dialog
  */
 export abstract class SourceDialog {
   private dialogContainerModal: HTMLDivElement
@@ -61,7 +65,7 @@ export abstract class SourceDialog {
         this.initialize()
 
         const buttonsContainer = document.createElement('div')
-        addClass(buttonsContainer, 'buttonsContainer')
+        buttonsContainer.classList.add('buttonsContainer')
 
         const cancelButton = document.createElement('button')
         cancelButton.textContent = 'Cancel'
@@ -136,7 +140,7 @@ export abstract class SourceDialog {
     labelText: string,
     doc: string,
     mode: string | object
-  ): EditorFromTextArea {
+  ): CodeMirror.EditorFromTextArea {
     const container = this.createDescription(labelText, doc)
     const textArea = document.createElement('textarea')
     container.appendChild(textArea)
@@ -175,11 +179,9 @@ export abstract class SourceDialog {
 export class NodesSourceDialog extends SourceDialog {
   private readonly nodesSourceConnector: NodesSourceDefinitionBuilderConnector
 
-  // @ts-ignore
-  private dataEditor: CodeMirror
+  private dataEditor: CodeMirror.EditorFromTextArea | undefined
+  private templateEditor: CodeMirror.EditorFromTextArea | undefined
   private idBindingInput?: HTMLInputElement
-  // @ts-ignore
-  private templateEditor: CodeMirror
   private nameInput?: HTMLInputElement
 
   constructor(
@@ -229,8 +231,8 @@ export class NodesSourceDialog extends SourceDialog {
   accept(): void {
     this.nodesSourceConnector.sourceDefinition.name = this.nameInput!.value
     this.nodesSourceConnector.sourceDefinition.idBinding = this.idBindingInput!.value
-    this.nodesSourceConnector.sourceDefinition.template = this.templateEditor.getValue()
-    this.nodesSourceConnector.sourceDefinition.data = this.dataEditor.getValue()
+    this.nodesSourceConnector.sourceDefinition.template = this.templateEditor!.getValue()
+    this.nodesSourceConnector.sourceDefinition.data = this.dataEditor!.getValue()
 
     try {
       this.nodesSourceConnector.applyDefinition()
@@ -248,8 +250,7 @@ export class NodesSourceDialog extends SourceDialog {
 export class EdgesSourceDialog extends SourceDialog {
   private readonly edgesSourceConnector: EdgesSourceDefinitionBuilderConnector
 
-  // @ts-ignore
-  private dataEditor: CodeMirror
+  private dataEditor: CodeMirror.EditorFromTextArea | undefined
   private sourceBindingInput?: HTMLInputElement
   private targetBindingInput?: HTMLInputElement
   private labelBindingInput?: HTMLInputElement
@@ -313,7 +314,7 @@ export class EdgesSourceDialog extends SourceDialog {
    */
   protected accept(): void {
     this.edgesSourceConnector.sourceDefinition.name = this.nameInput!.value
-    this.edgesSourceConnector.sourceDefinition.data = this.dataEditor.getValue()
+    this.edgesSourceConnector.sourceDefinition.data = this.dataEditor!.getValue()
     this.edgesSourceConnector.sourceDefinition.sourceBinding = this.sourceBindingInput!.value
     this.edgesSourceConnector.sourceDefinition.targetBinding = this.targetBindingInput!.value
     this.edgesSourceConnector.sourceDefinition.labelBinding = this.labelBindingInput!.value

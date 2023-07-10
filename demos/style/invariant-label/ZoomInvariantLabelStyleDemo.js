@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  ICommand,
   IGraph,
   ILabelStyle,
   License,
@@ -46,9 +45,9 @@ import {
   ZoomInvariantLabelStyleBase,
   ZoomInvariantOutsideRangeLabelStyle
 } from './ZoomInvariantLabelStyle.js'
-import { addNavigationButtons, addOptions, bindCommand, showApp } from '../../resources/demo-app.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * @returns {!Promise}
@@ -78,8 +77,6 @@ async function run() {
   graphComponent.fitGraphBounds()
 
   initializeUI(graphComponent)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -172,8 +169,7 @@ function initializeUI(graphComponent) {
     { value: 'FIT_OWNER', text: "Fit into the label's owner" },
     { value: 'DEFAULT', text: 'Default behaviour' }
   )
-  addNavigationButtons(modeSelectElement)
-  modeSelectElement.addEventListener('change', evt => {
+  addNavigationButtons(modeSelectElement).addEventListener('change', evt => {
     setLabelStyle(graphComponent.graph, modeSelectElement.value)
 
     // hide the threshold controls if not applicable for the selected zoom style
@@ -208,16 +204,10 @@ function initializeUI(graphComponent) {
     graphComponent.updateVisual()
   })
 
-  // shows the current zoom level in the tool bar
+  // shows the current zoom level in the toolbar
   graphComponent.addZoomChangedListener(() => {
     document.querySelector('#zoomLevel').textContent = graphComponent.zoom.toFixed(2)
   })
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

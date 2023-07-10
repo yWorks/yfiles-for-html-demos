@@ -1,3 +1,14 @@
+<!--
+ //////////////////////////////////////////////////////////////////////////////
+ // @license
+ // This file is part of yFiles for HTML 2.6.
+ // Use is subject to license terms.
+ //
+ // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // 72070 Tuebingen, Germany. All rights reserved.
+ //
+ //////////////////////////////////////////////////////////////////////////////
+-->
 # Demo Utility Files
 
 The files in this directory implement demo features that are used in more than one specific demo. Like other demo code, you can use these files in your own project if it fits your needs.
@@ -20,7 +31,7 @@ Contains helper classes that provide methods for JSON I/O of an `IGraph`. This i
 
 #### VuejsNodeStyle.js
 
-A template node style that leverages the powerful data binding and conditional rendering features of the [Vue.js framework](https://vuejs.org/v2/guide/index.html). See the corresponding [template styles section in the developer's guide](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles) and the [Vue.js Template Node Style Demo](../style/vuejstemplatenodestyle/index.html) for more details.
+A template node style that leverages the powerful data binding and conditional rendering features of the [Vue.js framework](https://vuejs.org/v2/guide/index.html). See the corresponding [template styles section in the developer's guide](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles) and the [Vue Template Node Style Demo](../style/vue-template-node-style/) for more details.
 
 #### Workarounds.js
 

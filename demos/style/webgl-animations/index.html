@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,14 +30,14 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>WebGL2 Animations Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
       input[type='range'] {
@@ -62,13 +61,65 @@
         cursor: not-allowed;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>WebGL2 Animations</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+
+      <label>
+        Node Shape
+        <select title="Node Shapes" id="shape-select">
+          <option value="ellipse">Ellipse</option>
+          <option value="rectangle">Rectangle</option>
+          <option value="triangle">Triangle</option>
+          <option value="hexagon">Hexagon</option>
+          <option value="octagon">Octagon</option>
+        </select>
+      </label>
+
+      <span class="demo-separator"></span>
+
+      <label>
+        <input type="checkbox" title="show Labels" id="use-labels" />
+        Labels
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>WebGL2 Animations Demo</h1>
 
         <p>
@@ -81,7 +132,11 @@
           with an animation of the chosen type and settings. Recall that a connected component
           consists of all nodes that can reach each other.
         </p>
-        <p>Note that the animated items all share the same <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2Animation" target="_blank">WebGL2Animation</a> object.</p>
+        <p>
+          Note that the animated items all share the same
+          <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2Animation" target="_blank">WebGL2Animation</a>
+          object.
+        </p>
 
         <h2>Things to Try</h2>
         <ul>
@@ -103,283 +158,257 @@
         </ul>
       </div>
     </aside>
-
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content" id="animationConfiguration">
-        <h2>Animated Graph Parts</h2>
-        <input type="radio" id="componentMembers" name="animatedElements" checked="" />
-        <label for="componentMembers">Component Members</label>
-        <input type="radio" id="others" name="animatedElements" />
-        <label for="others">Others</label>
-
-        <h2>Animation Type</h2>
-        <p>Choose one of the animation types.</p>
-        <select id="baseAnimation" title="Animation to use on element hover." style="width: 130px">
-          <option selected value="pulse">Pulse</option>
-          <option value="pulse-effect">Pulse Node Effect</option>
-          <option value="scale">Scale</option>
-          <option value="scale-effect">Scale Node Effect</option>
-          <option value="shake">Shake</option>
-          <option value="fade">Fade</option>
-          <option value="fade-effect">Fade Node Effect</option>
-          <option value="beacon">Beacon</option>
-          <option value="halo">Halo</option>
-        </select>
-
-        <div id="animated-elements-options">
-          <h2>Animated Elements</h2>
-
-          <div>
-            <input type="checkbox" id="animateNodes" style="margin-top: 10px" checked />
-            <label for="animateNodes">Animate Nodes</label>
-            <br />
-            <input type="checkbox" id="animateEdges" style="margin-top: 10px" checked />
-            <label for="animateEdges">Animate Edges</label>
-            <br />
-            <input type="checkbox" id="animateLabels" style="margin-top: 10px" checked />
-            <label for="animateLabels">Animate Labels</label>
-          </div>
-        </div>
-
-        <div id="fade-options" style="display: none">
-          <h2>Fade Type</h2>
-          <p>Choose the fade target, i.e., what to fade to or from.</p>
-          <select
-            id="fadeType"
-            title="For fade animations, whether to animate to the effect or away from it."
-            style="width: 130px"
-          >
-            <option selected value="to gray">To Gray</option>
-            <option value="to color">To Color</option>
-            <option value="to semi-transparent">To Semi-transparent</option>
-            <option value="to invisible">To Invisible</option>
-            <option value="from gray">From Gray</option>
-            <option value="from color">From Color</option>
-            <option value="from semi-transparent">From Semi-transparent</option>
-            <option value="from invisible">From Invisible</option>
-          </select>
-
-          <h2>Fade Colors</h2>
-          <p>
-            Choose two colors that mark the range of color values to or from which a fading
-            animation will change the original colors. That means when color 1 and color 2 are
-            different grey values, the result is a greyscale version of the original graph.
-          </p>
-          <label for="fadeColor1">Color 1 </label>
-          <input
-            type="color"
-            id="fadeColor1"
-            value="#00ff00"
-            style="border: none"
-            title="Color range for fade animations"
-          /><br />
-          <label for="fadeColor2">Color 2 </label>
-          <input
-            type="color"
-            id="fadeColor2"
-            value="#00ffff"
-            style="border: none"
-            title="Color range for fade animations"
-          />
-        </div>
-
-        <div id="pulse-options">
-          <h2>Pulse Type</h2>
-          <p>Choose the pulse type.</p>
-          <select
-            id="pulseType"
-            title="Whether to enlarge, shrink or to combine both directions."
-            style="width: 130px"
-          >
-            <option selected value="grow">Grow</option>
-            <option value="shrink">Shrink</option>
-            <option value="both">Both</option>
-            <option value="grow-relative">Grow Relative</option>
-            <option value="shrink-relative">Shrink Relative</option>
-            <option value="both-relative">Both Relative</option>
-          </select>
-        </div>
-
-        <div id="shake-options" style="display: none">
-          <h2>Shake Type</h2>
-          <p>Choose the shake type:</p>
-          <select
-            id="shakeType"
-            title="Direction in which to shake the elements."
-            style="width: 130px"
-          >
-            <option selected value="horizontal">Horizontal</option>
-            <option value="vertical">Vertical</option>
-          </select>
-        </div>
-
-        <div id="beacon-options" style="display: none">
-          <h2>Beacon Type</h2>
-          <p>Choose the beacon type:</p>
-          <select
-            id="beaconType"
-            title="Direction in which to shake the elements."
-            style="width: 130px"
-          >
-            <option selected value="fade">Fade</option>
-            <option value="no-fade">No Fade</option>
-            <option value="reverse-fade">Reverse Fade</option>
-          </select>
-          <br />
-          <h2>Beacon Color</h2>
-          <p>Choose color.</p>
-          <label for="beaconColor">Color</label>
-          <input
-            type="color"
-            id="beaconColor"
-            value="#4169e1"
-            style="border: none"
-            title="Beacon Color"
-          /><br />
-          <h2>Beacon Settings</h2>
-          <p>Choose whether each pulse should be drawn smoothly or with hard edges.</p>
-          <input type="checkbox" id="beaconSmooth" value="true" title="Smooth Pulses" />
-          <label for="beaconSmooth">Smooth Pulses</label>
-          <br />
-          <p>Choose the size of pulses.</p>
-          <select id="pulseWidth" title="Pulse Width" style="width: 130px">
-            <option selected value="1">1</option>
-            <option value="2">2</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-          </select>
-          <p>Choose the distance between pulses.</p>
-          <select id="pulseDistance" title="Pulse Distance" style="width: 130px">
-            <option value="2">2</option>
-            <option selected value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-          </select>
-          <p>Choose the number of pulses.</p>
-          <select id="pulseCount" title="Pulse Count" style="width: 130px">
-            <option selected value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-          </select>
-        </div>
-
-        <div id="scale-options" style="display: none">
-          <h2>Scale Type</h2>
-          <p>Choose the scale type.</p>
-          <select
-            id="scaleType"
-            title="Whether to enlarge, shrink or to combine both directions."
-            style="width: 130px"
-          >
-            <option selected value="scale-grow">Grow</option>
-            <option value="scale-shrink">Shrink</option>
-            <option value="scale-shrink-relative">Shrink Relative</option>
-            <option value="scale-grow-relative">Grow Relative</option>
-          </select>
-        </div>
-
-        <div id="magnitude-options">
-          <h2>Animation Magnitude</h2>
-          <p>Choose the animation magnitude.</p>
-          <select id="animationMagnitude" title="Animation magnitude" style="width: 130px">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option selected value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="60">60</option>
-          </select>
-        </div>
-
-        <h2>Animation Duration</h2>
-        <p>Choose the duration of one animation cycle.</p>
-        <select id="animationDuration" title="Animation duration" style="width: 130px">
-          <option value="100ms">100ms</option>
-          <option value="500ms">500ms</option>
-          <option selected value="1s">1s</option>
-          <option value="2s">2s</option>
-          <option value="3s">3s</option>
-          <option value="5s">5s</option>
-          <option value="10s">10s</option>
-        </select>
-        <p>Choose how often the animation loops.</p>
-        <select id="iterationCount" title="Iteration Count" style="width: 130px">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="5">5</option>
-          <option selected value="10">10</option>
-          <option value="infinity">Infinity</option>
-        </select>
-
-        <h2>Animation Direction</h2>
-        <p>
-          Choose, whether to use a normal, reversed, alternated, or reverse alternated animation.
-        </p>
-        <select id="animationDirection" title="Animation direction" style="width: 130px">
-          <option selected value="normal">Normal</option>
-          <option value="reverse">Reverse</option>
-          <option value="alternate">Alternate</option>
-          <option value="alternate-reverse">Alternate (Reverse)</option>
-        </select>
-
-        <h2>Easing</h2>
-        <p>Choose between different types of easing.</p>
-        <select id="animationEasing" title="Easing" style="width: 130px">
-          <option value="linear">Linear</option>
-          <option value="step">Step</option>
-          <option selected value="ease">Ease</option>
-          <option value="ease-in-out">Ease In Out</option>
-          <option value="ease-in">Ease In</option>
-          <option value="ease-out">Ease Out</option>
-        </select>
-
-        <div id="use-view-coordinates-options">
-          <h2>Zoom-invariant Rendering</h2>
-          <input type="checkbox" id="viewCoordinates" style="margin-top: 10px" />
-          <label for="viewCoordinates">Zoom-invariant</label>
-        </div>
-      </div>
-    </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar">
-        <button
-          data-command="ZoomOriginal"
-          title="Zoom to original size"
-          class="demo-icon-yIconZoomOriginal"
-        ></button>
-        <button
-          data-command="FitContent"
-          title="Fit Content"
-          class="demo-icon-yIconZoomFit"
-        ></button>
-        <span class="demo-separator"></span>
-
-        <label for="shapeSelect">Node Shape</label>
-        <select data-command="ShapeChanged" title="Node Shapes" id="shapeSelect">
-          <option value="ellipse">Ellipse</option>
-          <option value="rectangle">Rectangle</option>
-          <option value="triangle">Triangle</option>
-          <option value="hexagon">Hexagon</option>
-          <option value="octagon">Octagon</option>
-        </select>
-
-        <span class="demo-separator"></span>
-
-        <label for="useLabels">Labels</label>
-        <input type="checkbox" data-command="useLabelsChanged" title="show Labels" id="useLabels" />
-      </div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-    </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content" id="animation-configuration">
+          <h2>Animated Graph Parts</h2>
+          <input type="radio" id="component-members" name="animated-elements" checked="" />
+          <label for="component-members">Component Members</label>
+          <input type="radio" id="others" name="animated-elements" />
+          <label for="others">Others</label>
 
-    <script type="module" crossorigin="anonymous" src="WebGLAnimationsDemo.js"></script>
+          <h2>Animation Type</h2>
+          <p>Choose one of the animation types.</p>
+          <select
+            id="base-animation"
+            title="Animation to use on element hover."
+            style="width: 130px"
+          >
+            <option selected="" value="pulse">Pulse</option>
+            <option value="pulse-effect">Pulse Node Effect</option>
+            <option value="scale">Scale</option>
+            <option value="scale-effect">Scale Node Effect</option>
+            <option value="shake">Shake</option>
+            <option value="fade">Fade</option>
+            <option value="fade-effect">Fade Node Effect</option>
+            <option value="beacon">Beacon</option>
+            <option value="halo">Halo</option>
+          </select>
+
+          <div id="animated-elements-options">
+            <h2>Animated Elements</h2>
+
+            <div>
+              <input type="checkbox" id="animate-nodes" style="margin-top: 10px" checked="" />
+              <label for="animate-nodes">Animate Nodes</label>
+              <br />
+              <input type="checkbox" id="animate-edges" style="margin-top: 10px" checked="" />
+              <label for="animate-edges">Animate Edges</label>
+              <br />
+              <input type="checkbox" id="animate-labels" style="margin-top: 10px" checked="" />
+              <label for="animate-labels">Animate Labels</label>
+            </div>
+          </div>
+
+          <div id="fade-options" style="display: none">
+            <h2>Fade Type</h2>
+            <p>Choose the fade target, i.e., what to fade to or from.</p>
+            <select
+              id="fade-type"
+              title="For fade animations, whether to animate to the effect or away from it."
+              style="width: 130px"
+            >
+              <option selected="" value="to gray">To Gray</option>
+              <option value="to color">To Color</option>
+              <option value="to semi-transparent">To Semi-transparent</option>
+              <option value="to invisible">To Invisible</option>
+              <option value="from gray">From Gray</option>
+              <option value="from color">From Color</option>
+              <option value="from semi-transparent">From Semi-transparent</option>
+              <option value="from invisible">From Invisible</option>
+            </select>
+
+            <h2>Fade Colors</h2>
+            <p>
+              Choose two colors that mark the range of color values to or from which a fading
+              animation will change the original colors. That means when color 1 and color 2 are
+              different grey values, the result is a greyscale version of the original graph.
+            </p>
+            <label for="fade-color1">Color 1</label>
+            <input
+              type="color"
+              id="fade-color1"
+              value="#00ff00"
+              style="border: none"
+              title="Color range for fade animations"
+            />
+            <br />
+            <label for="fade-color2">Color 2</label>
+            <input
+              type="color"
+              id="fade-color2"
+              value="#00ffff"
+              style="border: none"
+              title="Color range for fade animations"
+            />
+          </div>
+
+          <div id="pulse-options">
+            <h2>Pulse Type</h2>
+            <p>Choose the pulse type.</p>
+            <select
+              id="pulse-type"
+              title="Whether to enlarge, shrink or to combine both directions."
+              style="width: 130px"
+            >
+              <option selected="" value="grow">Grow</option>
+              <option value="shrink">Shrink</option>
+              <option value="both">Both</option>
+              <option value="grow-relative">Grow Relative</option>
+              <option value="shrink-relative">Shrink Relative</option>
+              <option value="both-relative">Both Relative</option>
+            </select>
+          </div>
+
+          <div id="shake-options" style="display: none">
+            <h2>Shake Type</h2>
+            <p>Choose the shake type:</p>
+            <select
+              id="shake-type"
+              title="Direction in which to shake the elements."
+              style="width: 130px"
+            >
+              <option selected="" value="horizontal">Horizontal</option>
+              <option value="vertical">Vertical</option>
+            </select>
+          </div>
+
+          <div id="beacon-options" style="display: none">
+            <h2>Beacon Type</h2>
+            <p>Choose the beacon type:</p>
+            <select
+              id="beacon-type"
+              title="Direction in which to shake the elements."
+              style="width: 130px"
+            >
+              <option selected="" value="fade">Fade</option>
+              <option value="no-fade">No Fade</option>
+              <option value="reverse-fade">Reverse Fade</option>
+            </select>
+            <br />
+            <h2>Beacon Color</h2>
+            <p>Choose color.</p>
+            <label for="beacon-color">Color</label>
+            <input
+              type="color"
+              id="beacon-color"
+              value="#4169e1"
+              style="border: none"
+              title="Beacon Color"
+            />
+            <br />
+            <h2>Beacon Settings</h2>
+            <p>Choose whether each pulse should be drawn smoothly or with hard edges.</p>
+            <input type="checkbox" id="beacon-smooth" value="true" title="Smooth Pulses" />
+            <label for="beacon-smooth">Smooth Pulses</label>
+            <br />
+            <p>Choose the size of pulses.</p>
+            <select id="pulse-width" title="Pulse Width" style="width: 130px">
+              <option selected="" value="1">1</option>
+              <option value="2">2</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+            </select>
+            <p>Choose the distance between pulses.</p>
+            <select id="pulse-distance" title="Pulse Distance" style="width: 130px">
+              <option value="2">2</option>
+              <option selected="" value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+            <p>Choose the number of pulses.</p>
+            <select id="pulse-count" title="Pulse Count" style="width: 130px">
+              <option selected="" value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+            </select>
+          </div>
+
+          <div id="scale-options" style="display: none">
+            <h2>Scale Type</h2>
+            <p>Choose the scale type.</p>
+            <select
+              id="scale-type"
+              title="Whether to enlarge, shrink or to combine both directions."
+              style="width: 130px"
+            >
+              <option selected="" value="scale-grow">Grow</option>
+              <option value="scale-shrink">Shrink</option>
+              <option value="scale-shrink-relative">Shrink Relative</option>
+              <option value="scale-grow-relative">Grow Relative</option>
+            </select>
+          </div>
+
+          <div id="magnitude-options">
+            <h2>Animation Magnitude</h2>
+            <p>Choose the animation magnitude.</p>
+            <select id="animation-magnitude" title="Animation magnitude" style="width: 130px">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option selected="" value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="60">60</option>
+            </select>
+          </div>
+
+          <h2>Animation Duration</h2>
+          <p>Choose the duration of one animation cycle.</p>
+          <select id="animation-duration" title="Animation duration" style="width: 130px">
+            <option value="100ms">100ms</option>
+            <option value="500ms">500ms</option>
+            <option selected="" value="1s">1s</option>
+            <option value="2s">2s</option>
+            <option value="3s">3s</option>
+            <option value="5s">5s</option>
+            <option value="10s">10s</option>
+          </select>
+          <p>Choose how often the animation loops.</p>
+          <select id="iteration-count" title="Iteration Count" style="width: 130px">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="5">5</option>
+            <option selected="" value="10">10</option>
+            <option value="infinity">Infinity</option>
+          </select>
+
+          <h2>Animation Direction</h2>
+          <p>
+            Choose, whether to use a normal, reversed, alternated, or reverse alternated animation.
+          </p>
+          <select id="animation-direction" title="Animation direction" style="width: 130px">
+            <option selected="" value="normal">Normal</option>
+            <option value="reverse">Reverse</option>
+            <option value="alternate">Alternate</option>
+            <option value="alternate-reverse">Alternate (Reverse)</option>
+          </select>
+
+          <h2>Easing</h2>
+          <p>Choose between different types of easing.</p>
+          <select id="animation-easing" title="Easing" style="width: 130px">
+            <option value="linear">Linear</option>
+            <option value="step">Step</option>
+            <option selected="" value="ease">Ease</option>
+            <option value="ease-in-out">Ease In Out</option>
+            <option value="ease-in">Ease In</option>
+            <option value="ease-out">Ease Out</option>
+          </select>
+
+          <div id="use-view-coordinates-options">
+            <h2>Zoom-invariant Rendering</h2>
+            <input type="checkbox" id="view-coordinates" style="margin-top: 10px" />
+            <label for="view-coordinates">Zoom-invariant</label>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="WebGLAnimationsDemo.ts" async></script>
   </body>
 </html>

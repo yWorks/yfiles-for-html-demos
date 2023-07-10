@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,10 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore
-import type { ComponentType } from '../../preact-loader'
-// @ts-ignore
-import { h, render } from '../../preact-loader'
+// @ts-ignore - We have no proper types for preact, here
+import { type ComponentType, h, render } from '../../preact-loader'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { INode, IRenderContext } from 'yfiles'
 import { NodeStyleBase, SvgVisual, Visual } from 'yfiles'

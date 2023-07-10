@@ -1,28 +1,48 @@
 {
   "compilerOptions": {
     "lib": [
-      "es2021",
+      "ES2022",
       "dom",
       "dom.iterable"
     ],
-    "module": "es2020",
-    "target": "es2021",
+    "module": "es2022",
+    "target": "es2022",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "types": [
+      "vite/client"
+    ]
   },
   "exclude": [
     "loading/parcel",
     "loading/vite",
+    "loading/webpack",
+    "loading/webpack-lazy-layout",
+    "loading/webpack-lazy-yfiles",
     "loading/webworker-umd",
     "loading/webworker-webpack",
     "node_modules",
+    "style/angular-component-node-style",
+    "style/react-component-node-style",
+    "style/vue-component-node-style",
+    "testing/cypress",
+    "testing/jest",
+    "testing/jest-puppeteer",
+    "testing/playwright",
+    "testing/selenium-webdriver",
+    "testing/vitest",
+    "testing/wdio",
     "toolkit/angular",
-    "toolkit/react-typescript",
+    "toolkit/next",
+    "toolkit/react",
+    "toolkit/react-class-components",
+    "toolkit/solid",
     "toolkit/svelte",
-    "toolkit/vue2-cli-typescript",
-    "toolkit/vue3-cli-typescript"
+    "toolkit/vue"
   ]
 }

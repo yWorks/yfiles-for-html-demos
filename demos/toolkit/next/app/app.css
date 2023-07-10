@@ -1,0 +1,159 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+#root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 14px;
+  color: #343f4a;
+}
+.app {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 320px 1fr 320px;
+  grid-template-rows: 60px auto 1fr;
+  grid-template-areas:
+    'sidebar-left header header'
+    'sidebar-left toolbar toolbar'
+    'sidebar-left main sidebar-right';
+}
+.demo-sidebar.left {
+  grid-area: sidebar-left;
+}
+.demo-sidebar.right {
+  grid-area: sidebar-right;
+}
+.demo-header {
+  grid-area: header;
+}
+.toolbar {
+  grid-area: toolbar;
+}
+.main {
+  grid-area: main;
+  position: relative;
+}
+.main-loader {
+  grid-area: main;
+  display: block;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  background: #fff
+    url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMy42NCAyNS4wMiIgaWQ9InN2ZzUxMDUiPg0KICA8ZyBpZD0ibGF5ZXIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTMuODEgLTExMS4xMykiPg0KICAgIDxnIGlkPSJnNTczNiIgdHJhbnNmb3JtPSJtYXRyaXgoLjI2NDU4IDAgMCAuMjY0NTggOTAuNjMgMTA4LjY1KSI+DQogICAgICA8cGF0aCBpZD0icGF0aDU2NTIiIGQ9Ik0xMi4zOSA0Ny4yOWwuMSAxOS4zYTI3Ljc0IDI3Ljc0IDAgMCAwIDEzLjkgMjMuOGwxNi44IDkuNmEyNy4zMiAyNy4zMiAwIDAgMCAyNy41LS4yTDg3LjM5IDkwQTI3LjQ0IDI3LjQ0IDAgMCAwIDEwMSA2Ni4wOWwtLjEtMTkuNEEyNy44NiAyNy44NiAwIDAgMCA4NyAyMi44OWwtMTYuNy05LjVhMjcuMzIgMjcuMzIgMCAwIDAtMjcuNS4ybC0xNi43IDkuOGEyNy41IDI3LjUgMCAwIDAtMTMuNyAyMy45IiBmaWxsPSIjMjQyMjY1Ii8+DQogICAgICA8ZyBpZD0iZzU2NzYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1IDkpIj4NCiAgICAgICAgPGcgaWQ9Imc1Njc0IiB0cmFuc2Zvcm09InJvdGF0ZSg1NCkiPg0KICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY1NCIgZD0iTTY2Ljg5LTIwLjA0bC4xIDQuOGMuMiAyLjQuOCA0LjUgMi4zIDYuNSAxLjMgMS44IDMgMyA1IDRsMi41IDEuNWMyIDEuNSAxLjMgMy4yLTIuMyAxLjJsLTMtMS42YTExLjYgMTEuNiAwIDAgMC0xMC40LS4zbC0zLjkgMi4xYy00IDEtMi41LTEgMS0zLjEgMy0xLjUgNS4xLTQuMSA2LTcuMy40LTEuNS42LTMgLjUtNC42di0zLjdjLS41LTQgMi44LTQgMi4yLjV6IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgPGcgaWQ9Imc1NjYwIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY1OCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46NjdweCAwcHg7YW5pbWF0aW9uLWRlbGF5Oi4xMjVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjU2IiBkPSJNNjUuNjEtMzguMzRjLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2NjYiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA0NS45IDQ4LjcpIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY2NCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46LTE0LjVweCA0OHB4O2FuaW1hdGlvbi1kZWxheTouNDVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjYyIiBkPSJNLTEzLjk4IDMwLjMyYy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjcyIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTIwIDQ1LjkgNDguNykiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjcwIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjo4NnB4IDg5cHg7YW5pbWF0aW9uLWRlbGF5Oi43OXMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2NjgiIGQ9Ik04NC44NSA2NC43NWMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgICA8ZyBpZD0iZzU3MDAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkgNikiPg0KICAgICAgICA8ZyBpZD0iZzU2OTgiIHRyYW5zZm9ybT0icm90YXRlKDEwKSI+DQogICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njc4IiBkPSJNNTQuMjMgMjguMzVsLjEgNC44Yy4yIDIuNC44IDQuNSAyLjMgNi41IDEuMyAxLjggMyAzIDUgNGwyLjUgMS41YzIgMS41IDEuMyAzLjItMi4zIDEuMmwtMy0xLjZhMTEuNiAxMS42IDAgMCAwLTEwLjQtLjNsLTMuOSAyLjFjLTQgMS0yLjUtMSAxLTMuMSAzLTEuNSA1LjEtNC4xIDYtNy4zLjQtMS41LjYtMyAuNS00LjZ2LTMuN2MtLjUtNCAyLjgtNCAyLjIuNXoiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICA8ZyBpZD0iZzU2ODQiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjgyIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjogNTNweCAzM3B4OyI+DQogICAgICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY4MCIgZD0iTTUyLjcxIDEwLjA5Yy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjkwIiB0cmFuc2Zvcm09InJvdGF0ZSgxMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2ODgiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjM3cHggNTBweDthbmltYXRpb24tZGVsYXk6LjMzMzNzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njg2IiBkPSJNMzQuMzQgMTYuMzljLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2OTYiIHRyYW5zZm9ybT0icm90YXRlKC0xMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2OTQiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjQ5cHggNTNweDthbmltYXRpb24tZGVsYXk6LjY2NnMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2OTIiIGQ9Ik00OS4wMSAyOC45MmMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgPC9nPg0KICA8L2c+DQogIDxzdHlsZSBpZD0ic3R5bGU1NjUwIj4NCiAgICBAa2V5ZnJhbWVzIHdvYmJsZSB7DQogICAgMCUsDQogICAgMzMlLA0KICAgIHRvIHsNCiAgICB0cmFuc2Zvcm06IHNjYWxlKDEpOw0KICAgIH0NCiAgICA1MCUgew0KICAgIHRyYW5zZm9ybTogc2NhbGUoMC45NSk7DQogICAgfQ0KICAgIDY2JSB7DQogICAgdHJhbnNmb3JtOiBzY2FsZSgxLjE1KTsNCiAgICB9DQogICAgfQ0KICAgIC53b2JibGUgew0KICAgIGFuaW1hdGlvbjogd29iYmxlIDFzIGVhc2UtaW4tb3V0IGluZmluaXRlOw0KICAgIHRyYW5zZm9ybS1vcmlnaW46IDUyLjNweCAzNC40NXB4Ow0KICAgIH0NCiAgPC9zdHlsZT4NCjwvc3ZnPg==)
+    no-repeat center;
+  background-size: 200px;
+}
+.demo-header {
+  display: flex;
+  height: 60px;
+  background: transparent linear-gradient(90deg, #29323c 0%, #38434f 100%) 0 0 no-repeat padding-box;
+  color: white;
+  font-size: 1.1rem;
+  z-index: 16;
+  transition: padding-left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+}
+.demo-y-logo {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  padding: 5px;
+  box-sizing: border-box;
+  border-color: transparent;
+}
+.demo-header a {
+  display: inline-block;
+  height: 60px;
+  text-decoration: none;
+  color: white;
+  line-height: 60px;
+  padding: 0 5px;
+  vertical-align: top;
+  cursor: pointer;
+}
+.demo-title {
+  display: inline-block;
+  padding: 0 5px 0 30px !important;
+  height: 60px;
+  line-height: 60px;
+  color: white;
+  cursor: default;
+  letter-spacing: 1px;
+  background: url('/assets/header-angle.svg') no-repeat 5px 50%;
+  background-size: 20px 20px;
+  vertical-align: top;
+}
+.demo-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  background: #e0edf0;
+  line-height: 140%;
+  overflow-y: auto;
+  font-family: Tahoma, Verdana, sans-serif;
+  color: #343f4a;
+  padding-left: 0.2em;
+}
+.demo-sidebar.left {
+  background-color: #e0edf0;
+}
+.demo-sidebar .demo-sidebar-content h1 {
+  font-size: 1.7em;
+  line-height: 1.5;
+  color: #343f4a;
+}
+.demo-sidebar .demo-sidebar-content h2 {
+  font-size: 140%;
+  line-height: 130%;
+  margin: 1.5ex 0 1ex;
+  color: #343f4a;
+}
+
+.demo-sidebar-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.demo-sidebar-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.demo-sidebar-content::-webkit-scrollbar {
+  width: 8px;
+}
+.demo-sidebar-content::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.05);
+}

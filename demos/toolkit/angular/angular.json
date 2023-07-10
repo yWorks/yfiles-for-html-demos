@@ -26,7 +26,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.json",
             "assets": ["src/assets"],
-            "styles": ["../../resources/style/demo.css", "src/styles.css"],
+            "styles": ["demo-resources/style/demo.css", "src/styles.css"],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
@@ -37,7 +37,8 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "preserveSymlinks": true
             },
             "development": {
               "buildOptimizer": false,
@@ -45,7 +46,8 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "preserveSymlinks": true
             }
           },
           "defaultConfiguration": "production"

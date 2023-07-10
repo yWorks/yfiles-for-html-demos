@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,82 +30,128 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Clipboard Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <style>
-      .demo-content .demo-toolbar {
-        top: 0;
-      }
-
-      #left {
-        width: 50%;
-        top: 60px;
-        position: absolute;
-        bottom: 0;
-        border-right: 4px solid #f7f7f7;
-      }
-
-      #right .demo-toolbar {
-        overflow: hidden;
-      }
-
-      #right {
-        width: 49.8%;
-        position: absolute;
-        top: 60px;
-        bottom: 0;
-        right: 0;
-      }
-
-      @media screen and (max-height: 500px) {
-        #left,
-        #right,
-        #left #graphComponent,
-        #right #graphComponent2 {
-          top: 30px;
-        }
-      }
-
-      #graphComponent {
-        top: 40px;
-      }
-
-      #graphComponent2 {
-        position: absolute;
-        top: 40px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ffffff;
-      }
-
-      .component {
+      .graph-component {
+        width: auto !important;
         border: #ffffff 3px solid;
       }
 
-      .component:focus {
+      .graph-component:focus {
         border: #6e99ce 3px solid;
       }
     </style>
+    <script src="../../resources/filesystem-warning.js"></script>
   </head>
-  <body class="demo-has-left">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Clipboard</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbars">
+      <div class="demo-page__toolbar">
+        <button data-command="INCREASE_ZOOM"></button>
+        <button data-command="ZOOM_ORIGINAL"></button>
+        <button data-command="DECREASE_ZOOM"></button>
+        <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+        <span class="demo-separator"></span>
+
+        <button data-command="CUT"></button>
+        <button data-command="COPY"></button>
+        <button data-command="PASTE"></button>
+        <button data-command="DELETE"></button>
+        <button id="paste-special" title="Paste Special" class="labeled" disabled="">
+          Paste Special
+        </button>
+
+        <span class="demo-separator"></span>
+
+        <button data-command="UNDO"></button>
+        <button data-command="REDO"></button>
+
+        <span class="demo-separator"></span>
+
+        <button id="edit-name" title="Edit Name" class="labeled" disabled="">Edit Name</button>
+      </div>
+      <div class="demo-page__toolbar">
+        <button data-command="ZoomIn2" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+        <button
+          data-command="ZoomOriginal2"
+          title="Zoom to original size"
+          class="demo-icon-yIconZoomOriginal"
+        ></button>
+        <button data-command="ZoomOut2" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+        <button
+          data-command="FitContent2"
+          title="Fit Content"
+          class="demo-icon-yIconZoomFit"
+        ></button>
+
+        <span class="demo-separator"></span>
+
+        <button data-command="Cut2" title="Cut" class="demo-icon-yIconCut"></button>
+        <button data-command="Copy2" title="Copy" class="demo-icon-yIconCopy"></button>
+        <button data-command="Paste2" title="Paste" class="demo-icon-yIconPaste"></button>
+        <button data-command="Delete2" title="Delete" class="demo-icon-yIconDelete"></button>
+        <button id="paste-special2" title="Paste Special" class="labeled" disabled="">
+          Paste Special
+        </button>
+
+        <span class="demo-separator"></span>
+
+        <button data-command="Undo2" title="Undo" class="demo-icon-yIconUndo"></button>
+        <button data-command="Redo2" title="Redo" class="demo-icon-yIconRedo"></button>
+
+        <span class="demo-separator"></span>
+
+        <button id="edit-name2" title="Edit Name" class="labeled" disabled="">Edit Name</button>
+      </div>
+    </div>
+
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <!-- prettier-ignore -->
+      <div class="demo-description__content">
         <h1>Clipboard Demo</h1>
 
         <p>
-          The Clipboard demo shows different ways of using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphClipboard" target="_blank">GraphClipboard</a> for Copy &amp;
-          Paste operations.
+          The Clipboard demo shows different ways of using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphClipboard" target="_blank">GraphClipboard</a>
+          for Copy &amp; Paste operations.
         </p>
 
         <p>
@@ -129,21 +174,19 @@
 
         <ul>
           <li>Note how both paste variants update the labels of the copied nodes.</li>
-
           <li>
             <em>Paste Special</em> only pastes nodes and node labels, even if edges have been also
             copied or cut.
           </li>
-
           <li>
             The nodes have a "business object" associated with the elements reflected in the nodes'
-            titles (the text which is displayed inside the node). Editing the
-            <code>name</code> property of a node's business object via the "Edit name" button
-            changes the node's title, too, as it is bound to the name of the business object. <br />
+            titles (the text which is displayed inside the node). Editing the <code>name</code>
+            property of a node's business object via the "Edit name" button changes the node's
+            title, too, as it is bound to the name of the business object.
+            <br />
             See class <code>ClipboardBusinessObject</code> which is associated via the node's
             <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>.
           </li>
-
           <li>
             The two nodes which are linked with the "Shared Object" edge share the same business
             object. Editing the name of one of the nodes will also change the name of the other
@@ -154,101 +197,31 @@
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-
-      <div id="left">
-        <div class="demo-toolbar">
-          <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-          <button
-            data-command="ZoomOriginal"
-            title="Zoom to original size"
-            class="demo-icon-yIconZoomOriginal"
-          ></button>
-          <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-          <button
-            data-command="FitContent"
-            title="Fit Content"
-            class="demo-icon-yIconZoomFit"
-          ></button>
-
-          <span class="demo-separator"></span>
-
-          <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-          <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-          <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-          <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-          <button data-command="PasteSpecial" title="Paste Special" class="labeled" disabled="">
-            Paste Special
-          </button>
-
-          <span class="demo-separator"></span>
-
-          <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-          <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-          <span class="demo-separator"></span>
-
-          <button data-command="EditName" title="Edit Name" class="labeled" disabled="">
-            Edit Name
-          </button>
-        </div>
-        <div id="graphComponent" class="component"></div>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component" style="border-right: 4px solid #f7f7f7">
+        <div id="graphComponent" class="graph-component"></div>
       </div>
 
-      <div id="right">
-        <div class="demo-toolbar">
-          <button data-command="ZoomIn2" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-          <button
-            data-command="ZoomOriginal2"
-            title="Zoom to original size"
-            class="demo-icon-yIconZoomOriginal"
-          ></button>
-          <button data-command="ZoomOut2" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-          <button
-            data-command="FitContent2"
-            title="Fit Content"
-            class="demo-icon-yIconZoomFit"
-          ></button>
-
-          <span class="demo-separator"></span>
-
-          <button data-command="Cut2" title="Cut" class="demo-icon-yIconCut"></button>
-          <button data-command="Copy2" title="Copy" class="demo-icon-yIconCopy"></button>
-          <button data-command="Paste2" title="Paste" class="demo-icon-yIconPaste"></button>
-          <button data-command="Delete2" title="Delete" class="demo-icon-yIconDelete"></button>
-          <button data-command="PasteSpecial2" title="Paste Special" class="labeled" disabled="">
-            Paste Special
-          </button>
-
-          <span class="demo-separator"></span>
-
-          <button data-command="Undo2" title="Undo" class="demo-icon-yIconUndo"></button>
-          <button data-command="Redo2" title="Redo" class="demo-icon-yIconRedo"></button>
-
-          <span class="demo-separator"></span>
-
-          <button data-command="EditName2" title="Edit Name" class="labeled" disabled="">
-            Edit Name
-          </button>
-        </div>
-        <div id="graphComponent2" class="component"></div>
+      <div class="demo-main__graph-component">
+        <div id="clipboard-graph-component" class="graph-component"></div>
       </div>
-    </div>
-    <div id="nameDialog" class="demo-dialog" style="display: none">
-      <!-- The content template for the name dialog panel -->
-      <h2>Node Name</h2>
-      <div class="demo-properties demo-dialog-content">
-        <form>
-          <label for="nodeNameInput">Edit the node name</label>
-          <input id="nodeNameInput" maxlength="25" />
-          <button type="submit" id="applyButton">Apply</button>
-          <button type="button" id="cancelButton">Cancel</button>
-        </form>
+
+      <div class="demo-dialog-anchor">
+        <div id="name-dialog" class="demo-dialog" style="display: none">
+          <!-- The content template for the name dialog panel -->
+          <h2 class="demo-dialog__title">Node Name</h2>
+          <div class="demo-dialog__content">
+            <form class="demo-dialog__form">
+              <label for="node-name-input">Edit the node name</label>
+              <input id="node-name-input" maxlength="25" />
+              <button type="submit" id="apply-button">Apply</button>
+              <button type="button" id="cancel-button">Cancel</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
 
-    <script type="module" crossorigin="anonymous" src="ClipboardDemo.js"></script>
+    <script type="module" crossorigin="anonymous" src="ClipboardDemo.ts" async></script>
   </body>
 </html>

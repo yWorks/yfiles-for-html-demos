@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,6 +48,15 @@ import {
  * A custom {@link IHandle} implementation that implements the functionality needed for rotating a label.
  */
 export default class LabelRotateHandle extends BaseClass(IHandle) {
+  label
+  inputModeContext
+  handleLocation = new LabelRotateHandleLivePoint(this)
+  emulate = false
+  dummyLocation = null
+  up = null
+  rotationCenter = null
+  rotationIndicator = null
+
   /**
    * Creates a rotate handler for the given label.
    * @param {!ILabel} label The given label
@@ -55,12 +64,6 @@ export default class LabelRotateHandle extends BaseClass(IHandle) {
    */
   constructor(label, context) {
     super()
-    this.handleLocation = new LabelRotateHandleLivePoint(this)
-    this.emulate = false
-    this.dummyLocation = null
-    this.up = null
-    this.rotationCenter = null
-    this.rotationIndicator = null
     this.label = label
     this.inputModeContext = context
   }

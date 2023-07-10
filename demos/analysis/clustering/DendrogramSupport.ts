@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,7 +51,6 @@ import {
   ICanvasObjectGroup,
   ICanvasObjectInstaller,
   IEdge,
-  IEnumerable,
   IGraph,
   IHitTestable,
   IInputModeContext,
@@ -76,6 +75,7 @@ import {
   PortConstraintKeys,
   PortSide,
   Rect,
+  ScrollBarVisibility,
   ShapeNodeStyle,
   Size,
   SolidColorFill,
@@ -88,7 +88,7 @@ import {
 } from 'yfiles'
 
 import { AxisVisual, CutoffVisual, generateColors } from './DemoVisuals'
-import { colorSets } from '../../resources/demo-styles'
+import { colorSets } from 'demo-resources/demo-styles'
 
 const DENDROGRAM_GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -98,7 +98,7 @@ const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
  * This also requires the graph that will be clustered (the original graph).
  */
 export class DendrogramComponent {
-  private dendrogramComponent: GraphComponent = new GraphComponent('dendrogramGraphComponent')
+  private dendrogramComponent: GraphComponent = new GraphComponent('dendrogram-graph-component')
   private defaultNodeStyle: ShapeNodeStyle = new ShapeNodeStyle()
   private defaultEdgeStyle: PolylineEdgeStyle = new PolylineEdgeStyle()
   // the idea is to create the hierarchical graph from the dendrogram structure that is returned from the
@@ -119,6 +119,8 @@ export class DendrogramComponent {
    * @param graphComponent The {@link GraphComponent} which renders the original graph.
    */
   constructor(private graphComponent: GraphComponent) {
+    this.dendrogramComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
+    this.dendrogramComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
     this.configureUserInteraction()
 
     this.configureGraph(this.dendrogramComponent.graph)
@@ -324,8 +326,9 @@ export class DendrogramComponent {
     // add the dragging listener that will send the up-to-date cut-off value
     moveInputMode.addDraggingListener(() => {
       if (this.cutOffVisual) {
-        this.cutOffVisual.cutOffValue = Math.ceil(
-          this.dendrogramMaxY - this.cutOffVisual.rectangle.center.y + 1
+        this.cutOffVisual.cutOffValue = Math.max(
+          Math.ceil(this.dendrogramMaxY - this.cutOffVisual.rectangle.center.y + 1),
+          0
         )
       }
     })
@@ -423,11 +426,11 @@ export class DendrogramComponent {
    * original graph.
    * @param item The hovered item
    */
-  onHoveredItemChanged(item: IModelItem): void {
+  onHoveredItemChanged(item: IModelItem | null): void {
     const highlightIndicatorManager = this.dendrogramComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
-    let nodesToHighlight: IEnumerable<INode> = IEnumerable.from<INode>([])
-    if (item && item instanceof INode) {
+    let nodesToHighlight: Iterable<INode> = []
+    if (item instanceof INode) {
       // highlight the node of the hierarchical clustered graph
       highlightIndicatorManager.addHighlight(item)
 
@@ -452,12 +455,12 @@ export class DendrogramComponent {
    * Highlights the given nodes of the original graph.
    * @param nodes The nodes of the original graph that will be highlighted.
    */
-  private highlightNodes(nodes: IEnumerable<INode>): void {
+  private highlightNodes(nodes: Iterable<INode>): void {
     const highlightManager = this.graphComponent.highlightIndicatorManager
     highlightManager.clearHighlights()
-    nodes.forEach(node => {
+    for (const node of nodes) {
       highlightManager.addHighlight(node)
-    })
+    }
   }
 
   /**
@@ -526,7 +529,12 @@ export class DendrogramComponent {
    * @param showDendrogram True if the component should be visible, false otherwise
    */
   toggleVisibility(showDendrogram: boolean): void {
-    this.dendrogramComponent.div.style.display = showDendrogram ? 'inline' : 'none'
+    const dendrogramComponentDiv = this.dendrogramComponent.div
+    if (showDendrogram) {
+      dendrogramComponentDiv.classList.remove('hidden')
+    } else {
+      dendrogramComponentDiv.classList.add('hidden')
+    }
   }
 }
 
@@ -772,8 +780,8 @@ export class CutOffPositionHandler
     // check if the next position is within the boundary rectangle borders
     if (nextPositionY <= y1) {
       return y1
-    } else if (nextPositionY + this.rectangle.height >= y2) {
-      return y2 - this.rectangle.height
+    } else if (nextPositionY + 2 * this.rectangle.height >= y2) {
+      return y2 - 2 * this.rectangle.height
     }
 
     return nextPositionY

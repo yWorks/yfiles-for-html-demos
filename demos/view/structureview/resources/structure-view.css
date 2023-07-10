@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,106 +26,80 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-.structure-view-container {
-  overflow: auto;
+.structure-view {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  padding: 5px 15px 10px 15px;
 }
 
-.structure-view-container .structure-view-list li {
+.structure-view__list {
+  max-width: 100%;
+  width: 300px;
+  list-style: none;
+}
+
+.structure-view__node,
+.structure-view__group {
+  display: block;
+  position: relative;
   margin: 2px 0;
+  padding: 0;
+  cursor: pointer;
+  list-style: none;
   user-select: none;
   white-space: nowrap;
 }
 
-.structure-view-container .structure-view-list li:first-of-type {
-  margin-top: 0;
+.structure-view__group {
+  margin-top: 7px;
 }
 
-.structure-view-container .structure-view-list li.structure-view-group {
-  margin-top: 5px;
-}
-
-.structure-view-container ol.structure-view-list {
-  padding: 0;
-  width: 300px;
-  display: inline;
-}
-
-.structure-view-group {
-  margin-top: 2px;
-}
-
-.structure-view-group ol {
-  margin: 0;
-}
-
-.structure-view-list li {
-  position: relative;
-  padding: 0;
-  list-style: none;
-}
-
-.structure-view-node {
-  cursor: pointer;
-}
-
-.structure-view-node:hover {
-  font-weight: bold;
-}
-
-.structure-view-node::before {
-  content: '\25A0';
-  padding-right: 3px;
-  color: lightgray;
-  vertical-align: text-bottom;
-}
-
-.structure-view-list {
-  list-style: none;
-}
-
-.structure-view-container li input {
-  position: absolute;
-  left: 0;
-  margin-left: 0;
-  opacity: 0;
-  z-index: 2;
-  cursor: pointer;
-  height: 1em;
-  width: 1em;
-  top: 0;
-}
-
-.structure-view-container .structure-view-list li input + ol > li {
-  display: none;
-  margin-left: -14px;
-  padding-left: 1px;
-}
-
-.structure-view-expanded {
-  background: url('folder-expanded.svg') 0 0 no-repeat;
-}
-
-.structure-view-collapsed {
-  background: url('folder-collapsed.svg') 0 0 no-repeat;
-}
-
-.structure-view-container .structure-view-list li label {
+.structure-view__group > label {
   display: block;
   padding-left: 20px;
   cursor: pointer;
 }
 
-.structure-view-container .structure-view-list li input + ol {
-  margin: -12px 0 0 -44px;
-  height: 1em;
+.structure-view__group > label:hover {
+  font-weight: bold;
 }
 
-.structure-view-container .structure-view-list li input:checked + ol {
-  margin: -18px 0 0 -44px;
-  padding: 20px 0 0 80px;
+.structure-view__group > input[type='checkbox'] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1.2em;
+  width: 1.2em;
+  margin-left: 0;
+  margin-top: 0;
+  cursor: pointer;
+  appearance: none;
+  background: url('folder-collapsed.svg') 0 0 no-repeat;
+  z-index: 2;
+}
+
+.structure-view__group > input[type='checkbox']:checked {
+  background: url('folder-expanded.svg') 0 0 no-repeat;
+  background-size: 100% 100%;
+}
+
+.structure-view__group ol {
+  margin: 0;
+  padding-left: 22px;
   height: auto;
 }
 
-.structure-view-container .structure-view-list li input:checked + ol > li {
-  display: block;
+.structure-view__group > input[type='checkbox']:not(:checked) + ol {
+  display: none;
+}
+
+.structure-view__node::before {
+  content: '\25A0';
+  padding-right: 0.4rem;
+  color: lightgray;
+  vertical-align: text-bottom;
+}
+
+.structure-view__node:hover {
+  font-weight: bold;
 }

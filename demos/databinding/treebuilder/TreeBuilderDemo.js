@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutLayeringStrategy,
-  ICommand,
   IIncrementalHintsFactory,
   IList,
   IModelItem,
@@ -45,21 +44,14 @@ import {
   TemplateNodeStyle,
   TreeBuilder
 } from 'yfiles'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  reportDemoError,
-  showApp
-} from '../../resources/demo-app.js'
 import { SchemaComponent } from './SchemaComponent.js'
 import samples from './samples.js'
 
-import { applyDemoTheme } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-const samplesComboBox = document.getElementById('samplesComboBox')
+const samplesComboBox = document.getElementById('samples')
 
 /** @type {HierarchicLayout} */
 let layout
@@ -110,33 +102,26 @@ async function run() {
   // noinspection JSIgnoredPromiseFromCall
   loadSample(samples[0])
 
-  // register toolbar and other GUI element commands
-  registerCommands()
-
-  // initialize the demo
-  showApp(graphComponent)
+  // register toolbar and other GUI element actions
+  initializeUI()
 }
 
 /**
- * Bind various UI elements to the appropriate commands
+ * Bind various UI elements to the appropriate actions
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-
-  bindAction("button[data-command='BuildGraph']", async () => {
+function initializeUI() {
+  document.querySelector('#build-graph-button').addEventListener('click', async () => {
     samplesComboBox.disabled = true
     await buildGraphFromData(false)
     samplesComboBox.disabled = false
   })
-  bindAction("button[data-command='UpdateGraph']", async () => {
+  document.querySelector('#update-graph-button').addEventListener('click', async () => {
     samplesComboBox.disabled = true
     await buildGraphFromData(true)
     samplesComboBox.disabled = false
   })
-  bindChangeListener("select[data-command='SetSampleData']", async () => {
+
+  addNavigationButtons(samplesComboBox).addEventListener('change', async () => {
     const i = samplesComboBox.selectedIndex
     if (samples && samples[i]) {
       samplesComboBox.disabled = true
@@ -145,7 +130,6 @@ function registerCommands() {
       samplesComboBox.disabled = false
     }
   })
-  addNavigationButtons(samplesComboBox)
 }
 
 /**
@@ -201,8 +185,6 @@ async function applyLayout(update) {
   layouting = true
   try {
     await graphComponent.morphLayout(layout, '1s', layoutData)
-  } catch (error) {
-    reportDemoError(error)
   } finally {
     layouting = false
   }
@@ -228,7 +210,7 @@ async function loadSample(sample) {
 function initializeSamplesComboBox() {
   for (let i = 0; i < samples.length; i++) {
     const option = document.createElement('option')
-    option.textContent = samples[i].name
+    option.label = samples[i].name
     option.value = samples[i]
     samplesComboBox.appendChild(option)
   }
@@ -264,5 +246,4 @@ function initializeLayout() {
   })
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

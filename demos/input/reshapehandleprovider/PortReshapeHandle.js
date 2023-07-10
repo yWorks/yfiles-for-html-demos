@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,6 +43,17 @@ import {
 
 export class PortReshapeHandle extends BaseClass(IHandle) {
   /**
+   * The margins the handle is placed form the port visualization bounds.
+   * The margins are applied in view coordinates. Default is `4`.
+   */
+  margins
+
+  /**
+   * The initial render size (i.e. the size of the port visualization). Used to reset the visualization size on cancel.
+   */
+  initialRenderSize = Size.EMPTY
+
+  /**
    * Creates a new instance for port and its adapter.
    * @param {!IInputModeContext} context The context of the reshape gesture.
    * @param {!IPort} port The port whose visualization shall be resized.
@@ -57,12 +68,6 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     this.adapter = adapter
     this.port = port
     this.context = context
-
-    // The initial render size (i.e. the size of the port visualization). Used to reset the visualization size on cancel.
-    this.initialRenderSize = Size.EMPTY
-
-    // The margins the handle is placed form the port visualization bounds.
-    // The margins are applied in view coordinates. Default is `4`.
     this.margins = 4
   }
 

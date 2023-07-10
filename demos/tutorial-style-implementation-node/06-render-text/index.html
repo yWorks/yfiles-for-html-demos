@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>06 Rendering Text - Node Style Implementation Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-node-style-implementation">
+          Node Style Implementation Tutorial
+        </a>
+
+        <span>06 Rendering Text</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-style-implementation-node/05-data-from-tag/index.html'><span>05 Data from Tag</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 6/12</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 06 Rendering Text</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-style-implementation-node/01-create-a-rectangle/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create A Rectangle</a
+          ><a
+            href="../../tutorial-style-implementation-node/02-create-a-custom-shape/index.html"
+            class="tutorial-dropdown__item"
+            >02 Create A Custom Shape</a
+          ><a
+            href="../../tutorial-style-implementation-node/03-render-performance/index.html"
+            class="tutorial-dropdown__item"
+            >03 Render Performance</a
+          ><a
+            href="../../tutorial-style-implementation-node/04-making-the-style-configurable/index.html"
+            class="tutorial-dropdown__item"
+            >04 Making the Style Configurable</a
+          ><a
+            href="../../tutorial-style-implementation-node/05-data-from-tag/index.html"
+            class="tutorial-dropdown__item"
+            >05 Data from Tag</a
+          ><a
+            href="../../tutorial-style-implementation-node/06-render-text/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >06 Rendering Text</a
+          ><a
+            href="../../tutorial-style-implementation-node/07-hit-testing/index.html"
+            class="tutorial-dropdown__item"
+            >07 Hit-Testing</a
+          ><a
+            href="../../tutorial-style-implementation-node/08-edge-cropping/index.html"
+            class="tutorial-dropdown__item"
+            >08 Edge Cropping</a
+          ><a
+            href="../../tutorial-style-implementation-node/09-visibility/index.html"
+            class="tutorial-dropdown__item"
+            >09 Item Visibility</a
+          ><a
+            href="../../tutorial-style-implementation-node/10-bounds/index.html"
+            class="tutorial-dropdown__item"
+            >10 Render Boundaries</a
+          ><a
+            href="../../tutorial-style-implementation-node/11-group-node-style/index.html"
+            class="tutorial-dropdown__item"
+            >11 Group Node Style</a
+          ><a
+            href="../../tutorial-style-implementation-node/12-group-node-style-behavior/index.html"
+            class="tutorial-dropdown__item"
+            >12 Group Node Style Behavior</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-style-implementation-node/07-hit-testing/index.html'><span>07 Hit-Testing</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Rendering text</h1>
+          <div class="paragraph">
+            <p>
+              Not all visualisations consist of shapes and colors. Frequently, the business data
+              stored in the <code>tag</code> property also contains textual content that should be
+              rendered. Although yFiles for HTML offers labels for that purpose, text can also be rendered
+              as part of the node visualization. This can be useful when users don&#8217;t need to
+              interact with the text, or when the text should be integrated into the node
+              visualization.
+            </p>
+          </div>
+          <div class="paragraph">
+            <p>
+              We add another property to the node <code>tag</code>s that contains the node title.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript">graph.<span class="hljs-title function_">createNode</span>({
+  <span class="hljs-attr">layout</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>, <span class="hljs-number">70</span>],
+  <span class="hljs-attr">tag</span>: { <span class="hljs-attr">color</span>: <span class="hljs-string">&#x27;#b91c3b&#x27;</span>, <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Title&#x27;</span> }
+})
+graph.<span class="hljs-title function_">createNode</span>({
+  <span class="hljs-attr">layout</span>: [<span class="hljs-number">140</span>, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>, <span class="hljs-number">70</span>],
+  <span class="hljs-attr">tag</span>: {
+    <span class="hljs-attr">color</span>: <span class="hljs-string">&#x27;#9e7cb5&#x27;</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Long title&#x27;</span>,
+    <span class="hljs-attr">showBadge</span>: <span class="hljs-literal">true</span>
+  }
+})</code></pre>
+            </div>
+          </div>
+          <div class="paragraph">
+            <p>
+              yFiles for HTML offers the <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" target="_blank">TextRenderSupport</a> utility class to measure and
+              render text. Compared with just a plain SVG <code>&lt;text&gt;</code> element it
+              supports wrapping and trimming text based on a specified maximum size. In this
+              example, we add text to the &#8220;tab&#8221; in a way that the text is cut off with
+              an ellipsis if it doesn&#8217;t fit.
+            </p>
+          </div>
+          <div class="listingblock">
+            <div class="content">
+              <pre
+                class="highlight"
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> title = node.<span class="hljs-property">tag</span>?.<span class="hljs-property">title</span>
+<span class="hljs-keyword">if</span> (title) {
+  <span class="hljs-keyword">const</span> text = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(
+    <span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>,
+    <span class="hljs-string">&#x27;text&#x27;</span>
+  )
+  text.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;fill&#x27;</span>, <span class="hljs-string">&#x27;#eee&#x27;</span>)
+  <span class="hljs-title class_">SvgVisual</span>.<span class="hljs-title function_">setTranslate</span>(text, <span class="hljs-number">10</span>, <span class="hljs-number">2</span>)
+
+  <span class="hljs-title class_">TextRenderSupport</span>.<span class="hljs-title function_">addText</span>({
+    <span class="hljs-attr">targetElement</span>: text,
+    <span class="hljs-attr">text</span>: node.<span class="hljs-property">tag</span>.<span class="hljs-property">title</span>,
+    <span class="hljs-attr">font</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Font</span>(<span class="hljs-string">&#x27;sans-serif&#x27;</span>, <span class="hljs-number">10</span>),
+    <span class="hljs-attr">wrapping</span>: <span class="hljs-title class_">TextWrapping</span>.<span class="hljs-property">CHARACTER_ELLIPSIS</span>,
+    <span class="hljs-attr">maximumSize</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(tabWidth - <span class="hljs-number">12</span>, <span class="hljs-number">15</span>)
+  })
+
+  g.<span class="hljs-title function_">append</span>(text)
+}</code></pre>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-style-implementation-node/07-hit-testing/index.html'><span>07 Hit-Testing</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

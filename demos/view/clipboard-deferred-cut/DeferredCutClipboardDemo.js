@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,12 +42,12 @@ import {
   Size
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app.js'
 import { setClipboardStyles } from './ClipboardStyles.js'
 import { DeferredCutClipboard } from './DeferredCutClipboard.js'
-import { ContextMenu } from '../../utils/ContextMenu.js'
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { ContextMenu } from 'demo-utils/ContextMenu'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from 'demo-resources/demo-page'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -83,12 +83,6 @@ async function run() {
   // for demonstration purposes we configure a context menu
   // to make it possible to paste to an arbitrary location
   configureContextMenu(graphComponent)
-
-  // bind the demo buttons to their commands
-  registerCommands()
-
-  // Initialize the demo application's CSS and Javascript for the description
-  showApp(graphComponent)
 }
 
 /**
@@ -107,9 +101,9 @@ function createSampleGraph(graph) {
   const node1 = graph.createNodeAt(new Point(50, 50))
   const node2 = graph.createNodeAt(new Point(150, 50))
   const node3 = graph.createNode(new Rect(260, 180, 80, 40))
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node2, node3)
-  const bend1 = graph.addBend(edge2, new Point(300, 50))
+  const edge = graph.createEdge(node2, node3)
+  graph.createEdge(node1, node2)
+  graph.addBend(edge, new Point(300, 50))
 
   const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
   const port1AtNode3 = graph.addPortAt(node3, new Point(node3.layout.x, node3.layout.center.y))
@@ -184,19 +178,4 @@ function configureContextMenu(graphComponent) {
   }
 }
 
-function registerCommands() {
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-}
-
-// noinspection JSIgnoredPromiseFromCall
-run()
+run().then(finishLoading)

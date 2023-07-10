@@ -1,0 +1,80 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 25px;
+}
+
+.row.bold {
+  font-weight: bold;
+}
+
+.name.inapplicable {
+  color: #8a8a8a;
+}
+
+.name.inapplicable::before {
+  content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCI+PHBhdGggZmlsbD0iIzhhOGE4YSIgZD0ibTYuMDYyIDE0LjcwOC0uNzctLjc3TDkuMjI5IDEwIDUuMjkyIDYuMDYybC43Ny0uNzdMMTAgOS4yMjlsMy45MzgtMy45MzcuNzcuNzdMMTAuNzcxIDEwbDMuOTM3IDMuOTM4LS43Ny43N0wxMCAxMC43NzFaIi8+PC9zdmc+');
+  vertical-align: top;
+}
+
+.name.applicable {
+  color: white;
+  background-color: #56926e;
+  padding: 0 10px 0 5px;
+  margin: 2px;
+  border-radius: 12px;
+}
+
+.name.applicable::before {
+  content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0ibTguMjI5IDE0LjA2Mi0zLjUyMS0zLjU0MUw1Ljc1IDkuNDc5bDIuNDc5IDIuNDU5IDYuMDIxLTZMMTUuMjkyIDdaIi8+PC9zdmc+');
+  vertical-align: top;
+}
+
+.value {
+  height: 22px;
+}
+
+.value a .info-link {
+  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCI+PHBhdGggZmlsbD0iIyMzNDNmNGEiIGQ9Ik0xMCAxNXEuNDE3IDAgLjcwOC0uMjkyUTExIDE0LjQxNyAxMSAxNHQtLjI5Mi0uNzA4UTEwLjQxNyAxMyAxMCAxM3QtLjcwOC4yOTJROSAxMy41ODMgOSAxNHQuMjkyLjcwOFE5LjU4MyAxNSAxMCAxNVptLS43NS0zLjE4OGgxLjUyMXEwLS43Ny4xMzUtMS4wOTMuMTM2LS4zMjMuNjU2LS44MjMuNzMtLjcwOCAxLjAxMS0xLjIwOC4yODEtLjUuMjgxLTEuMTA1IDAtMS4xNDUtLjc4MS0xLjg2NFExMS4yOTIgNSAxMC4wODMgNXEtMS4wNjIgMC0xLjg0My41NjItLjc4Mi41NjMtMS4wOTQgMS41MjFsMS4zNTQuNTYzcS4xODgtLjU4NC41OTQtLjkwNi40MDYtLjMyMy45NDgtLjMyMy41ODMgMCAuOTU4LjMzM3QuMzc1Ljg3NXEwIC40NzktLjMyMy44NTR0LS43MTkuNzI5cS0uNzI5LjY2Ny0uOTA2IDEuMDk0LS4xNzcuNDI3LS4xNzcgMS41MVpNMTAgMThxLTEuNjQ2IDAtMy4xMDQtLjYyNS0xLjQ1OC0uNjI1LTIuNTUyLTEuNzE5dC0xLjcxOS0yLjU1MlEyIDExLjY0NiAyIDEwcTAtMS42NjcuNjI1LTMuMTE1LjYyNS0xLjQ0NyAxLjcxOS0yLjU0MVE1LjQzOCAzLjI1IDYuODk2IDIuNjI1VDEwIDJxMS42NjcgMCAzLjExNS42MjUgMS40NDcuNjI1IDIuNTQxIDEuNzE5IDEuMDk0IDEuMDk0IDEuNzE5IDIuNTQxUTE4IDguMzMzIDE4IDEwcTAgMS42NDYtLjYyNSAzLjEwNC0uNjI1IDEuNDU4LTEuNzE5IDIuNTUydC0yLjU0MSAxLjcxOVExMS42NjcgMTggMTAgMThabTAtMS41cTIuNzA4IDAgNC42MDQtMS44OTZUMTYuNSAxMHEwLTIuNzA4LTEuODk2LTQuNjA0VDEwIDMuNXEtMi43MDggMC00LjYwNCAxLjg5NlQzLjUgMTBxMCAyLjcwOCAxLjg5NiA0LjYwNFQxMCAxNi41Wm0wLTYuNVoiLz48L3N2Zz4=')
+    no-repeat;
+  width: 20px;
+  height: 20px;
+}
+
+.value a .info-link:hover {
+  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCI+PHBhdGggZmlsbD0iIzM0M2Y0YSIgZD0iTTEwIDE1cS40MTcgMCAuNzA4LS4yOTJRMTEgMTQuNDE3IDExIDE0dC0uMjkyLS43MDhRMTAuNDE3IDEzIDEwIDEzdC0uNzA4LjI5MlE5IDEzLjU4MyA5IDE0dC4yOTIuNzA4UTkuNTgzIDE1IDEwIDE1Wm0tLjc1LTMuMTg4aDEuNTIxcTAtLjc3LjEzNS0xLjA5My4xMzYtLjMyMy42NTYtLjgyMy43My0uNzA4IDEuMDExLTEuMjA4LjI4MS0uNS4yODEtMS4xMDUgMC0xLjE0NS0uNzgxLTEuODY0UTExLjI5MiA1IDEwLjA4MyA1cS0xLjA2MiAwLTEuODQzLjU2Mi0uNzgyLjU2My0xLjA5NCAxLjUyMWwxLjM1NC41NjNxLjE4OC0uNTg0LjU5NC0uOTA2LjQwNi0uMzIzLjk0OC0uMzIzLjU4MyAwIC45NTguMzMzdC4zNzUuODc1cTAgLjQ3OS0uMzIzLjg1NHQtLjcxOS43MjlxLS43MjkuNjY3LS45MDYgMS4wOTQtLjE3Ny40MjctLjE3NyAxLjUxWk0xMCAxOHEtMS42NDYgMC0zLjEwNC0uNjI1LTEuNDU4LS42MjUtMi41NTItMS43MTl0LTEuNzE5LTIuNTUyUTIgMTEuNjQ2IDIgMTBxMC0xLjY2Ny42MjUtMy4xMTUuNjI1LTEuNDQ3IDEuNzE5LTIuNTQxUTUuNDM4IDMuMjUgNi44OTYgMi42MjVUMTAgMnExLjY2NyAwIDMuMTE1LjYyNSAxLjQ0Ny42MjUgMi41NDEgMS43MTkgMS4wOTQgMS4wOTQgMS43MTkgMi41NDFRMTggOC4zMzMgMTggMTBxMCAxLjY0Ni0uNjI1IDMuMTA0LS42MjUgMS40NTgtMS43MTkgMi41NTJ0LTIuNTQxIDEuNzE5UTExLjY2NyAxOCAxMCAxOFoiLz48L3N2Zz4=')
+    no-repeat;
+}
+
+#graph-elements {
+  margin: 1.1em 0;
+}

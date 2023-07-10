@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,24 +39,19 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   HierarchicLayout,
-  ICommand,
-  IEnumerable,
-  IGraph,
-  ILabel,
-  ILayoutAlgorithm,
   LabelAngleOnRightSideOffsets,
   LabelAngleOnRightSideRotations,
   LabelAngleReferences,
-  LabelLayoutTranslator,
   LabelPlacements,
   LabelSideReferences,
   LayoutExecutor,
   LayoutGraphAdapter,
+  LayoutKeys,
   LayoutOrientation,
   License,
   Mapper,
   MinimumNodeSizeStage,
-  MultiStageLayout,
+  OrganicLayout,
   OrthogonalLayout,
   PreferredPlacementDescriptor,
   Size,
@@ -64,16 +59,9 @@ import {
   TreeReductionStage
 } from 'yfiles'
 
-import { applyDemoTheme, initDemoStyles } from '../../resources/demo-styles.js'
-import {
-  addNavigationButtons,
-  bindAction,
-  bindChangeListener,
-  bindCommand,
-  reportDemoError,
-  showApp
-} from '../../resources/demo-app.js'
-import { fetchLicense } from '../../resources/fetch-license.js'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { fetchLicense } from 'demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 /**
  * @typedef {*} EdgeLabelPlacementOption
@@ -98,28 +86,22 @@ let graph
  */
 let descriptorMapper
 
-/**
- * Flag to prevent re-entrant layouts.
- * @type {boolean}
- */
-let layouting = false
-
 // init UI elements
-const layoutComboBox = document.getElementById('layoutComboBox')
-const layoutButton = document.getElementById('layoutButton')
-const labelTextArea = document.getElementById('labelTextArea')
-const distanceToEdgeNumberField = document.getElementById('distanceToEdgeNumberField')
-const angleNumberField = document.getElementById('angleNumberField')
-const placementAlongEdgeComboBox = document.getElementById('placementAlongEdgeComboBox')
-const placementSideOfEdgeComboBox = document.getElementById('placementSideOfEdgeComboBox')
-const sideReferenceComboBox = document.getElementById('sideReferenceComboBox')
-const angleReferenceComboBox = document.getElementById('angleReferenceComboBox')
-const angleRotationComboBox = document.getElementById('angleRotationComboBox')
-const add180CheckBox = document.getElementById('add180CheckBox')
+const layoutComboBox = document.querySelector('#algorithm-select-box')
+const layoutButton = document.querySelector('#layout-button')
+const labelTextArea = document.querySelector('#label-textarea')
+const distanceToEdgeNumberField = document.querySelector('#distance-to-edge-number-field')
+const angleNumberField = document.querySelector('#angle-number-field')
+const placementAlongEdgeComboBox = document.querySelector('#placement-along-edge-combobox')
+const placementSideOfEdgeComboBox = document.querySelector('#placement-side-of-edge-combobox')
+const sideReferenceComboBox = document.querySelector('#side-reference-combobox')
+const angleReferenceComboBox = document.querySelector('#angle-reference-combobox')
+const angleRotationComboBox = document.querySelector('#angle-rotation-combobox')
+const add180CheckBox = document.querySelector('#add-180-checkbox')
 
 /**
- * This demo shows how to influence the placement of edge labels by a generic labeling algorithm as well as by a
- * layout algorithm with integrated edge labeling using a PreferredPlacementDescriptor.
+ * This demo shows how to place edge labels using {@link PreferredPlacementDescriptor} together
+ * with a generic labeling algorithm or a layout algorithm that supports integrated edge labeling.
  * @returns {!Promise}
  */
 async function run() {
@@ -130,7 +112,7 @@ async function run() {
 
   descriptorMapper = new Mapper()
 
-  registerCommands()
+  initializeUI()
 
   initializeGraph()
   initializeStyles()
@@ -142,8 +124,6 @@ async function run() {
   createSampleGraph()
 
   graph.undoEngineEnabled = true
-
-  showApp(graphComponent)
 }
 
 /**
@@ -151,46 +131,43 @@ async function run() {
  * PreferredPlacementDescriptor of the labels is set according to the option handlers settings.
  * @see {@link updateLabelProperties}
  * @param {boolean} fitViewToContent Whether to animate the viewport
+ * @returns {!Promise}
  */
 async function doLayout(fitViewToContent) {
-  if (!layouting) {
-    layouting = true
-    setUIDisabled(true)
+  const waitInputMode = graphComponent.inputMode.waitInputMode
+  if (waitInputMode.waiting) {
+    return
+  }
 
-    // retrieve current labeling/layout algorithm from the combo-box
-    const layout = layoutComboBox.options[layoutComboBox.selectedIndex].myValue
+  setUIDisabled(true)
 
-    // provide preferred placement data to the layout algorithm
-    const layoutData = new GenericLayoutData({
-      labelItemMappings: [
-        [
-          LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-          descriptorMapper
-        ]
-      ]
-    })
+  // retrieve current labeling/layout algorithm from the combo-box
+  const layout = layoutComboBox.options[layoutComboBox.selectedIndex].myValue
 
-    // fix node port stage is used to keep the bounding box of the graph in the view port
-    layoutData.combineWith(new FixNodeLayoutData({ fixedNodes: () => true }))
+  // provide preferred placement data to the layout algorithm
+  const layoutData = new GenericLayoutData({
+    labelItemMappings: [
+      [LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY, descriptorMapper]
+    ]
+  })
 
-    // initialize layout executor
-    const layoutExecutor = new LayoutExecutor({
-      graphComponent,
-      layout: new MinimumNodeSizeStage(new FixNodeLayoutStage(layout)),
-      layoutData,
-      duration: '0.5s',
-      animateViewport: fitViewToContent
-    })
+  // fix node port stage is used to keep the bounding box of the graph in the view port
+  layoutData.combineWith(new FixNodeLayoutData({ fixedNodes: () => true }))
 
-    // apply layout
-    try {
-      await layoutExecutor.start()
-    } catch (error) {
-      reportDemoError(error)
-    } finally {
-      layouting = false
-      setUIDisabled(false)
-    }
+  // initialize layout executor
+  const layoutExecutor = new LayoutExecutor({
+    graphComponent,
+    layout: new MinimumNodeSizeStage(new FixNodeLayoutStage(layout)),
+    layoutData,
+    duration: '0.5s',
+    animateViewport: fitViewToContent
+  })
+
+  // apply layout
+  try {
+    await layoutExecutor.start()
+  } finally {
+    setUIDisabled(false)
   }
 }
 
@@ -200,6 +177,7 @@ async function doLayout(fitViewToContent) {
  * @param {boolean} disabled true if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
+  graphComponent.inputMode.waitInputMode.waiting = disabled
   layoutButton.disabled = disabled
   layoutComboBox.disabled = disabled
 }
@@ -210,7 +188,7 @@ function setUIDisabled(disabled) {
  */
 function onLabelPropertyChanged(source) {
   updateLabelValues(getAffectedLabels(), source)
-  doLayout(false)
+  void doLayout(false)
 }
 
 /**
@@ -395,35 +373,29 @@ function getIndex(comboBox, value) {
 }
 
 /**
- * Binds the commands to the buttons of the toolbar and the input elements of the option handler.
+ * Binds the actions to the buttons of the toolbar and the input elements of the option handler.
  */
-function registerCommands() {
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
-
+function initializeUI() {
   addNavigationButtons(layoutComboBox)
 
-  bindAction("button[data-command='Layout']", () => doLayout(true))
-  bindChangeListener("select[data-command='SelectLayout']", () => doLayout(true))
-  bindAction("button[data-command='PlacementAlongEdgeChanged']", () =>
+  layoutButton.addEventListener('click', () => doLayout(true))
+  layoutComboBox.addEventListener('change', () => doLayout(true))
+  placementAlongEdgeComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(placementAlongEdgeComboBox)
   )
-  bindAction("button[data-command='PlacementSideOfEdgeChanged']", () =>
+  placementSideOfEdgeComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(placementSideOfEdgeComboBox)
   )
-  bindAction("button[data-command='SideReferenceChanged']", () =>
+  sideReferenceComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(sideReferenceComboBox)
   )
-  bindAction("button[data-command='AngleReferenceChanged']", () =>
+  angleReferenceComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(angleReferenceComboBox)
   )
-  bindAction("button[data-command='AngleRotationChanged']", () =>
+  angleRotationComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(angleRotationComboBox)
   )
+
   distanceToEdgeNumberField.addEventListener(
     'change',
     input => {
@@ -583,6 +555,7 @@ function initializeLayoutComboBox() {
     'Hierarchic, Left to Right',
     createHierarchicLayout(LayoutOrientation.LEFT_TO_RIGHT)
   )
+  addOption(layoutComboBox, 'Organic', createOrganicLayout())
   addOption(layoutComboBox, 'Generic Tree', createGenericTreeLayout())
   addOption(layoutComboBox, 'Orthogonal', createOrthogonalLayout())
 
@@ -608,14 +581,19 @@ function createHierarchicLayout(layoutOrientation) {
  */
 function createGenericTreeLayout() {
   const reductionStage = new TreeReductionStage()
+
+  const affectedLabelsKey = 'AFFECTED_LABELS'
   const labelingAlgorithm = new GenericLabeling()
-  labelingAlgorithm.affectedLabelsDpKey = 'AFFECTED_LABELS'
+  labelingAlgorithm.affectedLabelsDpKey = affectedLabelsKey
   reductionStage.nonTreeEdgeLabelingAlgorithm = labelingAlgorithm
-  reductionStage.nonTreeEdgeLabelSelectionKey = labelingAlgorithm.affectedLabelsDpKey
+  reductionStage.nonTreeEdgeLabelSelectionKey = affectedLabelsKey
+
+  const affectedEdgesKey = LayoutKeys.AFFECTED_EDGES_DP_KEY
   const edgeRouter = new EdgeRouter()
+  edgeRouter.affectedEdgesDpKey = affectedEdgesKey
   edgeRouter.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
   reductionStage.nonTreeEdgeRouter = edgeRouter
-  reductionStage.nonTreeEdgeSelectionKey = edgeRouter.affectedEdgesDpKey
+  reductionStage.nonTreeEdgeSelectionKey = affectedEdgesKey
 
   const layout = new TreeLayout()
   layout.integratedEdgeLabeling = true
@@ -631,6 +609,20 @@ function createGenericTreeLayout() {
 function createOrthogonalLayout() {
   const layout = new OrthogonalLayout()
   layout.integratedEdgeLabeling = true
+
+  disableAutoFlipping(layout)
+  return layout
+}
+
+/**
+ * @returns {!ILayoutAlgorithm}
+ */
+function createOrganicLayout() {
+  const layout = new OrganicLayout()
+  layout.integratedEdgeLabeling = true
+  layout.deterministic = true
+  layout.preferredEdgeLength = 60
+  layout.minimumNodeDistance = 20
 
   disableAutoFlipping(layout)
   return layout
@@ -735,5 +727,4 @@ function getAffectedLabels() {
   return selectedLabels.size > 0 ? selectedLabels : graph.edgeLabels
 }
 
-// noinspection JSIgnoredPromiseFromCall
-run()
+void run().then(finishLoading)

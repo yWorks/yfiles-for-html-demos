@@ -2,12 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -31,36 +30,82 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Printing Demo [yFiles for HTML]</title>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
+    <link rel="stylesheet" href="./option-panel/option-panel.css" />
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
 
     <style>
-      .demo-properties label.short {
-        width: 6em;
-      }
+      /* Load custom fonts for the custom-fonts sample graph. */
+      @import url('https://fonts.googleapis.com/css?family=Prata');
+      @import url('https://fonts.googleapis.com/css?family=Kosugi');
 
-      .demo-properties input[type='number'] {
-        width: 5em;
+      /*
+      * Custom fonts need to be loaded before their usage in the GraphComponent,
+      * otherwise the initial measurement of the font may use a system font.
+      * We pre-load the fonts by applying them to a hidden dummy element.
+      */
+      .font-preload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
       }
     </style>
   </head>
-  <body class="demo-has-left demo-has-right">
-    <aside class="demo-sidebar demo-left">
-      <div class="demo-sidebar-header">
-        <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo"></a>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Printing</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
-      <div class="demo-sidebar-content">
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
         <h1>Printing Demo</h1>
 
         <p>
-          The Printing demo shows how to export a graph or a part of it to vector graphics (SVG) on
-          the client and how to print this graphic.
+          This demo shows how to export the whole diagram or a part of it to an SVG on the client
+          and how to print this graphic.
         </p>
 
         <h2>Things to Try</h2>
@@ -71,99 +116,87 @@
             and trigger the printing.
           </li>
           <li>
-            Disable <code>Use Clipping Rectangle</code> to ignore the export region rectangle and
-            export the complete graph instead.
+            Enable <code>Print Rectangle Contents</code> to print only the rectangle's region
+            instead of the whole graph. Resize and move rectangle to control the region which will
+            be printed.
           </li>
-          <li>Play with the settings to see how different settings affect the outcome.</li>
+          <li>Experiment with the settings to observe how changes affect the results.</li>
         </ul>
       </div>
     </aside>
-
-    <div class="demo-content">
-      <header class="demo-header"></header>
-      <div class="demo-toolbar"></div>
-
-      <div class="demo-content-dynamic">
+    <div class="demo-page__main">
+      <div class="font-preload">
+        <span style="font-family: Prata, sans-serif">Кирилица</span>
+        <span style="font-family: Kosugi, sans-serif">平仮名</span>
+      </div>
+      <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-    </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Printing Options</h2>
 
-    <!--
-  Export Properties
-  -->
-    <aside class="demo-sidebar demo-right">
-      <div class="demo-sidebar-content">
-        <h2>Print</h2>
-
-        <div class="demo-properties">
-          <div id="formContainer" class="formContainer">
-            <fieldset>
-              <legend>General</legend>
-              <div class="demo-form-block">
-                <label for="scale" class="short">Scale</label>
-                <input
-                  id="scale"
-                  name="scale"
-                  type="number"
-                  min="0.1"
-                  max="200.0"
-                  step="0.1"
-                  value="1.0"
-                />
-              </div>
-              <div class="demo-form-block">
-                <label for="margin" class="short">Margin</label>
-                <input id="margin" name="margin" type="number" min="0" max="100" value="5.0" />
-              </div>
-              <div class="demo-form-block">
-                <label for="useRect">Use Clipping Rectangle</label>
-                <input id="useRect" type="checkbox" name="useRect" checked="checked" />
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend>Tiles</legend>
-              <div class="demo-form-block">
-                <label for="useTilePrinting">Tiled Printing</label>
-                <input
-                  id="useTilePrinting"
-                  data-name="inputUseTilePrinting"
-                  type="checkbox"
-                  name="useTilePrinting"
-                />
-              </div>
-              <div class="demo-form-block">
-                <label for="tileWidth" class="short">Tile Width</label>
-                <input
-                  id="tileWidth"
-                  data-name="inputTileWidth"
-                  name="tileWidth"
-                  type="number"
-                  min="10"
-                  value="595"
-                />
-              </div>
-              <div class="demo-form-block">
-                <label for="tileHeight" class="short">Tile Height</label>
-                <input
-                  id="tileHeight"
-                  data-name="inputTileHeight"
-                  name="tileHeight"
-                  type="number"
-                  min="10"
-                  value="842"
-                />
-              </div>
-            </fieldset>
-            <p>
-              <button data-name="PrintButton" data-command="Print" id="Print" value="Print">
-                Print
-              </button>
-            </p>
+          <div class="demo-properties__settings">
+            <div class="settings-grid">
+              <p class="settings-legend1">General</p>
+              <label for="useRect" class="settings-label-row1">Print Rectangle Contents</label>
+              <input class="settings-editor-row1" id="useRect" type="checkbox" name="useRect" />
+              <label for="scale" class="settings-label-row2">Scale</label>
+              <input
+                class="settings-editor-row2"
+                id="scale"
+                name="scale"
+                type="number"
+                min="0.1"
+                max="200.0"
+                step="0.1"
+                value="1.0"
+              />
+              <label for="margin" class="settings-label-row3">Margin</label>
+              <input
+                class="settings-editor-row3"
+                id="margin"
+                name="margin"
+                type="number"
+                min="0"
+                max="100"
+                value="5.0"
+              />
+              <p class="settings-legend2">Tiles</p>
+              <label for="useTilePrinting" class="settings-label-row4">Tiled Printing</label>
+              <input
+                class="settings-editor-row4"
+                id="useTilePrinting"
+                data-name="inputUseTilePrinting"
+                type="checkbox"
+                name="useTilePrinting"
+              />
+              <label for="tileWidth" class="settings-label-row5">Tile Width</label>
+              <input
+                class="settings-editor-row5"
+                id="tileWidth"
+                data-name="inputTileWidth"
+                name="tileWidth"
+                type="number"
+                min="10"
+                value="595"
+              />
+              <label for="tileHeight" class="settings-label-row6">Tile Height</label>
+              <input
+                class="settings-editor-row6"
+                id="tileHeight"
+                data-name="inputTileHeight"
+                name="tileHeight"
+                type="number"
+                min="10"
+                value="842"
+              />
+              <button class="settings-editor-row7 flat-button" id="print-button">Print</button>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
-
-    <script type="module" crossorigin="anonymous" src="PrintingDemo.js"></script>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="PrintingDemo.ts" async></script>
   </body>
 </html>

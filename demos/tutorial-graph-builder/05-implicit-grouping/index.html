@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title>05 Implicit Grouping - Graph Builder Tutorial [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body class="demo-tutorial theme-light">
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <a href="../../README.html#tutorial-graph-builder"> Graph Builder Tutorial </a>
+
+        <span>05 Implicit Grouping</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <theme-button></theme-button>
+
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar no-overflow">
+      <div class="demo-toolbar__tutorial-left">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-graph-builder/04-group-nodes/index.html'><span>04 Group Nodes</span></a>
+      </div>
+      <div
+        class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
+      >
+        <b>Step 5/13</b
+        ><span class="demo-toolbar__tutorial-step-title"> &mdash; 05 Implicit Grouping</span>
+        <div class="tutorial-dropdown">
+          <a
+            href="../../tutorial-graph-builder/01-create-graph/index.html"
+            class="tutorial-dropdown__item"
+            >01 Create Graph</a
+          ><a
+            href="../../tutorial-graph-builder/02-create-nodes-sources/index.html"
+            class="tutorial-dropdown__item"
+            >02 Create Nodes Sources</a
+          ><a
+            href="../../tutorial-graph-builder/03-create-edges-sources/index.html"
+            class="tutorial-dropdown__item"
+            >03 Create Edges Sources</a
+          ><a
+            href="../../tutorial-graph-builder/04-group-nodes/index.html"
+            class="tutorial-dropdown__item"
+            >04 Group Nodes</a
+          ><a
+            href="../../tutorial-graph-builder/05-implicit-grouping/index.html"
+            class="tutorial-dropdown__item tutorial-dropdown__item--current"
+            >05 Implicit Grouping</a
+          ><a
+            href="../../tutorial-graph-builder/06-configure-styles/index.html"
+            class="tutorial-dropdown__item"
+            >06 Configure Styles</a
+          ><a
+            href="../../tutorial-graph-builder/07-create-labels-sources/index.html"
+            class="tutorial-dropdown__item"
+            >07 Create Labels Sources</a
+          ><a
+            href="../../tutorial-graph-builder/08-configure-labels/index.html"
+            class="tutorial-dropdown__item"
+            >08 Configure Labels</a
+          ><a
+            href="../../tutorial-graph-builder/09-configure-tags/index.html"
+            class="tutorial-dropdown__item"
+            >09 Configure Tags</a
+          ><a
+            href="../../tutorial-graph-builder/10-configure-layout/index.html"
+            class="tutorial-dropdown__item"
+            >10 Configure Layout</a
+          ><a
+            href="../../tutorial-graph-builder/11-update-graph/index.html"
+            class="tutorial-dropdown__item"
+            >11 Update Graph</a
+          ><a
+            href="../../tutorial-graph-builder/12-adjacency-graph-builder/index.html"
+            class="tutorial-dropdown__item"
+            >12 Adjacency Graph Builder</a
+          ><a
+            href="../../tutorial-graph-builder/13-tree-builder/index.html"
+            class="tutorial-dropdown__item"
+            >13 Tree Builder</a
+          >
+        </div>
+      </div>
+      <div class="demo-toolbar__tutorial-right">
+        <!-- prettier-ignore -->
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-graph-builder/06-configure-styles/index.html'><span>06 Configure Styles</span></a>
+      </div>
+    </div>
+    <aside class="demo-page__description demo-description--draggable" data-no-header>
+      <div class="demo-description__content">
+        <div class="demo-description__width-limit">
+          <h1>Grouping nodes in the graph</h1>
+          <div id="preamble">
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In this tutorial step, you will learn an alternative approach to create group
+                  nodes to show hierarchy information within the business data.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          This step is optional when building a graph with
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. If you do not have hierarchy information in
+                          your data, you can proceed with the next step.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In a previous step, we have demonstrated how to use
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#GraphBuilder-method-createGroupNodesSource" target="_blank">createGroupNodesSource</a>
+                  to build the hierarchy.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  The downside of this approach is that the objects representing the group nodes
+                  need to be known in advance. While this is fine for many scenarios, sometimes the
+                  information is only provided implicitly in the data, and it can be difficult or
+                  very inefficient to extract all objects representing the group nodes. This is
+                  especially true for dynamic scenarios where a lot of information is just provided
+                  as part of a query.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  A related problem can occur when you want to navigate from group nodes to their
+                  contents. If the business data is already present as a hierarchical data
+                  structure, it is often much easier just to query an entity for their content than
+                  to extract descendants in advance, especially if there are many hierarchy levels
+                  involved.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  To address these use cases, the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a> provides two closely
+                  related APIs that allow you to
+                  <a href="#graph-builder-tutorial-05-createParentNodesSource"
+                    >Create group nodes from implicit node data</a
+                  >
+                  or
+                  <a href="#graph-builder-tutorial-05-createChildNodesSource"
+                    >Create group node contents from implicit node data</a
+                  >
+                  without the need for an explicit group node source.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="_the_data">The data</h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  In the example data, we start from an initial set of entities. Each one has a
+                  property <code>children</code> that can contain a (potentially empty) list of
+                  child entities and a <code>path</code> property that describes a hierarchical path
+                  structure how this entity can be reached, similar to a file system path.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">export</span> type <span class="hljs-title class_">ItemData</span> = {
+  <span class="hljs-attr">id</span>: string
+  <span class="hljs-attr">path</span>: string
+  children?: <span class="hljs-title class_">ChildData</span>[]
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>Each child item can optionally have a further list of its own child items:</p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">export</span> type <span class="hljs-title class_">ChildData</span> = {
+  <span class="hljs-attr">id</span>: string
+  children?: <span class="hljs-title class_">ChildData</span>[]
+}</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  The initial items as well as the child entities carry an additional
+                  <code>id</code> attribute to make it easier to define relations between them.
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre class="highlight"><code class="language-javascript" data-lang="javascript">[
+  { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;item0&#x27;</span>, <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/root/dir1/dir1&#x27;</span> },
+  {
+    <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;item1&#x27;</span>,
+    <span class="hljs-attr">path</span>: <span class="hljs-string">&#x27;/root/dir1/dir2&#x27;</span>,
+    <span class="hljs-attr">children</span>: [
+      {
+        <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child1&#x27;</span>,
+        <span class="hljs-attr">children</span>: [
+          {
+            <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child11&#x27;</span>,
+            <span class="hljs-attr">children</span>: [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child14&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child15&#x27;</span> }]
+          },
+          { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child12&#x27;</span> }
+        ]
+      },
+      { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child2&#x27;</span>, <span class="hljs-attr">children</span>: [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child13&#x27;</span> }] }
+    ]
+  },</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="graph-builder-tutorial-05-createParentNodesSource">
+              Create group nodes from implicit node data
+            </h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  If you want to create group nodes automatically from data that is present in the
+                  items in your node source, you can use
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-method-createParentNodesSource" target="_blank">NodesSource.createParentNodesSource</a>. This method uses the existing NodesSource to group its items from scratch. The
+                  mandatory <code>parentDataProvider</code> parameter describes how to retrieve a
+                  parent object for each item in the NodesSource. The optional
+                  <code>idProvider</code> parameter can be used to uniquely identify parent objects
+                  even if they are not referentially equal.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  This method creates a new <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a> which can then be configured
+                  as usual, e.g. by providing label bindings or custom styles.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  You can additionally <strong>augment</strong> the newly created parent node source
+                  with additional data with
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-method-addParentNodesSource" target="_blank">NodesSource.addParentNodesSource</a>, e.g. to recursively process parent data for that same source and thereby
+                  building a whole hierarchy.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  We start by defining the initial set of nodes via a <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a>:
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> idProvider = (<span class="hljs-attr">item</span>: <span class="hljs-title class_">ChildData</span> | <span class="hljs-title class_">ItemData</span>): <span class="hljs-function"><span class="hljs-params">string</span> =&gt;</span> item.<span class="hljs-property">id</span>
+<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>({
+  <span class="hljs-attr">data</span>: nodeData,
+  <span class="hljs-attr">id</span>: idProvider
+})</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  In the next step, we describe how to navigate from an entity to its path container
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> parentsSource = nodesSource.<span class="hljs-title function_">createParentNodesSource</span>(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">path</span>)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  To ascend further in the hierarchy, we add another parent source on top and enable
+                  recursion by augmenting that source. For the higher levels, we strip the last path
+                  entry from the existing path and terminate when we don&#8217;t have any further
+                  levels to ascend to.
+                </p>
+              </div>
+              <div id="graph-builder-tutorial-05-recursiveParentNodesSource" class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> parentDataProvider = (<span class="hljs-attr">path</span>: string | <span class="hljs-literal">null</span>): string | <span class="hljs-function"><span class="hljs-params">null</span> =&gt;</span> {
+  <span class="hljs-keyword">const</span> separator = path!.<span class="hljs-title function_">lastIndexOf</span>(<span class="hljs-string">&#x27;/&#x27;</span>)
+  <span class="hljs-keyword">return</span> separator === <span class="hljs-number">0</span> ? <span class="hljs-literal">null</span> : path!.<span class="hljs-title function_">substring</span>(<span class="hljs-number">0</span>, separator)
+}
+<span class="hljs-keyword">const</span> ancestorSource =
+  parentsSource.<span class="hljs-title function_">createParentNodesSource</span>(parentDataProvider)
+<span class="hljs-comment">// Enable recursive processing higher up in the container hierarchy</span>
+ancestorSource.<span class="hljs-title function_">addParentNodesSource</span>(parentDataProvider, ancestorSource)</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sect1">
+            <h2 id="graph-builder-tutorial-05-createChildNodesSource">
+              Create group node contents from implicit node data
+            </h2>
+            <div class="sectionbody">
+              <div class="paragraph">
+                <p>
+                  If you want to create the content of group nodes automatically from data that is
+                  present in the items in your node source, you can use
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-method-createChildNodesSource" target="_blank">NodesSource.createChildNodesSource</a>. This method uses the existing NodesSource to populate its nodes. The mandatory
+                  <code>childDataProvider</code> parameter describes how to retrieve a collection of
+                  child objects for each item in the NodesSource. The optional
+                  <code>idProvider</code> parameter can be used to uniquely identify child objects
+                  even if they are not referentially equal.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  This method creates a new <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a> which can then be configured
+                  as usual, e.g. by providing label bindings or custom styles.
+                </p>
+              </div>
+              <div class="paragraph">
+                <p>
+                  You can additionally <strong>augment</strong> the newly created child node source
+                  with additional data with
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-method-addChildNodesSource" target="_blank">NodesSource.addChildNodesSource</a>, e.g. to recursively process descendant data for that same source and thereby
+                  building a whole hierarchy.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          It is possible to combine both approaches, thereby automatically building
+                          a hierarchy in both directions from an initial set of node items.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Populating the nodes in the original nodes source and descending further in the
+                  hierarchy can be implemented in an analogous way to
+                  <a href="#graph-builder-tutorial-05-recursiveParentNodesSource"
+                    >recursive parents</a
+                  >: we just have to create corresponding <strong>Child Nodes Sources</strong> and
+                  declare how to retrieve the <strong>content</strong> of each item:
+                </p>
+              </div>
+              <div class="listingblock">
+                <div class="content">
+                  <pre
+                    class="highlight"
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Enable processing of the contents of the nodes in the NodeData</span>
+<span class="hljs-keyword">const</span> childDataProvider = (<span class="hljs-attr">item</span>: <span class="hljs-title class_">ChildData</span> | <span class="hljs-title class_">ItemData</span>): <span class="hljs-title class_">ChildData</span>[] =&gt;
+  item.<span class="hljs-property">children</span> ?? []
+<span class="hljs-keyword">const</span> childNodesSource = nodesSource.<span class="hljs-title function_">createChildNodesSource</span>(
+  childDataProvider,
+  idProvider
+)
+<span class="hljs-comment">// Enable processing of the contents of the child nodes</span>
+<span class="hljs-keyword">const</span> descendantsSource = childNodesSource.<span class="hljs-title function_">createChildNodesSource</span>(
+  childDataProvider,
+  idProvider
+)
+<span class="hljs-comment">// Enable recursive processing of the contents</span>
+descendantsSource.<span class="hljs-title function_">addChildNodesSource</span>(childDataProvider, descendantsSource)</code></pre>
+                </div>
+              </div>
+              <div class="paragraph">
+                <p>
+                  Edges can connect to any of the nodes, whether they are in the "core" nodes source
+                  or any of the derived ones, as long as their <code>id</code> is referenced in the
+                  source or target
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider" target="_blank">id provider</a>.
+                </p>
+              </div>
+              <div class="admonitionblock note">
+                <table>
+                  <tr>
+                    <td class="icon">
+                      <div class="title">Note</div>
+                    </td>
+                    <td class="content">
+                      <div class="paragraph">
+                        <p>
+                          Please have a look in this tutorial step’s demo code in
+                          <code>implicit-group-nodes.ts</code> and play around with the hierarchic
+                          structure. For example, try to change the definition of the group nodes.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="demo-description__next-tutorial">
+            <!-- prettier-ignore -->
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-graph-builder/06-configure-styles/index.html'><span>06 Configure Styles</span></a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+
+    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script type="module" crossorigin="anonymous" src="app.ts" async></script>
+  </body>
+</html>

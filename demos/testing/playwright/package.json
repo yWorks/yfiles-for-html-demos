@@ -1,0 +1,16 @@
+{
+  "name": "playwright-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "npx playwright install",
+    "test": "npx playwright test",
+    "test-ui": "npx playwright test --ui",
+    "show-report": "npx playwright show-report"
+  },
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "devDependencies": {
+    "@playwright/test": "^1.35.1"
+  }
+}

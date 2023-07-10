@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.5.
+ ** This demo file is part of yFiles for HTML 2.6.
  ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,21 +46,34 @@ import { LayoutHelper } from './LayoutHelper.js'
 
 export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
   /**
+   * The node we are currently moving.
+   */
+  node = null
+
+  /**
+   * The original {@link IPositionHandler}.
+   */
+  handler = null
+
+  /**
+   * Creates space at the new location.
+   */
+  layoutHelper = null
+
+  /**
+   * To check whether re-parenting is taking place.
+   */
+  reparentHandler = null
+
+  timeoutHandle
+
+  /**
    * @param {!INode} node
    * @param {!IPositionHandler} handler
    */
   constructor(node, handler) {
     super()
-
-    // Creates space at the new location.
-    this.layoutHelper = null
-
-    // To check whether re-parenting is taking place.
-    this.reparentHandler = null
-
-    // The node we are currently moving.
     this.node = node
-    // The original {@link IPositionHandler}.
     this.handler = handler
     this.timeoutHandle = null
   }

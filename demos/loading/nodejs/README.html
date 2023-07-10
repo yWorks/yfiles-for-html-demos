@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.5.
+     // This demo file is part of yFiles for HTML 2.6.
      // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -29,11 +28,11 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>NodeJS Demo [yFiles for HTML]</title>
-    <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css" />
+    <link rel="stylesheet" href="../../../doc/readme-style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   </head>
   <body>
@@ -43,7 +42,9 @@
       <div class="content-centered">
         <div class="content">
           <div class="breadcrumbs">
-            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> NodeJS Demo
+            <a href="../../README.html">yFiles for HTML</a>
+            <span class="angle-right"></span>
+            NodeJS Demo
           </div>
 
           <div>
@@ -51,29 +52,29 @@
 
             <p>
               This demo shows how to run a yFiles layout algorithm in a
-              <em><a href="https://nodejs.org/" target="_blank">Node.js&reg;</a></em>
-              environment. This makes it possible to run the layout calculation asynchronously,
-              preventing it from blocking the UI.
+              <em><a href="https://nodejs.org/" target="_blank">Node.js&reg;</a></em> environment.
+              This makes it possible to run the layout calculation asynchronously, preventing it
+              from blocking the UI.
             </p>
           </div>
           <div style="padding-bottom: 20px">
             <p>
               To transfer the graph structure and layout between the <em>Node.js</em>
               <em><a target="_blank" href="https://expressjs.com/">Express</a></em> server and the
-              main page, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a> creates a serializable data object on
-              the client-side and sends it to the <em>Node.js</em> server.
+              main page, the <a data-api>LayoutExecutorAsync</a> creates a serializable data object
+              on the client-side and sends it to the <em>Node.js</em> server.
             </p>
             <p>
-              On the server-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> parses this data object
-              and provides a callback which allows to apply a layout on the parsed graph. This
-              callback is executed by calling <code>process(data)</code> on the worker which
+              On the server-side, the <a data-api>LayoutExecutorAsyncWorker</a> parses this data
+              object and provides a callback which allows to apply a layout on the parsed graph.
+              This callback is executed by calling <code>process(data)</code> on the worker which
               resolves with a serializable result data object that is supposed to be sent back to
-              the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>.
+              the <a data-api>LayoutExecutorAsync</a>.
             </p>
             <p>
-              On the client-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a> waits for the response of the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a>
-              and eventually applies the result to the graph.
+              On the client-side, the <a data-api>LayoutExecutorAsync</a> waits for the response of
+              the <a data-api>LayoutExecutorAsyncWorker</a> and eventually applies the result to the
+              graph.
             </p>
           </div>
 
@@ -84,13 +85,9 @@
               <p>
                 First, install the required npm modules in the demo's <code>server</code> directory:
               </p>
-
-              <code> > npm install </code>
-
+              <code>> npm install</code>
               <p>Then start the <em>layout</em> server with:</p>
-
-              <code> > npm start </code>
-
+              <code>> npm start</code>
               <p>
                 Afterwards, open the <code>index.html</code> file via the standard demo server in a
                 browser to start the demo.
