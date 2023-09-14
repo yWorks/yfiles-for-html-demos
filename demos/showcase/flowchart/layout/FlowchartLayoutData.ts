@@ -169,8 +169,8 @@ export class FlowchartLayoutData {
 
   /**
    * Returns the flow direction for negative branches
-   * according to the {@link preferredNegativeBranchDirection}
-   * and the {@link adjustedNegativeBranchDirection}.
+   * according to the {@link FlowchartLayoutData.preferredNegativeBranchDirection}
+   * and the {@link FlowchartLayoutData.adjustedNegativeBranchDirection}.
    */
   private calculateAdjustedNegativeBranchDirection(): BranchDirection {
     const positiveDir = this.adjustedPositiveBranchDirection
@@ -206,7 +206,7 @@ export class FlowchartLayoutData {
 
   /**
    * Returns the flow direction for positive branches
-   * according to the {@link preferredPositiveBranchDirection}.
+   * according to the {@link FlowchartLayoutData.preferredPositiveBranchDirection}.
    */
   private calculateAdjustedPositiveBranchDirection(): BranchDirection {
     switch (this.preferredPositiveBranchDirection) {

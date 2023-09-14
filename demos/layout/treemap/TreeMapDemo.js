@@ -254,7 +254,7 @@ function onNodeClicked(clickedNode) {
   // get the node from the master graph to be able to check the hierarchy information
   let root = masterGraph.nodes.find(node => equalTags(clickedNode, node))
 
-  // group nodes can be entered or they lead to a higher hierarchy level
+  // group nodes can be entered, or they lead to a higher hierarchy level
   if (root && masterGraph.isGroupNode(root)) {
     const visibleGraph = graphComponent.graph
     const clickedNodeLayout = clickedNode.layout
@@ -375,7 +375,7 @@ function updateGraph(root, clickedNode, isDrillDown = false) {
     }
   }
 
-  // update the label in the tool bar
+  // update the label in the toolbar
   let pathString = ''
   if (root) {
     for (const node of masterGraph.groupingSupport.getPathToRoot(root)) {
@@ -388,7 +388,7 @@ function updateGraph(root, clickedNode, isDrillDown = false) {
       }
     }
   }
-  const path = getElementById('path')
+  const path = document.querySelector(`#path`)
   path.innerHTML = pathString || 'yFiles-for-HTML-Complete'
 
   // register a highlight
@@ -403,7 +403,7 @@ function updateGraph(root, clickedNode, isDrillDown = false) {
 
   graphComponent.graph = graph
 
-  // if it is an outwards animation, bring the clicked node to the front
+  // if it is an outward animation, bring the clicked node to the front
   if (clickedNodeCopy && !isDrillDown) {
     const clickedItem = graphComponent.graph.nodes
       .filter(n => n.tag.groupTag === clickedNodeCopy.tag.groupTag)
@@ -467,14 +467,14 @@ async function applyLayout() {
   )
 
   // configure layout algorithm using the settings from the module
-  const minimumWidth = Number.parseInt(getElementById('minimum-node-width').value)
-  const minimumHeight = Number.parseInt(getElementById('minimum-node-height').value)
+  const minimumWidth = Number.parseInt(document.querySelector(`#minimum-node-width`).value)
+  const minimumHeight = Number.parseInt(document.querySelector(`#minimum-node-height`).value)
   const layout = new TreeMapLayout({
     preferredSize: getPreferredSize(graph),
-    aspectRatio: Number.parseFloat(getElementById('aspect-ratio').value),
+    aspectRatio: Number.parseFloat(document.querySelector(`#aspect-ratio`).value),
     tilingPolicy: getTilingAlgorithm(),
     minimumNodeSize: new YDimension(minimumWidth, minimumHeight),
-    spacing: Number.parseInt(getElementById('spacing').value),
+    spacing: Number.parseInt(document.querySelector(`#spacing`).value),
     nodeComparer: createNodeComparer(graph)
   })
 
@@ -533,7 +533,7 @@ async function applyLayout() {
  * @returns {!YDimension}
  */
 function getPreferredSize(graph) {
-  const zoomingMode = getElementById('select-zooming-mode').value
+  const zoomingMode = document.querySelector(`#select-zooming-mode`).value
   const defaultMapSize = 1000
   const preferredSizes = masterGraph.mapperRegistry.getMapper(PREFERRED_SIZE_KEY)
   const root = graph.nodes.filter(node => !graph.getParent(node)).at(0)
@@ -559,7 +559,7 @@ function getPreferredSize(graph) {
  * @returns {!TilingPolicy}
  */
 function getTilingAlgorithm() {
-  const tilingAlgorithm = getElementById('select-tiling-algorithm').value
+  const tilingAlgorithm = document.querySelector(`#select-tiling-algorithm`).value
   return tilingAlgorithm === 'squarified' ? TilingPolicy.SQUARIFIED : TilingPolicy.SLICE_AND_DICE
 }
 
@@ -569,8 +569,8 @@ function getTilingAlgorithm() {
  * @returns {!TreeMapNodeComparer}
  */
 function createNodeComparer(graph) {
-  const sortingCriterion = getElementById('select-sorting-criterion').value
-  const fileDirectoryOrder = getElementById('select-file-directory-order').value
+  const sortingCriterion = document.querySelector(`#select-sorting-criterion`).value
+  const fileDirectoryOrder = document.querySelector(`#select-file-directory-order`).value
   const ascending = sortingCriterion.indexOf('ascending') !== -1
   const useNameAsCriterion = sortingCriterion.indexOf('name') === 0
   const considerLeafState = fileDirectoryOrder.indexOf('files') === 0
@@ -592,7 +592,7 @@ function createNodeComparer(graph) {
  */
 function updateLabelTextSizes(graph) {
   // we'll use a hidden div to measure the text sizes
-  const textMeasureDiv = getElementById('text-measure-container')
+  const textMeasureDiv = document.querySelector(`#text-measure-container`)
   for (const node of graph.nodes) {
     // only adjust text sizes for normal nodes and folders
     if (graph.isGroupNode(node)) {
@@ -657,8 +657,8 @@ function initializeUI() {
  * @param {!string} labelId
  */
 function bindLabelToInput(inputId, labelId) {
-  const input = getElementById(inputId)
-  const label = getElementById(labelId)
+  const input = document.querySelector(`#${inputId}`)
+  const label = document.querySelector(`#${labelId}`)
   input.addEventListener('input', () => {
     label.innerHTML = input.value
   })
@@ -731,11 +731,11 @@ class TreeMapNodeComparer extends NodeWeightComparer {
  */
 class ColorNodeStyle extends NodeStyleBase {
   /**
-   * @param {!IRenderContext} context
+   * @param {!IRenderContext} _
    * @param {!INode} node
    * @returns {!SvgVisual}
    */
-  createVisual(context, node) {
+  createVisual(_, node) {
     const { x, y, width, height } = node.layout
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('width', width.toString())
@@ -786,16 +786,6 @@ class ColorNodeStyle extends NodeStyleBase {
     }
     return oldVisual
   }
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns {!T} A reference to the first element with the specified ID in the current document.
- * @template {HTMLElement} T
- * @param {!string} id
- */
-function getElementById(id) {
-  return document.getElementById(id)
 }
 
 run().then(finishLoading)

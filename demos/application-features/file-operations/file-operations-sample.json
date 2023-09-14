@@ -1,0 +1,44 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "isGroup": true,
+      "layout": { "x": 78, "y": -2, "width": 144, "height": 64 },
+      "labels": [{ "text": "Group 1" }]
+    },
+    {
+      "id": 1,
+      "layout": { "x": -100, "y": 85, "width": 60, "height": 30 },
+      "labels": [{ "text": "Top" }]
+    },
+    {
+      "id": 2,
+      "layout": { "x": 85, "y": 85, "width": 30, "height": 30 }
+    },
+    {
+      "id": 3,
+      "layout": { "x": 85, "y": 145, "width": 30, "height": 30 }
+    },
+    {
+      "id": 4,
+      "layout": { "x": 185, "y": 85, "width": 30, "height": 30 }
+    },
+    {
+      "id": 5,
+      "parentId": 0,
+      "layout": { "x": 85, "y": 25, "width": 30, "height": 30 }
+    },
+    {
+      "id": 6,
+      "parentId": 0,
+      "layout": { "x": 185, "y": 25, "width": 30, "height": 30 }
+    }
+  ],
+  "edgeList": [
+    { "source": 5, "target": 6 },
+    { "source": 1, "target": 5, "labels": [{ "text": "Yes" }] },
+    { "source": 1, "target": 2, "labels": [{ "text": "No" }] },
+    { "source": 1, "target": 3, "labels": [{ "text": "Maybe" }] },
+    { "source": 2, "target": 4 }
+  ]
+}

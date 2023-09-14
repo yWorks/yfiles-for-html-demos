@@ -79,7 +79,6 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>EdgeRouter with Bus-style Routing</h1>
 
@@ -91,51 +90,57 @@
 
         <p>
           A bus is defined via the <em>add</em> method of the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#buses" target="_blank">buses</a> property. The method yields an object on which
-          the set of edges can conveniently be defined, e.g., via a delegate.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#buses" target="_blank">buses</a> property. The method yields an object on
+          which the set of edges can conveniently be defined, e.g., via a delegate.
         </p>
 
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor" target="_blank">EdgeRouterBusDescriptor</a> class provided to the <em>add</em> method offers
-          settings related to a bus.
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor" target="_blank">EdgeRouterBusDescriptor</a> class provided to the <em>add</em> method
+          offers settings related to a bus.
         </p>
 
         <p>This example showcases two buses which are defined differently.</p>
 
         <h3>First Bus - Automatic Backbone</h3>
         <p>
-          The first bus (<span style="color: #ff6c00; font-weight: bold">orange graph</span>) is defined using a
-          default descriptor and with no further settings. This means that the algorithm automatically chooses backbone
-          segments.
+          The first bus (<span style="color: #ff6c00; font-weight: bold">orange graph</span>) is
+          defined using a default descriptor and with no further settings. This means that the
+          algorithm automatically chooses backbone segments.
         </p>
 
         <h3>Second Bus - Given Points</h3>
         <p>
-          The second bus (<span style="color: #242265; font-weight: bold">blue graph</span>) is defined by <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor#busPoints" target="_blank">manually providing</a> the location of the backbone segments. The
-          manually defined backbone consists of a vertical segment to the left of the nodes and two horizontal segments
-          in-between the node rows.
+          The second bus (<span style="color: #242265; font-weight: bold">blue graph</span>) is
+          defined by <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor#busPoints" target="_blank">manually providing</a> the
+          location of the backbone segments. The manually defined backbone consists of a vertical
+          segment to the left of the nodes and two horizontal segments in-between the node rows.
         </p>
 
         <h3>Code Snippet</h3>
 
         <p>
           You can copy the code snippet to configure the layout from
-          <a href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/edge-router-buses/EdgeRouterBuses.ts"
-          target="_blank">GitHub</a>.
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/edge-router-buses/EdgeRouterBuses.ts"
+            target="_blank"
+            >GitHub</a
+          >.
         </p>
 
         <h3>Demos</h3>
 
         <p>
-          The <a href="../../layout/busrouting/index.html">Bus Routing Demo</a> is a more complex demo that shows the
-          bus-style routing feature. More features offered by the EdgeRouter algorithm are shown by the <a
-          href='../../showcase/layoutstyles/index.html?layout=edge-router&amp;sample=edge-router'>Layout Styles Demo</a>.
+          The <a href="../../layout/busrouting/index.html" target="_blank">Bus Routing Demo</a> is a more complex demo that shows the bus-style routing
+          feature. More features offered by the EdgeRouter algorithm are shown by the
+          <a href="../../showcase/layoutstyles/index.html" target="_blank">Layout Styles Demo</a>.
         </p>
 
         <h3>Documentation</h3>
 
         <p>
-          The Developer's Guide provides more information about the concepts of the <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing" target="_blank">Bus-style routing</a> feature of the EdgeRouter.
+          The Developer's Guide provides more information about the concepts of the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing" target="_blank">Bus-style routing</a> feature of the
+          EdgeRouter.
         </p>
       </div>
     </aside>

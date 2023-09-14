@@ -39,7 +39,7 @@ import {
   LayoutOrientation,
   License,
   Size,
-  TemplateNodeStyle,
+  StringTemplateNodeStyle,
   TreeBuilder
 } from 'yfiles'
 
@@ -52,6 +52,7 @@ import { initDataView, updateDataView } from './data-view'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { nodeTemplate } from './style-templates'
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
 // tools from removing this dependency which is needed for 'morphLayout'.
@@ -125,7 +126,7 @@ function configureGraph(graph: IGraph): void {
   initDemoStyles(graph)
 
   // ... but use a style that supports data binding for normal nodes
-  graph.nodeDefaults.style = new TemplateNodeStyle('nodeTemplate')
+  graph.nodeDefaults.style = new StringTemplateNodeStyle(nodeTemplate)
   graph.nodeDefaults.size = new Size(260, 60)
 }
 

@@ -102,11 +102,7 @@
 
         <p>
           This demo shows how to improve accessibility with ARIA attributes and a
-          <a
-            href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions"
-            target="_blank"
-            >live region</a
-          >
+          <a href="https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Live_Regions" target="_blank">live region</a>
           for the graph component. Switching an element in this demo, updates the live region of the
           graph component with the currently selected label.
         </p>
@@ -115,20 +111,20 @@
         <ul>
           <li>
             Focus the GraphComponent with <code>TAB</code> key and cycle through the nodes with the
-            arrow keys. The label of the currently selected node is read by the screen reader.
+            arrow keys. The screen reader reads the label of the currently selected node.
           </li>
           <li>Select an item to trigger the screen reader to read the label.</li>
           <li>Hover a node to trigger its tooltip which is also read by the screen reader.</li>
           <li>
             Toggle Aria-Atomic: This toggles <code>aria-atomic</code> on the live region. When
-            enabled, the entire content of the live region is read by the screen reader. When
-            disabled, only the changed part (i.e. the item's label) is read by the screen reader.
+            enabled, the screen reader reads the entire content of the live region. When disabled,
+            the screen reader reads only the changed part (i.e., the item's label).
           </li>
         </ul>
 
         <h2>About Screen Readers</h2>
         <p>
-          Screen reader support varies vastly and you might experience different behaviors across
+          Screen reader support varies vastly, and you might experience different behaviors across
           different screen readers and browsers. Some examples of popular screen readers:
         </p>
         <ul>
@@ -151,8 +147,8 @@
           Windows Narrator behaves differently depending on the browser and does not consider the
           aria-atomic attribute. For example, the <code>application</code>
           role is not honored on some systems with Chrome and Windows Narrator such that keyboard
-          inputs are not delivered to the graph component and therefore the item selection cannot be
-          changed with the arrow keys.
+          inputs are not delivered to the graph component, and therefore the item selection cannot
+          be changed with the arrow keys.
         </p>
         <p>
           VoiceOver on macOS does not pick up the aria-describedby label that is used on the graph

@@ -79,61 +79,67 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
-      <div class='demo-description__content'>
+      <div class="demo-description__content">
         <h1>Organic Layout with Edge Labeling</h1>
 
         <p>
-          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> for automatic edge label
-          placement.
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> for
+          automatic edge label placement.
         </p>
 
         <h3>Configuring label placement</h3>
 
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" target="_blank">Label models</a> and their <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" target="_blank">parameters</a> determine
-          the position of a label. For many interactive use cases, it makes sense to choose a model that restricts the
-          available positions in some way. However, for automatic label placement the opposite is true: Models that do
-          not impose restrictions on a label's position work best. Thus <a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" target="_blank">FreeEdgeLabelModel</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/SmartEdgeLabelModel" target="_blank">SmartEdgeLabelModel</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" target="_blank">Label models</a> and their
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" target="_blank">parameters</a> determine the position of a label. For
+          many interactive use cases, it makes sense to choose a model that restricts the available
+          positions in some way. However, for automatic label placement the opposite is true: Models
+          that do not impose restrictions on a label's position work best. Thus
+          <a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" target="_blank">FreeEdgeLabelModel</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/SmartEdgeLabelModel" target="_blank">SmartEdgeLabelModel</a>
           are good choices for integrated label placement.
         </p>
 
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor" target="_blank">PreferredPlacementDescriptor</a>s may be associated with labels to control automatic placement. Such a
-          descriptor determines if the algorithm will place a label close to its owner edge's source or target node,
-          next to or on the edge, or even rotate the label. For better results when using <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic
-          Layout</a>, both the side and angle of the labels has to be specified relative to the edge.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor" target="_blank">PreferredPlacementDescriptor</a>s may be associated with labels to control
+          automatic placement. Such a descriptor determines if the algorithm will place a label
+          close to its owner edge's source or target node, next to or on the edge, or even rotate
+          the label. For better results when using <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a>,
+          both the side and angle of the labels has to be specified relative to the edge.
         </p>
 
         <p>
-          Note that self-loops and parallel edges are handled by <a href="https://docs.yworks.com/yfileshtml/#/api/SelfLoopRouter" target="_blank">SelfLoopRouter</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/ParallelEdgeRouter" target="_blank">ParallelEdgeRouter</a>
-          respectively. Thus, labels of such edges are not considered by the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">organic layout
-          algorithm</a>. To place the labels of these edges, a <a href="https://docs.yworks.com/yfileshtml/#/api/GenericLabeling" target="_blank">generic labeling</a>
+          Note that self-loops and parallel edges are handled by <a href="https://docs.yworks.com/yfileshtml/#/api/SelfLoopRouter" target="_blank">SelfLoopRouter</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ParallelEdgeRouter" target="_blank">ParallelEdgeRouter</a> respectively. Thus, labels of such edges are not
+          considered by the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">organic layout algorithm</a>. To place the
+          labels of these edges, a <a href="https://docs.yworks.com/yfileshtml/#/api/GenericLabeling" target="_blank">generic labeling</a>
           algorithm has to be applied as a post-processing step.
         </p>
 
         <h3>Code Snippet</h3>
         <p>
-          You can copy the code snippet to configure the layout from <a
-          href='https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-edge-labeling/OrganicEdgeLabeling.ts'
-          target='_blank'>GitHub</a>.
+          You can copy the code snippet to configure the layout from
+          <a
+            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-edge-labeling/OrganicEdgeLabeling.ts"
+            target="_blank"
+            >GitHub</a
+          >.
         </p>
 
         <h3>Demos</h3>
         <p>
-          See the <a href='../../layout/edgelabelplacement/index.html'>Edge Label Placement</a> demo for a more
-          elaborate example regarding automatic edge label placement.
+          See the <a href="../../layout/edgelabelplacement/index.html" target="_blank">Edge Label Placement Demo</a> for a more elaborate example regarding
+          automatic edge label placement.
         </p>
 
         <h3>Documentation</h3>
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#_labeling" target="_blank">Labeling</a> and <a href="https://docs.yworks.com/yfileshtml/#/dguide/label_placement" target="_blank">Automatic
-          Label Placement</a> sections in the Developer's Guide contain in-depth discussions of the relevant
-          concepts.
+          The <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#_labeling" target="_blank">Labeling</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/label_placement" target="_blank">Automatic Label Placement</a> sections in the Developer's
+          Guide contain in-depth discussions of the relevant concepts.
         </p>
         <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor" target="_blank">PreferredPlacementDescriptor</a> API documentation for detailed information on all available
-          placement options.
+          See the <a href="https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor" target="_blank">PreferredPlacementDescriptor</a> API documentation for detailed
+          information on all available placement options.
         </p>
       </div>
     </aside>

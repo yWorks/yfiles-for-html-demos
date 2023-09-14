@@ -425,6 +425,13 @@
     let noSearchResults = true
     const searchBoxEmpty = searchTerm === ''
 
+    // when the search term is a category, use category matching/sorting
+    const matchedCategory = Object.keys(categoryNames).find(categoryId => categoryId === searchTerm)
+    if (matchedCategory) {
+      categoryFilter = matchedCategory
+      searchTerm = ''
+    }
+
     const sortedDemos = demos.map(function (demo) {
       return {
         demo: demo,

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { toggleExportRectangle } from '../../svgexport/export-rectangle/export-rectangle'
+import { toggleExportRectangle } from '../export-rectangle/export-rectangle'
 import type { ImageExportOptions } from '../ImageExportOptions'
 
 export function initializeOptionPanel(exportCallback: (options: ImageExportOptions) => void): void {

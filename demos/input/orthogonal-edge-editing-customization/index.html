@@ -110,15 +110,14 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Orthogonal Edge Editing Customization Demo</h1>
 
         <p>This demo shows how to customize orthogonal edge editing.</p>
 
         <p>
-          Using the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphDecorator" target="_blank">GraphDecorator</a>, the edge is decorated with custom implementations of the <a href="https://docs.yworks.com/yfileshtml/#/api/IOrthogonalEdgeHelper" target="_blank">IOrthogonalEdgeHelper</a>
-          interface.
+          Using the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphDecorator" target="_blank">GraphDecorator</a>, the edge is decorated with custom
+          implementations of the <a href="https://docs.yworks.com/yfileshtml/#/api/IOrthogonalEdgeHelper" target="_blank">IOrthogonalEdgeHelper</a> interface.
         </p>
 
         <h2>Things to Try</h2>
@@ -128,30 +127,34 @@
         <h2>Edge Types</h2>
         <ul>
           <li>
-            <em class="demo-red demo-bold">Red edge</em>: Orthogonal edge editing is disabled. The segments are
-            straight lines with arbitrary slope. Dragging an unselected segment creates a new bend.
+            <em class="demo-red demo-bold">Red edge</em>: Orthogonal edge editing is disabled. The
+            segments are straight lines with arbitrary slope. Dragging an unselected segment creates
+            a new bend.
           </li>
           <li>
-            <em class="demo-green demo-bold">Green edge</em>: Orthogonal edge editing is enabled. While dragging, all
-            segments stay orthogonal and new bends are created as needed.
+            <em class="demo-green demo-bold">Green edge</em>: Orthogonal edge editing is enabled.
+            While dragging, all segments stay orthogonal and new bends are created as needed.
           </li>
           <li>
-            <em class="demo-purple demo-bold">Purple edge</em>: Same behavior as the green edge. In addition, the
-            locations of the source port and target port are constraint to the given port candidates of the nodes.
+            <em class="demo-purple demo-bold">Purple edge</em>: Same behavior as the green edge. In
+            addition, the locations of the source port and target port are constraint to the given
+            port candidates of the nodes.
           </li>
           <li>
-            <em class="demo-orange demo-bold">Orange edge</em>: Same behavior as the green edge. In addition, the
-            source port and the target port can be placed at any location inside the node since they use dynamic port
-            candidates.
+            <em class="demo-orange demo-bold">Orange edge</em>: Same behavior as the green edge. In
+            addition, the source port and the target port can be placed at any location inside the
+            node since they use dynamic port candidates.
           </li>
           <li>
-            <em class="demo-palette-510 demo-bold">Yellow edge</em>: Same behavior as the green edge. In addition,
-            dragging the first (or last) segment of the edge will create only one new bend instead of two.
+            <em class="demo-palette-510 demo-bold">Yellow edge</em>: Same behavior as the green
+            edge. In addition, dragging the first (or last) segment of the edge will create only one
+            new bend instead of two.
           </li>
           <li>
-            <em class="demo-blue demo-bold">Blue edge</em>: Orthogonal edge editing is enabled for the inner segments
-            but the first and the last segment can have an arbitrary slope. If a new bend is added to one of these two
-            segments, the newly created inner segment becomes orthogonal immediately.
+            <em class="demo-blue demo-bold">Blue edge</em>: Orthogonal edge editing is enabled for
+            the inner segments but the first and the last segment can have an arbitrary slope. If a
+            new bend is added to one of these two segments, the newly created inner segment becomes
+            orthogonal immediately.
           </li>
         </ul>
       </div>

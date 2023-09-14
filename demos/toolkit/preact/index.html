@@ -62,10 +62,6 @@
       </div>
     </header>
 
-    <!--
-  The sidebar for the description text
-  -->
-
     <aside class="demo-page__description">
       <div class="demo-description__header">
         <a
@@ -78,30 +74,34 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
-      <div class='demo-description__content'>
+      <div class="demo-description__content">
         <h1>Preact Demo</h1>
 
         <p>
-          This demo shows how to integrate yFiles in a <a href='https://preactjs.com/' target='_blank'
-          rel='noopener noreferrer'>Preact</a> application. It uses the <a
-          href='https://preactjs.com/guide/v10/getting-started#no-build-tools-route'
-          target='_blank' rel='noopener noreferrer'>"No build tools route"</a> of the preact setup for simplicity.
-          Note that //@ts-ignore comments have to be used when importing from unpkg URLs, as TypeScript has no way of
-          knowing the types of these packages. The interoperability between the yFiles graph view and the preact
-          components that is demonstrated in this demo would not change with a different configuration setup, though
-          (e.g. Preact CLI, custom bundling pipeline).
+          This demo shows how to integrate yFiles in a
+          <a href="https://preactjs.com/" target="_blank" rel="noopener noreferrer">Preact</a>
+          application. It uses the
+          <a
+            href="https://preactjs.com/guide/v10/getting-started#no-build-tools-route"
+            target="_blank"
+            rel="noopener noreferrer"
+            >"No build tools route"</a
+          >
+          of the preact setup for simplicity. Note that //@ts-ignore comments have to be used when
+          importing from unpkg URLs, as TypeScript has no way of knowing the types of these
+          packages. The interoperability between the yFiles graph view and the preact components
+          that is demonstrated in this demo would not change with a different configuration setup,
+          though (e.g. Preact CLI, custom bundling pipeline).
         </p>
         <p>
-          The sample application shows how a collection of data items and connections can be automatically synced with
-          both a Preact view and a yFiles view.
+          The sample application shows how a collection of data items and connections can be
+          automatically synced with both a Preact view and a yFiles view.
         </p>
         <p>
-          To keep the yFiles view in sync with the application data, the yFiles <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> API is used.
+          To keep the yFiles view in sync with the application data, the yFiles
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> API is used.
         </p>
-        <p>
-          The nodes are rendered via the <code>NodeTemplate</code> preact component.
-        </p>
+        <p>The nodes are rendered via the <code>NodeTemplate</code> preact component.</p>
 
         <h2>Things to Try</h2>
 

@@ -150,7 +150,7 @@ async function run(): Promise<void> {
 
   initializeStyles()
 
-  // run smart aggregation algorithm with default settings and set graph to graphControl
+  // run the smart aggregation algorithm with default settings and set graph to the graph component
   await runAggregationAndReplaceGraph(originalGraph)
 
   // notify UI

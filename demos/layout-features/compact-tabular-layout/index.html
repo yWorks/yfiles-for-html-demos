@@ -90,35 +90,33 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Compact Tabular Layout</h1>
 
         <p>
-          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayout" target="_blank">TabularLayout</a> to create compact drawings.
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayout" target="_blank">TabularLayout</a> to create compact
+          drawings.
         </p>
         <p>
           The algorithm tries to calculate an arrangement that minimizes edge lengths. Since tabular
-          layout only supports straight-line edges, <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> is used to calculate the
-          final edge paths.
+          layout only supports straight-line edges, <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> is used to calculate
+          the final edge paths.
         </p>
 
         <p>
           If the <em>Preserve Aspect Ratio</em> button in the toolbar is selected, the tabular
           layout algorithm will use <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutPolicy" target="_blank">layout policy</a>
           <code>FIXED_SIZE</code> to arrange the graph with an aspect ratio close to the aspect
-          ratio of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>.
-          Otherwise, the algorithm will use layout policy <code>AUTO_SIZE</code> to get a result
-          that is as compact as possible.
+          ratio of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>. Otherwise, the algorithm will use layout
+          policy <code>AUTO_SIZE</code> to get a result that is as compact as possible.
         </p>
 
         <p>
-          If layout policy <code>FIXED_SIZE</code> is used, the tabular layout algorithm requires
-          a <a href="https://docs.yworks.com/yfileshtml/#/api/PartitionGrid" target="_blank">PartitionGrid</a> that defines the columns and rows for the resulting tabular
-          arrangement.
-          A <code>PartitionGrid</code> is not necessary for layout policy <code>AUTO_SIZE</code>.
-          However, an empty grid may be given to the algorithm to specify the distances between
-          the automatically calculated columns and rows.
+          If layout policy <code>FIXED_SIZE</code> is used, the tabular layout algorithm requires a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PartitionGrid" target="_blank">PartitionGrid</a> that defines the columns and rows for the resulting tabular
+          arrangement. A <code>PartitionGrid</code> is not necessary for layout policy
+          <code>AUTO_SIZE</code>. However, an empty grid may be given to the algorithm to specify
+          the distances between the automatically calculated columns and rows.
         </p>
         <h3>Code Snippet</h3>
 
@@ -127,7 +125,8 @@
           <a
             href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/compact-tabular-layout/CompactTabularLayout.ts"
             target="_blank"
-          >GitHub</a>.
+            >GitHub</a
+          >.
         </p>
 
         <h3>Documentation</h3>

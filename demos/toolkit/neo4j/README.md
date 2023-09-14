@@ -15,7 +15,7 @@
 
 This demo shows how to load data from a Neo4j database and display it with yFiles for HTML.
 
-First, connect to a Neo4j database by entering an URL, a username, and a password into the corresponding form fields, then click the _Connect_ button.
+First, connect to a Neo4j database by entering a URL, a username, and a password into the corresponding form fields, then click the _Connect_ button.
 
 After establishing a connection, a small set of data from the database will be displayed.
 
@@ -36,6 +36,6 @@ This demo uses the [Neo4j driver for JavaScript](https://github.com/neo4j/neo4j-
 
 The query results are then used by a [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) with a custom configuration to construct a graph from the data, while assigning different node styles to nodes with different labels.
 
-The maximum node count setting limits the amount of nodes that are queried from the database, while the label diversity setting determines the length of the distinct node label sequences that is searched for.
+The maximum node count setting limits the number of nodes that are queried from the database, while the label diversity setting determines the length of the distinct node label sequences that is searched for.
 
 The graph layout is achieved by using [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) with substructures enabled.

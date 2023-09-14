@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  DefaultLabelStyle,
-  GraphComponent,
-  IconLabelStyle,
-  IEdgeStyle,
-  IGraph,
-  ILabelStyle,
-  INode,
-  INodeStyle,
-  ShapeNodeStyle
-} from 'yfiles'
+import { DefaultLabelStyle, IconLabelStyle, ShapeNodeStyle } from 'yfiles'
 import { getSubtree } from '../subtrees.js'
 import { getDepth } from '../data-types.js'
 import { CollapseDecorator } from './CollapseDecorator.js'
@@ -47,21 +37,21 @@ import { TagChangeUndoUnit } from '../interaction/TagChangeUndoUnit.js'
 
 /**
  * The array of node styles used for nodes at different depths.
- * The style at position i in the array is used for nodes at depth i of tree.
+ * The style at position i in the array is used for nodes at depth i of the tree.
  * @type {Array.<INodeStyle>}
  */
 let nodeStyles
 
 /**
  * The array of edge styles used for edges at different depths.
- * The style at position i in the array is used for edges from depth i to depth i+1 of tree.
+ * The style at position i in the array is used for edges from depth i to depth i+1 of the tree.
  * @type {Array.<IEdgeStyle>}
  */
 let edgeStyles
 
 /**
  * The array of label styles used for node labels at different depths.
- * The style at position i in the array is used for labels at depth i of tree.
+ * The style at position i in the array is used for labels at depth i of the tree.
  * @type {Array.<ILabelStyle>}
  */
 let labelStyles

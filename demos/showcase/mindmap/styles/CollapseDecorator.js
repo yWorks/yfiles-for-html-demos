@@ -27,29 +27,17 @@
  **
  ***************************************************************************/
 import {
-  Class,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   FilteredGraphWrapper,
-  GeneralPath,
   GraphComponent,
-  ICanvasContext,
   IconLabelStyle,
-  IGraph,
-  IInputModeContext,
-  ILabelModelParameter,
-  INode,
-  INodeStyle,
   Insets,
   InteriorLabelModel,
-  IRenderContext,
   NodeStyleBase,
-  Point,
-  Rect,
   SimpleLabel,
   Size,
-  SvgVisual,
-  Visual
+  SvgVisual
 } from 'yfiles'
 import { getNodeData } from '../data-types.js'
 

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EditLabelHelper, IEdge, LabelEditingEventArgs } from 'yfiles'
+import { EditLabelHelper, IEdge } from 'yfiles'
 import { isCrossReference } from '../data-types.js'
 
 /**

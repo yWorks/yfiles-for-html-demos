@@ -335,7 +335,7 @@ function initializeUI(graphComponent: GraphComponent): void {
   })
 
   // Wire the save button, but initially disable it - will be enabled on selecting sample 2
-  const saveButton = getElementById<HTMLButtonElement>('save-button')
+  const saveButton = document.querySelector<HTMLButtonElement>(`#save-button`)!
   saveButton.addEventListener('click', () => ICommand.SAVE.execute(null, graphComponent))
   saveButton.disabled = true
 
@@ -387,19 +387,13 @@ function initializeUI(graphComponent: GraphComponent): void {
  * @param hiddenId the div element which gets hidden
  */
 function updateDescriptionText(visibleId: string, hiddenId: string): void {
-  getElementById<HTMLDivElement>(hiddenId).classList.add('hidden')
-  getElementById<HTMLDivElement>(visibleId).classList.remove('hidden')
-  const descriptionContainer = getElementById<HTMLDivElement>('sample-description-container')
+  document.querySelector<HTMLDivElement>(`#${hiddenId}`)!.classList.add('hidden')
+  document.querySelector<HTMLDivElement>(`#${visibleId}`)!.classList.remove('hidden')
+  const descriptionContainer = document.querySelector<HTMLDivElement>(
+    `#sample-description-container`
+  )!
   descriptionContainer.classList.remove('highlight-description')
   setTimeout(() => descriptionContainer.classList.add('highlight-description'), 0)
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns A reference to the first element with the specified ID in the current document.
- */
-function getElementById<T extends HTMLElement>(id: string): T {
-  return document.getElementById(id) as T
 }
 
 void run().then(finishLoading)

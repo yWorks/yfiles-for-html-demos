@@ -42,11 +42,11 @@ import {
 } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
-import { runLayoutCore } from './configure-layout'
 import type { LayoutSettings } from './configure-layout'
+import { runLayoutCore } from './configure-layout'
 import { initializeTypePanel, nodeTypeColors } from './types-popup'
 import type { DataType } from './resources/SampleData'
-import { singleStar, multipleStars } from './resources/SampleData'
+import { multipleStars, singleStar } from './resources/SampleData'
 
 let graphComponent: GraphComponent
 
@@ -94,8 +94,9 @@ async function runLayout(animate: boolean): Promise<void> {
   try {
     const settings = {
       starSubstructureStyle: getSelectedValue('starStyle'),
-      considerNodeTypes: getElementById<HTMLInputElement>('consider-node-types').checked,
-      starSubstructureTypeSeparation: getElementById<HTMLInputElement>('separate-star').checked
+      considerNodeTypes: document.querySelector<HTMLInputElement>(`#consider-node-types`)!.checked,
+      starSubstructureTypeSeparation:
+        document.querySelector<HTMLInputElement>(`#separate-star`)!.checked
     }
     // the actual layout calculation
     await runLayoutCore(graphComponent, settings, animate)
@@ -182,7 +183,8 @@ function updateLayoutSettings(settings: LayoutSettings): void {
  * @param defaultValue the fallback checked state to be used if the given value is undefined.
  */
 function updateState(id: string, value: boolean | undefined, defaultValue: boolean): void {
-  getElementById<HTMLInputElement>(id).checked = 'undefined' === typeof value ? defaultValue : value
+  document.querySelector<HTMLInputElement>(`#${id}`)!.checked =
+    'undefined' === typeof value ? defaultValue : value
 }
 
 /**
@@ -193,7 +195,7 @@ function updateState(id: string, value: boolean | undefined, defaultValue: boole
  * @param value the value whose index will be the new selectedIndex.
  */
 function updateSelectedIndex(id: string, value: string | undefined): void {
-  const select = getElementById<HTMLSelectElement>(id)
+  const select = document.querySelector<HTMLSelectElement>(`#${id}`)!
   const idx = indexOf(select, value)
   select.selectedIndex = idx > -1 ? idx : 0
 }
@@ -265,16 +267,8 @@ function initializeUI(): void {
  * @returns the selected value of the HTMLSelectElement identified by the given ID.
  */
 function getSelectedValue(id: string): string {
-  const select = getElementById<HTMLSelectElement>(id)
+  const select = document.querySelector<HTMLSelectElement>(`#${id}`)!
   return select.options[select.selectedIndex].value
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns A reference to the first element with the specified ID in the current document.
- */
-function getElementById<T extends HTMLElement>(id: string): T {
-  return document.getElementById(id) as T
 }
 
 void run().then(finishLoading)

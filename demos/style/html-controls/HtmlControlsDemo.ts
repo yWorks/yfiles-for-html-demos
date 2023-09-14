@@ -45,8 +45,8 @@ import { fetchLicense } from 'demo-resources/fetch-license'
 import { HtmlEditableNodeStyle } from './HtmlEditableNodeStyle'
 import { updateTagView } from './util'
 import { defaultData, people } from './data'
-import FileSaveSupport from 'demo-utils/FileSaveSupport'
 import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { downloadFile } from 'demo-utils/file-support'
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
 // tools it from removing this dependency which is needed for 'applyLayout'.
@@ -170,7 +170,7 @@ async function initExport(graphComponent: GraphComponent): Promise<void> {
     exportComponent.graph = graphComponent.graph
     const element = await exporter.exportSvgAsync(exportComponent)
     const exportString = SvgExport.exportSvgString(element)
-    await FileSaveSupport.save(exportString, 'export.svg')
+    downloadFile(exportString, 'export.svg')
   })
 }
 

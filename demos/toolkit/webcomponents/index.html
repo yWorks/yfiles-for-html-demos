@@ -134,28 +134,18 @@
         <h1>Web Components Integration Demo</h1>
 
         <p>This demo shows how yFiles for HTML can be used with Web Components.</p>
-        <p>
-          Currently,
-          <a href="https://github.com/w3c/webcomponents" target="_blank">Web Components</a>
-          are supported by almost all modern browsers. The exception is IE 11 that requires
-          polyfills which have a significant impact on the application's performance.
-        </p>
-        <p>
-          This demo does not include polyfills for Web Components, which is why it might not work in
-          your browser. Please visit
-          <a href="https://www.webcomponents.org/" target="_blank">webcomponents.org</a> and
-          <a href="https://caniuse.com/#search=web%20components" target="_blank">caniuse.com</a>
-          for details on browser support for Web Components.
-        </p>
+
+        <p><a href="https://developer.mozilla.org/docs/Web/Web_components" target="_blank">Web Components</a> are supported by all modern browsers.</p>
 
         <h2>Things to See</h2>
 
         <h3>Custom Graph Component Element</h3>
+
         <p>The GraphComponent is wrapped in a custom element. It can be used by writing</p>
         <pre><code>&lt;graph-component&gt;&lt;/graph-component&gt;</code></pre>
-        in your HTML markup, or by calling
+        <p>in your HTML markup, or by calling</p>
         <pre><code>document.createElement('graph-component')</code></pre>
-        in your javascript code.
+        <p>in your JavaScript code.</p>
         <p>
           The zoom property of the GraphComponent is reflected to an attribute of the custom
           element. Thus, the zoom level can be changed by simply setting the zoom attribute to a new
@@ -165,7 +155,7 @@
         <h3>Shadow DOM Encapsulation</h3>
         <p>
           The GraphComponents canvas is inside the shadow root of the graph-component custom
-          element. This encapsulates it from outside influences like user defined CSS styles.
+          element, encapsulating it from outside influences like user-defined CSS styles.
         </p>
         <p>
           Try changing this editable style element to see how it affects the svg rectangles

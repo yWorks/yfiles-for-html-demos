@@ -28,13 +28,13 @@
  ***************************************************************************/
 import {
   DefaultLabelStyle,
-  GraphComponent,
+  type GraphComponent,
   IconLabelStyle,
-  IEdgeStyle,
-  IGraph,
-  ILabelStyle,
-  INode,
-  INodeStyle,
+  type IEdgeStyle,
+  type IGraph,
+  type ILabelStyle,
+  type INode,
+  type INodeStyle,
   ShapeNodeStyle
 } from 'yfiles'
 import { getSubtree } from '../subtrees'
@@ -47,19 +47,19 @@ import { TagChangeUndoUnit } from '../interaction/TagChangeUndoUnit'
 
 /**
  * The array of node styles used for nodes at different depths.
- * The style at position i in the array is used for nodes at depth i of tree.
+ * The style at position i in the array is used for nodes at depth i of the tree.
  */
 let nodeStyles: INodeStyle[]
 
 /**
  * The array of edge styles used for edges at different depths.
- * The style at position i in the array is used for edges from depth i to depth i+1 of tree.
+ * The style at position i in the array is used for edges from depth i to depth i+1 of the tree.
  */
 let edgeStyles: IEdgeStyle[]
 
 /**
  * The array of label styles used for node labels at different depths.
- * The style at position i in the array is used for labels at depth i of tree.
+ * The style at position i in the array is used for labels at depth i of the tree.
  */
 let labelStyles: ILabelStyle[]
 

@@ -26,46 +26,35 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export default class SaveToNewWindowOperation {
-  /**
-   * Checks if the operation can be executed.
-   * @returns {boolean}
-   */
-  isAvailable() {
-    return true
+/*
+ * This file provides functions to {@link openStorageItem open} and {@link saveStorageItem save}
+ * text in the browser's storage.
+ */
+
+/**
+ * The Web Storage to use, one of Window.localStorage or Window.sessionStorage.
+ */
+export const currentStorage = window.localStorage
+
+/**
+ * Gets the value of the item with the given {@link key} from storage.
+ * @param {!string} key
+ * @returns {!string}
+ */
+export function openStorageItem(key) {
+  const item = currentStorage.getItem(key)
+  if (item == null) {
+    throw new Error(`No item found in storage for key ${key}`)
   }
 
-  /**
-   * @returns {!Promise} A Promise that resolves when the save operation is complete.
-   * @param {!string} fileContent
-   */
-  save(fileContent) {
-    return new Promise((resolve, reject) => {
-      const newWindow = window.open()
-      if (!newWindow) {
-        reject(new Error('Could not open a new window. Maybe it was blocked by the browser.'))
-        return
-      }
-      const newDocument = newWindow.document
-      newDocument.open()
-      if (!newDocument.documentElement) {
-        newDocument.write('<html lang="en"></html>')
-      }
-      const elementsByTagName = newDocument.documentElement.getElementsByTagName('body')
-      let body
-      if (elementsByTagName.length === 0) {
-        body = newDocument.createElement('body')
-        newDocument.documentElement.appendChild(body)
-      } else {
-        body = elementsByTagName.item(0)
-      }
-      newDocument.title = 'GraphML Export'
-      const pre = newDocument.createElement('pre')
-      body.appendChild(pre)
-      pre.textContent = fileContent
-      newDocument.close()
+  return item
+}
 
-      resolve()
-    })
-  }
+/**
+ * Sets the given {@link value} with the given {@link key} to storage.
+ * @param {!string} key
+ * @param {!string} value
+ */
+export function saveStorageItem(key, value) {
+  currentStorage.setItem(key, value)
 }

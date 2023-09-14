@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, UndoUnitBase } from 'yfiles'
+import { type INode, UndoUnitBase } from 'yfiles'
 import type { NodeData } from '../data-types'
 
 /**

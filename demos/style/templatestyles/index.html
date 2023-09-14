@@ -40,61 +40,6 @@
 
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <!-- This script tag contains the style templates -->
-    <script type="text/yfiles-template">
-
-      <!-- A very basic template for ports that consists of an ellipse -->
-      <ellipse id="orgchart-port-template" fill="rgb(229,233,240)" cx="0" cy="0"
-               rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"></ellipse>
-
-      <!-- A template for labels renders the label text with an outline stroke -->
-      <g id="orgchart-label-template" class="orgchart-label">
-        <text data-content="{TemplateBinding labelText}" dy="1em" stroke="rgb(94,103,130)" stroke-width="7px" stroke-linejoin="round" text-anchor="middle" transform="translate(50 0)"></text>
-        <text data-content="{TemplateBinding labelText}" dy="1em" fill="rgb(229,233,240)" text-anchor="middle" transform="translate(50 0)"></text>
-      </g>
-
-      <!-- A template for nodes that renders the icon and name as well as a status indicator and selection visualization -->
-      <g id="orgchart-node-template" class="orgchart-node">
-        <!-- The defs section stores the clip path elements -->
-        <defs>
-          <clipPath id="imageClip">
-            <ellipse cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
-              rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5-5}" ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5-5}"></ellipse>
-          </clipPath>
-          <clipPath id="labelClip">
-            <rect x="0" y="{TemplateBinding height, Converter=calc, Parameter=$v*0.6}"
-            width="{TemplateBinding width}" height="{TemplateBinding height, Converter=calc, Parameter=$v*0.4}"></rect>
-          </clipPath>
-        </defs>
-        <!-- An ellipse that appears on hover via CSS -->
-        <ellipse class="hover-ellipse" fill="{Binding businessUnit, Converter=backgroundColor}"
-                 cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
-                 rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5+10}" ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5+10}"></ellipse>
-        <!-- The background ellipse -->
-        <ellipse fill="{Binding businessUnit, Converter=backgroundColor}"
-          cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
-          rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"></ellipse>
-        <!-- The user icon -->
-        <image xlink:href="{Binding icon, Converter=icon}" clip-path="url(#imageClip)"
-          x="5" y="{TemplateBinding height, Converter=calc, Parameter=$v*-0.1}"
-          width="{TemplateBinding width, Converter=calc, Parameter=$v-10}" height="{TemplateBinding height, Converter=calc, Parameter=$v-10}"></image>
-        <!-- The half-circle background for the name -->
-        <ellipse  fill="{Binding businessUnit, Converter=backgroundColor}" clip-path="url(#labelClip)"
-          cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
-          rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"></ellipse>
-        <!-- The name text -->
-        <text fill="rgb(37,41,52)" data-content="{Binding name}" text-anchor="middle" style="font-family: Tahoma, Verdana, sans-serif" font-size="{TemplateBinding width, Converter=fontSize}"
-          x="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" y="{TemplateBinding height, Converter=calc, Parameter=$v*0.75}"></text>
-        <!-- The focus indicator -->
-        <ellipse stroke="rgb(255,220,0)" fill="none" stroke-width="10" visibility="{TemplateBinding itemFocused, Converter=visibility}"
-          cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}" cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
-          rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5+5}" ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5+5}"></ellipse>
-        <!-- The status indicator -->
-        <ellipse fill="{Binding status, Converter=statusColor}" class="orgchart-status-indicator"
-                 cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.90-5}" cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.1+5}"
-                 rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.10}" ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.10}"></ellipse>
-      </g>
-    </script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
@@ -136,7 +81,6 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Template Styles Demo</h1>
 
@@ -154,10 +98,8 @@
         <h3>Data Binding</h3>
         <p>
           SVG attributes can be bound to graph item data or to contextual information, using a
-          special binding syntax, e.g.
-          <br />
-          <code>fill="{Binding myColor}"</code>
-          <br />
+          special binding syntax, e.g. <br />
+          <code>fill="{Binding myColor}"</code> <br />
           The bound values can be manipulated and processed using converters. This makes it possible
           to set visual attributes based on the item data, e.g. you can link the background color of
           an employee node to the employee's business unit.
@@ -174,20 +116,16 @@
         <h2>Related Demos</h2>
         <ul>
           <li>
-            <a href="../../style/string-template-node-style/">
-              String Template Node Style Demo
-            </a>
+            <a href="../../style/string-template-node-style/index.html" target="_blank">String Template Node Style Demo</a>
           </li>
           <li>
-            <a href="../../style/vue-template-node-style/">
-              Vue.js Template Node Style Demo
-            </a>
+            <a href="../../style/vue-template-node-style/index.html" target="_blank">Vue Template Node Style Demo</a>
           </li>
           <li>
-            <a href="../react-template-node-style/">React JSX Component Style Demo</a>
+            <a href="../../style/react-template-node-style/index.html" target="_blank">React JSX Component Style Demo</a>
           </li>
           <li>
-            <a href="../lit-template-node-style/">Lit Template Node Style Demo</a>
+            <a href="../../style/lit-template-node-style/index.html" target="_blank">Lit Template Node Style Demo</a>
           </li>
         </ul>
       </div>
@@ -197,7 +135,6 @@
         <div id="graphComponent"></div>
       </div>
       <aside class="demo-main__sidebar">
-        <!-- prettier-ignore -->
         <div class="demo-sidebar__content">
           <h2>Personal Data</h2>
           <div style="width: 100%">

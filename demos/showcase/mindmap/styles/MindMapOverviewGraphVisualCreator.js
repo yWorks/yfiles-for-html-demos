@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphOverviewCanvasVisualCreator, IEdge, INode, IRenderContext } from 'yfiles'
+import { GraphOverviewCanvasVisualCreator } from 'yfiles'
 
 /**
  * Provides functionality for customizing the style of overview component.

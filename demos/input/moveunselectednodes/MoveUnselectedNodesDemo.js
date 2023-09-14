@@ -36,10 +36,9 @@ import {
   GroupNodeStyle,
   IGraph,
   IHitTestable,
-  IHitTester,
   IInputModeContext,
-  IModelItem,
   INode,
+  INodeHitTester,
   INodeInsetsProvider,
   Insets,
   InteriorLabelModel,
@@ -254,31 +253,20 @@ class TopInsetsHitTestable extends BaseClass(IHitTestable) {
   isHit(context, location) {
     // get the current hit tester from the input mode context
     const inputModeContext = this.inputMode.inputModeContext
-    const hitTester = inputModeContext.lookup(IHitTester.$class)
-    if (hitTester) {
-      // get an enumerator over all elements at the given location
-      const hits = hitTester.enumerateHits(inputModeContext, location)
-      const enumerator = hits.getEnumerator()
-      while (enumerator.moveNext()) {
-        const item = enumerator.current
-        // if the element is a node and its lookup returns an INodeInsetsProvider
-        if (item instanceof INode) {
-          const insetsProvider = item.lookup(INodeInsetsProvider.$class)
-          if (insetsProvider) {
-            // determine whether the given location lies inside the top insets
-            const insets = insetsProvider.getInsets(item)
-            const topInset = new Rect(item.layout.x, item.layout.y, item.layout.width, insets.top)
-            if (topInset.contains(location)) {
-              // if so: return true
-              return true
-            }
-            // else: continue iteration
-          }
-        }
-      }
+    const hitTester = inputModeContext.lookup(INodeHitTester.$class)
+    if (!hitTester) {
+      return false
     }
-    // no hits found: return false
-    return false
+    // get an enumerator over all elements at the given location
+    const hits = hitTester.enumerateHits(inputModeContext, location)
+    return hits.some(node => {
+      // determine whether the given location lies inside the top insets
+      const insets = node.lookup(INodeInsetsProvider.$class)?.getInsets(node)
+      const layout = node.layout
+      return (
+        insets != null && new Rect(layout.x, layout.y, layout.width, insets.top).contains(location)
+      )
+    })
   }
 }
 

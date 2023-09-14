@@ -26,7 +26,7 @@ This demo shows how to use the HTML5 Drag and Drop support to drag graph items f
 
 ## Related Demos
 
-- [Drag and Drop](../draganddrop)
-- [Graph Drag and Drop](../graph-drag-and-drop)
-- [Custom Drag and Drop](../custom-drag-and-drop)
-- [Simple Drag and Drop](../../application-features/drag-and-drop/index.html)
+- [Drag and Drop Demo](../../input/draganddrop/index.html)
+- [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/index.html)
+- [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/index.html)
+- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/index.html)

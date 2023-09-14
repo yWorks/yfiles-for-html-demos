@@ -638,7 +638,7 @@ function updateNodeInformation(layoutData) {
   for (const entry of circleNodes.entries) {
     const circleId = entry.key
     const entryNodes = entry.value
-    if (circleId !== '-1' && entryNodes.length > 2) {
+    if (circleId !== '-1' && entryNodes?.length > 2) {
       circleCenters.set(circleId, calculateCircleCenter(entryNodes))
     }
   }

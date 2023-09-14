@@ -69,10 +69,6 @@
       </div>
     </header>
 
-    <!--
-  The sidebar for description text
-  -->
-
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
       <button data-command="ZOOM_ORIGINAL"></button>
@@ -91,7 +87,6 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Label Editing Demo</h1>
 
@@ -99,11 +94,10 @@
           This demo shows customizations of the interactive label editing. In particular, it shows:
         </p>
         <ul>
+          <li>The related properties of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.</li>
           <li>
-            The related properties of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
-          </li>
-          <li>
-            A <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> that customizes label editing for individual labels and label owners.
+            A <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> that customizes label editing for individual labels
+            and label owners.
           </li>
           <li>Input validation.</li>
           <li>The Instant Typing feature that allows users to start typing immediately.</li>
@@ -112,15 +106,15 @@
         <h2>Thing to Try</h2>
         <ul>
           <li>
-            Edit a selected label by pressing <kbd>F2</kbd>. If no label exists, a new one will be added.
+            Edit a selected label by pressing <kbd>F2</kbd>. If no label exists, a new one will be
+            added.
           </li>
+          <li>Add an additional label to a selected graph item by pressing <kbd>Shift+F2</kbd>.</li>
           <li>
-            Add an additional label to a selected graph item by pressing <kbd>Shift+F2</kbd>.
-          </li>
-          <li>
-            Select multiple items (labels and/or label owners) and try to add or edit them by pressing
-            <kbd>Shift+F2</kbd> or <kbd>F2</kbd>, resp. Note that by default, if both labels and other items are
-            selected, editing a label is preferred.
+            Select multiple items (labels and/or label owners) and try to add or edit them by
+            pressing
+            <kbd>Shift+F2</kbd> or <kbd>F2</kbd>, resp. Note that by default, if both labels and
+            other items are selected, editing a label is preferred.
           </li>
         </ul>
 
@@ -140,9 +134,8 @@
           </dd>
           <dt>Custom Label Helper</dt>
           <dd>
-            Enables a custom
-            <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a>
-            for node labels. This helper has the following features:
+            Enables a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> for node labels. This helper has the
+            following features:
             <ul>
               <li>Each node can have at most two labels.</li>
               <li>

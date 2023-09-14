@@ -53,10 +53,11 @@ import {
   PolylineEdgeStyle,
   Rect,
   Size,
+  StringTemplateLabelStyle,
+  StringTemplateNodeStyle,
+  StringTemplatePortStyle,
   Stroke,
-  TemplateLabelStyle,
   TemplateNodeStyle,
-  TemplatePortStyle,
   VoidNodeStyle,
   YNodeList
 } from 'yfiles'
@@ -66,6 +67,11 @@ import OrgChartData from './resources/OrgChartData.js'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
 import { applyDemoTheme } from 'demo-resources/demo-styles'
+import {
+  orgchartLabelTemplate,
+  orgchartNodeTemplate,
+  orgchartPortTemplate
+} from './style-templates.js'
 
 /**
  * Specifies the properties of an employee, i.e. the business data associated to each node
@@ -115,21 +121,21 @@ function configureStyles(graph) {
 
   // create the node style
   // use a minimum size so the nodes cannot be made smaller
-  graph.nodeDefaults.style = new TemplateNodeStyle({
-    renderTemplateId: 'orgchart-node-template',
+  graph.nodeDefaults.style = new StringTemplateNodeStyle({
+    svgContent: orgchartNodeTemplate,
     minimumSize: [100, 100],
     normalizedOutline: outlinePath
   })
 
   // create the edge label style
-  graph.edgeDefaults.labels.style = new TemplateLabelStyle({
-    renderTemplateId: 'orgchart-label-template',
+  graph.edgeDefaults.labels.style = new StringTemplateLabelStyle({
+    svgContent: orgchartLabelTemplate,
     preferredSize: [100, 30]
   })
 
   // create the port style
-  graph.nodeDefaults.ports.style = new TemplatePortStyle({
-    renderTemplateId: 'orgchart-port-template',
+  graph.nodeDefaults.ports.style = new StringTemplatePortStyle({
+    svgContent: orgchartPortTemplate,
     renderSize: [20, 20],
     normalizedOutline: outlinePath
   })

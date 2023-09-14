@@ -301,8 +301,7 @@ function distributeImpl(
  * @param nodes the enumerable to check.
  */
 function hasAtLeastTwoNodes(nodes: IEnumerable<INode>): boolean {
-  const en = nodes.getEnumerator()
-  return en.moveNext() && en.moveNext()
+  return nodes.take(2).size === 2
 }
 
 /**

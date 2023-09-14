@@ -147,8 +147,7 @@
         step="50"
         class="custom-slider"
       />
-      <span id="numNodesLabel">50</span>
-      <span class="demo-separator"></span>
+      <span id="numNodesLabel">50</span> <span class="demo-separator"></span>
       <span style="margin: 0 10px 0 10px">Label Diversity:</span>
       <input type="range" id="numLabels" value="2" min="2" max="5" class="custom-slider" />
       <span id="numLabelsLabel">2</span>
@@ -183,7 +182,7 @@
           HTML.
         </p>
         <p>
-          First, connect to a Neo4j database by entering an URL, a username, and a password into the
+          First, connect to a Neo4j database by entering a URL, a username, and a password into the
           corresponding form fields, then click the <em>Connect</em> button.
         </p>
         <p>
@@ -236,7 +235,7 @@
           nodes with different labels.
         </p>
         <p>
-          The maximum node count setting limits the amount of nodes that are queried from the
+          The maximum node count setting limits the number of nodes that are queried from the
           database, while the label diversity setting determines the length of the distinct node
           label sequences that is searched for.
         </p>
@@ -293,8 +292,7 @@
               <div id="openInHttp" hidden="">
                 Connections from https to http are forbidden by the browser's security policy. If
                 you can't connect to a non-encrypted database, try clicking the link below to open
-                this tool served on http.
-                <br />
+                this tool served on http. <br />
                 <a>Open in http</a>
               </div>
             </div>
@@ -302,11 +300,8 @@
         </div>
         <div id="noWebSocketAPI" hidden="">
           <p>
-            This demo application uses
-            <a href="https://developer.mozilla.org/de/docs/WebSockets" target="_blank"
-              >WebSockets</a
-            >
-            to connect to the given Neo4j database.
+            This demo application uses <a href="https://developer.mozilla.org/docs/Web/API/WebSockets_API" target="_blank">WebSockets</a> to connect to
+            the given Neo4j database.
           </p>
           <p>Unfortunately, your browser does not support WebSockets.</p>
           <p>To view this demo, please switch to a recent browser.</p>

@@ -831,19 +831,17 @@ export class ButtonInputMode extends InputModeBase {
   getHitItem(location) {
     const context = this.inputModeContext
     const hitTester = context.lookup(IHitTester.$class)
-    let hitItem = hitTester
-      ? hitTester.enumerateHits(context, location).find(this.isValidItem.bind(this))
-      : null
+    const hitItem =
+      hitTester?.enumerateHits(context, location).find(this.isValidItem.bind(this)) ?? null
 
-    // as bends don't have their own visualization, bend hit testing has to be explicitly checked
-    if (hitItem instanceof IEdge && this.checkForBends()) {
-      hitItem.bends.forEach(bend => {
-        if (bend.location.distanceTo(location) < context.hitTestRadius) {
-          hitItem = bend
-        }
-      })
+    if (!(hitItem instanceof IEdge) || !this.checkForBends()) {
+      return hitItem
     }
-    return hitItem
+    // As bends don't have their own visualization, bend hit testing has to be explicitly checked
+    const hitBend = hitItem.bends.find(
+      bend => bend.location.distanceTo(location) < context.hitTestRadius
+    )
+    return hitBend ?? hitItem
   }
 
   checkForBends() {

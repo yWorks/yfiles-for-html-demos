@@ -65,10 +65,10 @@ import {
   VoidStripeStyle
 } from 'yfiles'
 
-import FileSaveSupport from 'demo-utils/FileSaveSupport'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import { downloadFile } from 'demo-utils/file-support'
 
 let graphComponent: GraphComponent
 
@@ -418,7 +418,7 @@ function initializeUI(): void {
     .addEventListener('click', (): void => {
       const graph = graphComponent.graph
       const json = writeToJSON(graph)
-      FileSaveSupport.save(JSON.stringify(json), 'graph.json')
+      downloadFile(JSON.stringify(json), 'graph.json')
     })
   document
     .querySelector<HTMLButtonElement>('#layout-button')!

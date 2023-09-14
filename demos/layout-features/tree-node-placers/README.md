@@ -17,7 +17,7 @@ This demo shows how to use [node placers](https://docs.yworks.com/yfileshtml/#/a
 
 yFiles comes with predefined node placers that provide a variety of subtree arrangement schemes. This example uses three of them:
 
-- Node 1 uses a [LayeredNodePlacer](https://docs.yworks.com/yfileshtml/#/api/LayeredNodePlacer) , that places child nodes with the same depth in the tree in the same horizontal layer.
+- Node 1 uses a [LayeredNodePlacer](https://docs.yworks.com/yfileshtml/#/api/LayeredNodePlacer), that places child nodes with the same depth in the tree in the same horizontal layer.
 - Node 2 uses a [LeftRightNodePlacer](https://docs.yworks.com/yfileshtml/#/api/LeftRightNodePlacer), that places child nodes left and right of a single vertical bus.
 - Node 6 uses a [DoubleLineNodePlacer](https://docs.yworks.com/yfileshtml/#/api/DoubleLineNodePlacer), that places child nodes in two horizontal lines.
 

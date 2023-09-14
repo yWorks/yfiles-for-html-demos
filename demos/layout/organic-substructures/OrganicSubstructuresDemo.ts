@@ -149,7 +149,7 @@ async function runLayoutCore(animate: boolean): Promise<void> {
   // configure the organic layout algorithm
   const algorithm = new OrganicLayout()
 
-  const currentSample = getElementById<HTMLInputElement>('sample-combo-box').value
+  const currentSample = document.querySelector<HTMLInputElement>(`#sample-combo-box`)!.value
 
   //configure some basic settings
   algorithm.deterministic = true
@@ -165,21 +165,21 @@ async function runLayoutCore(animate: boolean): Promise<void> {
   algorithm.groupSubstructureScope = getGroupSubstructureScope()
 
   //configure type separation for parallel and star substructures
-  const separateParallel = getElementById<HTMLInputElement>('separate-parallel')
+  const separateParallel = document.querySelector<HTMLInputElement>(`#separate-parallel`)!
   algorithm.parallelSubstructureTypeSeparation = separateParallel.checked
-  const separateStar = getElementById<HTMLInputElement>('separate-star')
+  const separateStar = document.querySelector<HTMLInputElement>(`#separate-star`)!
   algorithm.starSubstructureTypeSeparation = separateStar.checked
 
   // configure data-driven features for the organic layout algorithm by using OrganicLayoutData
   const layoutData = new OrganicLayoutData()
 
-  if (getElementById<HTMLInputElement>('use-edge-grouping').checked) {
+  if (document.querySelector<HTMLInputElement>(`#use-edge-grouping`)!.checked) {
     // if desired, define edge grouping on the organic layout data
     layoutData.sourceGroupIds.constant = 'groupAll'
     layoutData.targetGroupIds.constant = 'groupAll'
   }
 
-  if (getElementById<HTMLInputElement>('consider-node-types').checked) {
+  if (document.querySelector<HTMLInputElement>(`#consider-node-types`)!.checked) {
     // if types should be considered define a delegate on the respective layout data property
     // that queries the type from the node's tag
     layoutData.nodeTypes.delegate = getNodeType
@@ -453,16 +453,16 @@ function updateLayoutSettings(data: any): void {
     updateState('separate-parallel', settings.parallelSubstructureTypeSeparation, false)
     updateState('separate-star', settings.starSubstructureTypeSeparation, false)
   } else {
-    getElementById<HTMLSelectElement>('cycleStyle').selectedIndex = 0
-    getElementById<HTMLSelectElement>('chainStyle').selectedIndex = 0
-    getElementById<HTMLSelectElement>('starStyle').selectedIndex = 0
-    getElementById<HTMLSelectElement>('parallelStyle').selectedIndex = 0
-    getElementById<HTMLSelectElement>('treeStyle').selectedIndex = 0
-    getElementById<HTMLSelectElement>('groupScope').selectedIndex = 0
-    getElementById<HTMLInputElement>('use-edge-grouping').checked = false
-    getElementById<HTMLInputElement>('consider-node-types').checked = true
-    getElementById<HTMLInputElement>('separate-parallel').checked = false
-    getElementById<HTMLInputElement>('separate-star').checked = false
+    document.querySelector<HTMLSelectElement>(`#cycleStyle`)!.selectedIndex = 0
+    document.querySelector<HTMLSelectElement>(`#chainStyle`)!.selectedIndex = 0
+    document.querySelector<HTMLSelectElement>(`#starStyle`)!.selectedIndex = 0
+    document.querySelector<HTMLSelectElement>(`#parallelStyle`)!.selectedIndex = 0
+    document.querySelector<HTMLSelectElement>(`#treeStyle`)!.selectedIndex = 0
+    document.querySelector<HTMLSelectElement>(`#groupScope`)!.selectedIndex = 0
+    document.querySelector<HTMLInputElement>(`#use-edge-grouping`)!.checked = false
+    document.querySelector<HTMLInputElement>(`#consider-node-types`)!.checked = true
+    document.querySelector<HTMLInputElement>(`#separate-parallel`)!.checked = false
+    document.querySelector<HTMLInputElement>(`#separate-star`)!.checked = false
   }
 }
 
@@ -473,7 +473,8 @@ function updateLayoutSettings(data: any): void {
  * @param defaultValue the fallback checked state to be used if the given value is undefined.
  */
 function updateState(id: string, value: boolean | undefined, defaultValue: boolean): void {
-  getElementById<HTMLInputElement>(id).checked = 'undefined' === typeof value ? defaultValue : value
+  document.querySelector<HTMLInputElement>(`#${id}`)!.checked =
+    'undefined' === typeof value ? defaultValue : value
 }
 
 /**
@@ -484,7 +485,7 @@ function updateState(id: string, value: boolean | undefined, defaultValue: boole
  * @param value the value whose index will be the new selectedIndex.
  */
 function updateSelectedIndex(id: string, value: string | undefined): void {
-  const select = getElementById<HTMLSelectElement>(id)
+  const select = document.querySelector<HTMLSelectElement>(`#${id}`)!
   const idx = indexOf(select, value)
   select.selectedIndex = idx > -1 ? idx : 0
 }
@@ -560,16 +561,8 @@ function initializeUI(): void {
  * @returns the selected value of the HTMLSelectElement identified by the given ID.
  */
 function getSelectedValue(id: string): string {
-  const select = getElementById<HTMLSelectElement>(id)
+  const select = document.querySelector<HTMLSelectElement>(`#${id}`)!
   return select.options[select.selectedIndex].value
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns A reference to the first element with the specified ID in the current document.
- */
-function getElementById<T extends HTMLElement>(id: string): T {
-  return document.getElementById(id) as T
 }
 
 run().then(finishLoading)

@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  IconLabelStyleRenderer,
-  ILabelModelParameter,
-  INode,
-  Insets,
-  InteriorLabelModel,
-  Size
-} from 'yfiles'
+import { IconLabelStyleRenderer, Insets, InteriorLabelModel, Size } from 'yfiles'
 import { getNodeData } from '../data-types.js'
 
 /**

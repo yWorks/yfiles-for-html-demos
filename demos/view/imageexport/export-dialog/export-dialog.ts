@@ -26,4 +26,65 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export * from '../../svgexport/export-dialog/export-dialog'
+import './export-dialog.css'
+
+/**
+ * Initializes the export dialog.
+ * @param heading The heading of the dialog.
+ * @param saveCallback A callback that is called after the save button is pressed.
+ */
+export function initializeExportDialog(
+  heading: string,
+  saveCallback: (previewElement: Element) => void
+): void {
+  const dialog = document.querySelector<HTMLDivElement>('#export-dialog')!
+  dialog.innerHTML = `<div class="export-dialog">
+  <div class="outer">
+    <h2>${heading}</h2>
+    <div class="export-preview-container">
+      <div id="preview-container"></div>
+    </div>
+    <button id="save-button">Save</button>
+    <button id="close-button">Close</button>
+  </div>
+</div>`
+  dialog.style.display = 'none'
+
+  const saveButton = document.querySelector<HTMLButtonElement>('#save-button')!
+  const closeButton = document.querySelector<HTMLButtonElement>('#close-button')!
+  const exportButton = document.querySelector<HTMLButtonElement>('#export-button')!
+  const previewContainer = document.querySelector<HTMLDivElement>('#preview-container')!
+
+  saveButton.addEventListener('click', () => {
+    const previewElement = previewContainer.children.item(0)!
+    saveCallback(previewElement)
+  })
+
+  closeButton.addEventListener('click', _ => {
+    // Hide the popup
+    dialog.style.display = 'none'
+    // Remove the exported SVG element from the popup since it is no longer needed
+    previewContainer.innerHTML = ''
+    // Re-enable the export button
+    exportButton.disabled = false
+  })
+}
+
+/**
+ * Shows the export dialog.
+ */
+export function showExportDialog(previewElement: Element): void {
+  const previewContainer = document.querySelector<HTMLDivElement>('#preview-container')!
+  previewContainer.appendChild(previewElement)
+
+  const dialog = document.querySelector<HTMLDivElement>('#export-dialog')!
+  dialog.style.display = 'block'
+}
+
+/**
+ * Hides the export dialog.
+ */
+export function hideExportDialog(): void {
+  const dialog = document.querySelector<HTMLDivElement>('#export-dialog')!
+  dialog.style.display = 'none'
+}

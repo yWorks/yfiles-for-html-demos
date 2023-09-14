@@ -36,7 +36,7 @@ private updateText(
 ): void {
 ```
 
-To horizontally align the text, we use the SVG [text-anchor](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/text-anchor) property. After setting the anchor point of the text, we set the x-value of the translation according to the left, middle or right position of the label layout. This way, we don’t have to measure the text.
+To horizontally align the text, we use the SVG [text-anchor](https://developer.mozilla.org/docs/Web/SVG/Attribute/text-anchor) property. After setting the anchor point of the text, we set the x-value of the translation according to the left, middle or right position of the label layout. This way, we don’t have to measure the text.
 
 ```
 textElement.setAttribute('text-anchor', this.horizontalAlignment)

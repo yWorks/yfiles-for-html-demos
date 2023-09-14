@@ -30,11 +30,11 @@ import {
   EdgeStyleBase,
   GeneralPath,
   HtmlCanvasVisual,
-  IEdge,
-  IInputModeContext,
-  IRenderContext,
-  Point,
-  Visual
+  type IEdge,
+  type IInputModeContext,
+  type IRenderContext,
+  type Point,
+  type Visual
 } from 'yfiles'
 import { getNodeData } from '../data-types'
 

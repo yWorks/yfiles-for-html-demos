@@ -29,7 +29,7 @@ As an example, the demo uses an implementation of the [DropInputMode](https://do
 
 ## Related Demos
 
-- [Drag and Drop](../draganddrop)
-- [Graph Drag and Drop](../graph-drag-and-drop)
-- [Drag From Component](../drag-from-component)
-- [Simple Drag and Drop](../../application-features/drag-and-drop)
+- [Drag and Drop Demo](../../input/draganddrop/index.html)
+- [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/index.html)
+- [Drag From Component Demo](../../input/drag-from-component/index.html)
+- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/index.html)

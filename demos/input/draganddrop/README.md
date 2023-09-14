@@ -35,7 +35,7 @@ For dragging and dropping edges, the demo uses the custom class `EdgeDropInputMo
 
 ## Related Demos
 
-- [Graph Drag and Drop](../graph-drag-and-drop)
-- [Drag From Component](../drag-from-component)
-- [Custom Drag and Drop](../custom-drag-and-drop)
-- [Simple Drag and Drop](../../application-features/drag-and-drop/index.html)
+- [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/index.html)
+- [Drag From Component Demo](../../input/drag-from-component/index.html)
+- [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/index.html)
+- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/index.html)

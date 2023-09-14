@@ -34,11 +34,11 @@ import { initializeToggleWebGl2RenderingButton } from './webgl-support'
 import { initializeExportRectangle } from './export-rectangle/export-rectangle'
 import { createSampleGraph } from './samples'
 import './option-panel/option-panel.css'
-import FileSaveSupport from 'demo-utils/FileSaveSupport'
 import { initializeOptionPanel } from './option-panel/option-panel'
 import { exportSvg } from './svg-export'
 import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog'
 import { retainAspectRatio } from './aspect-ratio'
+import { downloadFile } from 'demo-utils/file-support'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -70,10 +70,10 @@ async function run(): Promise<void> {
     showExportDialog(element)
   })
 
-  initializeExportDialog('SVG Export', async (svgElement: Element) => {
+  initializeExportDialog('SVG Export', (svgElement: Element) => {
     const fileContent = SvgExport.exportSvgString(svgElement)
     try {
-      await FileSaveSupport.save(fileContent, 'graph.svg')
+      downloadFile(fileContent, 'graph.svg')
     } catch (e) {
       alert(
         'Saving directly to the filesystem is not supported by this browser.' +

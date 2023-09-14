@@ -428,104 +428,103 @@ export class DemoStripeStyle extends NodeStyleBase {
    */
   createVisual(renderContext, node) {
     const stripe = node.lookup(IStripe.$class)
-    const layout = node.layout
-    if (stripe !== null) {
-      const isColumn = stripe instanceof IColumn
-      const hasNoChildren = !stripe.childStripes.getEnumerator().moveNext()
-
-      let stripeInsets
-      let isFirst
-      if (hasNoChildren) {
-        const actualInsets = stripe.actualInsets
-        if (isColumn) {
-          stripeInsets = new Insets(0, actualInsets.top, 0, actualInsets.bottom)
-          let walker = stripe.table && stripe.table.rootColumn
-          while (walker !== null && walker !== stripe) {
-            const enumerator = walker.childColumns.getEnumerator()
-            walker = enumerator.moveNext() ? enumerator.current : null
-          }
-          isFirst = walker === stripe
-        } else {
-          stripeInsets = new Insets(actualInsets.left, 0, actualInsets.right, 0)
-          let walker = stripe.table && stripe.table.rootRow
-          while (walker !== null && walker !== stripe) {
-            const enumerator = walker.childRows.getEnumerator()
-            walker = enumerator.moveNext() ? enumerator.current : null
-          }
-          isFirst = walker === stripe
-        }
-      } else {
-        stripeInsets = stripe.insets
-        isFirst = false
-      }
-
-      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
-      const result = new SvgVisual(g)
-
-      let x = 1
-      let y = 1
-      let w = layout.width - 2
-      let h = layout.height - 2
-
-      if (stripeInsets.top > 2) {
-        this.createInnerRect(g, x, y, w, stripeInsets.top - 2, 'stripe-inset')
-      }
-      y += stripeInsets.top
-      h -= stripeInsets.top
-      if (stripeInsets.bottom > 2) {
-        this.createInnerRect(
-          g,
-          x,
-          layout.height - stripeInsets.bottom + 1,
-          w,
-          stripeInsets.bottom - 2,
-          'stripe-inset'
-        )
-      }
-      h -= stripeInsets.bottom
-
-      if (stripeInsets.left > 2) {
-        this.createInnerRect(g, x, y, stripeInsets.left - 2, h, 'stripe-inset')
-      }
-      x += stripeInsets.left
-      w -= stripeInsets.left
-
-      if (stripeInsets.right > 2) {
-        this.createInnerRect(
-          g,
-          layout.width - stripeInsets.right + 1,
-          y,
-          stripeInsets.right - 2,
-          h,
-          'stripe-inset'
-        )
-      }
-      w -= stripeInsets.right
-
-      if (isColumn && !isFirst && hasNoChildren) {
-        this.createInnerRect(g, -1, y, 2, h - 1, 'table-line')
-      }
-
-      if (!isColumn && !isFirst && hasNoChildren) {
-        this.createInnerRect(g, x, -1, w - 1, 2, 'table-line')
-      }
-
-      g.setAttribute('transform', `translate(${layout.x} ${layout.y})`)
-      result.cache = {
-        x: layout.x,
-        y: layout.y,
-        w: layout.width,
-        h: layout.height,
-        top: stripeInsets.top,
-        left: stripeInsets.left,
-        right: stripeInsets.right,
-        bottom: stripeInsets.bottom
-      }
-
-      return result
+    if (stripe == null) {
+      return null
     }
-    return null
+
+    const isColumn = stripe instanceof IColumn
+    let stripeInsets
+    let isFirst
+    if (stripe.childStripes.some()) {
+      stripeInsets = stripe.insets
+      isFirst = false
+    } else {
+      const actualInsets = stripe.actualInsets
+      if (isColumn) {
+        stripeInsets = new Insets(0, actualInsets.top, 0, actualInsets.bottom)
+        let walker = stripe.table && stripe.table.rootColumn
+        while (walker !== null && walker !== stripe) {
+          const enumerator = walker.childColumns.getEnumerator()
+          walker = enumerator.moveNext() ? enumerator.current : null
+        }
+        isFirst = walker === stripe
+      } else {
+        stripeInsets = new Insets(actualInsets.left, 0, actualInsets.right, 0)
+        let walker = stripe.table && stripe.table.rootRow
+        while (walker !== null && walker !== stripe) {
+          const enumerator = walker.childRows.getEnumerator()
+          walker = enumerator.moveNext() ? enumerator.current : null
+        }
+        isFirst = walker === stripe
+      }
+    }
+
+    const layout = node.layout
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
+    const result = new SvgVisual(g)
+
+    let x = 1
+    let y = 1
+    let w = layout.width - 2
+    let h = layout.height - 2
+
+    if (stripeInsets.top > 2) {
+      this.createInnerRect(g, x, y, w, stripeInsets.top - 2, 'stripe-inset')
+    }
+    y += stripeInsets.top
+    h -= stripeInsets.top
+    if (stripeInsets.bottom > 2) {
+      this.createInnerRect(
+        g,
+        x,
+        layout.height - stripeInsets.bottom + 1,
+        w,
+        stripeInsets.bottom - 2,
+        'stripe-inset'
+      )
+    }
+    h -= stripeInsets.bottom
+
+    if (stripeInsets.left > 2) {
+      this.createInnerRect(g, x, y, stripeInsets.left - 2, h, 'stripe-inset')
+    }
+    x += stripeInsets.left
+    w -= stripeInsets.left
+
+    if (stripeInsets.right > 2) {
+      this.createInnerRect(
+        g,
+        layout.width - stripeInsets.right + 1,
+        y,
+        stripeInsets.right - 2,
+        h,
+        'stripe-inset'
+      )
+    }
+    w -= stripeInsets.right
+
+    if (isColumn && !isFirst && !stripe.childStripes.some()) {
+      this.createInnerRect(g, -1, y, 2, h - 1, 'table-line')
+    }
+
+    if (!isColumn && !isFirst && !stripe.childStripes.some()) {
+      this.createInnerRect(g, x, -1, w - 1, 2, 'table-line')
+    }
+
+    g.setAttribute('transform', `translate(${layout.x} ${layout.y})`)
+    result.cache = {
+      x: layout.x,
+      y: layout.y,
+      w: layout.width,
+      h: layout.height,
+      top: stripeInsets.top,
+      left: stripeInsets.left,
+      right: stripeInsets.right,
+      bottom: stripeInsets.bottom
+    }
+
+    return result
   }
 
   /**
@@ -607,117 +606,116 @@ export class DemoStripeStyle extends NodeStyleBase {
     const layout = node.layout
     const g = oldVisual.svgElement
     const cache = oldVisual.cache
-    if (stripe !== null && g instanceof SVGGElement && cache) {
-      const isColumn = stripe instanceof IColumn
 
-      const hasNoChildren = !stripe.childStripes.getEnumerator().moveNext()
-
-      let stripeInsets
-      let isFirst
-      if (hasNoChildren) {
-        const actualInsets = stripe.actualInsets
-        if (isColumn) {
-          stripeInsets = new Insets(0, actualInsets.top, 0, actualInsets.bottom)
-          let walker = stripe.table && stripe.table.rootColumn
-          while (walker !== null && walker !== stripe) {
-            const enumerator = walker.childColumns.getEnumerator()
-            walker = enumerator.moveNext() ? enumerator.current : null
-          }
-          isFirst = walker === stripe
-        } else {
-          stripeInsets = new Insets(actualInsets.left, 0, actualInsets.right, 0)
-          let walker = stripe.table && stripe.table.rootRow
-          while (walker !== null && walker !== stripe) {
-            const enumerator = walker.childRows.getEnumerator()
-            walker = enumerator.moveNext() ? enumerator.current : null
-          }
-          isFirst = walker === stripe
-        }
-      } else {
-        stripeInsets = stripe.insets
-        isFirst = false
-      }
-
-      let x = 1
-      let y = 1
-      let w = layout.width - 2
-      let h = layout.height - 2
-
-      let childIndex = -1
-
-      if (stripeInsets.top > 2) {
-        childIndex = this.updateInnerRect(
-          g,
-          childIndex,
-          x,
-          y,
-          w,
-          stripeInsets.top - 2,
-          'stripe-inset'
-        )
-      }
-      y += stripeInsets.top
-      h -= stripeInsets.top
-      if (stripeInsets.bottom > 2) {
-        childIndex = this.updateInnerRect(
-          g,
-          childIndex,
-          x,
-          layout.height - stripeInsets.bottom + 1,
-          w,
-          stripeInsets.bottom - 2,
-          'stripe-inset'
-        )
-      }
-      h -= stripeInsets.bottom
-
-      if (stripeInsets.left > 2) {
-        childIndex = this.updateInnerRect(
-          g,
-          childIndex,
-          x,
-          y,
-          stripeInsets.left - 2,
-          h,
-          'stripe-inset'
-        )
-      }
-      x += stripeInsets.left
-      w -= stripeInsets.left
-
-      if (stripeInsets.right > 2) {
-        childIndex = this.updateInnerRect(
-          g,
-          childIndex,
-          layout.width - stripeInsets.right + 1,
-          y,
-          stripeInsets.right - 2,
-          h,
-          'stripe-inset'
-        )
-      }
-      w -= stripeInsets.right
-
-      if (isColumn && !isFirst && hasNoChildren) {
-        childIndex = this.updateInnerRect(g, childIndex, -1, y, 2, h - 1, 'table-line')
-      }
-
-      if (!isColumn && !isFirst && hasNoChildren) {
-        childIndex = this.updateInnerRect(g, childIndex, x, -1, w - 1, 2, 'table-line')
-      }
-
-      while (g.childElementCount > childIndex + 1) {
-        g.removeChild(g.lastElementChild)
-      }
-
-      if (cache.x !== layout.x || cache.y !== layout.y) {
-        cache.x = layout.x
-        cache.y = layout.y
-        SvgVisual.setTranslate(g, cache.x, cache.y)
-      }
-      return oldVisual
+    if (!stripe || !(g instanceof SVGGElement) || !cache) {
+      return this.createVisual(renderContext, node)
     }
-    return this.createVisual(renderContext, node)
+    const isColumn = stripe instanceof IColumn
+
+    let stripeInsets
+    let isFirst
+    if (!stripe.childStripes.some()) {
+      const actualInsets = stripe.actualInsets
+      if (isColumn) {
+        stripeInsets = new Insets(0, actualInsets.top, 0, actualInsets.bottom)
+        let walker = stripe.table && stripe.table.rootColumn
+        while (walker !== null && walker !== stripe) {
+          const enumerator = walker.childColumns.getEnumerator()
+          walker = enumerator.moveNext() ? enumerator.current : null
+        }
+        isFirst = walker === stripe
+      } else {
+        stripeInsets = new Insets(actualInsets.left, 0, actualInsets.right, 0)
+        let walker = stripe.table && stripe.table.rootRow
+        while (walker !== null && walker !== stripe) {
+          const enumerator = walker.childRows.getEnumerator()
+          walker = enumerator.moveNext() ? enumerator.current : null
+        }
+        isFirst = walker === stripe
+      }
+    } else {
+      stripeInsets = stripe.insets
+      isFirst = false
+    }
+
+    let x = 1
+    let y = 1
+    let w = layout.width - 2
+    let h = layout.height - 2
+
+    let childIndex = -1
+
+    if (stripeInsets.top > 2) {
+      childIndex = this.updateInnerRect(
+        g,
+        childIndex,
+        x,
+        y,
+        w,
+        stripeInsets.top - 2,
+        'stripe-inset'
+      )
+    }
+    y += stripeInsets.top
+    h -= stripeInsets.top
+    if (stripeInsets.bottom > 2) {
+      childIndex = this.updateInnerRect(
+        g,
+        childIndex,
+        x,
+        layout.height - stripeInsets.bottom + 1,
+        w,
+        stripeInsets.bottom - 2,
+        'stripe-inset'
+      )
+    }
+    h -= stripeInsets.bottom
+
+    if (stripeInsets.left > 2) {
+      childIndex = this.updateInnerRect(
+        g,
+        childIndex,
+        x,
+        y,
+        stripeInsets.left - 2,
+        h,
+        'stripe-inset'
+      )
+    }
+    x += stripeInsets.left
+    w -= stripeInsets.left
+
+    if (stripeInsets.right > 2) {
+      childIndex = this.updateInnerRect(
+        g,
+        childIndex,
+        layout.width - stripeInsets.right + 1,
+        y,
+        stripeInsets.right - 2,
+        h,
+        'stripe-inset'
+      )
+    }
+    w -= stripeInsets.right
+
+    if (isColumn && !isFirst && !stripe.childStripes.some()) {
+      childIndex = this.updateInnerRect(g, childIndex, -1, y, 2, h - 1, 'table-line')
+    }
+
+    if (!isColumn && !isFirst && !stripe.childStripes.some()) {
+      childIndex = this.updateInnerRect(g, childIndex, x, -1, w - 1, 2, 'table-line')
+    }
+
+    while (g.childElementCount > childIndex + 1) {
+      g.removeChild(g.lastElementChild)
+    }
+
+    if (cache.x !== layout.x || cache.y !== layout.y) {
+      cache.x = layout.x
+      cache.y = layout.y
+      SvgVisual.setTranslate(g, cache.x, cache.y)
+    }
+    return oldVisual
   }
 }
 

@@ -123,7 +123,7 @@ async function run(): Promise<void> {
   aggregateGraph.aggregationNodeDefaults.labels.style = new DefaultLabelStyle({ textSize: 32 })
   aggregateGraph.aggregationEdgeDefaults.labels.style = new DefaultLabelStyle({ textSize: 24 })
 
-  // assign it to the graphControl
+  // assign it to the graphComponent
   graphComponent.graph = aggregateGraph
 
   // disable edge cropping, so thick aggregation edges run smoothly into nodes

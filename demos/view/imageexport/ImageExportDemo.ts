@@ -35,13 +35,13 @@ import { createSampleGraph } from './samples'
 import { initializeToggleWebGl2RenderingButton } from './webgl-support'
 import './option-panel/option-panel.css'
 import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog'
-import FileSaveSupport from 'demo-utils/FileSaveSupport'
 import { initializeServerSideExport } from './server-side-export'
 import { exportImageServerSide, NODE_SERVER_URL } from './image-export-server-side'
 import { initializeExportRectangle } from './export-rectangle/export-rectangle'
 import { initializeOptionPanel } from './option-panel/option-panel'
 import { exportImageClientSide } from './image-export-client-side'
 import { retainAspectRatio } from './aspect-ratio'
+import { downloadFile } from 'demo-utils/file-support'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -74,10 +74,10 @@ async function run(): Promise<void> {
     }
   })
 
-  initializeExportDialog('Client-side Image Export', async imageElement => {
+  initializeExportDialog('Client-side Image Export', imageElement => {
     const image = imageElement as HTMLImageElement
     try {
-      await FileSaveSupport.save(image.src, 'graph.png')
+      downloadFile(image.src, 'graph.png')
     } catch (e) {
       alert(
         'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
@@ -85,8 +85,8 @@ async function run(): Promise<void> {
     }
   })
 
-  // initialize server-side export
-  await initializeServerSideExport(NODE_SERVER_URL)
+  // initialize server-side export in a non-blocking way
+  initializeServerSideExport(NODE_SERVER_URL)
 
   // wire up the button to toggle webgl rendering
   initializeToggleWebGl2RenderingButton(graphComponent)

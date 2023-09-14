@@ -15,7 +15,7 @@
 
 This demo shows how to create labels with rich text features using [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle).
 
-Since the [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle) supports basic HTML markup, it can be easily hooked up with a WYSIWYG text editor that completely hides the markup from the user, as demonstrated in the [Rich Text Label](../richtextlabel/index.html) demo.
+Since the [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle) supports basic HTML markup, it can be easily hooked up with a WYSIWYG text editor that completely hides the markup from the user, as demonstrated in the [Rich Text Label Demo](../../style/richtextlabel/index.html).
 
 #### Creating and Editing Labels
 

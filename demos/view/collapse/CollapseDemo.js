@@ -46,6 +46,7 @@ import {
   OrganicLayout,
   PlaceNodesAtBarycenterStage,
   Size,
+  StringTemplateNodeStyle,
   TemplateNodeStyle,
   TreeLayout
 } from 'yfiles'
@@ -54,6 +55,7 @@ import CollapseAndExpandNodes from './CollapseAndExpandNodes.js'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { innerNodeStyleTemplate, leafNodeStyleTemplate } from './style-templates.js'
 
 /**
  * Utilities for collapsing and expanding nodes.
@@ -104,10 +106,10 @@ function createGraph() {
   const completeGraph = new DefaultGraph()
 
   // create a new style that uses the specified svg snippet as a template for the node
-  const leafNodeStyle = new TemplateNodeStyle('LeafNodeStyleTemplate')
+  const leafNodeStyle = new StringTemplateNodeStyle(leafNodeStyleTemplate)
 
   // create a new style that uses the specified svg snippet as a template for the node
-  const style = new TemplateNodeStyle('InnerNodeStyleTemplate')
+  const style = new StringTemplateNodeStyle(innerNodeStyleTemplate)
   style.styleTag = { collapsed: true }
   completeGraph.nodeDefaults.style = style
   completeGraph.nodeDefaults.size = new Size(60, 30)

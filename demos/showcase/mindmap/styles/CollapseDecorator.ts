@@ -27,29 +27,29 @@
  **
  ***************************************************************************/
 import {
-  Class,
+  type Class,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   FilteredGraphWrapper,
-  GeneralPath,
+  type GeneralPath,
   GraphComponent,
-  ICanvasContext,
+  type ICanvasContext,
   IconLabelStyle,
-  IGraph,
-  IInputModeContext,
-  ILabelModelParameter,
-  INode,
-  INodeStyle,
+  type IGraph,
+  type IInputModeContext,
+  type ILabelModelParameter,
+  type INode,
+  type INodeStyle,
   Insets,
   InteriorLabelModel,
-  IRenderContext,
+  type IRenderContext,
   NodeStyleBase,
-  Point,
-  Rect,
+  type Point,
+  type Rect,
   SimpleLabel,
   Size,
   SvgVisual,
-  Visual
+  type Visual
 } from 'yfiles'
 import type { NodeData } from '../data-types'
 import { getNodeData } from '../data-types'
@@ -83,13 +83,13 @@ export class CollapseDecorator extends NodeStyleBase {
   /**
    * The size of the collapse/expand icon.
    */
-  public static readonly ICON_SIZE: Size = new Size(18, 18)
+  static readonly ICON_SIZE: Size = new Size(18, 18)
 
   /**
    * Creates a new instance of this style using the given node style as wrapped style.
    * @param wrappedNodeStyle The style used for rendering the node.
    */
-  constructor(public readonly wrappedNodeStyle: INodeStyle) {
+  constructor(readonly wrappedNodeStyle: INodeStyle) {
     super()
   }
 
@@ -139,7 +139,7 @@ export class CollapseDecorator extends NodeStyleBase {
 
     // get the complete old visual and compare it with the current wrapped visual
     const container = oldVisual.svgElement as CachedNodeVisual
-    const oldWrappedVisual = container.wrappedVisual as SvgVisual
+    const oldWrappedVisual = container.wrappedVisual!
     // update the wrappedNodeStyle visual
     const newWrappedVisual = this.wrappedNodeStyle.renderer
       .getVisualCreator(node, this.wrappedNodeStyle)
@@ -235,7 +235,7 @@ export class CollapseDecorator extends NodeStyleBase {
   ): void {
     const nodeData = getNodeData(node)
     // retrieve the old label information from the container
-    const oldLabel = container.label as SimpleLabel
+    const oldLabel = container.label!
     const oldButtonVisual = container.iconVisual as SvgVisual | undefined
 
     // get the new label model parameter and style to use for the dummy label
@@ -338,6 +338,7 @@ export class CollapseDecorator extends NodeStyleBase {
    * Performs the lookup operation by delegating the call to the wrapped node style.
    */
   lookup(node: INode, type: Class): object | null {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.wrappedNodeStyle.renderer.getContext(node, this.wrappedNodeStyle).lookup(type)
   }
 

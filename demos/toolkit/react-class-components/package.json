@@ -14,7 +14,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.1+dev.tgz"
   },
   "devDependencies": {
     "@types/react": "~18.2.0",

@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   Animator,
+  Class,
   Color,
   EdgePathLabelModel,
   EdgeSides,
@@ -149,9 +150,7 @@ const webGLImageData = []
 const edgeThickness = 5
 
 const redrawGraphButton = document.querySelector('#redrawGraphButton')
-// Control for the input mode.
 const modeChooserBox = document.querySelector('#modeChooserBox')
-// Controls for the sample graphs.
 const graphChooserBox = document.querySelector('#graphChooserBox')
 const nodeLabelsCheckbox = document.querySelector('#nodeLabelsCheckbox')
 const edgeLabelsCheckbox = document.querySelector('#edgeLabelsCheckbox')
@@ -531,6 +530,7 @@ function createEditorInputMode(isMoveMode) {
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
   if (BrowserDetection.webGL2) {
+    Class.ensure(WebGL2GraphModelManager)
     graphEditorInputMode.handleInputMode.renderMode = RenderModes.WEB_GL2
   }
 

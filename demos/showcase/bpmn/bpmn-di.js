@@ -734,26 +734,29 @@ export class BpmnDiParser {
 
   /**
    * Looks up the {@link BpmnElement} registered by `id`.
-   * @param {!string} id The id to look up the element for.
+   * @param {?string} id The id to look up the element for.
    * @param {!object} element The element to set if one could be found for the given id.
    * @param element.value The element to set if one could be found for the given id.
    * @returns {boolean}
    */
   tryGetElementForId(id, element) {
     element.value = null
+    if (id == null) {
+      return false
+    }
     if (this.document.elements.has(id)) {
       element.value = this.document.elements.get(id)
       return true
     }
     const separatorIndex = id.indexOf(':')
-    if (separatorIndex > 0) {
-      // if no element was found for id but the id was prefixed for a namespace, try to find an element for an id without prefix
-      const shortId = id.substr(separatorIndex + 1)
-      if (this.document.elements.has(shortId)) {
-        element.value = this.document.elements.get(shortId)
-        return true
-      }
+    if (separatorIndex <= 0) {
       return false
+    }
+    // if no element was found for id but the id was prefixed for a namespace, try to find an element for an id without prefix
+    const shortId = id.substr(separatorIndex + 1)
+    if (this.document.elements.has(shortId)) {
+      element.value = this.document.elements.get(shortId)
+      return true
     }
     return false
   }

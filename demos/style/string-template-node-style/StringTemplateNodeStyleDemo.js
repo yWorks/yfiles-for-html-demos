@@ -94,13 +94,13 @@ async function run() {
  * @param {!GraphComponent} graphComponent
  */
 function initializeEditors(graphComponent) {
-  templateEditor = CodeMirror.fromTextArea(getElementById('template-text-area'), {
+  templateEditor = CodeMirror.fromTextArea(document.querySelector(`#template-text-area`), {
     lineNumbers: true,
     mode: 'application/xml',
     gutters: ['CodeMirror-lint-markers'],
     lint: true
   })
-  tagEditor = CodeMirror.fromTextArea(getElementById('tag-text-area'), {
+  tagEditor = CodeMirror.fromTextArea(document.querySelector(`#tag-text-area`), {
     lineNumbers: true,
     mode: 'application/json',
     gutters: ['CodeMirror-lint-markers'],
@@ -123,15 +123,15 @@ function initializeEditors(graphComponent) {
       }
       tagEditor.setOption('readOnly', false)
       tagEditor.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-      getElementById('apply-template-button').disabled = false
-      getElementById('apply-tag-button').disabled = false
+      document.querySelector(`#apply-template-button`).disabled = false
+      document.querySelector(`#apply-tag-button`).disabled = false
     } else {
       templateEditor.setOption('readOnly', 'nocursor')
       tagEditor.setOption('readOnly', 'nocursor')
       templateEditor.setValue('Select a node to edit its template.')
       tagEditor.setValue('Select a node to edit its tag.')
-      getElementById('apply-template-button').disabled = true
-      getElementById('apply-tag-button').disabled = true
+      document.querySelector(`#apply-template-button`).disabled = true
+      document.querySelector(`#apply-tag-button`).disabled = true
     }
   })
 }
@@ -297,9 +297,9 @@ function applyTemplate(graphComponent) {
       graphComponent.graph.setStyle(node, style)
     }
 
-    getElementById('template-text-area-error').classList.remove('open-error')
+    document.querySelector(`#template-text-area-error`).classList.remove('open-error')
   } catch (err) {
-    const errorArea = getElementById('template-text-area-error')
+    const errorArea = document.querySelector(`#template-text-area-error`)
     const errorString = err.toString().replace(templateText, '...template...')
     errorArea.setAttribute('title', errorString)
     errorArea.classList.add('open-error')
@@ -326,9 +326,9 @@ function applyTag(graphComponent) {
       node.tag = tag
     }
 
-    getElementById('tag-text-area-error').classList.remove('open-error')
+    document.querySelector(`#tag-text-area-error`).classList.remove('open-error')
   } catch (err) {
-    const errorArea = getElementById('tag-text-area-error')
+    const errorArea = document.querySelector(`#tag-text-area-error`)
     errorArea.setAttribute('title', err.toString())
     errorArea.classList.add('open-error')
   }
@@ -336,21 +336,6 @@ function applyTag(graphComponent) {
   // Unlike replacing a node's style, replacing a node's tag does not automatically repaint
   // the graph view. Thus a repaint needs to be triggered manually here.
   graphComponent.invalidate()
-}
-
-/**
- * Opens a file chooser to read a GraphML file from the local file system.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
- */
-async function openFile(graphComponent) {
-  try {
-    await graphMLSupport.openFile(graphComponent.graph)
-    graphComponent.fitGraphBounds()
-  } catch (ignored) {
-    alert('The graph contains styles that are not supported by this demo.')
-    graphComponent.graph.clear()
-  }
 }
 
 /**
@@ -369,16 +354,6 @@ function initializeUI(graphComponent) {
   document
     .querySelector('#reload')
     .addEventListener('click', () => resetSampleGraph(graphComponent))
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns {!T} A reference to the first element with the specified ID in the current document.
- * @template {HTMLElement} T
- * @param {!string} id
- */
-function getElementById(id) {
-  return document.getElementById(id)
 }
 
 run().then(finishLoading)

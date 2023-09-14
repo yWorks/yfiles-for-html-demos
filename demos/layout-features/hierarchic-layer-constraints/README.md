@@ -33,7 +33,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-See the [Layer Constraints](../../layout/layerconstraints/index.html) demo for a more elaborate example of the constraints functionality.
+See the [Layer Constraints Demo](../../layout/layerconstraints/index.html) for a more elaborate example of the constraints functionality.
 
 ### Documentation
 

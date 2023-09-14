@@ -26,19 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  GraphComponent,
-  IEdge,
-  IGraph,
-  IInputModeContext,
-  INode,
-  IPoint,
-  IPositionHandler,
-  List,
-  Point,
-  Rect
-} from 'yfiles'
+import { BaseClass, IPositionHandler, List, Point, Rect } from 'yfiles'
 import { getNodeData, isLeft, isRoot } from '../data-types.js'
 
 import { adjustPortLocations, layoutSubtree, layoutTree } from '../mind-map-layout.js'
@@ -306,10 +294,8 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
         }
       }
     })
-    if (!newParent) {
-      newParent = this.globalRoot
-    }
-    return dMin < SubtreePositionHandler.MAX_DISTANCE ? newParent : null
+    // EsLint doesn't detect the possible assignment of newParent
+    return dMin < SubtreePositionHandler.MAX_DISTANCE ? newParent ?? this.globalRoot : null
   }
 
   /**

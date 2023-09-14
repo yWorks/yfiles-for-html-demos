@@ -38,7 +38,6 @@ import {
   HandlePositions,
   IHandle,
   IHitTestable,
-  IHitTester,
   IInputModeContext,
   INode,
   INodeHitTester,
@@ -104,7 +103,7 @@ let groupNode: INode | null
 let layoutHelper: ClearAreaLayoutHelper
 
 /**
- * A  {@link IHitTester} to determine the group node we are currently hovering.
+ * A  {@link INodeHitTester} to determine the group node we are currently hovering.
  */
 let nodeHitTester: INodeHitTester | null
 

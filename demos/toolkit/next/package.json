@@ -19,7 +19,7 @@
     "next": "13.4.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "yfiles": "../../../lib-dev/yfiles-26.0.0+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.1+dev.tgz"
   },
   "devDependencies": {
     "typescript": "~5.1.6"

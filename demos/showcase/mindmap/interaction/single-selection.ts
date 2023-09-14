@@ -28,9 +28,9 @@
  ***************************************************************************/
 import {
   EventRecognizers,
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphInputMode,
+  type GraphComponent,
+  type GraphEditorInputMode,
+  type GraphInputMode,
   GraphItemTypes,
   ICommand,
   IModelItem
@@ -71,6 +71,7 @@ export function useSingleSelection(graphComponent: GraphComponent): void {
  * Determines whether toggling the selection state of an item,
  * respecting the single selection policy, is allowed.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toggleItemSelectionCanExecute(graphComponent: GraphComponent, parameter: any): boolean {
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem
   return !!modelItem
@@ -80,6 +81,7 @@ function toggleItemSelectionCanExecute(graphComponent: GraphComponent, parameter
  * Custom command handler that allows toggling the selection state of an item
  * respecting the single selection policy.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toggleItemSelectionExecuted(graphComponent: GraphComponent, parameter: any): boolean {
   // get the item
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem

@@ -78,8 +78,9 @@ function checkLicense(licenseData) {
   }
 
   window.setTimeout(() => {
+    document.body.style.display = 'unset'
     document.body.innerHTML =
-      '<div id="errorComponent" style="margin:auto; width:40em; height: 100%;"></div>'
+      '<div id="errorComponent" style="position:sticky; margin:auto; width:40em; height: 100%;"></div>'
     new GraphComponent('errorComponent')
   }, 200)
 

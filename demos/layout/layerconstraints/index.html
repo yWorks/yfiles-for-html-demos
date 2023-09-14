@@ -56,44 +56,6 @@
       }
     </style>
 
-    <script type="text/yfiles-template">
-      <g id="ConstraintNodeStyle">
-        <g visibility="{Binding constraints, Converter=layerconstraintsdemo.constraintsvisibilityconverter}">
-          <rect stroke="none" fill="{Binding value, Converter=layerconstraintsdemo.backgroundconverter}" rx="4" ry="4"
-              width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-          <text data-content="{Binding value, Converter=layerconstraintsdemo.constraintconverter}" x="30" y="22"
-              text-anchor="middle" font-size="22"
-              fill="{Binding value, Converter=layerconstraintsdemo.textcolorconverter}"></text>
-          <g transform="translate(0 50)" class="button-container">
-            <ellipse cx="12" cy="-12" rx="8" ry="8" stroke="none" fill="white" class="button"></ellipse>
-            <path d="M 7 -12 L 17 -12" stroke="grey" stroke-width="2"></path>
-          </g>
-          <g transform="translate(0 50)" class="button-container">
-            <ellipse cx="30" cy="-12" rx="8" ry="8" stroke="none" fill="white" class="button"></ellipse>
-            <ellipse cx="30" cy="-14" rx="2" ry="3" stroke="grey" fill="none"></ellipse>
-            <rect width="9" height="7" rx="1" ry="1" x="25.5" y="-14" fill="grey"></rect>
-            <path d="M 30 -11 L 30 -9" stroke="white" stroke-linecap="round" fill="none"></path>
-            <ellipse cx="30" cy="-11" rx="1" ry="1" stroke="none" fill="white"></ellipse>
-          </g>
-          <g transform="translate(0 50)" class="button-container">
-            <ellipse cx="48" cy="-12" rx="8" ry="8" stroke="none" fill="white" class="button"></ellipse>
-            <path d="M 48 -17 L 48 -7 M 43 -12 L 53 -12" stroke="grey" stroke-width="2"></path>
-          </g>
-        </g>
-        <g visibility="{Binding constraints, Converter=layerconstraintsdemo.noconstraintsvisibilityconverter}">
-          <rect stroke="none" fill="lightgrey" rx="4" ry="4" width="{TemplateBinding width}"
-              height="{TemplateBinding height}"></rect>
-          <g class="button-container">
-            <ellipse cx="30" cy="25" rx="15" ry="15" stroke="none" fill="white" class="button"></ellipse>
-            <ellipse cx="30" cy="21" rx="4" ry="6" stroke="grey" stroke-width="2" fill="none"></ellipse>
-            <rect width="18" height="14" rx="2" ry="2" x="21" y="20" fill="grey"></rect>
-            <path d="M 30 25 L 30 30" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"></path>
-            <ellipse cx="30" cy="25" rx="2" ry="2" stroke="none" fill="white"></ellipse>
-            <path d="M 30 20 L 36 11 L 36 20 Z" stroke="none" fill="white"></path>
-          </g>
-        </g>
-      </g>
-    </script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
@@ -157,42 +119,44 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
-      <div class='demo-description__content'>
+      <div class="demo-description__content">
         <h1>Layer Constraints Demo</h1>
 
-        Shows how to use layer constraints to restrict the node layering in <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> .
+        Shows how to use layer constraints to restrict the node layering in
+        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> .
         <p>The layer is determined by the model data.</p>
         <p>
-          A <em>weight</em> property determines the position of the node. Higher weights will force a placement closer
-          to the bottom. The weight is indicated by the number on the node and its background color. A darker color
-          indicates a low weight, a brighter color a high weight. Red and green indicate that the node will be forced at
-          the first or last position, respectively.
+          A <em>weight</em> property determines the position of the node. Higher weights will force
+          a placement closer to the bottom. The weight is indicated by the number on the node and
+          its background color. A darker color indicates a low weight, a brighter color a high
+          weight. Red and green indicate that the node will be forced at the first or last position,
+          respectively.
         </p>
         <p>The weight can be changed using the buttons on each node.</p>
         <p>
-          A <em>weighted</em> property, controlled by the <b>Constraints</b> button, determines whether the node should
-          be constrained at all.
+          A <em>weighted</em> property, controlled by the <b>Constraints</b> button, determines
+          whether the node should be constrained at all.
         </p>
         <h2>Things to Try</h2>
         <ul>
           <li>Change the weight of the nodes using the buttons on the each node.</li>
           <li>Disable the layer constraints for a node by unchecking the constraints button.</li>
           <li>Run a layout to see how the layer constraints affect the layout.</li>
+          <li>Create a new random graph with the <em>New Graph</em> button.</li>
           <li>
-            Create a new random graph with the <em>New Graph</em> button.
+            Clicking on <img src="../../resources/icons/star-16.svg" /> activates the constraints
+            for each node.
           </li>
           <li>
-            Clicking on <img src='../../resources/icons/star-16.svg' /> activates the constraints for each node.
-          </li>
-          <li>
-            Clicking on <img src='../../resources/icons/delete2-16.svg' /> in the toolbar removes all constraints from
-            the nodes. In this case, integral values between 1 and 100 can be assigned as labels to the edges using the
-            <em>F2</em> key. These values will be interpreted as edge weights during the assignment of the layers.
-            Higher values indicate higher importance. The algorithm tries to minimize the lengths of important edges.
-            Thus, assigning higher edge label values will lead to the adjacent nodes coming closer together with respect
-            to their layering. Although it is possible to assign weights to edges between nodes that have active
-            constraints, constraints always have priority and thus, the result won't be visible as easy.
+            Clicking on <img src="../../resources/icons/delete2-16.svg" /> in the toolbar removes
+            all constraints from the nodes. In this case, integral values between 1 and 100 can be
+            assigned as labels to the edges using the <em>F2</em> key. These values will be
+            interpreted as edge weights during the assignment of the layers. Higher values indicate
+            higher importance. The algorithm tries to minimize the lengths of important edges. Thus,
+            assigning higher edge label values will lead to the adjacent nodes coming closer
+            together with respect to their layering. Although it is possible to assign weights to
+            edges between nodes that have active constraints, constraints always have priority and
+            thus, the result won't be visible as easy.
           </li>
         </ul>
       </div>

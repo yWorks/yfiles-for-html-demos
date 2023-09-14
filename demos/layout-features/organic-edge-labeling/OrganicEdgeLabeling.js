@@ -49,8 +49,7 @@ import {
  * Additionally, a post-processing labeling algorithm has to be applied for placing the labels
  * of self-loop or parallel edges, since these are not considered by the {@link OrganicLayout}.
  * @param {!IGraph} graph The graph to be laid out
- * @returns {!object} {{ILayoutAlgorithm, LayoutData}} the configured layout algorithm and the
- * corresponding layout data
+ * @returns {!object} The configured layout algorithm and the corresponding layout data
  */
 export function createFeatureLayoutConfiguration(graph) {
   // Integrated edge labeling depends on features of the layout-hierarchic module,

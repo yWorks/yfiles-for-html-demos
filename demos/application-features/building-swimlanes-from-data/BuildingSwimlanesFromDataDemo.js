@@ -64,10 +64,10 @@ import {
   VoidStripeStyle
 } from 'yfiles'
 
-import FileSaveSupport from 'demo-utils/FileSaveSupport'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import { downloadFile } from 'demo-utils/file-support'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -426,7 +426,7 @@ function initializeUI() {
   document.querySelector('#save-to-json').addEventListener('click', () => {
     const graph = graphComponent.graph
     const json = writeToJSON(graph)
-    FileSaveSupport.save(JSON.stringify(json), 'graph.json')
+    downloadFile(JSON.stringify(json), 'graph.json')
   })
   document.querySelector('#layout-button').addEventListener('click', () => runLayout('1s'))
 }

@@ -33,20 +33,7 @@ import './GraphComponentElement'
 import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
 
 // wait for the custom graph-component element to be defined
-if (window.customElements) {
-  window.customElements.whenDefined('graph-component').then(run)
-} else {
-  const warningDiv = document.createElement('div')
-  document.querySelector('.demo-page__main')!.appendChild(warningDiv)
-  warningDiv.outerHTML = `
-    <div style="padding: 50px; margin-top: 100px;">
-      <p style="font-size: 2rem;">Your browser does not support Web Components.</p>
-      <p> See <a href="https://www.webcomponents.org/">webcomponents.org</a> and
-        <a href="https://caniuse.com/#search=web%20components">caniuse.com</a> for details on browser support for Web Components.
-      </p>
-    </div>
-`
-}
+window.customElements.whenDefined('graph-component').then(run)
 
 type GraphComponentElementType = HTMLElement & {
   editMode: IInputMode

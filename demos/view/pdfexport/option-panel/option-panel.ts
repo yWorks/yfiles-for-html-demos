@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { toggleExportRectangle } from '../../svgexport/export-rectangle/export-rectangle'
+import { toggleExportRectangle } from '../export-rectangle/export-rectangle'
 import { PaperSize } from '../PaperSize'
 import type { PdfExportOptions } from '../PdfExportOptions'
 

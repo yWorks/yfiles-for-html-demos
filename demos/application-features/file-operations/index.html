@@ -62,53 +62,63 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button data-command="NEW"></button>
+      <button data-command="NEW" title="New empty graph"></button>
 
       <span class="demo-separator"></span>
 
       <button
-        id="open-from-file-button"
-        title="Open a file using the HTML 5 FileReader API"
+        id="open-file"
+        title="Open a GraphML or JSON file"
         class="demo-icon-yIconOpen labeled"
       >
-        File
-      </button>
-
-      <button
-        id="open-from-storage-button"
-        title="Open the last graph that was saved to the local storage"
-        class="demo-icon-yIconOpen labeled"
-        disabled=""
-      >
-        Local Storage
+        Open file
       </button>
 
       <span class="demo-separator"></span>
 
+      <span>Save:</span>
+      <select id="file-format-select" title="Select the format in which a graph is saved">
+        <option value="json">As JSON</option>
+        <option value="graphml">As GraphML</option>
+      </select>
+
       <button
-        id="save-to-file-button"
-        title="Download using the File API"
+        id="download-button"
+        title="Download the graph as file"
         class="demo-icon-yIconSave labeled"
       >
         Download
       </button>
 
       <button
-        id="save-to-window-button"
-        title="Save to a new tab or browser window"
+        id="show-in-window-button"
+        title="Show the GraphML or JSON of the graph in a new browser window"
         class="demo-icon-yIconSave labeled"
       >
         New Tab
       </button>
 
+      <span class="demo-separator"></span>
+
+      <span>Local storage:</span>
       <button
-        id="save-to-storage-button"
+        id="open-storage-button"
+        title="Open the last graph that was saved to the local storage"
+        class="demo-icon-yIconOpen labeled"
+        disabled
+      >
+        Get
+      </button>
+
+      <button
+        id="save-storage-button"
         title="Save to the local storage"
         class="demo-icon-yIconSave labeled"
       >
-        Local Storage
+        Set
       </button>
     </div>
+
     <aside class="demo-page__description">
       <div class="demo-description__header">
         <a
@@ -121,55 +131,53 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>File Operations Demo</h1>
 
-        <p>This demo shows various ways to open and save a graph as GraphML.</p>
+        <p>This demo shows various ways to open and save a graph.</p>
 
         <h2>Things to Try</h2>
 
         <ul>
-          <li>Edit the graph and save it in GraphML format in one of the available ways.</li>
-          <li>Open a previously saved GraphML.</li>
+          <li>
+            Edit the graph and save it in JSON or GraphML format in one of the available ways.
+          </li>
+          <li>Open a previously saved graph.</li>
         </ul>
 
         <h2>Open</h2>
 
         <p>
-          Most open commands show a file chooser dialog. This is implemented using a hidden file
-          input HTML element.
-        </p>
-
-        <h4>File (FileReader)</h4>
-
-        <p>
-          Open a file using the <a href="https://caniuse.com/#search=filereader" target="_blank">FileReader API</a>.
-        </p>
-
-        <h4>LocalStorage</h4>
-
-        <p>
-          Open the last graph that was saved using the <a href="https://www.html5rocks.com/en/features/storage"
-          target="_blank">Storage feature</a>.
+          Open a graph from file with a file chooser dialog. This is based on the
+          <a href="https://developer.mozilla.org/docs/Web/API/FileReader" target="_blank">FileReader</a> API.
         </p>
 
         <h2>Save</h2>
 
-        <h4>Download</h4>
+        <h3>Download</h3>
+
+        <p>Download the graph as file.</p>
+
+        <h3>New Tab</h3>
+
+        <p>Show the file content in a new browser window.</p>
+
+        <h2>Local Storage</h2>
 
         <p>
-          Download the graph using the <a href="https://caniuse.com/#search=file" target="_blank">File API</a>.
+          Open and save the graph using the
+          <a href="https://developer.mozilla.org/docs/Web/API/Storage" target="_blank">Storage</a> API.
         </p>
 
-        <h4>New Tab</h4>
-
-        <p>Show the GraphML content in a new browser window.</p>
-
-        <h4>Local Storage</h4>
+        <h2>JSON data model</h2>
 
         <p>
-          Save the graph using the <a href="https://www.html5rocks.com/en/features/storage" target="_blank">Storage feature</a>.
+          For JSON data handling, this demo uses types and functions defined in
+          <b>json-model.d.ts</b>, <b>json-support.ts</b> and <b>json-writer.ts</b>.
+        </p>
+        <p>
+          These type definitions and functions provide simple and, for many use cases, complete
+          functionality for processing graph data for a yFiles application.
         </p>
       </div>
     </aside>

@@ -43,9 +43,7 @@ import {
   ShapeNodeStyle,
   StringTemplateNodeStyle
 } from 'yfiles'
-// @ts-ignore svg import
 import ImageSwitch from './resources/switch.svg'
-// @ts-ignore svg import
 import ImageWorkstation from './resources/workstation.svg'
 
 export type Tag = {

@@ -29,7 +29,7 @@ The edge grouping setup for other algorithms that support the feature is basical
 
 ### Demos
 
-You can also take a look at the [Edge Grouping](../../layout/edgegrouping/index.html) and [Edge Router Grouping](../../layout/edgeroutergrouping/index.html) demos for more elaborate applications of edge grouping.
+You can also take a look at the [Edge Grouping Demo](../../layout/edgegrouping/index.html) and the [EdgeRouter Grouping Demo](../../layout/edgeroutergrouping/index.html) for more elaborate applications of edge grouping.
 
 ### Documentation
 

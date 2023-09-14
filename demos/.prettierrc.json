@@ -14,12 +14,6 @@
       "options": {
         "printWidth": 80
       }
-    },
-    {
-      "files": ["*/*/index.html"],
-      "options": {
-        "htmlWhitespaceSensitivity": "css"
-      }
     }
   ]
 }

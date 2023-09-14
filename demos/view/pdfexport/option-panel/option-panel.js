@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { toggleExportRectangle } from '../../svgexport/export-rectangle/export-rectangle.js'
+import { toggleExportRectangle } from '../export-rectangle/export-rectangle.js'
 import { PaperSize } from '../PaperSize.js'
 
 /**

@@ -173,8 +173,8 @@ export class FlowchartLayoutData {
 
   /**
    * Returns the flow direction for negative branches
-   * according to the {@link preferredNegativeBranchDirection}
-   * and the {@link adjustedNegativeBranchDirection}.
+   * according to the {@link FlowchartLayoutData.preferredNegativeBranchDirection}
+   * and the {@link FlowchartLayoutData.adjustedNegativeBranchDirection}.
    * @returns {!BranchDirection}
    */
   calculateAdjustedNegativeBranchDirection() {
@@ -211,7 +211,7 @@ export class FlowchartLayoutData {
 
   /**
    * Returns the flow direction for positive branches
-   * according to the {@link preferredPositiveBranchDirection}.
+   * according to the {@link FlowchartLayoutData.preferredPositiveBranchDirection}.
    * @returns {!BranchDirection}
    */
   calculateAdjustedPositiveBranchDirection() {

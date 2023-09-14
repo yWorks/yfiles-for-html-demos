@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EdgeStyleBase,
-  GeneralPath,
-  HtmlCanvasVisual,
-  IEdge,
-  IInputModeContext,
-  IRenderContext,
-  Point,
-  Visual
-} from 'yfiles'
+import { EdgeStyleBase, GeneralPath, HtmlCanvasVisual } from 'yfiles'
 import { getNodeData } from '../data-types.js'
 
 /**

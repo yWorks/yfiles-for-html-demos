@@ -1501,10 +1501,11 @@ fieldset legend {
   --description-scrollbar-color: #c2c2c2;
   --description-kbd-background: #fafafa;
   --description-kbd-border-color: #c1c1c1;
+  --description-code-color: #cedbdf;
 }
 .demo-tutorial.theme-dark {
   --description-color: #2b2b2b;
-  --description-color-2: #393939;
+  --description-color-2: #454545;
   --description-text-color: #cecece;
   --description-note-background: #2f373a;
   --description-button-color: #76818c;
@@ -1512,6 +1513,7 @@ fieldset legend {
   --description-scrollbar-color: #676767;
   --description-kbd-background: #676767;
   --description-kbd-border-color: #444;
+  --description-code-color: #666;
 }
 .hidden {
   display: none !important;
@@ -2159,10 +2161,14 @@ body:not(.loaded) .demo-page__toolbar:after {
   flex: 0 0 auto;
 }
 .demo-page__toolbar button,
-.demo-page__toolbar .overflow-button {
+.demo-page__toolbar .overflow-button,
+.demo-page__toolbar select {
   font-family: Tahoma, Verdana, sans-serif;
   font-size: 14px;
   color: #343f4a;
+}
+.demo-page__toolbar button,
+.demo-page__toolbar .overflow-button {
   line-height: normal;
   height: 24px;
   border-radius: 100px;
@@ -2279,10 +2285,10 @@ body:not(.loaded) .demo-page__toolbar:after {
   background-color: transparent;
 }
 .demo-page__toolbar select {
-  font-family: Tahoma, Verdana, sans-serif;
-  font-size: 14px;
-  color: #343f4a;
+  border-radius: 6px;
+  border-style: groove;
   margin: 0 3px;
+  padding: 2px 6px;
 }
 .demo-page__toolbar form {
   display: inline-block;

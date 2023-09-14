@@ -280,8 +280,7 @@ function distributeImpl(graph, nodes, minimumSpacing, coordinate, size) {
  * @returns {boolean}
  */
 function hasAtLeastTwoNodes(nodes) {
-  const en = nodes.getEnumerator()
-  return en.moveNext() && en.moveNext()
+  return nodes.take(2).size === 2
 }
 
 /**

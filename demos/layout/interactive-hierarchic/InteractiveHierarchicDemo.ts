@@ -259,7 +259,7 @@ async function updateLayout() {
  * Updates the layers for moved nodes.
  */
 function updateMovedNodes(): void {
-  if (newLayerMapper.entries.getEnumerator().moveNext()) {
+  if (newLayerMapper.entries.some()) {
     // spread out existing layers
     graph.nodes.forEach(node => {
       layerMapper.set(node, layerMapper.get(node)! * 2)

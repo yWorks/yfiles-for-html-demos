@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Class,
   FoldingManager,
   FreeNodeLabelModel,
   GraphComponent,
@@ -47,7 +48,8 @@ import {
   Rect,
   RenderModes,
   SmartEdgeLabelModel,
-  StorageLocation
+  StorageLocation,
+  WebGL2GraphModelManager
 } from 'yfiles'
 
 import { ContextMenu } from 'demo-utils/ContextMenu'
@@ -135,6 +137,7 @@ function createEditorMode(): GraphEditorInputMode {
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
   if (BrowserDetection.webGL2) {
+    Class.ensure(WebGL2GraphModelManager)
     mode.handleInputMode.renderMode = RenderModes.WEB_GL2
   }
 

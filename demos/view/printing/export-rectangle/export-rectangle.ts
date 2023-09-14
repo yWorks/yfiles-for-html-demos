@@ -26,4 +26,102 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export * from '../../svgexport/export-rectangle/export-rectangle'
+import {
+  Cursor,
+  GeneralPath,
+  type GraphComponent,
+  type GraphInputMode,
+  HandleInputMode,
+  HandlePositions,
+  type ICanvasObject,
+  type IHandle,
+  IHitTestable,
+  MoveInputMode,
+  MutableRectangle,
+  ObservableCollection,
+  RectangleHandle,
+  RectangleIndicatorInstaller,
+  RenderModes
+} from 'yfiles'
+import PositionHandler from './PositionHandler'
+
+let canvasObject: ICanvasObject
+let exportHandleInputMode: HandleInputMode
+
+/**
+ * Initializes user interaction.
+ * Aside from basic editing, this demo provides a visual marker (the 'export rectangle') that
+ * determines the area that will be exported. Users may move and resize the marker with their mouse.
+ */
+export function initializeExportRectangle(graphComponent: GraphComponent): MutableRectangle {
+  // create the model for the export rectangle, ...
+  const exportRect = new MutableRectangle(-20, 0, 300, 160)
+  // ... visualize it in the canvas, ...
+  const installer = new RectangleIndicatorInstaller(exportRect)
+  canvasObject = installer.addCanvasObject(
+    graphComponent.createRenderContext(),
+    graphComponent.backgroundGroup,
+    exportRect
+  )!
+
+  // add an input mode that allows the user resizing the rectangle
+  makeRectResizable(graphComponent.inputMode as GraphInputMode, exportRect)
+
+  // add an input mode that allows the user moving the rectangle
+  makeRectMovable(graphComponent.inputMode as GraphInputMode, exportRect)
+
+  // initially disable the rectangle
+  canvasObject.visible = false
+  exportHandleInputMode.enabled = false
+
+  return exportRect
+}
+
+function makeRectResizable(inputMode: GraphInputMode, exportRect: MutableRectangle): void {
+  // create a mode that deals with resizing the export rectangle and ...
+  exportHandleInputMode = new HandleInputMode({
+    // ensure that this mode takes precedence over most other modes,
+    // i.e. resizing the export rectangle takes precedence over another interactive editing
+    priority: 1,
+    renderMode: RenderModes.SVG,
+    // specify handles for resizing the export rectangle
+    handles: new ObservableCollection<IHandle>([
+      new RectangleHandle(HandlePositions.NORTH_EAST, exportRect),
+      new RectangleHandle(HandlePositions.NORTH_WEST, exportRect),
+      new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect),
+      new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect)
+    ])
+  })
+  // ... add it to the demo's main input mode
+  inputMode.add(exportHandleInputMode)
+}
+
+function makeRectMovable(inputMode: GraphInputMode, exportRect: MutableRectangle): void {
+  // create a mode that deals with moving the export rectangle and ...
+  const moveInputMode = new MoveInputMode({
+    // create a custom position handler that moves the export rectangle on mouse events
+    positionHandler: new PositionHandler(exportRect),
+    // create a hit-testable that determines if a mouse event occurs 'on' the export rectangle
+    // and thus should be handled by this mode
+    hitTestable: IHitTestable.create((context, location) => {
+      const path = new GeneralPath(5)
+      path.appendRectangle(exportRect, false)
+      return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+    }),
+    // ensure that this mode takes precedence over the move input mode used for regular graph
+    // elements
+    priority: 41
+  })
+
+  // ... add it to the demo's main input mode
+  inputMode.add(moveInputMode)
+}
+
+/**
+ * Toggles the visibility of the export rectangle.
+ */
+export function toggleExportRectangle(): void {
+  const visible = !canvasObject.visible
+  canvasObject.visible = visible
+  exportHandleInputMode.enabled = visible
+}

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, Size, SvgVisual } from 'yfiles'
+import { NodeStyleBase, SvgVisual } from 'yfiles'
 import { getNodeData } from '../data-types.js'
 
 /**

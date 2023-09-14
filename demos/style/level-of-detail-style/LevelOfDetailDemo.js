@@ -35,13 +35,18 @@ import {
   Point,
   PolylineEdgeStyle,
   Size,
-  TemplateNodeStyle
+  StringTemplateNodeStyle
 } from 'yfiles'
 
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle.js'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import {
+  detailNodeStyleTemplate,
+  intermediateNodeStyleTemplate,
+  overviewNodeStyleTemplate
+} from './style-templates.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -93,9 +98,9 @@ function initTutorialDefaults(graph) {
 
   // set styles, sizes and locations specific for this tutorial
   levelOfDetailNodeStyle = new LevelOfDetailNodeStyle(
-    new TemplateNodeStyle('detailNodeStyleTemplate'),
-    new TemplateNodeStyle('intermediateNodeStyleTemplate'),
-    new TemplateNodeStyle('overviewNodeStyleTemplate')
+    new StringTemplateNodeStyle(detailNodeStyleTemplate),
+    new StringTemplateNodeStyle(intermediateNodeStyleTemplate),
+    new StringTemplateNodeStyle(overviewNodeStyleTemplate)
   )
   graph.nodeDefaults.style = levelOfDetailNodeStyle
   graph.nodeDefaults.size = new Size(285, 100)

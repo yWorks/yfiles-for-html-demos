@@ -63,7 +63,10 @@ async function run(): Promise<void> {
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  graphComponent.inputMode = new GraphViewerInputMode()
+  graphComponent.inputMode = new GraphViewerInputMode({
+    focusableItems: 'none',
+    selectableItems: 'none'
+  })
   applyDemoTheme(graphComponent)
 
   // initialize Overview

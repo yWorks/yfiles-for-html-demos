@@ -25,7 +25,7 @@ In our examples, we add a property named `id` to the business data.
 
 ## Import nodes from an iterable
 
-[GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) accepts different types of data collections. The most commonly used collection is probably the **[JSArray](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)**.
+[GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) accepts different types of data collections. The most commonly used collection is probably the **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)**.
 
 ```
 const nodeData = [{ id: '00' }, { id: '01' }, { id: '02' }]
@@ -45,7 +45,7 @@ const nodeData = IEnumerable.from([{ id: '10' }, { id: '11' }, { id: '12' }])
 const nodesSource = graphBuilder.createNodesSource(nodeData, item => item.id)
 ```
 
-If you have organized the data in a **[JSMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)** for easy and fast access by a `key`, you can pass it to [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) as is. The map key of an item is passed to the [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider) function as a second parameter and can be used as the identifier or a part of it.
+If you have organized the data in a **[Map](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)** for easy and fast access by a `key`, you can pass it to [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) as is. The map key of an item is passed to the [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider) function as a second parameter and can be used as the identifier or a part of it.
 
 ```
 const nodeData = new Map<string, { id: string }>()
@@ -60,7 +60,7 @@ const nodesSource = graphBuilder.createNodesSource(
 )
 ```
 
-Passing data in a **[JSObject](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** is handled similar to using a **[JSMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)**. Instead of the key, the property name is available in this case.
+Passing data in a **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** is handled similar to using a **[Map](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)**. Instead of the key, the property name is available in this case.
 
 ```
 const nodeData = {

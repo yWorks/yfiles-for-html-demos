@@ -268,7 +268,7 @@ export class DeepZoomGroupNodeStyle extends NodeStyleBase {
    * Computes the transform for the rendering of the subgraph to fit the node that displays it.
    * @param {!INode} containerNode The group node whose contents have to be scaled
    * @param {!Rect} contentsBounds The actual bounds of the group node
-   * @returns {!Matrix} {Matrix} The transformation matrix
+   * @returns {!Matrix} The transformation matrix
    */
   static computeTransform(containerNode, contentsBounds) {
     const layout = containerNode.layout

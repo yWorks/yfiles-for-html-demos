@@ -98,7 +98,7 @@ async function run(): Promise<void> {
   initializeUI()
 
   // load the first scenario
-  loadScenario()
+  await loadScenario()
 }
 
 /**
@@ -108,7 +108,9 @@ async function runLayout() {
   setUIDisabled(true)
 
   // configure layout
-  const distance = Number.parseFloat(getElementById<HTMLInputElement>('node-distance').value)
+  const distance = Number.parseFloat(
+    document.querySelector<HTMLInputElement>(`#node-distance`)!.value
+  )
   const partialLayout = new PartialLayout({
     coreLayout: getSubgraphLayout(),
     componentAssignmentStrategy: getComponentAssignmentStrategy(),
@@ -116,8 +118,8 @@ async function runLayout() {
     edgeRoutingStrategy: getEdgeRoutingStrategy(),
     layoutOrientation: getLayoutOrientation(),
     minimumNodeDistance: Number.isNaN(distance) ? 0 : distance,
-    allowMirroring: getElementById<HTMLInputElement>('mirroring').checked,
-    considerNodeAlignment: getElementById<HTMLInputElement>('snapping').checked
+    allowMirroring: document.querySelector<HTMLInputElement>(`#mirroring`)!.checked,
+    considerNodeAlignment: document.querySelector<HTMLInputElement>(`#snapping`)!.checked
   })
 
   // mark partial elements for the layout algorithm
@@ -137,8 +139,10 @@ async function runLayout() {
  * Retrieves the selected layout for partial components.
  */
 function getSubgraphLayout(): ILayoutAlgorithm {
-  const distance = Number.parseFloat(getElementById<HTMLInputElement>('node-distance').value)
-  const layout: string = getElementById<HTMLInputElement>('subgraph-layout').value
+  const distance = Number.parseFloat(
+    document.querySelector<HTMLInputElement>(`#node-distance`)!.value
+  )
+  const layout: string = document.querySelector<HTMLInputElement>(`#subgraph-layout`)!.value
   switch (layout) {
     case 'hierarchic': {
       return new HierarchicLayout({
@@ -174,7 +178,8 @@ function getSubgraphLayout(): ILayoutAlgorithm {
  * Retrieves the assignment strategy, either single nodes or components.
  */
 function getComponentAssignmentStrategy(): ComponentAssignmentStrategy {
-  const componentAssignment: string = getElementById<HTMLInputElement>('component-assignment').value
+  const componentAssignment: string =
+    document.querySelector<HTMLInputElement>(`#component-assignment`)!.value
   switch (componentAssignment) {
     case 'single':
       return ComponentAssignmentStrategy.SINGLE
@@ -190,7 +195,7 @@ function getComponentAssignmentStrategy(): ComponentAssignmentStrategy {
  * initial location.
  */
 function getSubgraphPlacement(): SubgraphPlacement {
-  const placement: string = getElementById<HTMLInputElement>('subgraph-positioning').value
+  const placement: string = document.querySelector<HTMLInputElement>(`#subgraph-positioning`)!.value
   switch (placement) {
     case 'barycenter':
       return SubgraphPlacement.BARYCENTER
@@ -205,7 +210,7 @@ function getSubgraphPlacement(): SubgraphPlacement {
  * Retrieves the edge routing strategy for partial edges and edges connected to partial nodes.
  */
 function getEdgeRoutingStrategy(): PartialLayoutEdgeRoutingStrategy {
-  const edgeRouting: string = getElementById<HTMLInputElement>('edge-routing-style').value
+  const edgeRouting: string = document.querySelector<HTMLInputElement>(`#edge-routing-style`)!.value
   switch (edgeRouting) {
     case 'automatic':
       return PartialLayoutEdgeRoutingStrategy.AUTOMATIC
@@ -226,7 +231,7 @@ function getEdgeRoutingStrategy(): PartialLayoutEdgeRoutingStrategy {
  * Retrieves the layout orientation for partial components.
  */
 function getLayoutOrientation(): PartialLayoutOrientation {
-  const orientation: string = getElementById<HTMLInputElement>('layout-orientation').value
+  const orientation: string = document.querySelector<HTMLInputElement>(`#layout-orientation`)!.value
   switch (orientation) {
     default:
     case 'none':
@@ -316,13 +321,13 @@ function initializeInputModes(): void {
     allowGroupingOperations: true,
     allowEditLabel: false
   })
-  inputMode.addItemDoubleClickedListener((sender, args) => {
-    // a graph element was double clicked => toggle its fixed/partial state
-    setFixed(args.item, !isFixed(args.item))
+  inputMode.addItemDoubleClickedListener((_, evt) => {
+    // a graph element was double-clicked => toggle its fixed/partial state
+    setFixed(evt.item, !isFixed(evt.item))
   })
   // add a label to newly created nodes and mark the node as non-fixed
-  inputMode.addNodeCreatedListener((sender, args) => {
-    const node = args.item
+  inputMode.addNodeCreatedListener((_, evt) => {
+    const node = evt.item
     const graph = graphComponent.graph
     if (graph.isGroupNode(node)) {
       graph.addLabel(node, 'Group')
@@ -331,15 +336,15 @@ function initializeInputModes(): void {
     }
     setFixed(node, false)
   })
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
-    setFixed(args.item, false)
+  inputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
+    setFixed(evt.item, false)
   })
-  inputMode.navigationInputMode.addGroupCollapsedListener((sender, args) => {
-    const group = args.item
+  inputMode.navigationInputMode.addGroupCollapsedListener((_, evt) => {
+    const group = evt.item
     updateStyle(group, isFixed(group))
   })
-  inputMode.navigationInputMode.addGroupExpandedListener((sender, args) => {
-    const group = args.item
+  inputMode.navigationInputMode.addGroupExpandedListener((_, evt) => {
+    const group = evt.item
     updateStyle(group, isFixed(group))
   })
   graphComponent.inputMode = inputMode
@@ -460,7 +465,7 @@ async function loadScenario(): Promise<void> {
     partialEdgesMapper
   )
 
-  const sample = getElementById<HTMLSelectElement>('select-sample').value
+  const sample = document.querySelector<HTMLSelectElement>(`#select-sample`)!.value
 
   const path = `resources/${sample}.graphml`
   switch (sample) {
@@ -519,9 +524,9 @@ function setOptions(
   document.querySelector<HTMLSelectElement>('#subgraph-positioning')!.value = subgraphPlacement
   document.querySelector<HTMLSelectElement>('#edge-routing-style')!.value = edgeRoutingStrategy
   document.querySelector<HTMLSelectElement>('#layout-orientation')!.value = layoutOrientation
-  getElementById<HTMLInputElement>('node-distance').value = minimumNodeDistance.toString()
-  getElementById<HTMLInputElement>('mirroring').value = allowMirroring.toString()
-  getElementById<HTMLInputElement>('snapping').value = nodeSnapping.toString()
+  document.querySelector<HTMLInputElement>(`#node-distance`)!.value = minimumNodeDistance.toString()
+  document.querySelector<HTMLInputElement>(`#mirroring`)!.value = allowMirroring.toString()
+  document.querySelector<HTMLInputElement>(`#snapping`)!.value = nodeSnapping.toString()
 }
 
 /**
@@ -529,19 +534,11 @@ function setOptions(
  * layout calculation.
  */
 function setUIDisabled(disabled: boolean): void {
-  getElementById<HTMLSelectElement>('lock-selection').disabled = disabled
-  getElementById<HTMLSelectElement>('unlock-selection').disabled = disabled
-  getElementById<HTMLSelectElement>('select-sample').disabled = disabled
-  getElementById<HTMLInputElement>('refresh').disabled = disabled
-  getElementById<HTMLInputElement>('layout').disabled = disabled
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns A reference to the first element with the specified ID in the current document.
- */
-function getElementById<T extends HTMLElement>(id: string): T {
-  return document.getElementById(id) as T
+  document.querySelector<HTMLSelectElement>(`#lock-selection`)!.disabled = disabled
+  document.querySelector<HTMLSelectElement>(`#unlock-selection`)!.disabled = disabled
+  document.querySelector<HTMLSelectElement>(`#select-sample`)!.disabled = disabled
+  document.querySelector<HTMLInputElement>(`#refresh`)!.disabled = disabled
+  document.querySelector<HTMLInputElement>(`#layout`)!.disabled = disabled
 }
 
 run().then(finishLoading)

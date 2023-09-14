@@ -29,7 +29,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-See the [Edge Label Placement](../../layout/edgelabelplacement/index.html) demo for a more elaborate example regarding automatic edge label placement.
+See the [Edge Label Placement Demo](../../layout/edgelabelplacement/index.html) for a more elaborate example regarding automatic edge label placement.
 
 ### Documentation
 

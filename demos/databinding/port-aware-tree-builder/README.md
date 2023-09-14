@@ -16,7 +16,7 @@
 This demo automatically builds a graph from business data using [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).  
 The business data is stored in **JSON** format.
 
-By default, a [TreeBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder) connects the graph elements directly. It does not support further specification of the connection points (ports). The [Tree Builder](../treebuilder/index.html) demo shows such an unmodified TreeBuilder.
+By default, a [TreeBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder) connects the graph elements directly. It does not support further specification of the connection points (ports). The tree-builder shows such an unmodified TreeBuilder.
 
 In this sample the TreeBuilder is modified to support ports. These ports are created based on the node data. Edges are connected to these specific ports.
 

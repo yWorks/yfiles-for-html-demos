@@ -156,7 +156,7 @@ async function runLayoutCore(animate) {
   // configure the organic layout algorithm
   const algorithm = new OrganicLayout()
 
-  const currentSample = getElementById('sample-combo-box').value
+  const currentSample = document.querySelector(`#sample-combo-box`).value
 
   //configure some basic settings
   algorithm.deterministic = true
@@ -172,21 +172,21 @@ async function runLayoutCore(animate) {
   algorithm.groupSubstructureScope = getGroupSubstructureScope()
 
   //configure type separation for parallel and star substructures
-  const separateParallel = getElementById('separate-parallel')
+  const separateParallel = document.querySelector(`#separate-parallel`)
   algorithm.parallelSubstructureTypeSeparation = separateParallel.checked
-  const separateStar = getElementById('separate-star')
+  const separateStar = document.querySelector(`#separate-star`)
   algorithm.starSubstructureTypeSeparation = separateStar.checked
 
   // configure data-driven features for the organic layout algorithm by using OrganicLayoutData
   const layoutData = new OrganicLayoutData()
 
-  if (getElementById('use-edge-grouping').checked) {
+  if (document.querySelector(`#use-edge-grouping`).checked) {
     // if desired, define edge grouping on the organic layout data
     layoutData.sourceGroupIds.constant = 'groupAll'
     layoutData.targetGroupIds.constant = 'groupAll'
   }
 
-  if (getElementById('consider-node-types').checked) {
+  if (document.querySelector(`#consider-node-types`).checked) {
     // if types should be considered define a delegate on the respective layout data property
     // that queries the type from the node's tag
     layoutData.nodeTypes.delegate = getNodeType
@@ -473,16 +473,16 @@ function updateLayoutSettings(data) {
     updateState('separate-parallel', settings.parallelSubstructureTypeSeparation, false)
     updateState('separate-star', settings.starSubstructureTypeSeparation, false)
   } else {
-    getElementById('cycleStyle').selectedIndex = 0
-    getElementById('chainStyle').selectedIndex = 0
-    getElementById('starStyle').selectedIndex = 0
-    getElementById('parallelStyle').selectedIndex = 0
-    getElementById('treeStyle').selectedIndex = 0
-    getElementById('groupScope').selectedIndex = 0
-    getElementById('use-edge-grouping').checked = false
-    getElementById('consider-node-types').checked = true
-    getElementById('separate-parallel').checked = false
-    getElementById('separate-star').checked = false
+    document.querySelector(`#cycleStyle`).selectedIndex = 0
+    document.querySelector(`#chainStyle`).selectedIndex = 0
+    document.querySelector(`#starStyle`).selectedIndex = 0
+    document.querySelector(`#parallelStyle`).selectedIndex = 0
+    document.querySelector(`#treeStyle`).selectedIndex = 0
+    document.querySelector(`#groupScope`).selectedIndex = 0
+    document.querySelector(`#use-edge-grouping`).checked = false
+    document.querySelector(`#consider-node-types`).checked = true
+    document.querySelector(`#separate-parallel`).checked = false
+    document.querySelector(`#separate-star`).checked = false
   }
 }
 
@@ -494,7 +494,7 @@ function updateLayoutSettings(data) {
  * @param {boolean} [value]
  */
 function updateState(id, value, defaultValue) {
-  getElementById(id).checked = 'undefined' === typeof value ? defaultValue : value
+  document.querySelector(`#${id}`).checked = 'undefined' === typeof value ? defaultValue : value
 }
 
 /**
@@ -506,7 +506,7 @@ function updateState(id, value, defaultValue) {
  * @param {!string} [value]
  */
 function updateSelectedIndex(id, value) {
-  const select = getElementById(id)
+  const select = document.querySelector(`#${id}`)
   const idx = indexOf(select, value)
   select.selectedIndex = idx > -1 ? idx : 0
 }
@@ -583,18 +583,8 @@ function initializeUI() {
  * @returns {!string} the selected value of the HTMLSelectElement identified by the given ID.
  */
 function getSelectedValue(id) {
-  const select = getElementById(id)
+  const select = document.querySelector(`#${id}`)
   return select.options[select.selectedIndex].value
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns {!T} A reference to the first element with the specified ID in the current document.
- * @template {HTMLElement} T
- * @param {!string} id
- */
-function getElementById(id) {
-  return document.getElementById(id)
 }
 
 run().then(finishLoading)

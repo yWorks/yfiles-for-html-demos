@@ -144,18 +144,13 @@ export class ColorDropInputMode extends DropInputMode {
    * Finds the first edge or node that contains the given location.
    */
   private findEdgeOrNode(context: IInputModeContext, location: Point): IEdge | INode | null {
-    const hitTester = context.lookup(IHitTester.$class) as IHitTester<IModelItem>
-    if (hitTester) {
-      // hit testing needs to be done with a context whose parent input mode is this mode,
-      // because hit testables may behave differently depending on context
-      // this is e.g. the case for GroupNodeStyle
-      const childContext = IInputModeContext.createInputModeContext(this, context)
-      return hitTester.enumerateHits(childContext, location).find(isEdgeOrNode) as
-        | IEdge
-        | INode
-        | null
-    }
-    return null
+    const hitTester = context.lookup(IHitTester.$class)
+    // hit testing needs to be done with a context whose parent input mode is this mode,
+    // because hit-testables may behave differently depending on context
+    // this is e.g. the case for GroupNodeStyle
+    return hitTester
+      ?.enumerateHits(IInputModeContext.createInputModeContext(this, context), location)
+      .find(isEdgeOrNode) as IEdge | INode | null
   }
 
   /**

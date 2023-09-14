@@ -110,7 +110,7 @@ async function run() {
   initializeUI()
 
   // load the first scenario
-  loadScenario()
+  await loadScenario()
 }
 
 /**
@@ -120,7 +120,7 @@ async function runLayout() {
   setUIDisabled(true)
 
   // configure layout
-  const distance = Number.parseFloat(getElementById('node-distance').value)
+  const distance = Number.parseFloat(document.querySelector(`#node-distance`).value)
   const partialLayout = new PartialLayout({
     coreLayout: getSubgraphLayout(),
     componentAssignmentStrategy: getComponentAssignmentStrategy(),
@@ -128,8 +128,8 @@ async function runLayout() {
     edgeRoutingStrategy: getEdgeRoutingStrategy(),
     layoutOrientation: getLayoutOrientation(),
     minimumNodeDistance: Number.isNaN(distance) ? 0 : distance,
-    allowMirroring: getElementById('mirroring').checked,
-    considerNodeAlignment: getElementById('snapping').checked
+    allowMirroring: document.querySelector(`#mirroring`).checked,
+    considerNodeAlignment: document.querySelector(`#snapping`).checked
   })
 
   // mark partial elements for the layout algorithm
@@ -150,8 +150,8 @@ async function runLayout() {
  * @returns {!ILayoutAlgorithm}
  */
 function getSubgraphLayout() {
-  const distance = Number.parseFloat(getElementById('node-distance').value)
-  const layout = getElementById('subgraph-layout').value
+  const distance = Number.parseFloat(document.querySelector(`#node-distance`).value)
+  const layout = document.querySelector(`#subgraph-layout`).value
   switch (layout) {
     case 'hierarchic': {
       return new HierarchicLayout({
@@ -188,7 +188,7 @@ function getSubgraphLayout() {
  * @returns {!ComponentAssignmentStrategy}
  */
 function getComponentAssignmentStrategy() {
-  const componentAssignment = getElementById('component-assignment').value
+  const componentAssignment = document.querySelector(`#component-assignment`).value
   switch (componentAssignment) {
     case 'single':
       return ComponentAssignmentStrategy.SINGLE
@@ -205,7 +205,7 @@ function getComponentAssignmentStrategy() {
  * @returns {!SubgraphPlacement}
  */
 function getSubgraphPlacement() {
-  const placement = getElementById('subgraph-positioning').value
+  const placement = document.querySelector(`#subgraph-positioning`).value
   switch (placement) {
     case 'barycenter':
       return SubgraphPlacement.BARYCENTER
@@ -221,7 +221,7 @@ function getSubgraphPlacement() {
  * @returns {!PartialLayoutEdgeRoutingStrategy}
  */
 function getEdgeRoutingStrategy() {
-  const edgeRouting = getElementById('edge-routing-style').value
+  const edgeRouting = document.querySelector(`#edge-routing-style`).value
   switch (edgeRouting) {
     case 'automatic':
       return PartialLayoutEdgeRoutingStrategy.AUTOMATIC
@@ -243,7 +243,7 @@ function getEdgeRoutingStrategy() {
  * @returns {!PartialLayoutOrientation}
  */
 function getLayoutOrientation() {
-  const orientation = getElementById('layout-orientation').value
+  const orientation = document.querySelector(`#layout-orientation`).value
   switch (orientation) {
     default:
     case 'none':
@@ -336,13 +336,13 @@ function initializeInputModes() {
     allowGroupingOperations: true,
     allowEditLabel: false
   })
-  inputMode.addItemDoubleClickedListener((sender, args) => {
-    // a graph element was double clicked => toggle its fixed/partial state
-    setFixed(args.item, !isFixed(args.item))
+  inputMode.addItemDoubleClickedListener((_, evt) => {
+    // a graph element was double-clicked => toggle its fixed/partial state
+    setFixed(evt.item, !isFixed(evt.item))
   })
   // add a label to newly created nodes and mark the node as non-fixed
-  inputMode.addNodeCreatedListener((sender, args) => {
-    const node = args.item
+  inputMode.addNodeCreatedListener((_, evt) => {
+    const node = evt.item
     const graph = graphComponent.graph
     if (graph.isGroupNode(node)) {
       graph.addLabel(node, 'Group')
@@ -351,15 +351,15 @@ function initializeInputModes() {
     }
     setFixed(node, false)
   })
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
-    setFixed(args.item, false)
+  inputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
+    setFixed(evt.item, false)
   })
-  inputMode.navigationInputMode.addGroupCollapsedListener((sender, args) => {
-    const group = args.item
+  inputMode.navigationInputMode.addGroupCollapsedListener((_, evt) => {
+    const group = evt.item
     updateStyle(group, isFixed(group))
   })
-  inputMode.navigationInputMode.addGroupExpandedListener((sender, args) => {
-    const group = args.item
+  inputMode.navigationInputMode.addGroupExpandedListener((_, evt) => {
+    const group = evt.item
     updateStyle(group, isFixed(group))
   })
   graphComponent.inputMode = inputMode
@@ -491,7 +491,7 @@ async function loadScenario() {
     partialEdgesMapper
   )
 
-  const sample = getElementById('select-sample').value
+  const sample = document.querySelector(`#select-sample`).value
 
   const path = `resources/${sample}.graphml`
   switch (sample) {
@@ -557,9 +557,9 @@ function setOptions(
   document.querySelector('#subgraph-positioning').value = subgraphPlacement
   document.querySelector('#edge-routing-style').value = edgeRoutingStrategy
   document.querySelector('#layout-orientation').value = layoutOrientation
-  getElementById('node-distance').value = minimumNodeDistance.toString()
-  getElementById('mirroring').value = allowMirroring.toString()
-  getElementById('snapping').value = nodeSnapping.toString()
+  document.querySelector(`#node-distance`).value = minimumNodeDistance.toString()
+  document.querySelector(`#mirroring`).value = allowMirroring.toString()
+  document.querySelector(`#snapping`).value = nodeSnapping.toString()
 }
 
 /**
@@ -568,21 +568,11 @@ function setOptions(
  * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {
-  getElementById('lock-selection').disabled = disabled
-  getElementById('unlock-selection').disabled = disabled
-  getElementById('select-sample').disabled = disabled
-  getElementById('refresh').disabled = disabled
-  getElementById('layout').disabled = disabled
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns {!T} A reference to the first element with the specified ID in the current document.
- * @template {HTMLElement} T
- * @param {!string} id
- */
-function getElementById(id) {
-  return document.getElementById(id)
+  document.querySelector(`#lock-selection`).disabled = disabled
+  document.querySelector(`#unlock-selection`).disabled = disabled
+  document.querySelector(`#select-sample`).disabled = disabled
+  document.querySelector(`#refresh`).disabled = disabled
+  document.querySelector(`#layout`).disabled = disabled
 }
 
 run().then(finishLoading)

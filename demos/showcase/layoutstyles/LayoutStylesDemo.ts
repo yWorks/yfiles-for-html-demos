@@ -60,7 +60,8 @@ import {
   SmartEdgeLabelModel,
   StorageLocation,
   Stroke,
-  TableNodeStyle
+  TableNodeStyle,
+  WebGL2GraphModelManager
 } from 'yfiles'
 import { OptionEditor } from 'demo-resources/demo-option-editor'
 import HierarchicLayoutConfig from './HierarchicLayoutConfig'
@@ -130,10 +131,10 @@ let inLoadSample = false
 const comboBoxSeparatorItem = '-----------'
 
 // get hold of some UI elements
-const layoutComboBox = getElementById<HTMLSelectElement>('layout-select-box')
+const layoutComboBox = document.querySelector<HTMLSelectElement>(`#layout-select-box`)!
 addNavigationButtons(layoutComboBox, true, false, 'sidebar-button')
-const sampleComboBox = getElementById<HTMLSelectElement>('sample-select-box')
-const layoutButton = getElementById<HTMLButtonElement>('apply-layout-button')
+const sampleComboBox = document.querySelector<HTMLSelectElement>(`#sample-select-box`)!
+const layoutButton = document.querySelector<HTMLButtonElement>(`#apply-layout-button`)!
 
 // keep track of user interactions with the graph
 let customGraphSelected = false
@@ -162,12 +163,12 @@ async function run(): Promise<void> {
   // use the file system for built-in I/O
   enableGraphML()
   // initialize the property editor
-  const editorElement = getElementById<HTMLDivElement>('data-editor')
+  const editorElement = document.querySelector<HTMLDivElement>(`#data-editor`)!
   optionEditor = new OptionEditor(editorElement)
 
   // initialize the presets UI builder
   presetsUiBuilder = new PresetsUiBuilder({
-    rootElement: getElementById<HTMLDivElement>('data-presets'),
+    rootElement: document.querySelector<HTMLDivElement>(`#data-presets`)!,
     optionEditor: optionEditor,
     presetDefs: Presets,
     onPresetApplied: () => applyLayout(false)
@@ -368,14 +369,18 @@ function getSelectedAlgorithm(): string {
 }
 
 function updateThicknessButtonsState(layoutName: string): void {
-  const generateEdgeThicknessButton = getElementById<HTMLButtonElement>(
-    'generate-edge-thickness-button'
-  )
-  const resetEdgeThicknessButton = getElementById<HTMLButtonElement>('reset-edge-thickness-button')
-  const generateEdgeDirectionButton = getElementById<HTMLButtonElement>(
-    'generate-edge-direction-button'
-  )
-  const resetEdgeDirectionButton = getElementById<HTMLButtonElement>('reset-edge-direction-button')
+  const generateEdgeThicknessButton = document.querySelector<HTMLButtonElement>(
+    `#generate-edge-thickness-button`
+  )!
+  const resetEdgeThicknessButton = document.querySelector<HTMLButtonElement>(
+    `#reset-edge-thickness-button`
+  )!
+  const generateEdgeDirectionButton = document.querySelector<HTMLButtonElement>(
+    `#generate-edge-direction-button`
+  )!
+  const resetEdgeDirectionButton = document.querySelector<HTMLButtonElement>(
+    `#reset-edge-direction-button`
+  )!
   if (layoutName === 'hierarchic') {
     // enable edge-thickness buttons only for Hierarchic Layout
     generateEdgeThicknessButton.disabled = false
@@ -443,9 +448,11 @@ async function onLayoutChanged(initSamples = true, appliedPresetId = ''): Promis
 }
 
 function updateDescriptionText(config: LayoutConfigurationType): void {
-  const layoutDescriptionContainer = getElementById<HTMLDivElement>('layout-description-container')
-  const layoutDescription = getElementById<HTMLDivElement>('layout-description')
-  const layoutTitle = getElementById<HTMLElement>('layout-title')
+  const layoutDescriptionContainer = document.querySelector<HTMLDivElement>(
+    `#layout-description-container`
+  )!
+  const layoutDescription = document.querySelector<HTMLDivElement>(`#layout-description`)!
+  const layoutTitle = document.querySelector<HTMLElement>(`#layout-title`)!
 
   layoutDescriptionContainer.classList.remove('highlight-description')
   while (layoutDescription.lastChild) {
@@ -515,7 +522,7 @@ function getSelectedSample(): string {
  * Returns the normalized version of the given name, i.e., in lowercase and '-' instead of space.
  */
 function getNormalizedName(name: string): string {
-  return name.toLowerCase().replace(/[\s]/g, '-')
+  return name.toLowerCase().replace(/\s/g, '-')
 }
 
 /**
@@ -989,6 +996,7 @@ function createEditorMode(): IInputMode {
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
   if (BrowserDetection.webGL2) {
+    Class.ensure(WebGL2GraphModelManager)
     mode.handleInputMode.renderMode = RenderModes.WEB_GL2
   }
 
@@ -1189,7 +1197,7 @@ function initializeUI(): void {
     }
   })
   // also allow 'enter' within the option-editor
-  getElementById<HTMLDivElement>('data-editor').addEventListener('keydown', e => {
+  document.querySelector<HTMLDivElement>(`#data-editor`)!.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       applyLayout(false)
       e.preventDefault()
@@ -1247,14 +1255,6 @@ function getCenter(graph: IGraph): Point {
   } else {
     return Point.ORIGIN
   }
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns A reference to the first element with the specified ID in the current document.
- */
-function getElementById<T extends HTMLElement>(id: string): T {
-  return document.getElementById(id) as T
 }
 
 function querySelector<T extends HTMLElement>(selector: string): T {

@@ -26,7 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphOverviewCanvasVisualCreator, IEdge, INode, IRenderContext } from 'yfiles'
+import {
+  GraphOverviewCanvasVisualCreator,
+  type IEdge,
+  type INode,
+  type IRenderContext
+} from 'yfiles'
 
 /**
  * Provides functionality for customizing the style of overview component.
@@ -44,7 +49,7 @@ export class MindMapOverviewGraphVisualCreator extends GraphOverviewCanvasVisual
     if ('roundRect' in ctx) {
       ctx.roundRect(x, y, width, height, [30])
     } else {
-      // @ts-ignore older browser don't support roundRect
+      // @ts-ignore Older browsers don't support roundRect
       ctx.rect(x, y, width, height)
     }
 

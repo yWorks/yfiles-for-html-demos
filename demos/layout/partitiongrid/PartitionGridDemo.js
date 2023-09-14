@@ -161,7 +161,7 @@ async function run() {
 
   initializeUI()
 
-  runLayout()
+  await runLayout()
 }
 
 /**
@@ -193,7 +193,7 @@ function initializeGraph(graph) {
   })
 
   // add a node tag changed listener that will update the node style, as soon as a node changes a row/column
-  graph.addNodeTagChangedListener((sender, args) => {
+  graph.addNodeTagChangedListener((_, args) => {
     const node = args.item
     updateNodeFill(node)
     updateMapping(node, args.oldValue)
@@ -297,7 +297,7 @@ function configureUserInteraction() {
   const graph = graphComponent.graph
   // add a drag listener that will determine the column/row indices of the dragged elements based on their last
   // positions
-  inputMode.moveInputMode.addDragFinishedListener((sender, args) => {
+  inputMode.moveInputMode.addDragFinishedListener(() => {
     for (const node of graphComponent.selection.selectedNodes) {
       if (!graph.isGroupNode(node)) {
         updateNodeRestrictions(node)
@@ -317,7 +317,7 @@ function configureUserInteraction() {
   })
 
   // update the node style for the newly created node and run a layout
-  inputMode.addNodeCreatedListener((sender, args) => {
+  inputMode.addNodeCreatedListener((_, args) => {
     const node = args.item
     if (!graph.isGroupNode(node)) {
       // if a node is created, we have to determine the column/row indices based on the position where the node is
@@ -335,19 +335,18 @@ function configureUserInteraction() {
   })
 
   // whenever an edge is created, run a layout using the last applied layout algorithm
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
+  inputMode.createEdgeInputMode.addEdgeCreatedListener(() => {
     runLayout()
   })
 
   // whenever a graph element is deleted, run a layout using the last applied layout algorithm
-  inputMode.addDeletedSelectionListener((sender, args) => {
+  inputMode.addDeletedSelectionListener(() => {
     runLayout()
   })
 
   // before a node is removed, remove its tag so that the row2nodes and column2nodes maps are updated
-  inputMode.addDeletingSelectionListener((sender, args) => {
-    const selection = args.selection
-    for (const item of selection) {
+  inputMode.addDeletingSelectionListener((_, evt) => {
+    for (const item of evt.selection) {
       if (item instanceof INode) {
         item.tag = {
           rowIndex: -1,
@@ -358,18 +357,16 @@ function configureUserInteraction() {
   })
 
   // whenever a right-click on a cell occurs (on canvas), determine the row/column that is selected and highlight it
-  inputMode.addCanvasClickedListener((sender, args) => {
+  inputMode.addCanvasClickedListener((_, evt) => {
     toggleDeleteButtonsVisibility(true, Point.ORIGIN)
-    if (args.mouseButtons === MouseButtons.RIGHT) {
-      if (partitionGridVisualCreator) {
-        toggleDeleteButtonsVisibility(false, args.location)
-      }
+    if (evt.mouseButtons === MouseButtons.RIGHT && partitionGridVisualCreator) {
+      toggleDeleteButtonsVisibility(false, evt.location)
     }
   })
 
   // disable visibility buttons if are already enabled
-  inputMode.addItemClickedListener((sender, args) => {
-    if (!getElementById('delete-row').disabled) {
+  inputMode.addItemClickedListener(() => {
+    if (!document.querySelector(`#delete-row`).disabled) {
       toggleDeleteButtonsVisibility(true, Point.ORIGIN)
     }
   })
@@ -450,7 +447,7 @@ async function runLayout(algorithm) {
   // create the partition grid
   partitionGrid = createPartitionGrid()
 
-  // set the partition grid to the partitionGridVisualCreator so it can use the new layout of the rows/columns
+  // set the partition grid to the partitionGridVisualCreator, so it can use the new layout of the rows/columns
   // for its animation
   if (partitionGridVisualCreator) {
     partitionGridVisualCreator.grid = partitionGrid
@@ -621,7 +618,7 @@ function determineCellIndex(point) {
  * Adjusts the bounds of the graph component so that possible empty rows/columns on the top/bottom
  * or left/right are also included in the graphComponent's bounds. This is necessary since method
  * {@link GraphComponent.fitGraphBounds} considers only the content rectangle of the graph
- * component which is defined from the positions of graph elements (nodes, edges, bends, etc) but,
+ * component which is defined from the positions of graph elements (nodes, edges, bends, etc.) but,
  * not from visual objects, like the partition grid visual. This means that possible empty rows on
  * the top/bottom or columns on the left/right have to be manually included in the graphComponent's
  * bounds using special insets.
@@ -708,7 +705,7 @@ function getGroupNodeCellId(node) {
 }
 
 /**
- * Returns whether or not a given node has valid row/column indices.
+ * Returns whether a given node has valid row/column indices.
  * @param {!INode} node The given node
  * @returns {boolean} `true` if the given node has valid row/column indices,
  *   `false` otherwise
@@ -718,7 +715,7 @@ function hasActiveRestrictions(node) {
 }
 
 /**
- * Returns whether or not a partition grid currently exists.
+ * Returns whether a partition grid currently exists.
  * @returns {!(boolean|PartitionGrid)}
  */
 function existsPartitionGrid() {
@@ -735,7 +732,7 @@ function createPartitionGrid() {
   const minimumColumnWidth = getFloatValue('columnWidth')
   const leftInset = getFloatValue('leftInset')
   const rightInset = getFloatValue('rightInset')
-  const fixedColumnOrder = getElementById('fix-column-order').checked
+  const fixedColumnOrder = document.querySelector(`#fix-column-order`).checked
 
   for (const columnDescriptor of grid.columns) {
     columnDescriptor.minimumWidth = minimumColumnWidth || 0
@@ -762,7 +759,7 @@ function createPartitionGrid() {
  * @returns {number}
  */
 function getFloatValue(id) {
-  return parseFloat(getElementById(id).value)
+  return parseFloat(document.querySelector(`#${id}`).value)
 }
 
 /**
@@ -779,9 +776,9 @@ function createPartitionGridData() {
           return createNodeCellId(node)
         }
         // we have a group node
-        const stretchGroups = getElementById('stretch-group-nodes').checked
+        const stretchGroups = document.querySelector(`#stretch-group-nodes`).checked
         if (!stretchGroups || graph.getChildren(node).size === 0) {
-          // the group nodes shall not be stretched or the group node has no children so we return null
+          // the group nodes shall not be stretched or the group node has no children, so we return null
           // this means the group node will be adjusted to contain its children but has no specific assignment to cells
           return null
         }
@@ -804,7 +801,7 @@ function initializeUI() {
   const runHierarchicLayout = ICommand.createCommand()
   kim.addCommandBinding(
     runHierarchicLayout,
-    (command, parameter, sender) => {
+    (_, parameter) => {
       runLayout(parameter)
       return true
     },
@@ -821,7 +818,7 @@ function initializeUI() {
   const runOrganicLayout = ICommand.createCommand()
   kim.addCommandBinding(
     runOrganicLayout,
-    (command, parameter, sender) => {
+    (_, parameter) => {
       runLayout(parameter)
       return true
     },
@@ -1033,7 +1030,7 @@ function isValidInput(input, maxValue) {
 }
 
 /**
- * Checks whether or not a layout algorithm can be executed. A layout algorithm cannot be executed
+ * Checks whether a layout algorithm can be executed. A layout algorithm cannot be executed
  * when the graph is empty or a layout algorithm is already running.
  * @returns {boolean}
  */
@@ -1197,9 +1194,9 @@ function generateNodeColors() {
  * @param {boolean} disabled `true` if the UI should be disabled, `false` otherwise.
  */
 function setUIDisabled(disabled) {
-  getElementById('add-row').disabled = disabled
-  getElementById('add-column').disabled = disabled
-  getElementById('delete-empty-rows-columns').disabled = disabled
+  document.querySelector(`#add-row`).disabled = disabled
+  document.querySelector(`#add-column`).disabled = disabled
+  document.querySelector(`#delete-empty-rows-columns`).disabled = disabled
 }
 
 /**
@@ -1208,8 +1205,8 @@ function setUIDisabled(disabled) {
  * @param {!Point} location The location of the last mouse event
  */
 function toggleDeleteButtonsVisibility(disabled, location) {
-  getElementById('delete-row').disabled = disabled
-  getElementById('delete-column').disabled = disabled
+  document.querySelector(`#delete-row`).disabled = disabled
+  document.querySelector(`#delete-column`).disabled = disabled
 
   if (partitionGridVisualCreator) {
     const cellId = disabled ? null : determineCellIndex(location)
@@ -1217,15 +1214,6 @@ function toggleDeleteButtonsVisibility(disabled, location) {
     partitionGridVisualCreator.selectedCellId = cellId
     graphComponent.invalidate()
   }
-}
-
-/**
- * Generates a random integer with the given bound.
- * @param {number} upper The given upper bound
- * @returns {number}
- */
-function getRandomInt(upper) {
-  return Math.floor(Math.random() * upper)
 }
 
 /**
@@ -1240,21 +1228,11 @@ class CustomLayoutExecutor extends LayoutExecutor {
     const graphMorphAnimation = super.createMorphAnimation()
     if (partitionGridVisualCreator) {
       // we want to animate the graph itself as well as the partition
-      // grid visualization so we use a parallel animation:
+      // grid visualization, so we use a parallel animation:
       return IAnimation.createParallelAnimation([graphMorphAnimation, partitionGridVisualCreator])
     }
     return graphMorphAnimation
   }
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns {!T} A reference to the first element with the specified ID in the current document.
- * @template {HTMLElement} T
- * @param {!string} id
- */
-function getElementById(id) {
-  return document.getElementById(id)
 }
 
 run().then(finishLoading)

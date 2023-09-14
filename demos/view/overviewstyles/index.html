@@ -40,59 +40,6 @@
 
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <!-- Please note: The following script is used to store templates to be used in the node style.     -->
-    <!-- These templates are copied into the graph components's svg for each node that uses this style. -->
-    <!-- The script containing the templates has to have the type "text/yfiles-template".               -->
-    <!-- Also, please note that there are bindings in some elements' attributes. The bindings are       -->
-    <!-- dynamically replaced with the bound values by the binding engine at runtime.                   -->
-    <!-- Normal bindings are resolved on the node's tag. That means if there is an object stored in the -->
-    <!-- node's tag that has the property "foo", you can bind to the value of this                      -->
-    <!-- property with the string {Binding foo}.                                                        -->
-    <!-- Template bindings are resolved on the NodeTemplateContext. This can be used to modify an       -->
-    <!-- element based on the selection state of the node etc. Also, custom data can be stored in       -->
-    <!-- the NodeTemplateContext's styleTag which you can also bind to using a TemplateBinding.         -->
-    <!-- Bindings can specify converters and converter parameters. A converter first has to be          -->
-    <!-- registered under it's name as shown in the source code of this demo.                           -->
-    <!-- If a binding is specified in a standard attribute, the attribute value is replaced with the    -->
-    <!-- resolved binding value at runtime. If the binding is contained in the custom attribute         -->
-    <!-- "data-content", the content of the node is replaced with the binding value. In this case,      -->
-    <!-- the converter can also return an SVG element that is set as the child of the element that      -->
-    <!-- specifies the binding. If no converter is specified, or the converter returns a string,        -->
-    <!-- a new text node is added.                                                                      -->
-    <script type="text/yfiles-template">
-
-
-      <g id="detailNodeStyleTemplate">
-        <rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)"/>
-        <rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100"/>
-        <use xlink:href="{Binding icon, Converter=orgChartConverters.addHashConverter}"
-          transform="scale(0.85) translate(15 10)"/>
-        <use xlink:href="{Binding status, Converter=orgChartConverters.addHashConverter}"/>
-        <use xlink:href="{Binding status, Converter=orgChartConverters.addHashConverter, Parameter=_icon}"
-          transform="translate(26 84)"/>
-        <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
-          <text transform="translate(100 25)" data-content="{Binding name}" style="font-size:16px; fill:#336699"></text>
-          <text transform="translate(100 45)"
-            data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=true}"
-            style="text-transform: uppercase; font-weight: 400"></text>
-          <text transform="translate(100 57)"
-            data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=false}"
-            style="text-transform: uppercase; font-weight: 400"></text>
-          <text transform="translate(100 72)" data-content="{Binding email}"></text>
-          <text transform="translate(100 88)" data-content="{Binding phone}"></text>
-          <text transform="translate(170 88)" data-content="{Binding fax}"></text>
-        </g>
-      </g>
-
-      <g id="overViewNodeStyle">
-        <rect fill="{Binding status, Converter=orgChartConverters.colorConverter}" width="30"
-          height="{TemplateBinding height}"></rect>
-        <rect fill="white" transform="translate(30 0)" width="{TemplateBinding width}" height="{TemplateBinding height}"
-          rx="10" ry="10"></rect>
-        <text transform="translate(50 50)" data-content="{Binding name, Converter=orgChartConverters.overviewConverter}"
-          style="font-size:50px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;"></text>
-      </g>
-    </script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
@@ -142,26 +89,25 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Overview Styling Demo</h1>
 
         <div>
           <p>This demo shows different ways to render and style the overview:</p>
           <ul>
-            <li>
-              With HTML Canvas using a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewCanvasVisualCreator" target="_blank">GraphOverviewCanvasVisualCreator</a>.
-            </li>
-            <li>
-              With SVG using a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewSvgVisualCreator" target="_blank">GraphOverviewSvgVisualCreator</a>.
-            </li>
+            <li>With HTML Canvas using a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewCanvasVisualCreator" target="_blank">GraphOverviewCanvasVisualCreator</a>.</li>
+            <li>With SVG using a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewSvgVisualCreator" target="_blank">GraphOverviewSvgVisualCreator</a>.</li>
             <li>
               With WebGL using a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewWebGLVisualCreator" target="_blank">GraphOverviewWebGLVisualCreator</a>.
-              <span class="no-webgl-support"> This options is disabled because your browser does not support WebGL.</span>
+              <span class="no-webgl-support">
+                This options is disabled because your browser does not support WebGL.</span
+              >
             </li>
             <li>
               With WebGL2 using a <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2GraphOverviewVisualCreator" target="_blank">WebGL2GraphOverviewVisualCreator</a>.
-              <span class="no-webgl-support" data-webgl2> This options is disabled because your browser does not support WebGL2.</span>
+              <span class="no-webgl-support" data-webgl2>
+                This options is disabled because your browser does not support WebGL2.</span
+              >
             </li>
             <li>
               With a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> that uses <a href="https://docs.yworks.com/yfileshtml/#/api/OverviewInputMode" target="_blank">OverviewInputMode</a>.
@@ -178,10 +124,7 @@
             Of the supported rendering modes, Canvas and WebGL offer the best performance. Using SVG
             can make sense if you need high fidelity or high detail rendering, especially for
             smaller graphs. For such use cases, using a
-            <code>GraphComponent</code>
-            with
-            <code>OverviewInputMode</code>
-            is an option, too.
+            <code>GraphComponent</code> with <code>OverviewInputMode</code> is an option, too.
           </p>
 
           <p>

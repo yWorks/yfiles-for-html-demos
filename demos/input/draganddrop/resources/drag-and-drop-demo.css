@@ -28,18 +28,8 @@
  ***************************************************************************/
 .disabled-indicator {
   display: none;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.disabled-indicator__message {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 1rem;
+  color: orangered;
+  margin-left: 10px;
 }
 
 /* yFiles css classes */

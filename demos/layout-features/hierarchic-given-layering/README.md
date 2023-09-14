@@ -29,7 +29,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-You can also take a look at the [Incremental Hierarchic Layout](../../layout/incrementalhierarchic/index.html) demo in which the user can drag and move the nodes from one layer to another.
+You can also take a look at the [Interactive Hierarchic Layout Demo](../../layout/interactive-hierarchic/index.html) demo in which the user can drag and move the nodes from one layer to another.
 
 ### Documentation
 

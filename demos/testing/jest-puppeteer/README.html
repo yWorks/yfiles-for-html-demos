@@ -39,12 +39,10 @@
     <div id="header" class="simple-header">Jest Puppeteer Demo</div>
     <main>
       <div class="content-centered">
-        <!-- prettier-ignore -->
         <div class="content">
           <div class="breadcrumbs">
-            <a href="../../README.html">yFiles for HTML</a>
-            <span class="angle-right"></span>
-            Jest Puppeteer Demo
+            <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Jest
+            Puppeteer Demo
           </div>
 
           <h1>Jest Puppeteer Demo</h1>
@@ -52,24 +50,16 @@
           <p>
             The Jest Puppeteer demo shows how to use
             <a href="https://jestjs.io/en/" target="_blank">Jest</a> for integration testing a
-            <a href="https://reactjs.org/" target="_blank">React</a> application that uses
-            yFiles for HTML.
+            <a href="https://reactjs.org/" target="_blank">React</a> application that uses yFiles
+            for HTML.
           </p>
 
           <p>To start the demo and run the integration tests:</p>
           <ol>
-            <li>
-              Go to the demo's directory <code>demos-js/testing/jest-puppeteer</code>.
-            </li>
-            <li>
-              Run <code>npm install</code>.
-            </li>
-            <li>
-              Start the demo: Run <code>npm run start-test</code>.
-            </li>
-            <li>
-              Run the integration tests: <code>npm run test:integration</code>.
-            </li>
+            <li>Go to the demo's directory <code>demos-js/testing/jest-puppeteer</code>.</li>
+            <li>Run <code>npm install</code>.</li>
+            <li>Start the demo: Run <code>npm run start-test</code>.</li>
+            <li>Run the integration tests: <code>npm run test:integration</code>.</li>
           </ol>
 
           <p>
@@ -83,7 +73,8 @@
             The tests run in a
             <a target="_blank" href="https://github.com/smooth-code/jest-puppeteer">
               puppeteer environment
-            </a> instead of the default
+            </a>
+            instead of the default
             <a target="_blank" href="https://github.com/jsdom/jsdom">jsdom</a>
             environment, because yFiles for HTML needs a fully HTML5 compliant browser environment,
             which jsdom does not provide (in particular, jsdom lacks a complete SVG DOM
@@ -93,9 +84,9 @@
 
           <p>
             In order to obtain access to the yFiles API, in particular for access to the
-            <a data-api>GraphComponent</a> instance through <a data-api>CanvasComponent#getComponent</a>, this
-            sample introduces an environment variable that causes the application code to expose the
-            yFiles API to the global scope.
+            <a data-api>GraphComponent</a> instance through
+            <a data-api>CanvasComponent#getComponent</a>, this sample introduces an environment
+            variable that causes the application code to expose the yFiles API to the global scope.
           </p>
         </div>
         <!-- populated by readme-style.js -->

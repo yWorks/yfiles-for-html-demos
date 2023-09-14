@@ -27,11 +27,11 @@
  **
  ***************************************************************************/
 import {
+  Class,
   GraphComponent,
   GraphMLIOHandler,
   GraphOverviewComponent,
   GraphOverviewSvgVisualCreator,
-  GraphOverviewWebGLVisualCreator,
   GraphViewerInputMode,
   ICommand,
   License,
@@ -39,7 +39,8 @@ import {
   PolylineEdgeStyle,
   RenderModes,
   ShowFocusPolicy,
-  TemplateNodeStyle,
+  StringTemplateNodeStyle,
+  WebGL2GraphModelManager,
   WebGL2GraphOverviewVisualCreator
 } from 'yfiles'
 import OverviewCanvasVisualCreator from './OverviewCanvasVisualCreator.js'
@@ -49,6 +50,7 @@ import { fetchLicense } from 'demo-resources/fetch-license'
 import { BrowserDetection } from 'demo-utils/BrowserDetection'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 import { OverviewWebGL2VisualCreator } from './OverviewWebGL2VisualCreator.js'
+import { detailNodeStyleTemplate, overviewNodeStyle } from './style-templates.js'
 
 /**
  * The GraphComponent
@@ -103,6 +105,10 @@ async function run() {
 
   // load the graph
   new GraphMLIOHandler().readFromURL(graphComponent.graph, 'resources/graph.graphml').then(() => {
+    const nodeStyle = new StringTemplateNodeStyle(detailNodeStyleTemplate)
+    for (const node of graphComponent.graph.nodes) {
+      graphComponent.graph.setStyle(node, nodeStyle)
+    }
     ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
   })
 
@@ -169,6 +175,7 @@ function overviewStyling(styleType) {
       })
       break
     case 'WebGL2GraphOverviewVisualCreator':
+      Class.ensure(WebGL2GraphModelManager)
       overviewComponent.renderMode = RenderModes.WEB_GL2
       overviewComponent.graphVisualCreator = getWebGL2GraphOverviewVisualCreator()
 
@@ -188,7 +195,7 @@ function overviewStyling(styleType) {
  */
 function getOverviewSvgVisualCreator() {
   const overviewSvgVisualCreator = new GraphOverviewSvgVisualCreator(graphComponent.graph)
-  overviewSvgVisualCreator.nodeStyle = new TemplateNodeStyle('overViewNodeStyle')
+  overviewSvgVisualCreator.nodeStyle = new StringTemplateNodeStyle(overviewNodeStyle)
   overviewSvgVisualCreator.edgeStyle = new PolylineEdgeStyle({ stroke: '#336699' })
   return overviewSvgVisualCreator
 }
@@ -242,7 +249,7 @@ function probeWebGL2Support() {
  * Initializes the converters for the bindings of the template node styles.
  */
 function initializeConverters() {
-  TemplateNodeStyle.CONVERTERS.orgChartConverters = {
+  StringTemplateNodeStyle.CONVERTERS.orgChartConverters = {
     overviewConverter: value => {
       if (typeof value === 'string' && value.length > 0) {
         return value.replace(/^(.)(\S*)(.*)/, '$1.$3')

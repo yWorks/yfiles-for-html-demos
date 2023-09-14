@@ -101,28 +101,31 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Organization Chart Demo</h1>
 
         <div>
           <p>This demo shows how to create an interactive organization chart from JSON data.</p>
           <p>
-            The source data is easily converted to a yFiles graph using class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+            The source data is easily converted to a yFiles graph using class
+            <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
           </p>
           <p>
-            The visualization of the employee is defined by an svg-template which is interpreted by the node style using
-            the <a href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue.js-framework</a>.
+            The visualization of the employee is defined by an svg-template which is interpreted by
+            the node style using the
+            <a href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue.js-framework</a>.
           </p>
           <p>
-            The demo also shows how a <a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" target="_blank">FilteredGraphWrapper</a> can be used to display a subgraph of the model
-            graph.
+            The demo also shows how a <a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" target="_blank">FilteredGraphWrapper</a> can be used to display a
+            subgraph of the model graph.
           </p>
 
           <h2>Automatic Layout</h2>
           <p>
-            The organization chart is arranged automatically with the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a> and the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactNodePlacer" target="_blank">CompactNodePlacer</a>
-            which determines the best arrangement strategy for each node in order to achieve a compact and clear layout.
+            The organization chart is arranged automatically with the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a> and
+            the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactNodePlacer" target="_blank">CompactNodePlacer</a>
+            which determines the best arrangement strategy for each node in order to achieve a
+            compact and clear layout.
           </p>
 
           <h2>Organization Chart View</h2>
@@ -147,12 +150,15 @@
           <h2>Things to Try</h2>
           <ul>
             <li>
-              Click on the port to hide and show the children, you can <strong>hide children</strong> by clicking on
-              <img src="resources/minus.svg" alt="hide children" /> and you can <strong>show children</strong> by
-              clicking on <img src="resources/plus.svg" alt="show children" />.
+              Click on the port to hide and show the children, you can
+              <strong>hide children</strong> by clicking on
+              <img src="resources/minus.svg" alt="hide children" /> and you can
+              <strong>show children</strong> by clicking on
+              <img src="resources/plus.svg" alt="show children" />.
             </li>
             <li>
-              Right click on the node to see the <strong>context menu</strong>. For the selected node you can:
+              Right click on the node to see the <strong>context menu</strong>. For the selected
+              node you can:
             </li>
             <li>
               <ul>
@@ -164,28 +170,31 @@
               </ul>
             </li>
             <li>
-              In the Toolbar, you can <strong>Show All</strong> nodes by clicking on <img src="../../resources/icons/star-16.svg" alt="show all" />.
+              In the Toolbar, you can <strong>Show All</strong> nodes by clicking on
+              <img src="../../resources/icons/star-16.svg" alt="show all" />.
             </li>
           </ul>
 
           <h2>Developer Information</h2>
           <ul>
             <li>
-              To load your own data into the demo, replace the data in the <code>./model/orgchart-data.ts</code> file.
-              If your data is structured differently, change the <code>buildGraph()</code> function in the <code>./model/data-loading.ts</code>
-              file and/or the <code>Employee</code> type.
+              To load your own data into the demo, replace the data in the
+              <code>./model/orgchart-data.ts</code> file. If your data is structured differently,
+              change the <code>buildGraph()</code> function in the
+              <code>./model/data-loading.ts</code> file and/or the <code>Employee</code> type.
             </li>
             <li>
               To disable interactivity, remove the <code>initializeInteractivity()</code> call in
               <code>./input.ts.</code>
             </li>
             <li>
-              To use the collapsing feature in your own application, copy the <code>./CollapsibleTree.ts</code> file
-              and, for interactivity, the <code>./input.ts</code> and <code>./ui/orgchart-context-menu.ts</code> files.
+              To use the collapsing feature in your own application, copy the
+              <code>./CollapsibleTree.ts</code> file and, for interactivity, the
+              <code>./input.ts</code> and <code>./ui/orgchart-context-menu.ts</code> files.
             </li>
             <li>
-              To use the search feature in your own application, copy the <code>./OrgChartGraphSearch.ts</code> and
-              <code>../utils/GraphSearch.ts</code> files.
+              To use the search feature in your own application, copy the
+              <code>./OrgChartGraphSearch.ts</code> and <code>../utils/GraphSearch.ts</code> files.
             </li>
           </ul>
         </div>

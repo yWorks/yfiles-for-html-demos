@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  FilteredGraphWrapper,
-  GraphComponent,
-  GraphEditorInputMode,
-  IEdgeStyle,
-  ILabelStyle,
-  INode,
-  INodeStyle,
-  Key
-} from 'yfiles'
+import { GraphEditorInputMode, Key } from 'yfiles'
 import { isInLayout, layoutTree } from '../mind-map-layout.js'
 import {
   getDepth,
@@ -143,7 +134,7 @@ export function canExecuteToggleCollapseState(graphComponent, node) {
 
 /**
  * Executes the collapse/expand node command.
- * When the node - or alternatively the selected node - was expanded,
+ * When the node - or alternatively, the selected node - was expanded,
  * it is collapsed and all its descendants are hidden.
  * In case it was collapsed, its descendants become visible.
  * @see canExecuteToggleCollapseState
@@ -162,13 +153,14 @@ export function executeToggleCollapseState(graphComponent, node) {
 /**
  * Collapses/expands a node and updates the layout.
  * When a node is expanded, the subtree nodes appear at the center position
- * of the parent node and move to their positions in the updated layout afterwards.
+ * of the parent node and move to their positions in the updated layout afterward.
  * When it is collapsed, the subtree moves to the parent node. That way, a smooth transition between
  * collapsed and expanded state is possible.
  * @see executeToggleCollapseState
  * @param {!INode} node
  * @param {boolean} collapsed
  * @param {!GraphComponent} graphComponent
+ * @returns {!Promise}
  */
 async function collapseNode(node, collapsed, graphComponent) {
   const fullGraph = getFullGraph(graphComponent)

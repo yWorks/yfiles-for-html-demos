@@ -28,12 +28,12 @@
  ***************************************************************************/
 import {
   BaseClass,
-  GraphComponent,
-  IEdge,
-  IGraph,
-  IInputModeContext,
-  INode,
-  IPoint,
+  type GraphComponent,
+  type IEdge,
+  type IGraph,
+  type IInputModeContext,
+  type INode,
+  type IPoint,
   IPositionHandler,
   List,
   Point,
@@ -296,10 +296,9 @@ export class SubtreePositionHandler
         }
       }
     })
-    if (!newParent) {
-      newParent = this.globalRoot
-    }
-    return dMin < SubtreePositionHandler.MAX_DISTANCE ? newParent : null
+    // EsLint doesn't detect the possible assignment of newParent
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    return dMin < SubtreePositionHandler.MAX_DISTANCE ? newParent ?? this.globalRoot : null
   }
 
   /**

@@ -87,24 +87,21 @@
       <div class="demo-header__breadcrumb">Web Worker Demo (Webpack)</div>
     </header>
     <aside class="demo-page__description">
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Web Worker Demo (Webpack)</h1>
         <p>
           This demo shows how to run a yFiles layout algorithm in a
-          <a
-            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers"
-            target="_blank"
-          >Web Worker</a>
+          <a href="https://developer.mozilla.org/docs/Web/API/Web_Workers_API" target="_blank"
+            >Web Worker</a
+          >
           task in order to prevent the layout calculation from blocking the UI.
         </p>
         <p>This demo uses webpack to handle the loading of the yFiles library.</p>
         <p>
           The graph, layout, and layout data are configured in the main thread and transferred to
-          the web worker using class
-          <a data-api>LayoutExecutorAsync</a>. The actual layout calculation is performed in
-          <em>WorkerLayout.ts</em> with class <a data-api>LayoutExecutorAsyncWorker</a>
-          on the web worker thread.
+          the web worker using class <a data-api>LayoutExecutorAsync</a>. The actual layout
+          calculation is performed in <em>WorkerLayout.ts</em> with class
+          <a data-api>LayoutExecutorAsyncWorker</a> on the web worker thread.
         </p>
 
         <h2>Things to Try</h2>

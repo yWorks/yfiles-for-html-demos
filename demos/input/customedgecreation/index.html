@@ -108,30 +108,29 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Custom Edge Creation Demo</h1>
 
         <p>
-          This demo shows how to provide directional <a href="https://docs.yworks.com/yfileshtml/#/api/IPort" target="_blank">IPort</a>s and <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a>s and demonstrates
-          several customizations for the edge creation gesture.
+          This demo shows how to provide directional <a href="https://docs.yworks.com/yfileshtml/#/api/IPort" target="_blank">IPort</a>s and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a>s and demonstrates several customizations for the edge
+          creation gesture.
         </p>
 
         <h2>Ports and PortCandidates</h2>
         <p>
-          Each node provides directional ports that are visualized with the <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter" target="_blank">NodeStylePortStyleAdapter</a> and a
-          circular <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a>.
+          Each node provides directional ports that are visualized with the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter" target="_blank">NodeStylePortStyleAdapter</a> and a circular <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a>.
         </p>
         <p>
-          This demo restricts edge creation to the provided
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a>s. Therefore, the PortCandidates are also shown on the source on hover to indicate that
-          edge creation may start there.
+          This demo restricts edge creation to the provided <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a>s.
+          Therefore, the PortCandidates are also shown on the source on hover to indicate that edge
+          creation may start there.
         </p>
         <p>
-          The
-          <b>Show Ports</b>
-          button in the toolbar toggles the visualization of the ports. Note how the PortCandidates
-          are still visible on hover even if the ports are not visualized anymore.
+          The <b>Show Ports</b> button in the toolbar toggles the visualization of the ports. Note
+          how the PortCandidates are still visible on hover even if the ports are not visualized
+          anymore.
         </p>
 
         <h2>Edge Creation</h2>
@@ -140,9 +139,8 @@
           which the edge creation gesture originates.
         </p>
         <p>
-          <b>Enable Target Node</b>
-          toggles whether edge creation should create a target node as well. This enables users to
-          end the creation gesture on the empty canvas.
+          <b>Enable Target Node</b> toggles whether edge creation should create a target node as
+          well. This enables users to end the creation gesture on the empty canvas.
         </p>
 
         <h2>Interactive Edge Routing</h2>
@@ -152,21 +150,26 @@
         </p>
         <ul>
           <li>
-            <b>Default Orthogonal</b>: Utilizes the <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalEdgeEditingContext" target="_blank">OrthogonalEdgeEditingContext</a> which does not use a
-            dedicated layout algorithm. It is the fastest approach but does not consider port directions or other nodes.
+            <b>Default Orthogonal</b>: Utilizes the
+            <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalEdgeEditingContext" target="_blank">OrthogonalEdgeEditingContext</a> which does not use a dedicated layout
+            algorithm. It is the fastest approach but does not consider port directions or other
+            nodes.
           </li>
           <li>
-            <b>Edge Router (Quality)</b>: Applies the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> with each move during the edge creation
-            gesture. This is the most expensive approach but yields nicely routed edges.
+            <b>Edge Router (Quality)</b>: Applies the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> with each move
+            during the edge creation gesture. This is the most expensive approach but yields nicely
+            routed edges.
           </li>
           <li>
-            <b>Edge Router (Performance)</b>: Applies the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> as well but sets its <code>maximumDuration</code>
-            to <code>0</code> such that a less performance heavy approach is used. This still routes around other nodes
-            but sometimes yields less appealing results.
+            <b>Edge Router (Performance)</b>: Applies the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> as well but
+            sets its <code>maximumDuration</code> to <code>0</code> such that a less performance
+            heavy approach is used. This still routes around other nodes but sometimes yields less
+            appealing results.
           </li>
           <li>
-            <b>Channel Edge Router</b>: Uses the <a href="https://docs.yworks.com/yfileshtml/#/api/ChannelEdgeRouter" target="_blank">ChannelEdgeRouter</a> to layout the edge during the gesture.
-            This implementation is usually faster than the EdgeRouter but may produce node-edge overlaps.
+            <b>Channel Edge Router</b>: Uses the <a href="https://docs.yworks.com/yfileshtml/#/api/ChannelEdgeRouter" target="_blank">ChannelEdgeRouter</a> to layout the
+            edge during the gesture. This implementation is usually faster than the EdgeRouter but
+            may produce node-edge overlaps.
           </li>
         </ul>
       </div>

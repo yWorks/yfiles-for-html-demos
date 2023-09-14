@@ -251,7 +251,7 @@ function onNodeClicked(clickedNode: INode): boolean {
   // get the node from the master graph to be able to check the hierarchy information
   let root = masterGraph.nodes.find(node => equalTags(clickedNode, node))
 
-  // group nodes can be entered or they lead to a higher hierarchy level
+  // group nodes can be entered, or they lead to a higher hierarchy level
   if (root && masterGraph.isGroupNode(root)) {
     const visibleGraph = graphComponent.graph
     const clickedNodeLayout = clickedNode.layout
@@ -369,7 +369,7 @@ function updateGraph(root?: INode, clickedNode?: INode, isDrillDown = false): vo
     }
   }
 
-  // update the label in the tool bar
+  // update the label in the toolbar
   let pathString = ''
   if (root) {
     for (const node of masterGraph.groupingSupport.getPathToRoot(root)) {
@@ -382,7 +382,7 @@ function updateGraph(root?: INode, clickedNode?: INode, isDrillDown = false): vo
       }
     }
   }
-  const path = getElementById<HTMLSpanElement>('path')
+  const path = document.querySelector<HTMLSpanElement>(`#path`)!
   path.innerHTML = pathString || 'yFiles-for-HTML-Complete'
 
   // register a highlight
@@ -397,7 +397,7 @@ function updateGraph(root?: INode, clickedNode?: INode, isDrillDown = false): vo
 
   graphComponent.graph = graph
 
-  // if it is an outwards animation, bring the clicked node to the front
+  // if it is an outward animation, bring the clicked node to the front
   if (clickedNodeCopy && !isDrillDown) {
     const clickedItem = graphComponent.graph.nodes
       .filter(n => n.tag.groupTag === clickedNodeCopy!.tag.groupTag)
@@ -455,16 +455,20 @@ async function applyLayout(): Promise<void> {
   )
 
   // configure layout algorithm using the settings from the module
-  const minimumWidth = Number.parseInt(getElementById<HTMLInputElement>('minimum-node-width').value)
+  const minimumWidth = Number.parseInt(
+    document.querySelector<HTMLInputElement>(`#minimum-node-width`)!.value
+  )
   const minimumHeight = Number.parseInt(
-    getElementById<HTMLInputElement>('minimum-node-height').value
+    document.querySelector<HTMLInputElement>(`#minimum-node-height`)!.value
   )
   const layout = new TreeMapLayout({
     preferredSize: getPreferredSize(graph),
-    aspectRatio: Number.parseFloat(getElementById<HTMLInputElement>('aspect-ratio').value),
+    aspectRatio: Number.parseFloat(
+      document.querySelector<HTMLInputElement>(`#aspect-ratio`)!.value
+    ),
     tilingPolicy: getTilingAlgorithm(),
     minimumNodeSize: new YDimension(minimumWidth, minimumHeight),
-    spacing: Number.parseInt(getElementById<HTMLInputElement>('spacing').value),
+    spacing: Number.parseInt(document.querySelector<HTMLInputElement>(`#spacing`)!.value),
     nodeComparer: createNodeComparer(graph)
   })
 
@@ -521,7 +525,7 @@ async function applyLayout(): Promise<void> {
  * Determines the preferred layout size for the current graph.
  */
 function getPreferredSize(graph: IGraph): YDimension {
-  const zoomingMode = getElementById<HTMLSelectElement>('select-zooming-mode').value
+  const zoomingMode = document.querySelector<HTMLSelectElement>(`#select-zooming-mode`)!.value
   const defaultMapSize = 1000
   const preferredSizes = masterGraph.mapperRegistry.getMapper(PREFERRED_SIZE_KEY)!
   const root = graph.nodes.filter(node => !graph.getParent(node)).at(0)
@@ -546,7 +550,8 @@ function getPreferredSize(graph: IGraph): YDimension {
  * Determines the tiling algorithm.
  */
 function getTilingAlgorithm(): TilingPolicy {
-  const tilingAlgorithm = getElementById<HTMLSelectElement>('select-tiling-algorithm').value
+  const tilingAlgorithm =
+    document.querySelector<HTMLSelectElement>(`#select-tiling-algorithm`)!.value
   return tilingAlgorithm === 'squarified' ? TilingPolicy.SQUARIFIED : TilingPolicy.SLICE_AND_DICE
 }
 
@@ -554,8 +559,11 @@ function getTilingAlgorithm(): TilingPolicy {
  * Creates a node comparer according to the sorting settings.
  */
 function createNodeComparer(graph: IGraph): TreeMapNodeComparer {
-  const sortingCriterion = getElementById<HTMLSelectElement>('select-sorting-criterion').value
-  const fileDirectoryOrder = getElementById<HTMLSelectElement>('select-file-directory-order').value
+  const sortingCriterion =
+    document.querySelector<HTMLSelectElement>(`#select-sorting-criterion`)!.value
+  const fileDirectoryOrder = document.querySelector<HTMLSelectElement>(
+    `#select-file-directory-order`
+  )!.value
   const ascending = sortingCriterion.indexOf('ascending') !== -1
   const useNameAsCriterion = sortingCriterion.indexOf('name') === 0
   const considerLeafState = fileDirectoryOrder.indexOf('files') === 0
@@ -576,7 +584,7 @@ function createNodeComparer(graph: IGraph): TreeMapNodeComparer {
  */
 function updateLabelTextSizes(graph: IGraph): void {
   // we'll use a hidden div to measure the text sizes
-  const textMeasureDiv = getElementById<HTMLDivElement>('text-measure-container')
+  const textMeasureDiv = document.querySelector<HTMLDivElement>(`#text-measure-container`)!
   for (const node of graph.nodes) {
     // only adjust text sizes for normal nodes and folders
     if (graph.isGroupNode(node)) {
@@ -639,8 +647,8 @@ function initializeUI(): void {
  * labelId with the value property of the HTMLInputElement with the given inputId.
  */
 function bindLabelToInput(inputId: string, labelId: string): void {
-  const input = getElementById<HTMLInputElement>(inputId)
-  const label = getElementById<HTMLLabelElement>(labelId)
+  const input = document.querySelector<HTMLInputElement>(`#${inputId}`)!
+  const label = document.querySelector<HTMLLabelElement>(`#${labelId}`)!
   input.addEventListener('input', () => {
     label.innerHTML = input.value
   })
@@ -701,7 +709,7 @@ type RenderDataCache = {
  * A simple node style which draws a rectangle. The color for the rectangle is provided in the tag.
  */
 class ColorNodeStyle extends NodeStyleBase {
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(_: IRenderContext, node: INode): SvgVisual {
     const { x, y, width, height } = node.layout
     const rect = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -749,14 +757,6 @@ class ColorNodeStyle extends NodeStyleBase {
     }
     return oldVisual
   }
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns A reference to the first element with the specified ID in the current document.
- */
-function getElementById<T extends HTMLElement>(id: string): T {
-  return document.getElementById(id) as T
 }
 
 run().then(finishLoading)

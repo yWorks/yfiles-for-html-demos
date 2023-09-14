@@ -31,7 +31,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-See the [Layer Constraints](../../layout/layerconstraints/index.html) and [Sequence Constraints](../../layout/sequenceconstraints/index.html) demos for more elaborate examples of the constraints functionality.
+See the [Layer Constraints Demo](../../layout/layerconstraints/index.html) and the [Sequence Constraints Demo](../../layout/sequenceconstraints/index.html) for more elaborate examples of the constraints functionality.
 
 ### Documentation
 

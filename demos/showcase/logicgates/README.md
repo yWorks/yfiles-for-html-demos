@@ -19,7 +19,7 @@ Each node has specific ports: incoming edges connect only to the left side of th
 
 ## Graph Creation
 
-A port [port aware graph builder](../../databinding/port-aware-graph-builder/index.html) is used to create the graph, connecting the edges with specific ports defined in the business data.
+A [Port-aware Graph Builder Demo](../../databinding/port-aware-graph-builder/index.html) is used to create the graph, connecting the edges with specific ports defined in the business data.
 
 ## Things to Try
 

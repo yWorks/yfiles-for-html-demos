@@ -99,7 +99,7 @@ async function run(): Promise<void> {
   inputMode.addElementsPastedListener(updateLabels)
   inputMode.navigationInputMode.addGroupExpandedListener(updateLabels)
 
-  zOrderSupport.addZIndexChangedLister((sender: object, evt: ZIndexChangedEventArgs) => {
+  zOrderSupport.addZIndexChangedLister((_, evt) => {
     if (evt.item instanceof INode) {
       updateLabel(evt.item, evt.newZIndex)
     }

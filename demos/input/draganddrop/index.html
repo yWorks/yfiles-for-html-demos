@@ -86,27 +86,29 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!--prettier-ignore-->
       <div class="demo-description__content">
         <h1>Drag and Drop Demo</h1>
 
         <p>
           This demo shows how to enable drag and drop functionality for nodes using the classes
-          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">NodeDropInputMode</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode" target="_blank">LabelDropInputMode</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode" target="_blank">PortDropInputMode</a>.
-          The demo features two drag and drop panels: the left one uses yFiles drag and drop and
-          the right one uses the browser-native drag and drop.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">NodeDropInputMode</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode" target="_blank">LabelDropInputMode</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode" target="_blank">PortDropInputMode</a>. The demo features two drag and drop panels: the left
+          one uses yFiles drag and drop and the right one uses the browser-native drag and drop.
         </p>
 
         <p>
           The difference between the two mechanisms is the way a drag is started. The left panel
           starts a drag with e.g. <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode#startDrag" target="_blank">NodeDropInputMode.startDrag</a>. The right panel uses
-          the native "dragstart" event to start a drag. The drop input modes
-          are able to react to the native drag events. Unfortunately, snapping is not supported for
-          elements dragged from this palette. Note that the right palette only works with mouse
-          events. Native drag and drop currently cannot handle touch or pen events.
+          the native "dragstart" event to start a drag. The drop input modes are able to react to
+          the native drag events. Unfortunately, snapping is not supported for elements dragged from
+          this palette. Note that the right palette only works with mouse events. Native drag and
+          drop currently cannot handle touch or pen events.
         </p>
 
-        <p>For dragging and dropping edges, the demo uses the custom class <code>EdgeDropInputMode</code>.</p>
+        <p>
+          For dragging and dropping edges, the demo uses the custom class
+          <code>EdgeDropInputMode</code>.
+        </p>
 
         <h2>Things to Try</h2>
         <ul>
@@ -144,16 +146,16 @@
         <h2>Related Demos</h2>
         <ul>
           <li>
-            <a href="../graph-drag-and-drop">Graph Drag and Drop</a>
+            <a href="../../input/graph-drag-and-drop/index.html" target="_blank">Graph Drag and Drop Demo</a>
           </li>
           <li>
-            <a href="../drag-from-component">Drag From Component</a>
+            <a href="../../input/drag-from-component/index.html" target="_blank">Drag From Component Demo</a>
           </li>
           <li>
-            <a href="../custom-drag-and-drop">Custom Drag and Drop</a>
+            <a href="../../input/custom-drag-and-drop/index.html" target="_blank">Custom Drag and Drop Demo</a>
           </li>
           <li>
-            <a href="../../application-features/drag-and-drop/index.html">Simple Drag and Drop</a>
+            <a href="../../application-features/drag-and-drop/index.html" target="_blank">Simple Drag And Drop Demo</a>
           </li>
         </ul>
       </div>
@@ -169,11 +171,8 @@
 
       <div id="native-dnd-panel" class="demo-dnd-panel demo-dnd-panel--right">
         <span class="demo-dnd-panel__header">Native Drag and Drop</span>
-
         <div id="disabled-indicator" class="disabled-indicator">
-          <div class="disabled-indicator__message">
-            Snapping is not supported for Native Drag and Drop
-          </div>
+          Snapping is not supported for Native Drag and Drop
         </div>
       </div>
     </div>

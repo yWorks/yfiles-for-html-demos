@@ -116,15 +116,7 @@
           </li>
           <li>
             Explore the settings for page size, scale, and margin. Note that the scale option only
-            has an effect if page size is set to<code>Automatic</code>.
-          </li>
-          <li>
-            The client-side PDF export also supports custom fonts which is illustrated by the node
-            labels with custom fonts. To make use of custom fonts, they need to be preprocessed and
-            registered at the
-            <a href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> instance. Please see
-            the <a href="https://github.com/MrRio/jsPDF" target="_blank">readme</a> for more
-            details.
+            has an effect if page size is set to <code>Automatic</code>.
           </li>
           <li>Try to export the image using a Node.js server.</li>
         </ul>
@@ -132,15 +124,18 @@
         <h2>Details</h2>
 
         <p>
-          The demo shows an approach that completely runs in the client's browser, as well as an
-          approach for a server-side export. The client-side export uses
+          The demo shows two approaches, one that completely runs in the client's browser and a
+          server-side export. The client-side export uses the open source
           <a href="https://github.com/yWorks/svg2pdf.js" target="_blank">svg2pdf</a> and
-          <a href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> where we contributed
-          major changes and extensions. Please see its readme on
-          <a href="https://github.com/MrRio/jsPDF">github.com</a>. Although our fork of
-          <a href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> adds many features like
-          gradients and line style support, the actual export result may differ from the graph in
-          the graph component.
+          <a href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> libraries, to which we
+          contributed major improvements and bug fixes.
+        </p>
+
+        <p>
+          The client-side PDF export also supports custom fonts which is illustrated by the node
+          labels with custom fonts. To make use of custom fonts, they need to be preprocessed and
+          registered at the
+          <a href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> instance.
         </p>
 
         <h3>Server-side export</h3>
@@ -154,8 +149,8 @@
         </p>
 
         <p>
-          The server-side export button will be enabled, when the Node.js is alive on loading time
-          of the demo. To run the server, see the respective readme in
+          The server-side export button will be enabled when the Node.js is alive on loading time of
+          the demo. To run the server, see the respective readme in
           <a href="node-server/README.html" target="_blank"><code>./node-server/</code></a
           >.
         </p>
@@ -214,6 +209,7 @@
                 class="settings-editor-row5"
                 type="checkbox"
                 name="serverExport"
+                disabled
               />
 
               <button id="export-button" class="settings-editor-row6 flat-button">Export</button>

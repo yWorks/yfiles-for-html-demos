@@ -10,14 +10,6 @@
      cy="2.1166666"
      id="circle2"
      r="2.027554" />
-  <g transform="matrix(0.05291667,0,0,0.05291667,0.21125447,0.12399647)"/>
-  <ellipse
-     style="fill:#000000;stroke:#000000;stroke-width:0.0140009"
-     cx="3.262552"
-     cy="3.5991914"
-     id="circle6"
-     rx="7.2250354e-05"
-     ry="7.2250346e-05" />
   <g transform="matrix(0.05291667,0,0,0.05291667,0.21125447,0.12399647)">
     <g
        transform="matrix(0.9331297,0,0,0.99393504,10.411614,13.975354)"
@@ -81,16 +73,6 @@
        cx="25.811726"
        cy="16.443388"
        r="1.4779807"/>
-    <circle
-       style="fill:#000000;stroke:#000000;stroke-width:0.264583"
-       cx="49.916553"
-       cy="60.986473"
-       r="0.0013653609"/>
-    <circle
-       style="fill:#000000;stroke:#000000;stroke-width:0.264583"
-       cx="49.092072"
-       cy="60.617626"
-       r="0.0013653609"/>
     <rect
        style="fill:#0b7189;fill-opacity:1;stroke:none;stroke-width:0.387952;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        width="12.381835"

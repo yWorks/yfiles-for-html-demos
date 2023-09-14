@@ -43,7 +43,7 @@ import { fetchLicense } from 'demo-resources/fetch-license'
 import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
 import { runLayoutCore } from './configure-layout.js'
 import { initializeTypePanel, nodeTypeColors } from './types-popup.js'
-import { singleStar, multipleStars } from './resources/SampleData.js'
+import { multipleStars, singleStar } from './resources/SampleData.js'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -97,8 +97,8 @@ async function runLayout(animate) {
   try {
     const settings = {
       starSubstructureStyle: getSelectedValue('starStyle'),
-      considerNodeTypes: getElementById('consider-node-types').checked,
-      starSubstructureTypeSeparation: getElementById('separate-star').checked
+      considerNodeTypes: document.querySelector(`#consider-node-types`).checked,
+      starSubstructureTypeSeparation: document.querySelector(`#separate-star`).checked
     }
     // the actual layout calculation
     await runLayoutCore(graphComponent, settings, animate)
@@ -189,7 +189,7 @@ function updateLayoutSettings(settings) {
  * @param {boolean} [value]
  */
 function updateState(id, value, defaultValue) {
-  getElementById(id).checked = 'undefined' === typeof value ? defaultValue : value
+  document.querySelector(`#${id}`).checked = 'undefined' === typeof value ? defaultValue : value
 }
 
 /**
@@ -201,7 +201,7 @@ function updateState(id, value, defaultValue) {
  * @param {!string} [value]
  */
 function updateSelectedIndex(id, value) {
-  const select = getElementById(id)
+  const select = document.querySelector(`#${id}`)
   const idx = indexOf(select, value)
   select.selectedIndex = idx > -1 ? idx : 0
 }
@@ -274,18 +274,8 @@ function initializeUI() {
  * @returns {!string} the selected value of the HTMLSelectElement identified by the given ID.
  */
 function getSelectedValue(id) {
-  const select = getElementById(id)
+  const select = document.querySelector(`#${id}`)
   return select.options[select.selectedIndex].value
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns {!T} A reference to the first element with the specified ID in the current document.
- * @template {HTMLElement} T
- * @param {!string} id
- */
-function getElementById(id) {
-  return document.getElementById(id)
 }
 
 void run().then(finishLoading)

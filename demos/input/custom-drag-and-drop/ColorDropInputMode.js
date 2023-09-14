@@ -161,14 +161,12 @@ export class ColorDropInputMode extends DropInputMode {
    */
   findEdgeOrNode(context, location) {
     const hitTester = context.lookup(IHitTester.$class)
-    if (hitTester) {
-      // hit testing needs to be done with a context whose parent input mode is this mode,
-      // because hit testables may behave differently depending on context
-      // this is e.g. the case for GroupNodeStyle
-      const childContext = IInputModeContext.createInputModeContext(this, context)
-      return hitTester.enumerateHits(childContext, location).find(isEdgeOrNode)
-    }
-    return null
+    // hit testing needs to be done with a context whose parent input mode is this mode,
+    // because hit-testables may behave differently depending on context
+    // this is e.g. the case for GroupNodeStyle
+    return hitTester
+      ?.enumerateHits(IInputModeContext.createInputModeContext(this, context), location)
+      .find(isEdgeOrNode)
   }
 
   /**

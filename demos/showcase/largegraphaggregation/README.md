@@ -21,7 +21,7 @@ The demo shows aggregated nodes in a gray style, while original nodes of the dat
 
 The configuration panel provides access to the most important settings of the aggregation algorithm.
 
-The*Aggregation Mode* determines if nodes are combined in clusters based on the structure of the graph or based on their geometric locations.
+The _Aggregation Mode_ determines if nodes are combined in clusters based on the structure of the graph or based on their geometric locations.
 
 ## Things to Try
 

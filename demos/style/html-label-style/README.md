@@ -30,7 +30,7 @@ The stylesheet for labels _html-label.css_ shows how the label texts are styled.
 
 ## Related Demos
 
-- [Default Label Style](../default-label-style/)
-- [Markdown Label](../markdownlabel/)
-- [Rich Text Label](../richtextlabel/)
-- [Tutorial: Label Style Implementation](../../tutorial-style-implementation-label/01-render-label-text/)
+- [Default Label Style Demo](../../style/default-label-style/index.html)
+- [Markdown Label Demo](../../style/markdownlabel/index.html)
+- [Rich Text Label Demo](../../style/richtextlabel/index.html)
+- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/index.html)

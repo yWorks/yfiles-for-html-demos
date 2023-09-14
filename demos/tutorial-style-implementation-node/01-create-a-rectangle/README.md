@@ -53,7 +53,7 @@ Note
 
 The SVG element returned in `createVisual` does not necessarily have to be created using the JavaScript DOM API. You could also create it using any JavaScript UI framework or API like React, Vuejs, etc.
 
-Creating a visualization in SVG often includes a lot of SVG DOM manipulation. The code above uses [setAttribute](https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute) to move and resize the visualization according to the position and the size of the node. There are alternatives, such as modifying those values directly via the JavaScript API for certain SVG elements. Not all attributes can be set that way and, e.g., colors will still require `setAttribute` calls:
+Creating a visualization in SVG often includes a lot of SVG DOM manipulation. The code above uses [setAttribute](https://developer.mozilla.org/docs/Web/API/Element/setAttribute) to move and resize the visualization according to the position and the size of the node. There are alternatives, such as modifying those values directly via the JavaScript API for certain SVG elements. Not all attributes can be set that way and, e.g., colors will still require `setAttribute` calls:
 
 ```
 rect.x.baseVal.value = x

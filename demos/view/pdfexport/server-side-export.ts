@@ -31,36 +31,48 @@ import { GraphComponent, Insets, type Rect, Size, SvgExport, WebGL2GraphModelMan
 import { useWebGL2Rendering } from '../svgexport/webgl-support'
 import { hideExportDialog } from '../svgexport/export-dialog/export-dialog'
 
-export async function initializeServerSideExport(url: string): Promise<void> {
-  initializeForm()
-  await enableServerSideExportCheckbox(url, '#server-export')
-}
-
 /**
- * Enables server-side export buttons.
+ * Enables the server-side export checkbox in a non-blocking way, if that export mode is available.
  */
-async function enableServerSideExportCheckbox(url: string, selector: string): Promise<void> {
+export function initializeServerSideExport(url: string): void {
+  initializeForm()
+
   // if a server is available, enable the server export button
-  const isAliveJava = await isServerAlive(url)
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-  document.querySelector<HTMLInputElement>(selector)!.disabled = !isAliveJava
+  isServerAlive(url)
+    .then(response => {
+      document.querySelector<HTMLInputElement>('#server-export')!.disabled = false
+    })
+    .catch(() => {
+      // don't enable the button in case of errors
+    })
 }
 
 /**
  * Checks if the server at the given URL is alive.
- * @param url the URL of the service to check.
+ * @param url The URL of the service to check.
+ * @param timeout The timeout of the check request.
  */
-function isServerAlive(url: string): Promise<Response | boolean> {
-  const initObject = {
+async function isServerAlive(url: string, timeout = 5000): Promise<Response> {
+  const initObject: RequestInit = {
     method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain;charset=UTF-8'
-    },
+    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
     body: 'isAlive',
     mode: 'no-cors'
-  } as RequestInit
+  }
 
-  return fetch(url, initObject).catch(() => Promise.resolve(false))
+  try {
+    const controller = new AbortController()
+    const id = setTimeout(() => controller.abort(), timeout)
+
+    const response = await fetch(url, {
+      ...initObject,
+      signal: controller.signal
+    })
+    clearTimeout(id)
+    return Promise.resolve(response)
+  } catch (_) {
+    return Promise.reject(new Error(`Fetch timed out after ${timeout}ms`))
+  }
 }
 
 /**

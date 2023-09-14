@@ -122,14 +122,6 @@ let busy = false
  */
 let selectedAlgorithm: ClusteringAlgorithm
 
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns A reference to the first element with the specified ID in the current document.
- */
-function getElementById<T extends HTMLElement>(id: string): T {
-  return document.getElementById(id) as T
-}
-
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
@@ -212,10 +204,10 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
 
   // when an edge is created, run the algorithm again except for the k-means and hierarchical
   // because these two are independent of the edges of the graph
-  mode.createEdgeInputMode.addEdgeCreatedListener((source, args) => {
+  mode.createEdgeInputMode.addEdgeCreatedListener((_, args) => {
     if (
       selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
-      getElementById<HTMLInputElement>('directed').checked
+      document.querySelector<HTMLInputElement>(`#directed`)!.checked
     ) {
       graphComponent.graph.setStyle(args.item, directedEdgeStyle)
     }
@@ -248,7 +240,7 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
   // add the hover listener
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, event) => {
     // if a node is hovered and the algorithm is HIERARCHICAL clustering, hover the corresponding dendrogram node
     if (selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL) {
       const node = event.item
@@ -277,7 +269,7 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
  * Initializes the dendrogram component.
  */
 function configureDendrogramComponent(dendrogramComponent: DendrogramComponent): void {
-  // add a dragging listener to run the hierarchical algorithm's when the dragging of the cutoff line has finished
+  // add a dragging listener to run the hierarchical algorithm when the dragging of the cutoff line has finished
   dendrogramComponent.addDragFinishedListener(cutOffValue => {
     removeClusterVisuals()
     runHierarchicalClustering(cutOffValue)
@@ -333,26 +325,32 @@ function runEdgeBetweennessClustering(): void {
   const graph = graphComponent.graph
 
   // get the algorithm preferences from the right panel
-  let minClusterCount = parseFloat(getElementById<HTMLInputElement>('ebMinClusterNumber').value)
-  const maxClusterCount = parseFloat(getElementById<HTMLInputElement>('ebMaxClusterNumber').value)
+  let minClusterCount = parseFloat(
+    document.querySelector<HTMLInputElement>(`#ebMinClusterNumber`)!.value
+  )
+  const maxClusterCount = parseFloat(
+    document.querySelector<HTMLInputElement>(`#ebMaxClusterNumber`)!.value
+  )
 
   if (minClusterCount > maxClusterCount) {
     alert(
       'Desired minimum number of clusters cannot be larger than the desired maximum number of clusters.'
     )
-    getElementById<HTMLInputElement>('ebMinClusterNumber').value = maxClusterCount.toString()
+    document.querySelector<HTMLInputElement>(`#ebMinClusterNumber`)!.value =
+      maxClusterCount.toString()
     minClusterCount = maxClusterCount
   } else if (minClusterCount > graph.nodes.size) {
     alert(
       'Desired minimum number of clusters cannot be larger than the number of nodes in the graph.'
     )
-    getElementById<HTMLInputElement>('ebMinClusterNumber').value = graph.nodes.size.toString()
+    document.querySelector<HTMLInputElement>(`#ebMinClusterNumber`)!.value =
+      graph.nodes.size.toString()
     minClusterCount = graph.nodes.size
   }
 
   // run the algorithm
   result = new EdgeBetweennessClustering({
-    directed: getElementById<HTMLInputElement>('directed').checked,
+    directed: document.querySelector<HTMLInputElement>(`#directed`)!.checked,
     minimumClusterCount: minClusterCount,
     maximumClusterCount: maxClusterCount,
     weights: getEdgeWeight
@@ -370,7 +368,7 @@ function runKMeansClustering(): void {
 
   // get the algorithm preferences from the right panel
   let distanceMetric: DistanceMetric
-  switch (getElementById<HTMLSelectElement>('distance-metrics').selectedIndex) {
+  switch (document.querySelector<HTMLSelectElement>(`#distance-metrics`)!.selectedIndex) {
     default:
     case 0:
       distanceMetric = DistanceMetric.EUCLIDEAN
@@ -386,8 +384,8 @@ function runKMeansClustering(): void {
   // run the clustering algorithm
   result = new KMeansClustering({
     metric: distanceMetric,
-    maximumIterations: parseFloat(getElementById<HTMLInputElement>('iterations').value),
-    k: parseFloat(getElementById<HTMLInputElement>('kMeansMaxClusterNumber').value)
+    maximumIterations: parseFloat(document.querySelector<HTMLInputElement>(`#iterations`)!.value),
+    k: parseFloat(document.querySelector<HTMLInputElement>(`#kMeansMaxClusterNumber`)!.value)
   }).run(graphComponent.graph)
 
   // visualize the result
@@ -404,7 +402,7 @@ function runHierarchicalClustering(cutoff?: number): void {
   const graph = graphComponent.graph
   // get the algorithm preferences from the right panel
   let linkage: LinkageMethod
-  switch (getElementById<HTMLSelectElement>('linkage').selectedIndex) {
+  switch (document.querySelector<HTMLSelectElement>(`#linkage`)!.selectedIndex) {
     default:
     case 0:
       linkage = LinkageMethod.SINGLE
@@ -547,7 +545,7 @@ function visualizeClusteringResult(): void {
  * Called when the clustering algorithm changes
  */
 function onAlgorithmChanged() {
-  const algorithmsComboBox = getElementById<HTMLSelectElement>('algorithms')
+  const algorithmsComboBox = document.querySelector<HTMLSelectElement>(`#algorithms`)!
   selectedAlgorithm = algorithmsComboBox.selectedIndex
 
   // determine the file name that will be used for loading the graph
@@ -577,12 +575,12 @@ function loadGraph(sampleData: any): void {
 
   const isEdgeBetweenness = selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS
   const styleFactory =
-    isEdgeBetweenness && getElementById<HTMLInputElement>('directed').checked
+    isEdgeBetweenness && document.querySelector<HTMLInputElement>(`#directed`)!.checked
       ? () => directedEdgeStyle
       : () => undefined // tell GraphBuilder to use default styles
 
   const labelsFactory =
-    isEdgeBetweenness && getElementById<HTMLInputElement>('edgeCosts').checked
+    isEdgeBetweenness && document.querySelector<HTMLInputElement>(`#edgeCosts`)!.checked
       ? () => Math.floor(Math.random() * 200 + 1).toString()
       : () => undefined // tell GraphBuilder not to create any labels
 
@@ -619,15 +617,15 @@ function loadGraph(sampleData: any): void {
 function initializeUI(): void {
   const graph = graphComponent.graph
 
-  const samplesComboBox = getElementById<HTMLSelectElement>('algorithms')
+  const samplesComboBox = document.querySelector<HTMLSelectElement>(`#algorithms`)!
   addNavigationButtons(samplesComboBox).addEventListener('change', onAlgorithmChanged)
 
   // edge-betweenness menu
-  const minInput = getElementById<HTMLInputElement>('ebMinClusterNumber')
-  minInput.addEventListener('change', input => {
+  const minInput = document.querySelector<HTMLInputElement>(`#ebMinClusterNumber`)!
+  minInput.addEventListener('change', _ => {
     const value = parseFloat(minInput.value)
     const maximumClusterNumber = parseFloat(
-      getElementById<HTMLInputElement>('ebMaxClusterNumber').value
+      document.querySelector<HTMLInputElement>(`#ebMaxClusterNumber`)!.value
     )
     if (isNaN(value) || value < 1) {
       alert('Number of clusters should be non-negative.')
@@ -649,11 +647,11 @@ function initializeUI(): void {
     runAlgorithm()
   })
 
-  const maxInput = getElementById<HTMLInputElement>('ebMaxClusterNumber')
-  maxInput.addEventListener('change', input => {
+  const maxInput = document.querySelector<HTMLInputElement>(`#ebMaxClusterNumber`)!
+  maxInput.addEventListener('change', _ => {
     const value = parseFloat(maxInput.value)
     const minimumClusterNumber = parseFloat(
-      getElementById<HTMLInputElement>('ebMinClusterNumber').value
+      document.querySelector<HTMLInputElement>(`#ebMinClusterNumber`)!.value
     )
     if (isNaN(value) || value < minimumClusterNumber || minimumClusterNumber < 1) {
       const message =
@@ -667,7 +665,7 @@ function initializeUI(): void {
     runAlgorithm()
   })
 
-  const considerEdgeDirection = getElementById<HTMLInputElement>('directed')
+  const considerEdgeDirection = document.querySelector<HTMLInputElement>(`#directed`)!
   considerEdgeDirection.addEventListener('click', () => {
     const isChecked = considerEdgeDirection.checked
     graph.edges.forEach(edge => {
@@ -677,7 +675,7 @@ function initializeUI(): void {
     runAlgorithm()
   })
 
-  const considerEdgeCosts = getElementById<HTMLInputElement>('edgeCosts')
+  const considerEdgeCosts = document.querySelector<HTMLInputElement>(`#edgeCosts`)!
   considerEdgeCosts.addEventListener('click', () => {
     graph.edges.forEach(edge => {
       if (considerEdgeCosts.checked) {
@@ -697,20 +695,20 @@ function initializeUI(): void {
   })
 
   // k-Means
-  const distanceCombobox = getElementById<HTMLSelectElement>('distance-metrics')
+  const distanceCombobox = document.querySelector<HTMLSelectElement>(`#distance-metrics`)!
   distanceCombobox.addEventListener('change', runAlgorithm)
-  const kmeansInput = getElementById<HTMLInputElement>('kMeansMaxClusterNumber')
-  kmeansInput.addEventListener('change', input => {
-    const value = parseFloat(kmeansInput.value)
+  const kMeansInput = document.querySelector<HTMLInputElement>(`#kMeansMaxClusterNumber`)!
+  kMeansInput.addEventListener('change', _ => {
+    const value = parseFloat(kMeansInput.value)
     if (isNaN(value) || value < 1) {
       alert('Desired maximum number of clusters should be greater than zero.')
-      kmeansInput.value = '1'
+      kMeansInput.value = '1'
       return
     }
     runAlgorithm()
   })
-  const iterationInput = getElementById<HTMLInputElement>('iterations')
-  iterationInput.addEventListener('change', input => {
+  const iterationInput = document.querySelector<HTMLInputElement>(`#iterations`)!
+  iterationInput.addEventListener('change', _ => {
     const value = parseFloat(iterationInput.value)
     if (isNaN(value) || value < 0) {
       alert('Desired maximum number of iterations should be non-negative.')
@@ -745,13 +743,13 @@ function removeClusterVisuals(): void {
  * @returns The edge weight
  */
 function getEdgeWeight(edge: IEdge): number {
-  if (!getElementById<HTMLInputElement>('edgeCosts').checked) {
+  if (!document.querySelector<HTMLInputElement>(`#edgeCosts`)!.checked) {
     return 1
   }
 
   // if edge has at least one label...
   if (edge.labels.size > 0) {
-    // ..try to return it's value
+    // ...try to return its value
     const edgeWeight = parseFloat(edge.labels.first().text)
     if (!isNaN(edgeWeight)) {
       return edgeWeight > 0 ? edgeWeight : 1
@@ -764,7 +762,7 @@ function getEdgeWeight(edge: IEdge): number {
  * Updates the elements of the UI's state and checks whether the buttons should be enabled or not.
  */
 function setUIDisabled(disabled: boolean): void {
-  const samplesComboBox = getElementById<HTMLSelectElement>('algorithms')
+  const samplesComboBox = document.querySelector<HTMLSelectElement>(`#algorithms`)!
   samplesComboBox.disabled = disabled
   ;(graphComponent.inputMode as GraphEditorInputMode).waiting = disabled
   busy = disabled
@@ -776,13 +774,13 @@ function setUIDisabled(disabled: boolean): void {
  */
 function updateInformationPanel(panelId: string): void {
   // set display none to all and then change only the desired one
-  getElementById<HTMLDivElement>('edge-betweenness').style.display = 'none'
-  getElementById<HTMLDivElement>('k-means').style.display = 'none'
-  getElementById<HTMLDivElement>('hierarchical').style.display = 'none'
-  getElementById<HTMLDivElement>('biconnected-components').style.display = 'none'
-  getElementById<HTMLDivElement>('louvain-modularity').style.display = 'none'
-  getElementById<HTMLDivElement>('label-propagation').style.display = 'none'
-  getElementById<HTMLDivElement>(panelId).style.display = 'inline-block'
+  document.querySelector<HTMLDivElement>(`#edge-betweenness`)!.style.display = 'none'
+  document.querySelector<HTMLDivElement>(`#k-means`)!.style.display = 'none'
+  document.querySelector<HTMLDivElement>(`#hierarchical`)!.style.display = 'none'
+  document.querySelector<HTMLDivElement>(`#biconnected-components`)!.style.display = 'none'
+  document.querySelector<HTMLDivElement>(`#louvain-modularity`)!.style.display = 'none'
+  document.querySelector<HTMLDivElement>(`#label-propagation`)!.style.display = 'none'
+  document.querySelector<HTMLDivElement>(`#${panelId}`)!.style.display = 'inline-block'
 }
 
 enum ClusteringAlgorithm {

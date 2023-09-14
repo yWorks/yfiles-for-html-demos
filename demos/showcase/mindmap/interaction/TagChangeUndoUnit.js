@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, UndoUnitBase } from 'yfiles'
+import { UndoUnitBase } from 'yfiles'
 
 /**
  * This class provides undo/redo for an operation for changing tag data.

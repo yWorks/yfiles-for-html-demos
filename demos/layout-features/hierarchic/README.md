@@ -23,7 +23,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-The [Layout Styles](../../showcase/layoutstyles/index.html) demo showcases more configuration options for the [hierarchic layout algorithm](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
+The [Layout Styles: Hierarchic Demo](../../showcase/layoutstyles/index.html?layout=hierarchic&sample=hierarchic) showcases more configuration options for the [hierarchic layout algorithm](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
 
 ### Documentation
 

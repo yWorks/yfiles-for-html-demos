@@ -90,7 +90,7 @@ async function run(): Promise<void> {
  */
 function initializeEditors(graphComponent: GraphComponent): void {
   templateEditor = CodeMirror.fromTextArea(
-    getElementById<HTMLTextAreaElement>('template-text-area'),
+    document.querySelector<HTMLTextAreaElement>(`#template-text-area`)!,
     {
       lineNumbers: true,
       mode: 'application/xml',
@@ -98,12 +98,15 @@ function initializeEditors(graphComponent: GraphComponent): void {
       lint: true
     } as CodeMirror.EditorConfiguration
   )
-  tagEditor = CodeMirror.fromTextArea(getElementById<HTMLTextAreaElement>('tag-text-area'), {
-    lineNumbers: true,
-    mode: 'application/json',
-    gutters: ['CodeMirror-lint-markers'],
-    lint: true
-  } as CodeMirror.EditorConfiguration)
+  tagEditor = CodeMirror.fromTextArea(
+    document.querySelector<HTMLTextAreaElement>(`#tag-text-area`)!,
+    {
+      lineNumbers: true,
+      mode: 'application/json',
+      gutters: ['CodeMirror-lint-markers'],
+      lint: true
+    } as CodeMirror.EditorConfiguration
+  )
 
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
@@ -121,15 +124,15 @@ function initializeEditors(graphComponent: GraphComponent): void {
       }
       tagEditor.setOption('readOnly', false)
       tagEditor.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-      getElementById<HTMLButtonElement>('apply-template-button').disabled = false
-      getElementById<HTMLButtonElement>('apply-tag-button').disabled = false
+      document.querySelector<HTMLButtonElement>(`#apply-template-button`)!.disabled = false
+      document.querySelector<HTMLButtonElement>(`#apply-tag-button`)!.disabled = false
     } else {
       templateEditor.setOption('readOnly', 'nocursor')
       tagEditor.setOption('readOnly', 'nocursor')
       templateEditor.setValue('Select a node to edit its template.')
       tagEditor.setValue('Select a node to edit its tag.')
-      getElementById<HTMLButtonElement>('apply-template-button').disabled = true
-      getElementById<HTMLButtonElement>('apply-tag-button').disabled = true
+      document.querySelector<HTMLButtonElement>(`#apply-template-button`)!.disabled = true
+      document.querySelector<HTMLButtonElement>(`#apply-tag-button`)!.disabled = true
     }
   })
 }
@@ -290,9 +293,9 @@ function applyTemplate(graphComponent: GraphComponent): void {
       graphComponent.graph.setStyle(node, style)
     }
 
-    getElementById('template-text-area-error').classList.remove('open-error')
+    document.querySelector<HTMLElement>(`#template-text-area-error`)!.classList.remove('open-error')
   } catch (err) {
-    const errorArea = getElementById('template-text-area-error')
+    const errorArea = document.querySelector<HTMLElement>(`#template-text-area-error`)!
     const errorString = (err as Error).toString().replace(templateText, '...template...')
     errorArea.setAttribute('title', errorString)
     errorArea.classList.add('open-error')
@@ -318,9 +321,9 @@ function applyTag(graphComponent: GraphComponent): void {
       node.tag = tag
     }
 
-    getElementById('tag-text-area-error').classList.remove('open-error')
+    document.querySelector<HTMLElement>(`#tag-text-area-error`)!.classList.remove('open-error')
   } catch (err) {
-    const errorArea = getElementById('tag-text-area-error')
+    const errorArea = document.querySelector<HTMLElement>(`#tag-text-area-error`)!
     errorArea.setAttribute('title', (err as Error).toString())
     errorArea.classList.add('open-error')
   }
@@ -328,19 +331,6 @@ function applyTag(graphComponent: GraphComponent): void {
   // Unlike replacing a node's style, replacing a node's tag does not automatically repaint
   // the graph view. Thus a repaint needs to be triggered manually here.
   graphComponent.invalidate()
-}
-
-/**
- * Opens a file chooser to read a GraphML file from the local file system.
- */
-async function openFile(graphComponent: GraphComponent): Promise<void> {
-  try {
-    await graphMLSupport.openFile(graphComponent.graph)
-    graphComponent.fitGraphBounds()
-  } catch (ignored) {
-    alert('The graph contains styles that are not supported by this demo.')
-    graphComponent.graph.clear()
-  }
 }
 
 /**
@@ -358,14 +348,6 @@ function initializeUI(graphComponent: GraphComponent): void {
   document
     .querySelector('#reload')!
     .addEventListener('click', () => resetSampleGraph(graphComponent))
-}
-
-/**
- * Returns a reference to the first element with the specified ID in the current document.
- * @returns A reference to the first element with the specified ID in the current document.
- */
-function getElementById<T extends HTMLElement>(id: string): T {
-  return document.getElementById(id) as T
 }
 
 run().then(finishLoading)

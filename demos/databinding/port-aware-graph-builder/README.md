@@ -16,9 +16,9 @@
 This demo automatically builds a graph from business data using a [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder).  
 The business data is stored in **JSON** format.
 
-By default, a [GraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-GraphBuilder) connects the graph elements directly. It does not support further specification of the connection points (ports). The [Graph Builder](../graphbuilder/index.html) demo shows such an unmodified GraphBuilder.
+By default, a [GraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-GraphBuilder) connects the graph elements directly. It does not support further specification of the connection points (ports). The [Graph Builder Demo](../../databinding/graphbuilder/index.html) shows such an unmodified GraphBuilder.
 
-In this sample the GraphBuilder is modified to support ports. These ports are created based on different node types. Edges are connected to these specific ports.
+In this sample, the GraphBuilder is modified to support ports. These ports are created based on different node types. Edges are connected to these specific ports.
 
 Additionally, the demo shows how to update a graph built with GraphBuilder when the corresponding business data changes. See the source code for details.
 

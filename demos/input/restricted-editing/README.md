@@ -25,7 +25,7 @@ While the above editing schemes are fairly coarse-grained, GraphEditorInputMode 
 
 ## Editing Operations
 
-Choose one of the available editing schemes `None`,`Moving Items`, and`All`.
+Choose one of the available editing schemes `None`, `Moving Items`, and `All`.
 
 None
 
@@ -33,7 +33,7 @@ All interactive editing operations are disabled, i.e., it is not possible to int
 
 Moving Items
 
-Interactive editing is disabled except for moving items, i.e.m it is possible to move selected nodes, edges, or bends to new positions.
+Interactive editing is disabled except for moving items, i.e., it is possible to move selected nodes, edges, or bends to new positions.
 
 All
 

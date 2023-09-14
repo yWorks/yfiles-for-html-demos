@@ -15,10 +15,10 @@
 
 This demo is a simple app that is used as the test candidate in the following testing demos:
 
-- [Cypress](../cypress/README.html)
-- [Playwright](../playwright/README.html)
-- [Selenium WebDriver](../selenium-webdriver/README.html)
+- [Cypress Demo](../../../demos-ts/testing/cypress/README.html)
+- [Playwright Demo](../../../demos-ts/testing/playwright/README.html)
+- [Selenium WebDriver Demo](../../../demos-ts/testing/selenium-webdriver/README.html)
 
-Please refer to the READMEs in the aforementioned demos for further guidance.
+Please refer to the README files in the aforementioned demos for further guidance.
 
-A simple way to make a yFiles App testable is making the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) available to the testing framework. In this app, this is achieved by setting the instantiated [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) as a property of the [Window](https://developer.mozilla.org/en-US/docs/Web/API/Window) object.
+A simple way to make a yFiles App testable is making the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) available to the testing framework. In this app, this is achieved by setting the instantiated [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) as a property of the `Window` object.

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CanvasComponent, Rect, ViewportLimiter } from 'yfiles'
+import { type CanvasComponent, Rect, ViewportLimiter } from 'yfiles'
 
 /**
  * A viewport limiter implementation that limits panning to the client area if the whole
@@ -38,7 +38,8 @@ export class ContentRectViewportLimiter extends ViewportLimiter {
     const leftX = canvas.contentRect.x
     const rightX = canvas.contentRect.bottomRight.x
     const suggestedX = suggestedViewport.x
-    // we want to be able to pan the graph out of the center, however keep 20% of the viewport displaying graph items
+    // We want to be able to pan the graph out of the center,
+    // and keep 20% of the viewport displaying graph items
     const limiterPaddingX = canvas.viewport.width * 0.8
 
     let newX: number
@@ -60,7 +61,8 @@ export class ContentRectViewportLimiter extends ViewportLimiter {
     const topY = canvas.contentRect.y
     const bottomY = canvas.contentRect.bottomLeft.y
     const suggestedY = suggestedViewport.y
-    // we want to be able to pan the graph out of the center, however, keep 20% of the viewport displaying graph items
+    // We want to be able to pan the graph out of the center,
+    // and keep 20% of the viewport displaying graph items
     const limiterPaddingY = canvas.viewport.height * 0.8
 
     let newY

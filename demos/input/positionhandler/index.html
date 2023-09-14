@@ -91,15 +91,14 @@
       <div class="demo-description__toggle-button" title="Toggle description"></div>
       <div class="demo-description__play-button">Start here</div>
 
-      <!-- prettier-ignore -->
       <div class="demo-description__content">
         <h1>Position Handler Demo</h1>
 
         <p>This demo shows how to customize and restrict the movement behavior of nodes.</p>
 
         <p>
-          This is done with custom implementations of the interface <a href="https://docs.yworks.com/yfileshtml/#/api/IPositionHandler" target="_blank">IPositionHandler</a> that are added to the
-          lookup of the nodes.
+          This is done with custom implementations of the interface
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IPositionHandler" target="_blank">IPositionHandler</a> that are added to the lookup of the nodes.
         </p>
 
         <h2>Things to Try</h2>
@@ -108,20 +107,18 @@
 
         <h2>Node Types</h2>
         <ul>
+          <li><em class="demo-red demo-bold">Red nodes</em> are unmovable.</li>
           <li>
-            <em class="demo-red demo-bold">Red nodes</em> are unmovable.
+            <em class="demo-green demo-bold">Green nodes</em> move only vertically or horizontally
+            from the current start point.
           </li>
           <li>
-            <em class="demo-green demo-bold">Green nodes</em> move only vertically or horizontally from the current
-            start point.
+            <em class="demo-orange demo-bold">Orange nodes</em> move freely within the displayed
+            rectangle but cannot leave it.
           </li>
           <li>
-            <em class="demo-orange demo-bold">Orange nodes</em> move freely within the displayed rectangle but cannot
-            leave it.
-          </li>
-          <li>
-            <em class="demo-blue demo-bold">Blue nodes</em> combine the green and orange restrictions: they move only
-            vertically or horizontally and cannot leave the rectangle.
+            <em class="demo-blue demo-bold">Blue nodes</em> combine the green and orange
+            restrictions: they move only vertically or horizontally and cannot leave the rectangle.
           </li>
         </ul>
       </div>

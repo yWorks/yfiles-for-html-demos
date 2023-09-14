@@ -2749,14 +2749,14 @@ function getDemoData() {
     {
       id: 'file-operations',
       name: 'File Operations',
-      demoPath: 'view/fileoperations/index.html',
-      summary: 'shows various ways to open and save a graph as GraphML.',
+      demoPath: 'application-features/file-operations/index.html',
+      summary: 'Shows various ways to open and save a graph as GraphML.',
       category: 'view',
       type: 'integration',
-      thumbnailPath: 'resources/image/fileoperations.png',
-      sourcePath: 'view/fileoperations/FileOperationsDemo.js',
+      thumbnailPath: 'resources/image/file-operations.png',
+      sourcePath: 'application-features/file-operations/FileOperationsDemo.js',
       tags: ['i/o', 'export', 'graphml'],
-      keywords: ['load', 'save', 'io']
+      keywords: ['load', 'save', 'io', 'json', 'graphbuilder']
     },
     {
       id: 'events-viewer',

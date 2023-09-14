@@ -22,4 +22,4 @@ This demo shows how to create a simple custom arrow for edges.
 
 ## Related Demos
 
-- [Tutorial: Custom Arrow](../../tutorial-style-implementation-edge/12-custom-arrow/index.html)
+- [Step 12 Custom Arrow](../../tutorial-style-implementation-edge/12-custom-arrow/index.html)

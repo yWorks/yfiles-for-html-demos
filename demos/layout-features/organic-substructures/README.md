@@ -27,7 +27,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-See the [Organic Substructures Demo](../../layout/organic-substructures/) for an extensive presentation of the substructures functionality.
+See the [Organic Substructures Demo](../../layout/organic-substructures/index.html) for an extensive presentation of the substructures functionality.
 
 ### Documentation
 

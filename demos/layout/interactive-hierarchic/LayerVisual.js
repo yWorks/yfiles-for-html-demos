@@ -108,7 +108,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
     minX -= margin
     maxX += margin
     maxs[maxs.length - 1] += margin
-    if (nodes.getEnumerator().moveNext()) {
+    if (nodes.some()) {
       mins[0] -= margin
       minX -= margin
       maxX += margin

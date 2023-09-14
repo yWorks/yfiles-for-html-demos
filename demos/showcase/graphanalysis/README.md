@@ -19,7 +19,7 @@ The toolbar provides access to the most important settings of the algorithms.
 
 Since not every algorithm presents well for every type of graph, we provide several suitable sample graphs.
 
-The interactive editing capabilities of the graph component of this demo are explained in the [Graph Editor demo](../../view/grapheditor/).
+The interactive editing capabilities of the graph component of this demo are explained in the [Graph Editor Demo](../../view/grapheditor/index.html).
 
 ### Things to Try
 

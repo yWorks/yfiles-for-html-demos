@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EventRecognizers,
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphInputMode,
-  GraphItemTypes,
-  ICommand,
-  IModelItem
-} from 'yfiles'
+import { EventRecognizers, GraphItemTypes, ICommand, IModelItem } from 'yfiles'
 
 /**
  * Disables the selection of multiple graph items using mouse/keyboard gestures.

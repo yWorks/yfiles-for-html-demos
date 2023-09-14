@@ -29,7 +29,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-You can also take a look at the more involved [Critical Paths](../../layout/criticalpaths/index.html) Demo which shows how important paths can be emphasised by the hierarchic layout.
+You can also take a look at the more involved [Critical Paths Demo](../../layout/criticalpaths/index.html) which shows how important paths can be emphasised by the hierarchic layout.
 
 ### Documentation
 

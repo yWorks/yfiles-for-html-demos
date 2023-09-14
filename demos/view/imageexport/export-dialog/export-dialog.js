@@ -26,4 +26,63 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export * from '../../svgexport/export-dialog/export-dialog.js'
+import './export-dialog.css'
+
+/**
+ * Initializes the export dialog.
+ * @param {!string} heading The heading of the dialog.
+ * @param {!function} saveCallback A callback that is called after the save button is pressed.
+ */
+export function initializeExportDialog(heading, saveCallback) {
+  const dialog = document.querySelector('#export-dialog')
+  dialog.innerHTML = `<div class="export-dialog">
+  <div class="outer">
+    <h2>${heading}</h2>
+    <div class="export-preview-container">
+      <div id="preview-container"></div>
+    </div>
+    <button id="save-button">Save</button>
+    <button id="close-button">Close</button>
+  </div>
+</div>`
+  dialog.style.display = 'none'
+
+  const saveButton = document.querySelector('#save-button')
+  const closeButton = document.querySelector('#close-button')
+  const exportButton = document.querySelector('#export-button')
+  const previewContainer = document.querySelector('#preview-container')
+
+  saveButton.addEventListener('click', () => {
+    const previewElement = previewContainer.children.item(0)
+    saveCallback(previewElement)
+  })
+
+  closeButton.addEventListener('click', _ => {
+    // Hide the popup
+    dialog.style.display = 'none'
+    // Remove the exported SVG element from the popup since it is no longer needed
+    previewContainer.innerHTML = ''
+    // Re-enable the export button
+    exportButton.disabled = false
+  })
+}
+
+/**
+ * Shows the export dialog.
+ * @param {!Element} previewElement
+ */
+export function showExportDialog(previewElement) {
+  const previewContainer = document.querySelector('#preview-container')
+  previewContainer.appendChild(previewElement)
+
+  const dialog = document.querySelector('#export-dialog')
+  dialog.style.display = 'block'
+}
+
+/**
+ * Hides the export dialog.
+ */
+export function hideExportDialog() {
+  const dialog = document.querySelector('#export-dialog')
+  dialog.style.display = 'none'
+}

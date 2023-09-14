@@ -26,4 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export * from '../svgexport/aspect-ratio'
+import type { IGraph } from 'yfiles'
+import {
+  EventRecognizers,
+  HandlePositions,
+  ImageNodeStyle,
+  IReshapeHandler,
+  NodeReshapeHandleProvider
+} from 'yfiles'
+
+/**
+ * Configures node-resize behavior to force resize operations to keep the aspect ratio of the
+ * respective nodes.
+ */
+export function retainAspectRatio(graph: IGraph): void {
+  graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+    node => node.style instanceof ImageNodeStyle,
+    node => {
+      const keepAspectRatio = new NodeReshapeHandleProvider(
+        node,
+        node.lookup(IReshapeHandler.$class)!,
+        HandlePositions.CORNERS
+      )
+      keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
+      return keepAspectRatio
+    }
+  )
+}

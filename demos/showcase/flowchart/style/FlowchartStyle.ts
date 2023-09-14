@@ -1094,8 +1094,8 @@ function getIntersection(edge: IEdge, node: INode): Point | null {
 
   let lastBend: Point = firstPort.location
   let bend: Point | null = null
-  for (const enumerator = bends.getEnumerator(); enumerator.moveNext(); ) {
-    bend = enumerator.current.location.toPoint()
+  for (const b of bends) {
+    bend = b.location.toPoint()
 
     if (!node.layout.contains(bend)) {
       break

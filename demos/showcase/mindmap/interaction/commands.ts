@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import {
-  FilteredGraphWrapper,
-  GraphComponent,
+  type FilteredGraphWrapper,
+  type GraphComponent,
   GraphEditorInputMode,
-  IEdgeStyle,
-  ILabelStyle,
-  INode,
-  INodeStyle,
+  type IEdgeStyle,
+  type ILabelStyle,
+  type INode,
+  type INodeStyle,
   Key
 } from 'yfiles'
 import { isInLayout, layoutTree } from '../mind-map-layout'
@@ -143,7 +143,7 @@ export function canExecuteToggleCollapseState(
 
 /**
  * Executes the collapse/expand node command.
- * When the node - or alternatively the selected node - was expanded,
+ * When the node - or alternatively, the selected node - was expanded,
  * it is collapsed and all its descendants are hidden.
  * In case it was collapsed, its descendants become visible.
  * @see canExecuteToggleCollapseState
@@ -159,12 +159,16 @@ export function executeToggleCollapseState(graphComponent: GraphComponent, node?
 /**
  * Collapses/expands a node and updates the layout.
  * When a node is expanded, the subtree nodes appear at the center position
- * of the parent node and move to their positions in the updated layout afterwards.
+ * of the parent node and move to their positions in the updated layout afterward.
  * When it is collapsed, the subtree moves to the parent node. That way, a smooth transition between
  * collapsed and expanded state is possible.
  * @see executeToggleCollapseState
  */
-async function collapseNode(node: INode, collapsed: boolean, graphComponent: GraphComponent) {
+async function collapseNode(
+  node: INode,
+  collapsed: boolean,
+  graphComponent: GraphComponent
+): Promise<void> {
   const fullGraph = getFullGraph(graphComponent)
 
   const compoundEdit = graphComponent.graph.beginEdit(
@@ -221,7 +225,7 @@ export async function executeCreateChild(
   graphComponent: GraphComponent
 ): Promise<boolean> {
   const fullGraph = getFullGraph(graphComponent)
-  const parent = graphComponent.currentItem as INode
+  const parent = graphComponent.currentItem as INode | null
 
   const compoundEdit = graphComponent.graph.beginEdit('CreateChild', 'CreateChild')
 
@@ -236,7 +240,7 @@ export async function executeCreateChild(
     await layoutTree(graphComponent)
 
     // open label editor after the child node is created
-    const inputMode = graphComponent.inputMode as GraphEditorInputMode
+    const inputMode = graphComponent.inputMode as GraphEditorInputMode | null
     if (inputMode && node.labels.size > 0) {
       void inputMode.editLabel(node.labels.get(0))
     }
@@ -389,7 +393,7 @@ export async function changeStateLabel(
   stateLabelIndex: number,
   graphComponent: GraphComponent
 ): Promise<void> {
-  const node = graphComponent.currentItem as INode
+  const node = graphComponent.currentItem as INode | null
   if (node) {
     const compoundEdit = getFullGraph(graphComponent).beginEdit(
       'Set State Label',

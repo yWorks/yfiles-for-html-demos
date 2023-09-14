@@ -96,7 +96,6 @@
       </div>
     </header>
 
-    <!-- prettier-ignore -->
     <aside class="demo-page__description">
       <div class="demo-description__header">
         <a href="https://www.yworks.com/products/yfiles" class="demo-description__logo"></a>
@@ -104,22 +103,26 @@
       <div class="demo-description__content">
         <h1>Web Worker Demo (UMD)</h1>
         <p>
-          This demo shows how to run a yFiles layout algorithm in a <a
-          href="https://html.spec.whatwg.org/multipage/workers.html" target='_blank'>Web Worker</a> task in order to
-          prevent the layout calculation from blocking the UI.
+          This demo shows how to run a yFiles layout algorithm in a
+          <a href="https://html.spec.whatwg.org/multipage/workers.html" target="_blank"
+            >Web Worker</a
+          >
+          task in order to prevent the layout calculation from blocking the UI.
         </p>
         <p>This demo loads yFiles using the AMD loader require.js</p>
         <p>
           The graph, layout, and layout data are configured in the main thread and transferred to
-          the web worker using class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>. The actual layout calculation is performed in
-          <em>WorkerLayout.js</em> with class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> on the web worker thread.
+          the web worker using class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>. The actual layout
+          calculation is performed in <em>WorkerLayout.js</em> with class
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> on the web worker thread.
         </p>
 
         <h2>Things to Try</h2>
 
         <ul>
           <li>
-            Modify the graph structure by adding/removing nodes and edges, and re-run the web worker layout.
+            Modify the graph structure by adding/removing nodes and edges, and re-run the web worker
+            layout.
           </li>
           <li>
             Observe the loading animation which continues while the layout algorithm is working.

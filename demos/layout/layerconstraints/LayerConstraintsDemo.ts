@@ -45,6 +45,7 @@ import {
   PropertyChangedEventArgs,
   Rect,
   Size,
+  StringTemplateNodeStyle,
   TemplateNodeStyle
 } from 'yfiles'
 
@@ -53,6 +54,7 @@ import RandomGraphGenerator from 'demo-utils/RandomGraphGenerator'
 import { applyDemoTheme } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import { constraintNodeStyle } from './style-templates'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -200,7 +202,7 @@ function initializeGraph(graph: IGraph): void {
   // minimum size for nodes
   const size = new Size(60, 50)
 
-  const defaultStyle = new TemplateNodeStyle('ConstraintNodeStyle')
+  const defaultStyle = new StringTemplateNodeStyle(constraintNodeStyle)
   defaultStyle.minimumSize = size
   // set the style as the default for all new nodes
   graph.nodeDefaults.style = defaultStyle
@@ -334,7 +336,7 @@ function initializeConverters(): void {
     constraints ? 'hidden' : 'visible'
 
   // create an object to store the converter functions
-  TemplateNodeStyle.CONVERTERS.layerconstraintsdemo = {
+  TemplateNodeStyle.CONVERTERS.constraintsdemos = {
     backgroundconverter,
     textcolorconverter,
     constraintconverter,
@@ -343,7 +345,7 @@ function initializeConverters(): void {
   }
 }
 
-// property changed support - needed for data-binding to the Control Style
+// property changed support - needed for data-binding to the template style
 const VALUE_CHANGED_EVENT_ARGS = new PropertyChangedEventArgs('value')
 const CONSTRAINTS_CHANGED_EVENT_ARGS = new PropertyChangedEventArgs('constraints')
 

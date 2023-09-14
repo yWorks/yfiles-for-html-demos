@@ -28,8 +28,8 @@
  ***************************************************************************/
 import {
   IconLabelStyleRenderer,
-  ILabelModelParameter,
-  INode,
+  type ILabelModelParameter,
+  type INode,
   Insets,
   InteriorLabelModel,
   Size

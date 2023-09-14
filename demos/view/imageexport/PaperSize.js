@@ -26,55 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { StorageLocation } from 'yfiles'
-
 /**
- * Saves the given string to a Web Storage, alternatively either to the Local
- * Storage or to the Session Storage.
+ * This demo supports specific PDF output sizes.
  */
-export default class SaveToWebStorageOperation {
-  public allowOverwrite = true
-
-  /**
-   * @param storageLocation The storage location.
-   * @param uri The uri that is used in the storage key.
-   */
-  constructor(private storageLocation: StorageLocation, private uri: string) {}
-
-  /**
-   * Checks if the operation can be executed.
-   */
-  isAvailable(): boolean {
-    return !isUndefined(SaveToWebStorageOperation.getStorage(this.storageLocation))
-  }
-
-  /**
-   * Saves the given content to the file with the given name.
-   * @returns A Promise that resolves when the save operation is complete.
-   */
-  save(fileContent: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const storage = SaveToWebStorageOperation.getStorage(this.storageLocation)
-      const key = `${this.uri}/example.graphml`
-      if (isUndefined(storage.getItem(key)) || this.allowOverwrite) {
-        storage.setItem(key, fileContent)
-        resolve()
-      } else {
-        reject(new Error(`The key '${key}' already exists and overwriting is not allowed.`))
-      }
-    })
-  }
-
-  /**
-   * Gets the storage location.
-   */
-  static getStorage(storageLocation: StorageLocation): Storage {
-    return storageLocation === StorageLocation.LOCAL_STORAGE
-      ? window.localStorage
-      : window.sessionStorage
-  }
-}
-
-function isUndefined(value: any): boolean {
-  return typeof value === 'undefined'
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const PaperSize = {
+  A3: 'A3',
+  A4: 'A4',
+  A5: 'A5',
+  A6: 'A6',
+  LETTER: 'Letter',
+  AUTO: 'Auto'
 }
