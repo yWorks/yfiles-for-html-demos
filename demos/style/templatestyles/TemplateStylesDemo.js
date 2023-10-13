@@ -276,11 +276,11 @@ function createGraph(graph) {
     defaults: graph.edgeDefaults
   })
   // label edges that point to assistants
-  edgeCreator.addEdgeCreatedListener((sender, args) => {
-    const edge = args.item
+  edgeCreator.addEdgeCreatedListener((_, evt) => {
+    const edge = evt.item
     const targetData = edge.targetNode.tag
     if (targetData && targetData.assistant) {
-      args.graph.addLabel(edge, 'Assistant')
+      evt.graph.addLabel(edge, 'Assistant')
     }
   })
   adjacencyNodesSource.addSuccessorIds(data => data.subordinates, edgeCreator)

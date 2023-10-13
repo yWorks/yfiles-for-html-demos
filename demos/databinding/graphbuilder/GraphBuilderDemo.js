@@ -67,7 +67,7 @@ import { applyDemoTheme } from 'demo-resources/demo-styles'
  * @property {Array.<NodesSourceDefinition>} nodesSources
  * @property {Array.<EdgesSourceDefinition>} edgesSources
  */
-const samplesComboBox = document.getElementById('samples-combobox')
+const samplesComboBox = document.querySelector('#samples-combobox')
 
 const samples = SamplesData
 
@@ -130,13 +130,13 @@ async function run() {
  * Bind various UI elements to the appropriate actions.
  */
 function initializeUI() {
-  document.getElementById('build-graph-button').addEventListener('click', async () => {
+  document.querySelector('#build-graph-button').addEventListener('click', async () => {
     samplesComboBox.disabled = true
     await buildGraphFromData(false)
     samplesComboBox.disabled = false
   })
 
-  document.getElementById('update-graph-button').addEventListener('click', async () => {
+  document.querySelector('#update-graph-button').addEventListener('click', async () => {
     samplesComboBox.disabled = true
     await buildGraphFromData(true)
     samplesComboBox.disabled = false
@@ -273,8 +273,8 @@ function removeAllChildren(htmlElement) {
  * @returns {!object}
  */
 function createSourcesLists(sourcesFactory) {
-  const nodeSourcesListRootElement = document.getElementById('nodesSourcesList')
-  const edgesSourcesListRootElement = document.getElementById('edgesSourcesList')
+  const nodeSourcesListRootElement = document.querySelector('#nodesSourcesList')
+  const edgesSourcesListRootElement = document.querySelector('#edgesSourcesList')
   removeAllChildren(nodeSourcesListRootElement)
   removeAllChildren(edgesSourcesListRootElement)
 

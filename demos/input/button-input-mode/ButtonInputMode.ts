@@ -62,6 +62,7 @@ import {
   INode,
   InputModeBase,
   InteriorStretchLabelModel,
+  IObservableCollection,
   IOrientedRectangle,
   IPort,
   IRenderContext,
@@ -103,7 +104,7 @@ import {
   YObject
 } from 'yfiles'
 
-export type QueryButtonsListener = (sender: ButtonInputMode, evt: QueryButtonsEvent) => void
+export type QueryButtonsListener = (_: ButtonInputMode, evt: QueryButtonsEvent) => void
 export type ButtonHoverListener = (button: Button) => void
 export type ButtonActionListener = (button: Button) => void
 
@@ -319,8 +320,8 @@ export class ButtonInputMode extends InputModeBase {
     return buttonLabelManager
   }
 
-  private get buttonLabels(): ObservableCollection<Button> {
-    return this.buttonLabelManager.model as ObservableCollection<Button>
+  private get buttonLabels(): IObservableCollection<Button> {
+    return this.buttonLabelManager.model!
   }
 
   /**
@@ -364,7 +365,7 @@ export class ButtonInputMode extends InputModeBase {
             return Rect.add(previousValue, boundsProvider.getBounds(canvasContext))
           }, Rect.EMPTY)
           // get the bounds for the owner of the buttons
-          const itemBoundsProvider = item.lookup(IBoundsProvider.$class) as IBoundsProvider
+          const itemBoundsProvider = item.lookup(IBoundsProvider.$class)!
           const itemBounds = itemBoundsProvider.getBounds(canvasContext)
           // pan the viewport so both are visible
           this.inputModeContext?.canvasComponent?.ensureVisible(Rect.add(itemBounds, wholeBounds))
@@ -425,10 +426,7 @@ export class ButtonInputMode extends InputModeBase {
    * @param listener The listener to add.
    */
   addQueryButtonsListener(listener: QueryButtonsListener) {
-    this.queryButtonsListener = delegate.combine(
-      this.queryButtonsListener,
-      listener
-    ) as QueryButtonsListener
+    this.queryButtonsListener = delegate.combine(this.queryButtonsListener, listener)
   }
 
   /**
@@ -436,10 +434,7 @@ export class ButtonInputMode extends InputModeBase {
    * @param listener The listener to remove.
    */
   removeQueryButtonsListener(listener: QueryButtonsListener) {
-    this.queryButtonsListener = delegate.remove(
-      this.queryButtonsListener,
-      listener
-    ) as QueryButtonsListener
+    this.queryButtonsListener = delegate.remove(this.queryButtonsListener, listener)
   }
 
   private getHitButtons(context: IInputModeContext, location: Point) {

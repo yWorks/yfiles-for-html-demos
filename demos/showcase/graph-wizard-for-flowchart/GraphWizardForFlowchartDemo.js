@@ -58,7 +58,7 @@ async function run() {
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
-  legendDiv = document.getElementById('legend')
+  legendDiv = document.querySelector('#legend')
   configuration = new FlowchartConfiguration(layoutOrientation)
 
   // enable save/load options

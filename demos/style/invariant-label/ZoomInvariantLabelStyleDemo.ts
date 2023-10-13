@@ -27,16 +27,18 @@
  **
  ***************************************************************************/
 import {
+  Class,
   DefaultLabelStyle,
-  FreeEdgeLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
+  HierarchicLayout,
   IGraph,
   ILabelStyle,
+  LayoutExecutor,
   License,
-  Rect,
-  Size
+  Rect
 } from 'yfiles'
 import {
   FitOwnerLabelStyle,
@@ -48,6 +50,8 @@ import {
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -59,21 +63,61 @@ async function run(): Promise<void> {
   })
 
   initDemoStyles(graphComponent.graph)
+  // For the general appearance of a label, we use the common demo defaults set above
+  const baseLabelStyle = graphComponent.graph.nodeDefaults.labels.style as DefaultLabelStyle
+  // Initially, use FIXED_BELOW_THRESHOLD mode
+  setLabelStyle(graphComponent.graph, 'FIXED_BELOW_THRESHOLD', baseLabelStyle)
+
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({
+      orthogonalRouting: true,
+      minimumLayerDistance: 100,
+      edgeToEdgeDistance: 100,
+      nodeToEdgeDistance: 100,
+      considerNodeLabels: true,
+      integratedEdgeLabeling: true
+    })
+  )
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
 
   // Instances of {@link ZoomInvariantLabelStyleBase} should not be shared
   graphComponent.graph.nodeDefaults.labels.shareStyleInstance = false
   graphComponent.graph.edgeDefaults.labels.shareStyleInstance = false
 
-  // For the general appearance of a label, we use the common demo defaults set above
-  const baseLabelStyle = graphComponent.graph.nodeDefaults.labels.style as DefaultLabelStyle
-
-  // Initially, use FIXED_BELOW_THRESHOLD mode
-  setLabelStyle(graphComponent.graph, 'FIXED_BELOW_THRESHOLD', baseLabelStyle)
-
-  createGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
-
   initializeUI(graphComponent)
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  const nodesSource = graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
+  nodesSource.nodeCreator.createLabelBinding(item => item.label)
+  nodesSource.nodeCreator.layoutProvider = item =>
+    item.tag === 'level 1' ? new Rect(0, 0, 100, 70) : new Rect(0, 0, 30, 70)
+
+  graphBuilder
+    .createEdgesSource({
+      data: graphData.edgeList,
+      sourceId: item => item.source,
+      targetId: item => item.target
+    })
+    .edgeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -112,43 +156,6 @@ function createLabelStyle(mode: string, baseLabelStyle: ILabelStyle) {
 }
 
 /**
- * Creates a sample graph.
- */
-function createGraph(graph: IGraph): void {
-  graph.nodeDefaults.size = new Size(60, 60)
-  graph.edgeDefaults.labels.layoutParameter = new FreeEdgeLabelModel({
-    edgeRelativeAngle: true
-  }).createEdgeAnchored({ distance: 10 })
-
-  const n0 = graph.createNode({ layout: new Rect(110, -500, 120, 60), labels: ['Eric Joplin'] })
-  const n1 = graph.createNode({ layout: new Rect(-100, -300, 40, 60), labels: ['Gray Roberts'] })
-  const n2 = graph.createNode({ layout: new Rect(150, -300, 40, 60), labels: ['Linda Newland'] })
-  const n3 = graph.createNode({ layout: new Rect(450, -300, 40, 60), labels: ['David Kerry'] })
-  const n4 = graph.createNode({ layout: new Rect(-470, -100, 60, 60), labels: ['Dorothy Turner'] })
-  const n5 = graph.createNode({ layout: new Rect(-280, -100, 60, 60), labels: ['Martin Cornett'] })
-  const n6 = graph.createNode({ layout: new Rect(-110, -100, 60, 60), labels: ['Howard Meyer'] })
-  const n7 = graph.createNode({ layout: new Rect(140, -100, 60, 60), labels: ['Valerie Burnett'] })
-  const n8 = graph.createNode({ layout: new Rect(440, -100, 60, 60), labels: ['Kim Finn'] })
-  const n9 = graph.createNode({
-    layout: new Rect(-140, 100, 120, 60),
-    labels: ['Laurie Aitken Müller']
-  })
-  const n10 = graph.createNode({ layout: new Rect(-400, 100, 120, 60), labels: ['Rana Oxborough'] })
-
-  graph.createEdge({ source: n0, target: n1, labels: ['Friend to'] })
-  graph.createEdge({ source: n0, target: n2, labels: ['Like to work with'] })
-  graph.createEdge({ source: n0, target: n3, labels: ['Have problem with'] })
-  graph.createEdge({ source: n3, target: n8, labels: ['Friend to'] })
-  graph.createEdge({ source: n2, target: n7, labels: ['Have problem with'] })
-  graph.createEdge({ source: n1, target: n6, labels: ['Friend to'] })
-  graph.createEdge({ source: n1, target: n5, labels: ['Like to work with'] })
-  graph.createEdge({ source: n1, target: n4, labels: ['Friend to'] })
-  graph.createEdge({ source: n4, target: n10, labels: ['Friend to'] })
-  graph.createEdge({ source: n5, target: n10, labels: ['Friend to'] })
-  graph.createEdge({ source: n6, target: n9, labels: ['Have problem with'] })
-}
-
-/**
  * Wires up the UI.
  */
 function initializeUI(graphComponent: GraphComponent): void {
@@ -161,7 +168,7 @@ function initializeUI(graphComponent: GraphComponent): void {
     { value: 'FIT_OWNER', text: "Fit into the label's owner" },
     { value: 'DEFAULT', text: 'Default behaviour' }
   )
-  addNavigationButtons(modeSelectElement).addEventListener('change', evt => {
+  addNavigationButtons(modeSelectElement).addEventListener('change', _evt => {
     setLabelStyle(graphComponent.graph, modeSelectElement.value)
 
     // hide the threshold controls if not applicable for the selected zoom style

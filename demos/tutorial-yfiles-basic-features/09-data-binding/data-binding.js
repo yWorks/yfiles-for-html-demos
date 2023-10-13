@@ -53,18 +53,18 @@ export function enableDataBinding(graphComponent, graphEditorInputMode) {
   graph.createNode({ layout: new Rect(0, 80, 30, 30), tag: new Date() })
 
   // In this example we subscribe to the low-level node creation event to record the node creation time.
-  graph.addNodeCreatedListener((source, eventArgs) => {
+  graph.addNodeCreatedListener((_, evt) => {
     // Store the current time as node creation time
-    const node = eventArgs.item
+    const node = evt.item
     // if there is no tag associated with the node, already, add one
     if (node.tag === null) {
       node.tag = new Date()
     }
   })
 
-  graphEditorInputMode.addNodeCreatedListener((sender, eventArgs) => {
+  graphEditorInputMode.addNodeCreatedListener((_, evt) => {
     // Store the current time as node creation time
-    const node = eventArgs.item
+    const node = evt.item
     node.tag = new Date()
   })
 }
@@ -84,19 +84,19 @@ export function enableDataBinding(graphComponent, graphEditorInputMode) {
  */
 export function setupTooltips(graphEditorInputMode) {
   graphEditorInputMode.toolTipItems = GraphItemTypes.NODE
-  graphEditorInputMode.addQueryItemToolTipListener((src, eventArgs) => {
-    if (eventArgs.handled) {
+  graphEditorInputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled) {
       // Tooltip content has already been assigned -> nothing to do
       return
     }
-    const item = eventArgs.item
+    const item = evt.item
     if (item instanceof INode) {
       const node = item
       // Set the tooltip content
-      eventArgs.toolTip = node.tag ? node.tag.toLocaleString() : 'Not set'
+      evt.toolTip = node.tag ? node.tag.toLocaleString() : 'Not set'
 
       // Indicate that the tooltip content has been set
-      eventArgs.handled = true
+      evt.handled = true
     }
   })
 
@@ -134,16 +134,16 @@ export function setupContextMenu(graphComponent, graphEditorInputMode) {
   })
 
   // Add item-specific menu entries
-  graphEditorInputMode.addPopulateItemContextMenuListener((sender, args) => {
+  graphEditorInputMode.addPopulateItemContextMenuListener((_, evt) => {
     contextMenu.clearItems()
-    if (INode.isInstance(args.item)) {
+    if (INode.isInstance(evt.item)) {
       // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
       // for this item (or more generally, the location provided by the event args).
       // If you don't want to show a context menu for some locations, set 'false' in this cases.
-      args.showMenu = true
+      evt.showMenu = true
 
       contextMenu.addMenuItem('Set to now', () => {
-        const node = args.item
+        const node = evt.item
         node.tag = new Date()
       })
     }

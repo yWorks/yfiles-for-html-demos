@@ -60,14 +60,14 @@ export function configureInteraction(graphComponent: GraphComponent): void {
   })
 
   // validate the label text before the label is added so that only positive numbers are allowed as text
-  mode.addValidateLabelTextListener((sender, args) => {
-    if (args.label.owner instanceof IEdge) {
-      args.cancel = !validationPattern.test(args.newText)
+  mode.addValidateLabelTextListener((_, evt) => {
+    if (evt.label.owner instanceof IEdge) {
+      evt.cancel = !validationPattern.test(evt.newText)
     }
   })
 
-  mode.addLabelTextChangedListener(async (sender, args): Promise<void> => {
-    const label = args.item
+  mode.addLabelTextChangedListener(async (_, evt): Promise<void> => {
+    const label = evt.item
     if (label.owner instanceof IEdge) {
       // calculate the new thickness from the label text and update the edge's data
       updateEdgeThickness(label.owner, getThickness(label.text), graphComponent)

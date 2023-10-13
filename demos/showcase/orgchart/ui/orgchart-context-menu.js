@@ -52,8 +52,8 @@ export function configureContextMenu(graphComponent, orgChartGraph) {
 
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((sender, args) => {
-    populateContextMenu(graphComponent, orgChartGraph, contextMenu, args)
+  inputMode.addPopulateItemContextMenuListener((_, evt) => {
+    populateContextMenu(graphComponent, orgChartGraph, contextMenu, evt)
   })
 
   // Add a listener that closes the menu when the input mode requests this

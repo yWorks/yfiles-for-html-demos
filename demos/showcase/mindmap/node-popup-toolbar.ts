@@ -65,7 +65,7 @@ export function initializeNodePopups(graphComponent: GraphComponent): void {
     ExteriorLabelModel.NORTH
   )
 
-  graphComponent.selection.addItemSelectionChangedListener((sender, evt) => {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
     hidePopup(graphComponent)
     const selectedItem = evt.item
     if (selectedItem instanceof INode && evt.itemSelected) {
@@ -74,11 +74,11 @@ export function initializeNodePopups(graphComponent: GraphComponent): void {
   })
 
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
-  inputMode.addItemRightClickedListener((sender, event) => {
-    if (!(event.item instanceof INode)) {
+  inputMode.addItemRightClickedListener((_, evt) => {
+    if (!(evt.item instanceof INode)) {
       return
     }
-    showToolbar(event.item)
+    showToolbar(evt.item)
   })
 
   inputMode.moveInputMode.addDragStartedListener(_ => {
@@ -277,7 +277,7 @@ function createColorPicker(graphComponent: GraphComponent): void {
     '#2d4d3a'
   ]
 
-  const colorContainer = document.getElementById('color-picker-colors') as HTMLDivElement
+  const colorContainer = document.querySelector<HTMLDivElement>('#color-picker-colors')!
   colorPickerColors.forEach(color => {
     const colorButton = document.createElement('button')
     colorButton.setAttribute('data-color', color)
@@ -303,7 +303,7 @@ function createColorPicker(graphComponent: GraphComponent): void {
  * Adds the necessary buttons and registers the listeners for the change of the icon.
  */
 function createStateIconPicker(graphComponent: GraphComponent): void {
-  const iconContainer = document.getElementById('state-icon-picker-icons') as HTMLDivElement
+  const iconContainer = document.querySelector<HTMLDivElement>('#state-icon-picker-icons')!
   stateIcons.forEach((stateIcon, i) => {
     const stateButton = document.createElement('button')
     stateButton.setAttribute(

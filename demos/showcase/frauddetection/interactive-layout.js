@@ -99,17 +99,17 @@ function prepareInteraction() {
  */
 function prepareStructureChanges() {
   const graph = graphComponent.graph
-  graph.addNodeCreatedListener((_, event) => {
-    addNodeToLayout(event.item)
+  graph.addNodeCreatedListener((_, evt) => {
+    addNodeToLayout(evt.item)
   })
-  graph.addNodeRemovedListener((_, event) => {
-    removeNodeFromLayout(event.item)
+  graph.addNodeRemovedListener((_, evt) => {
+    removeNodeFromLayout(evt.item)
   })
-  graph.addEdgeCreatedListener((_, event) => {
-    addEdgeToLayout(event.item)
+  graph.addEdgeCreatedListener((_, evt) => {
+    addEdgeToLayout(evt.item)
   })
-  graph.addEdgeRemovedListener((_, event) => {
-    removeEdgeFromLayout(event.item)
+  graph.addEdgeRemovedListener((_, evt) => {
+    removeEdgeFromLayout(evt.item)
   })
 }
 

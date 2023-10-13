@@ -27,13 +27,17 @@
  **
  ***************************************************************************/
 import {
+  Class,
   Font,
   FreeEdgeLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  HierarchicLayout,
+  type IGraph,
   InteriorStretchLabelModel,
+  LayoutExecutor,
   License,
-  Point,
   ShapeNodeStyle,
   Size
 } from 'yfiles'
@@ -42,22 +46,12 @@ import HtmlLabelStyle from './HtmlLabelStyle'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
-
-type PersonData = {
-  name: string
-  position: string
-  email: string
-  phone: string
-  fax: string
-  web: 'string'
-  assistants: string[]
-  department: string
-}
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 /**
  * Simple demo that shows how to create a custom style that uses HTML for rendering the labels.
- * This is done using the foreignObject SVG element. Note that Internet Explorer does not currently (as of version
- * 11) support this feature.
+ * This is done using the foreignObject SVG element.
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -97,120 +91,40 @@ async function run(): Promise<void> {
   graph.nodeDefaults.labels.style = new HtmlLabelStyle(font)
   graph.edgeDefaults.labels.style = new HtmlLabelStyle(font)
 
-  // Create a graph
-  const node1 = graph.createNodeAt({
-    location: new Point(800, 0),
-    tag: {
-      name: 'Eric Joplin',
-      position: 'Chief Executive Officer',
-      email: 'ejoplin@yoyodyne.com',
-      phone: '555-0100',
-      fax: '555-0101',
-      web: 'yoyodyne.com/ejoplin',
-      assistants: ['Gary Robers', 'Alexander Burns', 'Linda Newland'],
-      department: 'executive'
-    }
-  })
-  const node2 = graph.createNodeAt({
-    location: new Point(100, 500),
-    tag: {
-      name: 'Amy Kain',
-      position: 'Vice President of Production',
-      email: 'akain@yoyodyne.com',
-      phone: '555-0106',
-      fax: '555-0107',
-      web: 'yoyodyne.com/akain',
-      department: 'production'
-    }
-  })
-  const node3 = graph.createNodeAt({
-    location: new Point(450, 500),
-    tag: {
-      name: 'Richard Fuller',
-      position: 'Vice President of Sales',
-      email: 'rfuller@yoyodyne.com',
-      phone: '555-0134',
-      fax: '555-0135',
-      web: 'yoyodyne.com/rfuller',
-      department: 'sales'
-    }
-  })
-  const node4 = graph.createNodeAt({
-    location: new Point(800, 500),
-    tag: {
-      name: 'Mildred Shark',
-      position: 'Vice President of Engineering',
-      email: 'mshark@yoyodyne.com',
-      phone: '555-0156',
-      fax: '555-0157',
-      web: 'yoyodyne.com/mshark',
-      department: 'engineering'
-    }
-  })
-  const node5 = graph.createNodeAt({
-    location: new Point(1150, 500),
-    tag: {
-      name: 'Angela Haase',
-      position: 'Marketing Manager',
-      email: 'ahaase@yoyodyne.com',
-      phone: '555-0170',
-      fax: '555-0171',
-      web: 'yoyodyne.com/ahaase',
-      department: 'marketing',
-      assistants: ['Lorraine Deaton']
-    }
-  })
-  const node6 = graph.createNodeAt({
-    location: new Point(1500, 500),
-    tag: {
-      name: 'David Kerry',
-      position: 'Chief Financial Officer',
-      email: 'dkerry@yoyodyne.com',
-      phone: '555-0180',
-      fax: '555-0181',
-      web: 'yoyodyne.com/dkerry',
-      department: 'accounting',
-      assistants: ['Aaron Buckman']
-    }
-  })
-  graph.createEdge(node1, node2)
-  graph.createEdge(node1, node3)
-  graph.createEdge(node1, node4)
-  graph.createEdge(node1, node5)
-  graph.createEdge(node1, node6)
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
 
-  // Add HTML labels to the nodes
-  for (const node of graph.nodes) {
-    graph.addLabel(node, buildLabelText(node.tag as PersonData))
-  }
-
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 100 })
+  )
   graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
 }
 
 /**
- * Builds the string of the HTML snippet that displays the given data.
+ * Creates nodes and edges according to the given data.
  */
-function buildLabelText(data: PersonData): string {
-  const assistants =
-    !Array.isArray(data.assistants) || data.assistants.length === 0
-      ? ''
-      : `
-<hr>
-<div class="assistants">
-  <b>Assistants:</b>
-  <ul>
-${data.assistants.map(name => `    <li>${name}</li>`).join('\n')}
-  </ul>
-</div>`
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
 
-  return `<div class="label-content ${data.department}">
-<h1>${data.name}</h1>
-<div class="position">${data.position}</div>
-<div class="details">
-  <a href="mailto:${data.email}">${data.email}</a><br>
-  Phone: ${data.phone} Fax: ${data.fax}<br>
-  Web: <a href="https://${data.web}" target="_blank">${data.web}</a>
-</div>${assistants}`
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList,
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 void run().then(finishLoading)

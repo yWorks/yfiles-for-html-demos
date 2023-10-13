@@ -234,7 +234,7 @@ function addCoReactantConstraints(
         OrganicLayoutConstraintOrientation.VERTICAL
       ).items = [coReactant, reaction]
     } else if (graph.inDegree(coReactant) > 0) {
-      const reaction = graph.inEdgesAt(coReactant).at(0)!.sourceNode! as INode
+      const reaction = graph.inEdgesAt(coReactant).at(0)!.sourceNode!
       // for each co-reactant, find the associated reaction and place,
       // (i) the reaction after the co-reactant in the horizontal axis
       // (ii) the reaction above the co-reactant

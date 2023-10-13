@@ -122,9 +122,9 @@ function createEditorMode() {
 
   // Configure label text validation
   // Note that by default, no visual feedback is provided, the text is just not changed
-  graphEditorInputMode.addValidateLabelTextListener((sender, args) => {
+  graphEditorInputMode.addValidateLabelTextListener((_, evt) => {
     // label must match the pattern
-    args.validatedText = validateText(args.newText)
+    evt.validatedText = validateText(evt.newText)
     // validatedText also accepts asynchronous calls e.g.:
     //args.validatedText = validateTextAsync(args.newText)
   })

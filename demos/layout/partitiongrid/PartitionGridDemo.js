@@ -193,10 +193,10 @@ function initializeGraph(graph) {
   })
 
   // add a node tag changed listener that will update the node style, as soon as a node changes a row/column
-  graph.addNodeTagChangedListener((_, args) => {
-    const node = args.item
+  graph.addNodeTagChangedListener((_, evt) => {
+    const node = evt.item
     updateNodeFill(node)
-    updateMapping(node, args.oldValue)
+    updateMapping(node, evt.oldValue)
   })
 }
 
@@ -317,8 +317,8 @@ function configureUserInteraction() {
   })
 
   // update the node style for the newly created node and run a layout
-  inputMode.addNodeCreatedListener((_, args) => {
-    const node = args.item
+  inputMode.addNodeCreatedListener((_, evt) => {
+    const node = evt.item
     if (!graph.isGroupNode(node)) {
       // if a node is created, we have to determine the column/row indices based on the position where the node is
       // created

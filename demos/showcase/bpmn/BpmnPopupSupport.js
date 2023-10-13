@@ -147,7 +147,7 @@ class BpmnPopup {
     })
 
     // Add listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((sender, node) => {
+    this.graphComponent.graph.addNodeLayoutChangedListener((_, node) => {
       if (
         (this._currentItem && this._currentItem === node) ||
         (this._currentItem instanceof IEdge &&
@@ -236,40 +236,40 @@ class BpmnPopup {
  * Manages visibility and content of popup.
  */
 export default class BpmnPopupSupport {
-  gatewayTypeBox = document.getElementById('gateway-type-box')
-  eventTypeBox = document.getElementById('event-type-box')
-  eventCharacteristicBox = document.getElementById('event-characteristic-box')
-  activityAdHocCheckBox = document.getElementById('activity-ad-hoc-checkbox')
-  activityCompensationCheckBox = document.getElementById('activity-compensation-checkbox')
-  activityTypeBox = document.getElementById('activity-type-box')
-  activityLoopCharacteristicBox = document.getElementById('activity-loop-characteristic-box')
-  activitySubStateBox = document.getElementById('activity-sub-state-box')
-  activityTaskTypeBox = document.getElementById('activity-task-type-box')
-  activityTriggerEventCharacteristicBox = document.getElementById(
-    'activity-trigger-event-characteristic-box'
+  gatewayTypeBox = document.querySelector('#gateway-type-box')
+  eventTypeBox = document.querySelector('#event-type-box')
+  eventCharacteristicBox = document.querySelector('#event-characteristic-box')
+  activityAdHocCheckBox = document.querySelector('#activity-ad-hoc-checkbox')
+  activityCompensationCheckBox = document.querySelector('#activity-compensation-checkbox')
+  activityTypeBox = document.querySelector('#activity-type-box')
+  activityLoopCharacteristicBox = document.querySelector('#activity-loop-characteristic-box')
+  activitySubStateBox = document.querySelector('#activity-sub-state-box')
+  activityTaskTypeBox = document.querySelector('#activity-task-type-box')
+  activityTriggerEventCharacteristicBox = document.querySelector(
+    '#activity-trigger-event-characteristic-box'
   )
-  activityTriggerEventTypeBox = document.getElementById('activity-trigger-event-type-box')
-  conversationTypeBox = document.getElementById('conversation-type-box')
-  choreographyInitiatingAtTopCheckBox = document.getElementById(
-    'choreography-initiating-at-top-checkbox'
+  activityTriggerEventTypeBox = document.querySelector('#activity-trigger-event-type-box')
+  conversationTypeBox = document.querySelector('#conversation-type-box')
+  choreographyInitiatingAtTopCheckBox = document.querySelector(
+    '#choreography-initiating-at-top-checkbox'
   )
-  choreographyInitiatingMessageCheckBox = document.getElementById(
-    'choreography-initiating-message-checkbox'
+  choreographyInitiatingMessageCheckBox = document.querySelector(
+    '#choreography-initiating-message-checkbox'
   )
-  choreographyResponseMessageCheckBox = document.getElementById(
-    'choreography-response-message-checkbox'
+  choreographyResponseMessageCheckBox = document.querySelector(
+    '#choreography-response-message-checkbox'
   )
-  choreographyTypeBox = document.getElementById('choreography-type-box')
-  choreographyLoopCharacteristicBox = document.getElementById(
-    'choreography-loop-characteristic-box'
+  choreographyTypeBox = document.querySelector('#choreography-type-box')
+  choreographyLoopCharacteristicBox = document.querySelector(
+    '#choreography-loop-characteristic-box'
   )
-  choreographySubStateBox = document.getElementById('choreography-sub-state-box')
-  dataObjectCollectionCheckBox = document.getElementById('data-object-collection-checkbox')
-  dataObjectTypeBox = document.getElementById('data-object-type-box')
-  poolMultipleCheckBox = document.getElementById('pool-multiple-checkbox')
-  edgeTypeBox = document.getElementById('edge-type-box')
-  portEventTypeBox = document.getElementById('port-event-type-box')
-  portEventCharacteristicBox = document.getElementById('event-characteristic-box')
+  choreographySubStateBox = document.querySelector('#choreography-sub-state-box')
+  dataObjectCollectionCheckBox = document.querySelector('#data-object-collection-checkbox')
+  dataObjectTypeBox = document.querySelector('#data-object-type-box')
+  poolMultipleCheckBox = document.querySelector('#pool-multiple-checkbox')
+  edgeTypeBox = document.querySelector('#edge-type-box')
+  portEventTypeBox = document.querySelector('#port-event-type-box')
+  portEventCharacteristicBox = document.querySelector('#event-characteristic-box')
 
   graphComponent
   contextMenu

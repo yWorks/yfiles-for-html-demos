@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 02 Creating Graph Elements - Basic Features Tutorial
+# 02 Creating Graph Elements - Tutorial: Basic Features
 
 # Creating Graph Elements
 
@@ -76,4 +76,4 @@ graph.addLabel(node3, 'n3')
 graph.addLabel(edgeAtPorts, 'Edge at Ports')
 ```
 
-[03 Managing Viewport](../../tutorial-yfiles-basic-features/03-managing-viewport/index.html)
+[03 Managing Viewport](../../tutorial-yfiles-basic-features/03-managing-viewport/)

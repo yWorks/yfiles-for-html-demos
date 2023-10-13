@@ -35,13 +35,13 @@ import { getCompany, getRelationship } from './data-types.js'
  */
 export function enableTooltips(graphComponent) {
   const viewerInputMode = graphComponent.inputMode
-  viewerInputMode.addQueryItemToolTipListener((sender, event) => {
-    if (event.item instanceof IEdge) {
-      const edgeTag = getRelationship(event.item)
-      event.toolTip = edgeTag.type
-    } else if (event.item instanceof INode) {
-      const nodeTag = getCompany(event.item)
-      event.toolTip = nodeTag.nodeType
+  viewerInputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.item instanceof IEdge) {
+      const edgeTag = getRelationship(evt.item)
+      evt.toolTip = edgeTag.type
+    } else if (evt.item instanceof INode) {
+      const nodeTag = getCompany(evt.item)
+      evt.toolTip = nodeTag.nodeType
     }
   })
   const mouseHoverInputMode = viewerInputMode.mouseHoverInputMode

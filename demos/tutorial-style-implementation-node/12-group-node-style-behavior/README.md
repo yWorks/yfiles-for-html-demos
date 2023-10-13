@@ -11,7 +11,7 @@
 -->
 #
 
-      12 Group Node Style Behavior - Node Style Implementation Tutorial
+      12 Group Node Style Behavior - Tutorial: Node Style Implementation
 
 # Customizing the group node behavior
 

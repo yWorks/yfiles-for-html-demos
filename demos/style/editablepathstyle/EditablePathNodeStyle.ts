@@ -584,9 +584,7 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
       'Change Path',
       [this.$node.style, this.$node],
       (item: INode | INodeStyle) =>
-        item instanceof INode
-          ? (item.lookup(IMementoSupport.$class) as IMementoSupport)
-          : EDITABLE_PATH_MEMENTO_SUPPORT
+        item instanceof INode ? item.lookup(IMementoSupport.$class) : EDITABLE_PATH_MEMENTO_SUPPORT
     )
   }
 
@@ -679,13 +677,13 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
 
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     this.handleMove(context, originalLocation, newLocation)
-    const finishHandler = (sender: object, evt: InputModeEventArgs): void => {
-      ;(sender as HandleInputMode).removeDragFinishedListener(finishHandler)
+    const finishHandler = (inputMode: object, evt: InputModeEventArgs): void => {
+      ;(inputMode as HandleInputMode).removeDragFinishedListener(finishHandler)
 
       // adjust node layout and update the path with the final handle coordinates
       this.$style.normalizePath(this.$node, context.graph!)
       this.updateXY()
-      updateHandles(this.$node, sender as HandleInputMode)
+      updateHandles(this.$node, inputMode as HandleInputMode)
 
       this.edit!.commit()
       this.edit = null

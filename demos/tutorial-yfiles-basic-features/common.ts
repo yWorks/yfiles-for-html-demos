@@ -332,7 +332,7 @@ export function configureInteraction(
 }
 
 export function configureHighlights(graphComponent: GraphComponent): void {
-  graphComponent.selection.addItemSelectionChangedListener(sender =>
+  graphComponent.selection.addItemSelectionChangedListener(() =>
     graphComponent.highlightIndicatorManager.clearHighlights()
   )
 

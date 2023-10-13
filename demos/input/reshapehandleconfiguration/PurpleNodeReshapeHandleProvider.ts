@@ -56,12 +56,12 @@ export default class PurpleNodeReshapeHandleProvider extends NodeReshapeHandlePr
       // handles at corners shall always keep the aspect ratio
       handle.reshapePolicy = ReshapePolicy.PROJECTION
       handle.ratioReshapeRecognizer = EventRecognizers.ALWAYS
-      ;(handle as ReshapeHandlerHandle).type = HandleTypes.RESIZE
+      handle.type = HandleTypes.RESIZE
     } else {
       // handles at the sides shall ignore the aspect ratio and use another handle visualization
       handle.reshapePolicy = ReshapePolicy.NONE
       handle.ratioReshapeRecognizer = EventRecognizers.NEVER
-      ;(handle as ReshapeHandlerHandle).type = HandleTypes.WARP
+      handle.type = HandleTypes.WARP
     }
 
     return handle

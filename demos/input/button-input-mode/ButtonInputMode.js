@@ -62,6 +62,7 @@ import {
   INode,
   InputModeBase,
   InteriorStretchLabelModel,
+  IObservableCollection,
   IOrientedRectangle,
   IPort,
   IRenderContext,
@@ -341,7 +342,7 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   /**
-   * @type {!ObservableCollection.<Button>}
+   * @type {!IObservableCollection.<Button>}
    */
   get buttonLabels() {
     return this.buttonLabelManager.model

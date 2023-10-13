@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 03 Managing Viewport - Basic Features Tutorial
+# 03 Managing Viewport - Tutorial: Basic Features
 
 # Managing the Viewport
 
@@ -53,4 +53,4 @@ Note
 
 Whether some of the default (keyboard) commands are animated can be configured with [animatedViewportChanges](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-animatedViewportChanges).
 
-[04 Setting Styles](../../tutorial-yfiles-basic-features/04-setting-styles/index.html)
+[04 Setting Styles](../../tutorial-yfiles-basic-features/04-setting-styles/)

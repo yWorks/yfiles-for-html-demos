@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 08 Item Visibility - Edge Style Implementation Tutorial
+# 08 Item Visibility - Tutorial: Edge Style Implementation
 
 # Item visibility
 
@@ -65,4 +65,4 @@ Note
 
 Since `isVisible` is called once for each item on every rendered frame, the implementation should be fast, even if this means to be inexact. If in doubt, prefer making the item visible.
 
-[09 Render Boundaries](../../tutorial-style-implementation-edge/09-bounds/index.html)
+[09 Render Boundaries](../../tutorial-style-implementation-edge/09-bounds/)

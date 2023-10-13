@@ -143,7 +143,7 @@ export class DendrogramComponent {
     })
     mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
     mode.itemHoverInputMode.discardInvalidItems = false
-    mode.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) =>
+    mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) =>
       this.onHoveredItemChanged(evt.item)
     )
     mode.marqueeSelectionInputMode.enabled = false

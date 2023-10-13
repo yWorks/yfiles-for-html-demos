@@ -79,7 +79,7 @@ function initializePopups(graphComponent: GraphComponent): void {
   // Creates the pop-up for the node pop-up template
   const nodePopup = new HTMLPopupSupport<INode>(
     graphComponent,
-    getDiv('nodePopupContent'),
+    getDiv('#nodePopupContent'),
     nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
   )
 
@@ -90,7 +90,7 @@ function initializePopups(graphComponent: GraphComponent): void {
   // Creates the pop-up for the edge pop-up template
   const edgePopup = new HTMLPopupSupport<IEdge>(
     graphComponent,
-    getDiv('edgePopupContent'),
+    getDiv('#edgePopupContent'),
     edgeLabelModel.createDefaultParameter()
   )
 
@@ -101,7 +101,7 @@ function initializePopups(graphComponent: GraphComponent): void {
   inputMode.focusableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
   // Register a listener that shows the pop-up for the currentItem
-  graphComponent.addCurrentItemChangedListener((sender, args) => {
+  graphComponent.addCurrentItemChangedListener((_, evt) => {
     const item = graphComponent.currentItem
     if (item instanceof INode) {
       // update data in node pop-up
@@ -122,7 +122,7 @@ function initializePopups(graphComponent: GraphComponent): void {
   })
 
   // On clicks on empty space, set currentItem to `null` to hide the pop-ups
-  inputMode.addCanvasClickedListener((sender, args) => {
+  inputMode.addCanvasClickedListener((_, evt) => {
     graphComponent.currentItem = null
   })
 
@@ -141,7 +141,7 @@ function initializePopups(graphComponent: GraphComponent): void {
  * Returns the HTMLDivElement with the given ID.
  */
 function getDiv(id: string): HTMLDivElement {
-  return document.getElementById(id) as HTMLDivElement
+  return document.querySelector<HTMLDivElement>(id)!
 }
 
 /**
@@ -219,12 +219,12 @@ function initializeInputMode(graphComponent: GraphComponent): void {
   })
 
   mode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
-  mode.addQueryItemToolTipListener((sender, args) => {
-    if (args.item instanceof INode && !args.handled) {
-      const nodeName = args.item.tag.name
+  mode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.item instanceof INode && !evt.handled) {
+      const nodeName = evt.item.tag.name
       if (nodeName) {
-        args.toolTip = nodeName
-        args.handled = true
+        evt.toolTip = nodeName
+        evt.handled = true
       }
     }
   })

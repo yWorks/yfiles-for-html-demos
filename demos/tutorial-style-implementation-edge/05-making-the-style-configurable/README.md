@@ -11,7 +11,7 @@
 -->
 #
 
-      05 Making the Style Configurable - Edge Style Implementation Tutorial
+      05 Making the Style Configurable - Tutorial: Edge Style Implementation
 
 # Style-specific customizations
 
@@ -61,4 +61,4 @@ Note
 
 All edges that share the same style instance will be rendered with the same distance. Thus, changing the distance of one edge’s style will also affect the distance of all other edges that share the same style instance.
 
-[06 Data from Tag](../../tutorial-style-implementation-edge/06-data-from-tag/index.html)
+[06 Data from Tag](../../tutorial-style-implementation-edge/06-data-from-tag/)

@@ -103,7 +103,7 @@ export class AppComponent implements AfterViewInit {
     // Since the node component style runs "outside of angular", we have to
     // trigger change detection manually if the level of detail needs to change.
     let oldZoom = this.graphComponent.zoom
-    this.graphComponent.addZoomChangedListener((sender, evt) => {
+    this.graphComponent.addZoomChangedListener((_, evt) => {
       const newZoom = this.graphComponent.zoom
       if (
         (newZoom > zoomDetail && oldZoom <= zoomDetail) ||

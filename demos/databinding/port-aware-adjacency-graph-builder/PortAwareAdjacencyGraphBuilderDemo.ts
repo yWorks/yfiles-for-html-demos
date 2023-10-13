@@ -98,7 +98,7 @@ async function updateGraph(graphComponent: GraphComponent, nodesSource: any[]): 
   // determine which nodes were added while updating the graph
   const newNodes: INode[] = []
   const nodeCreatedListener = (
-    sender: AdjacencyGraphBuilder,
+    _: AdjacencyGraphBuilder,
     evt: GraphBuilderItemEventArgs<INode, any>
   ) => newNodes.push(evt.item)
   builder.addNodeCreatedListener(nodeCreatedListener)
@@ -198,7 +198,7 @@ function setGraphDefaults(graph: IGraph) {
  */
 function initializeUI(graphComponent: GraphComponent): void {
   let index = 0
-  document.getElementById('update-builder')!.addEventListener('click', async () => {
+  document.querySelector('#update-builder')!.addEventListener('click', async () => {
     // build graph from new data
     const data = ++index % 2 === 1 ? GraphData.updateNodesSource : GraphData.nodesSource
     await updateGraph(graphComponent, data)

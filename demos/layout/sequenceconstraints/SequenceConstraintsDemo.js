@@ -138,10 +138,10 @@ function initializeInputMode(graphComponent) {
   })
 
   // listener for the buttons on the nodes
-  inputMode.addItemClickedListener((sender, args) => {
-    if (INode.isInstance(args.item)) {
-      const node = args.item
-      const location = args.location
+  inputMode.addItemClickedListener((_, evt) => {
+    if (INode.isInstance(evt.item)) {
+      const node = evt.item
+      const location = evt.location
       const { x, y, width, height } = node.layout
       const constraints = node.tag
       if (constraints instanceof SequenceConstraintsData) {
@@ -395,12 +395,12 @@ class SequenceConstraintsData extends BaseClass(IPropertyObservable) {
 
   /**
    * Notifies all registered listeners when a property changed.
-   * @param {*} sender
-   * @param {!PropertyChangedEventArgs} args
+   * @param {*} changedListener
+   * @param {!PropertyChangedEventArgs} evt
    */
-  propertyChanged(sender, args) {
+  propertyChanged(changedListener, evt) {
     for (const listener of this.propertyChangedListeners) {
-      listener(sender, args)
+      listener(changedListener, evt)
     }
   }
 }

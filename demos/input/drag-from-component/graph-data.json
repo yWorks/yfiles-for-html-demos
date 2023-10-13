@@ -1,0 +1,73 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "label": "Red 1"
+    },
+    {
+      "id": 1,
+      "label": "Red 2"
+    },
+    {
+      "id": 2,
+      "label": "Orange 1"
+    },
+    {
+      "id": 3,
+      "label": "Orange 2"
+    },
+    {
+      "id": 4,
+      "label": "Orange 3"
+    },
+    {
+      "id": 5,
+      "label": "Blue 1"
+    },
+    {
+      "id": 6,
+      "label": "Blue 2"
+    },
+    {
+      "id": 7,
+      "label": "Orange 4"
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 1
+    },
+    {
+      "id": 1,
+      "source": 1,
+      "target": 2
+    },
+    {
+      "id": 2,
+      "source": 0,
+      "target": 2
+    },
+    {
+      "id": 3,
+      "source": 3,
+      "target": 0
+    },
+    {
+      "id": 4,
+      "source": 4,
+      "target": 3
+    },
+    {
+      "id": 5,
+      "source": 6,
+      "target": 5
+    },
+    {
+      "id": 6,
+      "source": 5,
+      "target": 0
+    }
+  ]
+}

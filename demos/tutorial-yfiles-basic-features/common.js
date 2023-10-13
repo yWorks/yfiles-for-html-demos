@@ -318,7 +318,7 @@ export function configureInteraction(graphComponent) {
  * @param {!GraphComponent} graphComponent
  */
 export function configureHighlights(graphComponent) {
-  graphComponent.selection.addItemSelectionChangedListener(sender =>
+  graphComponent.selection.addItemSelectionChangedListener(() =>
     graphComponent.highlightIndicatorManager.clearHighlights()
   )
 

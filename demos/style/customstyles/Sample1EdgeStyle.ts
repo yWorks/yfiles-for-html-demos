@@ -123,7 +123,7 @@ export default class Sample1EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisu
    * Creates an object containing all necessary data to create an edge visual.
    */
   private createRenderDataCache(context: IRenderContext, edge: IEdge): EdgeRenderDataCache {
-    const node = edge.sourcePort!.owner as INode
+    const node = edge.sourceNode!
     return new EdgeRenderDataCache(
       this.pathThickness,
       Sample1EdgeStyle.isSelected(context, edge),

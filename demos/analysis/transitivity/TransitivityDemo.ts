@@ -214,7 +214,7 @@ async function run(): Promise<void> {
   graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
 
-  algorithmComboBox = document.getElementById('algorithms') as HTMLSelectElement
+  algorithmComboBox = document.querySelector<HTMLSelectElement>('#algorithms')!
   addNavigationButtons(algorithmComboBox)
 
   // use a filtered graph to have control over which nodes and edges are visible at any time
@@ -264,7 +264,7 @@ function initializeUI(): void {
     }
   })
 
-  const gvim = (graphComponent.inputMode as GraphViewerInputMode)!
+  const gvim = graphComponent.inputMode as GraphViewerInputMode
   gvim.keyboardInputMode.addCommandBinding(
     ICommand.UNDO,
     () => {
@@ -293,9 +293,9 @@ function initializeInputModes(): void {
   })
 
   // show enlarged nodes on hover
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-    const item = args.item
-    const oldItem = args.oldItem
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    const item = evt.item
+    const oldItem = evt.oldItem
 
     const highlightManager = graphComponent.highlightIndicatorManager
     if (item) {
@@ -344,18 +344,18 @@ function initializeInputModes(): void {
       currentNode = null
     }
     if (graphComponent.currentItem instanceof INode) {
-      currentNode = graphComponent.currentItem! as INode
+      currentNode = graphComponent.currentItem
       ;(currentNode.style as RectangleNodeStyle).cssClass = 'node-focus'
     }
   })
 
-  mode.addItemClickedListener(async (sender, args): Promise<void> => {
+  mode.addItemClickedListener(async (_, evt): Promise<void> => {
     // check if the clicked item is a node or if the loaded graph is yfiles/modules, since this graph has
     // no pending dependencies... in this case, we have to execute the code in addItemSelectedListener.
-    if (args.item instanceof INode) {
-      args.handled = true
+    if (evt.item instanceof INode) {
+      evt.handled = true
 
-      const item = args.item
+      const item = evt.item
 
       // check if dependencies' circle was hit
       if (item !== startNode) {
@@ -813,15 +813,15 @@ function prepareSmoothLayoutAnimation(): void {
 function setUIDisabled(disabled: boolean): void {
   ;(graphComponent.inputMode as GraphViewerInputMode).waitInputMode.waiting = disabled
   algorithmComboBox.disabled = disabled
-  ;(document.getElementById('show-transitive-edges') as HTMLButtonElement).disabled = disabled
-  ;(document.getElementById('layout') as HTMLButtonElement).disabled = disabled
+  document.querySelector<HTMLButtonElement>('#show-transitive-edges')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#layout')!.disabled = disabled
 }
 /**
  * Updates the table when dependencies are loaded.
  * @param packageNode the start node
  */
 function updateGraphInformation(packageNode: INode | null): void {
-  const table = document.getElementById('graph-information') as HTMLTableElement
+  const table = document.querySelector<HTMLTableElement>('#graph-information')!
   table.rows[0].cells[1].innerHTML = packageNode?.labels.at(0)?.text || ''
 
   // remove the dependents row if the graph is not module

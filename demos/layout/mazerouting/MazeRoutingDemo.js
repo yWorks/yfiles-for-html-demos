@@ -120,7 +120,7 @@ async function run() {
  * Initializes the option editor that will display the routing algorithm's settings.
  */
 function initializeOptionEditor() {
-  const editorElement = document.getElementById('data-editor')
+  const editorElement = document.querySelector('#data-editor')
   optionEditor = new OptionEditor(editorElement)
   optionEditor.config = new PolylineEdgeRouterConfig()
 }
@@ -131,9 +131,9 @@ function initializeOptionEditor() {
 function createEditorInputMode() {
   const inputMode = new GraphEditorInputMode()
 
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
+  inputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
     const selectedEdges = new List()
-    selectedEdges.add(args.item)
+    selectedEdges.add(evt.item)
     routeAffectedEdges(selectedEdges)
   })
 
@@ -302,8 +302,8 @@ async function routeImpl(affectedItems, scope) {
  * @param {boolean} disabled True if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.getElementById('route-edges-button').disabled = disabled
-  document.getElementById('reset-button').disabled = disabled
+  document.querySelector('#route-edges-button').disabled = disabled
+  document.querySelector('#reset-button').disabled = disabled
   // enable/disable input so that no use interactions occur on the graphComponent when a layout is running
   graphComponent.inputMode.waiting = disabled
 }

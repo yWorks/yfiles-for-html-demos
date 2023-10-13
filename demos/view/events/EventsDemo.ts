@@ -29,6 +29,7 @@
 import {
   BendEventArgs,
   CanvasComponent,
+  Class,
   ClickEventArgs,
   DefaultLabelStyle,
   DragDropEffects,
@@ -36,11 +37,16 @@ import {
   EventArgs,
   FoldingManager,
   FreeNodePortLocationModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphViewerInputMode,
   HandleInputMode,
+  HierarchicLayout,
+  HierarchicLayoutEdgeLayoutDescriptor,
+  HierarchicLayoutEdgeRoutingStyle,
+  HierarchicLayoutRoutingStyle,
   HoveredItemChangedEventArgs,
   IBend,
   IEdge,
@@ -69,6 +75,7 @@ import {
   LabelDropInputMode,
   LabelEventArgs,
   LabelTextValidatingEventArgs,
+  LayoutExecutor,
   License,
   MouseEventArgs,
   MoveInputMode,
@@ -105,6 +112,8 @@ import EventView from './EventView'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 /**
  * This demo shows how to register to the various events provided by the {@link IGraph graph},
@@ -126,13 +135,30 @@ async function run(): Promise<void> {
   registerInputModeEvents()
   registerNavigationInputModeEvents()
 
+  // Finally, enable the undo engine. This prevents undoing of the graph creation
+  graphComponent.graph.undoEngineEnabled = true
   enableFolding()
 
   initializeGraph()
   initializeDragAndDropPanel()
 
-  createSampleGraph()
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({
+      edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({
+        minimumFirstSegmentLength: 50,
+        minimumLastSegmentLength: 50,
+        routingStyle: new HierarchicLayoutRoutingStyle(HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL)
+      }),
+      minimumLayerDistance: 70
+    })
+  )
   graphComponent.fitGraphBounds()
+
   enableUndo()
 
   // initialize collapsible headings
@@ -149,6 +175,37 @@ let manager: FoldingManager
 
 let foldingView: IFoldingView
 
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList.filter(item => !item.isGroup),
+      id: item => item.id,
+      parentId: item => item.parentId
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createEdgesSource({
+      data: graphData.edgeList,
+      sourceId: item => item.source,
+      targetId: item => item.target
+    })
+    .edgeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.buildGraph()
+}
 /**
  * Registers some keyboard events to the graphComponent.
  */
@@ -3050,8 +3107,8 @@ function createDraggableNode(): HTMLElement {
       true,
       dragPreview
     )
-    dragSource.addQueryContinueDragListener((src, args) => {
-      if (args.dropTarget === null) {
+    dragSource.addQueryContinueDragListener((_, evt) => {
+      if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
         dragPreview.classList.add('hidden')
@@ -3119,8 +3176,8 @@ function createDraggableLabel(): HTMLDivElement {
       true,
       dragPreview
     )
-    dragSource.addQueryContinueDragListener((src, args) => {
-      if (args.dropTarget === null) {
+    dragSource.addQueryContinueDragListener((_, evt) => {
+      if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
         dragPreview.classList.add('hidden')
@@ -3190,8 +3247,8 @@ function createDraggablePort(): HTMLDivElement {
       true,
       dragPreview
     )
-    dragSource.addQueryContinueDragListener((src, args) => {
-      if (args.dropTarget === null) {
+    dragSource.addQueryContinueDragListener((_, evt) => {
+      if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
         dragPreview.classList.add('hidden')
@@ -3222,29 +3279,29 @@ function createDraggablePort(): HTMLDivElement {
 
 function setupToolTips(): void {
   editorMode.toolTipItems = GraphItemTypes.NODE
-  editorMode.addQueryItemToolTipListener((sender, args) => {
-    args.toolTip = `ToolTip for ${args.item}`
-    args.handled = true
+  editorMode.addQueryItemToolTipListener((_, evt) => {
+    evt.toolTip = `ToolTip for ${evt.item}`
+    evt.handled = true
   })
 
   viewerMode.toolTipItems = GraphItemTypes.NODE
-  viewerMode.addQueryItemToolTipListener((sender, args) => {
-    args.toolTip = `ToolTip for ${args.item}`
-    args.handled = true
+  viewerMode.addQueryItemToolTipListener((_, evt) => {
+    evt.toolTip = `ToolTip for ${evt.item}`
+    evt.handled = true
   })
 }
 
 function setupContextMenu(): void {
   editorMode.contextMenuItems = GraphItemTypes.NODE
-  editorMode.addPopulateItemContextMenuListener((sender, args) => {
-    args.showMenu = false
-    args.handled = true
+  editorMode.addPopulateItemContextMenuListener((_, evt) => {
+    evt.showMenu = false
+    evt.handled = true
   })
 
   viewerMode.contextMenuItems = GraphItemTypes.NODE
-  viewerMode.addPopulateItemContextMenuListener((sender, args) => {
-    args.showMenu = false
-    args.handled = true
+  viewerMode.addPopulateItemContextMenuListener((_, evt) => {
+    evt.showMenu = false
+    evt.handled = true
   })
 }
 
@@ -3265,41 +3322,6 @@ function enableUndo(): void {
   if (defaultGraph !== null) {
     defaultGraph.undoEngineEnabled = true
   }
-}
-
-function createSampleGraph(): void {
-  const graph = graphComponent.graph
-
-  const root = graph.createNodeAt(new Point(0, 0))
-  graph.addLabel(root, 'N1')
-  const n11 = graph.createNodeAt(new Point(0, 100))
-  graph.addLabel(n11, 'N2')
-  const n12 = graph.createNodeAt(new Point(100, 100))
-  graph.addLabel(n12, 'N3')
-  const n21 = graph.createNodeAt(new Point(100, 175))
-  graph.addLabel(n21, 'N4')
-  const n31 = graph.createNodeAt(new Point(0, 250))
-  graph.addLabel(n31, 'N5')
-
-  const eRootN11 = graph.createEdge(root, n11)
-  graph.addLabel(eRootN11, 'E1')
-  const eRootN12 = graph.createEdge(root, n12)
-  graph.addLabel(eRootN12, 'E2')
-  const eN11N31 = graph.createEdge(n11, n31)
-  graph.addLabel(eN11N31, 'E3')
-  const eN12N21 = graph.createEdge(n12, n21)
-  graph.addLabel(eN12N21, 'E4')
-  const eN21N31 = graph.createEdge(n21, n31)
-  graph.addLabel(eN21N31, 'E5')
-
-  graph.addBend(eRootN12, new Point(100, 0), 0)
-  graph.addBend(eN21N31, new Point(100, 250), 100)
-
-  const groupNode = graph.createGroupNode()
-  graph.addLabel(groupNode, 'GN1')
-  graph.setParent(n12, groupNode)
-  graph.setParent(n21, groupNode)
-  graph.adjustGroupNodeLayout(groupNode)
 }
 
 /**
@@ -3426,5 +3448,4 @@ function initOptionHeadings(): void {
     })
   }
 }
-
 run().then(finishLoading)

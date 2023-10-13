@@ -26,9 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, HtmlVisual, NodeStyleBase, Visual } from 'yfiles'
+import { GraphComponent, HtmlVisual, NodeStyleBase, Visual, VisualCachingPolicy } from 'yfiles'
 import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
+
 /**
  * @typedef {(FunctionComponent.<TTag>|ComponentClass.<TTag>)} RenderType
  */
@@ -74,7 +75,19 @@ const defaultTagProvider = (context, node) => node.tag
  * @returns {?Visual}
  */
 function unmountReact(context, removedVisual, dispose) {
-  removedVisual.tag.root.unmount()
+  const visual = removedVisual
+  // In React.StrictMode, React warns about unmounting components synchronously during rendering which
+  // may happen when React calls the cleanup callback of the component that contains the GraphComponent.
+  // To prevent this warning, you can enable visual-caching by setting "graphComponent.visualCaching = 'always'"
+  // and when the GraphComponent is cleaned up, asynchronously unmount the visual.
+  const visualCaching = context.canvasComponent?.visualCaching === VisualCachingPolicy.ALWAYS
+  if (visualCaching && dispose) {
+    setTimeout(() => {
+      visual.tag.root.unmount()
+    }, 0)
+  } else {
+    visual.tag.root.unmount()
+  }
   return null
 }
 

@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 08 Data From Tag - Label Style Implementation Tutorial
+# 08 Data From Tag - Tutorial: Label Style Implementation
 
 # Item-specific customizations
 
@@ -91,4 +91,4 @@ Note
 
 If the style uses the tag data to customize the visualization, it is possible to share a single style instance between multiple items. Using this pattern, the style can create different visualizations depending on the business data.
 
-[09 Hit-Testing](../../tutorial-style-implementation-label/09-hit-testing/index.html)
+[09 Hit-Testing](../../tutorial-style-implementation-label/09-hit-testing/)

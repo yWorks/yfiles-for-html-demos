@@ -49,7 +49,7 @@ const sortingToggle = document.querySelector<HTMLInputElement>('#sorting-toggle'
 const tabularGroupsToggle = document.querySelector<HTMLInputElement>('#tabular-groups-toggle')!
 const distanceSlider = document.querySelector<HTMLInputElement>('#child-distance-slider')!
 const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
-const distanceLabel = document.getElementById('childDistanceLabel')!
+const distanceLabel = document.querySelector('#childDistanceLabel')!
 
 /**
  * The graph component holding the graph and shown in this demo.

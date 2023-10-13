@@ -183,33 +183,33 @@ function initializeInputModes() {
   const inputMode = new GraphViewerInputMode()
   inputMode.selectableItems = GraphItemTypes.NONE
   inputMode.focusableItems = GraphItemTypes.NONE
-  inputMode.addItemClickedListener((sender, event) => {
-    const item = event.item
+  inputMode.addItemClickedListener((_, evt) => {
+    const item = evt.item
     if (item instanceof INode && onNodeClicked(item)) {
-      event.handled = true
+      evt.handled = true
     }
   })
   // add tooltips that show the label text
   inputMode.toolTipItems = GraphItemTypes.NODE
   inputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
-  inputMode.addQueryItemToolTipListener((sender, event) => {
-    if (event.handled) {
+  inputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled) {
       return
     }
-    const hitNode = event.item
+    const hitNode = evt.item
     if (hitNode instanceof INode && hitNode.labels.size > 0) {
-      event.toolTip = hitNode.labels.get(0).text
-      event.handled = true
+      evt.toolTip = hitNode.labels.get(0).text
+      evt.handled = true
     }
   })
 
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   inputMode.itemHoverInputMode.discardInvalidItems = false
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
+  inputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     const manager = graphComponent.highlightIndicatorManager
     manager.clearHighlights()
 
-    const item = event.item
+    const item = evt.item
 
     inputMode.defaultCursor = Cursor.DEFAULT
     if (item instanceof INode) {

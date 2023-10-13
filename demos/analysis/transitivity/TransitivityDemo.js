@@ -235,7 +235,7 @@ async function run() {
   graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
 
-  algorithmComboBox = document.getElementById('algorithms')
+  algorithmComboBox = document.querySelector('#algorithms')
   addNavigationButtons(algorithmComboBox)
 
   // use a filtered graph to have control over which nodes and edges are visible at any time
@@ -313,9 +313,9 @@ function initializeInputModes() {
   })
 
   // show enlarged nodes on hover
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-    const item = args.item
-    const oldItem = args.oldItem
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    const item = evt.item
+    const oldItem = evt.oldItem
 
     const highlightManager = graphComponent.highlightIndicatorManager
     if (item) {
@@ -369,13 +369,13 @@ function initializeInputModes() {
     }
   })
 
-  mode.addItemClickedListener(async (sender, args) => {
+  mode.addItemClickedListener(async (_, evt) => {
     // check if the clicked item is a node or if the loaded graph is yfiles/modules, since this graph has
     // no pending dependencies... in this case, we have to execute the code in addItemSelectedListener.
-    if (args.item instanceof INode) {
-      args.handled = true
+    if (evt.item instanceof INode) {
+      evt.handled = true
 
-      const item = args.item
+      const item = evt.item
 
       // check if dependencies' circle was hit
       if (item !== startNode) {
@@ -841,15 +841,15 @@ function prepareSmoothLayoutAnimation() {
 function setUIDisabled(disabled) {
   graphComponent.inputMode.waitInputMode.waiting = disabled
   algorithmComboBox.disabled = disabled
-  document.getElementById('show-transitive-edges').disabled = disabled
-  document.getElementById('layout').disabled = disabled
+  document.querySelector('#show-transitive-edges').disabled = disabled
+  document.querySelector('#layout').disabled = disabled
 }
 /**
  * Updates the table when dependencies are loaded.
  * @param {?INode} packageNode the start node
  */
 function updateGraphInformation(packageNode) {
-  const table = document.getElementById('graph-information')
+  const table = document.querySelector('#graph-information')
   table.rows[0].cells[1].innerHTML = packageNode?.labels.at(0)?.text || ''
 
   // remove the dependents row if the graph is not module

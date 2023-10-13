@@ -264,7 +264,7 @@ export function bindYFilesCommand(selector, command, target, parameter, tooltip)
   })
 
   // Add an event listener that syncs the disabled state of the command to the element
-  command.addCanExecuteChangedListener((command, _evt) => {
+  command.addCanExecuteChangedListener((command, evt) => {
     if (command.canExecute(parameter, target)) {
       element.removeAttribute('disabled')
     } else {

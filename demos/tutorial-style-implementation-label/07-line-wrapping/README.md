@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 07 Line Wrapping - Label Style Implementation Tutorial
+# 07 Line Wrapping - Tutorial: Label Style Implementation
 
 # Line wrapping
 
@@ -64,4 +64,4 @@ const textContent = TextRenderSupport.addText(
 
 In the sample graph, you can see the different options for line wrapping. Edit the labels using F2 to see how the wrapping behaves.
 
-[08 Data From Tag](../../tutorial-style-implementation-label/08-data-from-tag/index.html)
+[08 Data From Tag](../../tutorial-style-implementation-label/08-data-from-tag/)

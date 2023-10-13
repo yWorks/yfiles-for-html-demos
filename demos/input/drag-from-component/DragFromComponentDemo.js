@@ -27,28 +27,30 @@
  **
  ***************************************************************************/
 import {
+  Class,
+  DefaultLabelStyle,
+  Fill,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  HierarchicLayout,
   IGraph,
   INode,
+  Insets,
+  LabelShape,
+  LayoutExecutor,
   License,
   ModifierKeys,
   MouseEventArgs,
   MouseEventTypes,
-  Point,
-  Rect,
   Size
 } from 'yfiles'
 
 import { DraggableGraphComponent, NodeDragInputMode } from './NodeDragInputMode.js'
-import {
-  applyDemoTheme,
-  createDemoNodeLabelStyle,
-  createDemoNodeStyle,
-  initDemoStyles
-} from 'demo-resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -59,6 +61,7 @@ let graphComponent = null
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new DraggableGraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
@@ -68,8 +71,81 @@ async function run() {
 
   // configure default styles and create a sample graph
   initDefaultStyles(graphComponent.graph)
-  createGraph(graphComponent.graph)
+
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
+  )
   graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  const nodesSource = graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
+
+  nodesSource.nodeCreator.styleBindings.addBinding('fill', item => {
+    if (item.label) {
+      if (item.label.startsWith('Red')) {
+        return Fill.from('#ab2346')
+      }
+      if (item.label.startsWith('Orange')) {
+        return Fill.from('#ff6c00')
+      }
+      if (item.label.startsWith('Blue')) {
+        return Fill.from('#111d4a')
+      }
+    }
+  })
+
+  nodesSource.nodeCreator.createLabelBinding(item => item.label).styleProvider = item => {
+    if (item.label) {
+      if (item.label.startsWith('Red')) {
+        return new DefaultLabelStyle({
+          backgroundFill: '#dda7b5',
+          shape: LabelShape.ROUND_RECTANGLE,
+          insets: new Insets(4, 2, 4, 1)
+        })
+      }
+      if (item.label.startsWith('Orange')) {
+        return new DefaultLabelStyle({
+          backgroundFill: '#ffc499',
+          shape: LabelShape.ROUND_RECTANGLE,
+          insets: new Insets(4, 2, 4, 1)
+        })
+      }
+      if (item.label.startsWith('Blue')) {
+        return new DefaultLabelStyle({
+          backgroundFill: '#a0a5b7',
+          shape: LabelShape.ROUND_RECTANGLE,
+          insets: new Insets(4, 2, 4, 1)
+        })
+      }
+    }
+  }
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -81,14 +157,14 @@ function configureInputModes(graphComponent) {
 
   // edge creation: start with drag + shift down
   // since drag without shift will start dragging a node from the component
-  mode.createEdgeInputMode.prepareRecognizer = (eventSource, evt) =>
+  mode.createEdgeInputMode.prepareRecognizer = (_eventSource, evt) =>
     evt instanceof MouseEventArgs &&
     evt.eventType == MouseEventTypes.DOWN &&
     evt.modifiers == ModifierKeys.SHIFT
 
-  // move nodes: start with drag + shift down
+  // move nodes: start with drag + shift down,
   // so dragging a selected node without shift will start dragging a node from the component
-  mode.moveInputMode.pressedRecognizer = (eventSource, evt) =>
+  mode.moveInputMode.pressedRecognizer = (_eventSource, evt) =>
     evt instanceof MouseEventArgs &&
     evt.eventType == MouseEventTypes.DOWN &&
     evt.modifiers == ModifierKeys.SHIFT
@@ -104,8 +180,8 @@ function configureInputModes(graphComponent) {
   // configure the drop targets to handle the item drop
 
   // target #1: the list
-  const list = document.getElementById('drop-list')
-  dragMode.addDropTarget(list, (evt, node) => {
+  const list = document.querySelector('#drop-list')
+  dragMode.addDropTarget(list, (_evt, node) => {
     if (node) {
       addDroppedItemToList(node, list)
     }
@@ -113,7 +189,7 @@ function configureInputModes(graphComponent) {
 
   // target #2: the trashcan
   const trashcan = document.getElementById('drop-trashcan')
-  dragMode.addDropTarget(trashcan, (evt, node) => {
+  dragMode.addDropTarget(trashcan, (_evt, node) => {
     if (node) {
       graphComponent.graph.remove(node)
     }
@@ -154,73 +230,8 @@ function initDefaultStyles(graph) {
   })
 
   graph.nodeDefaults.size = new Size(70, 50)
-}
-
-/**
- * Creates a simple sample graph.
- * @param {!IGraph} graph
- */
-function createGraph(graph) {
-  const orange = createDemoNodeStyle('demo-orange')
-  const orangeLabel = createDemoNodeLabelStyle('demo-orange')
-  const red = createDemoNodeStyle('demo-red')
-  const redLabel = createDemoNodeLabelStyle('demo-red')
-  const blue = createDemoNodeStyle('demo-blue')
-  const blueLabel = createDemoNodeLabelStyle('demo-blue')
-
-  const n1 = graph.createNodeAt({
-    location: new Point(50, 50),
-    style: red,
-    labels: [{ text: 'Red 1', style: redLabel }]
-  })
-  const n2 = graph.createNodeAt({
-    location: new Point(150, 50),
-    style: red,
-    labels: [{ text: 'Red 2', style: redLabel }]
-  })
-  const n3 = graph.createNode({
-    layout: new Rect(260, 180, 80, 40),
-    style: orange,
-    labels: [{ text: 'Orange 1', style: orangeLabel }]
-  })
-
-  const n4 = graph.createNodeAt({
-    location: new Point(50, -50),
-    style: orange,
-    labels: [{ text: 'Orange 2', style: orangeLabel }]
-  })
-  const n5 = graph.createNodeAt({
-    location: new Point(50, -150),
-    style: orange,
-    labels: [{ text: 'Orange 3', style: orangeLabel }]
-  })
-  const n6 = graph.createNodeAt({
-    location: new Point(-50, -50),
-    style: blue,
-    labels: [{ text: 'Blue 1', style: blueLabel }]
-  })
-  const n7 = graph.createNodeAt({
-    location: new Point(-50, -150),
-    style: blue,
-    labels: [{ text: 'Blue 2', style: blueLabel }]
-  })
-  graph.createNodeAt({
-    location: new Point(150, -50),
-    style: orange,
-    labels: [{ text: 'Orange 4', style: orangeLabel }]
-  })
-
-  graph.createEdge(n1, n2)
-  const edge2 = graph.createEdge(n2, n3)
-  graph.addBend(edge2, new Point(300, 50))
-  graph.createEdge(n1, n3)
-  graph.createEdge(n4, n1)
-  graph.createEdge(n5, n4)
-  graph.createEdge(n7, n6)
-  const edge7 = graph.createEdge(n6, n1)
-  graph.addBend(edge7, new Point(-50, 50), 0)
-
-  graph.undoEngine.clear()
+  graph.nodeDefaults.shareStyleInstance = false
+  graph.nodeDefaults.labels.shareStyleInstance = false
 }
 
 run().then(finishLoading)

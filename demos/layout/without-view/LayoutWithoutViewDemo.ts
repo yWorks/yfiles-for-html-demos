@@ -244,7 +244,7 @@ function logGraph(layoutGraph: LayoutGraph): void {
 }
 
 /* Helper element and function to log to the HTML page */
-const logElement = document.getElementById('log') as HTMLTextAreaElement
+const logElement = document.querySelector<HTMLTextAreaElement>('#log')!
 
 function log(value?: string | object | undefined): void {
   if (arguments.length === 0) {

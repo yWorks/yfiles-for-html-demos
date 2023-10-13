@@ -39,8 +39,11 @@ import {
   ICanvasObjectDescriptor,
   IGraph,
   License,
-  Point,
-  Size
+  Size,
+  GraphBuilder,
+  HierarchicLayout,
+  Class,
+  LayoutExecutor
 } from 'yfiles'
 
 import RectangleVisualCreator from './RectangleVisualCreator.js'
@@ -48,6 +51,7 @@ import ImageVisualCreator from './ImageVisualCreator.js'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /**
  * Application Features - Add an image or colored rectangle to the background of the graph
@@ -74,21 +78,57 @@ async function run() {
     allowGroupingOperations: true
   })
 
-  // configures default styles for newly created graph elements
-  initializeGraph(graphComponent.graph)
+  const graph = graphComponent.graph
 
-  // create an initial sample graph
-  createGraph(graphComponent.graph)
+  // configures default styles for newly created graph elements
+  initializeGraph(graph)
+
+  // build the graph from the given data set
+  buildGraph(graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graph.applyLayout(new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 }))
   graphComponent.fitGraphBounds()
 
-  // Finally, enable the undo engine. This prevents undoing of the graph creation
-  graphComponent.graph.undoEngineEnabled = true
+  // enable now the undo engine to prevent undoing of the graph creation
+  graph.undoEngineEnabled = true
 
   // set initial background
   displayImage()
 
   // bind the buttons to their functionality
   initializeUI()
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList.filter(item => !item.isGroup),
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -152,41 +192,6 @@ function initializeGraph(graph) {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Creates an initial sample graph.
- *
- * @param {!IGraph} graph The graph.
- */
-function createGraph(graph) {
-  const node1 = graph.createNodeAt([110, 20])
-  const node2 = graph.createNodeAt([145, 95])
-  const node3 = graph.createNodeAt([75, 95])
-  const node4 = graph.createNodeAt([30, 175])
-  const node5 = graph.createNodeAt([100, 175])
-
-  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  graph.setPortLocation(edge1.sourcePort, new Point(123.33, 40))
-  graph.setPortLocation(edge1.targetPort, new Point(145, 75))
-  graph.setPortLocation(edge2.sourcePort, new Point(96.67, 40))
-  graph.setPortLocation(edge2.targetPort, new Point(75, 75))
-  graph.setPortLocation(edge3.sourcePort, new Point(65, 115))
-  graph.setPortLocation(edge3.targetPort, new Point(30, 155))
-  graph.setPortLocation(edge4.sourcePort, new Point(85, 115))
-  graph.setPortLocation(edge4.targetPort, new Point(90, 155))
-  graph.setPortLocation(edge5.sourcePort, new Point(110, 40))
-  graph.setPortLocation(edge5.targetPort, new Point(110, 155))
-  graph.addBends(edge1, [new Point(123.33, 55), new Point(145, 55)])
-  graph.addBends(edge2, [new Point(96.67, 55), new Point(75, 55)])
-  graph.addBends(edge3, [new Point(65, 130), new Point(30, 130)])
-  graph.addBends(edge4, [new Point(85, 130), new Point(90, 130)])
 }
 
 /**

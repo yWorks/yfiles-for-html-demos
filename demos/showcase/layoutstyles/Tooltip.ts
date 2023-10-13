@@ -41,7 +41,7 @@ export class Tooltip {
   private deltaHeight: number
 
   constructor() {
-    this.element = document.getElementById('preset-tooltip') as HTMLDivElement
+    this.element = document.querySelector<HTMLDivElement>('#preset-tooltip')!
     this.dummy = Tooltip.createDummyElement(this.element)
     this.deltaHeight = this.element.parentElement!.getBoundingClientRect().top
   }
@@ -69,7 +69,7 @@ export class Tooltip {
       element.style.top = `${activatorAnchorY - this.deltaHeight}px`
 
       const tooltipBounds = element.getBoundingClientRect()
-      const triangle = element.querySelector('.triangle') as HTMLSpanElement
+      const triangle = element.querySelector<HTMLSpanElement>('.triangle')!
       triangle.style.left = `${activatorAnchorX - tooltipBounds.left - triangleSize}px`
 
       this.updateActive(activator)

@@ -6719,7 +6719,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
    * @see {@link NodeStyleBase.updateVisual}
    */
   createVisual(renderContext: IRenderContext, node: IStripe): SvgVisual | null {
-    const stripe = node.lookup(IStripe.$class) as IStripe
+    const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     if (stripe != null) {
       const container = new SvgVisualGroup()
@@ -6800,7 +6800,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
     oldVisual: SvgVisualGroup,
     node: IStripe
   ): SvgVisual | null {
-    const stripe = node.lookup(IStripe.$class) as IStripe
+    const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     if (stripe != null) {
       let stripeInsets: Insets
@@ -8187,7 +8187,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
       return IOrientedRectangle.EMPTY
     }
 
-    const table = owner.lookup(ITable.$class) as ITable
+    const table = owner.lookup(ITable.$class)
     if (!table) {
       return new OrientedRectangle()
     }

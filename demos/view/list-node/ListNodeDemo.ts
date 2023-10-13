@@ -114,7 +114,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
   geim.createEdgeInputMode.edgeDirectionPolicy = EdgeDirectionPolicy.DETERMINE_FROM_PORT_CANDIDATES
 
   // register label changes in the model
-  geim.addLabelTextChangedListener((sender, evt) => {
+  geim.addLabelTextChangedListener((_, evt) => {
     if (evt.owner instanceof INode || evt.owner instanceof IPort) {
       if ('name' in evt.owner.tag) {
         evt.owner.tag.name = evt.item.text
@@ -122,7 +122,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     }
   })
 
-  geim.addDeletedItemListener((sender, evt) => {
+  geim.addDeletedItemListener((_, evt) => {
     if (evt instanceof LabelEventArgs && evt.owner instanceof IPort) {
       const port = evt.owner
       const node = port.owner as INode
@@ -147,7 +147,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     return oldHitTestable.isHit(context, location)
   })
   // the move gesture has been started
-  geim.moveUnselectedInputMode.addQueryPositionHandlerListener((sender, evt) => {
+  geim.moveUnselectedInputMode.addQueryPositionHandlerListener((_, evt) => {
     const location = evt.queryLocation
     const node = findNodeAt(geim, location)
     if (node && node.style instanceof ListNodeStyle) {
@@ -407,12 +407,12 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
     contextMenu.close()
   })
 
-  geim.addPopulateItemContextMenuListener((sender, args) => {
+  geim.addPopulateItemContextMenuListener((_, evt) => {
     contextMenu.clearItems()
 
-    const node = args.item
+    const node = evt.item
     if (node instanceof INode && node.style instanceof ListNodeStyle) {
-      args.showMenu = true
+      evt.showMenu = true
 
       // we have a row containing node at cursor location
       const style = node.style
@@ -432,7 +432,7 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
       )
 
       // if we are over a row add an entry for removing that row
-      const portInfoIndex = style.getRowIndex(node, args.queryLocation)
+      const portInfoIndex = style.getRowIndex(node, evt.queryLocation)
       if (portInfoIndex > -1) {
         const nodeInfo = node.tag as NodeInfo
         const rowInfo = nodeInfo.rows[portInfoIndex]

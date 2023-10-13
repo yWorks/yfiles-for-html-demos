@@ -200,7 +200,7 @@ function configureInteraction(graphComponent) {
   })
 
   // On node creation, set the configured style as well as a random color
-  geim.addNodeCreatedListener((sender, evt) => {
+  geim.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     if (graphComponent.graph.isGroupNode(node)) {
       gmm.setStyle(node, getConfiguredGroupNodeStyle())
@@ -212,7 +212,7 @@ function configureInteraction(graphComponent) {
   })
 
   // On edge creation, set the configured edge style
-  geim.createEdgeInputMode.addEdgeCreatedListener((sender, evt) => {
+  geim.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
     gmm.setStyle(evt.item, getConfiguredEdgeStyle())
   })
 
@@ -220,7 +220,7 @@ function configureInteraction(graphComponent) {
     geim.createEdgeInputMode.dummyEdge.style.targetArrow = IArrow.NONE
   })
 
-  geim.addLabelAddedListener((sender, evt) => {
+  geim.addLabelAddedListener((_, evt) => {
     gmm.setStyle(evt.item, getConfiguredLabelStyle())
   })
 

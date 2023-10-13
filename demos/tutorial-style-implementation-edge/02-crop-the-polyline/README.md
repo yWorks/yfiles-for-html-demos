@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 02 Crop the Polyline - Edge Style Implementation Tutorial
+# 02 Crop the Polyline - Tutorial: Edge Style Implementation
 
 # Cropping the path at the node outline
 
@@ -63,4 +63,4 @@ protected createVisual(context: IRenderContext, edge: IEdge): Visual | null {
 }
 ```
 
-[03 Create Parallel Polylines](../../tutorial-style-implementation-edge/03-create-parallel-polylines/index.html)
+[03 Create Parallel Polylines](../../tutorial-style-implementation-edge/03-create-parallel-polylines/)

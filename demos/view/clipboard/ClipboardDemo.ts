@@ -108,10 +108,10 @@ function initializeGraphStyling(): void {
   // Set the default style for new nodes and edges
   graph.nodeDefaults.style = new StringTemplateNodeStyle(`<g>
       <rect stroke-width="1.5" stroke="#617984" fill="#C1E1F1" rx="4" ry="4"
-          width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+          width="{TemplateBinding width}" height="{TemplateBinding height}"/>
       <text data-content="{Binding name}"
           transform="{TemplateBinding width, Converter=centerTransform, Parameter=15}"
-          text-anchor="middle" style="font-size:120%; fill:#000" dy="0.5em"></text>
+          text-anchor="middle" style="font-size:120%; fill:#000" dy="0.5em"/>
     </g>
   `)
   graph.nodeDefaults.size = new Size(120, 60)
@@ -179,7 +179,7 @@ function initializeUI() {
     inputMode: GraphEditorInputMode,
     buttonSelector: string
   ) {
-    inputMode.addMultiSelectionFinishedListener((sender, evt) => {
+    inputMode.addMultiSelectionFinishedListener((_, evt) => {
       document.querySelector<HTMLButtonElement>(buttonSelector)!.disabled = evt.selection.size === 0
     })
 

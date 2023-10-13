@@ -106,7 +106,7 @@ export function enableHoverHighlights(viewerInputMode, graphComponent) {
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
   viewerInputMode.itemHoverInputMode.enabled = true
   viewerInputMode.itemHoverInputMode.discardInvalidItems = false
-  viewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) => {
+  viewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     const highlightIndicatorManager = graphComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
     if (evt.item) {

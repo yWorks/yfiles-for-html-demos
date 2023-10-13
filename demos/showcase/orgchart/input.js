@@ -65,14 +65,14 @@ export function initializeInputMode(graphComponent, orgChartGraph) {
     orgChartGraph.zoomToItem(graphComponent.currentItem)
   })
 
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
+  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     // we use the highlight manager to highlight hovered items
     const manager = graphComponent.highlightIndicatorManager
-    if (args.oldItem) {
-      manager.removeHighlight(args.oldItem)
+    if (evt.oldItem) {
+      manager.removeHighlight(evt.oldItem)
     }
-    if (args.item) {
-      manager.addHighlight(args.item)
+    if (evt.item) {
+      manager.addHighlight(evt.item)
     }
   })
   graphViewerInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
@@ -129,8 +129,8 @@ function initializeClickablePorts(graphViewerInputMode, orgChartGraph) {
   graphViewerInputMode.clickHitTestOrder = [GraphItemTypes.PORT, GraphItemTypes.NODE]
 
   // listen to clicks on items
-  graphViewerInputMode.addItemClickedListener((sender, args) => {
-    const port = args.item
+  graphViewerInputMode.addItemClickedListener((_, evt) => {
+    const port = evt.item
     if (port instanceof IPort && orgChartGraph.completeGraph.inEdgesAt(port).size === 0) {
       // if the item is a port, and it has not incoming edges expand or collapse the subtree
       const node = port.owner
@@ -141,7 +141,7 @@ function initializeClickablePorts(graphViewerInputMode, orgChartGraph) {
           void orgChartGraph.executeShowChildren(node)
         }
       }
-      args.handled = true
+      evt.handled = true
     }
   })
 }

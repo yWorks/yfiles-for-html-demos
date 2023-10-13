@@ -103,7 +103,7 @@ export default class PriorityPanel {
     })
 
     // Adds listener for updates of the visual tree
-    this.graphComponent.addUpdatedVisualListener((sender, eventArgs) => {
+    this.graphComponent.addUpdatedVisualListener((_, evt) => {
       if (this.currentItems && this.currentItems.length > 0 && this.dirty) {
         this.dirty = false
         this.updateLocation()

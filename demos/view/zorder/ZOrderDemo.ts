@@ -87,7 +87,7 @@ async function run(): Promise<void> {
   inputMode.allowAddLabel = false
   inputMode.allowEditLabelOnDoubleClick = false
 
-  inputMode.addNodeCreatedListener((sender, evt) => {
+  inputMode.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     updateLabel(node, zOrderSupport.getZOrder(node))
   })

@@ -27,25 +27,30 @@
  **
  ***************************************************************************/
 import {
+  Class,
   DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeStyle,
+  HierarchicLayout,
   IGraph,
   INode,
   IPortCandidateProvider,
+  LayoutExecutor,
   License,
   NodeDecorator,
-  Point,
   Size
 } from 'yfiles'
 
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
 
@@ -54,6 +59,7 @@ let graphComponent: GraphComponent
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
 
@@ -64,15 +70,48 @@ async function run(): Promise<void> {
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
 
-  // configure port candidate provider
-  configurePortCandidateProvider(graphComponent.graph)
+  // then build the graph with the given data set
+  buildGraph(graphComponent.graph, graphData)
 
-  // create an initial sample graph
-  createGraph(graphComponent.graph)
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
+  )
   graphComponent.fitGraphBounds()
 
-  // Finally, enable the undo engine. This prevents undoing of the graph creation
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
+  // configure port candidate provider
+  configurePortCandidateProvider(graphComponent.graph)
+}
+
+/**
+ * Iterates through the given data set and creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList.filter(item => !item.isGroup),
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -143,41 +182,6 @@ function initializeGraph(graph: IGraph): void {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Creates an initial sample graph.
- *
- * @param graph The graph.
- */
-function createGraph(graph: IGraph): void {
-  const node1 = graph.createNodeAt([110, 20])
-  const node2 = graph.createNodeAt([145, 95])
-  const node3 = graph.createNodeAt([75, 95])
-  const node4 = graph.createNodeAt([30, 175])
-  const node5 = graph.createNodeAt([100, 175])
-
-  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  graph.setPortLocation(edge1.sourcePort!, new Point(123.33, 40))
-  graph.setPortLocation(edge1.targetPort!, new Point(145, 75))
-  graph.setPortLocation(edge2.sourcePort!, new Point(96.67, 40))
-  graph.setPortLocation(edge2.targetPort!, new Point(75, 75))
-  graph.setPortLocation(edge3.sourcePort!, new Point(65, 115))
-  graph.setPortLocation(edge3.targetPort!, new Point(30, 155))
-  graph.setPortLocation(edge4.sourcePort!, new Point(85, 115))
-  graph.setPortLocation(edge4.targetPort!, new Point(90, 155))
-  graph.setPortLocation(edge5.sourcePort!, new Point(110, 40))
-  graph.setPortLocation(edge5.targetPort!, new Point(110, 155))
-  graph.addBends(edge1, [new Point(123.33, 55), new Point(145, 55)])
-  graph.addBends(edge2, [new Point(96.67, 55), new Point(75, 55)])
-  graph.addBends(edge3, [new Point(65, 130), new Point(30, 130)])
-  graph.addBends(edge4, [new Point(85, 130), new Point(90, 130)])
 }
 
 run().then(finishLoading)

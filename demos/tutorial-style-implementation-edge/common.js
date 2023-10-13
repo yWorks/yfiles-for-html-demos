@@ -440,7 +440,7 @@ export class IsVisibleEdgeStyleDescriptor extends BaseClass(ICanvasObjectDescrip
  */
 export function startAnimation(graphComponent) {
   graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener(sender => {
+  graphComponent.addSizeChangedListener(_ => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()

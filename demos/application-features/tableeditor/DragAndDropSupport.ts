@@ -81,7 +81,7 @@ export function configureDndInputMode(graph: IGraph): NodeDropInputMode {
  * Configures the drag and drop panel.
  */
 export function configureDndPanel(): void {
-  const dndPanel = new DragAndDropPanel(document.getElementById('dnd-panel') as HTMLDivElement)
+  const dndPanel = new DragAndDropPanel(document.querySelector<HTMLDivElement>('#dnd-panel')!)
   dndPanel.maxItemWidth = 160
   dndPanel.populatePanel(createDndPanelNodes())
 }

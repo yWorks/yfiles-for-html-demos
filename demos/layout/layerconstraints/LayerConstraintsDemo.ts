@@ -154,25 +154,25 @@ function initializeInputMode(graphComponent: GraphComponent): void {
     labelEditableItems: GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL,
     showHandleItems: GraphItemTypes.ALL ^ GraphItemTypes.NODE
   })
-  inputMode.addValidateLabelTextListener((sender, args) => {
-    args.newText = args.newText.trim()
-    if (args.newText.length === 0) {
+  inputMode.addValidateLabelTextListener((_, evt) => {
+    evt.newText = evt.newText.trim()
+    if (evt.newText.length === 0) {
       return
     }
-    const result = Number.parseFloat(args.newText)
+    const result = Number.parseFloat(evt.newText)
     if (!Number.isNaN(result)) {
       // only allow numbers between 0 and 100
       if (result > 100 && result <= 0) {
-        args.cancel = true
+        evt.cancel = true
       }
     }
   })
 
   // listener for the buttons on the nodes
-  inputMode.addItemClickedListener((sender, args) => {
-    if (args.item instanceof INode) {
-      const node = args.item
-      const location = args.location
+  inputMode.addItemClickedListener((_, evt) => {
+    if (evt.item instanceof INode) {
+      const node = evt.item
+      const location = evt.location
       const { x, y, width, height } = node.layout
       const constraints = node.tag
       if (constraints instanceof LayerConstraintsData) {
@@ -357,10 +357,8 @@ const CONSTRAINTS_CHANGED_EVENT_ARGS = new PropertyChangedEventArgs('constraints
 class LayerConstraintsData extends BaseClass(IPropertyObservable) {
   private _value: number
   private _constraints: boolean
-  private readonly propertyChangedListeners: ((
-    sender: this,
-    args: PropertyChangedEventArgs
-  ) => void)[] = []
+  private readonly propertyChangedListeners: ((_: this, evt: PropertyChangedEventArgs) => void)[] =
+    []
 
   /**
    * Creates a new instance of LayerConstraintsData.
@@ -414,18 +412,14 @@ class LayerConstraintsData extends BaseClass(IPropertyObservable) {
   /**
    * Adds a listener for property changes
    */
-  addPropertyChangedListener(
-    listener: (sender: this, args: PropertyChangedEventArgs) => void
-  ): void {
+  addPropertyChangedListener(listener: (_: this, evt: PropertyChangedEventArgs) => void): void {
     this.propertyChangedListeners.push(listener)
   }
 
   /**
    * Removes a listener for property changes
    */
-  removePropertyChangedListener(
-    listener: (sender: this, args: PropertyChangedEventArgs) => void
-  ): void {
+  removePropertyChangedListener(listener: (_: this, evt: PropertyChangedEventArgs) => void): void {
     const index = this.propertyChangedListeners.indexOf(listener)
     if (index >= 0) {
       this.propertyChangedListeners.splice(index, 1)
@@ -435,9 +429,9 @@ class LayerConstraintsData extends BaseClass(IPropertyObservable) {
   /**
    * Notifies all registered listeners when a property changed.
    */
-  propertyChanged(sender: this, args: PropertyChangedEventArgs): void {
+  propertyChanged(propertyChange: this, evt: PropertyChangedEventArgs): void {
     for (const listener of this.propertyChangedListeners) {
-      listener(sender, args)
+      listener(propertyChange, evt)
     }
   }
 }

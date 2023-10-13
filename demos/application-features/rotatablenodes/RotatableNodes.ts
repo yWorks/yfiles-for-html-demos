@@ -913,7 +913,7 @@ class RotatedReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
     this.node = node
     // use a reshape handler to properly handle
     // implicit resizing of parent group nodes
-    this.reshapeHandler = node.lookup(IReshapeHandler.$class) as IReshapeHandler
+    this.reshapeHandler = node.lookup(IReshapeHandler.$class)!
   }
 
   /**
@@ -943,7 +943,7 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
   constructor(private readonly node: INode) {
     super()
     this.node = node
-    this.reshapeHandler = node.lookup(IReshapeHandler.$class) as IReshapeHandler
+    this.reshapeHandler = node.lookup(IReshapeHandler.$class)!
     this.snapStep = 45
     this.snapDelta = 10
     this.snapToSameAngleDelta = 5
@@ -1168,7 +1168,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
    */
   snapAngle(inputModeContext: IInputModeContext, angle: number): number {
     // Check for disabled snapping
-    const snapContext = inputModeContext.lookup(SnapContext.$class) as SnapContext
+    const snapContext = inputModeContext.lookup(SnapContext.$class)!
     if (snapContext && !snapContext.enabled) {
       return angle
     }
@@ -1255,9 +1255,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     // Workaround: if the OrthogonalEdgeEditingContext is used to keep the edges orthogonal, it is not allowed
     // to change that edges manually. Therefore, we explicitly finish the OrthogonalEdgeEditingContext here and
     // then call the edge router.
-    const edgeEditingContext = context.lookup(
-      OrthogonalEdgeEditingContext.$class
-    ) as OrthogonalEdgeEditingContext
+    const edgeEditingContext = context.lookup(OrthogonalEdgeEditingContext.$class)!
     if (edgeEditingContext && edgeEditingContext.isInitialized) {
       edgeEditingContext.dragFinished()
     }
@@ -1726,18 +1724,18 @@ function toRadians(degrees: number): number {
 
 export function RotatableNodesSerializationListener(
   source: GraphMLIOHandler,
-  args: HandleSerializationEventArgs
+  evt: HandleSerializationEventArgs
 ): void {
-  const item = args.item
+  const item = evt.item
   if (item instanceof RotatableNodeStyleDecorator) {
     const markupExtension = new RotatableNodeStyleDecoratorExtension()
     markupExtension.angle = item.angle
     markupExtension.wrapped = item.wrapped
-    args.context.serializeReplacement(
+    evt.context.serializeReplacement(
       RotatableNodeStyleDecoratorExtension.$class,
       item,
       markupExtension
     )
-    args.handled = true
+    evt.handled = true
   }
 }

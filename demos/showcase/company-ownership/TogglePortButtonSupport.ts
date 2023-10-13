@@ -104,16 +104,16 @@ export default class TogglePortButtonSupport {
       GraphItemTypes.ALL
     ]
 
-    graphInputMode.addItemClickedListener((sender, args) => {
-      if (!(args.item instanceof IPort)) {
+    graphInputMode.addItemClickedListener((_, evt) => {
+      if (!(evt.item instanceof IPort)) {
         return
       }
-      const port = args.item
+      const port = evt.item
       if (port instanceof IPort && port.style instanceof StringTemplatePortStyle) {
         const styleTag = port.style.styleTag as PortStyleTag
         const collapsed = styleTag.collapsed ?? false
         port.style.styleTag = { ...styleTag, collapsed: !collapsed }
-        args.handled = true
+        evt.handled = true
         graphInputMode.graph!.invalidateDisplays()
         styleTag.action?.(!collapsed)
       }

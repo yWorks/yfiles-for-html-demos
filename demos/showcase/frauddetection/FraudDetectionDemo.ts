@@ -161,8 +161,8 @@ function initializeGraphComponent(): void {
   inputMode.moveUnselectedInputMode.enabled = true
   inputMode.marqueeSelectionInputMode.enabled = false
 
-  inputMode.addItemDoubleClickedListener((_, event) => {
-    openInspectionViewForItem(event.item, graphComponent)
+  inputMode.addItemDoubleClickedListener((_, evt) => {
+    openInspectionViewForItem(evt.item, graphComponent)
   })
 
   graphComponent.inputMode = inputMode
@@ -286,8 +286,7 @@ function initializeTimelineComponent(
   timeline.addFilterChangedListener(() => {
     filteredGraph.nodePredicateChanged()
 
-    const bankFraud =
-      (document.getElementById('samples') as HTMLSelectElement).value === 'bank-fraud'
+    const bankFraud = document.querySelector<HTMLSelectElement>('#samples')!.value === 'bank-fraud'
     const fraudsters = bankFraud
       ? detectBankFraud(graphComponent)
       : detectInsuranceFraud(graphComponent)

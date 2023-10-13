@@ -118,9 +118,7 @@ export default class PropertiesPanelUI {
     const textField = document.createElement('input')
     textField.type = 'text'
     textField.setAttribute('class', 'property-value')
-
     textField.value = value
-    textField['data-value'] = value
 
     textField.addEventListener(
       'change',

@@ -13,9 +13,7 @@
 
 # Network Monitoring Demo
 
-This demo shows a basic network monitoring tool.
-
-You can watch the traffic flowing through the network and even influence the network by deactivating nodes.
+This demo shows a basic network monitoring tool. Watch the traffic flowing through the network.
 
 The network consists of PCs, Laptops, Tablets, Servers, Databases and Routers. The color of a connection depicts its traffic load and changes from green to yellow to red. The traffic load of a node is shown on its control panel pop-up.
 

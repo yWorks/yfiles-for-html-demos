@@ -70,19 +70,17 @@ export function initializeInputMode(
     orgChartGraph.zoomToItem(graphComponent.currentItem as INode)
   })
 
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener(
-    (sender: object, args: HoveredItemChangedEventArgs): void => {
-      // we use the highlight manager to highlight hovered items
-      const manager = graphComponent.highlightIndicatorManager
-      if (args.oldItem) {
-        manager.removeHighlight(args.oldItem)
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition,@typescript-eslint/strict-boolean-expressions
-      if (args.item) {
-        manager.addHighlight(args.item)
-      }
+  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt): void => {
+    // we use the highlight manager to highlight hovered items
+    const manager = graphComponent.highlightIndicatorManager
+    if (evt.oldItem) {
+      manager.removeHighlight(evt.oldItem)
     }
-  )
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition,@typescript-eslint/strict-boolean-expressions
+    if (evt.item) {
+      manager.addHighlight(evt.item)
+    }
+  })
   graphViewerInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
 
   // display information about the current employee
@@ -138,8 +136,8 @@ function initializeClickablePorts(
   graphViewerInputMode.clickHitTestOrder = [GraphItemTypes.PORT, GraphItemTypes.NODE]
 
   // listen to clicks on items
-  graphViewerInputMode.addItemClickedListener((sender, args) => {
-    const port = args.item
+  graphViewerInputMode.addItemClickedListener((_, evt) => {
+    const port = evt.item
     if (port instanceof IPort && orgChartGraph.completeGraph.inEdgesAt(port).size === 0) {
       // if the item is a port, and it has not incoming edges expand or collapse the subtree
       const node = port.owner as INode
@@ -150,7 +148,7 @@ function initializeClickablePorts(
           void orgChartGraph.executeShowChildren(node)
         }
       }
-      args.handled = true
+      evt.handled = true
     }
   })
 }

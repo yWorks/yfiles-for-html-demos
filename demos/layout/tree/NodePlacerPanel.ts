@@ -161,14 +161,14 @@ export class NodePlacerPanel {
    * Updates which node placer configuration is used in this panel and the layout of the preview graph.
    */
   onNodeSelectionChanged(selectedNodes: INode[]): void {
-    const noNodePlacerElement = document.getElementById('no-node-placer-settings') as HTMLDivElement
-    const nodePlacerElement = document.getElementById('select-node-placer') as HTMLSelectElement
-    const nodePlacerLabelElement = document.getElementById(
-      'select-node-placer-label'
-    ) as HTMLLabelElement
-    const rotationElement = document.getElementById('rotation') as HTMLDivElement
-    const spacingElement = document.getElementById('rotatable-spacing') as HTMLDivElement
-    const previewElement = document.getElementById('previewComponent') as HTMLDivElement
+    const noNodePlacerElement = document.querySelector<HTMLDivElement>('#no-node-placer-settings')!
+    const nodePlacerElement = document.querySelector<HTMLDivElement>('#select-node-placer')!
+    const nodePlacerLabelElement = document.querySelector<HTMLLabelElement>(
+      '#select-node-placer-label'
+    )!
+    const rotationElement = document.querySelector<HTMLDivElement>('#rotation')!
+    const spacingElement = document.querySelector<HTMLDivElement>('#rotatable-spacing')!
+    const previewElement = document.querySelector<HTMLDivElement>('#previewComponent')!
 
     if (this.currentNodePlacerConfiguration) {
       this.currentNodePlacerConfiguration.visible = false
@@ -289,7 +289,7 @@ async function runPreviewLayout(
  * Wires up the UI elements that are not node placer specific.
  */
 function bindActions(panel: NodePlacerPanel): void {
-  const selectNodePlacer = document.getElementById('select-node-placer') as HTMLSelectElement
+  const selectNodePlacer = document.querySelector<HTMLSelectElement>('#select-node-placer')!
   selectNodePlacer.addEventListener('change', () => {
     if (panel.currentNodePlacerConfiguration) {
       panel.currentNodePlacerConfiguration.visible = false
@@ -303,8 +303,8 @@ function bindActions(panel: NodePlacerPanel): void {
       panel.currentNodePlacerConfiguration.adoptSettings([defaultPlacer])
     }
 
-    const rotationElement = document.getElementById('rotation') as HTMLDivElement
-    const spacingElement = document.getElementById('rotatable-spacing') as HTMLDivElement
+    const rotationElement = document.querySelector<HTMLDivElement>('#rotation')!
+    const spacingElement = document.querySelector<HTMLDivElement>('#rotatable-spacing')!
     if (panel.currentNodePlacerConfiguration.rotatable) {
       rotationElement.style.display = 'block'
       spacingElement.style.display = 'block'
@@ -315,7 +315,7 @@ function bindActions(panel: NodePlacerPanel): void {
     panel.panelChanged()
   })
 
-  const rotationLeft = document.getElementById('rotation-left') as HTMLButtonElement
+  const rotationLeft = document.querySelector<HTMLButtonElement>('#rotation-left')!
   rotationLeft.addEventListener('click', () => {
     panel.graphComponent.selection.selectedNodes.forEach(node => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.ROT90, panel)
@@ -323,7 +323,7 @@ function bindActions(panel: NodePlacerPanel): void {
     panel.updateChangeListeners()
   })
 
-  const rotationRight = document.getElementById('rotation-right') as HTMLButtonElement
+  const rotationRight = document.querySelector<HTMLButtonElement>('#rotation-right')!
   rotationRight.addEventListener('click', () => {
     panel.graphComponent.selection.selectedNodes.forEach(node => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.ROT270, panel)
@@ -331,7 +331,7 @@ function bindActions(panel: NodePlacerPanel): void {
     panel.updateChangeListeners()
   })
 
-  const mirrorHorizontal = document.getElementById('mirror-horizontal') as HTMLButtonElement
+  const mirrorHorizontal = document.querySelector<HTMLButtonElement>('#mirror-horizontal')!
   mirrorHorizontal.addEventListener('click', () => {
     panel.graphComponent.selection.selectedNodes.forEach(node => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.MIR_HOR, panel)
@@ -339,7 +339,7 @@ function bindActions(panel: NodePlacerPanel): void {
     panel.updateChangeListeners()
   })
 
-  const mirrorVertical = document.getElementById('mirror-vertical') as HTMLButtonElement
+  const mirrorVertical = document.querySelector<HTMLButtonElement>('#mirror-vertical')!
   mirrorVertical.addEventListener('click', () => {
     panel.graphComponent.selection.selectedNodes.forEach(node => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.MIR_VERT, panel)
@@ -532,7 +532,7 @@ abstract class NodePlacerConfiguration {
   set visible(visible: boolean) {
     this._visible = visible
 
-    const description = document.getElementById('node-placer-description') as HTMLDivElement
+    const description = document.querySelector<HTMLDivElement>('#node-placer-description')!
     if (visible) {
       this.div.style.display = 'block'
       description.innerHTML = this.getDescriptionText()
@@ -636,7 +636,7 @@ abstract class RotatableNodePlacerConfiguration extends NodePlacerConfiguration 
   }
 
   bindActions(panel: NodePlacerPanel): void {
-    const spacingElement = document.getElementById('spacing') as HTMLInputElement
+    const spacingElement = document.querySelector<HTMLInputElement>('#spacing')!
     spacingElement.addEventListener('change', () => {
       if (this.visible) {
         this.spacing = Number.parseInt(spacingElement.value)
@@ -644,7 +644,7 @@ abstract class RotatableNodePlacerConfiguration extends NodePlacerConfiguration 
         panel.panelChanged()
       }
     })
-    const spacingLabel = document.getElementById('spacing-label') as HTMLLabelElement
+    const spacingLabel = document.querySelector<HTMLLabelElement>('#spacing-label')!
     spacingElement.addEventListener('input', () => {
       if (this.visible) {
         spacingLabel.innerHTML = spacingElement.value
@@ -672,7 +672,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('default-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#default-node-placer-settings')!,
       new DefaultNodePlacer(),
       panel
     )
@@ -764,7 +764,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   updatePanel(): void {
-    const childPlacement = document.getElementById('select-child-placement') as HTMLSelectElement
+    const childPlacement = document.querySelector<HTMLSelectElement>('#select-child-placement')!
     if (this.indeterminateChildPlacement) {
       childPlacement.selectedIndex = 0
     } else {
@@ -785,7 +785,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       }
     }
 
-    const routingStyle = document.getElementById('routing-style') as HTMLSelectElement
+    const routingStyle = document.querySelector<HTMLSelectElement>('#routing-style')!
     if (this.indeterminateRoutingStyle) {
       routingStyle.selectedIndex = 0
     } else {
@@ -818,7 +818,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       this.indeterminateMinimumChannelSegmentDistance
     )
 
-    const rootAlignment = document.getElementById('root-alignment') as HTMLSelectElement
+    const rootAlignment = document.querySelector<HTMLSelectElement>('#root-alignment')!
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
     } else {
@@ -861,7 +861,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   bindActions(panel: NodePlacerPanel): void {
-    const childPlacement = document.getElementById('select-child-placement') as HTMLSelectElement
+    const childPlacement = document.querySelector<HTMLSelectElement>('#select-child-placement')!
     childPlacement.addEventListener('change', () => {
       switch (childPlacement.selectedIndex) {
         default:
@@ -882,7 +882,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const routingStyle = document.getElementById('routing-style') as HTMLSelectElement
+    const routingStyle = document.querySelector<HTMLSelectElement>('#routing-style')!
     routingStyle.addEventListener('change', () => {
       switch (routingStyle.selectedIndex) {
         default:
@@ -903,48 +903,48 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const horizontalDistance = document.getElementById('horizontal-distance') as HTMLInputElement
+    const horizontalDistance = document.querySelector<HTMLInputElement>('#horizontal-distance')!
     horizontalDistance.addEventListener('change', () => {
       this.horizontalDistance = Number.parseInt(horizontalDistance.value)
       this.indeterminateHorizontalDistance = false
       panel.panelChanged()
     })
-    const horizontalDistanceLabel = document.getElementById(
-      'horizontal-distance-label'
-    ) as HTMLLabelElement
+    const horizontalDistanceLabel = document.querySelector<HTMLLabelElement>(
+      '#horizontal-distance-label'
+    )!
     horizontalDistance.addEventListener('input', () => {
       horizontalDistanceLabel.innerHTML = horizontalDistance.value
     })
 
-    const verticalDistance = document.getElementById('vertical-distance') as HTMLInputElement
+    const verticalDistance = document.querySelector<HTMLInputElement>('#vertical-distance')!
     verticalDistance.addEventListener('change', () => {
       this.verticalDistance = Number.parseInt(verticalDistance.value)
       this.indeterminateVerticalDistance = false
       panel.panelChanged()
     })
-    const verticalDistanceLabel = document.getElementById(
-      'vertical-distance-label'
-    ) as HTMLLabelElement
+    const verticalDistanceLabel = document.querySelector<HTMLLabelElement>(
+      '#vertical-distance-label'
+    )!
     verticalDistance.addEventListener('input', () => {
       verticalDistanceLabel.innerHTML = verticalDistance.value
     })
 
-    const minimumChannelSegmentDistance = document.getElementById(
-      'minimum-channel-segment-distance'
-    ) as HTMLInputElement
+    const minimumChannelSegmentDistance = document.querySelector<HTMLInputElement>(
+      '#minimum-channel-segment-distance'
+    )!
     minimumChannelSegmentDistance.addEventListener('change', () => {
       this.minimumChannelSegmentDistance = Number.parseInt(minimumChannelSegmentDistance.value)
       this.indeterminateMinimumChannelSegmentDistance = false
       panel.panelChanged()
     })
-    const minimumChannelSegmentDistanceLabel = document.getElementById(
-      'minimum-channel-segment-distance-label'
-    ) as HTMLLabelElement
+    const minimumChannelSegmentDistanceLabel = document.querySelector<HTMLLabelElement>(
+      '#minimum-channel-segment-distance-label'
+    )!
     minimumChannelSegmentDistance.addEventListener('input', () => {
       minimumChannelSegmentDistanceLabel.innerHTML = minimumChannelSegmentDistance.value
     })
 
-    const rootAlignment = document.getElementById('root-alignment') as HTMLSelectElement
+    const rootAlignment = document.querySelector<HTMLSelectElement>('#root-alignment')!
     rootAlignment.addEventListener('change', () => {
       switch (rootAlignment.selectedIndex) {
         default:
@@ -996,7 +996,7 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('simple-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#simple-node-placer-settings')!,
       new SimpleNodePlacer(),
       panel
     )
@@ -1063,11 +1063,11 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 
   updatePanel(): void {
     super.updatePanel()
-    const createBus = document.getElementById('create-bus') as HTMLInputElement
+    const createBus = document.querySelector<HTMLInputElement>('#create-bus')!
     createBus.checked = this.createBus
     createBus.indeterminate = this.indeterminateCreateBus
 
-    const rootAlignment = document.getElementById('simple-root-node-alignment') as HTMLSelectElement
+    const rootAlignment = document.querySelector<HTMLSelectElement>('#simple-root-node-alignment')!
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
     } else {
@@ -1115,14 +1115,14 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   bindActions(panel: NodePlacerPanel) {
     super.bindActions(panel)
 
-    const createBus = document.getElementById('create-bus') as HTMLInputElement
+    const createBus = document.querySelector<HTMLInputElement>('#create-bus')!
     createBus.addEventListener('change', () => {
       this.createBus = createBus.checked
       this.indeterminateCreateBus = false
       panel.panelChanged()
     })
 
-    const rootAlignment = document.getElementById('simple-root-node-alignment') as HTMLSelectElement
+    const rootAlignment = document.querySelector<HTMLSelectElement>('#simple-root-node-alignment')!
     rootAlignment.addEventListener('change', () => {
       switch (rootAlignment.selectedIndex) {
         default:
@@ -1152,17 +1152,17 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const minimumChannelSegmentDistance = document.getElementById(
-      'min-channel-segment-distance'
-    ) as HTMLInputElement
+    const minimumChannelSegmentDistance = document.querySelector<HTMLInputElement>(
+      '#min-channel-segment-distance'
+    )!
     minimumChannelSegmentDistance.addEventListener('change', () => {
       this.minimumChannelSegmentDistance = Number.parseInt(minimumChannelSegmentDistance.value)
       this.indeterminateMinimumChannelSegmentDistance = false
       panel.panelChanged()
     })
-    const minimumChannelSegmentDistanceLabel = document.getElementById(
-      'min-channel-segment-distance-label'
-    ) as HTMLLabelElement
+    const minimumChannelSegmentDistanceLabel = document.querySelector<HTMLLabelElement>(
+      '#min-channel-segment-distance-label'
+    )!
     minimumChannelSegmentDistance.addEventListener('input', () => {
       minimumChannelSegmentDistanceLabel.innerHTML = minimumChannelSegmentDistance.value
     })
@@ -1179,7 +1179,7 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('bus-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#bus-node-placer-settings')!,
       new BusNodePlacer(),
       panel
     )
@@ -1233,7 +1233,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('grid-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#grid-node-placer-settings')!,
       new GridNodePlacer(),
       panel
     )
@@ -1301,7 +1301,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   updatePanel(): void {
     super.updatePanel()
 
-    const rootAlignment = document.getElementById('grid-node-placer-alignment') as HTMLSelectElement
+    const rootAlignment = document.querySelector<HTMLSelectElement>('#grid-node-placer-alignment')!
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
     } else {
@@ -1331,9 +1331,9 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       }
     }
 
-    const busPlacement = document.getElementById(
-      'grid-node-placer-bus-placement'
-    ) as HTMLSelectElement
+    const busPlacement = document.querySelector<HTMLSelectElement>(
+      '#grid-node-placer-bus-placement'
+    )!
     if (this.indeterminateBusPlacement) {
       busPlacement.selectedIndex = 0
     } else {
@@ -1354,7 +1354,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 
   bindActions(panel: NodePlacerPanel) {
     super.bindActions(panel)
-    const rootAlignment = document.getElementById('grid-node-placer-alignment') as HTMLSelectElement
+    const rootAlignment = document.querySelector<HTMLSelectElement>('#grid-node-placer-alignment')!
     rootAlignment.addEventListener('change', () => {
       switch (rootAlignment.selectedIndex) {
         default:
@@ -1384,9 +1384,9 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const busPlacement = document.getElementById(
-      'grid-node-placer-bus-placement'
-    ) as HTMLSelectElement
+    const busPlacement = document.querySelector<HTMLSelectElement>(
+      '#grid-node-placer-bus-placement'
+    )!
     busPlacement.addEventListener('change', () => {
       switch (busPlacement.selectedIndex) {
         default:
@@ -1419,7 +1419,7 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('double-line-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#double-line-node-placer-settings')!,
       new DoubleLineNodePlacer(),
       panel
     )
@@ -1479,9 +1479,9 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
   updatePanel(): void {
     super.updatePanel()
 
-    const rootAlignment = document.getElementById(
-      'double-line-root-node-alignment'
-    ) as HTMLSelectElement
+    const rootAlignment = document.querySelector<HTMLSelectElement>(
+      '#double-line-root-node-alignment'
+    )!
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
     } else {
@@ -1514,9 +1514,9 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
 
   bindActions(panel: NodePlacerPanel): void {
     super.bindActions(panel)
-    const rootAlignment = document.getElementById(
-      'double-line-root-node-alignment'
-    ) as HTMLSelectElement
+    const rootAlignment = document.querySelector<HTMLSelectElement>(
+      '#double-line-root-node-alignment'
+    )!
     rootAlignment.addEventListener('change', () => {
       switch (rootAlignment.selectedIndex) {
         default:
@@ -1563,7 +1563,7 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('left-right-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#left-right-node-placer-settings')!,
       new LeftRightNodePlacer(),
       panel
     )
@@ -1629,7 +1629,7 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   updatePanel(): void {
     super.updatePanel()
 
-    const lastOnBottom = document.getElementById('last-on-bottom') as HTMLInputElement
+    const lastOnBottom = document.querySelector<HTMLInputElement>('#last-on-bottom')!
     lastOnBottom.checked = this.placeLastOnBottom
     lastOnBottom.indeterminate = this.indeterminatePlaceLastOnBottom
     updateInput('branchCount', this.branchCount, this.indeterminateBranchCount)
@@ -1637,21 +1637,21 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
 
   bindActions(panel: NodePlacerPanel): void {
     super.bindActions(panel)
-    const lastOnBottom = document.getElementById('last-on-bottom') as HTMLInputElement
+    const lastOnBottom = document.querySelector<HTMLInputElement>('#last-on-bottom')!
     lastOnBottom.addEventListener('change', () => {
       this.placeLastOnBottom = lastOnBottom.checked
       this.indeterminatePlaceLastOnBottom = false
       panel.panelChanged()
     })
 
-    const branchCount = document.getElementById('branch-count') as HTMLInputElement
+    const branchCount = document.querySelector<HTMLInputElement>('#branch-count')!
     branchCount.addEventListener('change', () => {
       this.branchCount = Number.parseInt(branchCount.value)
       this.indeterminateBranchCount = false
       panel.panelChanged()
     })
 
-    const branchCountLabel = document.getElementById('branch-count-label') as HTMLLabelElement
+    const branchCountLabel = document.querySelector<HTMLLabelElement>('#branch-count-label')!
     branchCount.addEventListener('input', () => {
       branchCountLabel.innerHTML = branchCount.value
     })
@@ -1679,7 +1679,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('aspect-ratio-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#aspect-ratio-node-placer-settings')!,
       new AspectRatioNodePlacer(),
       panel
     )
@@ -1766,7 +1766,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   updatePanel(): void {
     updateInput('aspect-ratio', this.aspectRatio, this.indeterminateAspectRatio)
 
-    const fillStyle = document.getElementById('fill-style') as HTMLSelectElement
+    const fillStyle = document.querySelector<HTMLSelectElement>('#fill-style')!
     if (this.indeterminateFillStyle) {
       fillStyle.selectedIndex = 0
     } else {
@@ -1798,24 +1798,24 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
       this.indeterminateVerticalDistance
     )
 
-    const horizontal = document.getElementById('horizontal') as HTMLInputElement
+    const horizontal = document.querySelector<HTMLInputElement>('#horizontal')!
     horizontal.checked = this.horizontal
     horizontal.indeterminate = this.indeterminateHorizontal
   }
 
   bindActions(panel: NodePlacerPanel): void {
-    const aspectRatio = document.getElementById('aspect-ratio') as HTMLInputElement
+    const aspectRatio = document.querySelector<HTMLInputElement>('#aspect-ratio')!
     aspectRatio.addEventListener('change', () => {
       this.aspectRatio = parseFloat(aspectRatio.value)
       this.indeterminateAspectRatio = false
       panel.panelChanged()
     })
-    const aspectRatioLabel = document.getElementById('aspect-ratio-label') as HTMLLabelElement
+    const aspectRatioLabel = document.querySelector<HTMLLabelElement>('#aspect-ratio-label')!
     aspectRatio.addEventListener('input', () => {
       aspectRatioLabel.innerHTML = aspectRatio.value
     })
 
-    const fillStyle = document.getElementById('fill-style') as HTMLSelectElement
+    const fillStyle = document.querySelector<HTMLSelectElement>('#fill-style')!
     fillStyle.addEventListener('change', () => {
       switch (fillStyle.selectedIndex) {
         default:
@@ -1836,37 +1836,37 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const horizontalDistance = document.getElementById(
-      'aspect-ratio-horizontal-distance'
-    ) as HTMLInputElement
+    const horizontalDistance = document.querySelector<HTMLInputElement>(
+      '#aspect-ratio-horizontal-distance'
+    )!
     horizontalDistance.addEventListener('change', () => {
       this.horizontalDistance = Number.parseInt(horizontalDistance.value)
       this.indeterminateHorizontalDistance = false
       panel.panelChanged()
     })
-    const horizontalDistanceLabel = document.getElementById(
-      'aspect-ratio-horizontal-distance-label'
-    ) as HTMLLabelElement
+    const horizontalDistanceLabel = document.querySelector<HTMLLabelElement>(
+      '#aspect-ratio-horizontal-distance-label'
+    )!
     horizontalDistance.addEventListener('input', () => {
       horizontalDistanceLabel.innerHTML = horizontalDistance.value
     })
 
-    const verticalDistance = document.getElementById(
-      'aspect-ratio-vertical-distance'
-    ) as HTMLInputElement
+    const verticalDistance = document.querySelector<HTMLInputElement>(
+      '#aspect-ratio-vertical-distance'
+    )!
     verticalDistance.addEventListener('change', () => {
       this.verticalDistance = Number.parseInt(verticalDistance.value)
       this.indeterminateVerticalDistance = false
       panel.panelChanged()
     })
-    const verticalDistanceLabel = document.getElementById(
-      'aspect-ratio-vertical-distance-label'
-    ) as HTMLInputElement
+    const verticalDistanceLabel = document.querySelector<HTMLInputElement>(
+      '#aspect-ratio-vertical-distance-label'
+    )!
     verticalDistance.addEventListener('input', () => {
       verticalDistanceLabel.innerHTML = verticalDistance.value
     })
 
-    const horizontal = document.getElementById('horizontal') as HTMLInputElement
+    const horizontal = document.querySelector<HTMLInputElement>('#horizontal')!
     horizontal.addEventListener('change', () => {
       this.horizontal = horizontal.checked
       this.indeterminateHorizontal = false
@@ -1888,7 +1888,7 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('assistant-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#assistant-node-placer-settings')!,
       new AssistantNodePlacer(),
       panel
     )
@@ -1948,7 +1948,7 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   updatePanel(): void {
     super.updatePanel()
 
-    const childNodePlacer = document.getElementById('child-node-placer') as HTMLSelectElement
+    const childNodePlacer = document.querySelector<HTMLSelectElement>('#child-node-placer')!
     if (this.indeterminateChildNodePlacer) {
       childNodePlacer.selectedIndex = 0
     } else if (this.childNodePlacer instanceof DefaultNodePlacer) {
@@ -1968,7 +1968,7 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
 
   bindActions(panel: NodePlacerPanel): void {
     super.bindActions(panel)
-    const childNodePlacer = document.getElementById('child-node-placer') as HTMLSelectElement
+    const childNodePlacer = document.querySelector<HTMLSelectElement>('#child-node-placer')!
     childNodePlacer.addEventListener('change', () => {
       switch (childNodePlacer.selectedIndex) {
         default:
@@ -2018,7 +2018,7 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
    */
   constructor(panel: NodePlacerPanel) {
     super(
-      document.getElementById('compact-node-placer-settings') as HTMLDivElement,
+      document.querySelector<HTMLDivElement>('#compact-node-placer-settings')!,
       new CompactNodePlacer(),
       panel
     )
@@ -2132,77 +2132,75 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   bindActions(panel: NodePlacerPanel): void {
-    const preferredAspectRatio = document.getElementById(
-      'compact-preferred-aspect-ratio'
-    ) as HTMLInputElement
+    const preferredAspectRatio = document.querySelector<HTMLInputElement>(
+      '#compact-preferred-aspect-ratio'
+    )!
     preferredAspectRatio.addEventListener('change', () => {
       this.preferredAspectRatio = Number.parseInt(preferredAspectRatio.value)
       this.indeterminatePreferredAspectRatio = false
       panel.panelChanged()
     })
-    const preferredAspectRatioLabel = document.getElementById(
-      'compact-preferred-aspect-ratio-label'
-    ) as HTMLLabelElement
+    const preferredAspectRatioLabel = document.querySelector<HTMLLabelElement>(
+      '#compact-preferred-aspect-ratio-label'
+    )!
     preferredAspectRatio.addEventListener('input', () => {
       preferredAspectRatioLabel.innerHTML = preferredAspectRatio.value
     })
 
-    const verticalDistance = document.getElementById(
-      'compact-vertical-distance'
-    ) as HTMLInputElement
+    const verticalDistance = document.querySelector<HTMLInputElement>('#compact-vertical-distance')!
     verticalDistance.addEventListener('change', () => {
       this.verticalDistance = Number.parseInt(verticalDistance.value)
       this.indeterminateVerticalDistance = false
       panel.panelChanged()
     })
-    const verticalDistanceLabel = document.getElementById(
-      'compact-vertical-distance-label'
-    ) as HTMLLabelElement
+    const verticalDistanceLabel = document.querySelector<HTMLLabelElement>(
+      '#compact-vertical-distance-label'
+    )!
     verticalDistance.addEventListener('input', () => {
       verticalDistanceLabel.innerHTML = verticalDistance.value
     })
 
-    const horizontalDistance = document.getElementById(
-      'compact-horizontal-distance'
-    ) as HTMLInputElement
+    const horizontalDistance = document.querySelector<HTMLInputElement>(
+      '#compact-horizontal-distance'
+    )!
     horizontalDistance.addEventListener('change', () => {
       this.horizontalDistance = Number.parseInt(horizontalDistance.value)
       this.indeterminateHorizontalDistance = false
       panel.panelChanged()
     })
-    const horizontalDistanceLabel = document.getElementById(
-      'compact-horizontal-distance-label'
-    ) as HTMLLabelElement
+    const horizontalDistanceLabel = document.querySelector<HTMLLabelElement>(
+      '#compact-horizontal-distance-label'
+    )!
     horizontalDistance.addEventListener('input', () => {
       horizontalDistanceLabel.innerHTML = horizontalDistance.value
     })
 
-    const minimumFirstSegmentLength = document.getElementById(
-      'compact-minimum-first-segment-length'
-    ) as HTMLInputElement
+    const minimumFirstSegmentLength = document.querySelector<HTMLInputElement>(
+      '#compact-minimum-first-segment-length'
+    )!
     minimumFirstSegmentLength.addEventListener('change', () => {
       this.minimumFirstSegmentLength = Number.parseInt(minimumFirstSegmentLength.value)
       this.indeterminateMinimumFirstSegmentLength = false
       panel.panelChanged()
     })
-    const minimumFirstSegmentLengthLabel = document.getElementById(
-      'compact-minimum-first-segment-length-label'
-    ) as HTMLLabelElement
+    const minimumFirstSegmentLengthLabel = document.querySelector<HTMLLabelElement>(
+      '#compact-minimum-first-segment-length-label'
+    )!
     minimumFirstSegmentLength.addEventListener('input', () => {
       minimumFirstSegmentLengthLabel.innerHTML = minimumFirstSegmentLength.value
     })
 
-    const minimumLastSegmentLength = document.getElementById(
-      'compact-minimum-last-segment-length'
-    ) as HTMLInputElement
+    const minimumLastSegmentLength = document.querySelector<HTMLInputElement>(
+      '#compact-minimum-last-segment-length'
+    )!
     minimumLastSegmentLength.addEventListener('change', () => {
       this.minimumLastSegmentLength = Number.parseInt(minimumLastSegmentLength.value)
       this.indeterminateMinimumLastSegmentLength = false
       panel.panelChanged()
     })
-    const minimumLastSegmentLengthLabel = document.getElementById(
-      'compact-minimum-last-segment-length-label'
-    ) as HTMLLabelElement
+    const minimumLastSegmentLengthLabel = document.querySelector<HTMLLabelElement>(
+      '#compact-minimum-last-segment-length-label'
+    )!
     minimumLastSegmentLength.addEventListener('input', () => {
       minimumLastSegmentLengthLabel.innerHTML = minimumLastSegmentLength.value
     })
@@ -2218,7 +2216,7 @@ class MultipleNodePlacerConfiguration extends NodePlacerConfiguration {
    * Creates a new instance of MultipleNodePlacerConfiguration.
    */
   constructor(panel: NodePlacerPanel) {
-    super(document.getElementById('multiple-node-placer-settings') as HTMLDivElement, null, panel)
+    super(document.querySelector<HTMLDivElement>('#multiple-node-placer-settings')!, null, panel)
   }
 
   get hasPreview(): boolean {

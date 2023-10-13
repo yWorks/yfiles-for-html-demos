@@ -315,7 +315,7 @@ export default class PreConfigurator {
       }
     }
 
-    const editMode = this.modeMapping[document.getElementById('modeChooserBox').selectedIndex]
+    const editMode = this.modeMapping[document.querySelector('#modeChooserBox').selectedIndex]
 
     // get style specific limits
     const styleLimits = this.preConfigurationLimits[graphItemStyle]

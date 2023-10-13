@@ -103,7 +103,7 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
   // set which items are hoverable
   gvim.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
-  gvim.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) => {
+  gvim.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     // reset opacities of all edges
     graph.edges.forEach(edge => {
       edge.tag.opacity = ChordEdgeStyle.defaultOpacity
@@ -127,10 +127,10 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
   })
 
   // when the selected edge changes, the toolbar slider needs to reflect the thickness of the current edge
-  graphComponent.selection.addItemSelectionChangedListener((sender, evt) => {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
     if (evt.item instanceof IEdge) {
-      const label = document.getElementById('thickness-label') as HTMLElement
-      const slider = document.getElementById('thickness') as HTMLInputElement
+      const label = document.querySelector<HTMLElement>('#thickness-label')!
+      const slider = document.querySelector<HTMLInputElement>('#thickness')!
       const edge = evt.item
       if (evt.itemSelected) {
         edge.tag.highlighted = true

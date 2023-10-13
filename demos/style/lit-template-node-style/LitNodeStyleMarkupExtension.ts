@@ -81,9 +81,9 @@ export function registerLitNodeStyleSerialization(graphmlHandler: GraphMLIOHandl
     LitNodeStyle: LitNodeStyleMarkupExtension
   })
   graphmlHandler.addNamespace('http://www.yworks.com/demos/yfiles-lit-node-style/1.0', 'lit')
-  graphmlHandler.addHandleSerializationListener((sender, args) => {
-    const item = args.item
-    const context = args.context
+  graphmlHandler.addHandleSerializationListener((_, evt) => {
+    const item = evt.item
+    const context = evt.context
     if (item instanceof LitNodeStyle) {
       const litNodeStyleMarkupExtension = new LitNodeStyleMarkupExtension()
       litNodeStyleMarkupExtension.renderFunction = item.renderFunction.toString()
@@ -92,7 +92,7 @@ export function registerLitNodeStyleSerialization(graphmlHandler: GraphMLIOHandl
         item,
         litNodeStyleMarkupExtension
       )
-      args.handled = true
+      evt.handled = true
     }
   })
 }

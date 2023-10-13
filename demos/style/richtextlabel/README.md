@@ -57,7 +57,7 @@ Markup labels can use line wrapping. In this demo application, the labels use wo
 
 ## Related Demos
 
-- [Default Label Style Demo](../../style/default-label-style/index.html)
-- [HTML Label Style Demo](../../style/html-label-style/index.html)
-- [Markdown Label Demo](../../style/markdownlabel/index.html)
-- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/index.html)
+- [Default Label Style Demo](../../style/default-label-style/)
+- [HTML Label Style Demo](../../style/html-label-style/)
+- [Markdown Label Demo](../../style/markdownlabel/)
+- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)

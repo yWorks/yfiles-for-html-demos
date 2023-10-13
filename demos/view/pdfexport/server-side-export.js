@@ -107,20 +107,20 @@ function requestFile(
   margins = Insets.from(5),
   paperSize = PaperSize.AUTO
 ) {
-  const svgStringInput = document.getElementById('postSvgString')
+  const svgStringInput = document.querySelector('#postSvgString')
   svgStringInput.setAttribute('value', `${svgString}`)
-  const formatInput = document.getElementById('postFormat')
+  const formatInput = document.querySelector('#postFormat')
   formatInput.setAttribute('value', `${format}`)
-  const width = document.getElementById('postWidth')
+  const width = document.querySelector('#postWidth')
   width.setAttribute('value', `${size.width}`)
-  const height = document.getElementById('postHeight')
+  const height = document.querySelector('#postHeight')
   height.setAttribute('value', `${size.height}`)
-  const margin = document.getElementById('postMargin')
+  const margin = document.querySelector('#postMargin')
   margin.setAttribute('value', `${margins.left}`)
-  const pSize = document.getElementById('postPaperSize')
+  const pSize = document.querySelector('#postPaperSize')
   pSize.setAttribute('value', paperSize === PaperSize.AUTO ? '' : paperSize)
 
-  const form = document.getElementById('postForm')
+  const form = document.querySelector('#postForm')
   form.setAttribute('action', url)
   form.submit()
 }

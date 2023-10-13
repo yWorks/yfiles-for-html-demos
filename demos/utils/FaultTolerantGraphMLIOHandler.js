@@ -130,7 +130,7 @@ export function createConfiguredGraphMLIOHandler(graphComponent) {
     graphMLIOHandler.addInputMapper(INode.$class, YBoolean.$class, 'SelectedNodes', selectedNodes)
 
     // set selection state for edges and nodes once parsing is finished
-    graphMLIOHandler.addParsedListener((sender, args) => {
+    graphMLIOHandler.addParsedListener((_, evt) => {
       const selection = graphComponent.selection
       selection.clear()
 
@@ -149,7 +149,7 @@ export function createConfiguredGraphMLIOHandler(graphComponent) {
   }
 
   // ignore or replace some unknown bpmn styles to avoid exceptions
-  graphMLIOHandler.addHandleDeserializationListener((sender, evt) => {
+  graphMLIOHandler.addHandleDeserializationListener((_, evt) => {
     if (evt.xmlNode instanceof Element) {
       const element = evt.xmlNode
       if (

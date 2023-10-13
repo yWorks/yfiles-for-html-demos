@@ -95,7 +95,7 @@ async function run() {
  */
 function initializeTextAreas() {
   renderFunctionSourceTextArea = CodeMirror.fromTextArea(
-    document.getElementById('template-text-area'),
+    document.querySelector('#template-text-area'),
     {
       lineNumbers: true,
       mode: 'application/xml',
@@ -103,7 +103,7 @@ function initializeTextAreas() {
       lint: true
     }
   )
-  tagTextArea = CodeMirror.fromTextArea(document.getElementById('tag-text-area'), {
+  tagTextArea = CodeMirror.fromTextArea(document.querySelector('#tag-text-area'), {
     lineNumbers: true,
     mode: 'application/json',
     gutters: ['CodeMirror-lint-markers'],
@@ -128,15 +128,15 @@ function initializeTextAreas() {
       }
       tagTextArea.setOption('readOnly', false)
       tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-      document.getElementById('apply-template-button').disabled = false
-      document.getElementById('apply-tag-button').disabled = false
+      document.querySelector('#apply-template-button').disabled = false
+      document.querySelector('#apply-tag-button').disabled = false
     } else {
       renderFunctionSourceTextArea.setOption('readOnly', 'nocursor')
       tagTextArea.setOption('readOnly', 'nocursor')
       renderFunctionSourceTextArea.setValue('Select a node to edit its template.')
       tagTextArea.setValue('Select a node to edit its tag.')
-      document.getElementById('apply-template-button').disabled = true
-      document.getElementById('apply-tag-button').disabled = true
+      document.querySelector('#apply-template-button').disabled = true
+      document.querySelector('#apply-tag-button').disabled = true
     }
   })
 }

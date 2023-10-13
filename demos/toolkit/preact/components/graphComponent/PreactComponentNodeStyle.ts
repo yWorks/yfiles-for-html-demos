@@ -100,7 +100,7 @@ export default class PreactComponentNodeStyle<TTag> extends NodeStyleBase {
 
   updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual | null {
     const oldSvgVisual = oldVisual as SvgVisual & Cache<TTag>
-    const gElement = oldSvgVisual.svgElement as SVGGElement
+    const gElement = oldSvgVisual.svgElement
 
     const props = this.createProps(node)
 

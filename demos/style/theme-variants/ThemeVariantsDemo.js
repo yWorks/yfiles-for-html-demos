@@ -211,9 +211,9 @@ function synchronizeGraphComponents() {
         changing = false
       }
     })
-    graphComponent.selection.addItemSelectionChangedListener((selection, args) => {
+    graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
       for (const otherComponent of otherComponents) {
-        otherComponent.selection.setSelected(args.item, args.itemSelected)
+        otherComponent.selection.setSelected(evt.item, evt.itemSelected)
       }
     })
   }

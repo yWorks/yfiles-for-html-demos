@@ -85,7 +85,7 @@ function createEditorMode() {
   mode.marqueeSelectionInputMode.enabled = false
 
   // When a marquee selection is finished, create a new node at the position and size of the marquee rectangle
-  myMarqueeSelectionInputMode.addDragFinishingListener((sender, evt) => {
+  myMarqueeSelectionInputMode.addDragFinishingListener((_, evt) => {
     graphComponent.graph.createNode(evt.rectangle)
   })
 

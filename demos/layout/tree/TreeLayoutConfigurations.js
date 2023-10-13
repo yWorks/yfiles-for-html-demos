@@ -60,7 +60,7 @@ import {
 export function createGenericConfiguration(graph, nodePlacerPanel) {
   // create layout algorithm
   const treeLayout = new TreeLayout()
-  const sample = document.getElementById('select-sample').value
+  const sample = document.querySelector('#select-sample').value
   if (sample === 'general') {
     // add the tree reduction stage for the case where the graph is not a tree but a general graph
     const treeReductionStage = new TreeReductionStage({

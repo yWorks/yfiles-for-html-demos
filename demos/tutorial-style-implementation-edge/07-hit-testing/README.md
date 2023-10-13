@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 07 Hit-Testing - Edge Style Implementation Tutorial
+# 07 Hit-Testing - Tutorial: Edge Style Implementation
 
 # Customizing hit-testing
 
@@ -38,4 +38,4 @@ Note
 
 Try this implementation by hovering both edges. Notice that the left edge, which uses the default hit-test, only detects hits in the center of the edge visualization. The right edge uses the adjusted hit-test code.
 
-[08 Item Visibility](../../tutorial-style-implementation-edge/08-visibility/index.html)
+[08 Item Visibility](../../tutorial-style-implementation-edge/08-visibility/)

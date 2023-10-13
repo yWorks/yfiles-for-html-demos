@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 06 Data from Tag - Edge Style Implementation Tutorial
+# 06 Data from Tag - Tutorial: Edge Style Implementation
 
 # Item-specific customizations
 
@@ -65,4 +65,4 @@ Note
 
 It is important to store the load in the cache in `createVisual` and check in `updateVisual` whether its value has been changed in the meantime. If so, you should update the old visual before returning it.
 
-[07 Hit-Testing](../../tutorial-style-implementation-edge/07-hit-testing/index.html)
+[07 Hit-Testing](../../tutorial-style-implementation-edge/07-hit-testing/)

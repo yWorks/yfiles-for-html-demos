@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 01 Creating the View - Basic Features Tutorial
+# Tutorial: Basic Features - Tutorial: Basic Features
 
 # Creating the View
 
@@ -57,10 +57,10 @@ Note
 
 The yFiles demo and tutorial applications use additional scripts and CSS (demo-ui) to reduce the amount of boilerplate code that is needed to get a good-looking demo app that shows the relevant features. All code samples included in this distribution can be implemented using plain HTML and TypeScript/JavaScript together with yFiles for HTML.
 
-For a minimal example of using yFiles for HTML to display a graph on a web page, please take a look at the [Basic Module Loading Demo](../../loading/basic-module-loading/index.html).
+For a minimal example of using yFiles for HTML to display a graph on a web page, please take a look at the [Basic Module Loading Demo](../../loading/basic-module-loading/).
 
 ## App Generator
 
 Alternatively, you may use the [App Generator](https://www.yworks.com/products/app-generator) to create visualization prototypes – quickly and easily. It will allow you to scaffold a working code example using your preferred UI framework (React, Vue, Angular, Plain, etc.)
 
-[02 Creating Graph Elements](../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html)
+[01 Creating the View](../../tutorial-yfiles-basic-features/01-graphcomponent/)

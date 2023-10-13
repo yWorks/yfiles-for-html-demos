@@ -404,7 +404,7 @@ export class AggregationHelper {
       .toList()
       .forEach(edge => {
         if (edge.targetPort.owner === originalNode) {
-          this.$createReplacementEdge(edge.sourcePort.owner, node, edge, true)
+          this.$createReplacementEdge(edge.sourceNode, node, edge, true)
         } else {
           this.$createReplacementEdge(node, edge.targetPort.owner, edge, false)
         }

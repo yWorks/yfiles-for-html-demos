@@ -78,9 +78,7 @@ export default class BlueBendCreator extends BaseClass(IBendCreator) {
       return -1
     }
 
-    const editingContext = context.lookup(
-      OrthogonalEdgeEditingContext.$class
-    ) as OrthogonalEdgeEditingContext
+    const editingContext = context.lookup(OrthogonalEdgeEditingContext.$class)
     if (!editingContext) {
       return -1
     }

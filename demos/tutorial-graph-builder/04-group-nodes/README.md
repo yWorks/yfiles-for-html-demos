@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 04 Group Nodes - Graph Builder Tutorial
+# 04 Group Nodes - Tutorial: Graph Builder
 
 # Grouping nodes in the graph
 
@@ -59,4 +59,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `create-group-nodes.ts` and play around with the hierarchic structure. For example, try to use a separate collection for group items.
 
-[05 Implicit Grouping](../../tutorial-graph-builder/05-implicit-grouping/index.html)
+[05 Implicit Grouping](../../tutorial-graph-builder/05-implicit-grouping/)

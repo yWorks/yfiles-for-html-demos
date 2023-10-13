@@ -221,7 +221,7 @@ let hideTimer = null
 function showToast() {
   // Shows a toast to indicate the successful click, and hides it again.
   clearTimeout(hideTimer)
-  const toast = document.getElementById('toast')
+  const toast = document.querySelector('#toast')
   toast.style.bottom = '40px'
   hideTimer = setTimeout(() => {
     toast.style.bottom = '-50px'

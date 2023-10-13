@@ -11,7 +11,7 @@
 -->
 #
 
-      04 Conditional Port Coloring - Port Style Implementation Tutorial
+      04 Conditional Port Coloring - Tutorial: Port Style Implementation
 
 # Conditional port coloring
 
@@ -62,4 +62,4 @@ Note
 
 You can also use business data that’s stored in the port’s [tag](https://docs.yworks.com/yfileshtml/#/api/IPort#ITagOwner-property-tag) for conditional styling. This way, a single style instance that’s shared between all ports can produce varying visualizations.
 
-[05 Hit-Testing](../../tutorial-style-implementation-port/05-hit-testing/index.html)
+[05 Hit-Testing](../../tutorial-style-implementation-port/05-hit-testing/)

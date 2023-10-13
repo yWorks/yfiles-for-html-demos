@@ -538,7 +538,7 @@ export class StructureView {
     }
     const groupLabel = this.getLabelElement(groupLi)
     const checkboxId = groupLabel.getAttribute('data-groupElement')
-    const checkboxElement = document.getElementById(checkboxId)
+    const checkboxElement = document.querySelector('#' + checkboxId)
     checkboxElement.checked = src.isExpanded(groupNode)
   }
 }

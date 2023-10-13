@@ -28,18 +28,26 @@
  ***************************************************************************/
 import {
   Class,
+  DefaultLabelStyle,
+  Font,
+  FontStyle,
+  FontWeight,
+  GraphBuilder,
   GraphComponent,
   GraphFocusIndicatorManager,
   GraphItemTypes,
-  GraphMLIOHandler,
   GraphSelectionIndicatorManager,
   GraphViewerInputMode,
   ICanvasObjectDescriptor,
+  ImageNodeStyle,
   IndicatorNodeStyleDecorator,
   Insets,
+  InteriorLabelModel,
   License,
+  OrganicLayout,
   Rect,
   ShapeNodeStyle,
+  Size,
   StringTemplateNodeStyle,
   StyleDecorationZoomPolicy,
   SvgVisual,
@@ -49,10 +57,10 @@ import { getApplyLayoutCallback } from './apply-layout-callback.js'
 import { getBuildGraphCallback } from './build-graph-callback.js'
 import { NeighborhoodType } from './NeighborhoodType.js'
 import { NeighborhoodView } from '../neighborhood/NeighborhoodView.js'
-import { enableGraphML } from '../neighborhood/enable-graphml.js'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import graphData from './resources/graph-data.json'
 
 // We need to load the 'styles-other' module explicitly to prevent tree-shaking
 // tools from removing it, because it contains styles referenced in the sample GraphML file.
@@ -64,25 +72,84 @@ Class.ensure(StringTemplateNodeStyle)
 async function run() {
   License.value = await fetchLicense()
 
-  // initialize a GraphComponent with GraphML I/O support
+  // initialize a GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
-  enableGraphML(graphComponent)
   graphComponent.inputMode = createInputMode()
 
   // configure a vivid selection indicator and some default styling for graph items
   initializeSelectionIndicator(graphComponent)
   initDemoStyles(graphComponent.graph)
 
+  graphComponent.focusIndicatorManager.enabled = false
+
   // create and configure the NeighborhoodView component
   const neighborhoodView = createNeighborhoodView(graphComponent)
   applyDemoTheme(neighborhoodView.neighborhoodComponent)
 
+  // then build the graph with the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  graphComponent.graph.applyLayout(
+    new OrganicLayout({
+      minimumNodeDistance: 60,
+      nodeEdgeOverlapAvoided: true
+    })
+  )
+  graphComponent.fitGraphBounds()
+
+  //pre-select a node to show its neighborhood
+  graphComponent.selection.clear()
+  const node = graphComponent.graph.nodes.at(0)
+  if (node) {
+    graphComponent.selection.setSelected(node, true)
+  }
+
   // wire up the UI elements of this demo
   initializeUI(neighborhoodView)
+}
 
-  // start the demo with an initial sample graph
-  await readSampleGraph(graphComponent)
+/**
+ * Iterates through the given data set and creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  const nodesSource = graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  nodesSource.nodeCreator.styleProvider = item =>
+    new ImageNodeStyle({ image: `./resources/${item.tag}.svg` })
+
+  nodesSource.nodeCreator.createLabelBinding(item => item.label)
+
+  nodesSource.nodeCreator.defaults.size = new Size(48, 48)
+  nodesSource.nodeCreator.defaults.labels.style = new DefaultLabelStyle({
+    textFill: '#ff000000',
+    backgroundFill: '#b0ffffff',
+    clipText: false,
+    font: new Font({
+      fontFamily: 'Arial',
+      fontSize: 10,
+      fontStyle: FontStyle.NORMAL,
+      fontWeight: FontWeight.NORMAL
+    }),
+    insets: 2
+  })
+  nodesSource.nodeCreator.defaults.labels.layoutParameter = InteriorLabelModel.SOUTH
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -305,23 +372,6 @@ function changeNeighborhoodDistance(neighborhoodView, distance) {
   )
 
   neighborhoodView.update()
-}
-
-/**
- * Reads the demo's sample graph.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
- */
-async function readSampleGraph(graphComponent) {
-  await new GraphMLIOHandler().readFromURL(graphComponent.graph, 'resources/social-network.graphml')
-  graphComponent.fitGraphBounds()
-
-  // pre-select a node to show its neighborhood
-  graphComponent.selection.clear()
-  const node = graphComponent.graph.nodes.at(0)
-  if (node) {
-    graphComponent.selection.setSelected(node, true)
-  }
 }
 
 void run().then(finishLoading)

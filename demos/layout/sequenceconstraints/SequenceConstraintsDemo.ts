@@ -132,10 +132,10 @@ function initializeInputMode(graphComponent: GraphComponent): void {
   })
 
   // listener for the buttons on the nodes
-  inputMode.addItemClickedListener((sender, args) => {
-    if (INode.isInstance(args.item)) {
-      const node = args.item
-      const location = args.location
+  inputMode.addItemClickedListener((_, evt) => {
+    if (INode.isInstance(evt.item)) {
+      const node = evt.item
+      const location = evt.location
       const { x, y, width, height } = node.layout
       const constraints = node.tag
       if (constraints instanceof SequenceConstraintsData) {
@@ -309,8 +309,8 @@ class SequenceConstraintsData extends BaseClass<IPropertyObservable>(IPropertyOb
   private _value: number
   private _constraints: boolean
   private readonly propertyChangedListeners: ((
-    sender: this,
-    args: PropertyChangedEventArgs
+    changedListener: this,
+    evt: PropertyChangedEventArgs
   ) => void)[] = []
 
   /**
@@ -365,18 +365,14 @@ class SequenceConstraintsData extends BaseClass<IPropertyObservable>(IPropertyOb
   /**
    * Adds a listener for property changes
    */
-  addPropertyChangedListener(
-    listener: (sender: this, args: PropertyChangedEventArgs) => void
-  ): void {
+  addPropertyChangedListener(listener: (_: this, evt: PropertyChangedEventArgs) => void): void {
     this.propertyChangedListeners.push(listener)
   }
 
   /**
    * Removes a listener for property changes
    */
-  removePropertyChangedListener(
-    listener: (sender: this, args: PropertyChangedEventArgs) => void
-  ): void {
+  removePropertyChangedListener(listener: (_: this, evt: PropertyChangedEventArgs) => void): void {
     const index = this.propertyChangedListeners.indexOf(listener)
     if (index >= 0) {
       this.propertyChangedListeners.splice(index, 1)
@@ -386,9 +382,9 @@ class SequenceConstraintsData extends BaseClass<IPropertyObservable>(IPropertyOb
   /**
    * Notifies all registered listeners when a property changed.
    */
-  propertyChanged(sender: this, args: PropertyChangedEventArgs): void {
+  propertyChanged(changedListener: this, evt: PropertyChangedEventArgs): void {
     for (const listener of this.propertyChangedListeners) {
-      listener(sender, args)
+      listener(changedListener, evt)
     }
   }
 }

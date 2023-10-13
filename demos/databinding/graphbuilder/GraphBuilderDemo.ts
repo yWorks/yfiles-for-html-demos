@@ -66,7 +66,7 @@ interface GraphBuilderSample {
   nodesSources: NodesSourceDefinition[]
   edgesSources: EdgesSourceDefinition[]
 }
-const samplesComboBox = document.getElementById('samples-combobox') as HTMLSelectElement
+const samplesComboBox = document.querySelector<HTMLSelectElement>('#samples-combobox')!
 
 const samples: GraphBuilderSample[] = SamplesData
 
@@ -124,7 +124,7 @@ async function run(): Promise<void> {
  */
 function initializeUI(): void {
   document
-    .getElementById('build-graph-button')!
+    .querySelector('#build-graph-button')!
     .addEventListener('click', async (): Promise<void> => {
       samplesComboBox.disabled = true
       await buildGraphFromData(false)
@@ -132,7 +132,7 @@ function initializeUI(): void {
     })
 
   document
-    .getElementById('update-graph-button')!
+    .querySelector('#update-graph-button')!
     .addEventListener('click', async (): Promise<void> => {
       samplesComboBox.disabled = true
       await buildGraphFromData(true)
@@ -267,8 +267,8 @@ function createSourcesLists(sourcesFactory: SourcesFactory): {
   nodesSourcesListBox: SourcesListBox<NodesSourceDefinitionBuilderConnector>
   edgesSourcesListBox: SourcesListBox<EdgesSourceDefinitionBuilderConnector>
 } {
-  const nodeSourcesListRootElement = document.getElementById('nodesSourcesList')!
-  const edgesSourcesListRootElement = document.getElementById('edgesSourcesList')!
+  const nodeSourcesListRootElement = document.querySelector<HTMLElement>('#nodesSourcesList')!
+  const edgesSourcesListRootElement = document.querySelector<HTMLElement>('#edgesSourcesList')!
   removeAllChildren(nodeSourcesListRootElement)
   removeAllChildren(edgesSourcesListRootElement)
 

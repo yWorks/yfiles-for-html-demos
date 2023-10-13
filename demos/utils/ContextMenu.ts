@@ -240,25 +240,13 @@ export class ContextMenu {
     graphComponent: GraphComponent,
     openingCallback: (p: Point) => void
   ): void {
-    const componentDiv = graphComponent.div
-    const contextMenuListener = (evt: MouseEvent & { mozInputSource?: number }): void => {
+    const contextMenuListener = (evt: MouseEvent): void => {
       evt.preventDefault()
       if (this.isOpen) {
         // might be open already because of the longpress listener
         return
       }
-      const me = evt
-      if (evt.mozInputSource === 1 && me.button === 0) {
-        // This event was triggered by the context menu key in Firefox.
-        // Thus, the coordinates of the event point to the lower left corner of the element and should be corrected.
-        openingCallback(ContextMenu.getCenterInPage(componentDiv))
-      } else if (me.pageX === 0 && me.pageY === 0) {
-        // Most likely, this event was triggered by the context menu key in IE.
-        // Thus, the coordinates are meaningless and should be corrected.
-        openingCallback(ContextMenu.getCenterInPage(componentDiv))
-      } else {
-        openingCallback(new Point(me.pageX, me.pageY))
-      }
+      openingCallback(new Point(evt.pageX, evt.pageY))
     }
 
     // Listen for the contextmenu event
@@ -266,20 +254,20 @@ export class ContextMenu {
     // which triggers the ContextMenuInputMode before the ClickInputMode. Therefore handling the
     // event, will prevent the ItemRightClicked event from firing.
     // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
-    componentDiv.addEventListener('contextmenu', contextMenuListener, false)
+    graphComponent.div.addEventListener('contextmenu', contextMenuListener, false)
 
     if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer: number | undefined
-      graphComponent.addTouchDownListener((sender, args) => {
-        if (!args.device.isPrimaryDevice) {
+      graphComponent.addTouchDownListener((_, evt) => {
+        if (!evt.device.isPrimaryDevice) {
           // a second pointer is down, so just dismiss the context-menu event
           clearTimeout(contextMenuTimer)
           return
         }
         contextMenuTimer = setTimeout(() => {
           openingCallback(
-            graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location))
+            graphComponent.toPageFromView(graphComponent.toViewCoordinates(evt.location))
           )
         }, 500) as any as number
       })
@@ -289,10 +277,10 @@ export class ContextMenu {
     }
 
     // Listen to the context menu key to make it work in Chrome
-    componentDiv.addEventListener('keyup', evt => {
+    graphComponent.div.addEventListener('keyup', evt => {
       if (evt.key === 'ContextMenu') {
         evt.preventDefault()
-        openingCallback(ContextMenu.getCenterInPage(componentDiv))
+        openingCallback(ContextMenu.getCenterInPage(graphComponent.div))
       }
     })
   }

@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 10 Bridge Support - Edge Style Implementation Tutorial
+# 10 Bridge Support - Tutorial: Edge Style Implementation
 
 # Bridge support
 
@@ -91,4 +91,4 @@ if (
 }
 ```
 
-[11 Adding Arrows](../../tutorial-style-implementation-edge/11-adding-arrows/index.html)
+[11 Adding Arrows](../../tutorial-style-implementation-edge/11-adding-arrows/)

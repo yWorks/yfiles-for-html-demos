@@ -27,10 +27,12 @@
  **
  ***************************************************************************/
 import {
+  Class,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
   Fill,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
@@ -39,12 +41,12 @@ import {
   GridSnapTypes,
   GridStyle,
   GridVisualCreator,
+  HierarchicLayout,
   ICanvasContext,
   IGraph,
   LabelSnapContext,
+  LayoutExecutor,
   License,
-  Point,
-  Rect,
   RenderModes,
   Size,
   Stroke
@@ -54,6 +56,7 @@ import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
 import { BrowserDetection } from 'demo-utils/BrowserDetection'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -70,32 +73,76 @@ let grid = null
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
-  graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
 
+  // then build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({
+      orthogonalRouting: true,
+      minimumLayerDistance: 70,
+      nodeToNodeDistance: 70
+    })
+  )
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+
   // enable snapping and create the grid
   initializeSnapping()
   initializeGrid()
-
-  // add a sample graph
-  createGraph()
 
   // bind the buttons to their functionality
   initializeUI()
 }
 
 /**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList.filter(item => !item.isGroup),
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
+}
+
+/**
  * Initializes snapping for labels and other graph items. The default snapping behavior can easily
  * be enabled by setting the according snap context. Those snap contexts provide many options to
- * fine tune their behavior, in this case we use it to make the items snap only to the given grid
+ * fine-tune their behavior; in this case, we use it to make the items snap only to the given grid
  * but not to other graph items. Please see the documentation of {@link GraphSnapContext} and
  * {@link LabelSnapContext} for more information.
  */
@@ -254,7 +301,7 @@ function createRadioGroup(containerElement, groupName, items, checkedKey, callba
  * @param {!Array.<string>} sortedGridColors
  */
 function createColorPicker(sortedGridColors) {
-  const gridColorPicker = document.getElementById('grid-color-picker')
+  const gridColorPicker = document.querySelector('#grid-color-picker')
 
   let xOffset = 0
   const size = 25
@@ -376,46 +423,6 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
-
-/**
- * Creates a simple sample graph.
- */
-function createGraph() {
-  const graph = graphComponent.graph
-
-  const node1 = graph.createNodeAt([150, 50])
-  const node2 = graph.createNodeAt([200, 150])
-  const node3 = graph.createNodeAt([100, 150])
-  const node4 = graph.createNodeAt([50, 300])
-  const node5 = graph.createNodeAt([150, 300])
-
-  const group = graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-  graph.setNodeLayout(group, new Rect(50, 0, 200, 200))
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  graph.setPortLocation(edge1.sourcePort, new Point(163.33, 70))
-  graph.setPortLocation(edge1.targetPort, new Point(200, 130))
-  graph.setPortLocation(edge2.sourcePort, new Point(136.67, 70))
-  graph.setPortLocation(edge2.targetPort, new Point(100, 130))
-  graph.setPortLocation(edge3.sourcePort, new Point(90, 170))
-  graph.setPortLocation(edge3.targetPort, new Point(50, 280))
-  graph.setPortLocation(edge4.sourcePort, new Point(110, 170))
-  graph.setPortLocation(edge4.targetPort, new Point(140, 280))
-  graph.setPortLocation(edge5.sourcePort, new Point(150, 70))
-  graph.setPortLocation(edge5.targetPort, new Point(150, 280))
-  graph.addBends(edge1, [new Point(163.33, 100), new Point(200, 100)])
-  graph.addBends(edge2, [new Point(136.67, 100), new Point(100, 100)])
-  graph.addBends(edge3, [new Point(90, 250), new Point(50, 250)])
-  graph.addBends(edge4, [new Point(110, 250), new Point(140, 250)])
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
-}
-
 /**
  * Binds the buttons in the toolbar to their functionality.
  */

@@ -154,7 +154,7 @@ export default class Timeline {
     // the zoom specifies the currently visible granularity
     this.zoomTo(2)
     let changeLayout = false
-    this.graphComponent.addSizeChangedListener((sender, evt) => {
+    this.graphComponent.addSizeChangedListener((_, evt) => {
       if (evt.oldSize.height !== this.graphComponent.size.height && !changeLayout) {
         changeLayout = true
         setTimeout(() => {
@@ -312,7 +312,7 @@ export default class Timeline {
     graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.ALWAYS
 
     // wire up a custom mousewheel behavior
-    graphComponent.addMouseWheelListener((sender, evt) => {
+    graphComponent.addMouseWheelListener((_, evt) => {
       evt.originalEvent?.preventDefault()
       this.updateZoom(evt)
     })
@@ -341,15 +341,15 @@ export default class Timeline {
    */
   initializeEvents(inputMode) {
     // bar-chart click listener
-    inputMode.addItemLeftClickedListener((src, args) => {
-      const clickedItem = args.item
+    inputMode.addItemLeftClickedListener((src, evt) => {
+      const clickedItem = evt.item
 
       src.clearSelection()
       src.setSelected(clickedItem, true)
 
       if (clickedItem instanceof INode) {
         if (this.barSelectListener) {
-          args.handled = true
+          evt.handled = true
           this.barSelectListener(getItemsFromBucket(clickedItem))
         }
       }
@@ -374,14 +374,14 @@ export default class Timeline {
       }
     })()
     itemHoverInputMode.hoverCursor = Cursor.POINTER
-    itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-      const highlightManager = sender.inputModeContext.canvasComponent.highlightIndicatorManager
+    itemHoverInputMode.addHoveredItemChangedListener((hoverInput, evt) => {
+      const highlightManager = hoverInput.inputModeContext.canvasComponent.highlightIndicatorManager
       highlightManager.clearHighlights()
 
       let hoveredItems = []
-      if (args.item instanceof INode) {
-        highlightManager.addHighlight(args.item)
-        hoveredItems = getItemsFromBucket(args.item)
+      if (evt.item instanceof INode) {
+        highlightManager.addHighlight(evt.item)
+        hoveredItems = getItemsFromBucket(evt.item)
       }
 
       if (this.barHoverListener) {

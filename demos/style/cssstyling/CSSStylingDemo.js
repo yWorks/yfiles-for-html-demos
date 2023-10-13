@@ -27,8 +27,11 @@
  **
  ***************************************************************************/
 import {
+  CircularLayout,
+  Class,
   DefaultLabelStyle,
   ExteriorLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -40,6 +43,7 @@ import {
   INode,
   IPort,
   LabelSnapContext,
+  LayoutExecutor,
   License,
   Visualization
 } from 'yfiles'
@@ -47,6 +51,7 @@ import { createDemoEdgeStyle, createDemoNodeStyle } from 'demo-resources/demo-st
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
 import CSS3NodeStyleWrapper from './CSS3NodeStyleWrapper.js'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -64,7 +69,49 @@ async function run() {
   overviewComponent.graphVisualCreator = new GraphOverviewVisualCreator(overviewComponent.graph)
 
   configureInputMode()
-  createSampleGraph()
+  initializeGraph(graphComponent.graph)
+
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new CircularLayout({
+      layoutStyle: 'single-cycle',
+      componentLayoutEnabled: false,
+      integratedNodeLabeling: true,
+      nodeLabelingPolicy: 'ray-like'
+    })
+  )
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList,
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(data => data.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -96,28 +143,28 @@ function configureInputMode() {
   graphEditorInputMode.moveLabelInputMode.visualization = Visualization.GHOST
 
   // add a tooltip for hovered items
-  graphEditorInputMode.addQueryItemToolTipListener((src, event) => {
-    if (event.handled) {
+  graphEditorInputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled) {
       return
     }
-    event.toolTip = createTooltipContent(event.item)
-    event.handled = true
+    evt.toolTip = createTooltipContent(evt.item)
+    evt.handled = true
   })
 
   // add a highlight for hovered items
-  graphEditorInputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
-    if (event.oldItem) {
-      graphComponent.highlightIndicatorManager.removeHighlight(event.oldItem)
+  graphEditorInputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    if (evt.oldItem) {
+      graphComponent.highlightIndicatorManager.removeHighlight(evt.oldItem)
     }
-    if (event.item) {
-      graphComponent.highlightIndicatorManager.addHighlight(event.item)
+    if (evt.item) {
+      graphComponent.highlightIndicatorManager.addHighlight(evt.item)
     }
   })
 
-  // whenever a node is created by the user, we set a created flag on its tag data object, which will then be used
+  // whenever the user creates a node, we set a created flag on its tag data object, which will then be used
   // by the custom node style to set the appropriate CSS classes
-  graphEditorInputMode.addNodeCreatedListener((sender, args) => {
-    const node = args.item
+  graphEditorInputMode.addNodeCreatedListener((_, evt) => {
+    const node = evt.item
     node.tag = { created: true }
   })
 
@@ -143,10 +190,10 @@ function createTooltipContent(item) {
 }
 
 /**
- * Creates a sample graph that contains all kinds of graph elements. These elements can be selected, focused,
- * highlighted and edited.
+ * Initializes the defaults for the styling in this demo.
+ * @param {!IGraph} graph
  */
-function createSampleGraph() {
+function initializeGraph(graph) {
   const demoNodeStyle = createDemoNodeStyle()
   demoNodeStyle.stroke = '1.5px #3c4253'
   demoNodeStyle.fill = 'white'
@@ -160,53 +207,21 @@ function createSampleGraph() {
     backgroundFill: 'rgba(60, 66, 83, 0.5)'
   })
 
-  const graph = graphComponent.graph
   graph.nodeDefaults.style = new CSS3NodeStyleWrapper(demoNodeStyle)
   graph.edgeDefaults.style = demoEdgeStyle
   graph.nodeDefaults.labels.style = demoLabelStyle
   graph.edgeDefaults.labels.style = demoLabelStyle
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
-
-  const node0 = graph.createNodeAt([291, 433])
-  const node1 = graph.createNodeAt([396, 398])
-  const node2 = graph.createNodeAt([462, 308])
-  const node3 = graph.createNodeAt([462, 197])
-  const node4 = graph.createNodeAt([396, 107])
-  const node5 = graph.createNodeAt([291, 73])
-  const node6 = graph.createNodeAt([185, 107])
-  const node7 = graph.createNodeAt([119, 197])
-  const node8 = graph.createNodeAt([119, 308])
-  const node9 = graph.createNodeAt([185, 398])
-
-  graph.addLabel(node0, 'Node 0', ExteriorLabelModel.SOUTH)
-  graph.addLabel(node1, 'Node 1', ExteriorLabelModel.SOUTH_EAST)
-  graph.addLabel(node2, 'Node 2', ExteriorLabelModel.EAST)
-  graph.addLabel(node3, 'Node 3', ExteriorLabelModel.EAST)
-  graph.addLabel(node4, 'Node 4', ExteriorLabelModel.NORTH_EAST)
-  graph.addLabel(node5, 'Node 5', ExteriorLabelModel.NORTH)
-  graph.addLabel(node6, 'Node 6', ExteriorLabelModel.NORTH_WEST)
-  graph.addLabel(node7, 'Node 7', ExteriorLabelModel.WEST)
-  graph.addLabel(node8, 'Node 8', ExteriorLabelModel.WEST)
-  graph.addLabel(node9, 'Node 9', ExteriorLabelModel.SOUTH_WEST)
-
-  graph.createEdge(node0, node4)
-  graph.createEdge(node6, node0)
-  graph.createEdge(node6, node5)
-  graph.createEdge(node5, node2)
-  graph.createEdge(node3, node7)
-  graph.createEdge(node9, node4)
-
-  graphComponent.fitGraphBounds()
 }
 
 class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
   /**
    * Paints the path of the edge in a very light gray.
-   * @param {!IRenderContext} renderContext
+   * @param {!IRenderContext} _renderContext
    * @param {!CanvasRenderingContext2D} ctx
    * @param {!IEdge} edge
    */
-  paintEdge(renderContext, ctx, edge) {
+  paintEdge(_renderContext, ctx, edge) {
     ctx.strokeStyle = '#f7f7f7'
     ctx.beginPath()
     ctx.moveTo(edge.sourcePort.location.x, edge.sourcePort.location.y)
@@ -217,22 +232,22 @@ class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
 
   /**
    * Paints the outline of the group node in a very light gray.
-   * @param {!IRenderContext} renderContext
+   * @param {!IRenderContext} _renderContext
    * @param {!CanvasRenderingContext2D} ctx
    * @param {!INode} node
    */
-  paintGroupNode(renderContext, ctx, node) {
+  paintGroupNode(_renderContext, ctx, node) {
     ctx.strokeStyle = '#f7f7f7'
     ctx.strokeRect(node.layout.x, node.layout.y, node.layout.width, node.layout.height)
   }
 
   /**
    * Paints the rectangle of the node in a very light gray
-   * @param {!IRenderContext} renderContext
+   * @param {!IRenderContext} _renderContext
    * @param {!CanvasRenderingContext2D} ctx
    * @param {!INode} node
    */
-  paintNode(renderContext, ctx, node) {
+  paintNode(_renderContext, ctx, node) {
     ctx.fillStyle = '#f7f7f7'
     ctx.fillRect(node.layout.x, node.layout.y, node.layout.width, node.layout.height)
   }

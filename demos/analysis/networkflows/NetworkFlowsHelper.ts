@@ -164,10 +164,10 @@ export class NetworkFlowInputMode extends InputModeBase {
   private initialCapacity: number
   private initialSupply: number
   private oldTag: any
-  private readonly onMouseMoveListener: (sender: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseDownListener: (sender: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseUpListener: (sender: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseDragListener: (sender: GraphComponent, evt: MouseEventArgs) => void
+  private readonly onMouseMoveListener: (_: GraphComponent, evt: MouseEventArgs) => void
+  private readonly onMouseDownListener: (_: GraphComponent, evt: MouseEventArgs) => void
+  private readonly onMouseUpListener: (_: GraphComponent, evt: MouseEventArgs) => void
+  private readonly onMouseDragListener: (_: GraphComponent, evt: MouseEventArgs) => void
   private dragFinishedListener: ((item: IModelItem, oldTag: any) => void) | null
   private dragStartedListener: ((item: IModelItem) => void) | null
 
@@ -184,10 +184,10 @@ export class NetworkFlowInputMode extends InputModeBase {
     this.oldTag = null
 
     // initializes listener functions in order to install/uninstall them
-    this.onMouseMoveListener = (sender, evt) => this.onMouseMove(evt.location)
-    this.onMouseDownListener = (sender, evt) => this.onMouseDown(evt.location, evt.buttons)
-    this.onMouseUpListener = (sender, evt) => this.onMouseUp(evt.location)
-    this.onMouseDragListener = (sender, evt) => this.onMouseDrag(evt.location)
+    this.onMouseMoveListener = (_, evt) => this.onMouseMove(evt.location)
+    this.onMouseDownListener = (_, evt) => this.onMouseDown(evt.location, evt.buttons)
+    this.onMouseUpListener = (_, evt) => this.onMouseUp(evt.location)
+    this.onMouseDragListener = (_, evt) => this.onMouseDrag(evt.location)
   }
 
   /**

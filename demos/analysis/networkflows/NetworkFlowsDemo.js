@@ -137,14 +137,14 @@ let nodesToChange = []
  */
 let compoundEdit
 
-const newButton = document.getElementById('new-button')
-const algorithmComboBox = document.getElementById('algorithm-combo-box')
-const reloadButton = document.getElementById('reload-button')
-const layoutButton = document.getElementById('layout-button')
-const edgePopupContent = document.getElementById('edgePopupContent')
-const costForm = document.getElementById('cost-form')
-const flowLabel = document.getElementById('flowInformationLabel')
-const flowInput = document.getElementById('flowValue')
+const newButton = document.querySelector('#new-button')
+const algorithmComboBox = document.querySelector('#algorithm-combo-box')
+const reloadButton = document.querySelector('#reload-button')
+const layoutButton = document.querySelector('#layout-button')
+const edgePopupContent = document.querySelector('#edgePopupContent')
+const costForm = document.querySelector('#cost-form')
+const flowLabel = document.querySelector('#flowInformationLabel')
+const flowInput = document.querySelector('#flowValue')
 /**
  * Runs the demo.
  * @returns {!Promise}
@@ -297,10 +297,10 @@ function createEditorInputMode() {
     deletedCompoundEdit.commit()
   })
 
-  inputMode.addDeletingSelectionListener((sender, args) => {
+  inputMode.addDeletingSelectionListener((_, evt) => {
     edgePopup.currentItem = null
     // collect all nodes that are endpoints of removed edges
-    args.selection.forEach(item => {
+    evt.selection.forEach(item => {
       if (item instanceof IEdge) {
         nodesToChange.push(item.sourceNode)
         nodesToChange.push(item.targetNode)
@@ -312,9 +312,9 @@ function createEditorInputMode() {
   inputMode.createEdgeInputMode.allowSelfloops = false
 
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (sender, args) => {
+  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (_, evt) => {
     const edgeCreatedCompoundEdit = graphComponent.graph.beginEdit('EdgeCreation', 'EdgeCreation')
-    const edge = args.item
+    const edge = evt.item
     edge.tag = {
       capacity: 10,
       cost: 1,
@@ -333,8 +333,8 @@ function createEditorInputMode() {
   })
 
   // node creation
-  inputMode.addNodeCreatedListener((sender, event) => {
-    event.item.tag = {
+  inputMode.addNodeCreatedListener((_, evt) => {
+    evt.item.tag = {
       supply: 0,
       flow: 0,
       adjustable: algorithmComboBox.selectedIndex === MIN_COST_FLOW
@@ -343,24 +343,19 @@ function createEditorInputMode() {
 
   inputMode.addCanvasClickedListener(() => (edgePopup.currentItem = null))
 
-  inputMode.addItemClickedListener(onClicked)
+  // Presents a popup that provides buttons for increasing/decreasing the edge capacity.
+  inputMode.addItemClickedListener((_, evt) => {
+    const item = evt.item
+    if (item instanceof ILabel && item.tag === 'cost') {
+      costForm.value = parseInt(item.text).toString()
+      edgePopup.currentItem = item.owner
+      return
+    }
+
+    edgePopup.currentItem = null
+  })
+
   graphComponent.inputMode = inputMode
-}
-
-/**
- * Presents a popup that provides buttons for increasing/decreasing the edge capacity.
- * @param {*} sender The sender of the event
- * @param {!ItemClickedEventArgs.<IModelItem>} args The event data
- */
-function onClicked(sender, args) {
-  const item = args.item
-  if (item instanceof ILabel && item.tag === 'cost') {
-    costForm.value = parseInt(item.text).toString()
-    edgePopup.currentItem = item.owner
-    return
-  }
-
-  edgePopup.currentItem = null
 }
 
 /**
@@ -436,7 +431,7 @@ function runFlowAlgorithm() {
   }
 
   // update flow information
-  flowLabel.innerHTML = `${algorithmComboBox[algorithmComboBox.selectedIndex].text}`
+  flowLabel.innerHTML = `${algorithmComboBox[algorithmComboBox.selectedIndex].textContent}`
   flowLabel.style.display = 'inline-block'
   flowInput.style.display = 'inline-block'
   flowInput.value = flowValue.toString()
@@ -930,7 +925,7 @@ async function onAlgorithmChanged() {
  */
 function updateDescriptionText() {
   const selectedIndex = algorithmComboBox.selectedIndex
-  const descriptionText = document.getElementById('description')
+  const descriptionText = document.querySelector('#description')
   let i = 0
   for (let child = descriptionText.firstElementChild; child; child = child.nextElementSibling) {
     child.style.display = i === selectedIndex ? 'block' : 'none'

@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 12 Custom Arrow - Edge Style Implementation Tutorial
+# 12 Custom Arrow - Tutorial: Edge Style Implementation
 
 # Custom arrow visualization
 

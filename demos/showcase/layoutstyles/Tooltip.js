@@ -41,7 +41,7 @@ export class Tooltip {
   deltaHeight
 
   constructor() {
-    this.element = document.getElementById('preset-tooltip')
+    this.element = document.querySelector('#preset-tooltip')
     this.dummy = Tooltip.createDummyElement(this.element)
     this.deltaHeight = this.element.parentElement.getBoundingClientRect().top
   }

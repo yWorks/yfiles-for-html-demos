@@ -123,6 +123,6 @@ function calculateGrid(policy: TabularLayoutPolicy): PartitionGrid {
  * Returns the selected layout policy for the tabular layout algorithm.
  */
 function getPolicy(): TabularLayoutPolicy {
-  const aspectRatioButton = document.getElementById('use-aspect-ratio') as HTMLInputElement
+  const aspectRatioButton = document.querySelector<HTMLInputElement>('#use-aspect-ratio')!
   return aspectRatioButton.checked ? TabularLayoutPolicy.FIXED_SIZE : TabularLayoutPolicy.AUTO_SIZE
 }

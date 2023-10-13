@@ -345,10 +345,10 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
     'http://www.yworks.com/demos/yfiles-react-jsx-node-style/2.0',
     'react'
   )
-  graphmlHandler.addHandleSerializationListener((sender, args) => {
-    const item = args.item
+  graphmlHandler.addHandleSerializationListener((_, evt) => {
+    const item = evt.item
     if (isReactComponentStyleEx(item)) {
-      const context = args.context
+      const context = evt.context
       if (isReactComponentSvgNodeStyleEx(item)) {
         const reactExtension = new ReactComponentSvgNodeStyleMarkupExtension()
         reactExtension.jsx = item.jsx
@@ -357,7 +357,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
           item,
           reactExtension
         )
-        args.handled = true
+        evt.handled = true
       } else if (isReactComponentSvgLabelStyleEx(item)) {
         const reactExtension = new ReactComponentSvgLabelStyleMarkupExtension()
         reactExtension.jsx = item.jsx
@@ -368,7 +368,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
           item,
           reactExtension
         )
-        args.handled = true
+        evt.handled = true
       } else if (isReactComponentHtmlNodeStyleEx(item)) {
         const reactExtension = new ReactComponentHtmlNodeStyleMarkupExtension()
         reactExtension.jsx = item.jsx
@@ -377,7 +377,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
           item,
           reactExtension
         )
-        args.handled = true
+        evt.handled = true
       } else if (isReactComponentHtmlLabelStyleEx(item)) {
         const reactExtension = new ReactComponentHtmlLabelStyleMarkupExtension()
         reactExtension.jsx = item.jsx
@@ -388,7 +388,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
           item,
           reactExtension
         )
-        args.handled = true
+        evt.handled = true
       }
     }
   })

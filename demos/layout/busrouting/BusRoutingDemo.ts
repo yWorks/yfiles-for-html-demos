@@ -315,9 +315,9 @@ function newEdgeStyle(): PolylineEdgeStyle {
  * Helper function to disable UI during layout animation
  */
 function disableUI(disabled: boolean) {
-  const connect = document.getElementById('connect') as HTMLButtonElement
+  const connect = document.querySelector<HTMLButtonElement>('#connect')!
   connect.disabled = disabled
-  const layout = document.getElementById('route') as HTMLButtonElement
+  const layout = document.querySelector<HTMLButtonElement>('#route')!
   layout.disabled = disabled
 }
 

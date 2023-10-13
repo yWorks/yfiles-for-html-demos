@@ -118,7 +118,7 @@ function configureBridges(): void {
 function initializeToolBarElements(): void {
   const crossingStylesComboBox = document.querySelector<HTMLSelectElement>('#crossing-styles')!
   addNavigationButtons(crossingStylesComboBox).addEventListener('change', () => {
-    bridgeManager.defaultBridgeCrossingStyle = getValueFromComboBox('crossing-styles')
+    bridgeManager.defaultBridgeCrossingStyle = getValueFromComboBox('#crossing-styles')
     graphComponent.invalidate()
   })
   const crossingStylesElements = [
@@ -159,7 +159,7 @@ function initializeToolBarElements(): void {
 
   const crossingPolicyComboBox = document.querySelector<HTMLSelectElement>('#crossing-policies')!
   addNavigationButtons(crossingPolicyComboBox).addEventListener('change', () => {
-    bridgeManager.bridgeCrossingPolicy = getValueFromComboBox('crossing-policies')
+    bridgeManager.bridgeCrossingPolicy = getValueFromComboBox('#crossing-policies')
     graphComponent.invalidate()
   })
   const crossingDeterminationElements = [
@@ -185,7 +185,7 @@ function initializeToolBarElements(): void {
   const bridgeOrientationComboBox =
     document.querySelector<HTMLSelectElement>('#bridge-orientations')!
   addNavigationButtons(bridgeOrientationComboBox).addEventListener('change', () => {
-    bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('bridge-orientations')
+    bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('#bridge-orientations')
     graphComponent.invalidate()
   })
   const bridgeOrientationElements = [
@@ -265,10 +265,10 @@ function fillComboBox(
 /**
  * Returns the integer value of the currently-selected element in the combo box
  * with the given ID.
- * @param id The ID of the combo box.
+ * @param selector The ID of the combo box.
  */
-function getValueFromComboBox(id: string): number {
-  const comboBox = document.getElementById(id) as HTMLSelectElement
+function getValueFromComboBox(selector: string): number {
+  const comboBox = document.querySelector<HTMLSelectElement>(selector)!
   return parseInt((comboBox[comboBox.selectedIndex] as HTMLOptionElement).value)
 }
 

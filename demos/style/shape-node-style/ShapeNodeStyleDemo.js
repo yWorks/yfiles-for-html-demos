@@ -206,7 +206,7 @@ function configureInteraction(graphComponent) {
  * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  const aspectRatioToggle = document.getElementById('intrinsic-aspect-ratio-button')
+  const aspectRatioToggle = document.querySelector('#intrinsic-aspect-ratio-button')
   aspectRatioToggle.addEventListener('change', () => {
     // Change the keep-intrinsic-aspect-ratio behavior of the nodes depending on the state of the
     // corresponding toggle button

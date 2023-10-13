@@ -33,11 +33,11 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-    <title>09 Data Binding - Basic Features Tutorial [yFiles for HTML]</title>
+    <title>09 Data Binding - Tutorial: Basic Features [yFiles for HTML]</title>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
 
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
@@ -52,7 +52,7 @@
         <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <a href="../../README.html#tutorial-basic-features"> Basic Features Tutorial </a>
+        <a href="../../README.html#tutorial-basic-features"> Tutorial: Basic Features </a>
 
         <span>09 Data Binding</span>
         <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
@@ -68,60 +68,62 @@
     <div class="demo-page__toolbar no-overflow">
       <div class="demo-toolbar__tutorial-left">
         <!-- prettier-ignore -->
-        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-yfiles-basic-features/08-grouping/index.html'><span>08 Grouping</span></a>
+        <a class='demo-toolbar__button demo-toolbar__button--back' href='../../tutorial-yfiles-basic-features/08-grouping/'><span>08 Grouping</span></a>
       </div>
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 9/12</b
+        <b>Step 10/13</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 09 Data Binding</span>
         <div class="tutorial-dropdown">
           <a
-            href="../../tutorial-yfiles-basic-features/01-graphcomponent/index.html"
+            href="../../tutorial-yfiles-basic-features/01-graphcomponent/"
+            class="tutorial-dropdown__item"
+            >Tutorial: Basic Features</a
+          ><a
+            href="../../tutorial-yfiles-basic-features/01-graphcomponent/"
             class="tutorial-dropdown__item"
             >01 Creating the View</a
           ><a
-            href="../../tutorial-yfiles-basic-features/02-graph-element-creation/index.html"
+            href="../../tutorial-yfiles-basic-features/02-graph-element-creation/"
             class="tutorial-dropdown__item"
             >02 Creating Graph Elements</a
           ><a
-            href="../../tutorial-yfiles-basic-features/03-managing-viewport/index.html"
+            href="../../tutorial-yfiles-basic-features/03-managing-viewport/"
             class="tutorial-dropdown__item"
             >03 Managing Viewport</a
           ><a
-            href="../../tutorial-yfiles-basic-features/04-setting-styles/index.html"
+            href="../../tutorial-yfiles-basic-features/04-setting-styles/"
             class="tutorial-dropdown__item"
             >04 Setting Styles</a
           ><a
-            href="../../tutorial-yfiles-basic-features/05-label-placement/index.html"
+            href="../../tutorial-yfiles-basic-features/05-label-placement/"
             class="tutorial-dropdown__item"
             >05 Label Placement</a
           ><a
-            href="../../tutorial-yfiles-basic-features/06-basic-interaction/index.html"
+            href="../../tutorial-yfiles-basic-features/06-basic-interaction/"
             class="tutorial-dropdown__item"
             >06 Basic Interaction</a
           ><a
-            href="../../tutorial-yfiles-basic-features/07-undo-clipboard-support/index.html"
+            href="../../tutorial-yfiles-basic-features/07-undo-clipboard-support/"
             class="tutorial-dropdown__item"
             >07 Undo Clipboard Support</a
           ><a
-            href="../../tutorial-yfiles-basic-features/08-grouping/index.html"
+            href="../../tutorial-yfiles-basic-features/08-grouping/"
             class="tutorial-dropdown__item"
             >08 Grouping</a
           ><a
-            href="../../tutorial-yfiles-basic-features/09-data-binding/index.html"
+            href="../../tutorial-yfiles-basic-features/09-data-binding/"
             class="tutorial-dropdown__item tutorial-dropdown__item--current"
             >09 Data Binding</a
-          ><a
-            href="../../tutorial-yfiles-basic-features/10-layout/index.html"
-            class="tutorial-dropdown__item"
+          ><a href="../../tutorial-yfiles-basic-features/10-layout/" class="tutorial-dropdown__item"
             >10 Layout</a
           ><a
-            href="../../tutorial-yfiles-basic-features/11-layout-data/index.html"
+            href="../../tutorial-yfiles-basic-features/11-layout-data/"
             class="tutorial-dropdown__item"
             >11 Layout Data</a
           ><a
-            href="../../tutorial-yfiles-basic-features/12-graph-analysis/index.html"
+            href="../../tutorial-yfiles-basic-features/12-graph-analysis/"
             class="tutorial-dropdown__item"
             >12 Analysis Algorithms</a
           >
@@ -129,7 +131,7 @@
       </div>
       <div class="demo-toolbar__tutorial-right">
         <!-- prettier-ignore -->
-        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-yfiles-basic-features/10-layout/index.html'><span>10 Layout</span></a>
+        <a class='demo-toolbar__button demo-toolbar__button--forward' href='../../tutorial-yfiles-basic-features/10-layout/'><span>10 Layout</span></a>
       </div>
     </div>
     <aside class="demo-page__description demo-description--draggable" data-no-header>
@@ -183,16 +185,14 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-title function_">addNodeCreatedListener</span>(
-  (<span class="hljs-attr">source</span>: object, <span class="hljs-attr">eventArgs</span>: <span class="hljs-title class_">ItemEventArgs</span>&lt;<span class="hljs-title class_">INode</span>&gt;): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
-    <span class="hljs-comment">// Store the current time as node creation time</span>
-    <span class="hljs-keyword">const</span> node = eventArgs.<span class="hljs-property">item</span>
-    <span class="hljs-comment">// if there is no tag associated with the node, already, add one</span>
-    <span class="hljs-keyword">if</span> (node.<span class="hljs-property">tag</span> === <span class="hljs-literal">null</span>) {
-      node.<span class="hljs-property">tag</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
-    }
+                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-title function_">addNodeCreatedListener</span>((_, evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+  <span class="hljs-comment">// Store the current time as node creation time</span>
+  <span class="hljs-keyword">const</span> node = evt.<span class="hljs-property">item</span>
+  <span class="hljs-comment">// if there is no tag associated with the node, already, add one</span>
+  <span class="hljs-keyword">if</span> (node.<span class="hljs-property">tag</span> === <span class="hljs-literal">null</span>) {
+    node.<span class="hljs-property">tag</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
   }
-)</code></pre>
+})</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -213,13 +213,11 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">graphEditorInputMode.<span class="hljs-title function_">addNodeCreatedListener</span>(
-  (<span class="hljs-attr">sender</span>: object, <span class="hljs-attr">eventArgs</span>: <span class="hljs-title class_">ItemEventArgs</span>&lt;<span class="hljs-title class_">INode</span>&gt;): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
-    <span class="hljs-comment">// Store the current time as node creation time</span>
-    <span class="hljs-keyword">const</span> node = eventArgs.<span class="hljs-property">item</span>
-    node.<span class="hljs-property">tag</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
-  }
-)</code></pre>
+                  ><code class="language-javascript" data-lang="javascript">graphEditorInputMode.<span class="hljs-title function_">addNodeCreatedListener</span>((_, evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+  <span class="hljs-comment">// Store the current time as node creation time</span>
+  <span class="hljs-keyword">const</span> node = evt.<span class="hljs-property">item</span>
+  node.<span class="hljs-property">tag</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
+})</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -239,7 +237,7 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Set the tooltip content</span>
-eventArgs.<span class="hljs-property">toolTip</span> = node.<span class="hljs-property">tag</span> ? node.<span class="hljs-property">tag</span>.<span class="hljs-title function_">toLocaleString</span>() : <span class="hljs-string">&#x27;Not set&#x27;</span></code></pre>
+evt.<span class="hljs-property">toolTip</span> = node.<span class="hljs-property">tag</span> ? node.<span class="hljs-property">tag</span>.<span class="hljs-title function_">toLocaleString</span>() : <span class="hljs-string">&#x27;Not set&#x27;</span></code></pre>
                 </div>
               </div>
               <div class="admonitionblock note">
@@ -251,8 +249,8 @@ eventArgs.<span class="hljs-property">toolTip</span> = node.<span class="hljs-pr
                     <td class="content">
                       Since this demo focuses on storing the data, the tooltip and context menu code
                       is not explained in detail. See the
-                      <a href="../../application-features/tooltips/index.html" target="_blank">Tooltips Demo</a> and the
-                      <a href="../../input/contextmenu/index.html" target="_blank">Context Menu Demo</a> for more information.
+                      <a href="../../application-features/tooltips/" target="_blank">Tooltips Demo</a> and the
+                      <a href="../../input/contextmenu/" target="_blank">Context Menu Demo</a> for more information.
                     </td>
                   </tr>
                 </table>
@@ -261,7 +259,7 @@ eventArgs.<span class="hljs-property">toolTip</span> = node.<span class="hljs-pr
           </div>
           <div class="demo-description__next-tutorial">
             <!-- prettier-ignore -->
-            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-yfiles-basic-features/10-layout/index.html'><span>10 Layout</span></a>
+            <a class='demo-description__button demo-description__button--solid demo-description__button--next' href='../../tutorial-yfiles-basic-features/10-layout/'><span>10 Layout</span></a>
           </div>
         </div>
       </div>

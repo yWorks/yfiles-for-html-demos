@@ -112,17 +112,17 @@ function configureInputMode(graphComponent) {
   mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
 
   // Register a listener for when a tooltip should be shown.
-  gvim.addQueryItemToolTipListener((src, eventArgs) => {
-    if (eventArgs.handled || !INode.isInstance(eventArgs.item)) {
+  gvim.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled || !INode.isInstance(evt.item)) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
 
     // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
-    eventArgs.toolTip = createTooltipContent(eventArgs.item)
+    evt.toolTip = createTooltipContent(evt.item)
 
     // Indicate that the tooltip content has been set.
-    eventArgs.handled = true
+    evt.handled = true
   })
 
   graphComponent.inputMode = gvim

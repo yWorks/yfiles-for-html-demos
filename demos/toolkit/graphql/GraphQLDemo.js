@@ -178,7 +178,7 @@ function configureInteraction(graphComponent) {
   })
   mode.marqueeSelectionInputMode.enabled = false
 
-  mode.addItemDoubleClickedListener(async (sender, evt) => {
+  mode.addItemDoubleClickedListener(async (_, evt) => {
     await loadFriends(evt.item)
 
     // update the properties panel, since new friends may be visible now

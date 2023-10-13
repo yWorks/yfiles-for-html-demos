@@ -169,7 +169,7 @@ export function updateNodeColor(node: INode, graph: IGraph): void {
  * of its associated data.
  */
 export function updateAdjacentEdges(node: INode, graph: IGraph): void {
-  const colorDirectionBox = document.getElementById('colorDirection') as HTMLSelectElement
+  const colorDirectionBox = document.querySelector<HTMLSelectElement>('#colorDirection')!
   const edges =
     colorDirectionBox.value === 'outgoing' ? graph.outEdgesAt(node) : graph.inEdgesAt(node)
   for (const edge of edges) {

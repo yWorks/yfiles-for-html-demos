@@ -121,7 +121,7 @@ function configureBridges() {
 function initializeToolBarElements() {
   const crossingStylesComboBox = document.querySelector('#crossing-styles')
   addNavigationButtons(crossingStylesComboBox).addEventListener('change', () => {
-    bridgeManager.defaultBridgeCrossingStyle = getValueFromComboBox('crossing-styles')
+    bridgeManager.defaultBridgeCrossingStyle = getValueFromComboBox('#crossing-styles')
     graphComponent.invalidate()
   })
   const crossingStylesElements = [
@@ -162,7 +162,7 @@ function initializeToolBarElements() {
 
   const crossingPolicyComboBox = document.querySelector('#crossing-policies')
   addNavigationButtons(crossingPolicyComboBox).addEventListener('change', () => {
-    bridgeManager.bridgeCrossingPolicy = getValueFromComboBox('crossing-policies')
+    bridgeManager.bridgeCrossingPolicy = getValueFromComboBox('#crossing-policies')
     graphComponent.invalidate()
   })
   const crossingDeterminationElements = [
@@ -187,7 +187,7 @@ function initializeToolBarElements() {
 
   const bridgeOrientationComboBox = document.querySelector('#bridge-orientations')
   addNavigationButtons(bridgeOrientationComboBox).addEventListener('change', () => {
-    bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('bridge-orientations')
+    bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('#bridge-orientations')
     graphComponent.invalidate()
   })
   const bridgeOrientationElements = [
@@ -260,11 +260,11 @@ function fillComboBox(comboBox, content) {
 /**
  * Returns the integer value of the currently-selected element in the combo box
  * with the given ID.
- * @param {!string} id The ID of the combo box.
+ * @param {!string} selector The ID of the combo box.
  * @returns {number}
  */
-function getValueFromComboBox(id) {
-  const comboBox = document.getElementById(id)
+function getValueFromComboBox(selector) {
+  const comboBox = document.querySelector(selector)
   return parseInt(comboBox[comboBox.selectedIndex].value)
 }
 

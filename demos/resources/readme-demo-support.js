@@ -63,8 +63,8 @@
       isCompletePackage ||
       (isViewerPackage &&
         layoutCategories.indexOf(item.category) === -1 &&
-        item.packageType !== 'needs-layout') ||
-      (isLayoutPackage && item.packageType === 'no-viewer')
+        item.distributionType !== 'needs-layout') ||
+      (isLayoutPackage && item.distributionType === 'no-viewer')
   })
 
   var gridItemTemplate = document.querySelector('#grid-item-template')
@@ -112,12 +112,11 @@
       gridItem.className += ' not-available'
       var notAvailableNotice = document.createElement('div')
       notAvailableNotice.className = 'not-available-notice'
-      notAvailableNotice.innerHTML =
-        'Not available in "' +
-        (isViewerPackage ? 'Viewer' : 'Layout') +
-        '" packages.<br><a href="https://live.yworks.com/demos/' +
-        demo.demoPath +
-        '">See online version.</a>'
+      notAvailableNotice.innerHTML = `<div>Requires "${
+        isViewerPackage ? 'layout' : 'viewer'
+      }" features to run.</div>
+         <div><a href="https://www.yworks.com/demos/${demo.demoPath}">Run it online</a>
+          or view the source code files.</div>`
       gridItem.appendChild(notAvailableNotice)
     }
     return gridItem
@@ -408,12 +407,15 @@
     searchBox.value = ''
   }
 
+  /**
+   * @param {string} categoryName
+   */
   function showDemoCategoryHeader(categoryName) {
-    document.querySelectorAll('.demo-header').forEach(element => element.classList.add('hidden'))
-    const header = document.getElementById(categoryName + '-demo-header')
-    if (header) {
-      header.classList.remove('hidden')
-    }
+    document
+      .querySelectorAll('.tutorial-header')
+      .forEach(element => element.classList.add('hidden'))
+
+    document.getElementById(categoryName + '-header')?.classList.remove('hidden')
   }
 
   function filterByCategory(categoryName) {

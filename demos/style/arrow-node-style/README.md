@@ -26,11 +26,11 @@ For all shapes, the [angle](https://docs.yworks.com/yfileshtml/#/api/ArrowNodeSt
 - Resize a selected node via its resize handles and see how the shape changes based on the node size ratio.
 - Click on the canvas background to create a new node using the style settings of the property panel.
 
-To learn how to customize the handles of the arrow node style, please see the [Custom Handle Provider Demo](../../input/custom-handle-provider/index.html).
+To learn how to customize the handles of the arrow node style, please see the [Custom Handle Provider Demo](../../input/custom-handle-provider/).
 
 ## Related Demos
 
-- [Shape Node Style Demo](../../style/shape-node-style/index.html)
-- [Rectangle Node Style Demo](../../style/rectangle-node-style/index.html)
-- [Group Node Style Demo](../../style/group-node-style/index.html)
-- [Step 01 Create A Rectangle](../../tutorial-style-implementation-node/01-create-a-rectangle/index.html)
+- [Shape Node Style Demo](../../style/shape-node-style/)
+- [Rectangle Node Style Demo](../../style/rectangle-node-style/)
+- [Group Node Style Demo](../../style/group-node-style/)
+- [Step 01 Create A Rectangle](../../tutorial-style-implementation-node/01-create-a-rectangle/)

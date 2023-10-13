@@ -125,18 +125,7 @@ export function ContextMenuComponent({ graphComponent }: ContextMenuProps) {
     const componentDiv = graphComponent.div
     const contextMenuListener = (evt: MouseEvent) => {
       evt.preventDefault()
-      const me = evt
-      if ((evt as any).mozInputSource === 1 && me.button === 0) {
-        // This event was triggered by the context menu key in Firefox.
-        // Thus, the coordinates of the event point to the lower left corner of the element and should be corrected.
-        openContextMenu(getCenterInPage(componentDiv))
-      } else if (me.pageX === 0 && me.pageY === 0) {
-        // Most likely, this event was triggered by the context menu key in IE.
-        // Thus, the coordinates are meaningless and should be corrected.
-        openContextMenu(getCenterInPage(componentDiv))
-      } else {
-        openContextMenu({ x: me.pageX, y: me.pageY })
-      }
+      openContextMenu({ x: evt.pageX, y: evt.pageY })
     }
 
     // Listen for the contextmenu event
@@ -149,10 +138,10 @@ export function ContextMenuComponent({ graphComponent }: ContextMenuProps) {
     if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer: ReturnType<typeof setTimeout> | undefined
-      graphComponent.addTouchDownListener((_, args) => {
+      graphComponent.addTouchDownListener((_, evt) => {
         contextMenuTimer = setTimeout(() => {
           openContextMenu(
-            graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location))
+            graphComponent.toPageFromView(graphComponent.toViewCoordinates(evt.location))
           )
         }, 500)
       })

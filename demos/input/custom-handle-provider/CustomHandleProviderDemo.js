@@ -114,7 +114,7 @@ function initializeInteraction(graphComponent) {
   graphComponent.inputMode = inputMode
 
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((sender, evt) => {
+  inputMode.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     graphComponent.graph.addLabel(node, styleToText(node.style))
   })

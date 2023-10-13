@@ -158,11 +158,11 @@ function configureUserInteraction(): void {
   })
 
   // add an event listener that expands or collapses the clicked node
-  graphViewerInputMode.addItemClickedListener(async (sender, args) => {
-    if (!(args.item instanceof INode)) {
+  graphViewerInputMode.addItemClickedListener(async (_, evt) => {
+    if (!(evt.item instanceof INode)) {
       return
     }
-    const node = args.item
+    const node = evt.item
     const filteredGraph = graphComponent.graph as FilteredGraphWrapper
     const canExpand = filteredGraph.outDegree(node) !== filteredGraph.wrappedGraph!.outDegree(node)
     if (canExpand) {

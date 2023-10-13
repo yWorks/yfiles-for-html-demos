@@ -434,10 +434,10 @@ function configureInteraction(graphComponent: GraphComponent): void {
     movableItems: 'label',
     deletableItems: 'none'
   })
-  inputMode.addLabelEditingListener((sender, args) => {
+  inputMode.addLabelEditingListener((_, evt) => {
     // only the labels of the orange node are editable
-    if (!args.owner?.tag?.editableLabels) {
-      args.cancel = true
+    if (!evt.owner?.tag?.editableLabels) {
+      evt.cancel = true
     }
   })
   configureToolTips(inputMode)

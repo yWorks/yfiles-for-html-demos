@@ -44,7 +44,7 @@ export function initializeDeviceDetailsPopup(graphComponent, graphInputMode, get
   createDeviceDetailsPopup(graphComponent)
 
   // On item click, update the popup with the device's data
-  graphInputMode.addItemClickedListener((inputMode, evt) => {
+  graphInputMode.addItemClickedListener((_, evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }

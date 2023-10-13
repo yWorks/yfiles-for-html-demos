@@ -210,16 +210,16 @@ function configureTableEditing() {
   graphInputMode.add(tableInputMode)
 
   // tooltip for tables. We show only tool tips for stripe headers in this demo.
-  graphInputMode.mouseHoverInputMode.addQueryToolTipListener((sender, args) => {
-    if (!args.handled) {
+  graphInputMode.mouseHoverInputMode.addQueryToolTipListener((_, evt) => {
+    if (!evt.handled) {
       const stripe = tableInputMode.findStripe(
-        args.queryLocation,
+        evt.queryLocation,
         StripeTypes.ALL,
         StripeSubregionTypes.HEADER
       )
       if (stripe !== null) {
-        args.toolTip = stripe.stripe.toString()
-        args.handled = true
+        evt.toolTip = stripe.stripe.toString()
+        evt.handled = true
       }
     }
   })
@@ -258,8 +258,8 @@ function configureContextMenu(tableEditorInputMode) {
 
   // add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // this PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  graphInputMode.addPopulateItemContextMenuListener((sender, args) =>
-    populateContextMenu(contextMenu, args, tableEditorInputMode)
+  graphInputMode.addPopulateItemContextMenuListener((_, evt) =>
+    populateContextMenu(contextMenu, evt, tableEditorInputMode)
   )
 
   // add a listener that closes the menu when the input mode requests this
@@ -368,7 +368,7 @@ async function applyLayout() {
  * Wire up the UI.
  */
 function initializeUI() {
-  document.getElementById('layout-button').addEventListener('click', applyLayout)
+  document.querySelector('#layout-button').addEventListener('click', applyLayout)
 }
 
 run().then(finishLoading)

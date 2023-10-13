@@ -47,7 +47,7 @@ import { applyDemoTheme } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-const chooser = document.getElementById('node-order')
+const chooser = document.querySelector('#node-order')
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
 // tools from removing this dependency which is needed for 'applyLayout'.

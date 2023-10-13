@@ -27,16 +27,20 @@
  **
  ***************************************************************************/
 import {
-  ArcEdgeStyle,
+  Class,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   IEdge,
   IGraph,
   ILabel,
   INode,
+  LayoutExecutor,
+  LayoutOrientation,
   License,
+  OrganicLayout,
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size,
@@ -48,6 +52,7 @@ import ContextualToolbar from './ContextualToolbar.js'
 import { applyDemoTheme } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -71,13 +76,57 @@ async function run() {
 
   initializeInputMode()
   initializeDefaultStyles(graphComponent.graph)
-  createSampleGraph(graphComponent.graph)
-  // clear undo queue to prevent the possibility of undoing the sample graph creation
-  graphComponent.graph.undoEngine.clear()
 
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new OrganicLayout({
+      minimumNodeDistance: 50,
+      automaticGroupNodeCompaction: true,
+      layoutOrientation: LayoutOrientation.BOTTOM_TO_TOP
+    })
+  )
   graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
 }
 
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  const nodesSource = graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
+  nodesSource.nodeCreator.createLabelBinding(item => item.label)
+  nodesSource.nodeCreator.styleBindings.addBinding('shape', item => item.tag)
+  nodesSource.nodeCreator.styleBindings.addBinding('fill', item => {
+    if (item.id === 0 || item.id === 4) {
+      return '#e01a4f'
+    }
+    if (item.id === 2 || item.id === 7) {
+      return '#0b7189'
+    }
+  })
+
+  const edgesSource = graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+  edgesSource.edgeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.buildGraph()
+}
 /**
  * Initializes the default styles.
  * @param {!IGraph} graph
@@ -88,6 +137,7 @@ function initializeDefaultStyles(graph) {
     stroke: '#228B22'
   })
   graph.nodeDefaults.size = new Size(45, 45)
+  graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
     insets: 5
   }).createParameter(ExteriorLabelModelPosition.NORTH)
@@ -109,103 +159,31 @@ function initializeInputMode() {
   const mode = new GraphEditorInputMode()
 
   // update the contextual toolbar when the selection changes ...
-  mode.addMultiSelectionFinishedListener((src, args) => {
+  mode.addMultiSelectionFinishedListener((_, evt) => {
     // this implementation of the contextual toolbar only supports nodes, edges and labels
-    contextualToolbar.selectedItems = args.selection
+    contextualToolbar.selectedItems = evt.selection
       .filter(item => item instanceof INode || item instanceof ILabel || item instanceof IEdge)
       .toArray()
   })
   // ... or when an item is right clicked
-  mode.addItemRightClickedListener((src, args) => {
+  mode.addItemRightClickedListener((_, evt) => {
     // this implementation of the contextual toolbar only supports nodes, edges and labels
     graphComponent.selection.clear()
-    graphComponent.selection.setSelected(args.item, true)
-    contextualToolbar.selectedItems = [args.item]
+    graphComponent.selection.setSelected(evt.item, true)
+    contextualToolbar.selectedItems = [evt.item]
   })
 
   graphComponent.inputMode = mode
 
   // if an item is deselected or deleted, we remove that element from the selectedItems
-  graphComponent.selection.addItemSelectionChangedListener((src, args) => {
-    if (!args.itemSelected) {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+    if (!evt.itemSelected) {
       // remove the element from the selectedItems of the contextual toolbar
-      const idx = contextualToolbar.selectedItems.findIndex(item => item === args.item)
+      const idx = contextualToolbar.selectedItems.findIndex(item => item === evt.item)
       const newSelection = contextualToolbar.selectedItems.slice()
       newSelection.splice(idx, 1)
       contextualToolbar.selectedItems = newSelection
     }
-  })
-}
-
-/**
- * Creates the initial graph.
- * @param {!IGraph} graph
- */
-function createSampleGraph(graph) {
-  graph.clear()
-
-  const n1 = graph.createNodeAt({
-    location: [-130, -150],
-    labels: ['Node'],
-    style: new ShapeNodeStyle({
-      fill: '#DC143C',
-      stroke: '#DC143C',
-      shape: 'ellipse'
-    })
-  })
-  const n2 = graph.createNodeAt([-70, -80])
-  const n3 = graph.createNodeAt({
-    location: [0, 0],
-    style: new ShapeNodeStyle({
-      fill: '#336699',
-      stroke: '#336699',
-      shape: 'ellipse'
-    })
-  })
-  const n4 = graph.createNodeAt([70, -80])
-  const n5 = graph.createNodeAt({
-    location: [130, -150],
-    labels: ['Node'],
-    style: new ShapeNodeStyle({
-      fill: '#DC143C',
-      stroke: '#DC143C',
-      shape: 'ellipse'
-    })
-  })
-  const n6 = graph.createNodeAt([-60, 70])
-  const n7 = graph.createNodeAt([-120, 140])
-  const n8 = graph.createNodeAt({
-    location: [-200, 120],
-    labels: ['Node'],
-    style: new ShapeNodeStyle({
-      fill: '#336699',
-      stroke: '#336699',
-      shape: 'ellipse'
-    })
-  })
-
-  graph.createEdge({
-    source: n1,
-    target: n2,
-    labels: ['Edge']
-  })
-  graph.createEdge(n2, n3)
-  graph.createEdge(n3, n4)
-  graph.createEdge({
-    source: n4,
-    target: n5,
-    labels: ['Edge']
-  })
-  graph.createEdge(n3, n6)
-  graph.createEdge(n6, n7)
-  graph.createEdge({
-    source: n7,
-    target: n8,
-    style: new ArcEdgeStyle({
-      height: 50,
-      stroke: 'thick #333',
-      targetArrow: '#333 large triangle'
-    })
   })
 }
 

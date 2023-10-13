@@ -57,18 +57,18 @@ export function useTooltips(graphComponent: GraphComponent) {
   inputMode.addQueryItemToolTipListener(
     (
       src: GraphEditorInputMode | GraphViewerInputMode,
-      args: QueryItemToolTipEventArgs<IModelItem>
+      evt: QueryItemToolTipEventArgs<IModelItem>
     ) => {
-      if (args.handled) {
+      if (evt.handled) {
         // Tooltip content has already been assigned -> nothing to do.
         return
       }
 
       // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
-      args.toolTip = createContent(args.item!)
+      evt.toolTip = createContent(evt.item!)
 
       // Indicate that the tooltip content has been set.
-      args.handled = true
+      evt.handled = true
     }
   )
 }

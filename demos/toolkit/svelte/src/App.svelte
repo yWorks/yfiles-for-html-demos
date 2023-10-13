@@ -73,7 +73,7 @@
         class='demo-header__breadcrumb demo-header__breadcrumb--link'
         target='_blank'>yFiles for HTML</a>
 
-      <a href='https://live.yworks.com'
+      <a href='https://www.yworks.com/demos'
         style='cursor: pointer;' target='_blank'
         class='demo-header__breadcrumb demo-header__breadcrumb--link'>Demos</a> <span class='demo-header__breadcrumb'>Svelte Integration Demo [yFiles for HTML]</span>
     </div>

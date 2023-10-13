@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 04 Preferred Label Size - Label Style Implementation Tutorial
+# 04 Preferred Label Size - Tutorial: Label Style Implementation
 
 # Preferred Label Size
 
@@ -40,4 +40,4 @@ Note
 
 The [ILabelModel](https://docs.yworks.com/yfileshtml/#/api/ILabelModel) may or may not take the preferred size into account. Therefore, it is not guaranteed that the label will become as large as the preferred size. Most label models, like [ExteriorLabelModel](https://docs.yworks.com/yfileshtml/#/api/ExteriorLabelModel), [InteriorLabelModel](https://docs.yworks.com/yfileshtml/#/api/InteriorLabelModel), [FreeLabelModel](https://docs.yworks.com/yfileshtml/#/api/FreeLabelModel) etc. will respect the value, though. Usually, only stretch label models like [InteriorStretchLabelModel](https://docs.yworks.com/yfileshtml/#/api/InteriorStretchLabelModel), that fit the content into the owner node, will result in a different size.
 
-[05 Render Performance](../../tutorial-style-implementation-label/05-render-performance/index.html)
+[05 Render Performance](../../tutorial-style-implementation-label/05-render-performance/)

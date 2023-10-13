@@ -27,30 +27,41 @@
  **
  ***************************************************************************/
 import {
-  Class,
+  Font,
+  FreeEdgeLabelModel,
+  GraphBuilder,
   GraphComponent,
-  GraphMLIOHandler,
   GraphOverviewComponent,
   GraphOverviewSvgVisualCreator,
   GraphViewerInputMode,
-  ICommand,
+  Class,
+  IGraph,
+  InteriorStretchLabelModel,
   License,
+  LineCap,
   OverviewInputMode,
   PolylineEdgeStyle,
   RenderModes,
   ShowFocusPolicy,
+  Size,
   StringTemplateNodeStyle,
+  Stroke,
+  TreeLayout,
   WebGL2GraphModelManager,
-  WebGL2GraphOverviewVisualCreator
+  WebGL2GraphOverviewVisualCreator,
+  CompactNodePlacer,
+  LayoutExecutor
 } from 'yfiles'
 import OverviewCanvasVisualCreator from './OverviewCanvasVisualCreator.js'
 
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { BrowserDetection } from 'demo-utils/BrowserDetection'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 import { OverviewWebGL2VisualCreator } from './OverviewWebGL2VisualCreator.js'
 import { detailNodeStyleTemplate, overviewNodeStyle } from './style-templates.js'
+import HtmlLabelStyle from '../../style/html-label-style/HtmlLabelStyle.js'
+import graphData from './graph-data.json'
 
 /**
  * The GraphComponent
@@ -59,13 +70,13 @@ import { detailNodeStyleTemplate, overviewNodeStyle } from './style-templates.js
 let graphComponent
 
 /**
- * The overview graph component that use the Canvas and Svg visual creator.
+ * The overview graph component that uses the Canvas and Svg visual creator.
  * @type {GraphOverviewComponent}
  */
 let overviewComponent
 
 /**
- * The graph component that use the overview inputMode to let the overview graph use the same
+ * The graph component that uses the overview inputMode to let the overview graph use the same
  * styles as the graphComponent.
  * @type {GraphComponent}
  */
@@ -93,7 +104,7 @@ async function run() {
   // initialize the overview graph with the graph overview svg visual creator
   overviewComponent.graphVisualCreator = getOverviewSvgVisualCreator()
 
-  // initialize the overview graph that use the same GraphComponent styles.
+  // initialize the overview graph that uses the same GraphComponent styles.
   // If you want the overview to use the same styles as the GraphComponent, you can use a GraphComponent to display the overview.
   overviewGraphComponent = new GraphComponent('overviewGraphComponent')
   applyDemoTheme(overviewGraphComponent)
@@ -103,14 +114,37 @@ async function run() {
 
   initializeConverters()
 
-  // load the graph
-  new GraphMLIOHandler().readFromURL(graphComponent.graph, 'resources/graph.graphml').then(() => {
-    const nodeStyle = new StringTemplateNodeStyle(detailNodeStyleTemplate)
-    for (const node of graphComponent.graph.nodes) {
-      graphComponent.graph.setStyle(node, nodeStyle)
-    }
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  // Apply default styling
+  const graph = graphComponent.graph
+  initDemoStyles(graph)
+  graph.nodeDefaults.style = new StringTemplateNodeStyle({ svgContent: detailNodeStyleTemplate })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: new Stroke({ fill: '#FFAAAAAA', lineCap: LineCap.SQUARE, thickness: 2 })
   })
+  graph.nodeDefaults.size = new Size(285, 100)
+  graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
+  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graphComponent.focusIndicatorManager.enabled = false
+
+  // Labels get the HTML label style
+  const font = new Font('Montserrat,sans-serif', 14)
+  graph.nodeDefaults.labels.style = new HtmlLabelStyle(font)
+  graph.edgeDefaults.labels.style = new HtmlLabelStyle(font)
+
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new TreeLayout({
+      defaultNodePlacer: new CompactNodePlacer()
+    })
+  )
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
 
   initializeUI()
 
@@ -122,6 +156,27 @@ async function run() {
   overviewStyling(initialStyle)
 }
 
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  }).nodeCreator.tagProvider = item => item.tag
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
+}
 /**
  * Styles the overview graph.
  * @param {!string} styleType The type of the styling selected with the combobox.
@@ -135,7 +190,7 @@ function overviewStyling(styleType) {
 
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
-        // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL creator
+        // hide the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL creator
         overviewGraphComponent.div.style.display = 'none'
         overviewComponent.div.style.display = 'block'
       })
@@ -147,7 +202,7 @@ function overviewStyling(styleType) {
 
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
-        // hides the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL creator
+        // hides the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL creator
         overviewGraphComponent.div.style.display = 'none'
         overviewComponent.div.style.display = 'block'
       })
@@ -158,7 +213,7 @@ function overviewStyling(styleType) {
 
       // updates the overview component then show the overview graph
       overviewGraphComponent.updateVisualAsync().then(() => {
-        // hides the overview graph that use the canvas or Svg visual creator and show the overview graph that use the GraphComponent styles
+        // hides the overview graph that uses the canvas or Svg visual creator and show the overview graph that uses the GraphComponent styles
         overviewGraphComponent.div.style.display = 'block'
         overviewComponent.div.style.display = 'none'
         overviewGraphComponent.fitGraphBounds()
@@ -169,7 +224,7 @@ function overviewStyling(styleType) {
 
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
-        // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL visual creator
+        // hide the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL visual creator
         overviewGraphComponent.div.style.display = 'none'
         overviewComponent.div.style.display = 'block'
       })
@@ -181,7 +236,7 @@ function overviewStyling(styleType) {
 
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
-        // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL visual creator
+        // hide the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL visual creator
         overviewGraphComponent.div.style.display = 'none'
         overviewComponent.div.style.display = 'block'
       })
@@ -280,7 +335,7 @@ function initializeConverters() {
       }
       return value
     },
-    // converter function that return a color according to the employee's status
+    // converter function that returns a color according to the employee's status
     colorConverter: value =>
       ({
         busy: '#AB2346',

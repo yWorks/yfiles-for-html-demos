@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 09 Item Visibility - Node Style Implementation Tutorial
+# 09 Item Visibility - Tutorial: Node Style Implementation
 
 # Item visibility
 
@@ -41,4 +41,4 @@ Note
 
 Since `isVisible` is called once for each item on every rendered frame, the implementation should be fast, even if this means to be inexact. If in doubt, prefer making the item visible.
 
-[10 Render Boundaries](../../tutorial-style-implementation-node/10-bounds/index.html)
+[10 Render Boundaries](../../tutorial-style-implementation-node/10-bounds/)

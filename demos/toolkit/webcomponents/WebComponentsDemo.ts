@@ -112,7 +112,7 @@ function initializeUI(graphComponent: GraphComponentElementType): void {
  * selector.
  */
 function addClickListener(selector: string, handler: () => void): void {
-  ;(document.querySelector(selector) as HTMLElement).addEventListener('click', handler)
+  document.querySelector<HTMLElement>(selector)!.addEventListener('click', handler)
 }
 
 /**

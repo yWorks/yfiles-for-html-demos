@@ -46,7 +46,7 @@ import { disableUIElements, enableUIElements } from 'demo-resources/demo-page'
  * @returns {!Promise}
  */
 export async function runLayout(graphComponent, clearUndo, fitBounds = true) {
-  const algorithmSelect = document.getElementById('algorithm-select-box')
+  const algorithmSelect = document.querySelector('#algorithm-select-box')
   const selectedIndex = algorithmSelect.selectedIndex
 
   let layout

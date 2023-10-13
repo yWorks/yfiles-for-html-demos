@@ -42,7 +42,8 @@ import type { JSONLabel } from 'demo-utils/json-model'
 /**
  * Reads a graph from the given JSON {@link text} and sets it to the given {@link graphComponent}.
  * The JSON is expected to conform to the structure outlined by {@link JSONGraph}.
- * @yjs:keep=nodeList,edgeList,id,source,target,sourcePort,targetPort,bends,labels
+ *
+ * @yjs:keep = nodeList,edgeList,id,source,target,sourcePort,targetPort,bends,labels
  */
 export function readJSON(graphComponent: GraphComponent, text: string): void {
   try {

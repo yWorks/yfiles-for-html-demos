@@ -31,7 +31,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-You can also take a look at the [Maze Routing Demo](../../layout/mazerouting/index.html) for a more elaborate application of edge routing.
+You can also take a look at the [Maze Routing Demo](../../layout/mazerouting/) for a more elaborate application of edge routing.
 
 ### Documentation
 

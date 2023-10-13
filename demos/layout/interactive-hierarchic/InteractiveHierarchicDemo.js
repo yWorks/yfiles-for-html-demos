@@ -29,6 +29,7 @@
 import {
   CanvasComponent,
   GivenLayersLayerer,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   HierarchicLayout,
@@ -56,6 +57,7 @@ import { ContextMenu } from 'demo-utils/ContextMenu'
 import { LayerVisual } from './LayerVisual.js'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /**
  * Sample that interactively demonstrates the usage of {@link HierarchicLayout}.
@@ -81,6 +83,50 @@ async function run() {
   initializeInputModes()
   // initialize the graph
   initializeGraph()
+
+  // then build the graph with the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // calculate the initial layout
+  graph.applyLayout(
+    new HierarchicLayout({
+      orthogonalRouting: true,
+      recursiveGroupLayering: false
+    }),
+    new HierarchicLayoutData({
+      layerIndices: layerMapper
+    })
+  )
+
+  // and update the layer visualization
+  layerVisual.updateLayers(graph, layerMapper)
+
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+}
+
+/**
+ * Iterates through the given data set and creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /** @type {GraphComponent} */
@@ -117,25 +163,25 @@ function createEditorMode() {
   mode.createEdgeInputMode.allowCreateBend = false
 
   // register hooks whenever something is dragged or resized
-  mode.handleInputMode.addDragFinishedListener((_sender, _args) => {
-    updateLayout()
+  mode.handleInputMode.addDragFinishedListener(() => {
+    void updateLayout()
   })
-  mode.moveInputMode.addDragFinishedListener((_sender, _args) => {
-    updateLayout()
+  mode.moveInputMode.addDragFinishedListener(() => {
+    void updateLayout()
   })
   // ... and when new nodes are created interactively
-  mode.addNodeCreatedListener((_sender, args) => {
-    const newLayer = layerVisual.getLayer(args.item.layout.center)
-    newLayerMapper.set(args.item, newLayer)
-    updateLayout()
+  mode.addNodeCreatedListener((_, evt) => {
+    const newLayer = layerVisual.getLayer(evt.item.layout.center)
+    newLayerMapper.set(evt.item, newLayer)
+    void updateLayout()
   })
   // ... or edges
-  mode.createEdgeInputMode.addEdgeCreatedListener((_sender, args) => {
-    incrementalEdges.add(args.item)
-    updateLayout()
+  mode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
+    incrementalEdges.add(evt.item)
+    void updateLayout()
   })
 
-  // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
+  // Create a context menu. In this demo, we use our sample context menu implementation, but you can use any other
   // context menu widget as well. See the Context Menu demo for more details about working with context menus.
   const contextMenu = new ContextMenu(graphComponent)
 
@@ -150,10 +196,10 @@ function createEditorMode() {
 
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  mode.addPopulateItemContextMenuListener((sender, args) => {
+  mode.addPopulateItemContextMenuListener((_, evt) => {
     contextMenu.clearItems()
     // see if it's a node but not a not empty group node
-    const item = args.item
+    const item = evt.item
     if (item instanceof INode && !graph.isGroupNode(item)) {
       // see if it's already selected
       const selectedNodes = graphComponent.selection.selectedNodes
@@ -167,9 +213,9 @@ function createEditorMode() {
       // mark all selected nodes for incremental layout
       contextMenu.addMenuItem('Reinsert Incrementally', () => {
         incrementalNodes.addRange(selectedNodes)
-        updateLayout()
+        void updateLayout()
       })
-      args.handled = true
+      evt.handled = true
     }
     // if it's an edge...
     if (item instanceof IEdge) {
@@ -183,9 +229,9 @@ function createEditorMode() {
       // and offer option to reroute selected edges
       contextMenu.addMenuItem('Reroute', () => {
         incrementalEdges.addRange(selectedEdges)
-        updateLayout()
+        void updateLayout()
       })
-      args.handled = true
+      evt.handled = true
     }
   })
 
@@ -317,72 +363,6 @@ function initializeGraph() {
       bend.owner.bends.get(0) === bend || bend.owner.bends.get(bend.owner.bends.size - 1) === bend,
     createBendHandle
   )
-
-  // create a small sample graph with given layers
-  createSampleGraph()
-
-  // fit it into the view
-  graphComponent.fitGraphBounds()
-}
-
-/**
- * Creates the sample graph.
- */
-function createSampleGraph() {
-  graph.clear()
-  const nodes = []
-  for (let i = 0; i < 27; i++) {
-    nodes[i] = graph.createNode()
-  }
-
-  graph.createEdge(nodes[3], nodes[7])
-  graph.createEdge(nodes[0], nodes[1])
-  graph.createEdge(nodes[0], nodes[4])
-  graph.createEdge(nodes[1], nodes[2])
-  graph.createEdge(nodes[0], nodes[9])
-  graph.createEdge(nodes[6], nodes[10])
-  graph.createEdge(nodes[11], nodes[12])
-  graph.createEdge(nodes[11], nodes[13])
-  graph.createEdge(nodes[8], nodes[11])
-  graph.createEdge(nodes[15], nodes[16])
-  graph.createEdge(nodes[16], nodes[17])
-  graph.createEdge(nodes[18], nodes[19])
-  graph.createEdge(nodes[20], nodes[21])
-  graph.createEdge(nodes[7], nodes[17])
-  graph.createEdge(nodes[9], nodes[22])
-  graph.createEdge(nodes[22], nodes[3])
-  graph.createEdge(nodes[19], nodes[0])
-  graph.createEdge(nodes[8], nodes[4])
-  graph.createEdge(nodes[18], nodes[25])
-  graph.createEdge(nodes[24], nodes[8])
-  graph.createEdge(nodes[26], nodes[25])
-  graph.createEdge(nodes[10], nodes[20])
-  graph.createEdge(nodes[5], nodes[23])
-  graph.createEdge(nodes[25], nodes[15])
-  graph.createEdge(nodes[10], nodes[15])
-  graph.createEdge(nodes[21], nodes[17])
-  graph.createEdge(nodes[26], nodes[6])
-  graph.createEdge(nodes[13], nodes[12])
-  graph.createEdge(nodes[12], nodes[14])
-  graph.createEdge(nodes[14], nodes[11])
-  graph.createEdge(nodes[21], nodes[5])
-  graph.createEdge(nodes[5], nodes[6])
-  graph.createEdge(nodes[9], nodes[7])
-  graph.createEdge(nodes[19], nodes[24])
-
-  // calculate the initial layout
-  const layout = new HierarchicLayout()
-  layout.orthogonalRouting = true
-  layout.recursiveGroupLayering = false
-
-  const layoutData = new HierarchicLayoutData({
-    layerIndices: layerMapper
-  })
-
-  graph.applyLayout(layout, layoutData)
-
-  // and update the layer visualization
-  layerVisual.updateLayers(graph, layerMapper)
 }
 
 /**

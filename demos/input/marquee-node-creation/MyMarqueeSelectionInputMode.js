@@ -119,7 +119,7 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
 
     this.getSnapContext().addItemToBeReshaped(this.dummyNode)
 
-    const collectSnapResultsEventListener = (sender, evt1) => {
+    const collectSnapResultsEventListener = (_, evt) => {
       const reshapePosition = this.currentReshapePosition
       const topLeftChangeFactor_x =
         (reshapePosition & HandlePositions.WEST) == HandlePositions.WEST ? 1 : 0
@@ -136,7 +136,7 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
 
       NodeReshapeSnapResultProvider.INSTANCE.collectSnapResults(
         snapContext,
-        evt1,
+        evt,
         this.dummyNode,
         new ReshapeRectangleContext(
           initialBounds,
@@ -155,7 +155,7 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
     }
     snapContext.addCollectSnapResultsListener(collectSnapResultsEventListener)
 
-    snapContext.addCleanedUpListener((sender, evt1) =>
+    snapContext.addCleanedUpListener((_, evt) =>
       snapContext.removeCollectSnapResultsListener(collectSnapResultsEventListener)
     )
   }
@@ -194,7 +194,7 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
     if (this.snapContext != null) {
       return this.snapContext
     } else {
-      this.snapContext = super.inputModeContext.lookup(SnapContext.$class)
+      this.snapContext = super.inputModeContext.lookup(GraphSnapContext.$class)
       if (this.snapContext == null) {
         return new GraphSnapContext()
       } else {

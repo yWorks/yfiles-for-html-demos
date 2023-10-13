@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 04 Render Performance - Edge Style Implementation Tutorial
+# 04 Render Performance - Tutorial: Edge Style Implementation
 
 # Improving rendering performance
 
@@ -109,4 +109,4 @@ Note
 
 Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#EdgeStyleBase-method-updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame-rates during animations and interactive gestures.
 
-[05 Making the Style Configurable](../../tutorial-style-implementation-edge/05-making-the-style-configurable/index.html)
+[05 Making the Style Configurable](../../tutorial-style-implementation-edge/05-making-the-style-configurable/)

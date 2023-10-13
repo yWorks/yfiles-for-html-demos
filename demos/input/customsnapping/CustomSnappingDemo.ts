@@ -121,7 +121,7 @@ function createGraphSnapContext(): GraphSnapContext {
     snapDistance: 10
   })
   // use the free additional snap lines
-  context.addCollectSnapLinesListener((sender, evt) => {
+  context.addCollectSnapLinesListener((_, evt) => {
     // Creates and adds snap lines for the free AdditionalSnapLineVisualCreator to a GraphSnapContext.
     // While the AdditionalSnapLineVisualCreators are used to visualize free snap lines, corresponding
     // OrthogonalSnapLines have to be added to the snapping mechanism to provide the snapping behavior.
@@ -141,7 +141,7 @@ function createLabelSnapContext(): LabelSnapContext {
     collectInitialLocationSnapLines: false
   })
 
-  snapContext.addCollectSnapLinesListener((sender, evt) => {
+  snapContext.addCollectSnapLinesListener((_, evt) => {
     // Creates and adds snap lines for the free AdditionalSnapLineVisualCreator to a LabelSnapContext.
     // While the AdditionalSnapLineVisualCreators are used to visualize free snap lines, corresponding
     // OrthogonalSnapLines have to be added to the snapping mechanism to provide the snapping behavior.

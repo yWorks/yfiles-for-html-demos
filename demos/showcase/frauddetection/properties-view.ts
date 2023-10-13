@@ -52,9 +52,9 @@ export function initializePropertiesView(graphComponent: GraphComponent): void {
   toggleNoSelectionVisibility(true)
 
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
-  graphComponent.selection.addItemSelectionChangedListener((sender, event) => {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
     clearPropertiesView()
-    updatePropertiesView(event.item, event.itemSelected, detailsContainer!)
+    updatePropertiesView(evt.item, evt.itemSelected, detailsContainer!)
   })
 
   inputMode.addCanvasClickedListener(() => {

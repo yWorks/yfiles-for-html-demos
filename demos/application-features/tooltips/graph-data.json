@@ -1,0 +1,64 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "label": "Node 1",
+      "parentId": 5
+    },
+    {
+      "id": 1,
+      "label": "Node 2",
+      "parentId": 5
+    },
+    {
+      "id": 2,
+      "label": "Node 3",
+      "parentId": 5
+    },
+    {
+      "id": 3,
+      "label": "Node 4"
+    },
+    {
+      "id": 4,
+      "label": "Node 5"
+    },
+    {
+      "id": 5,
+      "label": "Group 1",
+      "isGroup": true
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 1,
+      "label": "Edge 1"
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 2,
+      "label": "Edge 2"
+    },
+    {
+      "id": 2,
+      "source": 2,
+      "target": 3,
+      "label": "Edge 3"
+    },
+    {
+      "id": 3,
+      "source": 2,
+      "target": 4,
+      "label": "Edge 4"
+    },
+    {
+      "id": 4,
+      "source": 0,
+      "target": 4,
+      "label": "Edge 5"
+    }
+  ]
+}

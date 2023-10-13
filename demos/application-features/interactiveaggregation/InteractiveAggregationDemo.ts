@@ -32,11 +32,12 @@ import {
   DefaultLabelStyle,
   Fill,
   GenericLabeling,
+  GraphBuilder,
   GraphComponent,
   GraphItemTypes,
-  GraphMLIOHandler,
   GraphViewerInputMode,
   IEnumerable,
+  IGraph,
   IList,
   IModelItem,
   INode,
@@ -53,6 +54,7 @@ import {
   Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
+  Size,
   SolidColorFill,
   Stroke,
   YObject
@@ -63,6 +65,8 @@ import { ContextMenu } from 'demo-utils/ContextMenu'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from '../../utils/json-model'
+import graphData from './graph-data.json'
 
 Class.ensure(LayoutExecutor)
 
@@ -77,7 +81,6 @@ const fillColorSelector = (n: INode): Color => {
   const fill = (n.style as ShapeNodeStyle).fill! as SolidColorFill
   return fill.color
 }
-
 const shapeAndFillSelector = (n: INode): ShapeAndFill =>
   new ShapeAndFill(shapeSelector(n), fillColorSelector(n))
 
@@ -113,8 +116,15 @@ async function run(): Promise<void> {
 
   // initialize the demo styles
   initDemoStyles(graphComponent.graph)
+  graphComponent.graph.nodeDefaults.size = new Size(40, 40)
 
-  await loadGraph()
+  // then build and layout the graph with the given data set
+  buildGraph(graphComponent.graph, graphData as unknown as JSONGraph)
+
+  await runLayout()
+
+  // Finally, enable the undo engine. This prevents undoing of the graph creation
+  graphComponent.graph.undoEngineEnabled = true
 
   // create and configure a new AggregationGraphWrapper
   aggregateGraph = new AggregationGraphWrapper(graphComponent.graph)
@@ -164,7 +174,7 @@ function configureContextMenu(graphComponent: GraphComponent): void {
 
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((sender, evt) =>
+  inputMode.addPopulateItemContextMenuListener((_, evt) =>
     populateContextMenu(contextMenu, graphComponent, evt)
   )
 
@@ -180,7 +190,7 @@ function configureContextMenu(graphComponent: GraphComponent): void {
  */
 function populateContextMenu(
   contextMenu: ContextMenu,
-  sender: object,
+  _sender: object,
   e: PopulateItemContextMenuEventArgs<IModelItem>
 ): void {
   e.showMenu = true
@@ -276,7 +286,7 @@ function updateSelection(node: INode | null): void {
 function registerAggregationCallbacks(): void {
   const graph = graphComponent.graph
 
-  graph.addNodeCreatedListener((sender, evt) => {
+  graph.addNodeCreatedListener((_, evt) => {
     if (aggregateGraph.isAggregationItem(evt.item)) {
       // add a label with the number of aggregated items to the new aggregation node
       graph.addLabel(
@@ -287,7 +297,7 @@ function registerAggregationCallbacks(): void {
     }
   })
 
-  graph.addEdgeCreatedListener((sender, evt) => {
+  graph.addEdgeCreatedListener((_, evt) => {
     const edge = evt.item
     if (!aggregateGraph.isAggregationItem(edge)) {
       return
@@ -310,9 +320,70 @@ function registerAggregationCallbacks(): void {
   })
 }
 
-async function loadGraph(): Promise<void> {
-  const graphMLIOHandler = new GraphMLIOHandler()
-  await graphMLIOHandler.readFromURL(graphComponent.graph, 'resources/sample.graphml')
+/**
+ * Iterates through the given data set and creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id,
+    parentId: item => item.parentId
+  }).nodeCreator.styleProvider = item => {
+    switch (item.tag) {
+      case 'b1':
+        return new ShapeNodeStyle({
+          fill: '#67b7dc',
+          stroke: '#617984',
+          shape: ShapeNodeShape.RECTANGLE
+        })
+      case 'b2':
+        return new ShapeNodeStyle({
+          fill: '#67b7dc',
+          stroke: '#617984',
+          shape: ShapeNodeShape.OCTAGON
+        })
+      case 'p1':
+        return new ShapeNodeStyle({
+          fill: '#177E89',
+          stroke: '#304F52',
+          shape: ShapeNodeShape.RECTANGLE
+        })
+      case 'p2':
+        return new ShapeNodeStyle({
+          fill: '#177E89',
+          stroke: '#304F52',
+          shape: ShapeNodeShape.OCTAGON
+        })
+      case 'p3':
+        return new ShapeNodeStyle({
+          fill: '#177E89',
+          stroke: '#304F52',
+          shape: ShapeNodeShape.DIAMOND
+        })
+      case 'l2':
+        return new ShapeNodeStyle({
+          fill: '#aa4586',
+          stroke: '#66485B',
+          shape: ShapeNodeShape.OCTAGON
+        })
+      case 'l3':
+        return new ShapeNodeStyle({
+          fill: '#aa4586',
+          stroke: '#66485B',
+          shape: ShapeNodeShape.DIAMOND
+        })
+    }
+  }
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**

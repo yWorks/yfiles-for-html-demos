@@ -79,23 +79,23 @@ let graphComponent
  */
 let intersectionVisualCreator
 
-const considerSourceTargetIntersectionsBox = document.getElementById(
-  'consider-source-target-node-intersections'
+const considerSourceTargetIntersectionsBox = document.querySelector(
+  '#consider-source-target-node-intersections'
 )
-const considerGroupContentIntersectionsBox = document.getElementById(
-  'consider-group-content-intersections'
+const considerGroupContentIntersectionsBox = document.querySelector(
+  '#consider-group-content-intersections'
 )
-const considerLabelOwnerIntersectionsBox = document.getElementById(
-  'consider-label-owner-intersections'
+const considerLabelOwnerIntersectionsBox = document.querySelector(
+  '#consider-label-owner-intersections'
 )
-const considerItemGeometryBox = document.getElementById('consider-item-geometry')
-const considerSelectionBox = document.getElementById('consider-only-selection')
-const intersectionCountLabel = document.getElementById('intersection-count')
-const nodeNodeCountLabel = document.getElementById('node-node-count')
-const nodeEdgeCountLabel = document.getElementById('node-edge-count')
-const edgeEdgeCountLabel = document.getElementById('edge-edge-count')
-const labelCountLabel = document.getElementById('label-count')
-const consideredItemsSelect = document.getElementById('considered-items-select')
+const considerItemGeometryBox = document.querySelector('#consider-item-geometry')
+const considerSelectionBox = document.querySelector('#consider-only-selection')
+const intersectionCountLabel = document.querySelector('#intersection-count')
+const nodeNodeCountLabel = document.querySelector('#node-node-count')
+const nodeEdgeCountLabel = document.querySelector('#node-edge-count')
+const edgeEdgeCountLabel = document.querySelector('#edge-edge-count')
+const labelCountLabel = document.querySelector('#label-count')
+const consideredItemsSelect = document.querySelector('#considered-items-select')
 /** @type {Array} */
 let intersectionInfoArray = []
 
@@ -255,7 +255,7 @@ function loadSampleGraph(graph) {
     layout: 'layout',
     parentId: dataItem => dataItem.parent
   })
-  ns.nodeCreator.addNodeCreatedListener((sender, evt) => {
+  ns.nodeCreator.addNodeCreatedListener((_, evt) => {
     if (evt.dataItem.isEllipse) {
       const defaultStyle = graph.nodeDefaults.style
       graph.setStyle(
@@ -270,7 +270,7 @@ function loadSampleGraph(graph) {
   })
   const nodeLabelCreator = ns.nodeCreator.createLabelsSource(data => data.labels || []).labelCreator
   nodeLabelCreator.textProvider = data => data.text || ''
-  nodeLabelCreator.addLabelAddedListener((sender, evt) => {
+  nodeLabelCreator.addLabelAddedListener((_, evt) => {
     const label = evt.item
     const data = evt.dataItem
     graph.setLabelLayoutParameter(
@@ -302,7 +302,7 @@ function loadSampleGraph(graph) {
   })
   const edgeLabelCreator = es.edgeCreator.createLabelsSource(data => data.labels || []).labelCreator
   edgeLabelCreator.textProvider = data => data.text || ''
-  edgeLabelCreator.addLabelAddedListener((sender, evt) => {
+  edgeLabelCreator.addLabelAddedListener((_, evt) => {
     const label = evt.item
     const data = evt.dataItem
     graph.setLabelLayoutParameter(
@@ -425,8 +425,8 @@ function initializeInputMode() {
 
   inputMode.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-    const item = args.item
+  inputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    const item = evt.item
     const highlightIndicatorManager = graphComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
 
@@ -486,16 +486,16 @@ function configureToolTips(inputMode) {
   mouseHoverInputMode.duration = TimeSpan.fromSeconds(10)
 
   // Register a listener for when a tool tip should be shown.
-  inputMode.addQueryItemToolTipListener((src, eventArgs) => {
-    if (eventArgs.handled) {
+  inputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled) {
       // Tool tip content has already been assigned -> nothing to do.
       return
     }
 
     // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
-    eventArgs.toolTip = createToolTipContent(eventArgs.item, intersectionInfoArray)
+    evt.toolTip = createToolTipContent(evt.item, intersectionInfoArray)
     // Indicate that the tool tip content has been set.
-    eventArgs.handled = true
+    evt.handled = true
   })
 }
 

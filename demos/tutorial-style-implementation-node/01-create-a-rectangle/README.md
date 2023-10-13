@@ -9,7 +9,9 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 01 Create A Rectangle - Node Style Implementation Tutorial
+#
+
+      Tutorial: Node Style Implementation - Tutorial: Node Style Implementation
 
 # Custom node visualizations
 
@@ -66,4 +68,4 @@ Note
 
 It’s important that SvgVisual contains an SVG element in the 'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
 
-[02 Create A Custom Shape](../../tutorial-style-implementation-node/02-create-a-custom-shape/index.html)
+[01 Create A Rectangle](../../tutorial-style-implementation-node/01-create-a-rectangle/)

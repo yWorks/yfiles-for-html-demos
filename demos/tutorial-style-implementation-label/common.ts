@@ -366,7 +366,7 @@ export class IsVisibleLabelStyleDescriptor extends BaseClass(
 
 export function startNodeAnimation(graphComponent: GraphComponent): void {
   graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener(sender => {
+  graphComponent.addSizeChangedListener(_ => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()

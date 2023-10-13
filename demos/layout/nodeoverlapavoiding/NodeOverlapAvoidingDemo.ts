@@ -162,25 +162,21 @@ function initializeInputModes(): void {
   )
 
   // avoid overlapping when creating, pasting or duplicating nodes
-  editMode.addNodeCreatedListener((sender: object, args: ItemEventArgs<INode>) => {
-    makeSpace(args.item)
+  editMode.addNodeCreatedListener((_, evt) => {
+    makeSpace(evt.item)
   })
-  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener(
-    (sender: object, args: ItemCopiedEventArgs<INode>) => {
-      // clear the current selection before the layout starts because GraphEditorInputMode cannot
-      // do this while the layout is running (the selection is usually cleared after this event)
-      graphComponent.selection.clear()
-      makeSpace(args.copy)
-    }
-  )
-  graphComponent.clipboard.duplicateCopier.addNodeCopiedListener(
-    (sender: object, args: ItemCopiedEventArgs<INode>) => {
-      // clear the current selection before the layout starts because GraphEditorInputMode cannot
-      // do this while the layout is running (the selection is usually cleared after this event)
-      graphComponent.selection.clear()
-      makeSpace(args.copy)
-    }
-  )
+  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener((_, evt) => {
+    // clear the current selection before the layout starts because GraphEditorInputMode cannot
+    // do this while the layout is running (the selection is usually cleared after this event)
+    graphComponent.selection.clear()
+    makeSpace(evt.copy)
+  })
+  graphComponent.clipboard.duplicateCopier.addNodeCopiedListener((_, evt) => {
+    // clear the current selection before the layout starts because GraphEditorInputMode cannot
+    // do this while the layout is running (the selection is usually cleared after this event)
+    graphComponent.selection.clear()
+    makeSpace(evt.copy)
+  })
 }
 
 /**

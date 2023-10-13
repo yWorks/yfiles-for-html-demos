@@ -157,13 +157,8 @@ function zoomChanged(graphComponent: GraphComponent, zoom: number): void {
   // update the label for the airports since they depend on the zoom level
   graph.nodes.forEach(node => {
     const airportData = getAirportData(node)
-    if (zoom >= 6) {
-      // show the airport's IATA-code when the zoom level is high
-      graph.setLabelText(node.labels.at(0)!, airportData.iata)
-    } else {
-      // show the city names when the zoom level is low
-      graph.setLabelText(node.labels.at(0)!, airportData.name)
-    }
+    // show the airport's IATA-code when the zoom value is low
+    graph.setLabelText(node.labels.at(0)!, zoom >= 4 ? airportData.name : airportData.iata)
   })
 }
 

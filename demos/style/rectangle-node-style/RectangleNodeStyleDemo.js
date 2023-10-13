@@ -176,7 +176,7 @@ function initializeInteraction(graphComponent) {
   enableSingleSelection(graphComponent)
 
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((sender, evt) => {
+  inputMode.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     addLabel(graphComponent.graph, node, gray)
   })
@@ -350,8 +350,8 @@ function initializeUI(graphComponent) {
   }
 
   // Update the values of the input elements when the selected element changes
-  graphComponent.selection.addItemSelectionChangedListener(sender =>
-    onSelectionChanged(sender.selectedNodes.find())
+  graphComponent.selection.addItemSelectionChangedListener(graphComponent =>
+    onSelectionChanged(graphComponent.selectedNodes.find())
   )
 }
 

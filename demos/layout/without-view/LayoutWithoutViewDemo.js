@@ -254,7 +254,7 @@ function logGraph(layoutGraph) {
 }
 
 /* Helper element and function to log to the HTML page */
-const logElement = document.getElementById('log')
+const logElement = document.querySelector('#log')
 
 /**
  * @param {!(string|object)} [value]

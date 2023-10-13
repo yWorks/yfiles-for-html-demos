@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 07 Create Labels Sources - Graph Builder Tutorial
+# 07 Create Labels Sources - Tutorial: Graph Builder
 
 # Adding labels
 
@@ -107,4 +107,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `create-labels-sources.ts` and play around with the different ways to add labels to the visualization.
 
-[08 Configure Labels](../../tutorial-graph-builder/08-configure-labels/index.html)
+[08 Configure Labels](../../tutorial-graph-builder/08-configure-labels/)

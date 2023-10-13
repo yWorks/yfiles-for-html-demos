@@ -292,12 +292,12 @@ require([
 
     // Add listeners for item created events to add a tag to each new item
     const masterGraph = manager.masterGraph
-    masterGraph.addNodeCreatedListener((source, evt) => {
+    masterGraph.addNodeCreatedListener((_, evt) => {
       evt.item.tag = {
         id: (masterGraph.isGroupNode(evt.item) ? 'G-' : 'N-') + masterGraph.nodes.size
       }
     })
-    masterGraph.addEdgeCreatedListener((source, evt) => {
+    masterGraph.addEdgeCreatedListener((_, evt) => {
       evt.item.tag = {
         id: `E-${masterGraph.edges.size}`
       }

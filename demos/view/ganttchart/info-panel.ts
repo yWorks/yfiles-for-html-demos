@@ -31,7 +31,7 @@ import type { CanvasComponent, GraphComponent, Point } from 'yfiles'
 import { GanttTimestamp, getTaskColor, getTaskForId, getTotalActivityDuration } from './gantt-utils'
 
 export function showInfo(text: string, location: Point, canvasComponent: CanvasComponent): void {
-  const info = document.getElementById('info') as HTMLDivElement
+  const info = document.querySelector<HTMLDivElement>('#info')!
   const pageLocation = canvasComponent.toPageFromView(canvasComponent.toViewCoordinates(location))
   info.textContent = text
   info.classList.remove('hidden')
@@ -74,7 +74,7 @@ export function showActivityInfo(
     return entry
   }
 
-  const nodeInfo = document.getElementById('node-info')! as HTMLElement
+  const nodeInfo = document.querySelector<HTMLElement>('#node-info')!
   nodeInfo.innerText = ''
 
   const nodeInfoName = document.createElement('div')

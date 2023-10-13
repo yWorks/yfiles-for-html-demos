@@ -54,7 +54,7 @@ let graphComponent: GraphComponent
 let executor: LayoutExecutorAsync | null
 let worker: Worker
 
-const layoutButton = document.getElementById('layoutBtn') as HTMLButtonElement
+const layoutButton = document.querySelector<HTMLButtonElement>('#layoutBtn')!
 
 function run() {
   // @ts-ignore

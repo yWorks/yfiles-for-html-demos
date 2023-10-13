@@ -49,7 +49,7 @@ let lastClickedNode
  */
 export function initializeShortestPaths(graphComponent, map) {
   const inputMode = graphComponent.inputMode
-  inputMode.addItemClickedListener((sender, evt) => {
+  inputMode.addItemClickedListener((_, evt) => {
     updateShortestPathHighlight(evt.item, graphComponent, map)
   })
 

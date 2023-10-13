@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 05 Implicit Grouping - Graph Builder Tutorial
+# 05 Implicit Grouping - Tutorial: Graph Builder
 
 # Grouping nodes in the graph
 
@@ -146,4 +146,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `implicit-group-nodes.ts` and play around with the hierarchic structure. For example, try to change the definition of the group nodes.
 
-[06 Configure Styles](../../tutorial-graph-builder/06-configure-styles/index.html)
+[06 Configure Styles](../../tutorial-graph-builder/06-configure-styles/)

@@ -59,10 +59,10 @@ export function initializeNodePopup(graphComponent) {
 
   const inputMode = graphComponent.inputMode
   // configures the input mode to show the popup when a node is clicked
-  inputMode.addItemClickedListener((sender, event) => {
-    if (event.item instanceof INode) {
+  inputMode.addItemClickedListener((_, evt) => {
+    if (evt.item instanceof INode) {
       document.getElementById('color-picker-label').style.display = 'inline-block'
-      nodePopup.currentItem = event.item
+      nodePopup.currentItem = evt.item
     }
   })
 
@@ -95,7 +95,7 @@ function createNodePopup(graphComponent) {
  * @param {!GraphComponent} graphComponent
  */
 function createColorPicker(graphComponent) {
-  const colorContainer = document.getElementById('color-picker-colors')
+  const colorContainer = document.querySelector('#color-picker-colors')
 
   const darkColors = colors.map(c => c.dark)
   for (const color of darkColors) {

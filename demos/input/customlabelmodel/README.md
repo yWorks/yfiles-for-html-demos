@@ -23,4 +23,4 @@ This demo shows how to create and use a custom label model.
 
 ## Related Demo
 
-- See the [Custom Port Location Model Demo](../../input/customportmodel/index.html) to learn how to customize the models for port locations. Note that the code is very similar as the same concepts are being applied.
+- See the [Custom Port Location Model Demo](../../input/customportmodel/) to learn how to customize the models for port locations. Note that the code is very similar as the same concepts are being applied.

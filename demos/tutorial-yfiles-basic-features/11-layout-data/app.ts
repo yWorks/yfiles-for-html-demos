@@ -45,7 +45,7 @@ initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
 
 const graphEditorInputMode = configureInteraction(graphComponent)
-graphEditorInputMode.addLabelTextChangedListener(sender =>
+graphEditorInputMode.addLabelTextChangedListener(() =>
   runLayout(graphComponent)
 )
 
@@ -54,9 +54,9 @@ createSampleGraphLayoutData(graphComponent.graph)
 await runLayout(graphComponent)
 finishLoading()
 
-const layoutButton = document.querySelector(
+const layoutButton = document.querySelector<HTMLButtonElement>(
   '#layoutAnimatedButton'
-) as HTMLButtonElement
+)!
 
 addButtonListener('#layoutAnimatedButton', async () => {
   layoutButton.disabled = true

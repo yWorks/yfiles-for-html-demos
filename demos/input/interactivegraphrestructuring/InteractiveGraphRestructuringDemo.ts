@@ -136,7 +136,7 @@ function initializeInputMode(): void {
   // ignore items of other types which might be in front of them
   mode.itemHoverInputMode.discardInvalidItems = false
   // handle changes on the hovered items
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     if (subTree !== null) {
       subTree.nodes.forEach(node => {
         const style = node.style as RectangleNodeStyle
@@ -144,7 +144,7 @@ function initializeInputMode(): void {
       })
     }
 
-    const newItem = args.item as INode
+    const newItem = evt.item as INode
     if (newItem) {
       subTree = new Subtree(graph, newItem)
       subTree.nodes.forEach(node => {

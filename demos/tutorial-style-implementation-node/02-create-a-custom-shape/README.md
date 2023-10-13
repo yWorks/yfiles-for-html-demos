@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 02 Create A Custom Shape - Node Style Implementation Tutorial
+# 02 Create A Custom Shape - Tutorial: Node Style Implementation
 
 # A more interesting shape
 
@@ -62,4 +62,4 @@ function createPathData(
 }
 ```
 
-[03 Render Performance](../../tutorial-style-implementation-node/03-render-performance/index.html)
+[03 Render Performance](../../tutorial-style-implementation-node/03-render-performance/)

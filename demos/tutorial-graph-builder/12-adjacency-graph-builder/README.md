@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 12 Adjacency Graph Builder - Graph Builder Tutorial
+# 12 Adjacency Graph Builder - Tutorial: Graph Builder
 
 # Building a graph with the AdjacencyGraphBuilder
 
@@ -97,4 +97,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `adjacency-graph-building.ts` and play around with the different ways to import business data.
 
-[13 Tree Builder](../../tutorial-graph-builder/13-tree-builder/index.html)
+[13 Tree Builder](../../tutorial-graph-builder/13-tree-builder/)

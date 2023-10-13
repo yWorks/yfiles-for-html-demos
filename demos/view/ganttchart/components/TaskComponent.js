@@ -51,8 +51,8 @@ export class TaskComponent {
     this.parent.append(this.taskWrapper)
 
     // synchronize with y-axis with the graphComponent
-    graphComponent.addViewportChangedListener(src => {
-      this.taskWrapper.style.top = `${-src.viewPoint.y}px`
+    graphComponent.addViewportChangedListener(graphComponent => {
+      this.taskWrapper.style.top = `${-graphComponent.viewPoint.y}px`
     })
   }
 

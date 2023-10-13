@@ -44,26 +44,26 @@ export function enableTooltips(graphComponent) {
   mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(100)
   mouseHoverInputMode.duration = TimeSpan.fromSeconds(3)
 
-  inputMode.addQueryItemToolTipListener((sender, event) => {
-    if (event.handled) {
+  inputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
 
-    const item = event.item
+    const item = evt.item
     if (item instanceof INode) {
       const nodeInfo = getEntityInfo(item)
       // show the first entry of the info element stored in the business data
-      event.toolTip = typeof nodeInfo == 'string' ? nodeInfo : nodeInfo[Object.keys(nodeInfo)[0]]
+      evt.toolTip = typeof nodeInfo == 'string' ? nodeInfo : nodeInfo[Object.keys(nodeInfo)[0]]
     } else if (item instanceof IEdge) {
       const connectionData = getConnectionData(item)
       if (connectionData.type !== undefined) {
         // show the type of the connection
-        event.toolTip = connectionData.type
+        evt.toolTip = connectionData.type
       }
     }
 
     // Indicate that the tooltip content has been set.
-    event.handled = true
+    evt.handled = true
   })
 }

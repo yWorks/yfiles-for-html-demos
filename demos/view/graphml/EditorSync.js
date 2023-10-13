@@ -105,7 +105,7 @@ export class EditorSync {
     this._graph = masterGraph
 
     // Initialize the CodeMirror editor
-    const textarea = document.getElementById('xmlEditor')
+    const textarea = document.querySelector('#xmlEditor')
     const editor = CodeMirror.fromTextArea(textarea, {
       lineNumbers: true,
       mode: 'application/xml'
@@ -165,15 +165,15 @@ export class EditorSync {
     this.itemToIdMap.clear()
     const idProvider = args.context.lookup(IGraphElementIdProvider.$class)
 
-    args.context.writeEvents.addNodeWrittenListener((s, a) => {
-      const node = a.item
-      const nodeId = idProvider.getNodeId(a.context, node)
+    args.context.writeEvents.addNodeWrittenListener((_, evt) => {
+      const node = evt.item
+      const nodeId = idProvider.getNodeId(evt.context, node)
       this.itemToIdMap.set(node, nodeId)
     })
 
-    args.context.writeEvents.addEdgeWrittenListener((s, a) => {
-      const edge = a.item
-      const edgeId = idProvider.getEdgeId(a.context, edge)
+    args.context.writeEvents.addEdgeWrittenListener((_, evt) => {
+      const edge = evt.item
+      const edgeId = idProvider.getEdgeId(evt.context, edge)
       this.itemToIdMap.set(edge, edgeId)
     })
   }
@@ -185,16 +185,16 @@ export class EditorSync {
   onParsing(args) {
     this.itemToIdMap.clear()
 
-    args.context.parseEvents.addNodeParsedListener((s, a) => {
-      const xmlElement = a.element
-      const node = a.context.getCurrent(INode.$class)
+    args.context.parseEvents.addNodeParsedListener((_, evt) => {
+      const xmlElement = evt.element
+      const node = evt.context.getCurrent(INode.$class)
       const id = xmlElement.getAttribute('id')
       this.itemToIdMap.set(node, id)
     })
 
-    args.context.parseEvents.addEdgeParsedListener((s, a) => {
-      const xmlElement = a.element
-      const edge = a.context.getCurrent(IEdge.$class)
+    args.context.parseEvents.addEdgeParsedListener((_, evt) => {
+      const xmlElement = evt.element
+      const edge = evt.context.getCurrent(IEdge.$class)
       const id = xmlElement.getAttribute('id')
       this.itemToIdMap.set(edge, id)
     })
@@ -448,6 +448,6 @@ function findMatchingTag(str, startIndex, tagName) {
  * @param {!string} text
  */
 function setOutput(text) {
-  const outputText = document.getElementById('outputText')
+  const outputText = document.querySelector('#outputText')
   outputText.textContent = text
 }

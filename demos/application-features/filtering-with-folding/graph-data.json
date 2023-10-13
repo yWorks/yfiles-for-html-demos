@@ -1,0 +1,65 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "tag": { "filtered": false },
+      "parentId": 5
+    },
+    {
+      "id": 1,
+      "tag": { "filtered": false },
+      "parentId": 5
+    },
+    {
+      "id": 2,
+      "tag": { "filtered": false },
+      "parentId": 5
+    },
+    {
+      "id": 3,
+      "tag": { "filtered": false }
+    },
+    {
+      "id": 4,
+      "tag": { "filtered": false }
+    },
+    {
+      "id": 5,
+      "tag": { "filtered": false },
+      "label": "Group 1",
+      "isGroup": true
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 1,
+      "tag": { "filtered": false }
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 2,
+      "tag": { "filtered": false }
+    },
+    {
+      "id": 2,
+      "source": 2,
+      "target": 3,
+      "tag": { "filtered": false }
+    },
+    {
+      "id": 3,
+      "source": 2,
+      "target": 4,
+      "tag": { "filtered": false }
+    },
+    {
+      "id": 4,
+      "source": 0,
+      "target": 4,
+      "tag": { "filtered": false }
+    }
+  ]
+}

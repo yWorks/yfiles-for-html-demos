@@ -30,8 +30,8 @@
 export const detailNodeStyleTemplate = `
   <defs>
     <linearGradient x1="0.5" y1="0" x2="0.5" y2="1" spreadMethod="pad" id="background_gradient">
-      <stop stop-color="#CCFFFF" stop-opacity="1" offset="0"></stop>
-      <stop stop-color="#249AE7" stop-opacity="1" offset="1"></stop>
+      <stop stop-color="#CCFFFF" stop-opacity="1" offset="0"/>
+      <stop stop-color="#249AE7" stop-opacity="1" offset="1"/>
     </linearGradient>
 
     <linearGradient
@@ -42,8 +42,8 @@ export const detailNodeStyleTemplate = `
       spreadMethod="pad"
       id="background_gradient_focused"
     >
-      <stop stop-color="#FFFFFF" stop-opacity="1" offset="0"></stop>
-      <stop stop-color="#FFA500" stop-opacity="1" offset="1"></stop>
+      <stop stop-color="#FFFFFF" stop-opacity="1" offset="0"/>
+      <stop stop-color="#FFA500" stop-opacity="1" offset="1"/>
     </linearGradient>
 
     <linearGradient
@@ -54,8 +54,8 @@ export const detailNodeStyleTemplate = `
       spreadMethod="pad"
       id="background_gradient_hover"
     >
-      <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="0"></stop>
-      <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="1"></stop>
+      <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="0"/>
+      <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="1"/>
     </linearGradient>
   </defs>
 
@@ -65,25 +65,25 @@ export const detailNodeStyleTemplate = `
   <use xlink:href="{Binding status" />
 
   <g>
-    <rect width="3" height="100"></rect>
-    <rect width="3" height="100" transform="translate(282 0)"></rect>
+    <rect width="3" height="100"/>
+    <rect width="3" height="100" transform="translate(282 0)"/>
     <rect width="285" height="3"></rect>
-    <rect width="285" height="3" transform="translate(0 97)"></rect>
+    <rect width="285" height="3" transform="translate(0 97)"/>
   </g>
   <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
     <text
       transform="translate(10 25)"
       data-content="{Binding name}"
       style="font-size:16px; fill:#336699"
-    ></text>
+    />
     <text
       transform="translate(10 45)"
       data-content="{Binding position}"
       style="text-transform: uppercase; font-weight: 400"
-    ></text>
-    <text transform="translate(10 72)" data-content="{Binding email}"></text>
-    <text transform="translate(10 88)" data-content="{Binding phone}"></text>
-    <text transform="translate(70 88)" data-content="{Binding fax}"></text>
+    />
+    <text transform="translate(10 72)" data-content="{Binding email}"/>
+    <text transform="translate(10 88)" data-content="{Binding phone}"/>
+    <text transform="translate(70 88)" data-content="{Binding fax}"/>
   </g>
 `
 
@@ -93,22 +93,22 @@ export const intermediateNodeStyleTemplate = `
   <rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100" />
   <use xlink:href="{Binding status}" />
   <g>
-    <rect width="3" height="100"></rect>
-    <rect width="3" height="100" transform="translate(282 0)"></rect>
-    <rect width="285" height="3"></rect>
-    <rect width="285" height="3" transform="translate(0 97)"></rect>
+    <rect width="3" height="100"/>
+    <rect width="3" height="100" transform="translate(282 0)"/>
+    <rect width="285" height="3"/>
+    <rect width="285" height="3" transform="translate(0 97)"/>
   </g>
 
   <text
     transform="translate(10 40)"
     data-content="{Binding name}"
     style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699;"
-  ></text>
+  />
   <text
     transform="translate(10 70)"
     data-content="{Binding position}"
     style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400"
-  ></text>
+  />
 `
 
 //language=HTML
@@ -117,14 +117,14 @@ export const overviewNodeStyleTemplate = `
   <rect fill="#FFFFFF" width="285" height="100" />
   <use xlink:href="{Binding status}" />
   <g>
-    <rect width="3" height="100"></rect>
-    <rect width="3" height="100" transform="translate(282 0)"></rect>
-    <rect width="285" height="3"></rect>
-    <rect width="285" height="3" transform="translate(0 97)"></rect>
+    <rect width="3" height="100"/>
+    <rect width="3" height="100" transform="translate(282 0)"/>
+    <rect width="285" height="3"/>
+    <rect width="285" height="3" transform="translate(0 97)"/>
   </g>
   <text
     transform="translate(10 50)"
     data-content="{Binding name}"
     style="font-size:40px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;"
-  ></text>
+  />
 `

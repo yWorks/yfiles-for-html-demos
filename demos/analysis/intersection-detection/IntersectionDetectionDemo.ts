@@ -77,27 +77,23 @@ let graphComponent: GraphComponent
  */
 let intersectionVisualCreator: IntersectionVisualCreator
 
-const considerSourceTargetIntersectionsBox = document.getElementById(
-  'consider-source-target-node-intersections'
-) as HTMLInputElement
-const considerGroupContentIntersectionsBox = document.getElementById(
-  'consider-group-content-intersections'
-) as HTMLInputElement
-const considerLabelOwnerIntersectionsBox = document.getElementById(
-  'consider-label-owner-intersections'
-) as HTMLInputElement
-const considerItemGeometryBox = document.getElementById(
-  'consider-item-geometry'
-) as HTMLInputElement
-const considerSelectionBox = document.getElementById('consider-only-selection') as HTMLInputElement
-const intersectionCountLabel = document.getElementById('intersection-count') as HTMLLabelElement
-const nodeNodeCountLabel = document.getElementById('node-node-count') as HTMLLabelElement
-const nodeEdgeCountLabel = document.getElementById('node-edge-count') as HTMLLabelElement
-const edgeEdgeCountLabel = document.getElementById('edge-edge-count') as HTMLLabelElement
-const labelCountLabel = document.getElementById('label-count') as HTMLLabelElement
-const consideredItemsSelect = document.getElementById(
-  'considered-items-select'
-) as HTMLSelectElement
+const considerSourceTargetIntersectionsBox = document.querySelector<HTMLInputElement>(
+  '#consider-source-target-node-intersections'
+)!
+const considerGroupContentIntersectionsBox = document.querySelector<HTMLInputElement>(
+  '#consider-group-content-intersections'
+)!
+const considerLabelOwnerIntersectionsBox = document.querySelector<HTMLInputElement>(
+  '#consider-label-owner-intersections'
+)!
+const considerItemGeometryBox = document.querySelector<HTMLInputElement>('#consider-item-geometry')!
+const considerSelectionBox = document.querySelector<HTMLInputElement>('#consider-only-selection')!
+const intersectionCountLabel = document.querySelector<HTMLInputElement>('#intersection-count')!
+const nodeNodeCountLabel = document.querySelector<HTMLInputElement>('#node-node-count')!
+const nodeEdgeCountLabel = document.querySelector<HTMLInputElement>('#node-edge-count')!
+const edgeEdgeCountLabel = document.querySelector<HTMLInputElement>('#edge-edge-count')!
+const labelCountLabel = document.querySelector<HTMLInputElement>('#label-count')!
+const consideredItemsSelect = document.querySelector<HTMLInputElement>('#considered-items-select')!
 let intersectionInfoArray: Intersection[] = []
 
 /**
@@ -252,7 +248,7 @@ function loadSampleGraph(graph: IGraph): void {
     layout: 'layout',
     parentId: dataItem => dataItem.parent
   })
-  ns.nodeCreator.addNodeCreatedListener((sender, evt) => {
+  ns.nodeCreator.addNodeCreatedListener((_, evt) => {
     if (evt.dataItem.isEllipse) {
       const defaultStyle = graph.nodeDefaults.style as ShapeNodeStyle
       graph.setStyle(
@@ -267,7 +263,7 @@ function loadSampleGraph(graph: IGraph): void {
   })
   const nodeLabelCreator = ns.nodeCreator.createLabelsSource(data => data.labels || []).labelCreator
   nodeLabelCreator.textProvider = data => data.text || ''
-  nodeLabelCreator.addLabelAddedListener((sender, evt) => {
+  nodeLabelCreator.addLabelAddedListener((_, evt) => {
     const label = evt.item
     const data = evt.dataItem
     graph.setLabelLayoutParameter(
@@ -299,7 +295,7 @@ function loadSampleGraph(graph: IGraph): void {
   })
   const edgeLabelCreator = es.edgeCreator.createLabelsSource(data => data.labels || []).labelCreator
   edgeLabelCreator.textProvider = data => data.text || ''
-  edgeLabelCreator.addLabelAddedListener((sender, evt) => {
+  edgeLabelCreator.addLabelAddedListener((_, evt) => {
     const label = evt.item
     const data = evt.dataItem
     graph.setLabelLayoutParameter(
@@ -421,8 +417,8 @@ function initializeInputMode(): void {
 
   inputMode.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-    const item = args.item
+  inputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    const item = evt.item
     const highlightIndicatorManager = graphComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
 
@@ -481,19 +477,17 @@ function configureToolTips(inputMode: GraphEditorInputMode): void {
   mouseHoverInputMode.duration = TimeSpan.fromSeconds(10)
 
   // Register a listener for when a tool tip should be shown.
-  inputMode.addQueryItemToolTipListener(
-    (src: object, eventArgs: QueryItemToolTipEventArgs<IModelItem>): void => {
-      if (eventArgs.handled) {
-        // Tool tip content has already been assigned -> nothing to do.
-        return
-      }
-
-      // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
-      eventArgs.toolTip = createToolTipContent(eventArgs.item!, intersectionInfoArray)
-      // Indicate that the tool tip content has been set.
-      eventArgs.handled = true
+  inputMode.addQueryItemToolTipListener((_, evt): void => {
+    if (evt.handled) {
+      // Tool tip content has already been assigned -> nothing to do.
+      return
     }
-  )
+
+    // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
+    evt.toolTip = createToolTipContent(evt.item!, intersectionInfoArray)
+    // Indicate that the tool tip content has been set.
+    evt.handled = true
+  })
 }
 
 run().then(finishLoading)

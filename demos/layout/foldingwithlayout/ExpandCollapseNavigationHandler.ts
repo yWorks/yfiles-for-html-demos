@@ -185,7 +185,7 @@ export class ExpandCollapseNavigationHelper {
 
     // calculate the bounds of the expanded group node
     let groupNodeBounds = bounds.getTranslated(diffVector)
-    const insetsProvider = node.lookup(INodeInsetsProvider.$class) as INodeInsetsProvider
+    const insetsProvider = node.lookup(INodeInsetsProvider.$class)
     if (insetsProvider != null) {
       // respect the insets of the group node
       const insets = insetsProvider.getInsets(node)

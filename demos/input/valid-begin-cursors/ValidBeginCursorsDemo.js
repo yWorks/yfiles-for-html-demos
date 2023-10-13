@@ -28,24 +28,28 @@
  ***************************************************************************/
 import {
   BaseClass,
+  Class,
   Cursor,
   EventRecognizers,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  HierarchicLayout,
   IEdge,
   IGraph,
   IHitTestable,
   IInputModeContext,
   KeyEventRecognizers,
+  LayoutExecutor,
   License,
   ModifierKeys,
-  Point,
-  Rect
+  Point
 } from 'yfiles'
 
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -66,12 +70,49 @@ async function run() {
   // Assign the default demo styles
   initDemoStyles(graphComponent.graph)
 
-  // Specify an input mode configured to use customized cursors and interaction gestures
-  graphComponent.inputMode = createEditorMode()
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
 
-  // Create a sample graph
-  createSampleGraph(graphComponent.graph)
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(new HierarchicLayout({ minimumLayerDistance: 35 }))
   graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+
+  // specify an input mode configured to use customized cursors and interaction gestures
+  graphComponent.inputMode = createEditorMode()
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList.filter(item => !item.isGroup),
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -112,7 +153,7 @@ function createEditorMode() {
   // is displayed when hovering over an edge.
   mode.mouseHoverInputMode.priority = mode.moveViewportInputMode.priority - 3
   // For edges a simple tooltip containing information about the source and target node is used.
-  mode.addQueryItemToolTipListener((sender, evt) => {
+  mode.addQueryItemToolTipListener((_, evt) => {
     if (evt.item instanceof IEdge && !evt.handled) {
       evt.toolTip = `${evt.item.sourceNode} -> ${evt.item.targetNode}`
       evt.handled = true
@@ -146,66 +187,15 @@ function createEditorMode() {
 }
 
 /**
- * Creates the initial graph.
- * @param {!IGraph} graph
- */
-function createSampleGraph(graph) {
-  const n1 = graph.createNode(new Rect(126, 0, 30, 30))
-  const n2 = graph.createNode(new Rect(126, 72, 30, 30))
-  const n3 = graph.createNode(new Rect(75, 147, 30, 30))
-  const n4 = graph.createNode(new Rect(177.5, 147, 30, 30))
-  const n5 = graph.createNode(new Rect(110, 249, 30, 30))
-  const n6 = graph.createNode(new Rect(177.5, 249, 30, 30))
-  const n7 = graph.createNode(new Rect(110, 299, 30, 30))
-  const n8 = graph.createNode(new Rect(177.5, 299, 30, 30))
-  const n9 = graph.createNode(new Rect(110, 359, 30, 30))
-  const n10 = graph.createNode(new Rect(47.5, 299, 30, 30))
-  const n11 = graph.createNode(new Rect(20, 440, 30, 30))
-  const n12 = graph.createNode(new Rect(110, 440, 30, 30))
-  const n13 = graph.createNode(new Rect(20, 515, 30, 30))
-  const n14 = graph.createNode(new Rect(80, 515, 30, 30))
-  const n15 = graph.createNode(new Rect(140, 515, 30, 30))
-  const n16 = graph.createNode(new Rect(20, 569, 30, 30))
-
-  const group1 = graph.createGroupNode({
-    layout: new Rect(98, 222, 119.5, 116),
-    labels: ['Group 1']
-  })
-  graph.groupNodes(group1, [n5, n6, n7, n8])
-
-  const group2 = graph.createGroupNode({
-    layout: new Rect(10, 413, 170, 141),
-    labels: ['Group 2']
-  })
-  graph.groupNodes(group2, [n11, n12, n13, n14, n15])
-
-  graph.createEdge(n1, n2)
-  graph.createEdge(n2, n3)
-  graph.createEdge(n2, n4)
-  graph.createEdge(n3, n5)
-  graph.createEdge(n3, n10)
-  graph.createEdge(n5, n7)
-  graph.createEdge(n7, n9)
-  graph.createEdge(n4, n6)
-  graph.createEdge(n6, n8)
-  graph.createEdge(n10, n11)
-  graph.createEdge(n10, n12)
-  graph.createEdge(n11, n13)
-  graph.createEdge(n13, n16)
-  graph.createEdge(n12, n14)
-  graph.createEdge(n12, n15)
-}
-
-/**
  * This hit testable returns true when any edge is at the given location.
  */
 class EdgeHitTestable extends BaseClass(IHitTestable) {
   /**
-   * @param {!IInputModeContext} context
+   * @param {!IInputModeContext} _context
    * @param {!Point} location
    * @returns {boolean}
    */
-  isHit(context, location) {
+  isHit(_context, location) {
     return graphComponent.graphModelManager.typedHitElementsAt(IEdge.$class, location).some()
   }
 }

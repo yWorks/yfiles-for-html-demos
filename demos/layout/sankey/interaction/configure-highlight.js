@@ -78,12 +78,12 @@ export function initializeHighlight(graphComponent) {
   mode.itemHoverInputMode.enabled = true
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
   mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     const highlightManager = graphComponent.highlightIndicatorManager
     // remove all previous highlighting
     highlightManager.clearHighlights()
 
-    const item = args.item
+    const item = evt.item
     if (item instanceof IEdge) {
       // when an edge is being hovered, highlight first the edge and then its associated labels,
       // so that the label highlighting stays above the edge highlighting

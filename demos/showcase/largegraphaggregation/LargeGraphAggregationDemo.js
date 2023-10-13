@@ -176,7 +176,7 @@ function initializeToggleAggregation() {
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     focusableItems: GraphItemTypes.NODE
   })
-  graphViewerInputMode.addItemClickedListener((sender, evt) => {
+  graphViewerInputMode.addItemClickedListener((_, evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }
@@ -187,12 +187,12 @@ function initializeToggleAggregation() {
   })
   graphComponent.inputMode = graphViewerInputMode
 
-  graphComponent.addKeyUpListener((sender, evt) => {
+  graphComponent.addKeyUpListener((_, evt) => {
     if (evt.key === Key.ENTER) {
       toggleAggregationNode(graphComponent.currentItem)
     }
   })
-  graphComponent.addCurrentItemChangedListener((sender, evt) => {
+  graphComponent.addCurrentItemChangedListener((_, evt) => {
     onInfoPanelPropertiesChanged()
   })
 }
@@ -223,10 +223,10 @@ function toggleAggregationNode(node) {
  */
 function initializeSmartNavigation() {
   // Implements the smart click navigation
-  graphComponent.inputMode.addItemClickedListener((sender, args) => {
-    if (args.item instanceof IEdge) {
-      args.handled = true
-      zoomToLocation(args.item, args.location)
+  graphComponent.inputMode.addItemClickedListener((_, evt) => {
+    if (evt.item instanceof IEdge) {
+      evt.handled = true
+      zoomToLocation(evt.item, evt.location)
     }
   })
 }
@@ -288,8 +288,8 @@ function initializeHighlight() {
   // they should be discarded, rather than be reported as "null"
   graphViewerInputMode.itemHoverInputMode.discardInvalidItems = false
   // whenever the currently hovered item changes call our method
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((o, evt) => {
-    onHoveredItemChanged(o, evt)
+  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((inputMode, evt) => {
+    onHoveredItemChanged(inputMode, evt)
   })
 }
 
@@ -841,8 +841,8 @@ function initializeStyles() {
         rx='{TemplateBinding width, Converter=radius}'
         ry='{TemplateBinding height, Converter=radius}'
         stroke='{Binding, Converter=strokeColor, Parameter=rgba(0,0,0,0.45)}' stroke-dasharray='{Binding, Converter=strokeStyle}' stroke-width='1.5'
-        fill='{Binding, Converter=fillColor, Parameter=rgba(108,145,191,0.16)|rgba(108,145,191,0.13)}' style='cursor: pointer'></ellipse>
-      <path d='{Binding isAggregated, Converter=sign}' stroke='#4B4B4B' stroke-width='1.5' transform='{TemplateBinding bounds, Converter=centered}'></path>`
+        fill='{Binding, Converter=fillColor, Parameter=rgba(108,145,191,0.16)|rgba(108,145,191,0.13)}' style='cursor: pointer'/>
+      <path d='{Binding isAggregated, Converter=sign}' stroke='#4B4B4B' stroke-width='1.5' transform='{TemplateBinding bounds, Converter=centered}'/>`
 
   const outline = new GeneralPath()
   outline.appendEllipse(new Rect(0, 0, 1, 1), false)
@@ -920,7 +920,7 @@ function loadGraph(graph) {
     svgContent:
       '<ellipse rx="{TemplateBinding width, Converter=radius}" ry="{TemplateBinding height, Converter=radius}" ' +
       'cx="{TemplateBinding width, Converter=radius}" cy="{TemplateBinding height, Converter=radius}" ' +
-      'fill="{Binding c}" stroke="#696969"></ellipse>',
+      'fill="{Binding c}" stroke="#696969"/>',
     normalizedOutline: outline
   })
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({

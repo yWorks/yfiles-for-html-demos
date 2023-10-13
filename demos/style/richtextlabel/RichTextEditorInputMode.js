@@ -141,7 +141,9 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
       'pointerdown',
       'pointermove'
     ].forEach(event => {
-      container.addEventListener(event, e => e.stopPropagation(), { passive: false })
+      container.addEventListener(event, container => container.stopPropagation(), {
+        passive: false
+      })
     })
     return container
   }

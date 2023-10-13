@@ -99,14 +99,14 @@ export default class HTMLPopupSupport {
    */
   registerListeners(): void {
     // Adds listener for viewport changes
-    this.graphComponent.addViewportChangedListener((sender, propertyChangedEventArgs) => {
+    this.graphComponent.addViewportChangedListener((_, evt) => {
       if (this.currentItem) {
         this.dirty = true
       }
     })
 
     // Adds listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((sender, node, oldLayout) => {
+    this.graphComponent.graph.addNodeLayoutChangedListener((_, node, oldLayout) => {
       if (
         ((this.currentItem && this.currentItem === node) || this.currentItem instanceof IEdge) &&
         (node === (this.currentItem as IEdge).sourcePort!.owner ||
@@ -117,7 +117,7 @@ export default class HTMLPopupSupport {
     })
 
     // Adds listener for updates of the visual tree
-    this.graphComponent.addUpdatedVisualListener((sender, eventArgs) => {
+    this.graphComponent.addUpdatedVisualListener((_, evt) => {
       if (this.currentItem && this.dirty) {
         this.dirty = false
         this.updateLocation()

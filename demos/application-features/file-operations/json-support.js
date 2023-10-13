@@ -41,7 +41,8 @@ import { getDefaultWriterOptions, toJSON } from '../../utils/json-writer.js'
 /**
  * Reads a graph from the given JSON {@link text} and sets it to the given {@link graphComponent}.
  * The JSON is expected to conform to the structure outlined by {@link JSONGraph}.
- * @yjs:keep=nodeList,edgeList,id,source,target,sourcePort,targetPort,bends,labels
+ *
+ * @yjs:keep = nodeList,edgeList,id,source,target,sourcePort,targetPort,bends,labels
  */
 export function readJSON(graphComponent, text) {
   try {

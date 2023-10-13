@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 11 Update Graph - Graph Builder Tutorial
+# 11 Update Graph - Tutorial: Graph Builder
 
 # Updating the graph
 
@@ -72,4 +72,4 @@ Use the buttons below to apply the changes from the sample code to the graph, an
 
 Update the graph Reset the graph
 
-[12 Adjacency Graph Builder](../../tutorial-graph-builder/12-adjacency-graph-builder/index.html)
+[12 Adjacency Graph Builder](../../tutorial-graph-builder/12-adjacency-graph-builder/)

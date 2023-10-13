@@ -289,8 +289,7 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
     this.previewGraph.nodes.forEach(node => {
       const suggestedLayout = this.getNodeLayoutAt(node, evt.newLocation)
       const provider =
-        (node.lookup(INodeSnapResultProvider.$class) as INodeSnapResultProvider) ??
-        NodeSnapResultProvider.INSTANCE
+        node.lookup(INodeSnapResultProvider.$class) ?? NodeSnapResultProvider.INSTANCE
       provider.collectSnapResults(source, evt, suggestedLayout, node)
     })
   }

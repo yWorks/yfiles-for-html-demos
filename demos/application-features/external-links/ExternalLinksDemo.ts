@@ -27,20 +27,21 @@
  **
  ***************************************************************************/
 import {
+  Class,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  HierarchicLayout,
   IEdge,
   IGraph,
   ILabel,
-  IModelItem,
   INode,
-  ItemClickedEventArgs,
+  LayoutExecutor,
   License,
   ModifierKeys,
-  Point,
   Size
 } from 'yfiles'
 
@@ -48,6 +49,8 @@ import LinkItemHoverInputMode from './LinkItemHoverInputMode'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
 
@@ -56,57 +59,99 @@ let graphComponent: GraphComponent
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
+
   const inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
   graphComponent.inputMode = inputMode
-  graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
+  // then build the graph with the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({
+      orthogonalRouting: true,
+      minimumLayerDistance: 35,
+      considerNodeLabels: true
+    })
+  )
+  graphComponent.fitGraphBounds()
+
+  // Finally, enable the undo engine. This prevents undoing of the graph creation
+  graphComponent.graph.undoEngineEnabled = true
 
   // the click listener for labels that represent external links
   initializeLinkListener()
 
   // an optional custom ItemHoverInputMode which highlights clickable links by underlining the text
   inputMode.add(new LinkItemHoverInputMode())
+}
 
-  // add a sample graph
-  createGraph()
+/**
+ * Creates nodes and edges from to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList.filter(item => !item.isGroup),
+      id: item => item.id,
+      parentId: item => item.parentId
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 function initializeLinkListener(): void {
-  ;(graphComponent.inputMode as GraphEditorInputMode).addItemLeftClickedListener(
-    (src: object, args: ItemClickedEventArgs<IModelItem>): void => {
-      if (args.modifiers !== ModifierKeys.CONTROL) {
-        // this listener should only handle CTRL+click to open external links
-        return
-      }
-      const clickedItem = args.item
-      let url = ''
-
-      if (ILabel.isInstance(clickedItem)) {
-        const label = clickedItem
-        url = label.text.startsWith('www.') || label.text.startsWith('http') ? label.text : ''
-      } else if (INode.isInstance(clickedItem) || IEdge.isInstance(clickedItem)) {
-        // if a node or edge was clicked, we see whether it has any label that resembles a link
-        clickedItem.labels.forEach((label: ILabel): void => {
-          const text = label.text
-          if (text.startsWith('www.') || text.startsWith('http')) {
-            url = text
-          }
-        })
-      }
-
-      if (url) {
-        window.open(url.startsWith('http') ? url : `https://${url}`, '_blank')
-        args.handled = true
-      }
+  ;(graphComponent.inputMode as GraphEditorInputMode).addItemLeftClickedListener((_, evt): void => {
+    if (evt.modifiers !== ModifierKeys.CONTROL) {
+      // this listener should only handle CTRL+click to open external links
+      return
     }
-  )
+    const clickedItem = evt.item
+    let url = ''
+
+    if (ILabel.isInstance(clickedItem)) {
+      const label = clickedItem
+      url = label.text.startsWith('www.') || label.text.startsWith('http') ? label.text : ''
+    } else if (INode.isInstance(clickedItem) || IEdge.isInstance(clickedItem)) {
+      // if a node or edge was clicked, we see whether it has any label that resembles a link
+      clickedItem.labels.forEach((label: ILabel): void => {
+        const text = label.text
+        if (text.startsWith('www.') || text.startsWith('http')) {
+          url = text
+        }
+      })
+    }
+
+    if (url) {
+      window.open(url.startsWith('http') ? url : `https://${url}`, '_blank')
+      evt.handled = true
+    }
+  })
 }
 
 /**
@@ -127,51 +172,6 @@ function initializeGraph(graph: IGraph): void {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Creates a simple sample graph.
- */
-function createGraph(): void {
-  const graph = graphComponent.graph
-
-  const node1 = graph.createNodeAt([110, 20])
-  const node2 = graph.createNodeAt([195, 95])
-  const node3 = graph.createNodeAt([75, 95])
-  const node4 = graph.createNodeAt({
-    location: [-60, 175],
-    labels: ['https://www.yworks.com/yed-live/']
-  })
-  const node5 = graph.createNodeAt({ location: [100, 175], labels: ['www.yworks.com'] })
-  const node6 = graph.createNodeAt({ location: [195, 175], labels: ['Not a link'] })
-
-  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  const edge6 = graph.createEdge(node2, node6)
-  graph.setPortLocation(edge1.sourcePort!, new Point(123.33, 40))
-  graph.setPortLocation(edge1.targetPort!, new Point(195, 75))
-  graph.setPortLocation(edge2.sourcePort!, new Point(96.67, 40))
-  graph.setPortLocation(edge2.targetPort!, new Point(75, 75))
-  graph.setPortLocation(edge3.sourcePort!, new Point(65, 115))
-  graph.setPortLocation(edge3.targetPort!, new Point(-60, 155))
-  graph.setPortLocation(edge4.sourcePort!, new Point(85, 115))
-  graph.setPortLocation(edge4.targetPort!, new Point(90, 155))
-  graph.setPortLocation(edge5.sourcePort!, new Point(110, 40))
-  graph.setPortLocation(edge5.targetPort!, new Point(110, 155))
-  graph.setPortLocation(edge6.sourcePort!, new Point(195, 115))
-  graph.setPortLocation(edge6.targetPort!, new Point(195, 155))
-  graph.addBends(edge1, [new Point(123.33, 55), new Point(195, 55)])
-  graph.addBends(edge2, [new Point(96.67, 55), new Point(75, 55)])
-  graph.addBends(edge3, [new Point(65, 130), new Point(-60, 130)])
-  graph.addBends(edge4, [new Point(85, 130), new Point(90, 130)])
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine!.clear()
 }
 
 run().then(finishLoading)

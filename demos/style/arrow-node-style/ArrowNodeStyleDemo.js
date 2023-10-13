@@ -210,7 +210,7 @@ function initializeInteraction(graphComponent) {
   const inputMode = new GraphEditorInputMode({ selectableItems: GraphItemTypes.NODE })
 
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((sender, evt) => {
+  inputMode.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     graphComponent.graph.addLabel(node, styleToText(node.style))
   })
@@ -247,7 +247,7 @@ function initializeUI(graphComponent) {
   })
 
   // adjust option panel when the selection has been changed
-  graphComponent.selection.addItemSelectionChangedListener((sender, evt) => {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
     if (evt.item instanceof INode && evt.item.style instanceof ArrowNodeStyle) {
       adjustOptionPanel(graphComponent, evt.item)
     }

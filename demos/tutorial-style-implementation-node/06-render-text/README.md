@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 06 Rendering Text - Node Style Implementation Tutorial
+# 06 Rendering Text - Tutorial: Node Style Implementation
 
 # Rendering text
 
@@ -56,4 +56,4 @@ if (title) {
 }
 ```
 
-[07 Hit-Testing](../../tutorial-style-implementation-node/07-hit-testing/index.html)
+[07 Hit-Testing](../../tutorial-style-implementation-node/07-hit-testing/)

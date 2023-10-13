@@ -150,12 +150,12 @@ async function run() {
     0.5
   )
 
-  propertiesPanel = new PropertiesPanel(document.getElementById('propertiesContent'))
+  propertiesPanel = new PropertiesPanel(document.querySelector('#propertiesContent'))
   propertiesPanel.addSomethingChangedListener(onGraphModified)
 
   graphComponent.fitGraphBounds()
   graphComponent.addCurrentItemChangedListener(
-    (sender, args) => (propertiesPanel.currentItem = getMasterItem(graphComponent.currentItem))
+    (_, evt) => (propertiesPanel.currentItem = getMasterItem(graphComponent.currentItem))
   )
 
   createGraphMLIOHandler()
@@ -186,10 +186,10 @@ function createEditorMode() {
   })
   inputMode.add(tableInputMode)
 
-  tableInputMode.addDeletedSelectionListener((sender, args) => onGraphModified())
-  tableInputMode.addLabelAddedListener((sender, args) => onGraphModified())
-  tableInputMode.addLabelTextChangedListener((sender, args) => onGraphModified())
-  tableInputMode.resizeStripeInputMode.addDragFinishedListener((sender, args) => onGraphModified())
+  tableInputMode.addDeletedSelectionListener((_, evt) => onGraphModified())
+  tableInputMode.addLabelAddedListener((_, evt) => onGraphModified())
+  tableInputMode.addLabelTextChangedListener((_, evt) => onGraphModified())
+  tableInputMode.resizeStripeInputMode.addDragFinishedListener((_, evt) => onGraphModified())
 
   inputMode.availableCommands.remove(ICommand.UNDO)
   inputMode.availableCommands.remove(ICommand.REDO)
@@ -271,28 +271,28 @@ function createGraphMLIOHandler() {
   const ioHandler = createConfiguredGraphMLIOHandler()
 
   // Enable parsing/writing of arbitrary custom data
-  ioHandler.addQueryInputHandlersListener((sender, args) => {
-    queryInputHandlers(args)
+  ioHandler.addQueryInputHandlersListener((_, evt) => {
+    queryInputHandlers(evt)
   })
-  ioHandler.addQueryOutputHandlersListener((sender, args) => {
-    queryOutputHandlers(args)
+  ioHandler.addQueryOutputHandlersListener((_, evt) => {
+    queryOutputHandlers(evt)
   })
 
   // Hook the EditorSync instance to the GraphML parsing and writing events
-  ioHandler.addWritingListener((sender, args) => {
-    editorSync.onWriting(args)
+  ioHandler.addWritingListener((_, evt) => {
+    editorSync.onWriting(evt)
   })
-  ioHandler.addParsingListener((sender, args) => {
-    editorSync.onParsing(args)
+  ioHandler.addParsingListener((_, evt) => {
+    editorSync.onParsing(evt)
   })
-  ioHandler.addParsedListener((sender, args) => {
-    editorSync.onParsed(args)
+  ioHandler.addParsedListener((_, evt) => {
+    editorSync.onParsed(evt)
   })
 
-  ioHandler.addParsingListener((sender, args) => {
+  ioHandler.addParsingListener((_, evt) => {
     propertiesPanel.clear()
   })
-  ioHandler.addParsedListener((sender, args) => {
+  ioHandler.addParsedListener((_, evt) => {
     propertiesPanel.showGraphProperties()
   })
 
@@ -307,19 +307,19 @@ function createGraphMLIOHandler() {
 function initializeEditorSynchronization() {
   editorSync.initialize(foldingView.manager.masterGraph)
   // Update the view when the editor's selection or content changes
-  editorSync.addItemSelectedListener(args => {
-    onEditorItemSelected(args.item)
+  editorSync.addItemSelectedListener(evt => {
+    onEditorItemSelected(evt.item)
   })
-  editorSync.addEditorContentChangedListener(args => {
-    onEditorContentChanged(args.value)
+  editorSync.addEditorContentChangedListener(evt => {
+    onEditorContentChanged(evt.value)
   })
 
   // update the editor selection when the view's selection state changes
   const selection = graphComponent.selection
-  selection.addItemSelectionChangedListener((sender, args) => {
-    const masterItem = getMasterItem(args.item)
+  selection.addItemSelectionChangedListener((_, evt) => {
+    const masterItem = getMasterItem(evt.item)
     if (masterItem) {
-      if (args.itemSelected) {
+      if (evt.itemSelected) {
         editorSync.onItemSelected(masterItem)
       } else {
         editorSync.onItemDeselected(masterItem)
@@ -362,43 +362,43 @@ function onEditorItemSelected(masterItem) {
  */
 function initGraphModificationEvents() {
   const mode = graphComponent.inputMode
-  mode.addNodeCreatedListener((sender, args) => {
+  mode.addNodeCreatedListener((_, evt) => {
     onGraphModified()
   })
-  mode.addDeletedItemListener((sender, args) => {
+  mode.addDeletedItemListener((_, evt) => {
     onGraphModified()
   })
-  mode.addEdgePortsChangedListener((sender, args) => {
+  mode.addEdgePortsChangedListener((_, evt) => {
     onGraphModified()
   })
-  mode.addLabelAddedListener((sender, args) => {
+  mode.addLabelAddedListener((_, evt) => {
     onGraphModified()
   })
-  mode.addLabelTextChangedListener((sender, args) => {
+  mode.addLabelTextChangedListener((_, evt) => {
     onGraphModified()
   })
-  mode.createBendInputMode.addBendCreatedListener((sender, args) => {
+  mode.createBendInputMode.addBendCreatedListener((_, evt) => {
     onGraphModified()
   })
-  mode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
+  mode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
     onGraphModified()
   })
-  mode.moveInputMode.addDragFinishedListener((sender, args) => {
+  mode.moveInputMode.addDragFinishedListener((_, evt) => {
     onGraphModified()
   })
-  mode.handleInputMode.addDragFinishedListener((sender, args) => {
+  mode.handleInputMode.addDragFinishedListener((_, evt) => {
     onGraphModified()
   })
-  mode.moveLabelInputMode.addDragFinishedListener((sender, args) => {
+  mode.moveLabelInputMode.addDragFinishedListener((_, evt) => {
     onGraphModified()
   })
-  mode.addNodeReparentedListener((sender, args) => {
+  mode.addNodeReparentedListener((_, evt) => {
     onGraphModified()
   })
-  mode.navigationInputMode.addGroupCollapsedListener((sender, args) => {
+  mode.navigationInputMode.addGroupCollapsedListener((_, evt) => {
     onGraphModified()
   })
-  mode.navigationInputMode.addGroupExpandedListener((sender, args) => {
+  mode.navigationInputMode.addGroupExpandedListener((_, evt) => {
     onGraphModified()
   })
 }

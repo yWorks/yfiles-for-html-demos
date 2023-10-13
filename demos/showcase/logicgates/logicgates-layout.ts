@@ -51,7 +51,7 @@ export async function runLayout(
   clearUndo: boolean,
   fitBounds = true
 ): Promise<void> {
-  const algorithmSelect = document.getElementById('algorithm-select-box') as HTMLSelectElement
+  const algorithmSelect = document.querySelector<HTMLSelectElement>('#algorithm-select-box')!
   const selectedIndex = algorithmSelect.selectedIndex
 
   let layout: ILayoutAlgorithm

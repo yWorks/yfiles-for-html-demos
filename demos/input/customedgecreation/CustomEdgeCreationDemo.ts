@@ -114,9 +114,9 @@ function enableTargetNodeCreation(createEdgeInputMode: CreateEdgeInputMode): voi
 
   // If targeting another node during edge creation, the dummy target node should not be rendered
   // because we'd use that actual graph node as target if the gesture is finished on a node.
-  createEdgeInputMode.addTargetPortCandidateChangedListener((src, args) => {
+  createEdgeInputMode.addTargetPortCandidateChangedListener((src, evt) => {
     const dummyEdgeGraph = createEdgeInputMode.dummyEdgeGraph
-    if (args.item && args.item.owner instanceof INode) {
+    if (evt.item && evt.item.owner instanceof INode) {
       dummyEdgeGraph.setStyle(createEdgeInputMode.dummyTargetNode, VoidNodeStyle.INSTANCE)
       createEdgeInputMode.dummyEdgeGraph.ports.toArray().forEach(port => {
         createEdgeInputMode.dummyEdgeGraph.remove(port)
@@ -192,8 +192,8 @@ function initializeInputMode(graphComponent: GraphComponent, enableTargetNode: b
   geim.createEdgeInputMode.startOverCandidateOnly = true
 
   // newly created edges should use the same color as their source port color
-  geim.createEdgeInputMode.addEdgeCreationStartedListener((src, args) => {
-    const color = args.sourcePortOwner.tag
+  geim.createEdgeInputMode.addEdgeCreationStartedListener((src, evt) => {
+    const color = evt.sourcePortOwner.tag
     src.dummyEdgeGraph.setStyle(src.dummyEdge, newEdgeStyle(color))
   })
 
@@ -203,8 +203,8 @@ function initializeInputMode(graphComponent: GraphComponent, enableTargetNode: b
 
   // Use a random node color and add directional ports to each created node
   const graph = graphComponent.graph
-  geim.addNodeCreatedListener((src, args) => {
-    const node = args.item
+  geim.addNodeCreatedListener((src, evt) => {
+    const node = evt.item
     // assign a random color style
     const randomColor = getRandomColor()
     graph.setStyle(node, newNodeStyle(randomColor))

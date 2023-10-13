@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 03 Render Performance - Node Style Implementation Tutorial
+# 03 Render Performance - Tutorial: Node Style Implementation
 
 # Improving rendering performance
 
@@ -106,4 +106,4 @@ Note
 
 Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame-rates during animations and interactive gestures.
 
-[04 Making the Style Configurable](../../tutorial-style-implementation-node/04-making-the-style-configurable/index.html)
+[04 Making the Style Configurable](../../tutorial-style-implementation-node/04-making-the-style-configurable/)

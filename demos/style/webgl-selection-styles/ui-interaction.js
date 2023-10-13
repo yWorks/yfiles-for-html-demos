@@ -63,7 +63,7 @@ export function wireUpUI(style, graphComponent) {
     style.stylePattern = target.value
     const selectedIndex = target.selectedIndex
 
-    const dashAnimated = document.getElementById('change--dash-animated')
+    const dashAnimated = document.querySelector('#change--dash-animated')
     dashAnimated.disabled = selectedIndex < 9 || selectedIndex > 14
 
     updateSelectionStyles(style, graphComponent)

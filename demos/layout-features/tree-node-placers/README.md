@@ -27,7 +27,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-See the [Tree Layout Demo](../../layout/tree/index.html) for mode extensive examples of node placers.
+See the [Tree Layout Demo](../../layout/tree/) for mode extensive examples of node placers.
 
 ### Documentation
 

@@ -115,7 +115,7 @@ async function run(): Promise<void> {
  * Initializes the option editor that will display the routing algorithm's settings.
  */
 function initializeOptionEditor(): void {
-  const editorElement = document.getElementById('data-editor') as HTMLDivElement
+  const editorElement = document.querySelector<HTMLDivElement>('#data-editor')!
   optionEditor = new OptionEditor(editorElement)
   optionEditor.config = new PolylineEdgeRouterConfig()
 }
@@ -126,9 +126,9 @@ function initializeOptionEditor(): void {
 function createEditorInputMode(): void {
   const inputMode = new GraphEditorInputMode()
 
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
+  inputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
     const selectedEdges = new List<IEdge>()
-    selectedEdges.add(args.item)
+    selectedEdges.add(evt.item)
     routeAffectedEdges(selectedEdges)
   })
 
@@ -302,8 +302,8 @@ async function routeImpl(
  * @param disabled True if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled: boolean): void {
-  ;(document.getElementById('route-edges-button') as HTMLButtonElement).disabled = disabled
-  ;(document.getElementById('reset-button') as HTMLButtonElement).disabled = disabled
+  document.querySelector<HTMLButtonElement>('#route-edges-button')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#reset-button')!.disabled = disabled
   // enable/disable input so that no use interactions occur on the graphComponent when a layout is running
   ;(graphComponent.inputMode as GraphEditorInputMode).waiting = disabled
 }

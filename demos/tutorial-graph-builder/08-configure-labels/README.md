@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 08 Configure Labels - Graph Builder Tutorial
+# 08 Configure Labels - Tutorial: Graph Builder
 
 # Configure label styles and placement
 
@@ -166,4 +166,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `configure-labels.ts` and play around with the sample data and try different layout and styling for the labels.
 
-[09 Configure Tags](../../tutorial-graph-builder/09-configure-tags/index.html)
+[09 Configure Tags](../../tutorial-graph-builder/09-configure-tags/)

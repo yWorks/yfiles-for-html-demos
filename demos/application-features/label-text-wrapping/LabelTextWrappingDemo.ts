@@ -181,7 +181,7 @@ function createGraph(): void {
   const centerParameter = centerLabelModel.createParameter(InteriorStretchLabelModelPosition.CENTER)
 
   // maybe showcase right-to-left text direction
-  const rtlDirection = (document.getElementById('trl-toggle') as HTMLInputElement).checked
+  const rtlDirection = document.querySelector<HTMLInputElement>('#trl-toggle')!.checked
 
   // the text that should be displayed
   const longText = rtlDirection
@@ -318,7 +318,7 @@ function createGraph(): void {
  */
 function reinitializeDemo(): void {
   graphComponent.cleanUp()
-  const gcContainer = document.getElementById('graphComponent')!
+  const gcContainer = document.querySelector('#graphComponent')!
   while (gcContainer.childElementCount > 0) {
     gcContainer.removeChild(gcContainer.firstElementChild as Node)
   }
@@ -344,9 +344,8 @@ function reinitializeDemo(): void {
  */
 function initializeUI(): void {
   document.querySelector<HTMLInputElement>('#trl-toggle')!.addEventListener('click', () => {
-    const gcContainer = document.getElementById('graphComponent')!
-    gcContainer.style.direction = (document.getElementById('trl-toggle') as HTMLInputElement)
-      .checked
+    const gcContainer = document.querySelector<HTMLElement>('#graphComponent')!
+    gcContainer.style.direction = document.querySelector<HTMLInputElement>('#trl-toggle')!.checked
       ? 'rtl'
       : 'ltr'
     reinitializeDemo()

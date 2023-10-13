@@ -1,0 +1,55 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "label": "<div class=\"label-content executive\">\n<h1>Eric Joplin</h1>\n<div class=\"position\">Chief Executive Officer</div>\n<div class=\"details\">\n  <a href=\"mailto:ejoplin@yoyodyne.com\">ejoplin@yoyodyne.com</a><br>\n  Phone: 555-0100 Fax: 555-0101<br>\n  Web: <a href=\"https://yoyodyne.com/ejoplin\" target=\"_blank\">yoyodyne.com/ejoplin</a>\n</div>\n<hr>\n<div class=\"assistants\">\n  <b>Assistants:</b>\n  <ul>\n    <li>Gary Robers</li>\n    <li>Alexander Burns</li>\n    <li>Linda Newland</li>\n  </ul>\n</div>"
+    },
+    {
+      "id": 1,
+      "label": "<div class=\"label-content production\">\n<h1>Amy Kain</h1>\n<div class=\"position\">Vice President of Production</div>\n<div class=\"details\">\n  <a href=\"mailto:akain@yoyodyne.com\">akain@yoyodyne.com</a><br>\n  Phone: 555-0106 Fax: 555-0107<br>\n  Web: <a href=\"https://yoyodyne.com/akain\" target=\"_blank\">yoyodyne.com/akain</a>\n</div>"
+    },
+    {
+      "id": 2,
+      "label": "<div class=\"label-content sales\">\n<h1>Richard Fuller</h1>\n<div class=\"position\">Vice President of Sales</div>\n<div class=\"details\">\n  <a href=\"mailto:rfuller@yoyodyne.com\">rfuller@yoyodyne.com</a><br>\n  Phone: 555-0134 Fax: 555-0135<br>\n  Web: <a href=\"https://yoyodyne.com/rfuller\" target=\"_blank\">yoyodyne.com/rfuller</a>\n</div>"
+    },
+    {
+      "id": 3,
+      "label": "<div class=\"label-content engineering\">\n<h1>Mildred Shark</h1>\n<div class=\"position\">Vice President of Engineering</div>\n<div class=\"details\">\n  <a href=\"mailto:mshark@yoyodyne.com\">mshark@yoyodyne.com</a><br>\n  Phone: 555-0156 Fax: 555-0157<br>\n  Web: <a href=\"https://yoyodyne.com/mshark\" target=\"_blank\">yoyodyne.com/mshark</a>\n</div>"
+    },
+    {
+      "id": 4,
+      "label": "<div class=\"label-content marketing\">\n<h1>Angela Haase</h1>\n<div class=\"position\">Marketing Manager</div>\n<div class=\"details\">\n  <a href=\"mailto:ahaase@yoyodyne.com\">ahaase@yoyodyne.com</a><br>\n  Phone: 555-0170 Fax: 555-0171<br>\n  Web: <a href=\"https://yoyodyne.com/ahaase\" target=\"_blank\">yoyodyne.com/ahaase</a>\n</div>\n<hr>\n<div class=\"assistants\">\n  <b>Assistants:</b>\n  <ul>\n    <li>Lorraine Deaton</li>\n  </ul>\n</div>"
+    },
+    {
+      "id": 5,
+      "label": "<div class=\"label-content accounting\">\n<h1>David Kerry</h1>\n<div class=\"position\">Chief Financial Officer</div>\n<div class=\"details\">\n  <a href=\"mailto:dkerry@yoyodyne.com\">dkerry@yoyodyne.com</a><br>\n  Phone: 555-0180 Fax: 555-0181<br>\n  Web: <a href=\"https://yoyodyne.com/dkerry\" target=\"_blank\">yoyodyne.com/dkerry</a>\n</div>\n<hr>\n<div class=\"assistants\">\n  <b>Assistants:</b>\n  <ul>\n    <li>Aaron Buckman</li>\n  </ul>\n</div>"
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 1
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 2
+    },
+    {
+      "id": 2,
+      "source": 0,
+      "target": 3
+    },
+    {
+      "id": 3,
+      "source": 0,
+      "target": 4
+    },
+    {
+      "id": 4,
+      "source": 0,
+      "target": 5
+    }
+  ]
+}

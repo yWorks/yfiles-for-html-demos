@@ -515,12 +515,16 @@ function indexOf(select: HTMLSelectElement, value: string | undefined): number {
  * @param disabled the disabled state to set.
  */
 function disableUI(disabled: boolean): void {
-  for (const element of document.querySelectorAll('.toolbar-component')) {
-    ;(element as HTMLButtonElement | HTMLSelectElement).disabled = disabled
+  for (const element of document.querySelectorAll<HTMLButtonElement | HTMLSelectElement>(
+    '.toolbar-component'
+  )) {
+    element.disabled = disabled
   }
 
-  for (const element of document.querySelectorAll('.settings-editor')) {
-    ;(element as HTMLInputElement | HTMLSelectElement).disabled = disabled
+  for (const element of document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
+    '.settings-editor'
+  )) {
+    element.disabled = disabled
   }
 }
 

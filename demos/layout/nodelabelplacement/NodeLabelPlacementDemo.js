@@ -187,8 +187,8 @@ function initializeInputMode() {
     allowCreateEdge: false
   })
   // add a label for each newly created node
-  inputMode.addNodeCreatedListener(async (sender, args) => {
-    graphComponent.graph.addLabel(args.item, 'City')
+  inputMode.addNodeCreatedListener(async (_, evt) => {
+    graphComponent.graph.addLabel(evt.item, 'City')
     await placeLabels()
   })
   graphComponent.inputMode = inputMode

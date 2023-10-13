@@ -171,9 +171,9 @@ function createInputMode() {
     new umlModel.UMLClassModel()
   )
   createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size = new Size(125, 100)
-  createEdgeInputMode.addTargetPortCandidateChangedListener((src, args) => {
+  createEdgeInputMode.addTargetPortCandidateChangedListener((_, evt) => {
     const dummyEdgeGraph = createEdgeInputMode.dummyEdgeGraph
-    if (args.item && INode.isInstance(args.item.owner)) {
+    if (evt.item && INode.isInstance(evt.item.owner)) {
       dummyEdgeGraph.setStyle(createEdgeInputMode.dummyTargetNode, VoidNodeStyle.INSTANCE)
     } else {
       dummyEdgeGraph.setStyle(
@@ -218,32 +218,32 @@ function createInputMode() {
   // mode.add(umlContextButtonsInputMode)
   const bim = new ButtonInputMode()
   bim.buttonTrigger = ButtonTrigger.CURRENT_ITEM
-  bim.addQueryButtonsListener((src, queryEvent) => {
+  bim.addQueryButtonsListener((buttonInput, queryEvent) => {
     if (queryEvent.owner instanceof INode) {
       const node = queryEvent.owner
       const style = node.style
       if (style instanceof UMLNodeStyle) {
-        createExtensibilityButtons(src, queryEvent, style)
-        createEdgeCreationButtons(src, queryEvent)
+        createExtensibilityButtons(buttonInput, queryEvent, style)
+        createEdgeCreationButtons(buttonInput, queryEvent)
       }
     }
   })
   mode.add(bim)
 
   // execute a layout after certain gestures
-  mode.moveInputMode.addDragFinishedListener((src, args) => routeEdges())
-  mode.handleInputMode.addDragFinishedListener((src, args) => routeEdges())
-  createEdgeInputMode.addEdgeCreatedListener((src, args) => routeEdges())
+  mode.moveInputMode.addDragFinishedListener((_, evt) => routeEdges())
+  mode.handleInputMode.addDragFinishedListener((_, evt) => routeEdges())
+  createEdgeInputMode.addEdgeCreatedListener((_, evt) => routeEdges())
 
   // hide the edge creation buttons when the empty canvas was clicked
-  mode.addCanvasClickedListener((src, args) => {
+  mode.addCanvasClickedListener((_, evt) => {
     graphComponent.currentItem = null
   })
 
   // the UMLNodeStyle should handle clicks itself
-  mode.addItemClickedListener((src, args) => {
-    if (INode.isInstance(args.item) && args.item.style instanceof UMLNodeStyle) {
-      args.item.style.nodeClicked(src, args)
+  mode.addItemClickedListener((inputMode, evt) => {
+    if (INode.isInstance(evt.item) && evt.item.style instanceof UMLNodeStyle) {
+      evt.item.style.nodeClicked(inputMode, evt)
     }
   })
 

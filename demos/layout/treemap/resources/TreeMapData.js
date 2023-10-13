@@ -4133,8 +4133,8 @@ export default {
       color: 'rgb(0, 106, 196)'
     },
     {
-      id: 'yFiles-for-HTML/demos/showcase/interactiveorgchart/resources/orgchart.json',
-      label: 'orgchart.json\n(51.9kb)',
+      id: 'yFiles-for-HTML/demos/showcase/interactiveorgchart/resources/graph-data.json',
+      label: 'graph-data.json\n(51.9kb)',
       groupRef: 'yFiles-for-HTML/demos/showcase/interactiveorgchart/resources',
       size: '29532',
       color: 'rgb(0, 166, 221)'

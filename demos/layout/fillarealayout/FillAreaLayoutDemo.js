@@ -205,7 +205,7 @@ function loadGraph(sampleName) {
  * Registers commands and actions for the items in the toolbar.
  */
 function initializeUI() {
-  const sampleGraphs = document.getElementById('sample-graphs')
+  const sampleGraphs = document.querySelector('#sample-graphs')
 
   addNavigationButtons(sampleGraphs).addEventListener('change', () => {
     const selectedIndex = sampleGraphs.selectedIndex

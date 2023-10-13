@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 12 Analysis Algorithms - Basic Features Tutorial
+# 12 Analysis Algorithms - Tutorial: Basic Features
 
 # Running Graph Analysis Algorithms
 
@@ -17,7 +17,7 @@
 
 This step shows how to use the [graph analysis algorithms](https://docs.yworks.com/yfileshtml/#/dguide/analysis) in yFiles for HTML.
 
-yFiles provides a wide range of graph analysis algorithms that can be used for all kinds of purposes. The result of an analysis run can be shown directly to the user, or the results can be used to drive third party systems. They can also be used as input for layout algorithm configurations. The purpose of this sample is to demonstrate how to build, configure, and execute graph analysis algorithms and how to interpret the results. For a more interactive and complete showcase of the available algorithms, please see the [Graph Analysis Demo](../../showcase/graphanalysis/index.html), the [Clustering Algorithms Demo](../../analysis/clustering/index.html), the [Network Flows Demo](../../analysis/networkflows/index.html), the [Critical Path Analysis (CPA) Demo](../../analysis/criticalpathanalysis/index.html), the [Intersection Detection Demo](../../analysis/intersection-detection/index.html), and the [Transitivity Demo](../../analysis/transitivity/index.html).
+yFiles provides a wide range of graph analysis algorithms that can be used for all kinds of purposes. The result of an analysis run can be shown directly to the user, or the results can be used to drive third party systems. They can also be used as input for layout algorithm configurations. The purpose of this sample is to demonstrate how to build, configure, and execute graph analysis algorithms and how to interpret the results. For a more interactive and complete showcase of the available algorithms, please see the [Graph Analysis Demo](../../showcase/graphanalysis/), the [Clustering Algorithms Demo](../../analysis/clustering/), the [Network Flows Demo](../../analysis/networkflows/), the [Critical Path Analysis (CPA) Demo](../../analysis/criticalpathanalysis/), the [Intersection Detection Demo](../../analysis/intersection-detection/), and the [Transitivity Demo](../../analysis/transitivity/).
 
 ## Reachability
 

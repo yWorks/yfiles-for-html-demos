@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 02 Create Nodes Sources - Graph Builder Tutorial
+# 02 Create Nodes Sources - Tutorial: Graph Builder
 
 # Loading data from different sources
 
@@ -95,4 +95,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `create-nodes-sources.ts` and play around with the different ways to import business data.
 
-[03 Create Edges Sources](../../tutorial-graph-builder/03-create-edges-sources/index.html)
+[03 Create Edges Sources](../../tutorial-graph-builder/03-create-edges-sources/)

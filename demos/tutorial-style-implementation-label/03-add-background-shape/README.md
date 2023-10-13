@@ -11,7 +11,7 @@
 -->
 #
 
-      03 Adding a Background Shape - Label Style Implementation Tutorial
+      03 Adding a Background Shape - Tutorial: Label Style Implementation
 
 # Adding a background shape
 
@@ -53,4 +53,4 @@ Note
 
 The "tail" of the speech balloon is rendered outside the label bounds. We’ll deal with this later in this tutorial.
 
-[04 Preferred Label Size](../../tutorial-style-implementation-label/04-preferred-size/index.html)
+[04 Preferred Label Size](../../tutorial-style-implementation-label/04-preferred-size/)

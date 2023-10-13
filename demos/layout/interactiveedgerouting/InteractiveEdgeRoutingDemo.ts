@@ -108,14 +108,14 @@ function createInputMode() {
   mode.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
 
   // register listener which trigger a re-routing after each
-  mode.moveInputMode.addDragFinishedListener((sender, evt) => reRouteEdges())
-  mode.handleInputMode.addDragFinishedListener((sender, evt) => reRouteEdges())
-  mode.createEdgeInputMode.addEdgeCreatedListener((sender, evt) => reRouteEdges())
-  mode.addNodeCreatedListener((sender, evt) => reRouteEdges())
-  mode.addDeletedSelectionListener((sender, evt) => reRouteEdges())
-  mode.navigationInputMode.addGroupCollapsedListener((sender, evt) => reRouteEdges())
-  mode.navigationInputMode.addGroupExpandedListener((sender, evt) => reRouteEdges())
-  mode.addElementsPastedListener((sender, evt) => reRouteEdges())
+  mode.moveInputMode.addDragFinishedListener((_, evt) => reRouteEdges())
+  mode.handleInputMode.addDragFinishedListener((_, evt) => reRouteEdges())
+  mode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => reRouteEdges())
+  mode.addNodeCreatedListener((_, evt) => reRouteEdges())
+  mode.addDeletedSelectionListener((_, evt) => reRouteEdges())
+  mode.navigationInputMode.addGroupCollapsedListener((_, evt) => reRouteEdges())
+  mode.navigationInputMode.addGroupExpandedListener((_, evt) => reRouteEdges())
+  mode.addElementsPastedListener((_, evt) => reRouteEdges())
   return mode
 }
 

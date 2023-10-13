@@ -176,7 +176,7 @@ export function updateNodeColor(node, graph) {
  * @param {!IGraph} graph
  */
 export function updateAdjacentEdges(node, graph) {
-  const colorDirectionBox = document.getElementById('colorDirection')
+  const colorDirectionBox = document.querySelector('#colorDirection')
   const edges =
     colorDirectionBox.value === 'outgoing' ? graph.outEdgesAt(node) : graph.inEdgesAt(node)
   for (const edge of edges) {

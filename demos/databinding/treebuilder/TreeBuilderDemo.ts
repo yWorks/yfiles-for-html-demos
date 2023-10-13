@@ -51,7 +51,7 @@ import { applyDemoTheme } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
-const samplesComboBox = document.getElementById('samples') as HTMLSelectElement
+const samplesComboBox = document.querySelector<HTMLSelectElement>('#samples')!
 
 let layout: HierarchicLayout
 let layoutData: HierarchicLayoutData

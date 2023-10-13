@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 11 Bounds - Label Style Implementation Tutorial
+# 11 Bounds - Tutorial: Label Style Implementation
 
 # Render boundaries
 

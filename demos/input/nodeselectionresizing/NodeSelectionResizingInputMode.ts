@@ -190,7 +190,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
    */
   private registerReshapedNodes(sender: object, event: InputModeEventArgs): void {
     // register reshaped nodes
-    const snapContext = event.context.lookup(GraphSnapContext.$class) as GraphSnapContext
+    const snapContext = event.context.lookup(GraphSnapContext.$class)
     if (snapContext && snapContext.enabled) {
       this.rectangle!.nodes.forEach(node => {
         snapContext.addItemToBeReshaped(node)
@@ -397,9 +397,7 @@ class OrthogonalEdgeEditingHelper {
 
   public starting(sender: object, event: InputModeEventArgs): void {
     const context = event.context
-    const edgeEditingContext = context.lookup(
-      OrthogonalEdgeEditingContext.$class
-    ) as OrthogonalEdgeEditingContext
+    const edgeEditingContext = context.lookup(OrthogonalEdgeEditingContext.$class)
     if (
       edgeEditingContext &&
       !edgeEditingContext.isInitializing &&
@@ -647,7 +645,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
     this.$originalBounds = this.rectangle.tightRectangle
 
     // register our CollectSnapResults callback
-    const snapContext = context.lookup(GraphSnapContext.$class) as GraphSnapContext
+    const snapContext = context.lookup(GraphSnapContext.$class)
     if (snapContext) {
       snapContext.addCollectSnapResultsListener(delegate(this.collectSnapResults, this))
     }
@@ -657,15 +655,13 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
       this.originalNodeLayouts.set(node, node.layout.toRect())
 
       // store reshape handler to change the shape of node
-      const reshapeHandler = node.lookup(IReshapeHandler.$class) as IReshapeHandler
+      const reshapeHandler = node.lookup(IReshapeHandler.$class)
       if (reshapeHandler) {
         reshapeHandler.initializeReshape(context)
         this.reshapeHandlers.set(node, reshapeHandler)
       }
       // store reshape snap result provider to collect snap results where node would snap to snaplines etc.
-      const snapResultProvider = node.lookup(
-        INodeReshapeSnapResultProvider.$class
-      ) as INodeReshapeSnapResultProvider
+      const snapResultProvider = node.lookup(INodeReshapeSnapResultProvider.$class)
       if (snapContext && snapResultProvider) {
         this.reshapeSnapResultProviders.set(node, snapResultProvider)
       }
@@ -859,7 +855,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
         this.handle!.reshapePolicy === ReshapePolicy.VERTICAL)
 
     this.originalNodeLayouts.forEach((originalLayout: Rect, node: INode) => {
-      const reshapeHandler: IReshapeHandler = this.reshapeHandlers.get(node) as IReshapeHandler
+      const reshapeHandler = this.reshapeHandlers.get(node)
       if (reshapeHandler) {
         const topLeftFactor = this.getFactor(
           originalLayout.x,
@@ -911,7 +907,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   public cancelReshape(context: IInputModeContext, originalBounds: Rect): void {
     this.rectangle.reshape(originalBounds)
     this.reshapeHandlers.forEach((handler: IReshapeHandler, node: INode) => {
-      handler.cancelReshape(context, this.originalNodeLayouts.get(node) as Rect)
+      handler.cancelReshape(context, this.originalNodeLayouts.get(node)!)
     })
     this.orthogonalEdgeDragHandlers.forEach((handler: OrthogonalEdgeDragHandler) => {
       handler.cancelDrag()
@@ -922,11 +918,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
   public reshapeFinished(context: IInputModeContext, originalBounds: Rect, newBounds: Rect): void {
     this.reshapeHandlers.forEach((handler: IReshapeHandler, node: INode) => {
-      handler.reshapeFinished(
-        context,
-        this.originalNodeLayouts.get(node) as Rect,
-        handler.bounds.toRect()
-      )
+      handler.reshapeFinished(context, this.originalNodeLayouts.get(node)!, handler.bounds.toRect())
     })
     this.orthogonalEdgeDragHandlers.forEach((handler: OrthogonalEdgeDragHandler) => {
       handler.finishDrag()
@@ -937,7 +929,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   protected clear(context: IInputModeContext): void {
-    const snapContext = context.lookup(GraphSnapContext.$class) as GraphSnapContext
+    const snapContext = context.lookup(GraphSnapContext.$class)
     if (snapContext) {
       snapContext.removeCollectSnapResultsListener(delegate(this.collectSnapResults, this))
     }
@@ -1052,13 +1044,11 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
     let minScaleY = 0
 
     this.reshapeNodes.forEach(node => {
-      const constraintProvider = node.lookup(
-        INodeSizeConstraintProvider.$class
-      ) as INodeSizeConstraintProvider
+      const constraintProvider = node.lookup(INodeSizeConstraintProvider.$class)
       if (constraintProvider) {
         const minSize = constraintProvider.getMinimumSize(node)
         if (minSize !== Size.EMPTY) {
-          const originalLayout = this.originalNodeLayouts.get(node) as Rect
+          const originalLayout = this.originalNodeLayouts.get(node)!
           minScaleX = Math.max(minScaleX, minSize.width / originalLayout.width)
           minScaleY = Math.max(minScaleY, minSize.height / originalLayout.height)
         }
@@ -1079,13 +1069,11 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
     let maxScaleY = Number.POSITIVE_INFINITY
 
     this.reshapeNodes.forEach(node => {
-      const constraintProvider = node.lookup(
-        INodeSizeConstraintProvider.$class
-      ) as INodeSizeConstraintProvider
+      const constraintProvider = node.lookup(INodeSizeConstraintProvider.$class)
       if (constraintProvider) {
         const maxSize = constraintProvider.getMaximumSize(node)
         if (maxSize !== Size.INFINITE) {
-          const originalLayout = this.originalNodeLayouts.get(node) as Rect
+          const originalLayout = this.originalNodeLayouts.get(node)!
           maxScaleX = Math.min(maxScaleX, maxSize.width / originalLayout.width)
           maxScaleY = Math.min(maxScaleY, maxSize.height / originalLayout.height)
         }

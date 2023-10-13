@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 09 Render Boundaries - Edge Style Implementation Tutorial
+# 09 Render Boundaries - Tutorial: Edge Style Implementation
 
 # Render boundaries
 
@@ -35,4 +35,4 @@ protected getBounds(context: ICanvasContext, edge: IEdge): Rect {
 }
 ```
 
-[10 Bridge Support](../../tutorial-style-implementation-edge/10-bridge-support/index.html)
+[10 Bridge Support](../../tutorial-style-implementation-edge/10-bridge-support/)

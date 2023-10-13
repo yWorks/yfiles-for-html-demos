@@ -51,7 +51,7 @@ let lastClickedNode: INode | undefined
  */
 export function initializeShortestPaths(graphComponent: GraphComponent, map: Map): void {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
-  inputMode.addItemClickedListener((sender, evt) => {
+  inputMode.addItemClickedListener((_, evt) => {
     updateShortestPathHighlight(evt.item as INode, graphComponent, map)
   })
 

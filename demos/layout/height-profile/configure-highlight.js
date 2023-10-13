@@ -63,8 +63,8 @@ export function configureHighlight(graphComponent) {
   inputMode.itemHoverInputMode.enabled = true
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   inputMode.itemHoverInputMode.discardInvalidItems = false
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-    const hoveredItem = args.item
+  inputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    const hoveredItem = evt.item
     // clear previous highlights and remove the description icon if there was one
     highlightManager.clearHighlights()
     removeIconDescription()

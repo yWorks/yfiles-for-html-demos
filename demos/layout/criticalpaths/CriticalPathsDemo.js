@@ -281,12 +281,12 @@ function initializeInputMode() {
     selectableItems: GraphItemTypes.EDGE | GraphItemTypes.NODE,
     toolTipItems: GraphItemTypes.EDGE
   })
-  gvim.addQueryItemToolTipListener((sender, event) => {
-    if (!event.handled) {
-      const node = event.item
+  gvim.addQueryItemToolTipListener((_, evt) => {
+    if (!evt.handled) {
+      const node = evt.item
       if (node) {
-        event.toolTip = `Priority: ${node.tag.priority || 0}`
-        event.handled = true
+        evt.toolTip = `Priority: ${node.tag.priority || 0}`
+        evt.handled = true
       }
     }
   })
@@ -309,8 +309,8 @@ function initializePriorityPanel() {
 
   priorityPanel.priorityChanged = () => runLayout()
 
-  graphComponent.selection.addItemSelectionChangedListener((src, args) => {
-    if (args.item instanceof INode) {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+    if (evt.item instanceof INode) {
       priorityPanel.currentItems = graphComponent.selection.selectedNodes.toArray()
     } else {
       priorityPanel.currentItems = graphComponent.selection.selectedEdges.toArray()

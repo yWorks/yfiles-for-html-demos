@@ -65,8 +65,8 @@ export function configureTwoPointerPanning(graphComponent: GraphComponent): void
   // two pointers are pressed.
   if (BrowserDetection.iOSVersion > 0) {
     let previousWheelBehavior: MouseWheelBehaviors | null = null
-    graphComponent.addTouchDownListener((sender, args) => {
-      if (!args.device.isPrimaryDevice) {
+    graphComponent.addTouchDownListener((_, evt) => {
+      if (!evt.device.isPrimaryDevice) {
         // a second pointer is down, disable wheel behavior
         previousWheelBehavior = graphComponent.mouseWheelBehavior
         graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE

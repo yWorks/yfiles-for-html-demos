@@ -25,7 +25,7 @@ Select nodes or labels in the view and inspect their templates and tag values in
 
 ## Related Demos
 
-- [Template Styles Demo](../../style/templatestyles/index.html)
-- [String Template Node Style Demo](../../style/string-template-node-style/index.html)
-- [Vue Template Node Style Demo](../../style/vue-template-node-style/index.html)
-- [Lit Template Node Style Demo](../../style/lit-template-node-style/index.html)
+- [Template Styles Demo](../../style/templatestyles/)
+- [String Template Node Style Demo](../../style/string-template-node-style/)
+- [Vue Template Node Style Demo](../../style/vue-template-node-style/)
+- [Lit Template Node Style Demo](../../style/lit-template-node-style/)

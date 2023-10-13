@@ -54,7 +54,7 @@ async function run(): Promise<void> {
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
-  legendDiv = document.getElementById('legend') as HTMLDivElement
+  legendDiv = document.querySelector<HTMLDivElement>('#legend')!
   configuration = new FlowchartConfiguration(layoutOrientation)
 
   // enable save/load options

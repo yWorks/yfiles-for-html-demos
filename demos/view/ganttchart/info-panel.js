@@ -39,7 +39,7 @@ import {
  * @param {!CanvasComponent} canvasComponent
  */
 export function showInfo(text, location, canvasComponent) {
-  const info = document.getElementById('info')
+  const info = document.querySelector('#info')
   const pageLocation = canvasComponent.toPageFromView(canvasComponent.toViewCoordinates(location))
   info.textContent = text
   info.classList.remove('hidden')
@@ -81,7 +81,7 @@ export function showActivityInfo(activity, location, graphComponent) {
     return entry
   }
 
-  const nodeInfo = document.getElementById('node-info')
+  const nodeInfo = document.querySelector('#node-info')
   nodeInfo.innerText = ''
 
   const nodeInfoName = document.createElement('div')

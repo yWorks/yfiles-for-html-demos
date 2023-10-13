@@ -496,7 +496,7 @@ function createDropShadowElement(): SVGImageElement {
   const canvas = document.createElement('canvas')
   canvas.width = 64
   canvas.height = 64
-  const context = canvas.getContext('2d') as CanvasRenderingContext2D
+  const context = canvas.getContext('2d')!
   context.fillStyle = 'rgb(0, 0, 0)'
   context.globalAlpha = 0.5
   context.beginPath()

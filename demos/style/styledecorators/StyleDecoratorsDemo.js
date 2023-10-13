@@ -27,18 +27,18 @@
  **
  ***************************************************************************/
 import {
+  Class,
   DefaultLabelStyle,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   IGraph,
   IInputMode,
-  INode,
-  INodeStyle,
   InteriorLabelModel,
+  LayoutExecutor,
   License,
   NodeStylePortStyleAdapter,
-  Point,
+  OrganicLayout,
   ShapeNodeStyle,
   Size,
   SmartEdgeLabelModel
@@ -50,6 +50,7 @@ import NodeStyleDecorator from './NodeStyleDecorator.js'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /**
  * @returns {!Promise}
@@ -61,13 +62,65 @@ async function run() {
   applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = createInputMode()
-
   configureGraph(graphComponent.graph)
-
-  createSampleGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
+  loadGraph(graphComponent)
 
   initializeUI(graphComponent)
+}
+
+/**
+ * @param {!GraphComponent} graphComponent
+ */
+function loadGraph(graphComponent) {
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(new OrganicLayout({ minimumNodeDistance: 100 }))
+  graphComponent.fitGraphBounds()
+
+  // add some bends
+  for (const edge of graphComponent.graph.edges) {
+    const sp = edge.sourcePort
+    const tp = edge.targetPort
+    graphComponent.graph.addBend(edge, sp.location.add(tp.location).multiply(0.5))
+  }
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+}
+/**
+ * Iterates through the given data set and creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  const nodesSource = graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
+  nodesSource.nodeCreator.styleProvider = item =>
+    item.tag
+      ? new NodeStyleDecorator(
+          graph.nodeDefaults.getStyleInstance(),
+          `resources/${item.tag.toLowerCase()}.svg`
+        )
+      : undefined
+  nodesSource.nodeCreator.createLabelBinding(item => item.label)
+
+  const edgesSource = graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+  edgesSource.edgeCreator.tagProvider = item => item.tag
+  edgesSource.edgeCreator.styleProvider = item =>
+    item.tag ? graph.edgeDefaults.getStyleInstance() : undefined
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -81,20 +134,20 @@ function createInputMode() {
   })
 
   // set a random traffic value to edges created interactively
-  geim.createEdgeInputMode.addEdgeCreatedListener((source, args) => {
+  geim.createEdgeInputMode.addEdgeCreationStartedListener((_, evt) => {
     switch (Math.floor(Math.random() * 4)) {
       case 0:
-        args.item.tag = 'TRAFFIC_VERY_HIGH'
+        evt.item.tag = 'TRAFFIC_VERY_HIGH'
         break
       case 1:
-        args.item.tag = 'TRAFFIC_HIGH'
+        evt.item.tag = 'TRAFFIC_HIGH'
         break
       case 2:
-        args.item.tag = 'TRAFFIC_NORMAL'
+        evt.item.tag = 'TRAFFIC_NORMAL'
         break
       case 3:
       default:
-        args.item.tag = 'TRAFFIC_LOW'
+        evt.item.tag = 'TRAFFIC_LOW'
         break
     }
   })
@@ -109,9 +162,16 @@ function createInputMode() {
 function configureGraph(graph) {
   initDemoStyles(graph)
 
-  graph.nodeDefaults.style = new NodeStyleDecorator(newBaseStyle(), 'resources/workstation.svg')
+  graph.nodeDefaults.style = new NodeStyleDecorator(
+    new ShapeNodeStyle({
+      fill: '#46A8D5',
+      stroke: null,
+      shape: 'rectangle'
+    }),
+    'resources/workstation.svg'
+  )
   graph.nodeDefaults.size = new Size(80, 40)
-
+  graph.nodeDefaults.shareStyleInstance = false
   graph.edgeDefaults.style = new EdgeStyleDecorator(
     new NodeStylePortStyleAdapter({
       nodeStyle: new ShapeNodeStyle({
@@ -122,7 +182,6 @@ function configureGraph(graph) {
       renderSize: [5, 5]
     })
   )
-
   graph.nodeDefaults.labels.style = new LabelStyleDecorator(
     new DefaultLabelStyle({ textFill: '224556', backgroundFill: '#B4DBED' })
   )
@@ -130,96 +189,7 @@ function configureGraph(graph) {
 
   graph.edgeDefaults.labels.style = new LabelStyleDecorator(new DefaultLabelStyle())
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createDefaultParameter()
-}
-
-/**
- * Creates the sample graph of this demo.
- * @param {!IGraph} graph The graph to which nodes and edges are added
- */
-function createSampleGraph(graph) {
-  graph.clear()
-
-  const baseStyle = newBaseStyle()
-
-  graph.createNodeAt({
-    location: new Point(0, 0),
-    style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
-    tag: 'Root',
-    labels: ['Root']
-  })
-  addNode(graph, 120, -50, baseStyle, 'Switch')
-  addNode(graph, -130, 60, baseStyle, 'Switch')
-  addNode(graph, 95, -180, baseStyle, 'Scanner')
-  addNode(graph, 240, -110, baseStyle, 'Printer')
-  addNode(graph, 200, 50, baseStyle, 'Workstation')
-  addNode(graph, -160, -60, baseStyle, 'Printer')
-  addNode(graph, -260, 40, baseStyle, 'Scanner')
-  addNode(graph, -200, 170, baseStyle, 'Workstation')
-  addNode(graph, -50, 160, baseStyle, 'Workstation')
-
-  const nodes = graph.nodes.toArray()
-
-  addEdge(graph, nodes[0], nodes[1], 'TRAFFIC_VERY_HIGH')
-  addEdge(graph, nodes[0], nodes[2], 'TRAFFIC_HIGH')
-  addEdge(graph, nodes[1], nodes[3], 'TRAFFIC_HIGH')
-  addEdge(graph, nodes[1], nodes[4], 'TRAFFIC_NORMAL')
-  addEdge(graph, nodes[1], nodes[5], 'TRAFFIC_HIGH')
-  addEdge(graph, nodes[2], nodes[6], 'TRAFFIC_LOW')
-  addEdge(graph, nodes[2], nodes[7], 'TRAFFIC_LOW')
-  addEdge(graph, nodes[2], nodes[8], 'TRAFFIC_NORMAL')
-  addEdge(graph, nodes[2], nodes[9], 'TRAFFIC_LOW')
-
-  // add some bends
-  for (const edge of graph.edges) {
-    const sp = edge.sourcePort
-    const tp = edge.targetPort
-    graph.addBend(edge, sp.location.add(tp.location).multiply(0.5))
-  }
-}
-
-/**
- * Creates a new node style instance that is used as the base style or decorated style for
- * the NodeStyleDecorator instances created in this demo.
- * @returns {!INodeStyle}
- */
-function newBaseStyle() {
-  return new ShapeNodeStyle({
-    fill: '#46A8D5',
-    stroke: null,
-    shape: 'rectangle'
-  })
-}
-
-/**
- * Creates a new node in the given graph at the given location.
- * @param {!IGraph} graph
- * @param {number} x
- * @param {number} y
- * @param {!INodeStyle} baseStyle
- * @param {!string} type
- */
-function addNode(graph, x, y, baseStyle, type) {
-  graph.createNodeAt({
-    location: new Point(x, y),
-    style: new NodeStyleDecorator(baseStyle, `resources/${type.toLowerCase()}.svg`),
-    tag: type,
-    labels: [type]
-  })
-}
-
-/**
- * Creates a new edge in the given graph between the two given nodes.
- * @param {!IGraph} graph
- * @param {!INode} source
- * @param {!INode} target
- * @param {!string} type
- */
-function addEdge(graph, source, target, type) {
-  graph.createEdge({
-    source: source,
-    target: target,
-    tag: type
-  })
+  graph.edgeDefaults.shareStyleInstance = false
 }
 
 /**
@@ -229,8 +199,7 @@ function addEdge(graph, source, target, type) {
 function initializeUI(graphComponent) {
   document.querySelector('#reload').addEventListener('click', () => {
     graphComponent.graph.clear()
-    createSampleGraph(graphComponent.graph)
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    loadGraph(graphComponent)
   })
 }
 

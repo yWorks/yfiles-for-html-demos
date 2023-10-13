@@ -51,7 +51,7 @@ Markdown labels can use line wrapping. In this demo application, the labels use 
 
 ## Related Demos
 
-- [Default Label Style Demo](../../style/default-label-style/index.html)
-- [HTML Label Style Demo](../../style/html-label-style/index.html)
-- [Rich Text Label Demo](../../style/richtextlabel/index.html)
-- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/index.html)
+- [Default Label Style Demo](../../style/default-label-style/)
+- [HTML Label Style Demo](../../style/html-label-style/)
+- [Rich Text Label Demo](../../style/richtextlabel/)
+- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)

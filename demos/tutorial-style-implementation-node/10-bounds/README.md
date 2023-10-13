@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 10 Render Boundaries - Node Style Implementation Tutorial
+# 10 Render Boundaries - Tutorial: Node Style Implementation
 
 # Render boundaries
 
@@ -34,4 +34,4 @@ protected getBounds(context: ICanvasContext, node: INode): Rect {
 }
 ```
 
-[11 Group Node Style](../../tutorial-style-implementation-node/11-group-node-style/index.html)
+[11 Group Node Style](../../tutorial-style-implementation-node/11-group-node-style/)

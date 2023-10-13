@@ -167,13 +167,13 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     let zOrderKeyDefinitionFound = false
     let maxExistingZOrder = Number.MIN_VALUE
 
-    ioHandler.addQueryOutputHandlersListener((o, evt) => {
+    ioHandler.addQueryOutputHandlersListener((_, evt) => {
       if (evt.scope === KeyScope.NODE) {
         evt.addOutputHandler(new ZOrderOutputHandler(this))
       }
     })
 
-    ioHandler.addQueryInputHandlersListener((o, evt) => {
+    ioHandler.addQueryInputHandlersListener((_, evt) => {
       if (
         !evt.handled &&
         GraphMLIOHandler.matchesScope(evt.keyDefinition, KeyScope.NODE) &&
@@ -185,7 +185,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
       }
     })
 
-    ioHandler.addParsingListener((sender, evt) => {
+    ioHandler.addParsingListener((_, evt) => {
       // clear old z-orders of old graph
       if (ioHandler.clearGraphBeforeRead) {
         this.clear()
@@ -197,7 +197,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
       zOrderKeyDefinitionFound = false
     })
 
-    ioHandler.addParsedListener((sender, evt) => {
+    ioHandler.addParsedListener((_, evt) => {
       // enable automatic z-order creation for new nodes again
       this.addZOrderForNewNodes = true
       if (!zOrderKeyDefinitionFound) {

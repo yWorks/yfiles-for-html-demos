@@ -37,7 +37,7 @@ import {
 } from 'yfiles'
 
 // eslint-disable-next-line import/no-unresolved
-import { svg, render, nothing } from 'https://unpkg.com/lit-html?module'
+import { svg, render, nothing } from 'https://unpkg.com/lit-html@2.8.0?module'
 
 /**
  * The interface of the props passed to the lit render function for rendering the node's SVG contents.

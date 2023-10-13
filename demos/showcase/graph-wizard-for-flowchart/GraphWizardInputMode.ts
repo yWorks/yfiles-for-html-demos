@@ -206,11 +206,11 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     // A custom CreateEdgeInputMode is used, that allows for selecting the target node via keyboard
     this._createEdgeMode = new KeyboardCreateEdgeInputMode()
     this.createEdgeMode.addEdgeCreationStartedListener(this.updateActiveActions.bind(this))
-    this.createEdgeMode.addEdgeCreatedListener((sender, args) => {
-      this.handleEvent(sender, new WizardEventArgs('edge-created', args))
+    this.createEdgeMode.addEdgeCreatedListener((edgeInput, evt) => {
+      this.handleEvent(edgeInput, new WizardEventArgs('edge-created', evt))
     })
-    this.createEdgeMode.addGestureCanceledListener((sender, args) => {
-      this.handleEvent(sender, new WizardEventArgs('edge-canceled', args))
+    this.createEdgeMode.addGestureCanceledListener((edgeInput, evt) => {
+      this.handleEvent(edgeInput, new WizardEventArgs('edge-canceled', evt))
     })
     this.add(this.createEdgeMode)
   }
@@ -1069,16 +1069,16 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
   constructor() {
     super()
     this.useCurrentItem = false
-    this.keyListener = (sender, args) => {
+    this.keyListener = (_, evt) => {
       const arrowKeyPressed =
-        args.modifiers === ModifierKeys.NONE &&
-        (args.key === Key.ARROW_UP ||
-          args.key === Key.ARROW_DOWN ||
-          args.key === Key.ARROW_LEFT ||
-          args.key === Key.ARROW_RIGHT)
+        evt.modifiers === ModifierKeys.NONE &&
+        (evt.key === Key.ARROW_UP ||
+          evt.key === Key.ARROW_DOWN ||
+          evt.key === Key.ARROW_LEFT ||
+          evt.key === Key.ARROW_RIGHT)
       this.useCurrentItem = arrowKeyPressed
     }
-    this.mouseListener = (sender, args) => {
+    this.mouseListener = (_, evt) => {
       this.useCurrentItem = false
     }
 

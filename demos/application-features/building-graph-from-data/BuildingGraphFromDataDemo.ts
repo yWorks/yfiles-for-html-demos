@@ -47,6 +47,7 @@ import {
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
 
@@ -64,25 +65,19 @@ async function run(): Promise<void> {
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
-  try {
-    // load the graph data from the given JSON file
-    const graphData = await loadJSON('./GraphData.json')
 
-    // then build the graph with the given data set
-    buildGraph(graphComponent.graph, graphData)
+  // then build the graph with the given data set
+  buildGraph(graphComponent.graph, graphData)
 
-    graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 
-    // Often, the input data has no layout information at all. In this case you can apply any of the automatic layout
-    // algorithms, to automatically layout your input data, e.g. with HierarchicLayout. Make sure to require the
-    // relevant modules for example yfiles/view-layout-bridge and yfiles/layout-hierarchic
-    // graphComponent.morphLayout(new HierarchicLayout(), '500ms');
+  // Often, the input data has no layout information at all. In this case you can apply any of the automatic layout
+  // algorithms, to automatically layout your input data, e.g. with HierarchicLayout. Make sure to require the
+  // relevant modules for example yfiles/view-layout-bridge and yfiles/layout-hierarchic
+  // graphComponent.morphLayout(new HierarchicLayout(), '500ms');
 
-    // Finally, enable the undo engine. This prevents undoing of the graph creation
-    graphComponent.graph.undoEngineEnabled = true
-  } catch (e) {
-    alert(e)
-  }
+  // Finally, enable the undo engine. This prevents undoing of the graph creation
+  graphComponent.graph.undoEngineEnabled = true
 }
 
 /**
@@ -197,21 +192,6 @@ function initializeGraph(graph: IGraph): void {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Returns a promise that resolves when the JSON file is loaded.
- * In general, this can load other files, like plain text files or CSV files, too. However,
- * before usage you need to parse the file content which is done by JSON.parse in case of a JSON file as
- * demonstrated here.
- *
- * @param url The URL to load.
- * @returns A promise with the loaded data.
- */
-
-async function loadJSON(url: string): Promise<JSON> {
-  const response = await fetch(url)
-  return response.json()
 }
 
 run().then(finishLoading)

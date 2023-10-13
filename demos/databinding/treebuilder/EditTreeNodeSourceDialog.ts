@@ -60,8 +60,8 @@ export class EditTreeNodesSourceDialog {
     acceptCallback: () => void
   ) {
     this.acceptCallback = acceptCallback
-    this.dialogContainerModal = document.getElementById('editSourceDialogModal') as HTMLDivElement
-    this.dialogContainer = document.getElementById('editSourceDialog') as HTMLDivElement
+    this.dialogContainerModal = document.querySelector<HTMLDivElement>('#editSourceDialogModal')!
+    this.dialogContainer = document.querySelector<HTMLDivElement>('#editSourceDialog')!
     this.nodesSourceConnector = nodesSourceConnector
   }
 

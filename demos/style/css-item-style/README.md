@@ -32,4 +32,4 @@ Hold to disable CSS
 
 ## Related Demo
 
-- [CSS Styling Demo](../../style/cssstyling/index.html)
+- [CSS Styling Demo](../../style/cssstyling/)

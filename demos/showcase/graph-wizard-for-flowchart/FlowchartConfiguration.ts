@@ -300,7 +300,7 @@ export default class FlowchartConfiguration {
     const wizardMode = new GraphWizardInputMode(legendDiv)
     mode.moveUnselectedInputMode.enabled = true
     mode.moveUnselectedInputMode.priority = mode.moveViewportInputMode.priority - 1
-    mode.moveUnselectedInputMode.addDragFinishedListener(sender =>
+    mode.moveUnselectedInputMode.addDragFinishedListener(_ =>
       runLayout(wizardMode, this.createLayout(true), this.layoutData!)
     )
 

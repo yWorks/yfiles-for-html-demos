@@ -107,11 +107,11 @@ function initializeInputModes() {
   })
   // add newly created nodes to their only component
   graphEditorInputMode.addNodeCreatedListener(
-    (sender, event) => (event.item.tag = { component: componentCount++ })
+    (_, evt) => (evt.item.tag = { component: componentCount++ })
   )
   // change color of new edges to the color of the component if source and target belong to the same component
-  graphEditorInputMode.createEdgeInputMode.addEdgeCreatedListener((sender, event) => {
-    const edge = event.item
+  graphEditorInputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
+    const edge = evt.item
     if (edge.sourceNode.tag.component === edge.targetNode.tag.component) {
       graphComponent.graph.setStyle(
         edge,
@@ -124,13 +124,13 @@ function initializeInputModes() {
 
   // add a new component id to nodes in duplicated component
   const duplicateCopier = graphComponent.clipboard.duplicateCopier
-  duplicateCopier.addNodeCopiedListener((sender, event) => {
-    event.copy.tag = { component: componentCount }
+  duplicateCopier.addNodeCopiedListener((_, evt) => {
+    evt.copy.tag = { component: componentCount }
   })
   // add a new component id to nodes in copied component
   const fromCopier = graphComponent.clipboard.fromClipboardCopier
-  fromCopier.addNodeCopiedListener((sender, event) => {
-    event.copy.tag = { component: componentCount }
+  fromCopier.addNodeCopiedListener((_, evt) => {
+    evt.copy.tag = { component: componentCount }
   })
   graphEditorInputMode.addElementsDuplicatedListener(() => {
     updateGraph()
@@ -160,18 +160,18 @@ function initializeInputModes() {
   graphEditorInputMode.addDeletedSelectionListener(() => (deleting = false))
 
   // select the whole component when selecting a graph element
-  graphComponent.selection.addItemSelectionChangedListener((sender, event) => {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
     if (deleting) {
       return
     }
 
     let changedNode = null
-    if (event.item instanceof INode) {
-      changedNode = event.item
-    } else if (event.item instanceof IEdge) {
+    if (evt.item instanceof INode) {
+      changedNode = evt.item
+    } else if (evt.item instanceof IEdge) {
       changedNode =
-        event.item.sourceNode.tag.component === event.item.targetNode.tag.component
-          ? event.item.sourceNode
+        evt.item.sourceNode.tag.component === evt.item.targetNode.tag.component
+          ? evt.item.sourceNode
           : null
     }
 
@@ -180,13 +180,13 @@ function initializeInputModes() {
         node => node.tag.component === changedNode.tag.component
       )
       component.forEach(node => {
-        graphComponent.selection.setSelected(node, event.itemSelected)
+        graphComponent.selection.setSelected(node, evt.itemSelected)
         graphComponent.graph.edgesAt(node).forEach(edge => {
           if (component.includes(edge.sourceNode) && component.includes(edge.targetNode)) {
             edge.bends.forEach(bend => {
-              graphComponent.selection.setSelected(bend, event.itemSelected)
+              graphComponent.selection.setSelected(bend, evt.itemSelected)
             })
-            graphComponent.selection.setSelected(edge, event.itemSelected)
+            graphComponent.selection.setSelected(edge, evt.itemSelected)
           }
         })
       })
@@ -236,7 +236,7 @@ function initializeGraph() {
  */
 async function initializePalette() {
   // retrieve the panel element
-  const panel = document.getElementById('palette')
+  const panel = document.querySelector('#palette')
 
   let sampleComponents = []
   const response = await fetch('./resources/PaletteComponents.json')
@@ -275,8 +275,8 @@ function addComponentVisual(component, panel) {
       dragPreview
     )
 
-    dragSource.addQueryContinueDragListener((src, args) => {
-      if (args.dropTarget === null) {
+    dragSource.addQueryContinueDragListener((_, evt) => {
+      if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
         dragPreview.classList.add('hidden')

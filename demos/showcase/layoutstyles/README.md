@@ -19,7 +19,7 @@ The configuration panel provides access to the settings of each algorithm. Typic
 
 Since not every layout style works well for every type of graph, we provide several suitable sample graphs.
 
-The interactive editing capabilities of the graph component of this demo are explained in the [Graph Editor Demo](../../view/grapheditor/index.html).
+The interactive editing capabilities of the graph component of this demo are explained in the [Graph Editor Demo](../../view/grapheditor/).
 
 ## Things to Try
 

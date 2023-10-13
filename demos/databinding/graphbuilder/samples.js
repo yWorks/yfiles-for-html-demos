@@ -33,15 +33,15 @@ export default [
       {
         name: 'Orange Nodes',
         data: "['A', 'B', 'C']",
-        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect>
-<text transform='translate(10 20)' data-content='{Binding}' style='font-size:18px; fill:#000;'></text>`,
+        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
+<text transform='translate(10 20)' data-content='{Binding}' style='font-size:18px; fill:#000;'/>`,
         idBinding: ''
       },
       {
         name: 'Blue Nodes',
         data: "['X', 'Y']",
-        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect>
-<text transform='translate(10 20)' data-content='{Binding}' style='font-size:18px; fill:#FFFFFF;'></text>`,
+        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
+<text transform='translate(10 20)' data-content='{Binding}' style='font-size:18px; fill:#FFFFFF;'/>`,
         idBinding: ''
       }
     ],
@@ -67,15 +67,15 @@ export default [
       {
         name: 'Orange Nodes',
         data: "['A', 'B', 'C']",
-        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect>
-<text transform='translate(10 20)' data-content='{Binding}' style='font-size:18px; fill:#000;'></text>`,
+        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
+<text transform='translate(10 20)' data-content='{Binding}' style='font-size:18px; fill:#000;'/>`,
         idBinding: ''
       },
       {
         name: 'Blue Nodes',
         data: "['X', 'Y']",
-        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect>
-<text transform='translate(10 20)' data-content='{Binding}' style='font-size:18px; fill:#FFFFFF;'></text>`,
+        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
+<text transform='translate(10 20)' data-content='{Binding}' style='font-size:18px; fill:#FFFFFF;'/>`,
         idBinding: ''
       }
     ],
@@ -100,9 +100,9 @@ export default [
 {name:'Paul', id:'item1'},
 {name:'Mary', id:'item2'}
 ]`,
-        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect>
-<text transform='translate(10 20)' data-content='{Binding name}' style='font-size:18px;'></text>
-<text transform='translate(10 40)' data-content='{Binding id}' style='font-size:18px;'></text>`,
+        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
+<text transform='translate(10 20)' data-content='{Binding name}' style='font-size:18px;'/>
+<text transform='translate(10 40)' data-content='{Binding id}' style='font-size:18px;'/>`,
         idBinding: 'id'
       }
     ],
@@ -132,8 +132,8 @@ export default [
 1:{'name':'Paul'},
 2:{'name':'Mary'}
 }`,
-        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect>
-<text transform='translate(10 20)' data-content='{Binding name}' style='font-size:18px;'></text>`,
+        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
+<text transform='translate(10 20)' data-content='{Binding name}' style='font-size:18px;'/>`,
         idBinding: ''
       }
     ],

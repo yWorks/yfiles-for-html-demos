@@ -39,7 +39,7 @@ export function initializeGraphSearch(
   orgChartGraph: CollapsibleTree
 ): void {
   const graphSearch = new OrgChartGraphSearch(graphComponent)
-  const searchBox = document.getElementById('searchBox') as HTMLInputElement
+  const searchBox = document.querySelector<HTMLInputElement>('#searchBox')!
   GraphSearch.registerEventListener(searchBox, graphSearch)
   orgChartGraph.addGraphUpdatedListener(() => graphSearch.updateSearch(searchBox.value))
 }

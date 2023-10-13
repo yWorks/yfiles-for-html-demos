@@ -1,0 +1,78 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "label": "## IGraph \n *interface*\n \n Central interface that models a graph which can be displayed in a **canvas** or **GraphComponent**. \n ### Code example: \n``` \n const graph = graphComponent.graph \n```"
+    },
+    {
+      "id": 1,
+      "label": "## INode \n *interface*\n \n The interface for node entities in an **IGraph**. \n ### Code example: \n``` \n const node = graph.createNode( \n  new Rect(0, 0, 60, 40) \n) \n```"
+    },
+    {
+      "id": 2,
+      "label": "## IEdge \n *interface* \n \n The interface used to model edges in an **IGraph** implementation. \n ### Code example: \n ``` \n const edge = graph.createEdge({ \n  source: node1, \n  target: node2, \n  labels: ['Edge Label'] \n }) \n```"
+    },
+    {
+      "id": 3,
+      "label": "## ILabel \n *interface*\n \n The interface used in an **IGraph** implementation for labels. \n ### Code example: \n``` \n const nodeLabel = graph.addLabel(node, 'Node Label', ExteriorLabelModel.SOUTH) \n const edgeLabel = graph.addLabel(edge, 'Edge Label', FreeEdgeLabelModel.INSTANCE.createDefaultParameter()) \n```"
+    },
+    {
+      "id": 4,
+      "label": "## IPort \n *interface*\n \n The interface used in an **IGraph** implementation for **IEdges** to connect to. \n ### Code example: \n``` \n const port = graph.addPort(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED) \n```"
+    },
+    {
+      "id": 5,
+      "label": "## IBend \n *interface*\n \n The interface used in an **IGraph** implementation to control the layout of **edges**. \n ### Code example: \n```\n const bend = graph.addBend(edge, new Point(50, 20)) \n```"
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 1,
+      "label": "#### nodes"
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 2,
+      "label": "#### edges"
+    },
+    {
+      "id": 2,
+      "source": 1,
+      "target": 4,
+      "label": "#### ports"
+    },
+    {
+      "id": 3,
+      "source": 1,
+      "target": 3,
+      "label": "#### labels"
+    },
+    {
+      "id": 4,
+      "source": 2,
+      "target": 4,
+      "label": "#### ports"
+    },
+    {
+      "id": 5,
+      "source": 2,
+      "target": 3,
+      "label": "#### labels"
+    },
+    {
+      "id": 6,
+      "source": 2,
+      "target": 5,
+      "label": "#### bends"
+    },
+    {
+      "id": 7,
+      "source": 4,
+      "target": 3,
+      "label": "#### labels"
+    }
+  ]
+}

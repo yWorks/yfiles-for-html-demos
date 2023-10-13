@@ -27,17 +27,18 @@
  **
  ***************************************************************************/
 import {
+  Class,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  HierarchicLayout,
   IGraph,
-  IModelItem,
   INode,
-  ItemClickedEventArgs,
+  LayoutExecutor,
   License,
-  Point,
   Size
 } from 'yfiles'
 
@@ -45,6 +46,7 @@ import NodeStyleDecorator from './NodeStyleDecorator.js'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -61,22 +63,57 @@ let hideTimer = null
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
-  graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
 
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
+  )
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+
   // register a click listener that handles clicks on the decorator
   initializeDecorationClickListener()
+}
 
-  // add a sample graph
-  createGraph()
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  }).nodeCreator.styleProvider = item =>
+    item.tag
+      ? new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), `resources/${item.tag}.svg`)
+      : undefined
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -84,14 +121,14 @@ async function run() {
  * on the decorator icon.
  */
 function initializeDecorationClickListener() {
-  graphComponent.inputMode.addItemClickedListener((src, args) => {
-    if (!INode.isInstance(args.item)) {
+  graphComponent.inputMode.addItemClickedListener((_, evt) => {
+    if (!INode.isInstance(evt.item)) {
       return
     }
-    const node = args.item
+    const node = evt.item
     if (
       !(node.style instanceof NodeStyleDecorator) ||
-      !node.style.getDecorationLayout(node.layout).contains(args.location)
+      !node.style.getDecorationLayout(node.layout).contains(evt.location)
     ) {
       return
     }
@@ -100,11 +137,11 @@ function initializeDecorationClickListener() {
     // Handle the click if it should do nothing else than what is defined in the decorator click listener.
     // Otherwise the click will be handled by other input modes, too. For instance, a node may be created or the
     // clicked node may be selected.
-    args.handled = true
+    evt.handled = true
 
     // Shows a toast to indicate the successful click, and hides it again.
     clearTimeout(hideTimer)
-    const toast = document.getElementById('toast')
+    const toast = document.querySelector('#toast')
     toast.style.bottom = '40px'
     hideTimer = setTimeout(() => {
       toast.style.bottom = '-50px'
@@ -130,57 +167,6 @@ function initTutorialDefaults(graph) {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Creates a simple sample graph.
- */
-function createGraph() {
-  const graph = graphComponent.graph
-
-  const node1 = graph.createNodeAt([110, 20])
-  const node2 = graph.createNodeAt({
-    location: [145, 95],
-    style: new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), 'resources/printer.svg')
-  })
-  const node3 = graph.createNodeAt({
-    location: [75, 95],
-    style: new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), 'resources/switch.svg')
-  })
-  const node4 = graph.createNodeAt({
-    location: [30, 175],
-    style: new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), 'resources/scanner.svg')
-  })
-  const node5 = graph.createNodeAt({
-    location: [100, 175],
-    style: new NodeStyleDecorator(
-      graph.nodeDefaults.getStyleInstance(),
-      'resources/workstation.svg'
-    )
-  })
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  graph.setPortLocation(edge1.sourcePort, new Point(123.33, 40))
-  graph.setPortLocation(edge1.targetPort, new Point(145, 75))
-  graph.setPortLocation(edge2.sourcePort, new Point(96.67, 40))
-  graph.setPortLocation(edge2.targetPort, new Point(75, 75))
-  graph.setPortLocation(edge3.sourcePort, new Point(65, 115))
-  graph.setPortLocation(edge3.targetPort, new Point(30, 155))
-  graph.setPortLocation(edge4.sourcePort, new Point(85, 115))
-  graph.setPortLocation(edge4.targetPort, new Point(90, 155))
-  graph.setPortLocation(edge5.sourcePort, new Point(110, 40))
-  graph.setPortLocation(edge5.targetPort, new Point(110, 155))
-  graph.addBends(edge1, [new Point(123.33, 55), new Point(145, 55)])
-  graph.addBends(edge2, [new Point(96.67, 55), new Point(75, 55)])
-  graph.addBends(edge3, [new Point(65, 130), new Point(30, 130)])
-  graph.addBends(edge4, [new Point(85, 130), new Point(90, 130)])
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
 }
 
 run().then(finishLoading)

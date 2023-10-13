@@ -267,7 +267,7 @@ function initializeUI() {
         }
       }
     }
-    document.getElementById('smooth-editing').disabled = !config.enableEditing
+    document.querySelector('#smooth-editing').disabled = !config.enableEditing
   })
   document.querySelector('#smooth-editing').addEventListener('click', () => {
     config.smoothSegments = !config.smoothSegments
@@ -299,7 +299,7 @@ function initializeUI() {
       graphComponent.updateVisual()
     }
   })
-  const angleLabel = document.getElementById('angle-label')
+  const angleLabel = document.querySelector('#angle-label')
   document.querySelector('#angle-range').addEventListener('input', evt => {
     const value = evt.target.value
     config.angle = Number(value)

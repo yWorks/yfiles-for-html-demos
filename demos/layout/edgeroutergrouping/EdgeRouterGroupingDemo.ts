@@ -297,9 +297,7 @@ function configureInteraction(): void {
       contextMenu.show(location)
     }
   })
-  inputMode.addPopulateItemContextMenuListener((sender, args) =>
-    populateContextMenu(contextMenu, args)
-  )
+  inputMode.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
   inputMode.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
   contextMenu.onClosedCallback = (): void => inputMode.contextMenuInputMode.menuClosed()
   graphComponent.inputMode = inputMode

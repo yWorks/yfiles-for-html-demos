@@ -204,12 +204,12 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
 
   // when an edge is created, run the algorithm again except for the k-means and hierarchical
   // because these two are independent of the edges of the graph
-  mode.createEdgeInputMode.addEdgeCreatedListener((_, args) => {
+  mode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
     if (
       selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
       document.querySelector<HTMLInputElement>(`#directed`)!.checked
     ) {
-      graphComponent.graph.setStyle(args.item, directedEdgeStyle)
+      graphComponent.graph.setStyle(evt.item, directedEdgeStyle)
     }
     if (
       selectedAlgorithm != ClusteringAlgorithm.kMEANS &&
@@ -240,10 +240,10 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
   // add the hover listener
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((_, event) => {
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     // if a node is hovered and the algorithm is HIERARCHICAL clustering, hover the corresponding dendrogram node
     if (selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL) {
-      const node = event.item
+      const node = evt.item
       graphComponent.highlightIndicatorManager.clearHighlights()
       if (node && result) {
         graphComponent.highlightIndicatorManager.addHighlight(node)

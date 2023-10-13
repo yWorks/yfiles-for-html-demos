@@ -70,19 +70,19 @@ export function initializeHighlights(graphComponent: GraphComponent): void {
   const graphItemHoverInputMode = inputMode.itemHoverInputMode
   graphItemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
   graphItemHoverInputMode.discardInvalidItems = false
-  graphItemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
-    updateHighlights(graphComponent, event.item, event.oldItem)
+  graphItemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    updateHighlights(graphComponent, evt.item, evt.oldItem)
   })
 
   const graph = graphComponent.graph
-  graph.addNodeRemovedListener((sender, event) => {
+  graph.addNodeRemovedListener((_, evt) => {
     // if the node is removed, remove the highlights
-    graphComponent.highlightIndicatorManager.removeHighlight(event.item)
+    graphComponent.highlightIndicatorManager.removeHighlight(evt.item)
   })
 
-  graph.addEdgeRemovedListener((sender, event) => {
+  graph.addEdgeRemovedListener((_, evt) => {
     // if the edge is removed, remove the highlights
-    graphComponent.highlightIndicatorManager.removeHighlight(event.item)
+    graphComponent.highlightIndicatorManager.removeHighlight(evt.item)
   })
 }
 

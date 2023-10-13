@@ -777,13 +777,13 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
    */
   dragFinished(context, originalLocation, newLocation) {
     this.handleMove(context, originalLocation, newLocation)
-    const finishHandler = (sender, evt) => {
-      sender.removeDragFinishedListener(finishHandler)
+    const finishHandler = (inputMode, evt) => {
+      inputMode.removeDragFinishedListener(finishHandler)
 
       // adjust node layout and update the path with the final handle coordinates
       this.$style.normalizePath(this.$node, context.graph)
       this.updateXY()
-      updateHandles(this.$node, sender)
+      updateHandles(this.$node, inputMode)
 
       this.edit.commit()
       this.edit = null

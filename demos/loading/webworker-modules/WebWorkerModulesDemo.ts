@@ -55,7 +55,7 @@ let graphComponent: GraphComponent = null!
 let executor: LayoutExecutorAsync | null = null
 let worker: Worker
 
-const layoutButton = document.querySelector('#run-layout') as HTMLButtonElement
+const layoutButton = document.querySelector<HTMLButtonElement>('#run-layout')!
 const modulesWorkersSupported = BrowserDetection.modulesSupportedInWorker
 
 if (modulesWorkersSupported) {

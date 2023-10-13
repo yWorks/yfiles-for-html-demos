@@ -58,8 +58,8 @@ export default class ContextMenuSupport {
         contextMenu.show(location)
       }
     })
-    inputMode.addPopulateItemContextMenuListener((sender, args) =>
-      this.populateContextMenu(contextMenu, args)
+    inputMode.addPopulateItemContextMenuListener((_, evt) =>
+      this.populateContextMenu(contextMenu, evt)
     )
     inputMode.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
     contextMenu.onClosedCallback = () => inputMode.contextMenuInputMode.menuClosed()

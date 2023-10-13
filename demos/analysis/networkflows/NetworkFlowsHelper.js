@@ -174,10 +174,10 @@ export class NetworkFlowInputMode extends InputModeBase {
     this.oldTag = null
 
     // initializes listener functions in order to install/uninstall them
-    this.onMouseMoveListener = (sender, evt) => this.onMouseMove(evt.location)
-    this.onMouseDownListener = (sender, evt) => this.onMouseDown(evt.location, evt.buttons)
-    this.onMouseUpListener = (sender, evt) => this.onMouseUp(evt.location)
-    this.onMouseDragListener = (sender, evt) => this.onMouseDrag(evt.location)
+    this.onMouseMoveListener = (_, evt) => this.onMouseMove(evt.location)
+    this.onMouseDownListener = (_, evt) => this.onMouseDown(evt.location, evt.buttons)
+    this.onMouseUpListener = (_, evt) => this.onMouseUp(evt.location)
+    this.onMouseDragListener = (_, evt) => this.onMouseDrag(evt.location)
   }
 
   /**

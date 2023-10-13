@@ -327,9 +327,9 @@ function newEdgeStyle() {
  * @param {boolean} disabled
  */
 function disableUI(disabled) {
-  const connect = document.getElementById('connect')
+  const connect = document.querySelector('#connect')
   connect.disabled = disabled
-  const layout = document.getElementById('route')
+  const layout = document.querySelector('#route')
   layout.disabled = disabled
 }
 

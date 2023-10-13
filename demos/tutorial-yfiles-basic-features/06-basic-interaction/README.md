@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 06 Basic Interaction - Basic Features Tutorial
+# 06 Basic Interaction - Tutorial: Basic Features
 
 # Basic Interaction
 
@@ -33,4 +33,4 @@ graphComponent.inputMode = new GraphEditorInputMode()
 - To create or edit a label, select a node or an edge and press `F2`.
 - Drag a selected label to move it to another location.
 
-[07 Undo Clipboard Support](../../tutorial-yfiles-basic-features/07-undo-clipboard-support/index.html)
+[07 Undo Clipboard Support](../../tutorial-yfiles-basic-features/07-undo-clipboard-support/)

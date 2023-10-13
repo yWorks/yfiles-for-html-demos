@@ -112,9 +112,7 @@ export default class PropertiesPanelUI {
     const textField = document.createElement('input')
     textField.type = 'text'
     textField.setAttribute('class', 'property-value')
-
     textField.value = value
-    ;(textField as any)['data-value'] = value
 
     textField.addEventListener(
       'change',
@@ -178,5 +176,5 @@ export default class PropertiesPanelUI {
 }
 
 function getDiv(parent: HTMLElement, selector: string): HTMLDivElement {
-  return parent.querySelector(selector) as HTMLDivElement
+  return parent.querySelector<HTMLDivElement>(selector)!
 }

@@ -83,7 +83,7 @@ export default class EdgeReconnectionPortCandidateProvider extends BaseClass<IEd
       return result
     }
     for (const node of graph.nodes) {
-      const provider = node.lookup(IPortCandidateProvider.$class) as IPortCandidateProvider
+      const provider = node.lookup(IPortCandidateProvider.$class)
       // If available, use the candidates from the provider. Otherwise, add a default candidate.
       if (provider) {
         const candidates = source

@@ -28,22 +28,25 @@
  ***************************************************************************/
 import {
   Arrow,
+  Class,
   DefaultLabelStyle,
   ExteriorLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphOverviewComponent,
   GraphSnapContext,
   GroupNodeLabelModel,
   GroupNodeStyle,
+  HierarchicLayout,
   HorizontalTextAlignment,
   IGraph,
   Insets,
   LabelShape,
   LabelSnapContext,
+  LayoutExecutor,
   License,
   NinePositionsEdgeLabelModel,
-  Point,
   PolylineEdgeStyle,
   RectangleNodeStyle,
   ScrollBarVisibility,
@@ -54,6 +57,7 @@ import {
 
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -81,15 +85,61 @@ async function run() {
     snapContext: new GraphSnapContext(),
     labelSnapContext: new LabelSnapContext()
   })
-  graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
 
-  // create a sample graph
-  createGraph()
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 50 })
+  )
+  graphComponent.fitGraphBounds()
+
+  // initial selection of a single node to make the handles visible
+  graphComponent.selection.setSelected(graphComponent.graph.nodes.at(2), true)
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
 
   initializeUI()
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList.filter(item => !item.isGroup),
+      id: item => item.id,
+      parentId: item => item.parentId
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createEdgesSource({
+      data: graphData.edgeList,
+      sourceId: item => item.source,
+      targetId: item => item.target
+    })
+    .edgeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -195,49 +245,6 @@ function initializeGraph(graph) {
 
   // initially, enable the light mode styling variant
   enableMode('light')
-}
-
-/**
- * Creates a simple sample graph.
- */
-function createGraph() {
-  const graph = graphComponent.graph
-
-  const node1 = graph.createNodeAt([110, 20])
-  const node2 = graph.createNodeAt([145, 120])
-  const node3 = graph.createNodeAt([75, 120])
-  const node4 = graph.createNodeAt([30, 220])
-  const node5 = graph.createNodeAt([100, 220])
-  graph.addLabel(node5, 'Node Label')
-
-  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  graph.addLabel(edge3, 'Edge Label')
-  graph.setPortLocation(edge1.sourcePort, new Point(123.33, 40))
-  graph.setPortLocation(edge1.targetPort, new Point(145, 100))
-  graph.setPortLocation(edge2.sourcePort, new Point(96.67, 40))
-  graph.setPortLocation(edge2.targetPort, new Point(75, 100))
-  graph.setPortLocation(edge3.sourcePort, new Point(65, 140))
-  graph.setPortLocation(edge3.targetPort, new Point(30, 200))
-  graph.setPortLocation(edge4.sourcePort, new Point(85, 140))
-  graph.setPortLocation(edge4.targetPort, new Point(90, 200))
-  graph.setPortLocation(edge5.sourcePort, new Point(110, 40))
-  graph.setPortLocation(edge5.targetPort, new Point(110, 200))
-  graph.addBends(edge1, [new Point(123.33, 70), new Point(145, 70)])
-  graph.addBends(edge2, [new Point(96.67, 70), new Point(75, 70)])
-  graph.addBends(edge3, [new Point(65, 170), new Point(30, 170)])
-  graph.addBends(edge4, [new Point(85, 170), new Point(90, 170)])
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
-
-  // initial selection of a single node to make the handles visible
-  graphComponent.selection.selectedNodes.setSelected(node2, true)
 }
 
 /**

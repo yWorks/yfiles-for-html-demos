@@ -100,7 +100,7 @@ async function updateGraph(graphComponent, nodesSource, edgesSource) {
 
   // determine which nodes were added while updating the graph
   const newNodes = []
-  const nodeCreatedListener = (sender, evt) => newNodes.push(evt.item)
+  const nodeCreatedListener = (_, evt) => newNodes.push(evt.item)
   builder.addNodeCreatedListener(nodeCreatedListener)
 
   // update the graph according the new (but related) data
@@ -159,7 +159,7 @@ function arrangeGraph(graphComponent) {
  */
 function initializeUI(graphComponent) {
   let index = 0
-  document.getElementById('update-builder').addEventListener('click', async () => {
+  document.querySelector('#update-builder').addEventListener('click', async () => {
     // build graph from new data
     const update = ++index % 2 === 1
     const nodeData = update ? GraphBuilderData.updateGates : GraphBuilderData.gates

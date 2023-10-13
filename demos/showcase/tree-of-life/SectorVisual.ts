@@ -78,7 +78,7 @@ export default class SectorVisual
     }
 
     // find the root node of the graph
-    const root = graph.nodes.find(node => graph.inDegree(node) === 0) as INode
+    const root = graph.nodes.find(node => graph.inDegree(node) === 0)
     if (!root) {
       this.sectors = []
       return

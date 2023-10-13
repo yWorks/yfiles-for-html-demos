@@ -51,7 +51,7 @@ loadDiagramComponentBtn.addEventListener('click', async () => {
   )
 
   // hide the note and remove the inactive background color
-  const gcContainer = document.getElementById('graphComponent') as HTMLDivElement
+  const gcContainer = document.querySelector<HTMLDivElement>('#graphComponent')!
   gcContainer.removeChild(gcContainer.firstElementChild!)
   gcContainer.className = ''
 

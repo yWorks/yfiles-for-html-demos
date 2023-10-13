@@ -132,7 +132,7 @@ export default props => {
     edgesSourceRef.current = edgesSource
 
     // We need to update the node tags with each item update.
-    nodesSource.nodeCreator.addNodeUpdatedListener((sender, evt) => {
+    nodesSource.nodeCreator.addNodeUpdatedListener((_, evt) => {
       nodesSource.nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
     })
     return graphBuilder

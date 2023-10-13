@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 09 Configure Tags - Graph Builder Tutorial
+# 09 Configure Tags - Tutorial: Graph Builder
 
 # Customizing data stored in the graph
 
@@ -65,4 +65,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `configure-tags.ts` and play around with the example data and different `tag` configurations.
 
-[10 Configure Layout](../../tutorial-graph-builder/10-configure-layout/index.html)
+[10 Configure Layout](../../tutorial-graph-builder/10-configure-layout/)

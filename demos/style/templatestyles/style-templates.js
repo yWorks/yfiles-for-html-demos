@@ -32,8 +32,7 @@ export const orgchartPortTemplate =
   `
     <ellipse fill="rgb(229,233,240)" cx="0" cy="0"
       rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
-      ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}">
-    </ellipse>`
+      ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"/>`
 
 //language=HTML
 export const orgchartLabelTemplate =
@@ -42,9 +41,9 @@ export const orgchartLabelTemplate =
     <g class="orgchart-label">
       <text data-content="{TemplateBinding labelText}" dy="1em" stroke="rgb(94,103,130)"
         stroke-width="7px" stroke-linejoin="round" text-anchor="middle"
-        transform="translate(50 0)"></text>
+        transform="translate(50 0)"/>
       <text data-content="{TemplateBinding labelText}" dy="1em" fill="rgb(229,233,240)"
-        text-anchor="middle" transform="translate(50 0)"></text>
+        text-anchor="middle" transform="translate(50 0)"/>
     </g>`
 
 //language=HTML
@@ -58,14 +57,12 @@ export const orgchartNodeTemplate =
           <ellipse cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
             cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
             rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5-5}"
-            ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5-5}">
-          </ellipse>
+            ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5-5}"/>
         </clipPath>
         <clipPath id="labelClip">
           <rect x="0" y="{TemplateBinding height, Converter=calc, Parameter=$v*0.6}"
             width="{TemplateBinding width}"
-            height="{TemplateBinding height, Converter=calc, Parameter=$v*0.4}">
-          </rect>
+            height="{TemplateBinding height, Converter=calc, Parameter=$v*0.4}"/>
         </clipPath>
       </defs>
       <!-- An ellipse that appears on hover via CSS -->
@@ -73,49 +70,42 @@ export const orgchartNodeTemplate =
         cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
         cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
         rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5+10}"
-        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5+10}">
-      </ellipse>
+        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5+10}"/>
       <!-- The background ellipse -->
       <ellipse fill="{Binding businessUnit, Converter=backgroundColor}"
         cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
         cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
         rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
-        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}">
-      </ellipse>
+        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"/>
       <!-- The user icon -->
       <image xlink:href="{Binding icon, Converter=icon}" clip-path="url(#imageClip)" x="5"
         y="{TemplateBinding height, Converter=calc, Parameter=$v*-0.1}"
         width="{TemplateBinding width, Converter=calc, Parameter=$v-10}"
-        height="{TemplateBinding height, Converter=calc, Parameter=$v-10}">
-      </image>
+        height="{TemplateBinding height, Converter=calc, Parameter=$v-10}"/>
       <!-- The half-circle background for the name -->
       <ellipse fill="{Binding businessUnit, Converter=backgroundColor}" clip-path="url(#labelClip)"
         cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
         cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
         rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
-        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}">
-      </ellipse>
+        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"/>
       <!-- The name text -->
       <text fill="rgb(37,41,52)" data-content="{Binding name}" text-anchor="middle"
         style="font-family: Tahoma, Verdana, sans-serif"
         font-size="{TemplateBinding width, Converter=fontSize}"
         x="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
-        y="{TemplateBinding height, Converter=calc, Parameter=$v*0.75}">
-      </text>
+        y="{TemplateBinding height, Converter=calc, Parameter=$v*0.75}"/>
       <!-- The focus indicator -->
       <ellipse stroke="rgb(255,220,0)" fill="none" stroke-width="10"
         visibility="{TemplateBinding itemFocused, Converter=visibility}"
         cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
         cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"
         rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5+5}"
-        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5+5}">
-      </ellipse>
+        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5+5}"/>
       <!-- The status indicator -->
       <ellipse fill="{Binding status, Converter=statusColor}" class="orgchart-status-indicator"
         cx="{TemplateBinding width, Converter=calc, Parameter=$v*0.90-5}"
         cy="{TemplateBinding height, Converter=calc, Parameter=$v*0.1+5}"
         rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.10}"
-        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.10}">
-      </ellipse>
+        ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.10}"/>
     </g>
   `

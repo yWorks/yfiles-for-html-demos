@@ -80,9 +80,7 @@ export class ColorDropInputMode extends DropInputMode {
    */
   set dropTarget(value: INode | IEdge | null) {
     if (this._dropTarget !== value) {
-      const highlightManager = this.inputModeContext?.lookup(
-        HighlightIndicatorManager.$class
-      ) as HighlightIndicatorManager<IModelItem>
+      const highlightManager = this.inputModeContext?.lookup(HighlightIndicatorManager.$class)
 
       if (highlightManager) {
         if (this._dropTarget) {

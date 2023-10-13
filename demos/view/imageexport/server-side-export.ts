@@ -103,20 +103,20 @@ function requestFile(
   margins = Insets.from(5),
   paperSize = PaperSize.AUTO
 ): void {
-  const svgStringInput = document.getElementById('postSvgString') as HTMLInputElement
+  const svgStringInput = document.querySelector<HTMLInputElement>('#postSvgString')!
   svgStringInput.setAttribute('value', `${svgString}`)
-  const formatInput = document.getElementById('postFormat') as HTMLInputElement
+  const formatInput = document.querySelector<HTMLInputElement>('#postFormat')!
   formatInput.setAttribute('value', `${format}`)
-  const width = document.getElementById('postWidth') as HTMLInputElement
+  const width = document.querySelector<HTMLInputElement>('#postWidth')!
   width.setAttribute('value', `${size.width}`)
-  const height = document.getElementById('postHeight') as HTMLInputElement
+  const height = document.querySelector<HTMLInputElement>('#postHeight')!
   height.setAttribute('value', `${size.height}`)
-  const margin = document.getElementById('postMargin') as HTMLInputElement
+  const margin = document.querySelector<HTMLInputElement>('#postMargin')!
   margin.setAttribute('value', `${margins.left}`)
-  const pSize = document.getElementById('postPaperSize') as HTMLInputElement
+  const pSize = document.querySelector<HTMLInputElement>('#postPaperSize')!
   pSize.setAttribute('value', paperSize === PaperSize.AUTO ? '' : paperSize)
 
-  const form = document.getElementById('postForm') as HTMLFormElement
+  const form = document.querySelector<HTMLFormElement>('#postForm')!
   form.setAttribute('action', url)
   form.submit()
 }

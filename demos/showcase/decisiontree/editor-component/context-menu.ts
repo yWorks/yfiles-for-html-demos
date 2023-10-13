@@ -53,7 +53,7 @@ export function configureContextMenu(
 
   // Add a listener that populates the context menu for the hit elements or cancels showing a menu.
   // This PopulateItemContextMenu event is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((sender, evt) => {
+  inputMode.addPopulateItemContextMenuListener((_, evt) => {
     const item = evt.item
     if (!item || item instanceof INode) {
       populateContextMenu(contextMenu, graphComponent, setAsRootNode, item ?? undefined)

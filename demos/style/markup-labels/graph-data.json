@@ -1,0 +1,50 @@
+{
+  "nodeList": [
+    { "id": 0, "parentId": 5 },
+    {
+      "id": 2,
+      "parentId": 5
+    },
+    {
+      "id": 1,
+      "parentId": 5
+    },
+    {
+      "id": 3,
+      "label": "<h1>Supported Tags</h1>\n<p><strong><code>&lt;span&gt;</code></strong>: A stylable element.</p><p><strong><code>&lt;br&gt;</code></strong>: Adds a line break</p><p><strong><code>&lt;em&gt;</code></strong>: <em>Italic text</em></p><p><strong><code>&lt;strong&gt;</code></strong>: <strong>Bold text</strong></p><p><strong><code>&lt;del&gt;</code></strong>: <del>Strikethrough text</del></p>\n<p><strong><code>&lt;u&gt;</code></strong>: <u>Underline text</u></p>\n<p><strong><code>&lt;h1&gt;-&lt;h6&gt;</code></strong>: Heading 1-6</p>\n<p><strong><code>&lt;p&gt;</code></strong>: A paragraph element.</p>\n<p><strong><code>&lt;pre&gt;</code></strong>:</p><pre>A preformatted element\n    which preserves newlines and whitespaces.</pre>\n<p><strong><code>&lt;code&gt;</code></strong>: <code>A code element</code></p>\n<p><strong><code>&lt;small&gt;</code></strong>: <small>Small font-size</small></p>\n<p><strong><code>&lt;large&gt;</code></strong>: <large>Large font-size</large></p>\n<p><strong><code>&lt;[html color name]&gt;</code></strong>: Colored text, e.g. <blue>&lt;blue&gt;</blue></p>",
+      "tag": "Markup"
+    },
+    {
+      "id": 4,
+      "label": "<h2>CSS styling</h2>\n<p>The styling of the markup elements can be easily modified with CSS rules.</p>\n<p>In this case, we use <span style=\"font-variant: small-caps;\">small-caps</span> and <span style=\"color: #404040;\">color: #404040</span> for heading 2.</p>",
+      "tag": "CSS"
+    },
+    {
+      "id": 5,
+      "label": "Group 1",
+      "isGroup": true
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 1
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 2
+    },
+    {
+      "id": 2,
+      "source": 1,
+      "target": 3
+    },
+    {
+      "id": 3,
+      "source": 2,
+      "target": 4
+    }
+  ]
+}

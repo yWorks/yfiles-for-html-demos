@@ -48,8 +48,8 @@ export abstract class SourceDialog {
 
   protected constructor(acceptCallback: () => void) {
     this.acceptCallback = acceptCallback
-    this.dialogContainerModal = document.getElementById('editSourceDialogModal') as HTMLDivElement
-    this.dialogContainer = document.getElementById('editSourceDialog') as HTMLDivElement
+    this.dialogContainerModal = document.querySelector<HTMLDivElement>('#editSourceDialogModal')!
+    this.dialogContainer = document.querySelector<HTMLDivElement>('#editSourceDialog')!
   }
 
   /**

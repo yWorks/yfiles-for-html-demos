@@ -95,8 +95,8 @@ export default class ReactGraphComponent extends Component {
 
   createInputMode(): GraphInputMode {
     const mode = new GraphEditorInputMode()
-    mode.addNodeCreatedListener((sender, { item }) => {
-      item.tag = { name: `Node ${sender.graph!.nodes.size + 1}` }
+    mode.addNodeCreatedListener((modeInput, { item }) => {
+      item.tag = { name: `Node ${modeInput.graph!.nodes.size + 1}` }
     })
     return mode
   }

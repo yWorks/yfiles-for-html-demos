@@ -34,11 +34,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Preact Demo [yFiles for HTML]</title>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="style/index.css" />
 
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
@@ -88,7 +88,7 @@
             >"No build tools route"</a
           >
           of the preact setup for simplicity. Note that //@ts-ignore comments have to be used when
-          importing from unpkg URLs, as TypeScript has no way of knowing the types of these
+          importing from esm.sh URLs, as TypeScript has no way of knowing the types of these
           packages. The interoperability between the yFiles graph view and the preact components
           that is demonstrated in this demo would not change with a different configuration setup,
           though (e.g. Preact CLI, custom bundling pipeline).

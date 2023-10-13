@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 11 Group Node Style - Node Style Implementation Tutorial
+# 11 Group Node Style - Tutorial: Node Style Implementation
 
 # Writing a custom group node style
 
@@ -29,4 +29,4 @@ protected lookup(node: INode, type: Class): any {
 }
 ```
 
-[12 Group Node Style Behavior](../../tutorial-style-implementation-node/12-group-node-style-behavior/index.html)
+[12 Group Node Style Behavior](../../tutorial-style-implementation-node/12-group-node-style-behavior/)

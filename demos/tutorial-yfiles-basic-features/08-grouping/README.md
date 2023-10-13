@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 08 Grouping - Basic Features Tutorial
+# 08 Grouping - Tutorial: Basic Features
 
 # Grouped Graphs
 
@@ -86,4 +86,4 @@ graph.adjustGroupNodeLayout(groupNode)
 
 Add New Node and Adjust Group Node Size
 
-[09 Data Binding](../../tutorial-yfiles-basic-features/09-data-binding/index.html)
+[09 Data Binding](../../tutorial-yfiles-basic-features/09-data-binding/)

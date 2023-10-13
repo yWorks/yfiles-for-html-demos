@@ -15,7 +15,7 @@
 
 This demo presents a contextual toolbar that provides easy to reach controls for selected graph items.
 
-Similar to the [HTML Popup Demo](../../view/htmlpopup/index.html), the toolbar is displayed in the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) above the graph items and rendered zoom-invariant with a fixed size. It moves alongside the graph items but is limited to the Graph Component container, such that it will be visible at all times.
+Similar to the [HTML Popup Demo](../../view/htmlpopup/), the toolbar is displayed in the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) above the graph items and rendered zoom-invariant with a fixed size. It moves alongside the graph items but is limited to the Graph Component container, such that it will be visible at all times.
 
 ## Things to Try
 

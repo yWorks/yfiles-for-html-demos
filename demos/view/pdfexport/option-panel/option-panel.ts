@@ -70,6 +70,6 @@ export function initializeOptionPanel(exportCallback: (options: PdfExportOptions
  * Returns the chosen export paper size.
  */
 function getPaperSize(): PaperSize {
-  const inputPaperSize = document.getElementById('paperSize') as HTMLSelectElement
+  const inputPaperSize = document.querySelector<HTMLSelectElement>('#paperSize')!
   return PaperSize[inputPaperSize.value as keyof typeof PaperSize]
 }

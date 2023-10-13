@@ -27,24 +27,25 @@
  **
  ***************************************************************************/
 import {
+  Class,
   EdgePathLabelModel,
-  EdgeSegmentLabelModel,
   EdgeSides,
   ExteriorLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeStyle,
   GroupNodeStyleTabPosition,
+  HierarchicLayout,
   IEdge,
   IGraph,
   ILabel,
   IModelItem,
   INode,
   IPort,
+  LayoutExecutor,
   License,
-  MouseHoverInputMode,
   Point,
-  QueryItemToolTipEventArgs,
   Size,
   TimeSpan,
   ToolTipQueryEventArgs
@@ -53,6 +54,7 @@ import {
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -63,13 +65,13 @@ let graphComponent
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
-  graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
@@ -77,8 +79,55 @@ async function run() {
   // enable tooltips
   initializeTooltips()
 
-  // add a sample graph
-  createGraph()
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({
+      considerNodeLabels: true,
+      integratedEdgeLabeling: true
+    })
+  )
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList.filter(item => !item.isGroup),
+      id: item => item.id,
+      parentId: item => item.parentId
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createEdgesSource({
+      data: graphData.edgeList,
+      sourceId: item => item.source,
+      targetId: item => item.target
+    })
+    .edgeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -102,17 +151,17 @@ function initializeTooltips() {
   mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
 
   // Register a listener for when a tooltip should be shown.
-  inputMode.addQueryItemToolTipListener((src, eventArgs) => {
-    if (eventArgs.handled) {
+  inputMode.addQueryItemToolTipListener((src, evt) => {
+    if (evt.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
 
     // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
-    eventArgs.toolTip = createTooltipContent(eventArgs.item)
+    evt.toolTip = createTooltipContent(evt.item)
 
     // Indicate that the tooltip content has been set.
-    eventArgs.handled = true
+    evt.handled = true
   })
 }
 
@@ -180,62 +229,6 @@ function initializeGraph(graph) {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Creates a simple sample graph.
- */
-function createGraph() {
-  const graph = graphComponent.graph
-
-  const node1 = graph.createNodeAt({ location: [127.07, 20], labels: ['Node 1'] })
-  const node2 = graph.createNodeAt({ location: [181.09, 138], labels: ['Node 2'] })
-  const node3 = graph.createNodeAt({ location: [73.05, 138], labels: ['Node 3'] })
-  const node4 = graph.createNodeAt({ location: [30, 281], labels: ['Node 4'] })
-  const node5 = graph.createNodeAt({ location: [100, 281], labels: ['Node 5'] })
-
-  const group = graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-  // Enlarge the group node slightly to ensure that all labels also fit inside the node.
-  // They are typically not accounted for when calculating the group node size.
-  graph.setNodeLayout(group, group.layout.toRect().getEnlarged({ bottom: 25, horizontal: 5 }))
-
-  const edge1 = graph.createEdge({ source: node1, target: node2, labels: ['Edge 1'] })
-  const edge2 = graph.createEdge({ source: node1, target: node3, labels: ['Edge 2'] })
-  const edge3 = graph.createEdge({ source: node3, target: node4, labels: ['Edge 3'] })
-  const edge4 = graph.createEdge({ source: node3, target: node5, labels: ['Edge 4'] })
-  const edge5 = graph.createEdge({ source: node1, target: node5, labels: ['Edge 5'] })
-
-  graph.setPortLocation(edge1.sourcePort, new Point(140.1, 40))
-  graph.setPortLocation(edge1.targetPort, new Point(181.09, 118))
-  graph.setPortLocation(edge2.sourcePort, new Point(113.74, 40))
-  graph.setPortLocation(edge2.targetPort, new Point(73.05, 118))
-  graph.setPortLocation(edge3.sourcePort, new Point(63.05, 158))
-  graph.setPortLocation(edge3.targetPort, new Point(30, 261))
-  graph.setPortLocation(edge4.sourcePort, new Point(83.05, 158))
-  graph.setPortLocation(edge4.targetPort, new Point(90, 261))
-  graph.setPortLocation(edge5.sourcePort, new Point(127.07, 40))
-  graph.setPortLocation(edge5.targetPort, new Point(110, 261))
-  graph.addBends(edge1, [new Point(140.4, 54), new Point(181.09, 74)])
-  graph.addBends(edge2, [new Point(113.74, 54), new Point(73.05, 74)])
-  graph.addBends(edge3, [new Point(63.05, 182), new Point(30, 202)])
-  graph.addBends(edge4, [
-    new Point(83.05, 182),
-    new Point(88.05, 202),
-    new Point(88.05, 226),
-    new Point(90, 246)
-  ])
-  graph.addBends(edge5, [new Point(127.07, 226), new Point(110, 246)])
-
-  graph.edgeLabels.forEach(label => {
-    const labelModel = new EdgeSegmentLabelModel({ autoRotation: false })
-    graph.setLabelLayoutParameter(
-      label,
-      labelModel.createParameterFromSource(label.text !== 'Edge 5' ? 2 : 0, 0.5)
-    )
-  })
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
 }
 
 run().then(finishLoading)

@@ -26,7 +26,7 @@ To illustrate the effects of the latter feature, three nodes with different aspe
 
 ## Related Demos
 
-- [Rectangle Node Style Demo](../../style/rectangle-node-style/index.html)
-- [Group Node Style Demo](../../style/group-node-style/index.html)
-- [Arrow Node Style Demo](../../style/arrow-node-style/index.html)
-- [Step 01 Create A Rectangle](../../tutorial-style-implementation-node/01-create-a-rectangle/index.html)
+- [Rectangle Node Style Demo](../../style/rectangle-node-style/)
+- [Group Node Style Demo](../../style/group-node-style/)
+- [Arrow Node Style Demo](../../style/arrow-node-style/)
+- [Step 01 Create A Rectangle](../../tutorial-style-implementation-node/01-create-a-rectangle/)

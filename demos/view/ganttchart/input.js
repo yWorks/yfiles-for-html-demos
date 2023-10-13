@@ -85,32 +85,32 @@ export function configureInteraction(graphComponent, modelChangedCallback) {
   configureActivityNodeCreation(graphEditorInputMode, modelChangedCallback)
 
   // update the activity data information when the label changes
-  graphEditorInputMode.addLabelTextChangedListener((sender, args) => {
-    if (args.owner instanceof INode) {
-      getActivity(args.owner).name = args.item.text
+  graphEditorInputMode.addLabelTextChangedListener((_, evt) => {
+    if (evt.owner instanceof INode) {
+      getActivity(evt.owner).name = evt.item.text
     }
   })
-  graphEditorInputMode.addLabelAddedListener((sender, args) => {
-    if (args.owner instanceof INode) {
-      getActivity(args.owner).name = args.item.text
+  graphEditorInputMode.addLabelAddedListener((_, evt) => {
+    if (evt.owner instanceof INode) {
+      getActivity(evt.owner).name = evt.item.text
     }
   })
 
-  graphEditorInputMode.addDeletedItemListener(async (sender, args) => {
-    if (args instanceof NodeEventArgs) {
+  graphEditorInputMode.addDeletedItemListener(async (_, evt) => {
+    if (evt instanceof NodeEventArgs) {
       await modelChangedCallback()
       hideActivityInfo()
-    } else if (args instanceof LabelEventArgs) {
-      const labelOwner = args.owner
+    } else if (evt instanceof LabelEventArgs) {
+      const labelOwner = evt.owner
       if (labelOwner instanceof INode) {
         getActivity(labelOwner).name = ''
       }
     }
   })
 
-  graphEditorInputMode.addItemLeftClickedListener((sender, event) => {
-    if (event.item instanceof INode) {
-      showActivityInfo(getActivity(event.item), event.item.layout.center, sender.graphComponent)
+  graphEditorInputMode.addItemLeftClickedListener((inputMode, evt) => {
+    if (evt.item instanceof INode) {
+      showActivityInfo(getActivity(evt.item), evt.item.layout.center, inputMode.graphComponent)
     } else {
       hideActivityInfo()
     }
@@ -150,13 +150,13 @@ function initializeNodeDragging(graphEditorInputMode, modelChangedCallback) {
   // create the customized input mode
   const handleInputMode = new HandleInputMode()
 
-  handleInputMode.addDragStartedListener((sender, event) => {
+  handleInputMode.addDragStartedListener((_, evt) => {
     hideActivityInfo()
-    showInfoBox(handleInputMode.currentHandle, event.context.canvasComponent)
+    showInfoBox(handleInputMode.currentHandle, evt.context.canvasComponent)
   })
 
-  handleInputMode.addDraggedListener((sender, event) => {
-    showInfoBox(handleInputMode.currentHandle, event.context.canvasComponent)
+  handleInputMode.addDraggedListener((_, evt) => {
+    showInfoBox(handleInputMode.currentHandle, evt.context.canvasComponent)
   })
 
   // apply the graph modifications when a handle has been dragged

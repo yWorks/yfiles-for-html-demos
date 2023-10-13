@@ -36,7 +36,7 @@ import { getEmployee } from './model/data-loading.js'
  */
 export function initializeGraphSearch(graphComponent, orgChartGraph) {
   const graphSearch = new OrgChartGraphSearch(graphComponent)
-  const searchBox = document.getElementById('searchBox')
+  const searchBox = document.querySelector('#searchBox')
   GraphSearch.registerEventListener(searchBox, graphSearch)
   orgChartGraph.addGraphUpdatedListener(() => graphSearch.updateSearch(searchBox.value))
 }

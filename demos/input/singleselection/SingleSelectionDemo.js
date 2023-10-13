@@ -26,12 +26,22 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, IGraph, License, Point, Rect, Size } from 'yfiles'
+import {
+  Class,
+  GraphBuilder,
+  GraphComponent,
+  GraphEditorInputMode,
+  IGraph,
+  LayoutExecutor,
+  License,
+  OrganicLayout
+} from 'yfiles'
 
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { disableSingleSelection, enableSingleSelection } from './SingleSelectionHelper.js'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /**
  * Changes the selection mode.
@@ -51,6 +61,7 @@ function toggleSingleSelection(graphComponent, singleSelectionEnabled = true) {
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
@@ -58,13 +69,23 @@ async function run() {
 
   graphComponent.inputMode = new GraphEditorInputMode()
 
-  // enable the undo feature
-  graph.undoEngineEnabled = true
   // Initialize the default style of the nodes and edges
   initDemoStyles(graph)
 
-  createSampleGraph(graph)
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new OrganicLayout({
+      minimumNodeDistance: 50
+    })
+  )
   graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
 
   // wire up the UI
   const singleSelection = document.querySelector('#toggle-single-selection')
@@ -75,47 +96,26 @@ async function run() {
   toggleSingleSelection(graphComponent)
 }
 
-const sampleNodeLocations = [
-  [317, 87],
-  [291, 2],
-  [220, 0],
-  [246, 73],
-  [221, 144],
-  [150, 180],
-  [142, 251],
-  [213, 286],
-  [232, 215],
-  [71, 285],
-  [0, 320]
-]
-
 /**
- * Creates the sample graph.
+ * Creates nodes and edges according to the given data.
  * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
  */
-function createSampleGraph(graph) {
-  graph.clear()
-  const nodes = []
-  for (const location of sampleNodeLocations) {
-    nodes.push(graph.createNode(new Rect(Point.from(location), new Size(30, 30))))
-  }
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
 
-  graph.createEdge(nodes[2], nodes[1])
-  graph.createEdge(nodes[1], nodes[0])
-  graph.createEdge(nodes[0], nodes[3])
-  graph.createEdge(nodes[3], nodes[2])
-  graph.createEdge(nodes[3], nodes[1])
-  graph.createEdge(nodes[4], nodes[3])
-  graph.createEdge(nodes[4], nodes[5])
-  graph.createEdge(nodes[8], nodes[4])
-  graph.createEdge(nodes[7], nodes[8])
-  graph.createEdge(nodes[7], nodes[6])
-  graph.createEdge(nodes[6], nodes[5])
-  graph.createEdge(nodes[6], nodes[9])
-  graph.createEdge(nodes[9], nodes[10])
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
 
-  // reset undo after initial graph loading
-  graph.undoEngine.clear()
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 run().then(finishLoading)

@@ -1,0 +1,74 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "label": "Node 1"
+    },
+    {
+      "id": 1,
+      "label": "Node 2"
+    },
+    {
+      "id": 2,
+      "label": "Node 3"
+    },
+    {
+      "id": 3,
+      "label": "Node 4"
+    },
+    {
+      "id": 4,
+      "label": "Node 5"
+    },
+    {
+      "id": 5,
+      "label": "Node 6"
+    },
+    {
+      "id": 6,
+      "label": "Node 7"
+    },
+    {
+      "id": 7,
+      "label": "Node 8"
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 1,
+      "target": 2
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 1
+    },
+    {
+      "id": 2,
+      "source": 0,
+      "target": 2,
+      "label": "Edge"
+    },
+    {
+      "id": 3,
+      "source": 3,
+      "target": 0
+    },
+    {
+      "id": 4,
+      "source": 4,
+      "target": 3
+    },
+    {
+      "id": 5,
+      "source": 6,
+      "target": 5
+    },
+    {
+      "id": 6,
+      "source": 5,
+      "target": 0
+    }
+  ]
+}

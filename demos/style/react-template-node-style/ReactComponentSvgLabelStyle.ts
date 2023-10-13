@@ -27,7 +27,14 @@
  **
  ***************************************************************************/
 import type { ILabel, IRenderContext, SizeConvertible, TaggedSvgVisual } from 'yfiles'
-import { GraphComponent, LabelStyleBase, Size, SvgVisual, Visual } from 'yfiles'
+import {
+  GraphComponent,
+  LabelStyleBase,
+  Size,
+  SvgVisual,
+  Visual,
+  VisualCachingPolicy
+} from 'yfiles'
 
 import { type Root, createRoot } from 'react-dom/client'
 import { createElement } from 'react'
@@ -76,7 +83,19 @@ function unmountReact(
   removedVisual: Visual,
   dispose: boolean
 ): Visual | null {
-  ;(removedVisual as ReactStyleSvgVisual<any>).tag.root.unmount()
+  const visual = removedVisual as ReactStyleSvgVisual<any>
+  // In React.StrictMode, React warns about unmounting components synchronously during rendering which
+  // may happen when React calls the cleanup callback of the component that contains the GraphComponent.
+  // To prevent this warning, you can enable visual-caching by setting "graphComponent.visualCaching = 'always'"
+  // and when the GraphComponent is cleaned up, asynchronously unmount the visual.
+  const visualCaching = context.canvasComponent?.visualCaching === VisualCachingPolicy.ALWAYS
+  if (visualCaching && dispose) {
+    setTimeout(() => {
+      visual.tag.root.unmount()
+    }, 0)
+  } else {
+    visual.tag.root.unmount()
+  }
   return null
 }
 

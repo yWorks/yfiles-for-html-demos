@@ -24,4 +24,4 @@ This demo shows how to create and use a custom [IPortLocationModel](https://docs
 
 ## Related Demo
 
-- See the [Custom Label Model Demo](../../input/customlabelmodel/index.html) to learn how to customize the models for label locations. Note that the code is very similar as the same concepts are being applied.
+- See the [Custom Label Model Demo](../../input/customlabelmodel/) to learn how to customize the models for label locations. Note that the code is very similar as the same concepts are being applied.

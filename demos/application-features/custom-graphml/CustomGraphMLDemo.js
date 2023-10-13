@@ -27,10 +27,12 @@
  **
  ***************************************************************************/
 import {
+  Class,
   DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -38,15 +40,13 @@ import {
   GraphMLSupport,
   GroupNodeLabelModel,
   GroupNodeStyle,
+  HierarchicLayout,
   IGraph,
-  IModelItem,
   INode,
-  ItemEventArgs,
   KeyType,
+  LayoutExecutor,
   License,
-  MouseHoverInputMode,
   Point,
-  QueryItemToolTipEventArgs,
   Size,
   StorageLocation,
   ToolTipQueryEventArgs,
@@ -56,6 +56,7 @@ import {
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -72,28 +73,69 @@ const DATE_TIME_MAPPER_KEY = 'DateTimeMapperKey'
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
+
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
-  graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
 
-  // sets up the a data binding that stores the current date when a node is created
+  // sets up the data binding that stores the current date when a node is created
   enableDataBinding()
+
+  // then build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
+  )
+  graphComponent.fitGraphBounds()
+
+  // enable now the undo engine to prevent undoing of the graph creation
+  graphComponent.graph.undoEngineEnabled = true
 
   // enable GraphML IO
   enableGraphML()
 
   // displays tooltips for the stored data items, so that something is visible to the user
   setupTooltips()
+}
 
-  // add a sample graph
-  createGraph()
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList.filter(item => !item.isGroup),
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -115,9 +157,9 @@ function enableDataBinding() {
   // If this is unwanted behavior, you can customize the node creation itself
   // to associate this data with the element at the time of its initial creation,
   // e.g. by listening to the NodeCreated event of GraphEditorInputMode, see below
-  graph.addNodeCreatedListener((source, eventArgs) => {
+  graph.addNodeCreatedListener((_, evt) => {
     // Stores the current time as node creation time.
-    dateMapper.set(eventArgs.item, new Date())
+    dateMapper.set(evt.item, new Date())
   })
 }
 
@@ -204,19 +246,19 @@ function createGraphMLIOHandler() {
 function setupTooltips() {
   const graphEditorInputMode = graphComponent.inputMode
   graphEditorInputMode.toolTipItems = GraphItemTypes.NODE
-  graphEditorInputMode.addQueryItemToolTipListener((src, eventArgs) => {
-    if (eventArgs.handled) {
+  graphEditorInputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
-    const item = eventArgs.item
+    const item = evt.item
     if (INode.isInstance(item)) {
       const dateMapper = graphComponent.graph.mapperRegistry.getMapper(DATE_TIME_MAPPER_KEY)
-      if (dateMapper !== null) {
+      if (dateMapper !== null && dateMapper.get(item)) {
         // Found a suitable mapper. Set the tooltip content.
-        eventArgs.toolTip = dateMapper.get(item).toLocaleString()
+        evt.toolTip = dateMapper.get(item).toLocaleString()
         // Indicate that the tooltip content has been set.
-        eventArgs.handled = true
+        evt.handled = true
       }
     }
   })
@@ -258,44 +300,6 @@ function initTutorialDefaults(graph) {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Creates a simple sample graph.
- */
-function createGraph() {
-  const graph = graphComponent.graph
-
-  const node1 = graph.createNodeAt([110, 20])
-  const node2 = graph.createNodeAt([145, 95])
-  const node3 = graph.createNodeAt([75, 95])
-  const node4 = graph.createNodeAt([30, 175])
-  const node5 = graph.createNodeAt([100, 175])
-
-  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  graph.setPortLocation(edge1.sourcePort, new Point(123.33, 40))
-  graph.setPortLocation(edge1.targetPort, new Point(145, 75))
-  graph.setPortLocation(edge2.sourcePort, new Point(96.67, 40))
-  graph.setPortLocation(edge2.targetPort, new Point(75, 75))
-  graph.setPortLocation(edge3.sourcePort, new Point(65, 115))
-  graph.setPortLocation(edge3.targetPort, new Point(30, 155))
-  graph.setPortLocation(edge4.sourcePort, new Point(85, 115))
-  graph.setPortLocation(edge4.targetPort, new Point(90, 155))
-  graph.setPortLocation(edge5.sourcePort, new Point(110, 40))
-  graph.setPortLocation(edge5.targetPort, new Point(110, 155))
-  graph.addBends(edge1, [new Point(123.33, 55), new Point(145, 55)])
-  graph.addBends(edge2, [new Point(96.67, 55), new Point(75, 55)])
-  graph.addBends(edge3, [new Point(65, 130), new Point(30, 130)])
-  graph.addBends(edge4, [new Point(85, 130), new Point(90, 130)])
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
 }
 
 run().then(finishLoading)

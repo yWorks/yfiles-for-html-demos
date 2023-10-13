@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 02 Port Size - Port Style Implementation Tutorial
+# 02 Port Size - Tutorial: Port Style Implementation
 
 # Configuring the port size
 
@@ -59,4 +59,4 @@ graph.addPort({
 })
 ```
 
-[03 Render Performance](../../tutorial-style-implementation-port/03-render-performance/index.html)
+[03 Render Performance](../../tutorial-style-implementation-port/03-render-performance/)

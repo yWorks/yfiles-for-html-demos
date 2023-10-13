@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 07 Undo Clipboard Support - Basic Features Tutorial
+# 07 Undo Clipboard Support - Tutorial: Basic Features
 
 # Undo and Clipboard Support
 
@@ -98,4 +98,4 @@ if (!graphComponent.clipboard.empty) {
 }
 ```
 
-[08 Grouping](../../tutorial-yfiles-basic-features/08-grouping/index.html)
+[08 Grouping](../../tutorial-yfiles-basic-features/08-grouping/)

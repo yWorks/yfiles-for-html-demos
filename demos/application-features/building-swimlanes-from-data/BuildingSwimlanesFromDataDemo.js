@@ -68,6 +68,7 @@ import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
 import { downloadFile } from 'demo-utils/file-support'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent
@@ -96,7 +97,7 @@ async function run() {
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
 
-  loadGraph()
+  void loadGraph()
 
   // bind the buttons to their functionality
   initializeUI()
@@ -106,21 +107,14 @@ async function run() {
  * @returns {!Promise}
  */
 async function loadGraph() {
-  try {
-    // load the graph data from the given JSON file
-    const graphData = await loadJSON('./GraphData.json')
+  // then build the graph with the given data set
+  buildGraph(graphComponent.graph, graphData)
 
-    // then build the graph with the given data set
-    buildGraph(graphComponent.graph, graphData)
-
-    // Automatically layout the swimlanes. The HierarchicLayout respects the node to cell assignment based on the
-    // node's center position.
-    await runLayout('0s')
-    // Finally, clear the undo engine to prevent undoing of the graph creation.
-    graphComponent.graph.undoEngine?.clear()
-  } catch (e) {
-    alert(e)
-  }
+  // Automatically layout the swimlanes. The HierarchicLayout respects the node to cell assignment based on the
+  // node's center position.
+  await runLayout('0s')
+  // Finally, clear the undo engine to prevent undoing of the graph creation.
+  graphComponent.graph.undoEngine?.clear()
 }
 
 /**
@@ -321,7 +315,7 @@ function writeToJSON(graph) {
     jsonOutput.nodesSource.push(jsonNode)
 
     // store the lane of the node
-    if (table && table instanceof ITable) {
+    if (table) {
       const column = table.findColumn(tableNode, node.layout.center)
       if (column) {
         const columnId = `lane${table.findColumn(tableNode, node.layout.center).index}`
@@ -429,20 +423,6 @@ function initializeUI() {
     downloadFile(JSON.stringify(json), 'graph.json')
   })
   document.querySelector('#layout-button').addEventListener('click', () => runLayout('1s'))
-}
-
-/**
- * Returns a promise that resolves when the JSON file is loaded.
- * In general, this can load other files, like plain text files or CSV files, too. However,
- * before usage you need to parse the file content which is done by JSON.parse in case of a JSON file as
- * demonstrated here.
- *
- * @param {!string} url The URL to load.
- * @returns {!Promise.<JSON>} A promise with the loaded data.
- */
-async function loadJSON(url) {
-  const response = await fetch(url)
-  return response.json()
 }
 
 run().then(finishLoading)

@@ -27,13 +27,16 @@
  **
  ***************************************************************************/
 import {
+  Class,
   DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeLabelModel,
   GroupNodeStyle,
+  HierarchicLayout,
   IEdge,
   IGraph,
   ILabel,
@@ -42,11 +45,10 @@ import {
   INode,
   InteriorLabelModel,
   IPort,
+  LayoutExecutor,
   License,
-  MouseHoverInputMode,
   Point,
   QueryItemToolTipEventArgs,
-  Rect,
   Size,
   ToolTipQueryEventArgs
 } from 'yfiles'
@@ -54,6 +56,7 @@ import {
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /** @type {GraphComponent} */
 let graphComponent = null
@@ -71,10 +74,22 @@ async function run() {
     allowGroupingOperations: true,
     focusableItems: 'all'
   })
-  graphComponent.graph.undoEngineEnabled = true
+
+  const graph = graphComponent.graph
 
   // configures default styles for newly created graph elements
-  initializeGraph(graphComponent.graph)
+  initializeGraph(graph)
+
+  // build the graph from the given data set
+  buildGraph(graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graph.applyLayout(new HierarchicLayout({ minimumLayerDistance: 70 }))
+  graphComponent.fitGraphBounds()
+
+  // enable now the undo engine to prevent undoing of the graph creation
+  graph.undoEngineEnabled = true
 
   // enable tooltips
   initializeTooltips()
@@ -82,11 +97,42 @@ async function run() {
   // wire up screen reader live region
   initializeLiveRegion()
 
-  // add a sample graph
-  createGraph()
-
   // bind the buttons to their functionality
   initializeUI()
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList.filter(item => !item.isGroup),
+      id: item => item.id,
+      parentId: item => item.parentId
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createEdgesSource({
+      data: graphData.edgeList,
+      sourceId: item => item.source,
+      targetId: item => item.target
+    })
+    .edgeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -110,7 +156,7 @@ function initializeTooltips() {
   mouseHoverInputMode.duration = '5s'
 
   // Register a listener for when a tooltip should be shown.
-  inputMode.addQueryItemToolTipListener((src, eventArgs) => {
+  inputMode.addQueryItemToolTipListener((_src, eventArgs) => {
     if (eventArgs.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return
@@ -227,67 +273,12 @@ function initializeGraph(graph) {
     new GroupNodeLabelModel().createDefaultParameter()
 
   // set sizes and locations specific for this demo
-  graph.nodeDefaults.size = new Size(40, 40)
+  graph.nodeDefaults.size = new Size(60, 30)
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Creates a simple sample graph.
- */
-function createGraph() {
-  const graph = graphComponent.graph
-
-  const n1 = graph.createNode(new Rect(126, 0, 50, 30))
-  const n2 = graph.createNode(new Rect(126, 72, 50, 30))
-  const n3 = graph.createNode(new Rect(75, 147, 50, 30))
-  const n4 = graph.createNode(new Rect(177.5, 147, 50, 30))
-  const n5 = graph.createNode(new Rect(110, 249, 50, 30))
-  const n6 = graph.createNode(new Rect(177.5, 249, 50, 30))
-  const n7 = graph.createNode(new Rect(110, 299, 50, 30))
-  const n8 = graph.createNode(new Rect(177.5, 299, 50, 30))
-  const n9 = graph.createNode(new Rect(110, 359, 50, 30))
-  const n10 = graph.createNode(new Rect(20, 299, 50, 30))
-  const n11 = graph.createNode(new Rect(20, 440, 50, 30))
-  const n12 = graph.createNode(new Rect(110, 440, 50, 30))
-  const n13 = graph.createNode(new Rect(20, 515, 50, 30))
-  const n14 = graph.createNode(new Rect(80, 515, 50, 30))
-  const n15 = graph.createNode(new Rect(140, 515, 50, 30))
-  const n16 = graph.createNode(new Rect(20, 569, 50, 30))
-
-  const groupNode = graph.createGroupNode({
-    labels: ['Group']
-  })
-  graph.groupNodes(groupNode, [n5, n6, n7, n8])
-  graph.adjustGroupNodeLayout(groupNode)
-
-  graph.createEdge({ source: n1, target: n2, labels: ['Edge 1'] })
-  graph.createEdge({ source: n2, target: n3, labels: ['Edge 2'] })
-  graph.createEdge({ source: n2, target: n4, labels: ['Edge 3'] })
-  graph.createEdge(n3, n5)
-  graph.createEdge(n3, n10)
-  graph.createEdge(n5, n7)
-  graph.createEdge(n7, n9)
-  graph.createEdge(n4, n6)
-  graph.createEdge(n6, n8)
-  graph.createEdge(n10, n11)
-  graph.createEdge(n10, n12)
-  graph.createEdge(n11, n13)
-  graph.createEdge(n13, n16)
-  graph.createEdge(n12, n14)
-  graph.createEdge(n12, n15)
-
-  graph.nodes.forEach((node, idx) => {
-    if (!graph.isGroupNode(node)) {
-      graph.addLabel(node, `Node ${idx + 1}`)
-    }
-  })
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
 }
 
 /**
@@ -297,7 +288,7 @@ function initializeUI() {
   document.querySelector('#atomic-toggle').addEventListener('click', () => {
     graphComponent.ariaLiveRegion.setAttribute(
       'aria-atomic',
-      String(document.getElementById('atomic-toggle').checked)
+      String(document.querySelector('#atomic-toggle').checked)
     )
   })
 }

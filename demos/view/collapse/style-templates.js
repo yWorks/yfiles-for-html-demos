@@ -46,7 +46,7 @@ export const innerNodeStyleTemplate = `
   </defs>
   <g>
     <rect stroke="none" fill="{TemplateBinding styleTag, Converter=collapseDemo.backgroundConverter}"
-      rx="4" ry="4" width="60" height="30"></rect>
+      rx="4" ry="4" width="60" height="30"/>
     <use xlink:href="{TemplateBinding styleTag, Converter=collapseDemo.iconConverter}"
-      style="pointer-events:none"></use>
+      style="pointer-events:none"/>
   </g>`

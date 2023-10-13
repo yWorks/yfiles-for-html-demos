@@ -127,17 +127,17 @@ export class GraphComponentComponent implements AfterViewInit {
     mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
 
     // Register a listener for when a tooltip should be shown.
-    inputMode.addQueryItemToolTipListener((src, eventArgs) => {
-      if (eventArgs.handled) {
+    inputMode.addQueryItemToolTipListener((_, evt) => {
+      if (evt.handled) {
         // Tooltip content has already been assigned -> nothing to do.
         return
       }
 
       // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
-      eventArgs.toolTip = this.createTooltipContent(eventArgs.item!)
+      evt.toolTip = this.createTooltipContent(evt.item!)
 
       // Indicate that the tooltip content has been set.
-      eventArgs.handled = true
+      evt.handled = true
     })
   }
 

@@ -107,7 +107,7 @@ export function createGraphBuilder(graphComponent, nodes, edges) {
     labels: ['type']
   })
 
-  graphBuilder.addNodeCreatedListener((sender, { graph, item, dataItem }) => {
+  graphBuilder.addNodeCreatedListener((_, { graph, item, dataItem }) => {
     // look for a mapping for any of the nodes labels and use the mapped style
     let matchingLabel = dataItem.labels.find(label => label in nodeStyleMapping)
     if (!matchingLabel) {

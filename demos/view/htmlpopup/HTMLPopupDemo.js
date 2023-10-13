@@ -81,7 +81,7 @@ function initializePopups(graphComponent) {
   // Creates the pop-up for the node pop-up template
   const nodePopup = new HTMLPopupSupport(
     graphComponent,
-    getDiv('nodePopupContent'),
+    getDiv('#nodePopupContent'),
     nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
   )
 
@@ -92,7 +92,7 @@ function initializePopups(graphComponent) {
   // Creates the pop-up for the edge pop-up template
   const edgePopup = new HTMLPopupSupport(
     graphComponent,
-    getDiv('edgePopupContent'),
+    getDiv('#edgePopupContent'),
     edgeLabelModel.createDefaultParameter()
   )
 
@@ -103,7 +103,7 @@ function initializePopups(graphComponent) {
   inputMode.focusableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
   // Register a listener that shows the pop-up for the currentItem
-  graphComponent.addCurrentItemChangedListener((sender, args) => {
+  graphComponent.addCurrentItemChangedListener((_, evt) => {
     const item = graphComponent.currentItem
     if (item instanceof INode) {
       // update data in node pop-up
@@ -124,7 +124,7 @@ function initializePopups(graphComponent) {
   })
 
   // On clicks on empty space, set currentItem to `null` to hide the pop-ups
-  inputMode.addCanvasClickedListener((sender, args) => {
+  inputMode.addCanvasClickedListener((_, evt) => {
     graphComponent.currentItem = null
   })
 
@@ -145,7 +145,7 @@ function initializePopups(graphComponent) {
  * @returns {!HTMLDivElement}
  */
 function getDiv(id) {
-  return document.getElementById(id)
+  return document.querySelector(id)
 }
 
 /**
@@ -230,12 +230,12 @@ function initializeInputMode(graphComponent) {
   })
 
   mode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
-  mode.addQueryItemToolTipListener((sender, args) => {
-    if (args.item instanceof INode && !args.handled) {
-      const nodeName = args.item.tag.name
+  mode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.item instanceof INode && !evt.handled) {
+      const nodeName = evt.item.tag.name
       if (nodeName) {
-        args.toolTip = nodeName
-        args.handled = true
+        evt.toolTip = nodeName
+        evt.handled = true
       }
     }
   })

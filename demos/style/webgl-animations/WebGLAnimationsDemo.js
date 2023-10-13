@@ -162,11 +162,11 @@ function configureUI(graphComponent) {
 
   const animations = ['fade', 'pulse', 'beacon', 'scale', 'shake']
   const options = new Map(
-    animations.map(animation => [animation, document.getElementById(`${animation}-options`)])
+    animations.map(animation => [animation, document.querySelector(`#${animation}-options`)])
   )
-  options.set('fade-effect', document.getElementById(`fade-options`))
-  options.set('pulse-effect', document.getElementById(`pulse-options`))
-  options.set('scale-effect', document.getElementById(`scale-options`))
+  options.set('fade-effect', document.querySelector(`#fade-options`))
+  options.set('pulse-effect', document.querySelector(`#pulse-options`))
+  options.set('scale-effect', document.querySelector(`#scale-options`))
 
   const magnitudeOptions = document.querySelector('#magnitude-options')
   const animatedElementOptions = document.querySelector('#animated-elements-options')
@@ -288,7 +288,7 @@ function configureUI(graphComponent) {
         animatedElementOptions.style.display = 'none'
         animationMagnitudeSelect.value = '20'
         beaconSmoothCheckbox.checked = true
-        document.getElementById('beacon-color').style.display = 'block'
+        document.querySelector('#beacon-color').style.display = 'block'
         animationDurationSelect.value = '500ms'
         iterationCountSelect.value = '1'
         animationDirectionSelect.value = 'normal'
@@ -502,13 +502,13 @@ function configureInteraction(graphComponent) {
 
   // Add the configured animation either to the whole component the hovered item
   // is part of or to the rest of the graph.
-  gvim.itemHoverInputMode.addHoveredItemChangedListener((_, args) => {
-    stopAnimation(graphComponent, args.oldItem)
-    startAnimation(graphComponent, args.item)
+  gvim.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    stopAnimation(graphComponent, evt.oldItem)
+    startAnimation(graphComponent, evt.item)
   })
 
-  gvim.addMultiSelectionFinishedListener((_, args) => {
-    const item = args.selection.at(0)
+  gvim.addMultiSelectionFinishedListener((_, evt) => {
+    const item = evt.selection.at(0)
     stopAnimation(graphComponent, currentSelectedItem)
     startAnimation(graphComponent, item)
     currentSelectedItem = item
@@ -691,9 +691,9 @@ function getAnimationType(animationType) {
  * @returns {!object}
  */
 function getConfiguredFadeColors() {
-  const color1pickerValue = document.getElementById('fade-color1').value
-  const color2pickerValue = document.getElementById('fade-color2').value
-  const chosenFadeType = document.getElementById('fade-type').value
+  const color1pickerValue = document.querySelector('#fade-color1').value
+  const color2pickerValue = document.querySelector('#fade-color2').value
+  const chosenFadeType = document.querySelector('#fade-type').value
   const isSemiTransparent =
     chosenFadeType === 'from semi-transparent' || chosenFadeType === 'to semi-transparent'
   return {
@@ -797,14 +797,14 @@ function getAnimationConfiguration() {
     color1: colorFade
       ? colors.color1
       : baseAnimation === 'beacon'
-      ? Color.from(document.getElementById('beacon-color').value)
+      ? Color.from(document.querySelector('#beacon-color').value)
       : null,
     color2: colorFade ? colors.color2 : null,
-    count: Number(document.getElementById('pulse-count').value),
-    pulseWidth: Number(document.getElementById('pulse-width').value),
-    pulseDistance: Number(document.getElementById('pulse-distance').value),
-    viewCoordinates: Boolean(document.getElementById('view-coordinates').checked),
-    smooth: Boolean(document.getElementById('beacon-smooth').checked)
+    count: Number(document.querySelector('#pulse-count').value),
+    pulseWidth: Number(document.querySelector('#pulse-width').value),
+    pulseDistance: Number(document.querySelector('#pulse-distance').value),
+    viewCoordinates: Boolean(document.querySelector('#view-coordinates').checked),
+    smooth: Boolean(document.querySelector('#beacon-smooth').checked)
   }
 }
 

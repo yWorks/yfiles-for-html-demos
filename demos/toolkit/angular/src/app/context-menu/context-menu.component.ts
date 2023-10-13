@@ -76,17 +76,17 @@ export class ContextMenuComponent implements AfterViewInit {
       }
     })
 
-    this.inputMode.contextMenuInputMode.addPopulateMenuListener((sender, evt) => {
+    this.inputMode.contextMenuInputMode.addPopulateMenuListener((_, evt) => {
       evt.showMenu = true
     })
 
-    this.inputMode.addPopulateItemContextMenuListener((sender, args) => {
-      if (args.item) {
+    this.inputMode.addPopulateItemContextMenuListener((_, evt) => {
+      if (evt.item) {
         // select the item
         graphComponent.selection.clear()
-        graphComponent.selection.setSelected(args.item, true)
+        graphComponent.selection.setSelected(evt.item, true)
         // emit the populate event
-        this.populateContextMenu.emit(args.item)
+        this.populateContextMenu.emit(evt.item)
       }
     })
     this.inputMode.contextMenuInputMode.addCloseMenuListener(() => this.hide())
@@ -116,18 +116,7 @@ export class ContextMenuComponent implements AfterViewInit {
         // might be open already because of the long-press listener
         return
       }
-      const me = evt
-      if ((evt as any).mozInputSource === 1 && me.button === 0) {
-        // This event was triggered by the context menu key in Firefox.
-        // Thus, the coordinates of the event point to the lower left corner of the element and should be corrected.
-        openingCallback(getCenterInPage(componentDiv))
-      } else if (me.pageX === 0 && me.pageY === 0) {
-        // Most likely, this event was triggered by the context menu key in IE.
-        // Thus, the coordinates are meaningless and should be corrected.
-        openingCallback(getCenterInPage(componentDiv))
-      } else {
-        openingCallback({ x: me.pageX, y: me.pageY })
-      }
+      openingCallback({ x: evt.pageX, y: evt.pageY })
     }
 
     // Listen for the contextmenu event
@@ -140,10 +129,10 @@ export class ContextMenuComponent implements AfterViewInit {
     if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer: ReturnType<typeof setTimeout> | undefined
-      graphComponent.addTouchDownListener((sender, args) => {
+      graphComponent.addTouchDownListener((_, evt) => {
         contextMenuTimer = setTimeout(() => {
           openingCallback(
-            graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location))
+            graphComponent.toPageFromView(graphComponent.toViewCoordinates(evt.location))
           )
         }, 500)
       })

@@ -54,7 +54,7 @@ export class IsometricBarLabelNodeStyle extends NodeStyleBase {
    * @returns {?Visual}
    */
   createVisual(context, node) {
-    const g = window.document.createElementNS(this.svgNS, 'g')
+    const g = document.createElementNS(this.svgNS, 'g')
 
     // the offset off the label from the top of the bar in view coordinates
     const offset = -12
@@ -62,7 +62,7 @@ export class IsometricBarLabelNodeStyle extends NodeStyleBase {
     const triangleSize = 12
 
     // draw a small triangle as label pointer
-    const triangle = window.document.createElementNS(this.svgNS, 'polygon')
+    const triangle = document.createElementNS(this.svgNS, 'polygon')
     const svgPolygonDefinition = `${-triangleSize / 2},0 ${triangleSize / 2},0 0,${triangleSize}`
     triangle.setAttribute('points', svgPolygonDefinition)
     triangle.setAttribute('stroke', '#461622')
@@ -72,7 +72,7 @@ export class IsometricBarLabelNodeStyle extends NodeStyleBase {
     g.appendChild(triangle)
 
     // use the 'value' of the node.tag as label text
-    const text = window.document.createElementNS(this.svgNS, 'text')
+    const text = document.createElementNS(this.svgNS, 'text')
     const labelText = node.tag.value
     text.textContent = labelText
     const textOffset = offset - 20
@@ -83,7 +83,7 @@ export class IsometricBarLabelNodeStyle extends NodeStyleBase {
     text.setAttribute('y', `${textOffset}`)
 
     // use a semi-transparent round rect as label background
-    const background = window.document.createElementNS(this.svgNS, 'rect')
+    const background = document.createElementNS(this.svgNS, 'rect')
     background.setAttribute('fill', '#F6FFF7')
 
     // calculate background position

@@ -58,21 +58,19 @@ export function configureToolTips(inputMode: GraphInputMode): void {
   mouseHoverInputMode.duration = TimeSpan.fromSeconds(10)
 
   // Register a listener for when a tool tip should be shown.
-  inputMode.addQueryItemToolTipListener(
-    (src: object, eventArgs: QueryItemToolTipEventArgs<IModelItem>): void => {
-      if (eventArgs.handled) {
-        // Tool tip content has already been assigned -> nothing to do.
-        return
-      }
-
-      // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
-      if (eventArgs.item instanceof ILabel) {
-        eventArgs.toolTip = createToolTipContent(eventArgs.item)
-        // Indicate that the tool tip content has been set.
-        eventArgs.handled = true
-      }
+  inputMode.addQueryItemToolTipListener((_, evt): void => {
+    if (evt.handled) {
+      // Tool tip content has already been assigned -> nothing to do.
+      return
     }
-  )
+
+    // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
+    if (evt.item instanceof ILabel) {
+      evt.toolTip = createToolTipContent(evt.item)
+      // Indicate that the tool tip content has been set.
+      evt.handled = true
+    }
+  })
 }
 
 /**

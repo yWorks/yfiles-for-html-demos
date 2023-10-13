@@ -135,7 +135,7 @@ function initializeInputMode(): void {
 
   // Update the label that shows the current rotation angle
   const handleInputMode = (graphComponent.inputMode as GraphEditorInputMode).handleInputMode
-  handleInputMode.addDraggedListener((src, args) => {
+  handleInputMode.addDraggedListener((src, evt) => {
     if (src.currentHandle instanceof RotatableNodes.NodeRotateHandle) {
       const rotatedNode = src.affectedItems.find(item => item instanceof INode) as INode
       if (
@@ -144,7 +144,7 @@ function initializeInputMode(): void {
         rotatedNode.labels.size === 1 &&
         rotatedNode.labels.first().text.endsWith('°')
       ) {
-        args.context.graph!.setLabelText(
+        evt.context.graph!.setLabelText(
           rotatedNode.labels.first(),
           `${rotatedNode.style.angle.toFixed(0)}°`
         )

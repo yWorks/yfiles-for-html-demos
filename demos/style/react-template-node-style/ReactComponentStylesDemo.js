@@ -84,11 +84,11 @@ let tagTextArea
 /** @type {GraphMLSupport} */
 let graphMLSupport
 
-const templateErrorArea = document.getElementById('template-text-area-error')
-const tagErrorArea = document.getElementById('tag-text-area-error')
-const applyTemplateButton = document.getElementById('apply-template-button')
-const htmlTemplateToggle = document.getElementById('html-template')
-const applyTagButton = document.getElementById('apply-tag-button')
+const templateErrorArea = document.querySelector('#template-text-area-error')
+const tagErrorArea = document.querySelector('#tag-text-area-error')
+const applyTemplateButton = document.querySelector('#apply-template-button')
+const htmlTemplateToggle = document.querySelector('#html-template')
+const applyTagButton = document.querySelector('#apply-tag-button')
 
 /**
  * Runs the demo.
@@ -117,7 +117,7 @@ async function run() {
  */
 function initializeTextAreas() {
   jsxRenderFunctionTextArea = CodeMirror.fromTextArea(
-    document.getElementById('template-text-area'),
+    document.querySelector('#template-text-area'),
     {
       lineNumbers: true,
       mode: 'jsx',
@@ -125,7 +125,7 @@ function initializeTextAreas() {
       lint: true
     }
   )
-  tagTextArea = CodeMirror.fromTextArea(document.getElementById('tag-text-area'), {
+  tagTextArea = CodeMirror.fromTextArea(document.querySelector('#tag-text-area'), {
     lineNumbers: true,
     mode: 'application/json',
     gutters: ['CodeMirror-lint-markers'],

@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 03 Render Performance - Port Style Implementation Tutorial
+# 03 Render Performance - Tutorial: Port Style Implementation
 
 # Improving rendering performance
 
@@ -103,4 +103,4 @@ Note
 
 Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#PortStyleBase-method-updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame rates during animations and interactive gestures.
 
-[04 Conditional Port Coloring](../../tutorial-style-implementation-port/04-conditional-coloring/index.html)
+[04 Conditional Port Coloring](../../tutorial-style-implementation-port/04-conditional-coloring/)

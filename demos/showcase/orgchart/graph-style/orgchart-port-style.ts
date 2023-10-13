@@ -34,9 +34,9 @@ import type { CollapsibleTree } from '../CollapsibleTree'
 const portStyleTemplate = `<g id="PortStyleTemplate">
   <g class="port">
     <ellipse rx="8" ry="8"/>
-    <line x1="-6" y1="0" x2="6" y2="0" class="port-icon"></line>
+    <line x1="-6" y1="0" x2="6" y2="0" class="port-icon"/>
     <line x1="0" y1="-1" x2="0" y2="1"
-      class="{TemplateBinding styleTag, Converter=orgChartConverters.portIconStateConverter}"></line>
+      class="{TemplateBinding styleTag, Converter=orgChartConverters.portIconStateConverter}"/>
   </g>
 </g>
 `

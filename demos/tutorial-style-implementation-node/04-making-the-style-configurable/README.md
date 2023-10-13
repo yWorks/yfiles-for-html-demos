@@ -11,7 +11,7 @@
 -->
 #
 
-      04 Making the Style Configurable - Node Style Implementation Tutorial
+      04 Making the Style Configurable - Tutorial: Node Style Implementation
 
 # Style-specific customizations
 
@@ -54,4 +54,4 @@ Note
 
 All styles that share the same style instance will be rendered with the same fill color. Thus, changing the fill color of one node’s style will also affect the fill color of all other nodes that share the same style instance.
 
-[05 Data from Tag](../../tutorial-style-implementation-node/05-data-from-tag/index.html)
+[05 Data from Tag](../../tutorial-style-implementation-node/05-data-from-tag/)

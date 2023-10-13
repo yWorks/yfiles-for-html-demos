@@ -73,6 +73,6 @@ export function initializeOptionPanel(exportCallback) {
  * @returns {!PaperSize}
  */
 function getPaperSize() {
-  const inputPaperSize = document.getElementById('paperSize')
+  const inputPaperSize = document.querySelector('#paperSize')
   return PaperSize[inputPaperSize.value]
 }

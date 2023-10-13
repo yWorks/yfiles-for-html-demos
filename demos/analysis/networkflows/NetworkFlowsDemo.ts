@@ -131,14 +131,14 @@ let nodesToChange: INode[] = []
  */
 let compoundEdit: ICompoundEdit
 
-const newButton = document.getElementById('new-button') as HTMLButtonElement
-const algorithmComboBox = document.getElementById('algorithm-combo-box') as HTMLSelectElement
-const reloadButton = document.getElementById('reload-button') as HTMLButtonElement
-const layoutButton = document.getElementById('layout-button') as HTMLButtonElement
-const edgePopupContent = document.getElementById('edgePopupContent') as HTMLElement
-const costForm = document.getElementById('cost-form') as HTMLInputElement
-const flowLabel = document.getElementById('flowInformationLabel') as HTMLElement
-const flowInput = document.getElementById('flowValue') as HTMLInputElement
+const newButton = document.querySelector<HTMLButtonElement>('#new-button')!
+const algorithmComboBox = document.querySelector<HTMLSelectElement>('#algorithm-combo-box')!
+const reloadButton = document.querySelector<HTMLButtonElement>('#reload-button')!
+const layoutButton = document.querySelector<HTMLButtonElement>('#layout-button')!
+const edgePopupContent = document.querySelector<HTMLElement>('#edgePopupContent')!
+const costForm = document.querySelector<HTMLInputElement>('#cost-form')!
+const flowLabel = document.querySelector<HTMLElement>('#flowInformationLabel')!
+const flowInput = document.querySelector<HTMLInputElement>('#flowValue')!
 /**
  * Runs the demo.
  */
@@ -290,10 +290,10 @@ function createEditorInputMode(): void {
     deletedCompoundEdit.commit()
   })
 
-  inputMode.addDeletingSelectionListener((sender, args) => {
+  inputMode.addDeletingSelectionListener((_, evt) => {
     edgePopup.currentItem = null
     // collect all nodes that are endpoints of removed edges
-    args.selection.forEach(item => {
+    evt.selection.forEach(item => {
       if (item instanceof IEdge) {
         nodesToChange.push(item.sourceNode!)
         nodesToChange.push(item.targetNode!)
@@ -305,9 +305,9 @@ function createEditorInputMode(): void {
   inputMode.createEdgeInputMode.allowSelfloops = false
 
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (sender, args) => {
+  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (_, evt) => {
     const edgeCreatedCompoundEdit = graphComponent.graph.beginEdit('EdgeCreation', 'EdgeCreation')
-    const edge = args.item as IEdge & { sourceNode: INode; targetNode: INode }
+    const edge = evt.item
     edge.tag = {
       capacity: 10,
       cost: 1,
@@ -318,16 +318,16 @@ function createEditorInputMode(): void {
     updateEdgeThickness(edge)
 
     // update the size of the source and target nodes
-    calculateNodeSize(edge.sourceNode)
-    calculateNodeSize(edge.targetNode)
+    calculateNodeSize(edge.sourceNode!)
+    calculateNodeSize(edge.targetNode!)
     runFlowAlgorithm()
-    await runLayout(true, [edge.sourceNode, edge.targetNode])
+    await runLayout(true, [edge.sourceNode!, edge.targetNode!])
     edgeCreatedCompoundEdit.commit()
   })
 
   // node creation
-  inputMode.addNodeCreatedListener((sender, event) => {
-    event.item.tag = {
+  inputMode.addNodeCreatedListener((_, evt) => {
+    evt.item.tag = {
       supply: 0,
       flow: 0,
       adjustable: algorithmComboBox.selectedIndex === MIN_COST_FLOW
@@ -336,24 +336,19 @@ function createEditorInputMode(): void {
 
   inputMode.addCanvasClickedListener(() => (edgePopup.currentItem = null))
 
-  inputMode.addItemClickedListener(onClicked)
+  // Presents a popup that provides buttons for increasing/decreasing the edge capacity.
+  inputMode.addItemClickedListener((_, evt) => {
+    const item = evt.item
+    if (item instanceof ILabel && item.tag === 'cost') {
+      costForm.value = parseInt(item.text).toString()
+      edgePopup.currentItem = item.owner
+      return
+    }
+
+    edgePopup.currentItem = null
+  })
+
   graphComponent.inputMode = inputMode
-}
-
-/**
- * Presents a popup that provides buttons for increasing/decreasing the edge capacity.
- * @param sender The sender of the event
- * @param args The event data
- */
-function onClicked(sender: any, args: ItemClickedEventArgs<IModelItem>): void {
-  const item = args.item
-  if (item instanceof ILabel && item.tag === 'cost') {
-    costForm.value = parseInt(item.text).toString()
-    edgePopup.currentItem = item.owner
-    return
-  }
-
-  edgePopup.currentItem = null
 }
 
 /**
@@ -429,9 +424,7 @@ function runFlowAlgorithm(): void {
   }
 
   // update flow information
-  flowLabel.innerHTML = `${
-    (algorithmComboBox[algorithmComboBox.selectedIndex] as HTMLOptionElement).text
-  }`
+  flowLabel.innerHTML = `${algorithmComboBox[algorithmComboBox.selectedIndex].textContent}`
   flowLabel.style.display = 'inline-block'
   flowInput.style.display = 'inline-block'
   flowInput.value = flowValue.toString()
@@ -930,7 +923,7 @@ async function onAlgorithmChanged() {
  */
 function updateDescriptionText(): void {
   const selectedIndex = algorithmComboBox.selectedIndex
-  const descriptionText = document.getElementById('description') as HTMLElement
+  const descriptionText = document.querySelector<HTMLElement>('#description')!
   let i = 0
   for (let child = descriptionText.firstElementChild; child; child = child.nextElementSibling) {
     ;(child as HTMLDivElement).style.display = i === selectedIndex ? 'block' : 'none'

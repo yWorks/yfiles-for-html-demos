@@ -54,9 +54,9 @@ finishLoading()
 
 addButtonListener('#layoutButton', () => applyLayout(graphComponent))
 
-const layoutButton = document.querySelector(
+const layoutButton = document.querySelector<HTMLButtonElement>(
   '#layoutAnimatedButton'
-) as HTMLButtonElement
+)!
 
 addButtonListener('#layoutAnimatedButton', async () => {
   layoutButton.disabled = true

@@ -150,9 +150,9 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
       dragPreview
     )
 
-    dragSource.addQueryContinueDragListener((src, args) => {
+    dragSource.addQueryContinueDragListener((src, evt) => {
       // hide the preview if there is currently to valid drop target
-      if (args.dropTarget) {
+      if (evt.dropTarget) {
         dragPreview.classList.add('hidden')
       } else {
         dragPreview.classList.remove('hidden')

@@ -117,6 +117,6 @@ function calculateGrid(policy) {
  * @returns {!TabularLayoutPolicy}
  */
 function getPolicy() {
-  const aspectRatioButton = document.getElementById('use-aspect-ratio')
+  const aspectRatioButton = document.querySelector('#use-aspect-ratio')
   return aspectRatioButton.checked ? TabularLayoutPolicy.FIXED_SIZE : TabularLayoutPolicy.AUTO_SIZE
 }

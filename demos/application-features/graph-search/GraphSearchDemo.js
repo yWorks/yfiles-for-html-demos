@@ -27,15 +27,17 @@
  **
  ***************************************************************************/
 import {
-  EdgePathLabelModel,
-  EdgeSides,
+  Class,
+  GraphBuilder,
   GraphComponent,
   GraphHighlightIndicatorManager,
   IGraph,
   IndicatorNodeStyleDecorator,
   INode,
   InteriorLabelModel,
+  LayoutExecutor,
   License,
+  RadialLayout,
   Rect,
   ShapeNodeStyle,
   Size
@@ -44,6 +46,7 @@ import {
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /**
  * Application Features - Graph Search
@@ -59,6 +62,7 @@ let graphComponent
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   applyDemoTheme(graphComponent)
@@ -69,12 +73,38 @@ async function run() {
   // configure the highlight style for the nodes that match the searched query
   initSearchHighlightingStyle(graphComponent)
 
-  // add a sample graph
-  createGraph(graphComponent.graph)
+  // then build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(new RadialLayout())
   graphComponent.fitGraphBounds()
 
   // bind the buttons to their functionality
   initializeUI()
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  const nodesSource = graphBuilder.createNodesSource(graphData.nodeList, item => item.id)
+  nodesSource.nodeCreator.layoutProvider = item =>
+    item.label === 'Hobbies' ? new Rect(0, 0, 130, 70) : new Rect(0, 0, 80, 40)
+  nodesSource.nodeCreator.createLabelBinding(data => data.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -124,7 +154,7 @@ function updateSearch(searchText) {
  * @returns {boolean} True if the node matches the text, false otherwise
  */
 function matches(node, text) {
-  return node.labels.some(label => label.text.toLowerCase().indexOf(text.toLowerCase()) !== -1)
+  return node.labels.some(label => label.text.toLowerCase().includes(text.toLowerCase()))
 }
 
 /**
@@ -137,13 +167,9 @@ function initializeGraph(graph) {
   initDemoStyles(graph)
 
   // set sizes and locations specific for this demo
-  graph.nodeDefaults.size = new Size(40, 40)
-
+  graph.nodeDefaults.size = new Size(80, 40)
+  graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
-    distance: 5,
-    autoRotation: true
-  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
 
 /**
@@ -151,116 +177,9 @@ function initializeGraph(graph) {
  */
 function initializeUI() {
   // adds the listener to the search box
-  document.getElementById('searchBox').addEventListener('input', e => {
+  document.querySelector('#searchBox').addEventListener('input', e => {
     updateSearch(e.target.value)
   })
-}
-
-/**
- * Creates an initial sample graph.
- * @param {!IGraph} graph The graph.
- */
-function createGraph(graph) {
-  const node1 = graph.createNode({
-    layout: new Rect(241, 273, 130, 70),
-    labels: ['Hobbies']
-  })
-  const node2 = graph.createNode({
-    layout: new Rect(309, 126, 70, 40),
-    labels: ['Games']
-  })
-  const node3 = graph.createNode({
-    layout: new Rect(435, 318, 70, 40),
-    labels: ['Sport']
-  })
-  const node4 = graph.createNode({
-    layout: new Rect(249, 451, 70, 40),
-    labels: ['Books']
-  })
-  const node5 = graph.createNode({
-    layout: new Rect(116, 323, 70, 40),
-    labels: ['Diy']
-  })
-  const node6 = graph.createNode({
-    layout: new Rect(157, 187, 70, 40),
-    labels: ['Collecting']
-  })
-  const node7 = graph.createNode({
-    layout: new Rect(232, 579, 70, 40),
-    labels: ['Fantasy']
-  })
-  const node8 = graph.createNode({
-    layout: new Rect(343, 530, 70, 40),
-    labels: ['Science\nFiction']
-  })
-  const node9 = graph.createNode({
-    layout: new Rect(137, 503, 70, 40),
-    labels: ['Thriller']
-  })
-  const node10 = graph.createNode({
-    layout: new Rect(201, 30, 100, 40),
-    labels: ['Cops and\nRobbers']
-  })
-  const node11 = graph.createNode({
-    layout: new Rect(422, 85, 90, 40),
-    labels: ['The Settlers\nof Catan']
-  })
-  const node12 = graph.createNode({
-    layout: new Rect(341, 0, 70, 40),
-    labels: ['Computer']
-  })
-  const node13 = graph.createNode({
-    layout: new Rect(61, 109, 70, 40),
-    labels: ['Stamps']
-  })
-  const node14 = graph.createNode({
-    layout: new Rect(463, 435, 70, 40),
-    labels: ['Dancing']
-  })
-  const node15 = graph.createNode({
-    layout: new Rect(568, 349, 70, 40),
-    labels: ['Climbing']
-  })
-  const node16 = graph.createNode({
-    layout: new Rect(508, 222, 70, 40),
-    labels: ['Soccer']
-  })
-  const node17 = graph.createNode({
-    layout: new Rect(654, 442, 70, 40),
-    labels: ['Rock']
-  })
-  const node18 = graph.createNode({
-    layout: new Rect(679, 294, 70, 40),
-    labels: ['Ice']
-  })
-  const node19 = graph.createNode({
-    layout: new Rect(0, 272, 70, 40),
-    labels: ['Planes']
-  })
-  const node20 = graph.createNode({
-    layout: new Rect(16, 403, 70, 40),
-    labels: ['Cars']
-  })
-
-  graph.createEdge(node1, node2)
-  graph.createEdge(node1, node3)
-  graph.createEdge(node1, node4)
-  graph.createEdge(node1, node5)
-  graph.createEdge(node1, node6)
-  graph.createEdge(node2, node10)
-  graph.createEdge(node2, node11)
-  graph.createEdge(node2, node12)
-  graph.createEdge(node3, node14)
-  graph.createEdge(node3, node15)
-  graph.createEdge(node3, node16)
-  graph.createEdge(node4, node7)
-  graph.createEdge(node4, node8)
-  graph.createEdge(node4, node9)
-  graph.createEdge(node5, node19)
-  graph.createEdge(node5, node20)
-  graph.createEdge(node6, node13)
-  graph.createEdge(node15, node17)
-  graph.createEdge(node15, node18)
 }
 
 run().then(finishLoading)

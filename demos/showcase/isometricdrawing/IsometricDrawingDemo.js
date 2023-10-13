@@ -259,7 +259,7 @@ function initializeGraph() {
   )
 
   // ensure that every node has geometry and color information
-  graph.addNodeCreatedListener((sender, evt) => {
+  graph.addNodeCreatedListener((_, evt) => {
     ensureNodeTag(evt.item)
     if (graph.isGroupNode(evt.item)) {
       adaptGroupNodes()
@@ -402,12 +402,12 @@ function initializeUI() {
  * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {
-  document.getElementById('open-file').disabled = disabled
-  document.getElementById('fit-content').disabled = disabled
-  document.getElementById('hierarchic-layout').disabled = disabled
-  document.getElementById('orthogonal-layout').disabled = disabled
-  document.getElementById('grid-toggle').disabled = disabled
-  document.getElementById('rotation').disabled = disabled
+  document.querySelector('#open-file').disabled = disabled
+  document.querySelector('#fit-content').disabled = disabled
+  document.querySelector('#hierarchic-layout').disabled = disabled
+  document.querySelector('#orthogonal-layout').disabled = disabled
+  document.querySelector('#grid-toggle').disabled = disabled
+  document.querySelector('#rotation').disabled = disabled
 }
 
 run().then(finishLoading)

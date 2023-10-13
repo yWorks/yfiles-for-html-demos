@@ -15,6 +15,8 @@
 
 This demo shows how to build a graph using the data stored in JSON-format.
 
+This demo utilizes the [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) API to create graph elements, which can be useful for handling special cases. However, for general use cases, we recommend using the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) for creating graphs from data. The GraphBuilder simplifies the process and is the recommended approach for most scenarios.
+
 - Note that some nodes have individual colors or sizes.
 - Look at the hierarchy of group nodes.
 - See the edges connecting to normal nodes and group nodes.

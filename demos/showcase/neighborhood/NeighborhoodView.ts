@@ -448,16 +448,14 @@ export class NeighborhoodView {
     // If an item is clicked, we want the view to show the neighborhood
     // of the clicked node, and invoke the click callback with the original
     // node.
-    graphViewerInputMode.addItemClickedListener(
-      (sender: object, { item }: ItemClickedEventArgs<IModelItem>) => {
-        if (item instanceof INode) {
-          const originalNode = this.originalNodes.get(item)
-          if (originalNode) {
-            this.clickCallback?.(originalNode)
-          }
+    graphViewerInputMode.addItemClickedListener((_, { item }: ItemClickedEventArgs<IModelItem>) => {
+      if (item instanceof INode) {
+        const originalNode = this.originalNodes.get(item)
+        if (originalNode) {
+          this.clickCallback?.(originalNode)
         }
       }
-    )
+    })
 
     this.neighborhoodComponent.inputMode = graphViewerInputMode
   }

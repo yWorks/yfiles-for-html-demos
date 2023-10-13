@@ -11,7 +11,7 @@
 -->
 #
 
-      03 Create Parallel Polylines - Edge Style Implementation Tutorial
+      03 Create Parallel Polylines - Tutorial: Edge Style Implementation
 
 # A more interesting line visualization
 
@@ -43,4 +43,4 @@ group.append(widePath, thinPath)
 return new SvgVisual(group)
 ```
 
-[04 Render Performance](../../tutorial-style-implementation-edge/04-render-performance/index.html)
+[04 Render Performance](../../tutorial-style-implementation-edge/04-render-performance/)

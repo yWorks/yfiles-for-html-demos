@@ -112,6 +112,6 @@ function getNode(item: IModelItem): INode {
   return item instanceof INode
     ? item
     : item instanceof IEdge
-    ? (item.sourceNode as INode)
+    ? item.sourceNode!
     : ((item as ILabel).owner as INode)
 }

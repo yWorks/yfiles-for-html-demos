@@ -1,0 +1,48 @@
+{
+  "nodeList": [
+    { "id": 0 },
+    { "id": 1 },
+    {
+      "id": 2,
+      "tag": null,
+      "label": "Group 1",
+      "isGroup": true
+    },
+    {
+      "id": 3,
+      "parentId": 2
+    },
+    {
+      "id": 4,
+      "parentId": 2
+    },
+    { "id": 5, "parentId": 2 }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 5,
+      "target": 3
+    },
+    {
+      "id": 1,
+      "source": 3,
+      "target": 0
+    },
+    {
+      "id": 2,
+      "source": 3,
+      "target": 1
+    },
+    {
+      "id": 3,
+      "source": 5,
+      "target": 4
+    },
+    {
+      "id": 4,
+      "source": 5,
+      "target": 1
+    }
+  ]
+}

@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 06 Configure Styles - Graph Builder Tutorial
+# 06 Configure Styles - Tutorial: Graph Builder
 
 # Styling the graph using GraphBuilder
 
@@ -123,4 +123,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `configure-styles.ts` and play around with the different ways to style the nodes.
 
-[07 Create Labels Sources](../../tutorial-graph-builder/07-create-labels-sources/index.html)
+[07 Create Labels Sources](../../tutorial-graph-builder/07-create-labels-sources/)

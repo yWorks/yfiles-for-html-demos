@@ -53,17 +53,17 @@ export function configureToolTips(inputMode) {
   mouseHoverInputMode.duration = TimeSpan.fromSeconds(10)
 
   // Register a listener for when a tool tip should be shown.
-  inputMode.addQueryItemToolTipListener((src, eventArgs) => {
-    if (eventArgs.handled) {
+  inputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled) {
       // Tool tip content has already been assigned -> nothing to do.
       return
     }
 
     // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
-    if (eventArgs.item instanceof ILabel) {
-      eventArgs.toolTip = createToolTipContent(eventArgs.item)
+    if (evt.item instanceof ILabel) {
+      evt.toolTip = createToolTipContent(evt.item)
       // Indicate that the tool tip content has been set.
-      eventArgs.handled = true
+      evt.handled = true
     }
   })
 }

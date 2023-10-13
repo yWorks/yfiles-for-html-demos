@@ -198,15 +198,15 @@ export class CompanyStructureView {
    * @param {!GraphComponent} graphComponent The given graphComponent
    */
   enableItemClicking(viewerInputMode, graphComponent) {
-    viewerInputMode.addItemClickedListener((sender, event) => {
-      if (event.item instanceof INode) {
-        if (!graphComponent.graph.isGroupNode(event.item)) {
-          this.nodeClickListener && this.nodeClickListener(getCompany(event.item))
+    viewerInputMode.addItemClickedListener((_, evt) => {
+      if (evt.item instanceof INode) {
+        if (!graphComponent.graph.isGroupNode(evt.item)) {
+          this.nodeClickListener && this.nodeClickListener(getCompany(evt.item))
         }
-        event.handled = true
-      } else if (event.item instanceof IEdge) {
-        this.edgeClickListener && this.edgeClickListener(getRelationship(event.item))
-        event.handled = true
+        evt.handled = true
+      } else if (evt.item instanceof IEdge) {
+        this.edgeClickListener && this.edgeClickListener(getRelationship(evt.item))
+        evt.handled = true
       }
     })
   }
@@ -408,7 +408,7 @@ export class CompanyStructureView {
     })
 
     // whenever the node changes in the future, we want to update the tag, too
-    nodeSource.nodeCreator.addNodeUpdatedListener((sender, evt) => {
+    nodeSource.nodeCreator.addNodeUpdatedListener((_, evt) => {
       nodeSource.nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       nodeSource.nodeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
@@ -421,7 +421,7 @@ export class CompanyStructureView {
         preferredSize: () => labelSizeDefaults
       })
 
-      nameLabel.addLabelUpdatedListener((sender, evt) => {
+      nameLabel.addLabelUpdatedListener((_, evt) => {
         nameLabel.updateText(evt.graph, evt.item, evt.dataItem)
       })
     }
@@ -439,10 +439,10 @@ export class CompanyStructureView {
       text: dataItem => (dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null),
       defaults: edgeLabelDefaults
     })
-    edgeSource.edgeCreator.addEdgeUpdatedListener((sender, evt) => {
+    edgeSource.edgeCreator.addEdgeUpdatedListener((_, evt) => {
       edgeSource.edgeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
-    edgeLabel.addLabelUpdatedListener((sender, evt) =>
+    edgeLabel.addLabelUpdatedListener((_, evt) =>
       edgeLabel.updateText(evt.graph, evt.item, evt.dataItem)
     )
 

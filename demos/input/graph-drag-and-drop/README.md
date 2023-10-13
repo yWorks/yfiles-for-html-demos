@@ -29,7 +29,7 @@ This demo contains a custom implementation of a [DropInputMode](https://docs.ywo
 
 ## Related Demos
 
-- [Drag and Drop Demo](../../input/draganddrop/index.html)
-- [Drag From Component Demo](../../input/drag-from-component/index.html)
-- [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/index.html)
-- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/index.html)
+- [Drag and Drop Demo](../../input/draganddrop/)
+- [Drag From Component Demo](../../input/drag-from-component/)
+- [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/)
+- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/)

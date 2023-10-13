@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 07 Hit-Testing - Node Style Implementation Tutorial
+# 07 Hit-Testing - Tutorial: Node Style Implementation
 
 # Customizing hit-testing
 
@@ -50,4 +50,4 @@ Note
 
 Try this implementation by hovering both nodes. Notice that the red node, which uses the default hit-test, also detects hits in the upper right, empty corner. The blue node uses the adjusted hit-test code.
 
-[08 Edge Cropping](../../tutorial-style-implementation-node/08-edge-cropping/index.html)
+[08 Edge Cropping](../../tutorial-style-implementation-node/08-edge-cropping/)

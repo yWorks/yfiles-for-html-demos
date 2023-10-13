@@ -42,12 +42,12 @@ import { toggleExportRectangle } from '../export-rectangle/export-rectangle.js'
  * @param {!function} exportCallback
  */
 export function initializeOptionPanel(exportCallback) {
-  const useRectInput = document.getElementById('useRect')
-  const scale = document.getElementById('scale')
-  const margin = document.getElementById('margin')
-  const useTilePrinting = document.getElementById('useTilePrinting')
-  const tileWidth = document.getElementById('tileWidth')
-  const tileHeight = document.getElementById('tileHeight')
+  const useRectInput = document.querySelector('#useRect')
+  const scale = document.querySelector('#scale')
+  const margin = document.querySelector('#margin')
+  const useTilePrinting = document.querySelector('#useTilePrinting')
+  const tileWidth = document.querySelector('#tileWidth')
+  const tileHeight = document.querySelector('#tileHeight')
   const printButton = document.querySelector('#print-button')
 
   useRectInput.addEventListener('change', () => {

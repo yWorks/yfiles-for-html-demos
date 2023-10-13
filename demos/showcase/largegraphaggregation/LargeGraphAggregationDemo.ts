@@ -168,25 +168,23 @@ function initializeToggleAggregation(): void {
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     focusableItems: GraphItemTypes.NODE
   })
-  graphViewerInputMode.addItemClickedListener(
-    (sender: object, evt: ItemClickedEventArgs<IModelItem>) => {
-      if (!(evt.item instanceof INode)) {
-        return
-      }
-      // prevent default behavior, which would select nodes that are no longer in the graph
-      evt.handled = true
-
-      toggleAggregationNode(evt.item)
+  graphViewerInputMode.addItemClickedListener((_, evt) => {
+    if (!(evt.item instanceof INode)) {
+      return
     }
-  )
+    // prevent default behavior, which would select nodes that are no longer in the graph
+    evt.handled = true
+
+    toggleAggregationNode(evt.item)
+  })
   graphComponent.inputMode = graphViewerInputMode
 
-  graphComponent.addKeyUpListener((sender: object, evt: KeyEventArgs) => {
+  graphComponent.addKeyUpListener((_, evt) => {
     if (evt.key === Key.ENTER) {
       toggleAggregationNode(graphComponent.currentItem as INode)
     }
   })
-  graphComponent.addCurrentItemChangedListener((sender: object, evt: PropertyChangedEventArgs) => {
+  graphComponent.addCurrentItemChangedListener((_, evt) => {
     onInfoPanelPropertiesChanged()
   })
 }
@@ -216,14 +214,12 @@ function toggleAggregationNode(node: INode): void {
  */
 function initializeSmartNavigation(): void {
   // Implements the smart click navigation
-  ;(graphComponent.inputMode as GraphViewerInputMode)!.addItemClickedListener(
-    (sender: object, args: ItemClickedEventArgs<IModelItem>) => {
-      if (args.item instanceof IEdge) {
-        args.handled = true
-        zoomToLocation(args.item, args.location)
-      }
+  ;(graphComponent.inputMode as GraphViewerInputMode)!.addItemClickedListener((_, evt) => {
+    if (evt.item instanceof IEdge) {
+      evt.handled = true
+      zoomToLocation(evt.item, evt.location)
     }
-  )
+  })
 }
 
 /**
@@ -283,11 +279,9 @@ function initializeHighlight(): void {
   // they should be discarded, rather than be reported as "null"
   graphViewerInputMode.itemHoverInputMode.discardInvalidItems = false
   // whenever the currently hovered item changes call our method
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener(
-    (o: object, evt: HoveredItemChangedEventArgs) => {
-      onHoveredItemChanged(o, evt)
-    }
-  )
+  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((inputMode, evt) => {
+    onHoveredItemChanged(inputMode, evt)
+  })
 }
 
 function onHoveredItemChanged(sender: object, evt: HoveredItemChangedEventArgs): void {
@@ -817,8 +811,8 @@ function initializeStyles(): void {
         rx='{TemplateBinding width, Converter=radius}'
         ry='{TemplateBinding height, Converter=radius}'
         stroke='{Binding, Converter=strokeColor, Parameter=rgba(0,0,0,0.45)}' stroke-dasharray='{Binding, Converter=strokeStyle}' stroke-width='1.5'
-        fill='{Binding, Converter=fillColor, Parameter=rgba(108,145,191,0.16)|rgba(108,145,191,0.13)}' style='cursor: pointer'></ellipse>
-      <path d='{Binding isAggregated, Converter=sign}' stroke='#4B4B4B' stroke-width='1.5' transform='{TemplateBinding bounds, Converter=centered}'></path>`
+        fill='{Binding, Converter=fillColor, Parameter=rgba(108,145,191,0.16)|rgba(108,145,191,0.13)}' style='cursor: pointer'/>
+      <path d='{Binding isAggregated, Converter=sign}' stroke='#4B4B4B' stroke-width='1.5' transform='{TemplateBinding bounds, Converter=centered}'/>`
 
   const outline = new GeneralPath()
   outline.appendEllipse(new Rect(0, 0, 1, 1), false)
@@ -892,7 +886,7 @@ function loadGraph(graph: IGraph): IGraph {
     svgContent:
       '<ellipse rx="{TemplateBinding width, Converter=radius}" ry="{TemplateBinding height, Converter=radius}" ' +
       'cx="{TemplateBinding width, Converter=radius}" cy="{TemplateBinding height, Converter=radius}" ' +
-      'fill="{Binding c}" stroke="#696969"></ellipse>',
+      'fill="{Binding c}" stroke="#696969"/>',
     normalizedOutline: outline
   })
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({

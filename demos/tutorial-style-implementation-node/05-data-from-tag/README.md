@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 05 Data from Tag - Node Style Implementation Tutorial
+# 05 Data from Tag - Tutorial: Node Style Implementation
 
 # Item-specific customizations
 
@@ -75,4 +75,4 @@ Note
 
 If the style uses the tag data to customize the visualization, it is possible to share a single style instance between multiple items. Using this pattern, the style can create different visualizations depending on the business data.
 
-[06 Rendering Text](../../tutorial-style-implementation-node/06-render-text/index.html)
+[06 Rendering Text](../../tutorial-style-implementation-node/06-render-text/)

@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 05 Hit-Testing - Port Style Implementation Tutorial
+# 05 Hit-Testing - Tutorial: Port Style Implementation
 
 # Customizing hit-testing
 
@@ -40,4 +40,4 @@ Note
 
 Try this implementation by hovering the ports. Notice that the ports at the red node, which uses the default hit-test, also detects hits outside the visual circle within the bounds. The ports at the blue node use the adjusted hit-test code and detect the hover only in the circle.
 
-[06 Edge Cropping](../../tutorial-style-implementation-port/06-edge-cropping/index.html)
+[06 Edge Cropping](../../tutorial-style-implementation-port/06-edge-cropping/)

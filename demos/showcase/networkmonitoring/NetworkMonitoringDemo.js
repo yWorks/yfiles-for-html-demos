@@ -167,7 +167,7 @@ function createInputMode() {
 function enableRepairOnItemClick(graphInputMode) {
   graphInputMode.clickableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
-  graphInputMode.addItemClickedListener((inputMode, evt) => {
+  graphInputMode.addItemClickedListener((_, evt) => {
     if (evt.item instanceof INode) {
       const device = getDevice(evt.item)
       if (device.failed) {

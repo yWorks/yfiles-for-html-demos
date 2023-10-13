@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 10 Visibility - Label Style Implementation Tutorial
+# 10 Visibility - Tutorial: Label Style Implementation
 
 # Item visibility
 
@@ -64,4 +64,4 @@ Note
 
 Since `isVisible` is called once for each item on every rendered frame, the implementation should be fast, even if this means to be inexact. If in doubt, prefer making the item visible. In this sample, we check the complete rectangular tail area, instead of making an exact check for the triangle.
 
-[11 Bounds](../../tutorial-style-implementation-label/11-bounds/index.html)
+[11 Bounds](../../tutorial-style-implementation-label/11-bounds/)

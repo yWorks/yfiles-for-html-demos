@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 04 Setting Styles - Basic Features Tutorial
+# 04 Setting Styles - Tutorial: Basic Features
 
 # Customizing Styles
 
@@ -19,7 +19,7 @@ This step shows how to [configure the visual appearance of graph elements using 
 
 Note
 
-yFiles for HTML offers a set of predefined and configurable item styles for various use-cases. The [Style Implementation tutorials](../../tutorial-style-implementation-node/01-create-a-rectangle/index.html) show in detail how to create a custom style from scratch.
+yFiles for HTML offers a set of predefined and configurable item styles for various use-cases. The [Style Implementation tutorials](../../tutorial-style-implementation-node/01-create-a-rectangle/) show in detail how to create a custom style from scratch.
 
 ## Default Styles
 
@@ -130,4 +130,4 @@ const labelStyle = new DefaultLabelStyle({
 graph.setStyle(label, labelStyle)
 ```
 
-[05 Label Placement](../../tutorial-yfiles-basic-features/05-label-placement/index.html)
+[05 Label Placement](../../tutorial-yfiles-basic-features/05-label-placement/)

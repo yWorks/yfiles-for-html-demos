@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 11 Layout Data - Basic Features Tutorial
+# 11 Layout Data - Tutorial: Basic Features
 
 # Layout Data
 
@@ -71,4 +71,4 @@ await graphComponent.morphLayout({
 })
 ```
 
-[12 Analysis Algorithms](../../tutorial-yfiles-basic-features/12-graph-analysis/index.html)
+[12 Analysis Algorithms](../../tutorial-yfiles-basic-features/12-graph-analysis/)

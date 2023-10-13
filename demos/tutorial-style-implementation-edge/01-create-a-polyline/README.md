@@ -9,7 +9,9 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 01 Create a Polyline - Edge Style Implementation Tutorial
+#
+
+      Tutorial: Edge Style Implementation - Tutorial: Edge Style Implementation
 
 # Custom edge visualizations
 
@@ -63,4 +65,4 @@ Note
 
 It’s important that SvgVisual contains an SVG element in the 'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
 
-[02 Crop the Polyline](../../tutorial-style-implementation-edge/02-crop-the-polyline/index.html)
+[01 Create a Polyline](../../tutorial-style-implementation-edge/01-create-a-polyline/)

@@ -27,22 +27,28 @@
  **
  ***************************************************************************/
 import {
+  Class,
   EventRecognizers,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   IContextLookupChainLink,
   IGraph,
   ILassoTestable,
   LassoTestables,
+  LayoutExecutor,
+  LayoutOrientation,
   License,
   MouseEventRecognizers,
-  type PointConvertible,
+  OrganicLayout,
   TouchEventRecognizers
 } from 'yfiles'
 
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
 let inputMode: GraphEditorInputMode
@@ -55,17 +61,46 @@ async function run(): Promise<void> {
 
   initDemoStyles(graphComponent.graph)
 
-  // create a sample graph for the demo
-  createSampleGraph(graphComponent.graph)
-  // center the sample graph in the demo's GraphComponent
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new OrganicLayout({
+      minimumNodeDistance: 50,
+      automaticGroupNodeCompaction: true,
+      layoutOrientation: LayoutOrientation.TOP_TO_BOTTOM
+    })
+  )
   graphComponent.fitGraphBounds()
 
-  // enable undo and redo for the demo
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 
   configureLassoSelection()
 
   initializeUI()
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -150,7 +185,7 @@ function setFinishRadius(radius: number): void {
 }
 
 /**
- * Decorates the lasso testable lookup to provide different modes of when a node is selected.
+ * Decorates the lasso-testable lookup to provide different modes of when a node is selected.
  */
 function setLassoTestables(mode: 'nodes-complete' | 'nodes-intersected' | 'nodes-center'): void {
   const nodeDecorator = graphComponent.graph.decorator.nodeDecorator
@@ -162,7 +197,7 @@ function setLassoTestables(mode: 'nodes-complete' | 'nodes-intersected' | 'nodes
     // the nodes must be completely contained in the lasso to end up in the selection
     decoration = lassoTestableDecorator.setFactory(node =>
       ILassoTestable.create(
-        (context, lassoPath) =>
+        (_context, lassoPath) =>
           !lassoPath.intersects(node.layout.toRect(), 0) &&
           lassoPath.areaContains(node.layout.center)
       )
@@ -181,56 +216,21 @@ function setLassoTestables(mode: 'nodes-complete' | 'nodes-intersected' | 'nodes
 }
 
 /**
- * Creates the demo's sample graph.
- * @param graph The graph to populate
- */
-function createSampleGraph(graph: IGraph): void {
-  const locations: PointConvertible[] = [
-    [317, 87],
-    [291, 2],
-    [220, 0],
-    [246, 73],
-    [221, 144],
-    [150, 180],
-    [142, 251],
-    [213, 286],
-    [232, 215],
-    [71, 285],
-    [0, 320]
-  ]
-  const nodes = locations.map(location => graph.createNodeAt(location))
-
-  graph.createEdge(nodes[2], nodes[1])
-  graph.createEdge(nodes[1], nodes[0])
-  graph.createEdge(nodes[0], nodes[3])
-  graph.createEdge(nodes[3], nodes[2])
-  graph.createEdge(nodes[3], nodes[1])
-  graph.createEdge(nodes[4], nodes[3])
-  graph.createEdge(nodes[4], nodes[5])
-  graph.createEdge(nodes[8], nodes[4])
-  graph.createEdge(nodes[7], nodes[8])
-  graph.createEdge(nodes[7], nodes[6])
-  graph.createEdge(nodes[6], nodes[5])
-  graph.createEdge(nodes[6], nodes[9])
-  graph.createEdge(nodes[9], nodes[10])
-}
-
-/**
  * Binds actions to the toolbar elements.
  */
 function initializeUI(): void {
   const selectionStyles = document.querySelector<HTMLSelectElement>('#selection-styles')!
-  selectionStyles.addEventListener('change', evt => {
+  selectionStyles.addEventListener('change', _evt => {
     setSelectionStyle(
       selectionStyles.value as 'free-hand-selection' | 'polyline-selection' | 'marquee-selection'
     )
   })
   const selectFinishRadius = document.querySelector<HTMLInputElement>('#select-finish-radius')!
-  selectFinishRadius.addEventListener('change', evt => {
+  selectFinishRadius.addEventListener('change', _evt => {
     setFinishRadius(Number.parseFloat(selectFinishRadius.value))
   })
   const lassoTestable = document.querySelector<HTMLInputElement>('#choose-lasso-testable')!
-  lassoTestable.addEventListener('change', evt => {
+  lassoTestable.addEventListener('change', _evt => {
     setLassoTestables(
       lassoTestable.value as 'nodes-complete' | 'nodes-intersected' | 'nodes-center'
     )

@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 09 Hit-Testing - Label Style Implementation Tutorial
+# 09 Hit-Testing - Tutorial: Label Style Implementation
 
 # Customizing hit-testing
 
@@ -71,4 +71,4 @@ Note
 
 Try this implementation by hovering both labels. Notice that the red labels, which uses the default hit-test, does not detect hits on the tail. The yellow labels use the adjusted hit-test code.
 
-[10 Visibility](../../tutorial-style-implementation-label/10-visibility/index.html)
+[10 Visibility](../../tutorial-style-implementation-label/10-visibility/)

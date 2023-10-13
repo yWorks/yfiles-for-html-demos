@@ -82,7 +82,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
    * The node is upon to be dragged.
    */
   public initializeDrag(context: IInputModeContext): void {
-    this.reparentHandler = context.lookup(IReparentNodeHandler.$class) as IReparentNodeHandler
+    this.reparentHandler = context.lookup(IReparentNodeHandler.$class)
     this.layoutHelper = new LayoutHelper(context.canvasComponent as GraphComponent, this.node!)
     this.layoutHelper.initializeLayout()
     this.handler!.initializeDrag(context)

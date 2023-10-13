@@ -27,7 +27,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-See the [Sequence Constraints Demo](../../layout/sequenceconstraints/index.html) for more elaborate examples of the constraints functionality.
+See the [Sequence Constraints Demo](../../layout/sequenceconstraints/) for more elaborate examples of the constraints functionality.
 
 ### Documentation
 

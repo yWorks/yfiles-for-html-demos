@@ -68,10 +68,10 @@ export class NodeDragInputMode extends InputModeBase {
     super()
 
     // initializes listener functions in order to install/uninstall them
-    this.onNodeRemovedListeners = (_sender, evt) => this.handleNodeRemoved(evt.item)
-    this.onMouseDragListener = (_sender, _evt) => this.onMouseDrag()
-    this.onMouseDownListener = (_sender, evt) => this.onMouseDown(evt.modifiers, evt.location)
-    this.onMouseUpListener = (_sender, _evt) => this.onMouseUp()
+    this.onNodeRemovedListeners = (_, evt) => this.handleNodeRemoved(evt.item)
+    this.onMouseDragListener = (_, _evt) => this.onMouseDrag()
+    this.onMouseDownListener = (_, evt) => this.onMouseDown(evt.modifiers, evt.location)
+    this.onMouseUpListener = (_, _evt) => this.onMouseUp()
     this.onDragStartedListener = evt => this.onDragStarted(evt)
     this.onDragEndListener = _evt => this.onDragEnd()
   }

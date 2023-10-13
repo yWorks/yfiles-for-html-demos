@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 10 Configure Layout - Graph Builder Tutorial
+# 10 Configure Layout - Tutorial: Graph Builder
 
 # Using layout information provided by business data
 
@@ -106,4 +106,4 @@ Note
 
 Please have a look in this tutorial step’s demo code in `configure-layout.ts` and try different locations, sizes, and bends.
 
-[11 Update Graph](../../tutorial-graph-builder/11-update-graph/index.html)
+[11 Update Graph](../../tutorial-graph-builder/11-update-graph/)

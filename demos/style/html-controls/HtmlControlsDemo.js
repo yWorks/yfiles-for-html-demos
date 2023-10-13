@@ -118,8 +118,8 @@ function initGraphDefaults(graph) {
  * @param {!GraphComponent} graphComponent
  */
 function initTagView(graphComponent) {
-  graphComponent.selection.addItemSelectionChangedListener(sender => {
-    const firstSelectedNode = sender.selectedNodes.at(0)
+  graphComponent.selection.addItemSelectionChangedListener(graphComponent => {
+    const firstSelectedNode = graphComponent.selectedNodes.at(0)
     if (firstSelectedNode) {
       updateTagView(firstSelectedNode)
     } else {
@@ -137,8 +137,8 @@ function createInputMode() {
   })
 
   // When a node is created, we add default dummy data as the user tag.
-  inputMode.addNodeCreatedListener((sender, evt) => {
-    const graph = sender.graphComponent.graph
+  inputMode.addNodeCreatedListener((inputMode, evt) => {
+    const graph = inputMode.graphComponent.graph
     evt.item.tag = {
       ...defaultData,
       since: new Date().toISOString().substring(0, 10),

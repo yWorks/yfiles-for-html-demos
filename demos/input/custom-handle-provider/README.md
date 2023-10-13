@@ -21,4 +21,4 @@ This demo shows how to implement custom [IHandle](https://docs.yworks.com/yfiles
 - Drag the circular handle of the selected node to change the [angle of the arrow blade](https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#angle).
 - Observe how the angle and shaft values in the text box change as the handles are dragged.
 
-To learn more about the [ArrowNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle) features in general, please see the [Arrow Node Style Demo](../../style/arrow-node-style/index.html).
+To learn more about the [ArrowNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle) features in general, please see the [Arrow Node Style Demo](../../style/arrow-node-style/).

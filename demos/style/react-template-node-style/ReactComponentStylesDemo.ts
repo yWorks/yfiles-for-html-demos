@@ -83,11 +83,11 @@ let tagTextArea: CodeMirror.EditorFromTextArea
 
 let graphMLSupport: GraphMLSupport
 
-const templateErrorArea = document.getElementById('template-text-area-error') as HTMLDivElement
-const tagErrorArea = document.getElementById('tag-text-area-error') as HTMLDivElement
-const applyTemplateButton = document.getElementById('apply-template-button') as HTMLButtonElement
-const htmlTemplateToggle = document.getElementById('html-template') as HTMLInputElement
-const applyTagButton = document.getElementById('apply-tag-button') as HTMLButtonElement
+const templateErrorArea = document.querySelector<HTMLDivElement>('#template-text-area-error')!
+const tagErrorArea = document.querySelector<HTMLDivElement>('#tag-text-area-error')!
+const applyTemplateButton = document.querySelector<HTMLButtonElement>('#apply-template-button')!
+const htmlTemplateToggle = document.querySelector<HTMLInputElement>('#html-template')!
+const applyTagButton = document.querySelector<HTMLButtonElement>('#apply-tag-button')!
 
 /**
  * Runs the demo.
@@ -115,7 +115,7 @@ async function run(): Promise<void> {
  */
 function initializeTextAreas(): void {
   jsxRenderFunctionTextArea = CodeMirror.fromTextArea(
-    document.getElementById('template-text-area') as HTMLTextAreaElement,
+    document.querySelector<HTMLTextAreaElement>('#template-text-area')!,
     {
       lineNumbers: true,
       mode: 'jsx',
@@ -124,7 +124,7 @@ function initializeTextAreas(): void {
     } as CodeMirror.EditorConfiguration
   )
   tagTextArea = CodeMirror.fromTextArea(
-    document.getElementById('tag-text-area') as HTMLTextAreaElement,
+    document.querySelector<HTMLTextAreaElement>('#tag-text-area')!,
     {
       lineNumbers: true,
       mode: 'application/json',

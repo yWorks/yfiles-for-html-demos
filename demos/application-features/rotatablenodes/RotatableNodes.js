@@ -1904,19 +1904,19 @@ function toRadians(degrees) {
 
 /**
  * @param {!GraphMLIOHandler} source
- * @param {!HandleSerializationEventArgs} args
+ * @param {!HandleSerializationEventArgs} evt
  */
-export function RotatableNodesSerializationListener(source, args) {
-  const item = args.item
+export function RotatableNodesSerializationListener(source, evt) {
+  const item = evt.item
   if (item instanceof RotatableNodeStyleDecorator) {
     const markupExtension = new RotatableNodeStyleDecoratorExtension()
     markupExtension.angle = item.angle
     markupExtension.wrapped = item.wrapped
-    args.context.serializeReplacement(
+    evt.context.serializeReplacement(
       RotatableNodeStyleDecoratorExtension.$class,
       item,
       markupExtension
     )
-    args.handled = true
+    evt.handled = true
   }
 }

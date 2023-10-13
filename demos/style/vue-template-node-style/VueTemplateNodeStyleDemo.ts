@@ -92,7 +92,7 @@ async function run(): Promise<void> {
  */
 function initializeTextAreas(): void {
   templateTextArea = CodeMirror.fromTextArea(
-    document.getElementById('template-text-area') as HTMLTextAreaElement,
+    document.querySelector<HTMLTextAreaElement>('#template-text-area')!,
     {
       lineNumbers: true,
       mode: 'application/xml',
@@ -101,7 +101,7 @@ function initializeTextAreas(): void {
     } as CodeMirror.EditorConfiguration
   )
   tagTextArea = CodeMirror.fromTextArea(
-    document.getElementById('tag-text-area') as HTMLTextAreaElement,
+    document.querySelector<HTMLTextAreaElement>('#tag-text-area')!,
     {
       lineNumbers: true,
       mode: 'application/json',
@@ -126,15 +126,15 @@ function initializeTextAreas(): void {
       }
       tagTextArea.setOption('readOnly', false)
       tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-      ;(document.getElementById('apply-template-button') as HTMLButtonElement)!.disabled = false
-      ;(document.getElementById('apply-tag-button') as HTMLButtonElement).disabled = false
+      document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = false
+      document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = false
     } else {
       templateTextArea.setOption('readOnly', 'nocursor')
       tagTextArea.setOption('readOnly', 'nocursor')
       templateTextArea.setValue('Select a node to edit its template.')
       tagTextArea.setValue('Select a node to edit its tag.')
-      ;(document.getElementById('apply-template-button') as HTMLButtonElement).disabled = true
-      ;(document.getElementById('apply-tag-button') as HTMLButtonElement).disabled = true
+      document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = true
+      document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = true
     }
   })
 }
@@ -205,9 +205,9 @@ function initializeIO(): void {
     'http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0',
     'VuejsNodeStyle'
   )
-  graphmlHandler.addHandleSerializationListener((sender, args) => {
-    const item = args.item
-    const context = args.context
+  graphmlHandler.addHandleSerializationListener((_, evt) => {
+    const item = evt.item
+    const context = evt.context
     if (item instanceof VuejsNodeStyle) {
       const vuejsNodeStyleMarkupExtension = new VuejsNodeStyleMarkupExtension()
       vuejsNodeStyleMarkupExtension.template = item.template
@@ -216,7 +216,7 @@ function initializeIO(): void {
         item,
         vuejsNodeStyleMarkupExtension
       )
-      args.handled = true
+      evt.handled = true
     }
   })
   graphMLSupport = new GraphMLSupport({

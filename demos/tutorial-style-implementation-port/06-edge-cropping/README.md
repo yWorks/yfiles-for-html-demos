@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 06 Edge Cropping - Port Style Implementation Tutorial
+# 06 Edge Cropping - Tutorial: Port Style Implementation
 
 # Customizing edge-cropping
 

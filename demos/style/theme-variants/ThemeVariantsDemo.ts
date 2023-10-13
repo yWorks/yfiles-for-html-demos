@@ -49,7 +49,7 @@ import { colorSets } from 'demo-resources/demo-colors'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
 
-const graphComponents = [] as GraphComponent[]
+const graphComponents: GraphComponent[] = []
 
 const graphComponentContainer = document.getElementById('graphComponents')!
 
@@ -207,9 +207,9 @@ function synchronizeGraphComponents(): void {
         changing = false
       }
     })
-    graphComponent.selection.addItemSelectionChangedListener((selection, args) => {
+    graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
       for (const otherComponent of otherComponents) {
-        otherComponent.selection.setSelected(args.item, args.itemSelected)
+        otherComponent.selection.setSelected(evt.item, evt.itemSelected)
       }
     })
   }

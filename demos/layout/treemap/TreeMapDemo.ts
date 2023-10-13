@@ -180,33 +180,33 @@ function initializeInputModes(): void {
   const inputMode = new GraphViewerInputMode()
   inputMode.selectableItems = GraphItemTypes.NONE
   inputMode.focusableItems = GraphItemTypes.NONE
-  inputMode.addItemClickedListener((sender, event) => {
-    const item = event.item
+  inputMode.addItemClickedListener((_, evt) => {
+    const item = evt.item
     if (item instanceof INode && onNodeClicked(item)) {
-      event.handled = true
+      evt.handled = true
     }
   })
   // add tooltips that show the label text
   inputMode.toolTipItems = GraphItemTypes.NODE
   inputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
-  inputMode.addQueryItemToolTipListener((sender, event) => {
-    if (event.handled) {
+  inputMode.addQueryItemToolTipListener((_, evt) => {
+    if (evt.handled) {
       return
     }
-    const hitNode = event.item
+    const hitNode = evt.item
     if (hitNode instanceof INode && hitNode.labels.size > 0) {
-      event.toolTip = hitNode.labels.get(0).text
-      event.handled = true
+      evt.toolTip = hitNode.labels.get(0).text
+      evt.handled = true
     }
   })
 
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   inputMode.itemHoverInputMode.discardInvalidItems = false
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
+  inputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     const manager = graphComponent.highlightIndicatorManager
     manager.clearHighlights()
 
-    const item = event.item
+    const item = evt.item
 
     inputMode.defaultCursor = Cursor.DEFAULT
     if (item instanceof INode) {
@@ -260,7 +260,9 @@ function onNodeClicked(clickedNode: INode): boolean {
       root = masterGraph.getParent(root)
       isDrillDown = false
     } else {
-      const preferredSizes = masterGraph.mapperRegistry.getMapper(PREFERRED_SIZE_KEY)!
+      const preferredSizes = masterGraph.mapperRegistry.getMapper<INode, YDimension>(
+        PREFERRED_SIZE_KEY
+      )!
       const preferredSize = preferredSizes.get(root)
       if (!preferredSize) {
         preferredSizes.set(root, new YDimension(clickedNodeLayout.width, clickedNodeLayout.height))
@@ -527,12 +529,12 @@ async function applyLayout(): Promise<void> {
 function getPreferredSize(graph: IGraph): YDimension {
   const zoomingMode = document.querySelector<HTMLSelectElement>(`#select-zooming-mode`)!.value
   const defaultMapSize = 1000
-  const preferredSizes = masterGraph.mapperRegistry.getMapper(PREFERRED_SIZE_KEY)!
+  const preferredSizes = masterGraph.mapperRegistry.getMapper<INode, Size>(PREFERRED_SIZE_KEY)!
   const root = graph.nodes.filter(node => !graph.getParent(node)).at(0)
   const groupTag = root && root.tag ? root.tag.groupTag : null
   const preferredSize = preferredSizes.get(
-    masterGraph.nodes.filter(node => node.tag && node.tag.groupTag === groupTag).at(0)
-  ) as Size
+    masterGraph.nodes.filter(node => node.tag && node.tag.groupTag === groupTag).at(0)!
+  )
   if (zoomingMode === 'aspect-ratio' && preferredSize) {
     // if we have a preferred size specified, then the according property on the layout algorithm is configured
     // we do not keep the exact size, but the aspect ratio. the larger side has always size DEFAULT_MAP_SIZE

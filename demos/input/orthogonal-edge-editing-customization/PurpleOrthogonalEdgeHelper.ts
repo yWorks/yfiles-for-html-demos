@@ -73,7 +73,7 @@ export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
     // now check bends which lie inside the node bounds and remove them...
     const sourceNode = edge.sourceNode
     if (sourceNode) {
-      const sourceContainsTest = sourceNode.lookup(IShapeGeometry.$class) as IShapeGeometry
+      const sourceContainsTest = sourceNode.lookup(IShapeGeometry.$class)!
       while (
         edge.bends.size > 0 &&
         sourceContainsTest.isInside(edge.bends.first().location.toPoint())
@@ -90,7 +90,7 @@ export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
 
     const targetNode = edge.targetNode
     if (targetNode) {
-      const targetContainsTest = targetNode.lookup(IShapeGeometry.$class) as IShapeGeometry
+      const targetContainsTest = targetNode.lookup(IShapeGeometry.$class)!
       while (
         edge.bends.size > 0 &&
         targetContainsTest.isInside(edge.bends.get(edge.bends.size - 1).location.toPoint())

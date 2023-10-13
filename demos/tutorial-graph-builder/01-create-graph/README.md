@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 01 Create Graph - Graph Builder Tutorial
+# Tutorial: Graph Builder - Tutorial: Graph Builder
 
 # Creating a graph from business data
 
@@ -73,4 +73,4 @@ There are two other graph builder classes that are better suited for specific sc
 
 See the steps about [AdjacencyGraphBuilder](../12-adjacency-graph-builder/) and [TreeBuilder](../13-tree-builder/) of this tutorial for an explanation on how these classes work.
 
-[02 Create Nodes Sources](../../tutorial-graph-builder/02-create-nodes-sources/index.html)
+[01 Create Graph](../../tutorial-graph-builder/01-create-graph/)

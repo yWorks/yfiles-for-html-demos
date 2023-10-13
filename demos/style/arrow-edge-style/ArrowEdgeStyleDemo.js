@@ -180,7 +180,7 @@ function initializeUI(graphComponent) {
   })
 
   // adjust option panel when the selection has been changed
-  graphComponent.selection.addItemSelectionChangedListener((sender, evt) => {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
     if (evt.item instanceof IEdge && evt.item.style instanceof ArrowEdgeStyle) {
       adjustOptionPanel(graphComponent, evt.item)
       graphComponent.graph.edgeDefaults.style = getStyleForOptionsPanel()

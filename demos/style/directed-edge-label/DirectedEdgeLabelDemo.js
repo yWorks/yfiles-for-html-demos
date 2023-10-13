@@ -65,7 +65,9 @@ async function run() {
     orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
   })
 
-  graphComponent.graph.addEdgeCreatedListener((sender, evt) => addLabels(sender, evt.item))
+  graphComponent.graph.addEdgeCreatedListener((graphComponent, evt) =>
+    addLabels(graphComponent, evt.item)
+  )
 
   // Create some graph elements
   createSampleGraph(graphComponent.graph)

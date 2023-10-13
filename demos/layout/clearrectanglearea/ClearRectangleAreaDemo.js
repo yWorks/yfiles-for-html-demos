@@ -67,12 +67,12 @@ import { fetchLicense } from 'demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
 
 // UI components
-const samplesComboBox = document.getElementById('sample-graph-combobox')
+const samplesComboBox = document.querySelector('#sample-graph-combobox')
 
-const clearingStrategyComboBox = document.getElementById('clearing-strategy-combobox')
+const clearingStrategyComboBox = document.querySelector('#clearing-strategy-combobox')
 
-const componentAssignmentStrategyComboBox = document.getElementById(
-  'component-assignment-strategy-combobox'
+const componentAssignmentStrategyComboBox = document.querySelector(
+  '#component-assignment-strategy-combobox'
 )
 
 /**
@@ -239,14 +239,14 @@ function addClearRectInputModes(inputMode) {
   })
 
   // handle dragging the rectangle
-  moveInputMode.addDragStartingListener((sender, evt) => onDragStarting(sender, evt))
-  moveInputMode.addDraggedListener((sender, evt) => onDragged(sender, evt))
+  moveInputMode.addDragStartingListener((inputMove, evt) => onDragStarting(inputMove, evt))
+  moveInputMode.addDraggedListener((inputMove, evt) => onDragged(inputMove, evt))
   moveInputMode.addDragCanceledListener(onDragCanceled)
   moveInputMode.addDragFinishedListener(onDragFinished)
 
   // handle resizing the rectangle
-  handleInputMode.addDragStartingListener((sender, evt) => onDragStarting(sender, evt))
-  handleInputMode.addDraggedListener((sender, evt) => onDragged(sender, evt))
+  handleInputMode.addDragStartingListener((inputHandle, evt) => onDragStarting(inputHandle, evt))
+  handleInputMode.addDraggedListener((inputHandle, evt) => onDragged(inputHandle, evt))
   handleInputMode.addDragCanceledListener(onDragCanceled)
   handleInputMode.addDragFinishedListener(onDragFinished)
 

@@ -51,7 +51,7 @@ import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
 
-const graphChooserBox = document.getElementById('graph-chooser-box') as HTMLSelectElement
+const graphChooserBox = document.querySelector<HTMLSelectElement>('#graph-chooser-box')!
 
 let graphComponent: GraphComponent
 
@@ -148,14 +148,12 @@ function initializeInputMode(): void {
   const inputMode = new GraphViewerInputMode()
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE || GraphItemTypes.EDGE
   // Implements the smart click navigation
-  inputMode.addItemLeftClickedListener(
-    (sender: object, args: ItemClickedEventArgs<IModelItem>): void => {
-      // Zooms to the suitable point
-      zoomToLocation(args.item, args.location)
-      // Highlights the concerned objects(node or edge with target and source node)
-      updateHighlight(args.item)
-    }
-  )
+  inputMode.addItemLeftClickedListener((_, evt): void => {
+    // Zooms to the suitable point
+    zoomToLocation(evt.item, evt.location)
+    // Highlights the concerned objects(node or edge with target and source node)
+    updateHighlight(evt.item)
+  })
   graphComponent.inputMode = inputMode
 }
 

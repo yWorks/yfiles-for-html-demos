@@ -196,7 +196,7 @@ async function run(): Promise<void> {
  */
 function enableGraphML(): void {
   const graphMLIOHandler = createConfiguredGraphMLIOHandler()
-  graphMLIOHandler.addParsedListener((sender, args) => {
+  graphMLIOHandler.addParsedListener((_, evt) => {
     updateModifiedGraphSample()
   })
   new GraphMLSupport({
@@ -1022,9 +1022,7 @@ function initializeContextMenu(inputMode: GraphInputMode): void {
 
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((sender, args) =>
-    populateContextMenu(contextMenu, args)
-  )
+  inputMode.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
 
   // Add a listener that closes the menu when the input mode requests this
   inputMode.contextMenuInputMode.addCloseMenuListener(() => {
@@ -1258,7 +1256,7 @@ function getCenter(graph: IGraph): Point {
 }
 
 function querySelector<T extends HTMLElement>(selector: string): T {
-  return document.querySelector(selector) as T
+  return document.querySelector(selector)!
 }
 
 run().then(finishLoading)

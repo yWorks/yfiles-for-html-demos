@@ -110,7 +110,7 @@ async function runLayout(initConfig: boolean): Promise<void> {
     configuration = createGenericConfiguration(graphComponent.graph, nodePlacerPanel)
   } else {
     // create a layout configuration according to the current sample
-    switch ((document.getElementById('select-sample') as HTMLSelectElement).value) {
+    switch (document.querySelector<HTMLSelectElement>('#select-sample')!.value) {
       default:
         configuration = createGenericConfiguration(graphComponent.graph, nodePlacerPanel)
         break
@@ -163,18 +163,18 @@ function initializesInputModes(): void {
   inputMode.createEdgeInputMode.priority = 45
 
   // always delete the whole subtree
-  inputMode.addDeletingSelectionListener((sender, args) => {
-    const selectedNodes = args.selection
+  inputMode.addDeletingSelectionListener((_, evt) => {
+    const selectedNodes = evt.selection
     const nodesToDelete: INode[] = []
     selectedNodes.forEach(selectedNode => {
       collectSubtreeNodes(selectedNode as INode, nodesToDelete)
     })
     nodesToDelete.forEach(node => {
       if (graphComponent.graph.inDegree(node)) {
-        args.selection.setSelected(node, true)
+        evt.selection.setSelected(node, true)
       } else {
         // do not delete the root node to be able to build a new tree
-        args.selection.setSelected(node, false)
+        evt.selection.setSelected(node, false)
       }
     })
   })
@@ -186,14 +186,14 @@ function initializesInputModes(): void {
   inputMode.handleInputMode.addDragFinishedListener(() => runLayout(false))
 
   // update the settings panel when selection changed to be able to edit its node placer
-  inputMode.addMultiSelectionFinishedListener((sender, args) =>
-    nodePlacerPanel.onNodeSelectionChanged(args.selection.ofType(INode.$class).toArray())
+  inputMode.addMultiSelectionFinishedListener((_, evt) =>
+    nodePlacerPanel.onNodeSelectionChanged(evt.selection.ofType(INode.$class).toArray())
   )
 
   // toggle the assistant marking for the double-clicked node
-  inputMode.addItemDoubleClickedListener((sender, args) => {
-    if (args.item instanceof INode) {
-      const node = args.item
+  inputMode.addItemDoubleClickedListener((_, evt) => {
+    if (evt.item instanceof INode) {
+      const node = evt.item
       node.tag.assistant = !node.tag.assistant
       const nodeStyle = node.style.clone()
       ;(nodeStyle as ShapeNodeStyle).stroke = !node.tag.assistant
@@ -209,13 +209,13 @@ function initializesInputModes(): void {
   })
 
   // labels may influence the order of child nodes, if they are changed a new layout should be calculated
-  inputMode.addLabelAddedListener((sender, args) => {
-    if (!isNaN(Number(args.item.text))) {
+  inputMode.addLabelAddedListener((_, evt) => {
+    if (!isNaN(Number(evt.item.text))) {
       runLayout(false)
     }
   })
-  inputMode.addLabelTextChangedListener((sender, args) => {
-    if (!isNaN(Number(args.item.text))) {
+  inputMode.addLabelTextChangedListener((_, evt) => {
+    if (!isNaN(Number(evt.item.text))) {
       runLayout(false)
     }
   })
@@ -269,7 +269,7 @@ async function loadGraph(): Promise<void> {
 
   // select tree data
   let nodesSource: TreeNodeType[]
-  const sample = (document.getElementById('select-sample') as HTMLSelectElement).value
+  const sample = document.querySelector<HTMLSelectElement>('#select-sample')!.value
   switch (sample) {
     default:
     case 'default':

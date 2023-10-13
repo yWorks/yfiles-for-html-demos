@@ -34,6 +34,7 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Web Worker Demo (Modules) [yFiles for HTML]</title>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
@@ -85,7 +86,6 @@
       }
     </style>
 
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
@@ -146,7 +146,7 @@
           not supported in every browser, yet. If your browser does not support module workers,
           please refer to the <a href="../../loading/webpack/README.html">Webpack Demo</a> for an
           approach using Web Worker together with webpack, or the
-          <a href="../../../demos-js/loading/webworker-umd/index.html" target="_blank">Web Worker UMD Demo</a> that uses AMD modules to load resources in the Web Worker
+          <a href="../../../demos-js/loading/webworker-umd/" target="_blank">Web Worker UMD Demo</a> that uses AMD modules to load resources in the Web Worker
           thread.
         </p>
 
@@ -171,7 +171,7 @@
         <p>
           Your browser does not support module web workers. Please refer to the
           <a href="../../loading/webpack/README.html">Webpack Demo</a> or the
-          <a href="../../../demos-js/loading/webworker-umd/index.html" target="_blank">Web Worker UMD Demo</a> instead.
+          <a href="../../../demos-js/loading/webworker-umd/" target="_blank">Web Worker UMD Demo</a> instead.
         </p>
         <p>Module Workers are currently only supported in Chrome 80+ and Edge</p>
       </div>

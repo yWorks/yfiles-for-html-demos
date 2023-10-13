@@ -292,7 +292,7 @@ export class SourcesFactory {
     const nodesSource = this.graphBuilder.createNodesSource<any>([], null)
 
     const nodeCreator = nodesSource.nodeCreator
-    nodeCreator.addNodeUpdatedListener((sender, evt) => {
+    nodeCreator.addNodeUpdatedListener((_, evt) => {
       nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       evt.graph.setStyle(evt.item, nodeCreator.defaults.style)
     })
@@ -336,7 +336,7 @@ export class SourcesFactory {
       definition.strokeProvider ? definition.strokeProvider(edgeDataItem) : '#662b00'
     )
 
-    edgeCreator.addEdgeUpdatedListener((sender, evt) => {
+    edgeCreator.addEdgeUpdatedListener((_, evt) => {
       edgeCreator.applyStyleBindings(evt.graph, evt.item, evt.dataItem)
       edgeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
@@ -364,8 +364,8 @@ export class SourcesFactory {
     nodesSourceDefinition.name = sourceName
     nodesSourceDefinition.data = "['A','B','C']"
     nodesSourceDefinition.idBinding = 'dataItem => dataItem'
-    nodesSourceDefinition.template = `<rect fill="#ff6c00" stroke="white" rx="2" ry="2" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-<text transform="translate(10 20)" data-content="{Binding}" style="font-size:18px; fill:#000;"></text>`
+    nodesSourceDefinition.template = `<rect fill="#ff6c00" stroke="white" rx="2" ry="2" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
+<text transform="translate(10 20)" data-content="{Binding}" style="font-size:18px; fill:#000;"/>`
     return nodesSourceDefinition
   }
 

@@ -30,22 +30,24 @@ import {
   Class,
   FoldingManager,
   FreeNodeLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphMLSupport,
   GraphOverviewComponent,
   GraphSnapContext,
+  HierarchicLayout,
   ICommand,
   IEdge,
   IGraph,
   IModelItem,
   INode,
   LabelSnapContext,
+  LayoutExecutor,
   License,
   NodeAlignmentPolicy,
   OrthogonalEdgeEditingContext,
   PopulateItemContextMenuEventArgs,
-  Rect,
   RenderModes,
   SmartEdgeLabelModel,
   StorageLocation,
@@ -62,6 +64,8 @@ import { fetchLicense } from 'demo-resources/fetch-license'
 import { BrowserDetection } from 'demo-utils/BrowserDetection'
 import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
 
@@ -102,8 +106,12 @@ async function run(): Promise<void> {
   // use two finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
 
-  // Create a sample graph
-  createSampleGraph(graph)
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(new HierarchicLayout())
   graphComponent.fitGraphBounds()
 
   // Enable the undo engine on the master graph
@@ -111,6 +119,35 @@ async function run(): Promise<void> {
 
   // Register functionality for the buttons in this demo
   initializeUI(graphComponent)
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList.filter(item => !item.isGroup),
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id,
+      parentId: item => item.parentId
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -146,7 +183,7 @@ function createEditorMode(): GraphEditorInputMode {
   const contextMenu = new ContextMenu(graphComponent)
 
   // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback function which in turn asks the current ContextMenuInputMode if a
+  // call the provided callback function, which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
   contextMenu.addOpeningEventListeners(graphComponent, location => {
     if (mode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
@@ -156,14 +193,14 @@ function createEditorMode(): GraphEditorInputMode {
 
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  mode.addPopulateItemContextMenuListener((sender, args) => populateContextMenu(contextMenu, args))
+  mode.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
 
   // Add a listener that closes the menu when the input mode requests this
   mode.contextMenuInputMode.addCloseMenuListener(() => {
     contextMenu.close()
   })
 
-  // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
+  // If the context menu closes itself, for example, because a menu item was clicked, we must inform the input mode
   contextMenu.onClosedCallback = (): void => {
     mode.contextMenuInputMode.menuClosed()
   }
@@ -316,65 +353,6 @@ function populateContextMenu(
       ICommand.PASTE.execute(args.queryLocation, graphComponent)
     })
   }
-}
-
-/**
- * Creates the initial graph.
- */
-function createSampleGraph(graph: IGraph): void {
-  graph.clear()
-
-  const n1 = graph.createNode(new Rect(126, 0, 30, 30))
-  const n2 = graph.createNode(new Rect(126, 72, 30, 30))
-  const n3 = graph.createNode(new Rect(75, 147, 30, 30))
-  const n4 = graph.createNode(new Rect(177.5, 147, 30, 30))
-  const n5 = graph.createNode(new Rect(110, 249, 30, 30))
-  const n6 = graph.createNode(new Rect(177.5, 249, 30, 30))
-  const n7 = graph.createNode(new Rect(110, 299, 30, 30))
-  const n8 = graph.createNode(new Rect(177.5, 299, 30, 30))
-  const n9 = graph.createNode(new Rect(110, 359, 30, 30))
-  const n10 = graph.createNode(new Rect(47.5, 299, 30, 30))
-  const n11 = graph.createNode(new Rect(20, 440, 30, 30))
-  const n12 = graph.createNode(new Rect(110, 440, 30, 30))
-  const n13 = graph.createNode(new Rect(20, 515, 30, 30))
-  const n14 = graph.createNode(new Rect(80, 515, 30, 30))
-  const n15 = graph.createNode(new Rect(140, 515, 30, 30))
-  const n16 = graph.createNode(new Rect(20, 569, 30, 30))
-
-  const group1 = graph.createGroupNode({
-    layout: new Rect(25, 45, 202.5, 353),
-    labels: ['Group 1']
-  })
-  graph.groupNodes(group1, [n2, n3, n4, n9, n10])
-
-  const group2 = graph.createGroupNode({
-    parent: group1,
-    layout: new Rect(98, 222, 119.5, 116),
-    labels: ['Group 2']
-  })
-  graph.groupNodes(group2, [n5, n6, n7, n8])
-
-  const group3 = graph.createGroupNode({
-    layout: new Rect(10, 413, 170, 141),
-    labels: ['Group 3']
-  })
-  graph.groupNodes(group3, [n11, n12, n13, n14, n15])
-
-  graph.createEdge(n1, n2)
-  graph.createEdge(n2, n3)
-  graph.createEdge(n2, n4)
-  graph.createEdge(n3, n5)
-  graph.createEdge(n3, n10)
-  graph.createEdge(n5, n7)
-  graph.createEdge(n7, n9)
-  graph.createEdge(n4, n6)
-  graph.createEdge(n6, n8)
-  graph.createEdge(n10, n11)
-  graph.createEdge(n10, n12)
-  graph.createEdge(n11, n13)
-  graph.createEdge(n13, n16)
-  graph.createEdge(n12, n14)
-  graph.createEdge(n12, n15)
 }
 
 run().then(finishLoading)

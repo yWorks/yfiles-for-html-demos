@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Class,
   EdgeRouter,
   EdgeRouterScope,
   FixNodeLayoutData,
@@ -35,6 +36,7 @@ import {
   GenericLabeling,
   GenericLayoutData,
   Geom,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -68,6 +70,8 @@ import {
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph, JSONLabel } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 type EdgeLabelPlacementOption = {
   text: string
@@ -137,9 +141,40 @@ async function run(): Promise<void> {
   initializeOptions()
   initializeLayoutComboBox()
 
-  createSampleGraph()
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
 
-  graph.undoEngineEnabled = true
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(new HierarchicLayout({ integratedEdgeLabeling: true }))
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  const edgesSource = graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+  edgesSource.edgeCreator.createLabelsSource(item => item.labels).labelCreator.textProvider = (
+    item
+  ): string => item.text
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -462,11 +497,11 @@ function initializeUI(): void {
  */
 function initializeGraph(): void {
   // add preferred placement information to each new label
-  graph.addLabelAddedListener((source, event) => {
-    descriptorMapper.set(event.item, new PreferredPlacementDescriptor())
+  graph.addLabelAddedListener((_, evt) => {
+    descriptorMapper.set(evt.item, new PreferredPlacementDescriptor())
   })
-  graph.addLabelRemovedListener((source, event) => {
-    descriptorMapper.delete(event.item)
+  graph.addLabelRemovedListener((_, evt) => {
+    descriptorMapper.delete(evt.item)
   })
 }
 
@@ -679,73 +714,6 @@ function addOption(
   option.text = text
   option.myValue = value
   comboBox.add(option)
-}
-
-/**
- * Creates a graph with labels at each edge and an initial layout.
- */
-function createSampleGraph(): void {
-  // create nodes
-  const nodes = []
-  for (let i = 0; i < 29; i++) {
-    nodes.push(graph.createNode())
-  }
-
-  // create edges
-  const edges = []
-  edges.push(graph.createEdge(nodes[0], nodes[3]))
-  edges.push(graph.createEdge(nodes[4], nodes[0]))
-  edges.push(graph.createEdge(nodes[0], nodes[4]))
-  edges.push(graph.createEdge(nodes[0], nodes[4]))
-  edges.push(graph.createEdge(nodes[0], nodes[6]))
-  edges.push(graph.createEdge(nodes[0], nodes[6]))
-  edges.push(graph.createEdge(nodes[1], nodes[7]))
-  edges.push(graph.createEdge(nodes[1], nodes[9]))
-  edges.push(graph.createEdge(nodes[2], nodes[9]))
-  edges.push(graph.createEdge(nodes[4], nodes[10]))
-  edges.push(graph.createEdge(nodes[5], nodes[10]))
-  edges.push(graph.createEdge(nodes[5], nodes[11]))
-  edges.push(graph.createEdge(nodes[5], nodes[26]))
-  edges.push(graph.createEdge(nodes[6], nodes[12]))
-  edges.push(graph.createEdge(nodes[12], nodes[6]))
-  edges.push(graph.createEdge(nodes[6], nodes[13]))
-  edges.push(graph.createEdge(nodes[7], nodes[13]))
-  edges.push(graph.createEdge(nodes[8], nodes[13]))
-  edges.push(graph.createEdge(nodes[8], nodes[16]))
-  edges.push(graph.createEdge(nodes[9], nodes[17]))
-  edges.push(graph.createEdge(nodes[11], nodes[18]))
-  edges.push(graph.createEdge(nodes[13], nodes[19]))
-  edges.push(graph.createEdge(nodes[14], nodes[19]))
-  edges.push(graph.createEdge(nodes[15], nodes[19]))
-  edges.push(graph.createEdge(nodes[16], nodes[20]))
-  edges.push(graph.createEdge(nodes[16], nodes[21]))
-  edges.push(graph.createEdge(nodes[18], nodes[22]))
-  edges.push(graph.createEdge(nodes[19], nodes[23]))
-  edges.push(graph.createEdge(nodes[19], nodes[25]))
-  edges.push(graph.createEdge(nodes[22], nodes[26]))
-  edges.push(graph.createEdge(nodes[23], nodes[27]))
-  edges.push(graph.createEdge(nodes[24], nodes[27]))
-  edges.push(graph.createEdge(nodes[24], nodes[28]))
-
-  // add labels
-  edges.forEach((edge, i) => {
-    graph.addLabel(edge, 'Label')
-    if (i === 8 || i === 29) {
-      graph.addLabel(edge, 'Label')
-      graph.addLabel(edge, 'Label')
-    }
-  })
-
-  // initial layout and label placement
-  const layout = new HierarchicLayout()
-  layout.integratedEdgeLabeling = true
-  const labeling = new GenericLabeling()
-  labeling.coreLayout = layout
-  graph.applyLayout(labeling)
-  graphComponent.fitGraphBounds()
-
-  // update option handler
-  updateLabelProperties(graph.edgeLabels)
 }
 
 /**

@@ -112,8 +112,8 @@ function initializeEditors(graphComponent: GraphComponent): void {
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 
-  graphComponent.selection.addItemSelectionChangedListener(sender => {
-    const selectedNode = sender.selectedNodes.at(0)
+  graphComponent.selection.addItemSelectionChangedListener(graphComponent => {
+    const selectedNode = graphComponent.selectedNodes.at(0)
     if (selectedNode) {
       if (selectedNode.style instanceof StringTemplateNodeStyle) {
         templateEditor.setOption('readOnly', false)
@@ -142,18 +142,18 @@ function initializeEditors(graphComponent: GraphComponent): void {
  */
 function initializeStyles(graph: IGraph): void {
   graph.nodeDefaults.style = new StringTemplateNodeStyle(`<g>
-  <rect fill="#C0C0C0" width="{TemplateBinding width}" height="{TemplateBinding height}" x="2" y="2"></rect>
-  <rect fill="url('#bottomGradient')" stroke="#C0C0C0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-  <rect width="{TemplateBinding width}" height="2" fill="{Binding status, Converter=demoConverters.statusColorConverter}"></rect>
+  <rect fill="#C0C0C0" width="{TemplateBinding width}" height="{TemplateBinding height}" x="2" y="2"/>
+  <rect fill="url('#bottomGradient')" stroke="#C0C0C0" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
+  <rect width="{TemplateBinding width}" height="2" fill="{Binding status, Converter=demoConverters.statusColorConverter}"/>
   <use xlink:href="{Binding icon, Converter=demoConverters.addHashConverter}" transform="scale(0.85) translate(15 10)"/>
   <use xlink:href="{Binding status, Converter=demoConverters.addHashConverter}"/>
   <use xlink:href="{Binding status, Converter=demoConverters.addHashConverter, Parameter=_icon}" transform="translate(26 84)"/>
   <g style="font-family: Roboto,sans-serif; fill: #444">
-    <text transform="translate(90 25)" style="font-size: 16px; fill: #336699" data-content="{Binding name}"></text>
-    <text transform="translate(90 45)" style="font-size: 9px; text-transform: uppercase" data-content="{Binding position}"></text>
-    <text transform="translate(90 72)" data-content="{Binding email}"></text>
-    <text transform="translate(90 88)" data-content="{Binding phone}"></text>
-    <text transform="translate(170 88)" data-content="{Binding fax}"></text>
+    <text transform="translate(90 25)" style="font-size: 16px; fill: #336699" data-content="{Binding name}"/>
+    <text transform="translate(90 45)" style="font-size: 9px; text-transform: uppercase" data-content="{Binding position}"/>
+    <text transform="translate(90 72)" data-content="{Binding email}"/>
+    <text transform="translate(90 88)" data-content="{Binding phone}"/>
+    <text transform="translate(170 88)" data-content="{Binding fax}"/>
   </g>
    <rect fill='transparent'
       stroke="{TemplateBinding itemSelected, Converter=demoConverters.selectedStrokeConverter}"

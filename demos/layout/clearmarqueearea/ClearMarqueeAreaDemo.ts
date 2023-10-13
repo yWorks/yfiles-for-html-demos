@@ -192,7 +192,8 @@ function onDragFinished(sender: any, e: MarqueeSelectionEventArgs): void {
  * Returns the group node at the given location. If there is no group node, `null` is returned.
  */
 function getHitGroupNode(context: IInputModeContext, location: Point): INode | null {
-  return (context.lookup(INodeHitTester.$class) as INodeHitTester)
+  return context
+    .lookup(INodeHitTester.$class)!
     .enumerateHits(context, location)
     .find(n => graphComponent.graph.isGroupNode(n))
 }

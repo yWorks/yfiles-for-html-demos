@@ -28,8 +28,8 @@ See the sources for details.
 
 ## Related Demos
 
-- [Drag and Drop Demo](../../input/draganddrop/index.html)
-- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/index.html)
-- [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/index.html)
-- [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/index.html)
-- [Drag From Component Demo](../../input/drag-from-component/index.html)
+- [Drag and Drop Demo](../../input/draganddrop/)
+- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/)
+- [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/)
+- [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/)
+- [Drag From Component Demo](../../input/drag-from-component/)

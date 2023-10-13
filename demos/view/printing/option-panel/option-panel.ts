@@ -38,12 +38,12 @@ type PrintingOptions = {
 }
 
 export function initializeOptionPanel(exportCallback: (options: PrintingOptions) => void): void {
-  const useRectInput = document.getElementById('useRect')! as HTMLInputElement
-  const scale = document.getElementById('scale')! as HTMLInputElement
-  const margin = document.getElementById('margin')! as HTMLInputElement
-  const useTilePrinting = document.getElementById('useTilePrinting')! as HTMLInputElement
-  const tileWidth = document.getElementById('tileWidth')! as HTMLInputElement
-  const tileHeight = document.getElementById('tileHeight')! as HTMLInputElement
+  const useRectInput = document.querySelector<HTMLInputElement>('#useRect')!
+  const scale = document.querySelector<HTMLInputElement>('#scale')!
+  const margin = document.querySelector<HTMLInputElement>('#margin')!
+  const useTilePrinting = document.querySelector<HTMLInputElement>('#useTilePrinting')!
+  const tileWidth = document.querySelector<HTMLInputElement>('#tileWidth')!
+  const tileHeight = document.querySelector<HTMLInputElement>('#tileHeight')!
   const printButton = document.querySelector<HTMLButtonElement>('#print-button')!
 
   useRectInput.addEventListener('change', () => {

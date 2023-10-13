@@ -74,41 +74,27 @@ class FullscreenButtonComponent extends HTMLElement {
   }
 
   private toggleFullscreen(): void {
-    if (
-      !document.fullscreenElement &&
-      !(document as any).mozFullScreenElement &&
-      !(document as any).webkitFullscreenElement &&
-      !(document as any).msFullscreenElement
-    ) {
-      const documentElement = document.documentElement as any
+    // Before Safari 16.4 (2023-03-27), only the Fullscreen API is prefixed with webkit
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {
+        alert(`Error attempting to exit full-screen mode. Perhaps it was blocked by your browser.`)
+      })
+    } else if ((document as any).webkitFullscreenElement) {
+      // The method with vendor prefix might not return a Promise, don't add the error handler here
+      ;(document as any).webkitExitFullscreen()
+    } else {
+      const documentElement = document.documentElement as HTMLElement & {
+        webkitRequestFullscreen: any
+      }
       if (documentElement.requestFullscreen) {
-        // Methods with vendor prefix might not return a Promise, don't add the error handler there
         documentElement.requestFullscreen().catch(() => {
           alert(
             `Error attempting to enable full-screen mode. Perhaps it was blocked by your browser.`
           )
         })
-      } else if (documentElement.msRequestFullscreen) {
-        ;(document.body as any).msRequestFullscreen()
-      } else if (documentElement.mozRequestFullScreen) {
-        documentElement.mozRequestFullScreen()
       } else if (documentElement.webkitRequestFullscreen) {
+        // The method with vendor prefix might not return a Promise, don't add the error handler here
         documentElement.webkitRequestFullscreen((Element as any).ALLOW_KEYBOARD_INPUT)
-      }
-    } else {
-      if (document.exitFullscreen) {
-        // Methods with vendor prefix might not return a Promise, don't add the error handler there
-        document.exitFullscreen().catch(() => {
-          alert(
-            `Error attempting to exit full-screen mode. Perhaps it was blocked by your browser.`
-          )
-        })
-      } else if ((document as any).msExitFullscreen) {
-        ;(document as any).msExitFullscreen()
-      } else if ((document as any).mozCancelFullScreen) {
-        ;(document as any).mozCancelFullScreen()
-      } else if ((document as any).webkitExitFullscreen) {
-        ;(document as any).webkitExitFullscreen()
       }
     }
   }

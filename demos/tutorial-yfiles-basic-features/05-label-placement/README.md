@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 05 Label Placement - Basic Features Tutorial
+# 05 Label Placement - Tutorial: Basic Features
 
 # Placing Labels
 
@@ -60,6 +60,6 @@ graph.setLabelLayoutParameter(
 )
 ```
 
-You can also take a look at the [Node Label Placement Demo](../../layout/nodelabelplacement/index.html) and the [Edge Label Placement Demo](../../layout/edgelabelplacement/index.html) that show how to configure node and edge labels.
+You can also take a look at the [Node Label Placement Demo](../../layout/nodelabelplacement/) and the [Edge Label Placement Demo](../../layout/edgelabelplacement/) that show how to configure node and edge labels.
 
-[06 Basic Interaction](../../tutorial-yfiles-basic-features/06-basic-interaction/index.html)
+[06 Basic Interaction](../../tutorial-yfiles-basic-features/06-basic-interaction/)

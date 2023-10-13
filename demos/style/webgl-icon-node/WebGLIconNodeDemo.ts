@@ -307,7 +307,7 @@ function configureInteraction(graphComponent: GraphComponent) {
   // Disable moving of individual edge segments
   graphComponent.graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
 
-  graphEditorInputMode.addNodeCreatedListener((sender, evt) => {
+  graphEditorInputMode.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     const faClass = faClasses[Math.floor(Math.random() * faClasses.length)]
     const ctx = createCanvasContext(128, 128)

@@ -29,20 +29,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Arrow,
+  Class,
   Cursor,
   DefaultLabelStyle,
   EdgeSegmentLabelModel,
   EdgeSides,
   ExteriorLabelModel,
   FreeNodeLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  HierarchicLayout,
   IBend,
   ICommand,
   IEdge,
+  IGraph,
   ILabel,
   INode,
+  LayoutExecutor,
   License,
   Point,
   PolylineEdgeStyle,
@@ -57,6 +62,9 @@ import { OffsetLabelModelWrapper } from './OffsetLabelModelWrapper'
 import { applyDemoTheme } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 const BUTTON_OUT_VALUE = 'button'
 const BUTTON_OVER_VALUE = 'button hovered'
@@ -77,7 +85,7 @@ function createButtonInputMode(): ButtonInputMode {
   buttonInputMode = new ButtonInputMode()
 
   // the QueryButtonsEvent is dispatched for an owning IModelItem when buttons shall be displayed for it
-  buttonInputMode.addQueryButtonsListener((bim, queryEvent) => {
+  buttonInputMode.addQueryButtonsListener((_, queryEvent) => {
     if (queryEvent.owner instanceof INode) {
       // for nodes we add four arrow buttons around it that create a node and an edge between 'owner' and the new node
       addNodeArrowButton(
@@ -107,15 +115,15 @@ function createButtonInputMode(): ButtonInputMode {
       addEdgeColorButton(queryEvent, '#A4778B', new Point(37.5, 0))
       addEdgeColorButton(queryEvent, '#AA4586', new Point(62.5, 0))
     } else if (queryEvent.owner instanceof ILabel) {
-      // for labels we add a button that triggers label text editing
+      // for labels, we add a button that triggers label text editing
       queryEvent.addButton({
         text: 'Edit',
         layoutParameter: ExteriorLabelModel.NORTH_EAST,
-        onAction: button => ICommand.EDIT_LABEL.execute(queryEvent.owner, graphComponent),
+        onAction: () => ICommand.EDIT_LABEL.execute(queryEvent.owner, graphComponent),
         tooltip: 'Edit label text'
       })
     } else if (queryEvent.owner instanceof IBend) {
-      // for bends we add a button that splits the edge at the bend location
+      // for bends, we add a button that splits the edge at the bend location
       queryEvent.addButton({
         icon: 'demo-resources/icons/cut2-16.svg',
         layoutParameter: FreeNodeLabelModel.INSTANCE.createParameter({
@@ -125,7 +133,7 @@ function createButtonInputMode(): ButtonInputMode {
           layoutRatio: [0, 0],
           layoutOffset: [0, 0]
         }),
-        onAction: button => splitEdgeAt(queryEvent.owner as IBend),
+        onAction: () => splitEdgeAt(queryEvent.owner as IBend),
         tooltip: 'Split edge here'
       })
     }
@@ -165,14 +173,14 @@ function addNodeArrowButton(
       layoutRatio: layoutRatio,
       layoutOffset: [0, 0]
     }),
-    onAction: button => createNodeAndEdge(queryEvent.owner as INode, nodeCreationOffset),
+    onAction: () => createNodeAndEdge(queryEvent.owner as INode, nodeCreationOffset),
     cursor: cursor,
     tag: tag,
-    onHoverOver: button => {
+    onHoverOver: () => {
       tag[HOVER_PROPERTY] = BUTTON_OVER_VALUE
       tag.firePropertyChanged(HOVER_PROPERTY)
     },
-    onHoverOut: button => {
+    onHoverOut: () => {
       tag[HOVER_PROPERTY] = BUTTON_OUT_VALUE
       tag.firePropertyChanged(HOVER_PROPERTY)
     },
@@ -214,7 +222,7 @@ function addEdgeColorButton(queryEvent: QueryButtonsEvent, fill: string, offset:
       backgroundFill: fill,
       shape: 'rectangle'
     }),
-    onAction: button => {
+    onAction: () => {
       const edgeStyle = (queryEvent.owner as IEdge).style as PolylineEdgeStyle
       edgeStyle.stroke = '1.5px ' + fill
       edgeStyle.targetArrow = new Arrow({ fill: fill, type: 'triangle' })
@@ -276,66 +284,18 @@ function initGraphDefaults(): void {
 }
 
 /**
- * Creates a simple sample graph.
- */
-function createGraph(): void {
-  const graph = graphComponent.graph
-
-  const node1 = graph.createNodeAt([110, -30])
-  const node2 = graph.createNodeAt([215, 95])
-  const node3 = graph.createNodeAt([5, 95])
-  const node4 = graph.createNodeAt([-70, 225])
-  const node5 = graph.createNodeAt([100, 225])
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  graph.setPortLocation(edge1.sourcePort!, new Point(123.33, -10))
-  graph.setPortLocation(edge1.targetPort!, new Point(215, 75))
-  graph.setPortLocation(edge2.sourcePort!, new Point(96.67, -10))
-  graph.setPortLocation(edge2.targetPort!, new Point(5, 75))
-  graph.setPortLocation(edge3.sourcePort!, new Point(-5, 115))
-  graph.setPortLocation(edge3.targetPort!, new Point(-70, 205))
-  graph.setPortLocation(edge4.sourcePort!, new Point(15, 115))
-  graph.setPortLocation(edge4.targetPort!, new Point(90, 205))
-  graph.setPortLocation(edge5.sourcePort!, new Point(110, -10))
-  graph.setPortLocation(edge5.targetPort!, new Point(110, 205))
-  graph.addBends(edge1, [new Point(123.33, 10), new Point(215, 10)])
-  graph.addBends(edge2, [new Point(96.67, 10), new Point(5, 10)])
-  graph.addBends(edge3, [new Point(-5, 160), new Point(-70, 160)])
-  graph.addBends(edge4, [new Point(15, 160), new Point(90, 160)])
-
-  const model = new FreeNodeLabelModel()
-  graph.addLabel(
-    node1,
-    'Node Label',
-    model.createParameter({
-      layoutRatio: new Point(1, 0),
-      layoutOffset: Point.ORIGIN,
-      labelRatio: new Point(0.5, 1),
-      labelOffset: new Point(0, 5),
-      angle: Math.PI * 0.25
-    })
-  )
-  graphComponent.fitGraphBounds()
-  graph.undoEngine!.clear()
-}
-
-/**
  * Binds the buttons in the toolbar to their functionality.
  */
 function initializeUI(): void {
   document
     .querySelector('#button-trigger-combo-box')!
-    .addEventListener('change', () => onButtonTriggerChanged(graphComponent))
+    .addEventListener('change', () => onButtonTriggerChanged())
 }
 
 /**
  * Changes the trigger used by the ButtonInputMode to decide when to show the buttons for an IModelItem.
  */
-function onButtonTriggerChanged(graphComponent: GraphComponent) {
+function onButtonTriggerChanged() {
   const featureComboBox = document.querySelector<HTMLSelectElement>('#button-trigger-combo-box')!
   switch (featureComboBox.selectedIndex) {
     case 1: // CurrentItem
@@ -368,16 +328,51 @@ async function run(): Promise<void> {
 
   graphComponent.inputMode = graphEditorInputMode
 
-  graphComponent.graph.undoEngineEnabled = true
-
   // configures default styles for newly created graph elements
   initGraphDefaults()
 
-  // add a sample graph
-  createGraph()
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({
+      orthogonalRouting: true,
+      minimumLayerDistance: 100,
+      nodeToEdgeDistance: 100,
+      nodeToNodeDistance: 100
+    })
+  )
+  graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
 
   // bind the toolbar buttons to their actions
   initializeUI()
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList,
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 run().then(finishLoading)

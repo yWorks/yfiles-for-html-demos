@@ -169,12 +169,12 @@ function configureUI(graphComponent: GraphComponent) {
   const options: Map<BaseAnimation, HTMLDivElement> = new Map<BaseAnimation, HTMLDivElement>(
     animations.map(animation => [
       animation,
-      document.getElementById(`${animation}-options`) as HTMLDivElement
+      document.querySelector<HTMLDivElement>(`#${animation}-options`)!
     ])
   )
-  options.set('fade-effect', document.getElementById(`fade-options`) as HTMLDivElement)
-  options.set('pulse-effect', document.getElementById(`pulse-options`) as HTMLDivElement)
-  options.set('scale-effect', document.getElementById(`scale-options`) as HTMLDivElement)
+  options.set('fade-effect', document.querySelector<HTMLDivElement>(`#fade-options`)!)
+  options.set('pulse-effect', document.querySelector<HTMLDivElement>(`#pulse-options`)!)
+  options.set('scale-effect', document.querySelector<HTMLDivElement>(`#scale-options`)!)
 
   const magnitudeOptions = document.querySelector<HTMLDivElement>('#magnitude-options')!
   const animatedElementOptions = document.querySelector<HTMLDivElement>(
@@ -301,7 +301,7 @@ function configureUI(graphComponent: GraphComponent) {
         animatedElementOptions.style.display = 'none'
         animationMagnitudeSelect.value = '20'
         beaconSmoothCheckbox.checked = true
-        ;(document.getElementById('beacon-color') as HTMLInputElement).style.display = 'block'
+        document.querySelector<HTMLInputElement>('#beacon-color')!.style.display = 'block'
         animationDurationSelect.value = '500ms'
         iterationCountSelect.value = '1'
         animationDirectionSelect.value = 'normal'
@@ -515,13 +515,13 @@ function configureInteraction(graphComponent: GraphComponent) {
 
   // Add the configured animation either to the whole component the hovered item
   // is part of or to the rest of the graph.
-  gvim.itemHoverInputMode.addHoveredItemChangedListener((_, args) => {
-    stopAnimation(graphComponent, args.oldItem)
-    startAnimation(graphComponent, args.item)
+  gvim.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    stopAnimation(graphComponent, evt.oldItem)
+    startAnimation(graphComponent, evt.item)
   })
 
-  gvim.addMultiSelectionFinishedListener((_, args) => {
-    const item = args.selection.at(0)
+  gvim.addMultiSelectionFinishedListener((_, evt) => {
+    const item = evt.selection.at(0)
     stopAnimation(graphComponent, currentSelectedItem)
     startAnimation(graphComponent, item)
     currentSelectedItem = item
@@ -622,7 +622,7 @@ function removeAnimation(graphComponent: GraphComponent, animation: WebGL2Animat
  * Returns whether to animate nodes.
  */
 function getAnimateNodes(): boolean {
-  const checkBox = document.querySelector('input[id="animate-nodes"]') as HTMLInputElement
+  const checkBox = document.querySelector<HTMLInputElement>('input[id="animate-nodes"]')!
   const config = getAnimationConfiguration()
   const alwaysNode =
     config.baseAnimation == 'pulse-effect' ||
@@ -700,10 +700,9 @@ function getAnimationType(
  * Gets the colors from the fade to color pickers
  */
 function getConfiguredFadeColors(): { color1: Color; color2: Color } {
-  const color1pickerValue = (document.getElementById('fade-color1') as HTMLInputElement).value
-  const color2pickerValue = (document.getElementById('fade-color2') as HTMLInputElement).value
-  const chosenFadeType = (document.getElementById('fade-type') as HTMLSelectElement)
-    .value as FadeType
+  const color1pickerValue = document.querySelector<HTMLInputElement>('#fade-color1')!.value
+  const color2pickerValue = document.querySelector<HTMLInputElement>('#fade-color2')!.value
+  const chosenFadeType = document.querySelector<HTMLSelectElement>('#fade-type')!.value as FadeType
   const isSemiTransparent =
     chosenFadeType === 'from semi-transparent' || chosenFadeType === 'to semi-transparent'
   return {
@@ -839,16 +838,16 @@ function getAnimationConfiguration(): {
     color1: colorFade
       ? colors.color1
       : baseAnimation === 'beacon'
-      ? Color.from((document.getElementById('beacon-color') as HTMLInputElement).value)
+      ? Color.from(document.querySelector<HTMLInputElement>('#beacon-color')!.value)
       : null,
     color2: colorFade ? colors.color2 : null,
-    count: Number((document.getElementById('pulse-count') as HTMLSelectElement).value),
-    pulseWidth: Number((document.getElementById('pulse-width') as HTMLSelectElement).value),
-    pulseDistance: Number((document.getElementById('pulse-distance') as HTMLSelectElement).value),
+    count: Number(document.querySelector<HTMLSelectElement>('#pulse-count')!.value),
+    pulseWidth: Number(document.querySelector<HTMLSelectElement>('#pulse-width')!.value),
+    pulseDistance: Number(document.querySelector<HTMLSelectElement>('#pulse-distance')!.value),
     viewCoordinates: Boolean(
-      (document.getElementById('view-coordinates') as HTMLInputElement).checked
+      document.querySelector<HTMLInputElement>('#view-coordinates')!.checked
     ),
-    smooth: Boolean((document.getElementById('beacon-smooth') as HTMLInputElement).checked)
+    smooth: Boolean(document.querySelector<HTMLInputElement>('#beacon-smooth')!.checked)
   }
 }
 

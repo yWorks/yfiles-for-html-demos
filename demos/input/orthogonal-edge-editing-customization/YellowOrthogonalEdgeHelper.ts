@@ -96,7 +96,7 @@ function cleanUpEdgeEnd(
   const atSource = bendAddedState == BendAddedState.AtSource
 
   const port = atSource ? edge.sourcePort! : edge.targetPort!
-  const geometry = port.owner!.lookup(IShapeGeometry.$class) as IShapeGeometry
+  const geometry = port.owner!.lookup(IShapeGeometry.$class)!
 
   // remove all bend inside the respective node
   const bends = edge.bends

@@ -191,7 +191,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     focusableItems: GraphItemTypes.NONE
   })
   // toggle highlight state on right click
-  inputMode.addItemRightClickedListener((sender, { item }) => {
+  inputMode.addItemRightClickedListener((_, { item }) => {
     const him = graphComponent.highlightIndicatorManager
     if (him) {
       const isHighlighted = him.selectionModel?.includes(item)

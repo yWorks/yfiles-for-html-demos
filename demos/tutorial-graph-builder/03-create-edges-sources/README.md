@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 03 Create Edges Sources - Graph Builder Tutorial
+# 03 Create Edges Sources - Tutorial: Graph Builder
 
 # Loading edge data from different sources
 
@@ -49,4 +49,4 @@ Note
 
 Please have a look in this tutorial step’s demo code at `create-edges-sources.ts` and play around with the different ways to import business data.
 
-[04 Group Nodes](../../tutorial-graph-builder/04-group-nodes/index.html)
+[04 Group Nodes](../../tutorial-graph-builder/04-group-nodes/)

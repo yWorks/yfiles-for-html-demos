@@ -27,14 +27,18 @@
  **
  ***************************************************************************/
 import {
+  Class,
   Font,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   HorizontalTextAlignment,
+  IGraph,
   InteriorStretchLabelModel,
+  LayoutExecutor,
   License,
   OrthogonalEdgeEditingContext,
-  Point,
+  OrthogonalLayout,
   PolylineEdgeStyle,
   Size,
   SmartEdgeLabelModel,
@@ -46,13 +50,15 @@ import { MarkdownLabelStyle } from './MarkdownLabelStyle'
 import { applyDemoTheme } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 /**
  * Simple demo that shows how to use MarkupLabelStyle to render labels.
  * The label text shows how to create headings, strong and emphasis text and line breaks,
  * and also how to style those elements using inline CSS.
  * The stylesheet CSS shows how to style label elements using external CSS.
- * The label style uses interactive text wrapping, which means you can resize nodes interactively
+ * The label style uses interactive text wrapping, which means you can resize nodes interactively,
  * and the label text will be wrapped at word boundaries.
  */
 async function run(): Promise<void> {
@@ -95,107 +101,40 @@ async function run(): Promise<void> {
     insets: [5]
   })
 
-  // create a graph
-  const graphNode = graph.createNodeAt([175, 125])
-  const nodeNode = graph.createNodeAt([175, 500])
-  const edgeNode = graph.createNodeAt([1175, 500])
-  const labelNode = graph.createNodeAt([675, 875])
-  const portNode = graph.createNodeAt([675, 500])
-  const bendNode = graph.createNodeAt([1725, 500])
-  graph.createEdge({ source: graphNode, target: nodeNode, labels: ['#### nodes'] })
-  graph.createEdge({
-    source: graphNode,
-    target: edgeNode,
-    labels: ['#### edges'],
-    bends: [new Point(1175, 125)]
-  })
-  graph.createEdge({ source: nodeNode, target: portNode, labels: ['#### ports'] })
-  graph.createEdge({
-    source: nodeNode,
-    target: labelNode,
-    labels: ['#### labels'],
-    bends: [new Point(175, 875)]
-  })
-  graph.createEdge({ source: edgeNode, target: portNode, labels: ['#### ports'] })
-  graph.createEdge({
-    source: edgeNode,
-    target: labelNode,
-    labels: ['#### labels'],
-    bends: [new Point(1175, 875)]
-  })
-  graph.createEdge({ source: edgeNode, target: bendNode, labels: ['#### bends'] })
-  graph.createEdge({ source: portNode, target: labelNode, labels: ['#### labels'] })
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
 
-  // add markdown labels to the nodes
-  graph.addLabel(
-    graphNode,
-    `## IGraph
-*interface*\\
-Central interface that models a graph which can be displayed in a **canvas** or **GraphComponent**.
-### Code example:
-\`\`\`
-const graph = graphComponent.graph
-\`\`\``
-  )
-  graph.addLabel(
-    nodeNode,
-    `## INode
-*interface*\\
-The interface for node entities in an **IGraph**.
-### Code example:
-\`\`\`
-const node = graph.createNode(
-  new Rect(0, 0, 60, 40)
-)
-\`\`\``
-  )
-  graph.addLabel(
-    edgeNode,
-    `## IEdge
-*interface*\\
-The interface used to model edges in an **IGraph** implementation.
-### Code example:
-\`\`\`
-const edge = graph.createEdge({
-  source: node1,
-  target: node2,
-  labels: ['Edge Label']
-})
-\`\`\``
-  )
-  graph.addLabel(
-    labelNode,
-    `## ILabel
-*interface*\\
-The interface used in an **IGraph** implementation for labels.
-### Code example:
-\`\`\`
-const nodeLabel = graph.addLabel(node, 'Node Label', ExteriorLabelModel.SOUTH)
-const edgeLabel = graph.addLabel(edge, 'Edge Label', FreeEdgeLabelModel.INSTANCE.createDefaultParameter())
-\`\`\``
-  )
-  graph.addLabel(
-    portNode,
-    `## IPort
-*interface*\\
-The interface used in an **IGraph** implementation for **IEdges** to connect to.
-### Code example:
-\`\`\`
-const port = graph.addPort(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-\`\`\``
-  )
-  graph.addLabel(
-    bendNode,
-    `## IBend
-*interface*\\
-The interface used in an **IGraph** implementation to control the layout of **edges**.
-### Code example:
-\`\`\`
-const bend = graph.addBend(edge, new Point(50, 20))
-\`\`\``
-  )
-
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(new OrthogonalLayout({ integratedEdgeLabeling: true }))
   graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList,
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder
+    .createEdgesSource({
+      data: graphData.edgeList,
+      sourceId: item => item.source,
+      targetId: item => item.target
+    })
+    .edgeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.buildGraph()
 }
 
 run().then(finishLoading)

@@ -93,13 +93,13 @@ async function run() {
  * changed.
  */
 function initializeTextAreas() {
-  templateTextArea = CodeMirror.fromTextArea(document.getElementById('template-text-area'), {
+  templateTextArea = CodeMirror.fromTextArea(document.querySelector('#template-text-area'), {
     lineNumbers: true,
     mode: 'application/xml',
     gutters: ['CodeMirror-lint-markers'],
     lint: true
   })
-  tagTextArea = CodeMirror.fromTextArea(document.getElementById('tag-text-area'), {
+  tagTextArea = CodeMirror.fromTextArea(document.querySelector('#tag-text-area'), {
     lineNumbers: true,
     mode: 'application/json',
     gutters: ['CodeMirror-lint-markers'],
@@ -122,15 +122,15 @@ function initializeTextAreas() {
       }
       tagTextArea.setOption('readOnly', false)
       tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-      document.getElementById('apply-template-button').disabled = false
-      document.getElementById('apply-tag-button').disabled = false
+      document.querySelector('#apply-template-button').disabled = false
+      document.querySelector('#apply-tag-button').disabled = false
     } else {
       templateTextArea.setOption('readOnly', 'nocursor')
       tagTextArea.setOption('readOnly', 'nocursor')
       templateTextArea.setValue('Select a node to edit its template.')
       tagTextArea.setValue('Select a node to edit its tag.')
-      document.getElementById('apply-template-button').disabled = true
-      document.getElementById('apply-tag-button').disabled = true
+      document.querySelector('#apply-template-button').disabled = true
+      document.querySelector('#apply-tag-button').disabled = true
     }
   })
 }
@@ -201,9 +201,9 @@ function initializeIO() {
     'http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0',
     'VuejsNodeStyle'
   )
-  graphmlHandler.addHandleSerializationListener((sender, args) => {
-    const item = args.item
-    const context = args.context
+  graphmlHandler.addHandleSerializationListener((_, evt) => {
+    const item = evt.item
+    const context = evt.context
     if (item instanceof VuejsNodeStyle) {
       const vuejsNodeStyleMarkupExtension = new VuejsNodeStyleMarkupExtension()
       vuejsNodeStyleMarkupExtension.template = item.template
@@ -212,7 +212,7 @@ function initializeIO() {
         item,
         vuejsNodeStyleMarkupExtension
       )
-      args.handled = true
+      evt.handled = true
     }
   })
   graphMLSupport = new GraphMLSupport({

@@ -177,7 +177,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     for (const p of nodeInfo.rows) {
       const ports = getPortForData(this.node, p)
       ports.forEach(port => {
-        const handle = port.lookup(IHandle.$class) as IHandle
+        const handle = port.lookup(IHandle.$class)!
         const info = {
           info: p,
           parameter: port.locationParameter,

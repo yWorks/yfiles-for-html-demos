@@ -477,15 +477,15 @@ function configureInteraction(graphComponent: GraphComponent): void {
 
   // Provide a way to collapse group nodes or expand folder nodes even if their style does not
   // show an icon for collapsing or expanding.
-  geim.addItemLeftDoubleClickedListener((sender, args) => {
-    const item = args.item
+  geim.addItemLeftDoubleClickedListener((_, evt) => {
+    const item = evt.item
     if (item instanceof INode) {
       if (ICommand.TOGGLE_EXPANSION_STATE.canExecute(item, graphComponent)) {
         ICommand.TOGGLE_EXPANSION_STATE.execute(item, graphComponent)
         // we need to make sure that any handles that are present are reevaluated because they
         // may have different constraints after the expand/collapse operation
         geim.requeryHandles()
-        args.handled = true
+        evt.handled = true
       }
     }
   })

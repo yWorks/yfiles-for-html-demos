@@ -129,7 +129,7 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
         middleBend &&
         areCollinear(this.bend.location, middleBend.location, otherBend.location)
       ) {
-        this.slaveHandle = otherBend.lookup(IHandle.$class) as IHandle
+        this.slaveHandle = otherBend.lookup(IHandle.$class)
         this.middleLocation = middleBend.location.toPoint()
       }
 
@@ -322,8 +322,8 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
         context,
         ILookup.createSingleLookup(this, InnerControlPointHandle.$class)
       )
-      this.firstSlaveHandle = firstBend.lookup(IHandle.$class) as IHandle
-      this.lastSlaveHandle = lastBend.lookup(IHandle.$class) as IHandle
+      this.firstSlaveHandle = firstBend.lookup(IHandle.$class)
+      this.lastSlaveHandle = lastBend.lookup(IHandle.$class)
 
       if (this.firstSlaveHandle) {
         this.firstSlaveHandle.initializeDrag(childContext)

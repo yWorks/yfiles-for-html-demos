@@ -144,7 +144,7 @@ class BpmnPopup {
     })
 
     // Add listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((sender, node) => {
+    this.graphComponent.graph.addNodeLayoutChangedListener((_, node) => {
       if (
         (this._currentItem && this._currentItem === node) ||
         (this._currentItem instanceof IEdge &&
@@ -233,66 +233,59 @@ class BpmnPopup {
  * Manages visibility and content of popup.
  */
 export default class BpmnPopupSupport {
-  private gatewayTypeBox = document.getElementById('gateway-type-box')! as HTMLSelectElement
-  private eventTypeBox = document.getElementById('event-type-box')! as HTMLSelectElement
-  private eventCharacteristicBox = document.getElementById(
-    'event-characteristic-box'
-  )! as HTMLSelectElement
-  private activityAdHocCheckBox = document.getElementById(
-    'activity-ad-hoc-checkbox'
-  )! as HTMLInputElement
-  private activityCompensationCheckBox = document.getElementById(
-    'activity-compensation-checkbox'
-  )! as HTMLInputElement
-  private activityTypeBox = document.getElementById('activity-type-box')! as HTMLSelectElement
-  private activityLoopCharacteristicBox = document.getElementById(
-    'activity-loop-characteristic-box'
-  )! as HTMLSelectElement
-  private activitySubStateBox = document.getElementById(
-    'activity-sub-state-box'
-  )! as HTMLSelectElement
-  private activityTaskTypeBox = document.getElementById(
-    'activity-task-type-box'
-  )! as HTMLSelectElement
-  private activityTriggerEventCharacteristicBox = document.getElementById(
-    'activity-trigger-event-characteristic-box'
-  )! as HTMLSelectElement
-  private activityTriggerEventTypeBox = document.getElementById(
-    'activity-trigger-event-type-box'
-  )! as HTMLSelectElement
-  private conversationTypeBox = document.getElementById(
-    'conversation-type-box'
-  )! as HTMLSelectElement
-  private choreographyInitiatingAtTopCheckBox = document.getElementById(
-    'choreography-initiating-at-top-checkbox'
-  )! as HTMLInputElement
-  private choreographyInitiatingMessageCheckBox = document.getElementById(
-    'choreography-initiating-message-checkbox'
-  )! as HTMLInputElement
-  private choreographyResponseMessageCheckBox = document.getElementById(
-    'choreography-response-message-checkbox'
-  )! as HTMLInputElement
-  private choreographyTypeBox = document.getElementById(
-    'choreography-type-box'
-  )! as HTMLSelectElement
-  private choreographyLoopCharacteristicBox = document.getElementById(
-    'choreography-loop-characteristic-box'
-  )! as HTMLSelectElement
-  private choreographySubStateBox = document.getElementById(
-    'choreography-sub-state-box'
-  )! as HTMLSelectElement
-  private dataObjectCollectionCheckBox = document.getElementById(
-    'data-object-collection-checkbox'
-  )! as HTMLInputElement
-  private dataObjectTypeBox = document.getElementById('data-object-type-box')! as HTMLSelectElement
-  private poolMultipleCheckBox = document.getElementById(
-    'pool-multiple-checkbox'
-  )! as HTMLInputElement
-  private edgeTypeBox = document.getElementById('edge-type-box')! as HTMLSelectElement
-  private portEventTypeBox = document.getElementById('port-event-type-box')! as HTMLSelectElement
-  private portEventCharacteristicBox = document.getElementById(
-    'event-characteristic-box'
-  )! as HTMLSelectElement
+  private gatewayTypeBox = document.querySelector<HTMLSelectElement>('#gateway-type-box')!
+  private eventTypeBox = document.querySelector<HTMLSelectElement>('#event-type-box')!
+  private eventCharacteristicBox = document.querySelector<HTMLSelectElement>(
+    '#event-characteristic-box'
+  )!
+  private activityAdHocCheckBox = document.querySelector<HTMLInputElement>(
+    '#activity-ad-hoc-checkbox'
+  )!
+  private activityCompensationCheckBox = document.querySelector<HTMLInputElement>(
+    '#activity-compensation-checkbox'
+  )!
+  private activityTypeBox = document.querySelector<HTMLSelectElement>('#activity-type-box')!
+  private activityLoopCharacteristicBox = document.querySelector<HTMLSelectElement>(
+    '#activity-loop-characteristic-box'
+  )!
+  private activitySubStateBox =
+    document.querySelector<HTMLSelectElement>('#activity-sub-state-box')!
+  private activityTaskTypeBox =
+    document.querySelector<HTMLSelectElement>('#activity-task-type-box')!
+  private activityTriggerEventCharacteristicBox = document.querySelector<HTMLSelectElement>(
+    '#activity-trigger-event-characteristic-box'
+  )!
+  private activityTriggerEventTypeBox = document.querySelector<HTMLSelectElement>(
+    '#activity-trigger-event-type-box'
+  )!
+  private conversationTypeBox = document.querySelector<HTMLSelectElement>('#conversation-type-box')!
+  private choreographyInitiatingAtTopCheckBox = document.querySelector<HTMLInputElement>(
+    '#choreography-initiating-at-top-checkbox'
+  )!
+  private choreographyInitiatingMessageCheckBox = document.querySelector<HTMLInputElement>(
+    '#choreography-initiating-message-checkbox'
+  )!
+  private choreographyResponseMessageCheckBox = document.querySelector<HTMLInputElement>(
+    '#choreography-response-message-checkbox'
+  )!
+  private choreographyTypeBox = document.querySelector<HTMLSelectElement>('#choreography-type-box')!
+  private choreographyLoopCharacteristicBox = document.querySelector<HTMLSelectElement>(
+    '#choreography-loop-characteristic-box'
+  )!
+  private choreographySubStateBox = document.querySelector<HTMLSelectElement>(
+    '#choreography-sub-state-box'
+  )!
+  private dataObjectCollectionCheckBox = document.querySelector<HTMLInputElement>(
+    '#data-object-collection-checkbox'
+  )!
+  private dataObjectTypeBox = document.querySelector<HTMLSelectElement>('#data-object-type-box')!
+  private poolMultipleCheckBox =
+    document.querySelector<HTMLInputElement>('#pool-multiple-checkbox')!
+  private edgeTypeBox = document.querySelector<HTMLSelectElement>('#edge-type-box')!
+  private portEventTypeBox = document.querySelector<HTMLSelectElement>('#port-event-type-box')!
+  private portEventCharacteristicBox = document.querySelector<HTMLSelectElement>(
+    '#event-characteristic-box'
+  )!
 
   graphComponent: GraphComponent
   contextMenu: ContextMenu

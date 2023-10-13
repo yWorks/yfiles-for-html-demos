@@ -245,7 +245,7 @@ function initializeGraph(): void {
   )
 
   // ensure that every node has geometry and color information
-  graph.addNodeCreatedListener((sender, evt) => {
+  graph.addNodeCreatedListener((_, evt) => {
     ensureNodeTag(evt.item)
     if (graph.isGroupNode(evt.item)) {
       adaptGroupNodes()
@@ -389,12 +389,12 @@ function initializeUI(): void {
  * Disables buttons in the toolbar.
  */
 function setUIDisabled(disabled: boolean): void {
-  ;(document.getElementById('open-file') as HTMLInputElement).disabled = disabled
-  ;(document.getElementById('fit-content') as HTMLInputElement).disabled = disabled
-  ;(document.getElementById('hierarchic-layout') as HTMLInputElement).disabled = disabled
-  ;(document.getElementById('orthogonal-layout') as HTMLInputElement).disabled = disabled
-  ;(document.getElementById('grid-toggle') as HTMLInputElement).disabled = disabled
-  ;(document.getElementById('rotation') as HTMLInputElement).disabled = disabled
+  document.querySelector<HTMLInputElement>('#open-file')!.disabled = disabled
+  document.querySelector<HTMLInputElement>('#fit-content')!.disabled = disabled
+  document.querySelector<HTMLInputElement>('#hierarchic-layout')!.disabled = disabled
+  document.querySelector<HTMLInputElement>('#orthogonal-layout')!.disabled = disabled
+  document.querySelector<HTMLInputElement>('#grid-toggle')!.disabled = disabled
+  document.querySelector<HTMLInputElement>('#rotation')!.disabled = disabled
 }
 
 run().then(finishLoading)

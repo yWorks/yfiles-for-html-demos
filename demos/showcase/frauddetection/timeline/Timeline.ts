@@ -151,25 +151,23 @@ export default class Timeline<TDataItem> {
     // the zoom specifies the currently visible granularity
     this.zoomTo(2)
     let changeLayout = false
-    this.graphComponent.addSizeChangedListener(
-      (sender: GraphComponent, evt: SizeChangedEventArgs): void => {
-        if (evt.oldSize.height !== this.graphComponent.size.height && !changeLayout) {
-          changeLayout = true
-          setTimeout(() => {
-            changeLayout = false
-            applyTimelineLayout(
-              this.graphComponent,
-              this.styling,
-              this.zoom,
-              this.minZoom,
-              this.maxZoom
-            )
-            this.updateViewPort()
-            this.centerTimeFrame(this.buckets.toArray())
-          }, 500)
-        }
+    this.graphComponent.addSizeChangedListener((_, evt): void => {
+      if (evt.oldSize.height !== this.graphComponent.size.height && !changeLayout) {
+        changeLayout = true
+        setTimeout(() => {
+          changeLayout = false
+          applyTimelineLayout(
+            this.graphComponent,
+            this.styling,
+            this.zoom,
+            this.minZoom,
+            this.maxZoom
+          )
+          this.updateViewPort()
+          this.centerTimeFrame(this.buckets.toArray())
+        }, 500)
       }
-    )
+    })
 
     if (showPlayButton && showTimeframeRectangle) {
       this.addPlayButton()
@@ -293,7 +291,7 @@ export default class Timeline<TDataItem> {
     graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.ALWAYS
 
     // wire up a custom mousewheel behavior
-    graphComponent.addMouseWheelListener((sender, evt) => {
+    graphComponent.addMouseWheelListener((_, evt) => {
       evt.originalEvent?.preventDefault()
       this.updateZoom(evt)
     })
@@ -321,15 +319,15 @@ export default class Timeline<TDataItem> {
    */
   private initializeEvents(inputMode: GraphViewerInputMode): void {
     // bar-chart click listener
-    inputMode.addItemLeftClickedListener((src, args) => {
-      const clickedItem = args.item
+    inputMode.addItemLeftClickedListener((src, evt) => {
+      const clickedItem = evt.item
 
       src.clearSelection()
       src.setSelected(clickedItem, true)
 
       if (clickedItem instanceof INode) {
         if (this.barSelectListener) {
-          args.handled = true
+          evt.handled = true
           this.barSelectListener(getItemsFromBucket(clickedItem))
         }
       }
@@ -350,15 +348,15 @@ export default class Timeline<TDataItem> {
       }
     })()
     itemHoverInputMode.hoverCursor = Cursor.POINTER
-    itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-      const highlightManager = (sender.inputModeContext!.canvasComponent as GraphComponent)
+    itemHoverInputMode.addHoveredItemChangedListener((hoverInput, evt) => {
+      const highlightManager = (hoverInput.inputModeContext!.canvasComponent as GraphComponent)
         .highlightIndicatorManager
       highlightManager.clearHighlights()
 
       let hoveredItems: TDataItem[] = []
-      if (args.item instanceof INode) {
-        highlightManager.addHighlight(args.item)
-        hoveredItems = getItemsFromBucket<TDataItem>(args.item)
+      if (evt.item instanceof INode) {
+        highlightManager.addHighlight(evt.item)
+        hoveredItems = getItemsFromBucket<TDataItem>(evt.item)
       }
 
       if (this.barHoverListener) {

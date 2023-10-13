@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 10 Layout - Basic Features Tutorial
+# 10 Layout - Tutorial: Basic Features
 
 # Automatic Graph Layout
 
@@ -17,7 +17,7 @@
 
 This step shows how to use the [layout algorithms](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-layout) in yFiles for HTML to automatically place the graph elements.
 
-Automatic layout is one of the main features of the yFiles products. The layout library provides a large set of ready-to-use, highly customizable algorithms for most scenarios. The purpose of this sample is to demonstrate how to run an arbitrary layout algorithm. For an overview of the available layout styles, please see the [Layout Styles Demo](../../showcase/layoutstyles/index.html).
+Automatic layout is one of the main features of the yFiles products. The layout library provides a large set of ready-to-use, highly customizable algorithms for most scenarios. The purpose of this sample is to demonstrate how to run an arbitrary layout algorithm. For an overview of the available layout styles, please see the [Layout Styles Demo](../../showcase/layoutstyles/).
 
 ### Calculating a layout
 
@@ -56,4 +56,4 @@ Note
 
 morphLayout is a convenience method that comes with a lot of parameters that can be used to adjust various aspects of the layout animation. For more customized scenarios, use class [LayoutExecutor](https://docs.yworks.com/yfileshtml/#/api/LayoutExecutor).
 
-[11 Layout Data](../../tutorial-yfiles-basic-features/11-layout-data/index.html)
+[11 Layout Data](../../tutorial-yfiles-basic-features/11-layout-data/)

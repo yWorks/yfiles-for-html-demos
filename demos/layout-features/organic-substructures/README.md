@@ -23,11 +23,11 @@ The graph contains three substructures: a circle, a star and a chain. For each s
 
 ### Code Snippet
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-substructures/OraganicSubstructures.ts).
+You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-substructures/OrganicSubstructures.ts).
 
 ### Demos
 
-See the [Organic Substructures Demo](../../layout/organic-substructures/index.html) for an extensive presentation of the substructures functionality.
+See the [Organic Substructures Demo](../../layout/organic-substructures/) for an extensive presentation of the substructures functionality.
 
 ### Documentation
 

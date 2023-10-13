@@ -102,11 +102,11 @@ function initializeInputMode(graphComponent: GraphComponent): void {
     allowAddLabel: false
   })
   // add random user data to new nodes
-  mode.addNodeCreatedListener((sender, e) => {
-    e.item.tag = createNewRandomUserData()
+  mode.addNodeCreatedListener((_, evt) => {
+    evt.item.tag = createNewRandomUserData()
     // check if the label should be displayed
-    onToggleNodeLabel(graphComponent.graph, e.item, shouldAddLabels())
-    updateNodeSize(e.item, graphComponent.graph)
+    onToggleNodeLabel(graphComponent.graph, evt.item, shouldAddLabels())
+    updateNodeSize(evt.item, graphComponent.graph)
     graphComponent.updateContentRect()
   })
   graphComponent.inputMode = mode
@@ -135,8 +135,8 @@ function enableGraphML(graphComponent: GraphComponent): void {
     DataTableLabelStyle.$class
   )
 
-  gs.graphMLIOHandler.addParsedListener((sender, args) => {
-    onToggleLabels(args.context.graph)
+  gs.graphMLIOHandler.addParsedListener((_, evt) => {
+    onToggleLabels(evt.context.graph)
   })
 }
 

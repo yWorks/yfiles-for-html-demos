@@ -452,17 +452,7 @@ export default class DialContextMenu {
         // might be open already because of the longpress listener
         return
       }
-      if (evt.mozInputSource === 1 && evt.button === 0) {
-        // This event was triggered by the context menu key in Firefox.
-        // Thus, the coordinates of the event point to the lower left corner of the element and should be corrected.
-        openCallback(getCenterInPage(parent))
-      } else if (evt.pageX === 0 && evt.pageY === 0) {
-        // Most likely, this event was triggered by the context menu key in IE.
-        // Thus, the coordinates are meaningless and should be corrected.
-        openCallback(getCenterInPage(parent))
-      } else {
-        openCallback(new Point(evt.pageX, evt.pageY))
-      }
+      openCallback(new Point(evt.pageX, evt.pageY))
     }
 
     const contextMenuKeyListener = evt => {
@@ -476,8 +466,8 @@ export default class DialContextMenu {
     // consistently for the different devices and input types.
     parent.addEventListener('contextmenu', contextMenuListener, false)
     if (graphComponent) {
-      graphComponent.addTouchLongPressListener((sender, args) => {
-        openCallback(graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location)))
+      graphComponent.addTouchLongPressListener((_, evt) => {
+        openCallback(graphComponent.toPageFromView(graphComponent.toViewCoordinates(evt.location)))
       })
     }
     // Additionally, register to the context menu key to make it work in Chrome.

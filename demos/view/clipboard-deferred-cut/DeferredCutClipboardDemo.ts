@@ -28,18 +28,18 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  EdgePathLabelModel,
-  EdgeSides,
-  FreeNodePortLocationModel,
+  Class,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   ICommand,
   IGraph,
   INode,
+  InteriorLabelModel,
+  LayoutExecutor,
   License,
-  Point,
-  Rect,
+  OrthogonalLayout,
   Size
 } from 'yfiles'
 
@@ -49,6 +49,8 @@ import { ContextMenu } from 'demo-utils/ContextMenu'
 import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
 
@@ -60,15 +62,62 @@ async function run(): Promise<void> {
   applyDemoTheme(graphComponent)
 
   // set the styles and create a sample graph
-  initDemoStyles(graphComponent.graph)
+  initializeGraph(graphComponent.graph)
   setClipboardStyles(graphComponent.graph)
-  createSampleGraph(graphComponent.graph)
+
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(new OrthogonalLayout({ gridSpacing: 30 }))
   graphComponent.fitGraphBounds()
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+
+  /**
+   * Creates nodes and edges according to the given data.
+   */
+  function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+    const graphBuilder = new GraphBuilder(graph)
+
+    graphBuilder
+      .createNodesSource({
+        data: graphData.nodeList,
+        id: item => item.id
+      })
+      .nodeCreator.createLabelBinding(item => item.label)
+
+    graphBuilder
+      .createEdgesSource({
+        data: graphData.edgeList,
+        sourceId: item => item.source,
+        targetId: item => item.target
+      })
+      .edgeCreator.createLabelBinding(item => item.label)
+
+    graphBuilder.buildGraph()
+  }
+  /**
+   * Initializes the defaults for the styling in this demo.
+   *
+   * @param graph The graph.
+   */
+  function initializeGraph(graph: IGraph): void {
+    // set styles for this demo
+    initDemoStyles(graph)
+
+    // set sizes and locations specific for this demo
+    graph.nodeDefaults.size = new Size(50, 50)
+
+    graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  }
 
   // configure the clipboard itself
   const clipboard = new DeferredCutClipboard()
   // trigger a repaint after copy since copy removed the "marked for cut" mark from the elements
-  clipboard.addElementsCopiedListener(sender => graphComponent.invalidate())
+  clipboard.addElementsCopiedListener(_ => graphComponent.invalidate())
   graphComponent.clipboard = clipboard
 
   // set up the input mode
@@ -80,52 +129,6 @@ async function run(): Promise<void> {
   // for demonstration purposes we configure a context menu
   // to make it possible to paste to an arbitrary location
   configureContextMenu(graphComponent)
-}
-
-/**
- * Creates a sample graph.
- */
-function createSampleGraph(graph: IGraph): void {
-  graph.nodeDefaults.size = new Size(50, 50)
-  const edgeLabelModel = new EdgePathLabelModel({
-    autoRotation: true,
-    distance: 10,
-    sideOfEdge: EdgeSides.LEFT_OF_EDGE | EdgeSides.RIGHT_OF_EDGE
-  })
-  graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createDefaultParameter()
-
-  const node1 = graph.createNodeAt(new Point(50, 50))
-  const node2 = graph.createNodeAt(new Point(150, 50))
-  const node3 = graph.createNode(new Rect(260, 180, 80, 40))
-  const edge = graph.createEdge(node2, node3)
-  graph.createEdge(node1, node2)
-  graph.addBend(edge, new Point(300, 50))
-
-  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-  const port1AtNode3 = graph.addPortAt(node3, new Point(node3.layout.x, node3.layout.center.y))
-  const edgeAtPorts = graph.createEdge(port1AtNode1, port1AtNode3)
-
-  graph.addLabel(node1, 'Node 1')
-  graph.addLabel(node2, 'Node 2')
-  graph.addLabel(node3, 'Node 3')
-  graph.addLabel(edgeAtPorts, 'Edge')
-
-  const n4 = graph.createNodeAt(new Point(50, -50))
-  graph.addLabel(n4, 'Node 4')
-  const n5 = graph.createNodeAt(new Point(50, -150))
-  graph.addLabel(n5, 'Node 5')
-  const n6 = graph.createNodeAt(new Point(-50, -50))
-  graph.addLabel(n6, 'Node 6')
-  const n7 = graph.createNodeAt(new Point(-50, -150))
-  graph.addLabel(n7, 'Node 7')
-  const n8 = graph.createNodeAt(new Point(150, -50))
-  graph.addLabel(n8, 'Node 8')
-
-  graph.createEdge(n4, node1)
-  graph.createEdge(n5, n4)
-  graph.createEdge(n7, n6)
-  const e6_1 = graph.createEdge(n6, node1)
-  graph.addBend(e6_1, new Point(-50, 50), 0)
 }
 
 /**
@@ -143,14 +146,14 @@ function configureContextMenu(graphComponent: GraphComponent): void {
       contextMenu.show(location)
     }
   })
-  inputMode.addPopulateItemContextMenuListener((sender, args) => {
-    args.showMenu = true
+  inputMode.addPopulateItemContextMenuListener((_, evt) => {
+    evt.showMenu = true
     contextMenu.clearItems()
 
-    if (args.item instanceof INode) {
-      if (!graphComponent.selection.selectedNodes.isSelected(args.item)) {
+    if (evt.item instanceof INode) {
+      if (!graphComponent.selection.selectedNodes.isSelected(evt.item)) {
         graphComponent.selection.clear()
-        graphComponent.selection.selectedNodes.setSelected(args.item, true)
+        graphComponent.selection.selectedNodes.setSelected(evt.item, true)
       }
     } else {
       graphComponent.selection.clear()
@@ -161,7 +164,7 @@ function configureContextMenu(graphComponent: GraphComponent): void {
       contextMenu.addMenuItem('Delete', () => ICommand.DELETE.execute(null, graphComponent))
     } else {
       contextMenu.addMenuItem('Paste', () =>
-        ICommand.PASTE.execute(args.queryLocation, graphComponent)
+        ICommand.PASTE.execute(evt.queryLocation, graphComponent)
       )
     }
   })

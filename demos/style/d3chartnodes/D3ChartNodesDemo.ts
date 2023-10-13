@@ -58,9 +58,9 @@ async function run(): Promise<void> {
 
   // initialize the input mode
   const graphEditorInputMode = new GraphEditorInputMode()
-  graphEditorInputMode.addNodeCreatedListener((sender, args) => {
+  graphEditorInputMode.addNodeCreatedListener((_, evt) => {
     // put random data in tag of created node
-    args.item.tag = createRandomSparklineData()
+    evt.item.tag = createRandomSparklineData()
   })
   graphComponent.inputMode = graphEditorInputMode
 

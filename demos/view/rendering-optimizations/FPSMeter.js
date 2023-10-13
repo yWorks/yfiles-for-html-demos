@@ -48,7 +48,7 @@ export class FPSMeter {
     this._enabled = true
 
     // configure canvas
-    const canvas = document.getElementById('fpsMeter')
+    const canvas = document.querySelector('#fpsMeter')
     canvas.width = 200
     canvas.height = 75
     this.canvasCtx = canvas.getContext('2d')

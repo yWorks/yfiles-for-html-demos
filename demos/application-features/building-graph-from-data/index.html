@@ -34,10 +34,10 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Build Graph from Data - Application Features [yFiles for HTML]</title>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
     <script src="../../resources/filesystem-warning.js"></script>
     <style>
       :root {
@@ -98,6 +98,13 @@
         <h1>Build Graph from Data</h1>
 
         <p>This demo shows how to build a graph using the data stored in JSON-format.</p>
+        <p>
+          This demo utilizes the <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">IGraph</a> API to create graph elements, which can be useful
+          for handling special cases. However, for general use cases, we recommend using the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> for creating graphs from data. The GraphBuilder simplifies the
+          process and is the recommended approach for most scenarios.
+        </p>
+
         <ul>
           <li>Note that some nodes have individual colors or sizes.</li>
           <li>Look at the hierarchy of group nodes.</li>

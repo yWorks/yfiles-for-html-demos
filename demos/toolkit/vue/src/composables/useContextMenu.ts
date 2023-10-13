@@ -78,7 +78,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
       }
     })
 
-    inputMode.contextMenuInputMode.addPopulateMenuListener((sender, evt) => {
+    inputMode.contextMenuInputMode.addPopulateMenuListener((_, evt) => {
       evt.showMenu = true
     })
 
@@ -150,18 +150,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
         // might be open already because of the long press listener
         return
       }
-      const me = evt
-      if ((evt as any).mozInputSource === 1 && me.button === 0) {
-        // This event was triggered by the context menu key in Firefox.
-        // Thus, the coordinates of the event point to the lower left corner of the element and should be corrected.
-        openingCallback(getCenterInPage(componentDiv))
-      } else if (me.pageX === 0 && me.pageY === 0) {
-        // Most likely, this event was triggered by the context menu key in IE.
-        // Thus, the coordinates are meaningless and should be corrected.
-        openingCallback(getCenterInPage(componentDiv))
-      } else {
-        openingCallback(new Point(me.pageX, me.pageY))
-      }
+      openingCallback(new Point(evt.pageX, evt.pageY))
     }
 
     // Listen for the contextmenu event

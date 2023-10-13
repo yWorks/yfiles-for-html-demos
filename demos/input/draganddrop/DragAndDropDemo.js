@@ -35,17 +35,20 @@ import {
   FreeEdgeLabelModel,
   FreeNodeLabelModel,
   FreeNodePortLocationModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
   GridSnapTypes,
   GroupNodeLabelModel,
   GroupNodeStyle,
+  HierarchicLayout,
   IEdge,
   ImageNodeStyle,
   INode,
   IPort,
   LabelDropInputMode,
+  LayoutExecutor,
   License,
   ListEnumerable,
   NodeDropInputMode,
@@ -74,6 +77,7 @@ import {
 } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './resources/graph-data.json'
 
 Class.ensure(Arrow)
 
@@ -98,6 +102,7 @@ let nativeDragAndDropPanel = null
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
@@ -108,11 +113,52 @@ async function run() {
   // init graph default styles and visual decorators
   const graph = graphComponent.graph
   initializeGraph(graph)
-  graph.undoEngineEnabled = true
 
-  // add initial graph
-  createSampleGraph(graphComponent)
+  // build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graphComponent.graph.applyLayout(
+    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
+  )
+  graphComponent.fitGraphBounds()
+  graphComponent.zoom = 2
+
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graphComponent.graph.undoEngineEnabled = true
+
   initializeUI(graphComponent)
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  const nodesSource = graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
+  nodesSource.nodeCreator.styleProvider = item =>
+    item.tag === 'icon' ? new ImageNodeStyle('resources/y.svg') : undefined
+  nodesSource.nodeCreator.layoutProvider = item =>
+    item.tag === 'icon' ? new Rect(0, 0, 50, 50) : undefined
+  nodesSource.nodeCreator.createLabelBinding({
+    text: data => data.label,
+    layoutParameter: _ => ExteriorLabelModel.SOUTH
+  })
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -327,7 +373,7 @@ function initializeInteraction(graphComponent) {
   mode.nodeDropInputMode = new NodeDropInputMode({
     // enables the display of the dragged element during the drag
     showPreview: true,
-    // initially disables snapping fo the dragged element to existing elements
+    // initially disables snapping for the dragged element to existing elements
     snappingEnabled: false,
     // by default the mode available in GraphEditorInputMode is disabled, so first enable it
     enabled: true,
@@ -363,29 +409,6 @@ function initializeInteraction(graphComponent) {
 }
 
 /**
- * Creates an initial sample graph.
- * @param {!GraphComponent} graphComponent
- */
-function createSampleGraph(graphComponent) {
-  const graph = graphComponent.graph
-
-  const node1 = graph.createNodeAt([0, 0])
-  const node2 = graph.createNodeAt([-50, 80])
-  const node3 = graph.createNodeAt([50, 80])
-  const node4 = graph.createNode({
-    layout: [25, 150, 50, 50],
-    style: new ImageNodeStyle('resources/y.svg')
-  })
-  graph.createEdge(node1, node2)
-  graph.createEdge(node1, node3)
-  graph.createEdge(node3, node4)
-  graph.addLabel(node4, 'label', ExteriorLabelModel.SOUTH)
-
-  graphComponent.fitGraphBounds()
-  graphComponent.zoom = 2
-}
-
-/**
  * Registers event listeners for the snapping checkbox.
  * @param {!GraphComponent} graphComponent
  */
@@ -401,7 +424,7 @@ function initializeUI(graphComponent) {
  * @param {!GraphComponent} graphComponent
  */
 function updatePreviewSnapping(checkbox, graphComponent) {
-  const disabledIndicator = document.getElementById('disabled-indicator')
+  const disabledIndicator = document.querySelector('#disabled-indicator')
   const nodeDropInputMode = graphComponent.inputMode.nodeDropInputMode
 
   if (checkbox.checked) {

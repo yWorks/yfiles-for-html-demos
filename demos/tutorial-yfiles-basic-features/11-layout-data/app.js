@@ -45,7 +45,7 @@ initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
 
 const graphEditorInputMode = configureInteraction(graphComponent)
-graphEditorInputMode.addLabelTextChangedListener(sender => runLayout(graphComponent))
+graphEditorInputMode.addLabelTextChangedListener(() => runLayout(graphComponent))
 
 createSampleGraphLayoutData(graphComponent.graph)
 

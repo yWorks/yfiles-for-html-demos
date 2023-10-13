@@ -396,7 +396,7 @@ export class BoundsVisual extends BaseClass(IVisualCreator) {
 
 export function startNodeAnimation(graphComponent: GraphComponent): void {
   graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener(sender => {
+  graphComponent.addSizeChangedListener(_ => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()

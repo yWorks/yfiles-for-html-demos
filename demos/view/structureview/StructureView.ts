@@ -509,7 +509,7 @@ export class StructureView {
     }
     const groupLabel = this.getLabelElement(groupLi)
     const checkboxId = groupLabel.getAttribute('data-groupElement')!
-    const checkboxElement = document.getElementById(checkboxId) as HTMLInputElement
+    const checkboxElement = document.querySelector<HTMLInputElement>('#' + checkboxId)!
     checkboxElement.checked = src.isExpanded(groupNode)
   }
 }

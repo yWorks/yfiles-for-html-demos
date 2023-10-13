@@ -87,7 +87,7 @@ export function configureHoverHighlight(
 ): void {
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
   mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, { item, oldItem }) => {
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, { item, oldItem }) => {
     // the promise for both highlightItem calls can be ignored because it is merely a visual update
     void highlightItem(graphComponent, oldItem, false)
     void highlightItem(graphComponent, item, true)

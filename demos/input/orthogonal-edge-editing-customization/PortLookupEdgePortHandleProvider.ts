@@ -53,7 +53,7 @@ export default class PortLookupEdgePortHandleProvider extends BaseClass(IEdgePor
   getHandle(context: IInputModeContext, edge: IEdge, sourceHandle: boolean): IHandle {
     const port = sourceHandle ? edge.sourcePort! : edge.targetPort!
     return port.owner instanceof INode
-      ? new NodeLayoutPortLocationHandle(port.owner, port.lookup(IHandle.$class) as IHandle)
-      : (port.lookup(IHandle.$class) as IHandle)
+      ? new NodeLayoutPortLocationHandle(port.owner, port.lookup(IHandle.$class)!)
+      : port.lookup(IHandle.$class)!
   }
 }

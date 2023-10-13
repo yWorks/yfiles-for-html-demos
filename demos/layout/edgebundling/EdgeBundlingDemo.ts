@@ -129,11 +129,11 @@ const bundleDescriptorMap = new Mapper<IEdge, EdgeBundleDescriptor>()
 const bundlesMap = new Mapper<IEdge, boolean>()
 
 // inits the UI's elements
-const samplesComboBox = document.getElementById('sample-combo-box')! as HTMLSelectElement
-const bundlingStrengthSlider = document.getElementById(
-  'bundling-strength-slider'
-) as HTMLInputElement
-const bundlingStrengthLabel = document.getElementById('bundling-strength-label') as HTMLInputElement
+const samplesComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
+const bundlingStrengthSlider = document.querySelector<HTMLInputElement>(
+  '#bundling-strength-slider'
+)!
+const bundlingStrengthLabel = document.querySelector<HTMLInputElement>('#bundling-strength-label')!
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -194,8 +194,8 @@ function createInputMode(): void {
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
   mode.itemHoverInputMode.discardInvalidItems = false
   mode.itemHoverInputMode.hoverCursor = Cursor.POINTER
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-    const item = args.item
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+    const item = evt.item
     const highlightIndicatorManager = graphComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
     if (item) {
@@ -226,7 +226,7 @@ function createInputMode(): void {
 
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  mode.addPopulateItemContextMenuListener((sender, args) => populateContextMenu(contextMenu, args))
+  mode.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
 
   // Add a listener that closes the menu when the input mode requests this
   mode.contextMenuInputMode.addCloseMenuListener(() => {
@@ -371,10 +371,10 @@ function initializeGraph(): void {
   graphComponent.highlightIndicatorManager = new HighlightManager()
 
   // when a node is selected, select also the adjacent edges
-  graphComponent.selection.addItemSelectionChangedListener((sender, args) => {
-    const item = args.item
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+    const item = evt.item
     const selection = graphComponent.selection
-    if (INode.isInstance(item) && args.itemSelected) {
+    if (INode.isInstance(item) && evt.itemSelected) {
       selection.setSelected(item, true)
       graph.edgesAt(item).forEach(edge => {
         selection.setSelected(edge, true)

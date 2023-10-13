@@ -94,7 +94,7 @@ async function run() {
   initializeUI(graphComponent)
 
   // center the sample graph inside the visible area
-  await graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 }
 
 /**
@@ -175,32 +175,36 @@ function configureInteraction(graphComponent) {
   inputMode.addNodeCreatedListener(async () => alignNodes(graphComponent))
 
   // configure the visual hints that are displayed during Drag and Drop operations
-  const ndim = inputMode.nodeDropInputMode
-  ndim.addDragEnteredListener(sender => initializeHints(sender, snapDistanceCanvasObject))
-  ndim.addDragLeftListener(() => disposeHints(snapDistanceCanvasObject))
-  ndim.addDragDroppedListener(() => disposeHints(snapDistanceCanvasObject))
-  ndim.addDragOverListener(sender => updateHints(sender, snapDistanceCanvasObject))
-  ndim.enabled = true
+  const nodeDropInputMode = inputMode.nodeDropInputMode
+  nodeDropInputMode.addDragEnteredListener(inputNode =>
+    initializeHints(inputNode, snapDistanceCanvasObject)
+  )
+  nodeDropInputMode.addDragLeftListener(() => disposeHints(snapDistanceCanvasObject))
+  nodeDropInputMode.addDragDroppedListener(() => disposeHints(snapDistanceCanvasObject))
+  nodeDropInputMode.addDragOverListener(inputNode =>
+    updateHints(inputNode, snapDistanceCanvasObject)
+  )
+  nodeDropInputMode.enabled = true
 
   // display the same visual hints when moving an existing node
   const mim = inputMode.moveInputMode
-  mim.addDragStartedListener(sender => {
-    initializeHints(sender, snapDistanceCanvasObject)
+  mim.addDragStartedListener(inputMove => {
+    initializeHints(inputMove, snapDistanceCanvasObject)
 
     // force the graph component to render the initial state of the hints visualization
-    getGraphComponent(sender).updateVisual()
+    getGraphComponent(inputMove).updateVisual()
   })
-  mim.addDraggedListener(sender => updateHints(sender, snapDistanceCanvasObject))
-  mim.addDragFinishedListener(async sender => {
+  mim.addDraggedListener(inputMove => updateHints(inputMove, snapDistanceCanvasObject))
+  mim.addDragFinishedListener(async inputMove => {
     disposeHints(snapDistanceCanvasObject)
 
     // run the alignment layout calculation after a node has been moved
-    return await alignNodes(getGraphComponent(sender))
+    return await alignNodes(getGraphComponent(inputMove))
   })
 
   graphComponent.inputMode = inputMode
 
-  // only one graqph item may be selected at a time to prevent multiple nodes from being moved at
+  // only one graph item may be selected at a time to prevent multiple nodes from being moved at
   // the same time
   enableSingleSelection(graphComponent)
 }
@@ -235,8 +239,8 @@ function initializeHints(mode, snapDistanceCanvasObject) {
  * @param {!ICanvasObject} snapDistanceCanvasObject
  */
 function updateHints(mode, snapDistanceCanvasObject) {
-  const sdvc = snapDistanceCanvasObject.userObject
-  snapDistanceCanvasObject.dirty = sdvc.updateNodeCenter(getNodeCenter(mode))
+  const SnapDistanceVisualCreator = snapDistanceCanvasObject.userObject
+  snapDistanceCanvasObject.dirty = SnapDistanceVisualCreator.updateNodeCenter(getNodeCenter(mode))
 }
 
 /**

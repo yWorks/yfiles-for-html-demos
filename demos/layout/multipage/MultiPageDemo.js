@@ -136,19 +136,19 @@ function runMultiPageLayout() {
   layouting = true
 
   // parse the pageWidth and pageHeight parameters
-  const pageWidthTextBox = document.getElementById('pageWidthTextBox')
+  const pageWidthTextBox = document.querySelector('#pageWidthTextBox')
   let pageWidth = parseFloat(pageWidthTextBox.value)
   if (isNaN(pageWidth)) {
     pageWidth = 800
   }
-  const pageHeightTextBox = document.getElementById('pageHeightTextBox')
+  const pageHeightTextBox = document.querySelector('#pageHeightTextBox')
   let pageHeight = parseFloat(pageHeightTextBox.value)
   if (isNaN(pageHeight)) {
     pageHeight = 800
   }
 
   // get the core layout
-  const coreLayoutComboBox = document.getElementById('coreLayoutComboBox')
+  const coreLayoutComboBox = document.querySelector('#coreLayoutComboBox')
   const layoutIndex = coreLayoutComboBox.selectedIndex
   const coreLayout = coreLayoutComboBox.options[layoutIndex > -1 ? layoutIndex : 0].myValue
   if (coreLayoutComboBox.value === 'Tree') {
@@ -156,10 +156,10 @@ function runMultiPageLayout() {
     coreLayout.defaultNodePlacer.aspectRatio = pageWidth / pageHeight
   }
 
-  const createProxyReferenceNodes = document.getElementById('createProxyReferenceNodes')
+  const createProxyReferenceNodes = document.querySelector('#createProxyReferenceNodes')
   const createProxyNodes = createProxyReferenceNodes.checked
-  const placeMultipleComponentsOnSinglePage = document.getElementById(
-    'placeMultipleComponentsOnSinglePage'
+  const placeMultipleComponentsOnSinglePage = document.querySelector(
+    '#placeMultipleComponentsOnSinglePage'
   )
   const placeComponentsOnSinglePage = placeMultipleComponentsOnSinglePage.checked
 
@@ -168,7 +168,7 @@ function runMultiPageLayout() {
     maximumPageSize: new YDimension(pageWidth, pageHeight),
     createProxyReferenceNodes: createProxyNodes,
     multipleComponentsOnSinglePage: placeComponentsOnSinglePage,
-    additionalParentCount: Number.parseInt(document.getElementById('additionalParentCount').value),
+    additionalParentCount: Number.parseInt(document.querySelector('#additionalParentCount').value),
     layoutCallback: ILayoutCallback.create(async result => {
       await applyLayoutResult(result, pageWidth, pageHeight)
     })
@@ -260,7 +260,7 @@ function setPageNumber(newPageNumber, targetNode = null) {
       ? viewGraphs.length - 1
       : newPageNumber
 
-  const pageNumberTextBox = document.getElementById('page-number-text-box')
+  const pageNumberTextBox = document.querySelector('#page-number-text-box')
   pageNumberTextBox.value = (pageNumber + 1).toString()
   pageNumberTextBox.setAttribute('min', '1')
   pageNumberTextBox.setAttribute('max', `${viewGraphs.length}`)
@@ -351,7 +351,7 @@ function initializeUI() {
   document.querySelector('#samples').addEventListener('change', async evt => {
     const value = evt.target.value
     if (value === 'yFiles Layout Namespaces') {
-      document.getElementById('coreLayoutComboBox').value = 'Tree'
+      document.querySelector('#coreLayoutComboBox').value = 'Tree'
     }
     await loadModelGraph(value)
   })
@@ -382,8 +382,8 @@ function initializeCoreLayouts() {
   })
   treeLayout.prependStage(new TreeReductionStage())
 
-  const additionalParentCount = document.getElementById('additionalParentCount')
-  const coreLayoutComboBox = document.getElementById('coreLayoutComboBox')
+  const additionalParentCount = document.querySelector('#additionalParentCount')
+  const coreLayoutComboBox = document.querySelector('#coreLayoutComboBox')
   addOption(coreLayoutComboBox, 'Hierarchic', hierarchicLayout)
   addOption(coreLayoutComboBox, 'Circular', new CircularLayout())
   addOption(coreLayoutComboBox, 'Compact Orthogonal', new CompactOrthogonalLayout())
@@ -429,8 +429,8 @@ function initializeInputModes() {
   inputMode.itemHoverInputMode.addHoveredItemChangedListener(onHoveredItemChanged)
 
   // handle clicks on nodes
-  inputMode.addItemClickedListener((sender, event) => {
-    goToReferencingNode(event.item)
+  inputMode.addItemClickedListener((_, evt) => {
+    goToReferencingNode(evt.item)
   })
   graphComponent.inputMode = inputMode
 

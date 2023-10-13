@@ -141,7 +141,7 @@ async function loadSampleGraph(graph) {
   })
 
   // for nodes with a node type stored in the tag, add a label and change the color
-  nodesSource.nodeCreator.addNodeCreatedListener((sender, evt) => {
+  nodesSource.nodeCreator.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     if (node.tag && node.tag.nodeType) {
       let palette

@@ -146,8 +146,8 @@ function initializeGraph() {
   graph.undoEngineEnabled = true
 
   // add a listener to add the tags related to the highlighting to the new nodes
-  graph.addNodeCreatedListener((sender, args) => {
-    args.item.tag = {
+  graph.addNodeCreatedListener((_, evt) => {
+    evt.item.tag = {
       sourceHighlight: false,
       targetHighlight: false
     }

@@ -24,7 +24,8 @@
       > npm run dev
     </code>
     <p>
-      This will start the<a href="https://vitejs.dev/" target="_blank">Vite</a>
+      This will start the
+      <a href="https://vitejs.dev/" target="_blank">Vite</a>
       development server.
     </p>
 

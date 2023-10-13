@@ -174,9 +174,9 @@ function initializeInputMode() {
   })
 
   // add a label to each created node
-  mode.addNodeCreatedListener((sender, args) => {
+  mode.addNodeCreatedListener((_, evt) => {
     const graph = graphComponent.graph
-    graph.addLabel(args.item, `Node ${graph.nodes.size}`)
+    graph.addLabel(evt.item, `Node ${graph.nodes.size}`)
   })
 
   // the handles should be moved together with the ghost visualization of the label

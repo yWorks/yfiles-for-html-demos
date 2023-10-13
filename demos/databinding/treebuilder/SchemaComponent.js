@@ -188,7 +188,7 @@ export class SchemaComponent {
     this.enableTargetNodeCreation(inputMode.createEdgeInputMode)
 
     // start label edit when an edge or edge label is clicked
-    inputMode.addItemClickedListener((sender, evt) => {
+    inputMode.addItemClickedListener((_, evt) => {
       const graphComponent = evt.context.canvasComponent
       if (IEdge.isInstance(evt.item)) {
         evt.handled = true
@@ -211,7 +211,7 @@ export class SchemaComponent {
     })
 
     // open node dialog when a node is double clicked
-    inputMode.addItemDoubleClickedListener((sender, evt) => {
+    inputMode.addItemDoubleClickedListener((_, evt) => {
       if (INode.isInstance(evt.item)) {
         evt.handled = true
         this.openEditNodeSourceDialog(evt.item)
@@ -219,21 +219,21 @@ export class SchemaComponent {
     })
 
     // create a new nodes source and layout the graph
-    inputMode.addNodeCreatedListener((sender, evt) => {
+    inputMode.addNodeCreatedListener((_, evt) => {
       this.createNewTreeNodesSource(evt.item, true)
       // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
     // create the relationship in the TreeBuilder and layout the graph
-    inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, evt) => {
+    inputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
       this.createChildRelationship('children', evt.item)
       // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
     // update the schema
-    inputMode.addLabelTextChangedListener((sender, evt) => {
+    inputMode.addLabelTextChangedListener((_, evt) => {
       if (IEdge.isInstance(evt.owner)) {
         evt.owner.tag.provider = evt.item.text
         evt.owner.tag.binding = createBinding(evt.item.text)
@@ -242,7 +242,7 @@ export class SchemaComponent {
     })
 
     // remove edge when label was removed, recreate graph on all removals
-    inputMode.addDeletedItemListener((sender, evt) => {
+    inputMode.addDeletedItemListener((_, evt) => {
       if (LabelEventArgs.isInstance(evt)) {
         if (evt.owner) {
           graph.remove(evt.owner)
@@ -252,7 +252,7 @@ export class SchemaComponent {
     })
 
     // create Tooltips for node data
-    inputMode.addQueryItemToolTipListener((src, evt) => {
+    inputMode.addQueryItemToolTipListener((_, evt) => {
       if (evt.handled) {
         // A tooltip has already been assigned => nothing to do.
         return
@@ -315,7 +315,7 @@ export class SchemaComponent {
       e => e.parentSource,
       e => e.childSource
     )
-    schemaEdgesSource.edgeCreator.addEdgeCreatedListener((sender, evt) => {
+    schemaEdgesSource.edgeCreator.addEdgeCreatedListener((_, evt) => {
       this.createChildRelationship(evt.dataItem.childBinding, evt.item)
     })
 
@@ -399,8 +399,8 @@ export class SchemaComponent {
     treeNodesSourceDefinition.name = `Source ${this.newNodesSourcesCounter++}`
     treeNodesSourceDefinition.data = isRoot ? "[{ id: 'A', children: [{id: 'B'}, {id: 'C'}] }]" : ''
     treeNodesSourceDefinition.idBinding = 'dataItem => dataItem'
-    treeNodesSourceDefinition.template = `<rect fill="#ff6c00" stroke="white" rx="2" ry="2" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-<text transform="translate(10 20)" data-content="{Binding id}" style="font-size:18px; fill:#000;"></text>`
+    treeNodesSourceDefinition.template = `<rect fill="#ff6c00" stroke="white" rx="2" ry="2" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
+<text transform="translate(10 20)" data-content="{Binding id}" style="font-size:18px; fill:#000;"/>`
     node.tag = this.createTreeNodesSourceConnector(treeNodesSourceDefinition)
     this.schemaGraphComponent.graph.addLabel(node, treeNodesSourceDefinition.name)
 
@@ -421,7 +421,7 @@ export class SchemaComponent {
     const nodeCreator = nodesSource.nodeCreator
     nodeCreator.defaults.style = new StringTemplateNodeStyle(sourceDefinition.template)
     nodesSource.nodeCreator.defaults.size = new Size(150, 60)
-    nodesSource.nodeCreator.addNodeUpdatedListener((sender, evt) => {
+    nodesSource.nodeCreator.addNodeUpdatedListener((_, evt) => {
       nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       evt.graph.setStyle(evt.item, nodeCreator.defaults.style)
     })
@@ -498,7 +498,7 @@ export class SchemaComponent {
 
     // If targeting another node during edge creation, the dummy target node should not be rendered
     // because we'd use that actual graph node as target if the gesture is finished on a node.
-    createEdgeInputMode.addTargetPortCandidateChangedListener((src, args) => {
+    createEdgeInputMode.addTargetPortCandidateChangedListener((_, args) => {
       const dummyEdgeGraph = createEdgeInputMode.dummyEdgeGraph
       if (args.item && INode.isInstance(args.item.owner)) {
         dummyEdgeGraph.setStyle(createEdgeInputMode.dummyTargetNode, VoidNodeStyle.INSTANCE)

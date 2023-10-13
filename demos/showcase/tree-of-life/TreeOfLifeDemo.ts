@@ -217,7 +217,7 @@ function initializeInteraction(): void {
   })
 
   // show subtree of the clicked node
-  inputMode.addItemClickedListener(async (sender, evt) => {
+  inputMode.addItemClickedListener(async (_, evt) => {
     let clickedNode: INode
     if (evt.item instanceof INode) {
       clickedNode = evt.item
@@ -244,9 +244,9 @@ function initializeInteraction(): void {
   })
 
   // navigate to the clicked edge
-  inputMode.addItemLeftClickedListener(async (sender, args) => {
-    if (args.item instanceof IEdge) {
-      await navigateToEdge(args.item, args.location, args.context.canvasComponent as GraphComponent)
+  inputMode.addItemLeftClickedListener(async (_, evt) => {
+    if (evt.item instanceof IEdge) {
+      await navigateToEdge(evt.item, evt.location, evt.context.canvasComponent as GraphComponent)
     }
   })
 
@@ -255,7 +255,7 @@ function initializeInteraction(): void {
   itemHoverInputMode.hoverItems = GraphItemTypes.ALL
   itemHoverInputMode.hoverCursor = Cursor.POINTER
 
-  itemHoverInputMode.addHoveredItemChangedListener((sender, evt) => {
+  itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     const highlightManager = graphComponent.highlightIndicatorManager
     highlightManager.clearHighlights()
 
@@ -272,14 +272,14 @@ function initializeInteraction(): void {
   })
 
   // highlight sector when hovered
-  graphComponent.addMouseMoveListener((sender, evt) => {
+  graphComponent.addMouseMoveListener((_, evt) => {
     if (sectorVisual.updateHighlight(evt.location)) {
       graphComponent.invalidate()
     }
   })
 
   // if a sector is clicked show its subtree
-  inputMode.addCanvasClickedListener(async (sender, evt) => {
+  inputMode.addCanvasClickedListener(async (_, evt) => {
     if (!subtreeUpdateRunning) {
       subtreeUpdateRunning = true
       const subtreeRoot = sectorVisual.getSubtreeRoot(evt.location)
@@ -631,7 +631,7 @@ function updateNavigationMenuAndCombobox(selectedRoot: INode) {
   let ancestors = getAncestors(selectedRoot)
 
   // update sample in combo box based on the subtree in which the node belongs
-  const selectSubtreeCombo = document.getElementById('sample-subtrees') as HTMLSelectElement
+  const selectSubtreeCombo = document.querySelector<HTMLSelectElement>('#sample-subtrees')!
   const subtrees = Array.from(selectSubtreeCombo.options).map(o => o.text.toLowerCase())
   for (const node of ancestors) {
     if (subtrees.includes(node.tag.name.toLowerCase())) {

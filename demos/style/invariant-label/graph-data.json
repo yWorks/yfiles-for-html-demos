@@ -1,0 +1,127 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "label": "Eric Joplin",
+      "tag": "level 1"
+    },
+    {
+      "id": 1,
+      "label": "Gray Roberts",
+      "tag": "level 2"
+    },
+    {
+      "id": 2,
+      "label": "Linda Newland",
+      "tag": "level 2"
+    },
+    {
+      "id": 3,
+      "label": "David Kerry",
+      "tag": "level 2"
+    },
+    {
+      "id": 4,
+      "label": "Dorothy Turner",
+      "tag": "level 2"
+    },
+    {
+      "id": 5,
+      "label": "Martin Cornett",
+      "tag": "level 2"
+    },
+    {
+      "id": 6,
+      "label": "Howard Meyer",
+      "tag": "level 2"
+    },
+    {
+      "id": 7,
+      "label": "Valerie Burnett",
+      "tag": "level 2"
+    },
+    {
+      "id": 8,
+      "label": "Kim Finn",
+      "tag": "level 2"
+    },
+    {
+      "id": 9,
+      "label": "Laurie Aitken Müller",
+      "tag": "level 1"
+    },
+    {
+      "id": 10,
+      "label": "Rana Oxborough",
+      "tag": "level 1"
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 1,
+      "label": "Friend to"
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 2,
+      "label": "Like to work with"
+    },
+    {
+      "id": 2,
+      "source": 0,
+      "target": 3,
+      "label": "Have problem with"
+    },
+    {
+      "id": 3,
+      "source": 3,
+      "target": 8,
+      "label": "Friend to"
+    },
+    {
+      "id": 4,
+      "source": 2,
+      "target": 7,
+      "label": "Have problem with"
+    },
+    {
+      "id": 5,
+      "source": 1,
+      "target": 6,
+      "label": "Friend to"
+    },
+    {
+      "id": 6,
+      "source": 1,
+      "target": 5,
+      "label": "Like to work with"
+    },
+    {
+      "id": 7,
+      "source": 1,
+      "target": 4,
+      "label": "Friend to"
+    },
+    {
+      "id": 8,
+      "source": 4,
+      "target": 10,
+      "label": "Friend to"
+    },
+    {
+      "id": 9,
+      "source": 5,
+      "target": 10,
+      "label": "Friend to"
+    },
+    {
+      "id": 10,
+      "source": 6,
+      "target": 9,
+      "label": "Have problem with"
+    }
+  ]
+}

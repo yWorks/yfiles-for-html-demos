@@ -93,7 +93,7 @@ async function run(): Promise<void> {
  */
 function initializeTextAreas(): void {
   renderFunctionSourceTextArea = CodeMirror.fromTextArea(
-    document.getElementById('template-text-area') as HTMLTextAreaElement,
+    document.querySelector<HTMLTextAreaElement>('#template-text-area')!,
     {
       lineNumbers: true,
       mode: 'application/xml',
@@ -102,7 +102,7 @@ function initializeTextAreas(): void {
     } as CodeMirror.EditorConfiguration
   )
   tagTextArea = CodeMirror.fromTextArea(
-    document.getElementById('tag-text-area') as HTMLTextAreaElement,
+    document.querySelector<HTMLTextAreaElement>('#tag-text-area')!,
     {
       lineNumbers: true,
       mode: 'application/json',
@@ -129,15 +129,15 @@ function initializeTextAreas(): void {
       }
       tagTextArea.setOption('readOnly', false)
       tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-      ;(document.getElementById('apply-template-button') as HTMLButtonElement).disabled = false
-      ;(document.getElementById('apply-tag-button') as HTMLButtonElement).disabled = false
+      document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = false
+      document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = false
     } else {
       renderFunctionSourceTextArea.setOption('readOnly', 'nocursor')
       tagTextArea.setOption('readOnly', 'nocursor')
       renderFunctionSourceTextArea.setValue('Select a node to edit its template.')
       tagTextArea.setValue('Select a node to edit its tag.')
-      ;(document.getElementById('apply-template-button') as HTMLButtonElement).disabled = true
-      ;(document.getElementById('apply-tag-button') as HTMLButtonElement).disabled = true
+      document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = true
+      document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = true
     }
   })
 }

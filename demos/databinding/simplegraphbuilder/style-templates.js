@@ -36,15 +36,15 @@ export const nodeTemplate = `
       ry="3.5"
       width="{TemplateBinding width}"
       height="{TemplateBinding height}"
-    ></rect>
+    />
     <text
       transform="translate(10 20)"
       data-content="{Binding name}"
       style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"
-    ></text>
+    />
     <text
       transform="translate(10 40)"
       data-content="{Binding position}"
       style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"
-    ></text>
+    />
 `

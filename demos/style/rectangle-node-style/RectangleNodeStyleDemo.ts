@@ -181,7 +181,7 @@ function initializeInteraction(graphComponent: GraphComponent) {
   enableSingleSelection(graphComponent)
 
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((sender, evt) => {
+  inputMode.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     addLabel(graphComponent.graph, node, gray)
   })
@@ -197,7 +197,7 @@ function initializeInteraction(graphComponent: GraphComponent) {
   // only provide reshape handles for the east, south and south-east sides, so they don't clash with the corner size handle
   nodeDecorator.reshapeHandleProviderDecorator.setFactory(
     node =>
-      new NodeReshapeHandleProvider(node, node.lookup(IReshapeHandler.$class) as IReshapeHandler, [
+      new NodeReshapeHandleProvider(node, node.lookup(IReshapeHandler.$class)!, [
         'east',
         'south',
         'south-east'
@@ -288,10 +288,10 @@ function updateStyleProperties(graphComponent: GraphComponent): void {
  * Shows the properties of the selected node if a node is selected. Otherwise, it shows an information message to select a node.
  */
 function setPropertiesViewState(disabled: boolean) {
-  ;(document.querySelector<HTMLDivElement>('.demo-form-block') as HTMLDivElement).style.display =
-    disabled ? 'none' : ''
-  ;(document.querySelector<HTMLDivElement>('.info-message') as HTMLDivElement).style.display =
-    disabled ? 'inline-block' : 'none'
+  document.querySelector<HTMLDivElement>('.demo-form-block')!.style.display = disabled ? 'none' : ''
+  document.querySelector<HTMLDivElement>('.info-message')!.style.display = disabled
+    ? 'inline-block'
+    : 'none'
 }
 
 /**
@@ -347,8 +347,8 @@ function initializeUI(graphComponent: GraphComponent): void {
   }
 
   // Update the values of the input elements when the selected element changes
-  graphComponent.selection.addItemSelectionChangedListener(sender =>
-    onSelectionChanged(sender.selectedNodes.find())
+  graphComponent.selection.addItemSelectionChangedListener(graphComponent =>
+    onSelectionChanged(graphComponent.selectedNodes.find())
   )
 }
 

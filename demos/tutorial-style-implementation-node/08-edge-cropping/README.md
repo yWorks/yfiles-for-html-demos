@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 08 Edge Cropping - Node Style Implementation Tutorial
+# 08 Edge Cropping - Tutorial: Node Style Implementation
 
 # Cropping edges at the node outline
 
@@ -98,4 +98,4 @@ protected getIntersection(
 }
 ```
 
-[09 Item Visibility](../../tutorial-style-implementation-node/09-visibility/index.html)
+[09 Item Visibility](../../tutorial-style-implementation-node/09-visibility/)

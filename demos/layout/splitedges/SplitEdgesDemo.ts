@@ -31,6 +31,7 @@ import {
   ArrowType,
   EdgeRouter,
   EdgeStyleBase,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -40,6 +41,7 @@ import {
   HierarchicLayoutData,
   IArrow,
   IEdge,
+  IGraph,
   IRenderContext,
   LayoutOrientation,
   License,
@@ -64,6 +66,8 @@ import {
 } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
 
@@ -73,8 +77,54 @@ async function run(): Promise<void> {
   applyDemoTheme(graphComponent)
 
   configureInteraction()
-  await createSampleGraph()
+  await loadGraph()
+
   initializeUI()
+}
+
+async function loadGraph(): Promise<void> {
+  graphComponent.graph.clear()
+  initializeDefaults()
+
+  // then build the graph from the given data set
+  buildGraph(graphComponent.graph, graphData)
+
+  await runLayout()
+}
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList.filter(item => !item.isGroup),
+    id: item => item.id,
+    parentId: item => item.parentId
+  })
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id,
+      parentId: item => item.parentId
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  const edgesSource = graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+  edgesSource.edgeCreator.tagProvider = item => item.tag
+  edgesSource.edgeCreator.styleBindings.addBinding('stroke', item =>
+    item.tag ? `3px ${item.tag.color}` : undefined
+  )
+  edgesSource.edgeCreator.styleBindings.addBinding('targetArrow', item =>
+    item.tag ? new Arrow({ fill: item.tag.color, type: 'triangle', scale: 1.5 }) : undefined
+  )
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -124,103 +174,6 @@ async function runLayout() {
 }
 
 /**
- * Creates a simple sample graph.
- */
-async function createSampleGraph(): Promise<void> {
-  const graph = graphComponent.graph
-  graph.clear()
-  initializeDefaults()
-
-  const nodes = []
-  for (let i = 0; i < 8; i++) {
-    nodes.push(graph.createNode())
-  }
-  const groupNode1 = graph.createGroupNode()
-  graph.groupNodes(groupNode1, nodes.slice(0, 2))
-  const groupNode2 = graph.createGroupNode()
-  graph.groupNodes(groupNode2, nodes.slice(2, 5))
-  const groupNode3 = graph.createGroupNode()
-  graph.groupNodes(groupNode3, [groupNode2])
-
-  graph.createEdge({
-    source: nodes[0],
-    target: groupNode1,
-    tag: { targetSplitId: 'split0', color: '#DB3A34' }
-  })
-  graph.createEdge({
-    source: groupNode1,
-    target: groupNode3,
-    tag: { sourceSplitId: 'split0', targetSplitId: 'split0', color: '#DB3A34' }
-  })
-  graph.createEdge({
-    source: groupNode3,
-    target: groupNode2,
-    tag: { sourceSplitId: 'split0', targetSplitId: 'split0', color: '#DB3A34' }
-  })
-  graph.createEdge({
-    source: groupNode2,
-    target: nodes[2],
-    tag: { sourceSplitId: 'split0', color: '#DB3A34' }
-  })
-  graph.createEdge({
-    source: nodes[1],
-    target: groupNode3,
-    tag: { targetSplitId: 'split1', color: '#56926E' }
-  })
-  graph.createEdge({
-    source: groupNode3,
-    target: nodes[3],
-    tag: { sourceSplitId: 'split1', color: '#56926E' }
-  })
-  graph.createEdge({
-    source: groupNode3,
-    target: nodes[5],
-    tag: { sourceSplitId: 'split2', color: '#4281A4' }
-  })
-  graph.createEdge({
-    source: nodes[4],
-    target: groupNode3,
-    tag: { targetSplitId: 'split2', color: '#4281A4' }
-  })
-  graph.createEdge({
-    source: groupNode2,
-    target: groupNode3,
-    tag: { targetSplitId: 'split3', color: '#FF6C00' }
-  })
-  graph.createEdge({
-    source: groupNode3,
-    target: nodes[6],
-    tag: { sourceSplitId: 'split3', color: '#FF6C00' }
-  })
-  graph.createEdge({
-    source: nodes[0],
-    target: nodes[7]
-  })
-  graph.createEdge({
-    source: nodes[2],
-    target: nodes[4]
-  })
-  graph.createEdge({
-    source: nodes[3],
-    target: nodes[4]
-  })
-
-  graph.edges
-    .filter(edge => edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId))
-    .forEach(edge => {
-      const edgeStyle = edge.style as PolylineEdgeStyle
-      edgeStyle.stroke = `3px ${edge.tag.color}`
-      edgeStyle.targetArrow = new Arrow({
-        fill: edge.tag.color,
-        type: 'triangle',
-        scale: 1.5
-      })
-    })
-
-  await runLayout()
-}
-
-/**
  * Initializes graph defaults.
  */
 function initializeDefaults(): void {
@@ -265,7 +218,7 @@ function configureInteraction(): void {
  */
 function initializeUI(): void {
   document.querySelector<HTMLButtonElement>('#layout')!.addEventListener('click', runLayout)
-  document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', createSampleGraph)
+  document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', loadGraph)
 }
 
 /**

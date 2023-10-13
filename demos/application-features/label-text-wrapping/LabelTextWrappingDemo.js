@@ -183,7 +183,7 @@ function createGraph() {
   const centerParameter = centerLabelModel.createParameter(InteriorStretchLabelModelPosition.CENTER)
 
   // maybe showcase right-to-left text direction
-  const rtlDirection = document.getElementById('trl-toggle').checked
+  const rtlDirection = document.querySelector('#trl-toggle').checked
 
   // the text that should be displayed
   const longText = rtlDirection
@@ -320,7 +320,7 @@ function createGraph() {
  */
 function reinitializeDemo() {
   graphComponent.cleanUp()
-  const gcContainer = document.getElementById('graphComponent')
+  const gcContainer = document.querySelector('#graphComponent')
   while (gcContainer.childElementCount > 0) {
     gcContainer.removeChild(gcContainer.firstElementChild)
   }
@@ -346,8 +346,8 @@ function reinitializeDemo() {
  */
 function initializeUI() {
   document.querySelector('#trl-toggle').addEventListener('click', () => {
-    const gcContainer = document.getElementById('graphComponent')
-    gcContainer.style.direction = document.getElementById('trl-toggle').checked ? 'rtl' : 'ltr'
+    const gcContainer = document.querySelector('#graphComponent')
+    gcContainer.style.direction = document.querySelector('#trl-toggle').checked ? 'rtl' : 'ltr'
     reinitializeDemo()
   })
   initializeSvgWebGlSwitchButton('#render-modes', graphComponent)

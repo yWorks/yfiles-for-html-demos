@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 13 Tree Builder - Graph Builder Tutorial
+# 13 Tree Builder - Tutorial: Graph Builder
 
 # Building a graph with TreeBuilder
 

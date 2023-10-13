@@ -163,30 +163,28 @@ function createInputMode(): GraphInputMode {
 function enableRepairOnItemClick(graphInputMode: GraphInputMode): void {
   graphInputMode.clickableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
-  graphInputMode.addItemClickedListener(
-    (inputMode: GraphInputMode, evt: ItemClickedEventArgs<IModelItem>): void => {
-      if (evt.item instanceof INode) {
-        const device = getDevice(evt.item)
-        if (device.failed) {
-          device.repair()
-          removeFailureHighlight(evt.item)
-          evt.handled = true
-        }
-        return
+  graphInputMode.addItemClickedListener((_, evt): void => {
+    if (evt.item instanceof INode) {
+      const device = getDevice(evt.item)
+      if (device.failed) {
+        device.repair()
+        removeFailureHighlight(evt.item)
+        evt.handled = true
       }
-
-      if (evt.item instanceof IEdge) {
-        const connection = getConnection(evt.item)
-        if (connection.failed) {
-          connection.repair()
-          evt.context.canvasComponent!.invalidate()
-          evt.handled = true
-        }
-        // eslint-disable-next-line no-useless-return
-        return
-      }
+      return
     }
-  )
+
+    if (evt.item instanceof IEdge) {
+      const connection = getConnection(evt.item)
+      if (connection.failed) {
+        connection.repair()
+        evt.context.canvasComponent!.invalidate()
+        evt.handled = true
+      }
+      // eslint-disable-next-line no-useless-return
+      return
+    }
+  })
 }
 
 function enableViewportLimiter(graphComponent: GraphComponent): void {

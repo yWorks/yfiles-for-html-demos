@@ -165,9 +165,7 @@ function initializeInputMode(): void {
     KeyEventRecognizers.SHIFT_IS_DOWN
   )
 
-  mode.createEdgeInputMode.addEdgeCreationStartedListener((sender, args) =>
-    setRandomEdgeColor(args.item)
-  )
+  mode.createEdgeInputMode.addEdgeCreationStartedListener((_, evt) => setRandomEdgeColor(evt.item))
 
   graphComponent.inputMode = mode
 }

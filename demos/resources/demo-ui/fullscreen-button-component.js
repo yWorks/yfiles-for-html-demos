@@ -74,41 +74,25 @@ class FullscreenButtonComponent extends HTMLElement {
   }
 
   toggleFullscreen() {
-    if (
-      !document.fullscreenElement &&
-      !document.mozFullScreenElement &&
-      !document.webkitFullscreenElement &&
-      !document.msFullscreenElement
-    ) {
+    // Before Safari 16.4 (2023-03-27), only the Fullscreen API is prefixed with webkit
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {
+        alert(`Error attempting to exit full-screen mode. Perhaps it was blocked by your browser.`)
+      })
+    } else if (document.webkitFullscreenElement) {
+      // The method with vendor prefix might not return a Promise, don't add the error handler here
+      document.webkitExitFullscreen()
+    } else {
       const documentElement = document.documentElement
       if (documentElement.requestFullscreen) {
-        // Methods with vendor prefix might not return a Promise, don't add the error handler there
         documentElement.requestFullscreen().catch(() => {
           alert(
             `Error attempting to enable full-screen mode. Perhaps it was blocked by your browser.`
           )
         })
-      } else if (documentElement.msRequestFullscreen) {
-        document.body.msRequestFullscreen()
-      } else if (documentElement.mozRequestFullScreen) {
-        documentElement.mozRequestFullScreen()
       } else if (documentElement.webkitRequestFullscreen) {
+        // The method with vendor prefix might not return a Promise, don't add the error handler here
         documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
-      }
-    } else {
-      if (document.exitFullscreen) {
-        // Methods with vendor prefix might not return a Promise, don't add the error handler there
-        document.exitFullscreen().catch(() => {
-          alert(
-            `Error attempting to exit full-screen mode. Perhaps it was blocked by your browser.`
-          )
-        })
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen()
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen()
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen()
       }
     }
   }

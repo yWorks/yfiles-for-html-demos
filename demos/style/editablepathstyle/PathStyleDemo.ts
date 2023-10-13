@@ -140,7 +140,7 @@ function createEditorMode(): GraphEditorInputMode {
   changeShapeHandleInputMode.snapContext.createSnapResultsModelManager(
     graphComponent
   ).canvasObjectGroup = graphComponent.inputModeGroup
-  changeShapeHandleInputMode.snapContext.addInitializingListener((sender, evt) => {
+  changeShapeHandleInputMode.snapContext.addInitializingListener((_, evt) => {
     locations.clear()
     if (currentNode) {
       const outline = currentNode.style.renderer
@@ -161,7 +161,7 @@ function createEditorMode(): GraphEditorInputMode {
     }
   })
 
-  changeShapeHandleInputMode.snapContext.addCollectSnapResultsListener((sender, evt) => {
+  changeShapeHandleInputMode.snapContext.addCollectSnapResultsListener((_, evt) => {
     locations
       .filter(p => Math.abs(p.x - evt.newLocation.x) < evt.snapDistance)
       .forEach(p => {
@@ -215,7 +215,7 @@ function createEditorMode(): GraphEditorInputMode {
   let currentNode: INode | null = null
 
   // hide handles when a node is removed
-  graphComponent.graph.addNodeRemovedListener((sender, evt) => {
+  graphComponent.graph.addNodeRemovedListener((_, evt) => {
     if (evt.item === currentNode) {
       changeShapeHandleInputMode.cancel()
       changeShapeHandleInputMode.handles.clear()
@@ -224,14 +224,14 @@ function createEditorMode(): GraphEditorInputMode {
   })
 
   // deselect the control point handles using right-click on canvas
-  graphEditorInputMode.addCanvasClickedListener((sender, evt) => {
+  graphEditorInputMode.addCanvasClickedListener((_, evt) => {
     if (evt.mouseButtons === MouseButtons.RIGHT) {
       changeShapeHandleInputMode.handles.clear()
     }
   })
 
   // select existing or add new handles on double-click on path
-  graphEditorInputMode.addItemLeftDoubleClickedListener((sender, evt) => {
+  graphEditorInputMode.addItemLeftDoubleClickedListener((_, evt) => {
     if (evt.item instanceof INode && evt.item.style instanceof EditablePathNodeStyle) {
       const existingHandle = evt.item.style
         .getHandles(evt.context, evt.item)
@@ -272,11 +272,11 @@ function createEditorMode(): GraphEditorInputMode {
   })
 
   // remove a handle and control point on right click
-  graphEditorInputMode.addItemRightClickedListener((sender, args) => {
+  graphEditorInputMode.addItemRightClickedListener((_, evt) => {
     let handle = null
     if (currentNode && changeShapeHandleInputMode.handles.size > 3) {
       handle = changeShapeHandleInputMode.handles.find(
-        h => h instanceof PathHandle && h.location.distanceTo(args.location) < 10
+        h => h instanceof PathHandle && h.location.distanceTo(evt.location) < 10
       )
       if (handle) {
         ;(handle as PathHandle).removeSegment()
@@ -288,17 +288,17 @@ function createEditorMode(): GraphEditorInputMode {
         // reset handles to update their locations and order
         changeShapeHandleInputMode.handles.clear()
         ;(currentNode.style as EditablePathNodeStyle)
-          .getHandles(args.context, currentNode)
+          .getHandles(evt.context, currentNode)
           .forEach(handle => changeShapeHandleInputMode.handles.add(handle))
         graphEditorInputMode.graph!.invalidateDisplays()
       }
     }
   })
 
-  graphComponent.graph.undoEngine!.addUnitUndoneListener((sender: object, evt: EventArgs) => {
+  graphComponent.graph.undoEngine!.addUnitUndoneListener((_, evt) => {
     updateHandles(currentNode, changeShapeHandleInputMode)
   })
-  graphComponent.graph.undoEngine!.addUnitRedoneListener((sender: object, evt: EventArgs) => {
+  graphComponent.graph.undoEngine!.addUnitRedoneListener((_, evt) => {
     updateHandles(currentNode, changeShapeHandleInputMode)
   })
 

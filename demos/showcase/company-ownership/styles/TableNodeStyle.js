@@ -32,27 +32,27 @@ import { colorSets } from 'demo-resources/demo-colors'
 
 // creates the template style for the nodes
 export const tableNodeStyle = new StringTemplateNodeStyle(`<g>
-  <rect fill="#a4aeb3" width="{TemplateBinding width}" height="{TemplateBinding height}" x="1" y="1"></rect>
-  <rect fill="#f0f0f0" stroke="#a4aeb3" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-  <rect width="{TemplateBinding width}" height="3" fill="{Binding nodeType, Converter=templateNodeConverters.typeColorConverter}"></rect>
+  <rect fill="#a4aeb3" width="{TemplateBinding width}" height="{TemplateBinding height}" x="1" y="1"/>
+  <rect fill="#f0f0f0" stroke="#a4aeb3" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
+  <rect width="{TemplateBinding width}" height="3" fill="{Binding nodeType, Converter=templateNodeConverters.typeColorConverter}"/>
   <g style="font-family: Roboto,sans-serif; fill: #444; font-size: 12px;">
-    <text transform="translate(8 20)" style="font-size: 14px; text-align: center; fill: #336699" data-content="{Binding name}"></text>
-    <rect transform="translate(8 24)" width="164" height="1" fill="#336699"></rect>
+    <text transform="translate(8 20)" style="font-size: 14px; text-align: center; fill: #336699" data-content="{Binding name}"/>
+    <rect transform="translate(8 24)" width="164" height="1" fill="#336699"/>
 
     <text transform="translate(8 40)">Type</text>
-    <text transform="translate(110 40)" data-content="{Binding nodeType}"></text>
+    <text transform="translate(110 40)" data-content="{Binding nodeType}"/>
 
     <text transform="translate(8 55)">Jurisdiction</text>
-    <text transform="translate(110 55)" data-content="{Binding jurisdiction}"></text>
+    <text transform="translate(110 55)" data-content="{Binding jurisdiction}"/>
 
     <text transform="translate(8 70)">Tax Status</text>
-    <text transform="translate(110 70)" data-content="{Binding taxStatus, Converter=templateNodeConverters.valueConverter}"></text>
+    <text transform="translate(110 70)" data-content="{Binding taxStatus, Converter=templateNodeConverters.valueConverter}"/>
 
     <text transform="translate(8 85)">Currency</text>
-    <text transform="translate(110 85)" data-content="{Binding currency, Converter=templateNodeConverters.valueConverter}"></text>
+    <text transform="translate(110 85)" data-content="{Binding currency, Converter=templateNodeConverters.valueConverter}"/>
 
     <text transform="translate(8 100)">Units</text>
-    <text transform="translate(110 100)" data-content="{Binding units, Converter=templateNodeConverters.valueConverter}"></text>
+    <text transform="translate(110 100)" data-content="{Binding units, Converter=templateNodeConverters.valueConverter}"/>
   </g>
 </g>`)
 

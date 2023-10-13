@@ -170,12 +170,12 @@ export class NodePlacerPanel {
    * @param {!Array.<INode>} selectedNodes
    */
   onNodeSelectionChanged(selectedNodes) {
-    const noNodePlacerElement = document.getElementById('no-node-placer-settings')
-    const nodePlacerElement = document.getElementById('select-node-placer')
-    const nodePlacerLabelElement = document.getElementById('select-node-placer-label')
-    const rotationElement = document.getElementById('rotation')
-    const spacingElement = document.getElementById('rotatable-spacing')
-    const previewElement = document.getElementById('previewComponent')
+    const noNodePlacerElement = document.querySelector('#no-node-placer-settings')
+    const nodePlacerElement = document.querySelector('#select-node-placer')
+    const nodePlacerLabelElement = document.querySelector('#select-node-placer-label')
+    const rotationElement = document.querySelector('#rotation')
+    const spacingElement = document.querySelector('#rotatable-spacing')
+    const previewElement = document.querySelector('#previewComponent')
 
     if (this.currentNodePlacerConfiguration) {
       this.currentNodePlacerConfiguration.visible = false
@@ -300,7 +300,7 @@ async function runPreviewLayout(nodePlacer, graphComponent) {
  * @param {!NodePlacerPanel} panel
  */
 function bindActions(panel) {
-  const selectNodePlacer = document.getElementById('select-node-placer')
+  const selectNodePlacer = document.querySelector('#select-node-placer')
   selectNodePlacer.addEventListener('change', () => {
     if (panel.currentNodePlacerConfiguration) {
       panel.currentNodePlacerConfiguration.visible = false
@@ -314,8 +314,8 @@ function bindActions(panel) {
       panel.currentNodePlacerConfiguration.adoptSettings([defaultPlacer])
     }
 
-    const rotationElement = document.getElementById('rotation')
-    const spacingElement = document.getElementById('rotatable-spacing')
+    const rotationElement = document.querySelector('#rotation')
+    const spacingElement = document.querySelector('#rotatable-spacing')
     if (panel.currentNodePlacerConfiguration.rotatable) {
       rotationElement.style.display = 'block'
       spacingElement.style.display = 'block'
@@ -326,7 +326,7 @@ function bindActions(panel) {
     panel.panelChanged()
   })
 
-  const rotationLeft = document.getElementById('rotation-left')
+  const rotationLeft = document.querySelector('#rotation-left')
   rotationLeft.addEventListener('click', () => {
     panel.graphComponent.selection.selectedNodes.forEach(node => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.ROT90, panel)
@@ -334,7 +334,7 @@ function bindActions(panel) {
     panel.updateChangeListeners()
   })
 
-  const rotationRight = document.getElementById('rotation-right')
+  const rotationRight = document.querySelector('#rotation-right')
   rotationRight.addEventListener('click', () => {
     panel.graphComponent.selection.selectedNodes.forEach(node => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.ROT270, panel)
@@ -342,7 +342,7 @@ function bindActions(panel) {
     panel.updateChangeListeners()
   })
 
-  const mirrorHorizontal = document.getElementById('mirror-horizontal')
+  const mirrorHorizontal = document.querySelector('#mirror-horizontal')
   mirrorHorizontal.addEventListener('click', () => {
     panel.graphComponent.selection.selectedNodes.forEach(node => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.MIR_HOR, panel)
@@ -350,7 +350,7 @@ function bindActions(panel) {
     panel.updateChangeListeners()
   })
 
-  const mirrorVertical = document.getElementById('mirror-vertical')
+  const mirrorVertical = document.querySelector('#mirror-vertical')
   mirrorVertical.addEventListener('click', () => {
     panel.graphComponent.selection.selectedNodes.forEach(node => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.MIR_VERT, panel)
@@ -549,7 +549,7 @@ class NodePlacerConfiguration {
   set visible(visible) {
     this._visible = visible
 
-    const description = document.getElementById('node-placer-description')
+    const description = document.querySelector('#node-placer-description')
     if (visible) {
       this.div.style.display = 'block'
       description.innerHTML = this.getDescriptionText()
@@ -665,7 +665,7 @@ class RotatableNodePlacerConfiguration extends NodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   bindActions(panel) {
-    const spacingElement = document.getElementById('spacing')
+    const spacingElement = document.querySelector('#spacing')
     spacingElement.addEventListener('change', () => {
       if (this.visible) {
         this.spacing = Number.parseInt(spacingElement.value)
@@ -673,7 +673,7 @@ class RotatableNodePlacerConfiguration extends NodePlacerConfiguration {
         panel.panelChanged()
       }
     })
-    const spacingLabel = document.getElementById('spacing-label')
+    const spacingLabel = document.querySelector('#spacing-label')
     spacingElement.addEventListener('input', () => {
       if (this.visible) {
         spacingLabel.innerHTML = spacingElement.value
@@ -701,7 +701,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
-    super(document.getElementById('default-node-placer-settings'), new DefaultNodePlacer(), panel)
+    super(document.querySelector('#default-node-placer-settings'), new DefaultNodePlacer(), panel)
     this.childPlacement = ChildPlacement.HORIZONTAL_DOWNWARD
     this.routingStyle = TreeLayoutEdgeRoutingStyle.FORK
     this.rootAlignment = RootAlignment.CENTER
@@ -797,7 +797,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   updatePanel() {
-    const childPlacement = document.getElementById('select-child-placement')
+    const childPlacement = document.querySelector('#select-child-placement')
     if (this.indeterminateChildPlacement) {
       childPlacement.selectedIndex = 0
     } else {
@@ -818,7 +818,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       }
     }
 
-    const routingStyle = document.getElementById('routing-style')
+    const routingStyle = document.querySelector('#routing-style')
     if (this.indeterminateRoutingStyle) {
       routingStyle.selectedIndex = 0
     } else {
@@ -851,7 +851,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       this.indeterminateMinimumChannelSegmentDistance
     )
 
-    const rootAlignment = document.getElementById('root-alignment')
+    const rootAlignment = document.querySelector('#root-alignment')
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
     } else {
@@ -900,7 +900,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   bindActions(panel) {
-    const childPlacement = document.getElementById('select-child-placement')
+    const childPlacement = document.querySelector('#select-child-placement')
     childPlacement.addEventListener('change', () => {
       switch (childPlacement.selectedIndex) {
         default:
@@ -921,7 +921,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const routingStyle = document.getElementById('routing-style')
+    const routingStyle = document.querySelector('#routing-style')
     routingStyle.addEventListener('change', () => {
       switch (routingStyle.selectedIndex) {
         default:
@@ -942,44 +942,44 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const horizontalDistance = document.getElementById('horizontal-distance')
+    const horizontalDistance = document.querySelector('#horizontal-distance')
     horizontalDistance.addEventListener('change', () => {
       this.horizontalDistance = Number.parseInt(horizontalDistance.value)
       this.indeterminateHorizontalDistance = false
       panel.panelChanged()
     })
-    const horizontalDistanceLabel = document.getElementById('horizontal-distance-label')
+    const horizontalDistanceLabel = document.querySelector('#horizontal-distance-label')
     horizontalDistance.addEventListener('input', () => {
       horizontalDistanceLabel.innerHTML = horizontalDistance.value
     })
 
-    const verticalDistance = document.getElementById('vertical-distance')
+    const verticalDistance = document.querySelector('#vertical-distance')
     verticalDistance.addEventListener('change', () => {
       this.verticalDistance = Number.parseInt(verticalDistance.value)
       this.indeterminateVerticalDistance = false
       panel.panelChanged()
     })
-    const verticalDistanceLabel = document.getElementById('vertical-distance-label')
+    const verticalDistanceLabel = document.querySelector('#vertical-distance-label')
     verticalDistance.addEventListener('input', () => {
       verticalDistanceLabel.innerHTML = verticalDistance.value
     })
 
-    const minimumChannelSegmentDistance = document.getElementById(
-      'minimum-channel-segment-distance'
+    const minimumChannelSegmentDistance = document.querySelector(
+      '#minimum-channel-segment-distance'
     )
     minimumChannelSegmentDistance.addEventListener('change', () => {
       this.minimumChannelSegmentDistance = Number.parseInt(minimumChannelSegmentDistance.value)
       this.indeterminateMinimumChannelSegmentDistance = false
       panel.panelChanged()
     })
-    const minimumChannelSegmentDistanceLabel = document.getElementById(
-      'minimum-channel-segment-distance-label'
+    const minimumChannelSegmentDistanceLabel = document.querySelector(
+      '#minimum-channel-segment-distance-label'
     )
     minimumChannelSegmentDistance.addEventListener('input', () => {
       minimumChannelSegmentDistanceLabel.innerHTML = minimumChannelSegmentDistance.value
     })
 
-    const rootAlignment = document.getElementById('root-alignment')
+    const rootAlignment = document.querySelector('#root-alignment')
     rootAlignment.addEventListener('change', () => {
       switch (rootAlignment.selectedIndex) {
         default:
@@ -1034,7 +1034,7 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
-    super(document.getElementById('simple-node-placer-settings'), new SimpleNodePlacer(), panel)
+    super(document.querySelector('#simple-node-placer-settings'), new SimpleNodePlacer(), panel)
   }
 
   createNodePlacer() {
@@ -1102,11 +1102,11 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 
   updatePanel() {
     super.updatePanel()
-    const createBus = document.getElementById('create-bus')
+    const createBus = document.querySelector('#create-bus')
     createBus.checked = this.createBus
     createBus.indeterminate = this.indeterminateCreateBus
 
-    const rootAlignment = document.getElementById('simple-root-node-alignment')
+    const rootAlignment = document.querySelector('#simple-root-node-alignment')
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
     } else {
@@ -1160,14 +1160,14 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   bindActions(panel) {
     super.bindActions(panel)
 
-    const createBus = document.getElementById('create-bus')
+    const createBus = document.querySelector('#create-bus')
     createBus.addEventListener('change', () => {
       this.createBus = createBus.checked
       this.indeterminateCreateBus = false
       panel.panelChanged()
     })
 
-    const rootAlignment = document.getElementById('simple-root-node-alignment')
+    const rootAlignment = document.querySelector('#simple-root-node-alignment')
     rootAlignment.addEventListener('change', () => {
       switch (rootAlignment.selectedIndex) {
         default:
@@ -1197,14 +1197,14 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const minimumChannelSegmentDistance = document.getElementById('min-channel-segment-distance')
+    const minimumChannelSegmentDistance = document.querySelector('#min-channel-segment-distance')
     minimumChannelSegmentDistance.addEventListener('change', () => {
       this.minimumChannelSegmentDistance = Number.parseInt(minimumChannelSegmentDistance.value)
       this.indeterminateMinimumChannelSegmentDistance = false
       panel.panelChanged()
     })
-    const minimumChannelSegmentDistanceLabel = document.getElementById(
-      'min-channel-segment-distance-label'
+    const minimumChannelSegmentDistanceLabel = document.querySelector(
+      '#min-channel-segment-distance-label'
     )
     minimumChannelSegmentDistance.addEventListener('input', () => {
       minimumChannelSegmentDistanceLabel.innerHTML = minimumChannelSegmentDistance.value
@@ -1225,7 +1225,7 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
-    super(document.getElementById('bus-node-placer-settings'), new BusNodePlacer(), panel)
+    super(document.querySelector('#bus-node-placer-settings'), new BusNodePlacer(), panel)
   }
 
   /**
@@ -1289,7 +1289,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
-    super(document.getElementById('grid-node-placer-settings'), new GridNodePlacer(), panel)
+    super(document.querySelector('#grid-node-placer-settings'), new GridNodePlacer(), panel)
   }
 
   /**
@@ -1364,7 +1364,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   updatePanel() {
     super.updatePanel()
 
-    const rootAlignment = document.getElementById('grid-node-placer-alignment')
+    const rootAlignment = document.querySelector('#grid-node-placer-alignment')
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
     } else {
@@ -1394,7 +1394,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       }
     }
 
-    const busPlacement = document.getElementById('grid-node-placer-bus-placement')
+    const busPlacement = document.querySelector('#grid-node-placer-bus-placement')
     if (this.indeterminateBusPlacement) {
       busPlacement.selectedIndex = 0
     } else {
@@ -1418,7 +1418,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
    */
   bindActions(panel) {
     super.bindActions(panel)
-    const rootAlignment = document.getElementById('grid-node-placer-alignment')
+    const rootAlignment = document.querySelector('#grid-node-placer-alignment')
     rootAlignment.addEventListener('change', () => {
       switch (rootAlignment.selectedIndex) {
         default:
@@ -1448,7 +1448,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const busPlacement = document.getElementById('grid-node-placer-bus-placement')
+    const busPlacement = document.querySelector('#grid-node-placer-bus-placement')
     busPlacement.addEventListener('change', () => {
       switch (busPlacement.selectedIndex) {
         default:
@@ -1485,7 +1485,7 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
    */
   constructor(panel) {
     super(
-      document.getElementById('double-line-node-placer-settings'),
+      document.querySelector('#double-line-node-placer-settings'),
       new DoubleLineNodePlacer(),
       panel
     )
@@ -1555,7 +1555,7 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
   updatePanel() {
     super.updatePanel()
 
-    const rootAlignment = document.getElementById('double-line-root-node-alignment')
+    const rootAlignment = document.querySelector('#double-line-root-node-alignment')
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
     } else {
@@ -1591,7 +1591,7 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
    */
   bindActions(panel) {
     super.bindActions(panel)
-    const rootAlignment = document.getElementById('double-line-root-node-alignment')
+    const rootAlignment = document.querySelector('#double-line-root-node-alignment')
     rootAlignment.addEventListener('change', () => {
       switch (rootAlignment.selectedIndex) {
         default:
@@ -1642,7 +1642,7 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
    */
   constructor(panel) {
     super(
-      document.getElementById('left-right-node-placer-settings'),
+      document.querySelector('#left-right-node-placer-settings'),
       new LeftRightNodePlacer(),
       panel
     )
@@ -1718,7 +1718,7 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   updatePanel() {
     super.updatePanel()
 
-    const lastOnBottom = document.getElementById('last-on-bottom')
+    const lastOnBottom = document.querySelector('#last-on-bottom')
     lastOnBottom.checked = this.placeLastOnBottom
     lastOnBottom.indeterminate = this.indeterminatePlaceLastOnBottom
     updateInput('branchCount', this.branchCount, this.indeterminateBranchCount)
@@ -1729,21 +1729,21 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
    */
   bindActions(panel) {
     super.bindActions(panel)
-    const lastOnBottom = document.getElementById('last-on-bottom')
+    const lastOnBottom = document.querySelector('#last-on-bottom')
     lastOnBottom.addEventListener('change', () => {
       this.placeLastOnBottom = lastOnBottom.checked
       this.indeterminatePlaceLastOnBottom = false
       panel.panelChanged()
     })
 
-    const branchCount = document.getElementById('branch-count')
+    const branchCount = document.querySelector('#branch-count')
     branchCount.addEventListener('change', () => {
       this.branchCount = Number.parseInt(branchCount.value)
       this.indeterminateBranchCount = false
       panel.panelChanged()
     })
 
-    const branchCountLabel = document.getElementById('branch-count-label')
+    const branchCountLabel = document.querySelector('#branch-count-label')
     branchCount.addEventListener('input', () => {
       branchCountLabel.innerHTML = branchCount.value
     })
@@ -1775,7 +1775,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
    */
   constructor(panel) {
     super(
-      document.getElementById('aspect-ratio-node-placer-settings'),
+      document.querySelector('#aspect-ratio-node-placer-settings'),
       new AspectRatioNodePlacer(),
       panel
     )
@@ -1872,7 +1872,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   updatePanel() {
     updateInput('aspect-ratio', this.aspectRatio, this.indeterminateAspectRatio)
 
-    const fillStyle = document.getElementById('fill-style')
+    const fillStyle = document.querySelector('#fill-style')
     if (this.indeterminateFillStyle) {
       fillStyle.selectedIndex = 0
     } else {
@@ -1904,7 +1904,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
       this.indeterminateVerticalDistance
     )
 
-    const horizontal = document.getElementById('horizontal')
+    const horizontal = document.querySelector('#horizontal')
     horizontal.checked = this.horizontal
     horizontal.indeterminate = this.indeterminateHorizontal
   }
@@ -1913,18 +1913,18 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   bindActions(panel) {
-    const aspectRatio = document.getElementById('aspect-ratio')
+    const aspectRatio = document.querySelector('#aspect-ratio')
     aspectRatio.addEventListener('change', () => {
       this.aspectRatio = parseFloat(aspectRatio.value)
       this.indeterminateAspectRatio = false
       panel.panelChanged()
     })
-    const aspectRatioLabel = document.getElementById('aspect-ratio-label')
+    const aspectRatioLabel = document.querySelector('#aspect-ratio-label')
     aspectRatio.addEventListener('input', () => {
       aspectRatioLabel.innerHTML = aspectRatio.value
     })
 
-    const fillStyle = document.getElementById('fill-style')
+    const fillStyle = document.querySelector('#fill-style')
     fillStyle.addEventListener('change', () => {
       switch (fillStyle.selectedIndex) {
         default:
@@ -1945,31 +1945,31 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
       panel.panelChanged()
     })
 
-    const horizontalDistance = document.getElementById('aspect-ratio-horizontal-distance')
+    const horizontalDistance = document.querySelector('#aspect-ratio-horizontal-distance')
     horizontalDistance.addEventListener('change', () => {
       this.horizontalDistance = Number.parseInt(horizontalDistance.value)
       this.indeterminateHorizontalDistance = false
       panel.panelChanged()
     })
-    const horizontalDistanceLabel = document.getElementById(
-      'aspect-ratio-horizontal-distance-label'
+    const horizontalDistanceLabel = document.querySelector(
+      '#aspect-ratio-horizontal-distance-label'
     )
     horizontalDistance.addEventListener('input', () => {
       horizontalDistanceLabel.innerHTML = horizontalDistance.value
     })
 
-    const verticalDistance = document.getElementById('aspect-ratio-vertical-distance')
+    const verticalDistance = document.querySelector('#aspect-ratio-vertical-distance')
     verticalDistance.addEventListener('change', () => {
       this.verticalDistance = Number.parseInt(verticalDistance.value)
       this.indeterminateVerticalDistance = false
       panel.panelChanged()
     })
-    const verticalDistanceLabel = document.getElementById('aspect-ratio-vertical-distance-label')
+    const verticalDistanceLabel = document.querySelector('#aspect-ratio-vertical-distance-label')
     verticalDistance.addEventListener('input', () => {
       verticalDistanceLabel.innerHTML = verticalDistance.value
     })
 
-    const horizontal = document.getElementById('horizontal')
+    const horizontal = document.querySelector('#horizontal')
     horizontal.addEventListener('change', () => {
       this.horizontal = horizontal.checked
       this.indeterminateHorizontal = false
@@ -1995,7 +1995,7 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
    */
   constructor(panel) {
     super(
-      document.getElementById('assistant-node-placer-settings'),
+      document.querySelector('#assistant-node-placer-settings'),
       new AssistantNodePlacer(),
       panel
     )
@@ -2065,7 +2065,7 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   updatePanel() {
     super.updatePanel()
 
-    const childNodePlacer = document.getElementById('child-node-placer')
+    const childNodePlacer = document.querySelector('#child-node-placer')
     if (this.indeterminateChildNodePlacer) {
       childNodePlacer.selectedIndex = 0
     } else if (this.childNodePlacer instanceof DefaultNodePlacer) {
@@ -2088,7 +2088,7 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
    */
   bindActions(panel) {
     super.bindActions(panel)
-    const childNodePlacer = document.getElementById('child-node-placer')
+    const childNodePlacer = document.querySelector('#child-node-placer')
     childNodePlacer.addEventListener('change', () => {
       switch (childNodePlacer.selectedIndex) {
         default:
@@ -2141,7 +2141,7 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
-    super(document.getElementById('compact-node-placer-settings'), new CompactNodePlacer(), panel)
+    super(document.querySelector('#compact-node-placer-settings'), new CompactNodePlacer(), panel)
   }
 
   /**
@@ -2265,64 +2265,64 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   bindActions(panel) {
-    const preferredAspectRatio = document.getElementById('compact-preferred-aspect-ratio')
+    const preferredAspectRatio = document.querySelector('#compact-preferred-aspect-ratio')
     preferredAspectRatio.addEventListener('change', () => {
       this.preferredAspectRatio = Number.parseInt(preferredAspectRatio.value)
       this.indeterminatePreferredAspectRatio = false
       panel.panelChanged()
     })
-    const preferredAspectRatioLabel = document.getElementById(
-      'compact-preferred-aspect-ratio-label'
+    const preferredAspectRatioLabel = document.querySelector(
+      '#compact-preferred-aspect-ratio-label'
     )
     preferredAspectRatio.addEventListener('input', () => {
       preferredAspectRatioLabel.innerHTML = preferredAspectRatio.value
     })
 
-    const verticalDistance = document.getElementById('compact-vertical-distance')
+    const verticalDistance = document.querySelector('#compact-vertical-distance')
     verticalDistance.addEventListener('change', () => {
       this.verticalDistance = Number.parseInt(verticalDistance.value)
       this.indeterminateVerticalDistance = false
       panel.panelChanged()
     })
-    const verticalDistanceLabel = document.getElementById('compact-vertical-distance-label')
+    const verticalDistanceLabel = document.querySelector('#compact-vertical-distance-label')
     verticalDistance.addEventListener('input', () => {
       verticalDistanceLabel.innerHTML = verticalDistance.value
     })
 
-    const horizontalDistance = document.getElementById('compact-horizontal-distance')
+    const horizontalDistance = document.querySelector('#compact-horizontal-distance')
     horizontalDistance.addEventListener('change', () => {
       this.horizontalDistance = Number.parseInt(horizontalDistance.value)
       this.indeterminateHorizontalDistance = false
       panel.panelChanged()
     })
-    const horizontalDistanceLabel = document.getElementById('compact-horizontal-distance-label')
+    const horizontalDistanceLabel = document.querySelector('#compact-horizontal-distance-label')
     horizontalDistance.addEventListener('input', () => {
       horizontalDistanceLabel.innerHTML = horizontalDistance.value
     })
 
-    const minimumFirstSegmentLength = document.getElementById(
-      'compact-minimum-first-segment-length'
+    const minimumFirstSegmentLength = document.querySelector(
+      '#compact-minimum-first-segment-length'
     )
     minimumFirstSegmentLength.addEventListener('change', () => {
       this.minimumFirstSegmentLength = Number.parseInt(minimumFirstSegmentLength.value)
       this.indeterminateMinimumFirstSegmentLength = false
       panel.panelChanged()
     })
-    const minimumFirstSegmentLengthLabel = document.getElementById(
-      'compact-minimum-first-segment-length-label'
+    const minimumFirstSegmentLengthLabel = document.querySelector(
+      '#compact-minimum-first-segment-length-label'
     )
     minimumFirstSegmentLength.addEventListener('input', () => {
       minimumFirstSegmentLengthLabel.innerHTML = minimumFirstSegmentLength.value
     })
 
-    const minimumLastSegmentLength = document.getElementById('compact-minimum-last-segment-length')
+    const minimumLastSegmentLength = document.querySelector('#compact-minimum-last-segment-length')
     minimumLastSegmentLength.addEventListener('change', () => {
       this.minimumLastSegmentLength = Number.parseInt(minimumLastSegmentLength.value)
       this.indeterminateMinimumLastSegmentLength = false
       panel.panelChanged()
     })
-    const minimumLastSegmentLengthLabel = document.getElementById(
-      'compact-minimum-last-segment-length-label'
+    const minimumLastSegmentLengthLabel = document.querySelector(
+      '#compact-minimum-last-segment-length-label'
     )
     minimumLastSegmentLength.addEventListener('input', () => {
       minimumLastSegmentLengthLabel.innerHTML = minimumLastSegmentLength.value
@@ -2343,7 +2343,7 @@ class MultipleNodePlacerConfiguration extends NodePlacerConfiguration {
    * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
-    super(document.getElementById('multiple-node-placer-settings'), null, panel)
+    super(document.querySelector('#multiple-node-placer-settings'), null, panel)
   }
 
   /**

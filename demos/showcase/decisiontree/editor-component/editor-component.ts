@@ -130,8 +130,8 @@ function initializeInputModes(graphComponent: GraphComponent): void {
   graphEditorInputMode.allowGroupingOperations = true
 
   // refresh the graph layout after an edge has been created
-  graphEditorInputMode.createEdgeInputMode.addEdgeCreatedListener(async (sender, args) => {
-    await runLayout(graphComponent, true, [args.item.sourceNode!, args.item.targetNode!])
+  graphEditorInputMode.createEdgeInputMode.addEdgeCreatedListener(async (_, evt) => {
+    await runLayout(graphComponent, true, [evt.item.sourceNode!, evt.item.targetNode!])
   })
 
   // add listeners for the insertion/deletion of nodes to enable the button for returning to the decision tree

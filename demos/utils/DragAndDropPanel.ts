@@ -144,8 +144,8 @@ export class DragAndDropPanel {
 
     // let the GraphComponent handle the preview rendering if possible
     if (dragSource) {
-      dragSource.addQueryContinueDragListener((src, args) => {
-        if (args.dropTarget === null) {
+      dragSource.addQueryContinueDragListener((_, evt) => {
+        if (evt.dropTarget === null) {
           dragPreview.classList.remove('hidden')
         } else {
           dragPreview.classList.add('hidden')

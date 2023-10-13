@@ -175,7 +175,7 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
       // that the resize rectangle which acts as user feedback is in sync with the actual
       // labelLayoutParameter that is assigned to the label.
       const model = this.label.layoutParameter.model
-      const finder = model.lookup(ILabelModelParameterFinder.$class) as ILabelModelParameterFinder
+      const finder = model.lookup(ILabelModelParameterFinder.$class)
       if (finder !== null) {
         const param = finder.findBestParameter(this.label, model, this.getCurrentLabelLayout())
         graph.setLabelLayoutParameter(this.label, param)

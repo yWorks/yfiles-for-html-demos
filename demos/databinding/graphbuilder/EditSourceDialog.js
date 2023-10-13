@@ -46,8 +46,8 @@ export class SourceDialog {
    */
   constructor(acceptCallback) {
     this.acceptCallback = acceptCallback
-    this.dialogContainerModal = document.getElementById('editSourceDialogModal')
-    this.dialogContainer = document.getElementById('editSourceDialog')
+    this.dialogContainerModal = document.querySelector('#editSourceDialogModal')
+    this.dialogContainer = document.querySelector('#editSourceDialog')
   }
 
   /**

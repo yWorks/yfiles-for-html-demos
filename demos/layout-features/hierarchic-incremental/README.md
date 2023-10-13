@@ -33,11 +33,11 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 You can also take a look at more extensive demos that take advantage of this feature:
 
-- [Hierarchic Nesting Demo](../../layout/hierarchic-nesting/index.html)
-- [Interactive Hierarchic Layout Demo](../../layout/interactive-hierarchic/index.html)
-- [Decision Tree Demo](../../showcase/decisiontree/index.html)
-- [Collapsible Trees Demo](../../view/collapse/index.html)
-- [Network Flows Demo](../../analysis/networkflows/index.html)
+- [Hierarchic Nesting Demo](../../layout/hierarchic-nesting/)
+- [Interactive Hierarchic Layout Demo](../../layout/interactive-hierarchic/)
+- [Decision Tree Demo](../../showcase/decisiontree/)
+- [Collapsible Trees Demo](../../view/collapse/)
+- [Network Flows Demo](../../analysis/networkflows/)
 
 ### Documentation
 

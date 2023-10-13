@@ -154,7 +154,7 @@ export function configureHighlight(graphComponent: GraphComponent) {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
   inputMode.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) => {
+  inputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     const highlightIndicatorManager = graphComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
     let item = evt.item

@@ -74,12 +74,12 @@ export async function enableWebGLRendering(graphComponent) {
     // this will make sure that the node/edge colors are correctly updated when a node/edge is marked
     // as fraud and vice-versa
     const graph = graphComponent.graph
-    graph.addNodeTagChangedListener((sender, event) => {
-      updateNodeStyle(graphComponent, event.item)
+    graph.addNodeTagChangedListener((_, evt) => {
+      updateNodeStyle(graphComponent, evt.item)
     })
 
-    graph.addEdgeTagChangedListener((sender, event) => {
-      updateEdgeStyle(graphComponent, event.item)
+    graph.addEdgeTagChangedListener((_, evt) => {
+      updateEdgeStyle(graphComponent, evt.item)
     })
 
     // initialize the selection and the highlight style so that they also use WebGL2 as a

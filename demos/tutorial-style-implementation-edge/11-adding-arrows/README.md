@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 11 Adding Arrows - Edge Style Implementation Tutorial
+# 11 Adding Arrows - Tutorial: Edge Style Implementation
 
 # Adding arrows
 
@@ -69,4 +69,4 @@ cache.sourceArrow = this.sourceArrow
 cache.targetArrow = this.targetArrow
 ```
 
-[12 Custom Arrow](../../tutorial-style-implementation-edge/12-custom-arrow/index.html)
+[12 Custom Arrow](../../tutorial-style-implementation-edge/12-custom-arrow/)

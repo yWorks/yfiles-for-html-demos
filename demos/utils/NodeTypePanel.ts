@@ -114,8 +114,7 @@ export default class NodeTypePanel {
    * Registers click listeners for all buttons of this {@link NodeTypePanel}.
    */
   registerClickListeners(): void {
-    for (const element of this.div.querySelectorAll('.node-type-button')) {
-      const button = element as HTMLButtonElement
+    for (const button of this.div.querySelectorAll<HTMLButtonElement>('.node-type-button')) {
       const classes = button.getAttribute('class')
       const type = NodeTypePanel.findType(classes)
       if (type > -1) {

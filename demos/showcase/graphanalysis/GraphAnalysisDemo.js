@@ -155,8 +155,8 @@ function createEditorMode(graphComponent) {
   })
 
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (sender, args) => {
-    const edge = args.item
+  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (_, evt) => {
+    const edge = evt.item
 
     // ensure that each created node and edge have a tag
     if (!useUniformEdgeWeights()) {
@@ -173,8 +173,10 @@ function createEditorMode(graphComponent) {
     await runLayout(graphComponent, true, incrementalNodes)
   })
 
-  inputMode.moveInputMode.addDragFinishedListener(async sender => {
-    const affectedNodes = sender.affectedItems.filter(item => item instanceof INode).toArray()
+  inputMode.moveInputMode.addDragFinishedListener(async inputModeMove => {
+    const affectedNodes = inputModeMove.affectedItems
+      .filter(item => item instanceof INode)
+      .toArray()
     if (affectedNodes.length < graph.nodes.size) {
       applyAlgorithm(graph)
       await runLayout(graphComponent, true, affectedNodes)
@@ -192,9 +194,9 @@ function createEditorMode(graphComponent) {
 
   inputMode.addLabelTextChangedListener(() => applyAlgorithm(graph))
 
-  inputMode.addValidateLabelTextListener((sender, args) => {
+  inputMode.addValidateLabelTextListener((_, evt) => {
     // labels must contain only positive numbers
-    args.cancel = !validationPattern.test(args.newText)
+    evt.cancel = !validationPattern.test(evt.newText)
   })
 
   // ensure that each created node has a tag

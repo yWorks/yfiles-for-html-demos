@@ -195,12 +195,10 @@ function createInputMode() {
   mode.itemHoverInputMode.enabled = true
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.NODE
   mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) =>
-    onHoveredItemChanged(evt.item)
-  )
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => onHoveredItemChanged(evt.item))
 
   // load more data on double click
-  mode.addItemDoubleClickedListener(async (sender, { item }) => {
+  mode.addItemDoubleClickedListener(async (_, { item }) => {
     const result = await runCypherQuery(
       `MATCH (n)-[e]-(m)
        WHERE id(n) = $nodeId

@@ -54,24 +54,20 @@ export function enableDataBinding(
   graph.createNode({ layout: new Rect(0, 80, 30, 30), tag: new Date() })
 
   // In this example we subscribe to the low-level node creation event to record the node creation time.
-  graph.addNodeCreatedListener(
-    (source: object, eventArgs: ItemEventArgs<INode>): void => {
-      // Store the current time as node creation time
-      const node = eventArgs.item
-      // if there is no tag associated with the node, already, add one
-      if (node.tag === null) {
-        node.tag = new Date()
-      }
-    }
-  )
-
-  graphEditorInputMode.addNodeCreatedListener(
-    (sender: object, eventArgs: ItemEventArgs<INode>): void => {
-      // Store the current time as node creation time
-      const node = eventArgs.item
+  graph.addNodeCreatedListener((_, evt): void => {
+    // Store the current time as node creation time
+    const node = evt.item
+    // if there is no tag associated with the node, already, add one
+    if (node.tag === null) {
       node.tag = new Date()
     }
-  )
+  })
+
+  graphEditorInputMode.addNodeCreatedListener((_, evt): void => {
+    // Store the current time as node creation time
+    const node = evt.item
+    node.tag = new Date()
+  })
 }
 
 /**
@@ -90,23 +86,21 @@ export function setupTooltips(
   graphEditorInputMode: GraphEditorInputMode
 ): void {
   graphEditorInputMode.toolTipItems = GraphItemTypes.NODE
-  graphEditorInputMode.addQueryItemToolTipListener(
-    (src: object, eventArgs: QueryItemToolTipEventArgs<IModelItem>): void => {
-      if (eventArgs.handled) {
-        // Tooltip content has already been assigned -> nothing to do
-        return
-      }
-      const item = eventArgs.item
-      if (item instanceof INode) {
-        const node = item
-        // Set the tooltip content
-        eventArgs.toolTip = node.tag ? node.tag.toLocaleString() : 'Not set'
-
-        // Indicate that the tooltip content has been set
-        eventArgs.handled = true
-      }
+  graphEditorInputMode.addQueryItemToolTipListener((_, evt): void => {
+    if (evt.handled) {
+      // Tooltip content has already been assigned -> nothing to do
+      return
     }
-  )
+    const item = evt.item
+    if (item instanceof INode) {
+      const node = item
+      // Set the tooltip content
+      evt.toolTip = node.tag ? node.tag.toLocaleString() : 'Not set'
+
+      // Indicate that the tooltip content has been set
+      evt.handled = true
+    }
+  })
 
   // Add a little offset to the tooltip such that it is not obscured by the mouse pointer.
   graphEditorInputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(
@@ -150,25 +144,20 @@ export function setupContextMenu(
   )
 
   // Add item-specific menu entries
-  graphEditorInputMode.addPopulateItemContextMenuListener(
-    (
-      sender: object,
-      args: PopulateItemContextMenuEventArgs<IModelItem>
-    ): void => {
-      contextMenu.clearItems()
-      if (INode.isInstance(args.item)) {
-        // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
-        // for this item (or more generally, the location provided by the event args).
-        // If you don't want to show a context menu for some locations, set 'false' in this cases.
-        args.showMenu = true
+  graphEditorInputMode.addPopulateItemContextMenuListener((_, evt): void => {
+    contextMenu.clearItems()
+    if (INode.isInstance(evt.item)) {
+      // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
+      // for this item (or more generally, the location provided by the event args).
+      // If you don't want to show a context menu for some locations, set 'false' in this cases.
+      evt.showMenu = true
 
-        contextMenu.addMenuItem('Set to now', (): void => {
-          const node = args.item as INode
-          node.tag = new Date()
-        })
-      }
+      contextMenu.addMenuItem('Set to now', (): void => {
+        const node = evt.item as INode
+        node.tag = new Date()
+      })
     }
-  )
+  })
 
   // Add a listener that closes the menu when the input mode requests this
   graphEditorInputMode.contextMenuInputMode.addCloseMenuListener((): void => {

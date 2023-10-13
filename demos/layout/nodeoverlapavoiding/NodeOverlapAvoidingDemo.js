@@ -164,20 +164,20 @@ function initializeInputModes() {
   })
 
   // avoid overlapping when creating, pasting or duplicating nodes
-  editMode.addNodeCreatedListener((sender, args) => {
-    makeSpace(args.item)
+  editMode.addNodeCreatedListener((_, evt) => {
+    makeSpace(evt.item)
   })
-  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener((sender, args) => {
+  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener((_, evt) => {
     // clear the current selection before the layout starts because GraphEditorInputMode cannot
     // do this while the layout is running (the selection is usually cleared after this event)
     graphComponent.selection.clear()
-    makeSpace(args.copy)
+    makeSpace(evt.copy)
   })
-  graphComponent.clipboard.duplicateCopier.addNodeCopiedListener((sender, args) => {
+  graphComponent.clipboard.duplicateCopier.addNodeCopiedListener((_, evt) => {
     // clear the current selection before the layout starts because GraphEditorInputMode cannot
     // do this while the layout is running (the selection is usually cleared after this event)
     graphComponent.selection.clear()
-    makeSpace(args.copy)
+    makeSpace(evt.copy)
   })
 }
 

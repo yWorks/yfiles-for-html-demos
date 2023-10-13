@@ -65,7 +65,7 @@ export function initializeNodePopups(graphComponent) {
     ExteriorLabelModel.NORTH
   )
 
-  graphComponent.selection.addItemSelectionChangedListener((sender, evt) => {
+  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
     hidePopup(graphComponent)
     const selectedItem = evt.item
     if (selectedItem instanceof INode && evt.itemSelected) {
@@ -74,11 +74,11 @@ export function initializeNodePopups(graphComponent) {
   })
 
   const inputMode = graphComponent.inputMode
-  inputMode.addItemRightClickedListener((sender, event) => {
-    if (!(event.item instanceof INode)) {
+  inputMode.addItemRightClickedListener((_, evt) => {
+    if (!(evt.item instanceof INode)) {
       return
     }
-    showToolbar(event.item)
+    showToolbar(evt.item)
   })
 
   inputMode.moveInputMode.addDragStartedListener(_ => {
@@ -272,7 +272,7 @@ function createColorPicker(graphComponent) {
     '#2d4d3a'
   ]
 
-  const colorContainer = document.getElementById('color-picker-colors')
+  const colorContainer = document.querySelector('#color-picker-colors')
   colorPickerColors.forEach(color => {
     const colorButton = document.createElement('button')
     colorButton.setAttribute('data-color', color)
@@ -299,7 +299,7 @@ function createColorPicker(graphComponent) {
  * @param {!GraphComponent} graphComponent
  */
 function createStateIconPicker(graphComponent) {
-  const iconContainer = document.getElementById('state-icon-picker-icons')
+  const iconContainer = document.querySelector('#state-icon-picker-icons')
   stateIcons.forEach((stateIcon, i) => {
     const stateButton = document.createElement('button')
     stateButton.setAttribute(

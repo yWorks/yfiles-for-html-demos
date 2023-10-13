@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 06 Text Alignment - Label Style Implementation Tutorial
+# 06 Text Alignment - Tutorial: Label Style Implementation
 
 # Text alignment
 
@@ -85,4 +85,4 @@ Note
 
 Measuring text can be very costly, especially if a lot of text elements have to be measured frequently. Therefore, it should be used as little as possible. In this style, the text is only measured if the label size or text, or the alignment changes.
 
-[07 Line Wrapping](../../tutorial-style-implementation-label/07-line-wrapping/index.html)
+[07 Line Wrapping](../../tutorial-style-implementation-label/07-line-wrapping/)

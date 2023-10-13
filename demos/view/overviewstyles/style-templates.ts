@@ -37,20 +37,20 @@ export const detailNodeStyleTemplate = `
     transform="translate(26 84)" />
   <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
     <text transform="translate(100 25)" data-content="{Binding name}"
-      style="font-size:16px; fill:#336699"></text>
+      style="font-size:16px; fill:#336699"/>
     <text transform="translate(100 45)"
       data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=true}"
-      style="text-transform: uppercase; font-weight: 400"></text>
+      style="text-transform: uppercase; font-weight: 400"/>
     <text transform="translate(100 57)"
       data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=false}"
-      style="text-transform: uppercase; font-weight: 400"></text>
-    <text transform="translate(100 72)" data-content="{Binding email}"></text>
-    <text transform="translate(100 88)" data-content="{Binding phone}"></text>
-    <text transform="translate(170 88)" data-content="{Binding fax}"></text>
+      style="text-transform: uppercase; font-weight: 400"/>
+    <text transform="translate(100 72)" data-content="{Binding email}"/>
+    <text transform="translate(100 88)" data-content="{Binding phone}"/>
+    <text transform="translate(170 88)" data-content="{Binding fax}"/>
   </g>`
 
 export const overviewNodeStyle = `
-  <rect fill="{Binding status, Converter=orgChartConverters.colorConverter}" width="30" height="{TemplateBinding height}"></rect>
-  <rect fill="white" transform="translate(30 0)" width="{TemplateBinding width}" height="{TemplateBinding height}" rx="10" ry="10"></rect>
+  <rect fill="{Binding status, Converter=orgChartConverters.colorConverter}" width="30" height="{TemplateBinding height}"/>
+  <rect fill="white" transform="translate(30 0)" width="{TemplateBinding width}" height="{TemplateBinding height}" rx="10" ry="10"/>
   <text transform="translate(50 50)" data-content="{Binding name, Converter=orgChartConverters.overviewConverter}"
-  style="font-size:50px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;"></text>`
+  style="font-size:50px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;"/>`

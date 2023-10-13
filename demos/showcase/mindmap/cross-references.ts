@@ -70,13 +70,11 @@ export function initializeCrossReferences(graphComponent: GraphComponent): void 
   createEdgeInputMode.enabled = false
   createEdgeInputMode.allowCreateBend = false
   // disable CreateEdgeInputMode after cross-reference edge has been created
-  createEdgeInputMode.addEdgeCreatedListener(
-    async (sender: CreateEdgeInputMode, evt: EdgeEventArgs) => {
-      createEdgeInputMode.enabled = false
-      graphComponent.currentItem = null
-      void inputMode.editLabel(evt.item.labels.at(0)!)
-    }
-  )
+  createEdgeInputMode.addEdgeCreatedListener(async (_, evt) => {
+    createEdgeInputMode.enabled = false
+    graphComponent.currentItem = null
+    void inputMode.editLabel(evt.item.labels.at(0)!)
+  })
   createEdgeInputMode.addGestureCanceledListener(() => (createEdgeInputMode.enabled = false))
   createEdgeInputMode.edgeCreator = createCrossReferenceEdge
 

@@ -26,7 +26,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-- The [Tree Layout Demo](../../layout/tree/index.html) shows complex configurations of [NodePlacer](https://docs.yworks.com/yfileshtml/#/api/NodePlacer) instances to further customize the node placement.
+- The [Tree Layout Demo](../../layout/tree/) shows complex configurations of [NodePlacer](https://docs.yworks.com/yfileshtml/#/api/NodePlacer) instances to further customize the node placement.
 - More features of the tree layout and supported use cases are shown in the [Layout Styles: Tree Demo](../../showcase/layoutstyles/index.html?layout=tree&sample=tree).
 
 ### Documentation

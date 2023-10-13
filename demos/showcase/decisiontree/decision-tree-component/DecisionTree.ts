@@ -177,10 +177,10 @@ export default class DecisionTree {
       selectableItems: GraphItemTypes.NONE,
       clickableItems: GraphItemTypes.NODE
     })
-    graphViewerInputMode.addItemClickedListener(async (sender, args) => {
-      if (args.item instanceof INode) {
+    graphViewerInputMode.addItemClickedListener(async (_, evt) => {
+      if (evt.item instanceof INode) {
         // toggle the collapsed state of the clicked node
-        await this.showSuccessors(args.item, true)
+        await this.showSuccessors(evt.item, true)
       }
     })
     this.graphComponent.inputMode = graphViewerInputMode

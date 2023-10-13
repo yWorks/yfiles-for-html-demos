@@ -34,6 +34,7 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Rendering Optimizations Demo [yFiles for HTML]</title>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="resources/html-style.css" />
@@ -42,7 +43,7 @@
       // run yFiles in production mode for performance reasons
       window.process = { env: { NODE_ENV: 'production' } }
     </script>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
     <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
@@ -111,8 +112,7 @@
         <p class="tooltip-lightgray">
           On the downside, only the predefined styles can be used, some advanced features of the
           user interaction are not supported (e.g. snapping), and text rendering at high zoom levels
-          is less clear. Note that WebGL2 is not supported in Internet Explorer and at the time of
-          writing still needs to be enabled manually in the settings for Safari and on iOS.
+          is less clear. Note that WebGL2 is not supported in Safari 14 and lower.
         </p>
         <p class="tooltip-green">
           This option is suited for almost all scenarios with a large graph and a moderate

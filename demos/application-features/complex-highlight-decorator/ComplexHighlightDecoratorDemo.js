@@ -27,30 +27,30 @@
  **
  ***************************************************************************/
 import {
+  Class,
   DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   ExteriorLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphInputMode,
   GraphItemTypes,
   GroupNodeStyle,
+  HierarchicLayout,
   IGraph,
+  LayoutExecutor,
   License,
-  Point,
   ShapeNodeShape,
   Size
 } from 'yfiles'
 
 import { NodeHighlightManager } from './NodeHighlightManager.js'
-import {
-  applyDemoTheme,
-  createDemoShapeNodeStyle,
-  initDemoStyles
-} from 'demo-resources/demo-styles'
+import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import graphData from './graph-data.json'
 
 /**
  * Bootstraps the demo.
@@ -66,18 +66,56 @@ async function run() {
     allowGroupingOperations: true
   })
 
+  const graph = graphComponent.graph
+
   // configure default styles for newly created graph elements
-  initializeGraph(graphComponent.graph)
+  initializeGraph(graph)
 
   // enable mouse hover effects for nodes and edges
   configureHoverHighlight(graphComponent)
 
-  // create an initial sample graph
-  createGraph(graphComponent.graph)
+  // build the graph from the given data set
+  buildGraph(graph, graphData)
+
+  // layout and center the graph
+  Class.ensure(LayoutExecutor)
+  graph.applyLayout(new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 }))
   graphComponent.fitGraphBounds()
 
-  // Finally, enable the undo engine. This prevents undoing of the graph creation
-  graphComponent.graph.undoEngineEnabled = true
+  // enable now the undo engine to prevent undoing of the graph creation
+  graph.undoEngineEnabled = true
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ * @param {!IGraph} graph
+ * @param {!JSONGraph} graphData
+ */
+function buildGraph(graph, graphData) {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder
+    .createNodesSource({
+      data: graphData.nodeList.filter(item => !item.isGroup),
+      id: item => item.id,
+      parentId: item => item.parentId
+    })
+    .nodeCreator.styleBindings.addBinding('shape', item => item.tag)
+
+  graphBuilder
+    .createGroupNodesSource({
+      data: graphData.nodeList.filter(item => item.isGroup),
+      id: item => item.id
+    })
+    .nodeCreator.createLabelBinding(item => item.label)
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -93,10 +131,11 @@ function configureHoverHighlight(graphComponent) {
   inputMode.itemHoverInputMode.discardInvalidItems = false
 
   // specify the hover effect: highlight a node whenever the mouse hovers over the respective node
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
-    const highlightManager = sender.inputModeContext.canvasComponent.highlightIndicatorManager
+  inputMode.itemHoverInputMode.addHoveredItemChangedListener((hoverInputMode, evt) => {
+    const highlightManager =
+      hoverInputMode.inputModeContext.canvasComponent.highlightIndicatorManager
     highlightManager.clearHighlights()
-    const item = args.item
+    const item = evt.item
     if (item) {
       highlightManager.addHighlight(item)
     }
@@ -112,7 +151,7 @@ function configureHoverHighlight(graphComponent) {
  */
 function initializeGraph(graph) {
   // set styles for this demo
-  initDemoStyles(graph)
+  initDemoStyles(graph, { shape: ShapeNodeShape.ELLIPSE })
 
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
@@ -127,6 +166,7 @@ function initializeGraph(graph) {
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
+  graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
     insets: 5
   }).createParameter('south')
@@ -134,48 +174,6 @@ function initializeGraph(graph) {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-/**
- * Creates an initial sample graph.
- *
- * @param {!IGraph} graph The graph.
- */
-function createGraph(graph) {
-  const ellipseStyle = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE)
-  const triangleStyle = createDemoShapeNodeStyle(ShapeNodeShape.TRIANGLE)
-
-  const node1 = graph.createNodeAt({ location: [110, 20], tag: 'rect' })
-  const node2 = graph.createNodeAt({
-    location: [145, 95],
-    style: triangleStyle,
-    tag: 'triangle'
-  })
-  const node3 = graph.createNodeAt({ location: [75, 95], tag: 'rect' })
-  const node4 = graph.createNodeAt({ location: [30, 175], style: ellipseStyle, tag: 'ellipse' })
-  const node5 = graph.createNodeAt({ location: [100, 175], style: ellipseStyle, tag: 'ellipse' })
-
-  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
-
-  const edge1 = graph.createEdge(node1, node2)
-  const edge2 = graph.createEdge(node1, node3)
-  const edge3 = graph.createEdge(node3, node4)
-  const edge4 = graph.createEdge(node3, node5)
-  const edge5 = graph.createEdge(node1, node5)
-  graph.setPortLocation(edge1.sourcePort, new Point(123.33, 40))
-  graph.setPortLocation(edge1.targetPort, new Point(145, 75))
-  graph.setPortLocation(edge2.sourcePort, new Point(96.67, 40))
-  graph.setPortLocation(edge2.targetPort, new Point(75, 75))
-  graph.setPortLocation(edge3.sourcePort, new Point(65, 115))
-  graph.setPortLocation(edge3.targetPort, new Point(30, 155))
-  graph.setPortLocation(edge4.sourcePort, new Point(85, 115))
-  graph.setPortLocation(edge4.targetPort, new Point(90, 155))
-  graph.setPortLocation(edge5.sourcePort, new Point(110, 40))
-  graph.setPortLocation(edge5.targetPort, new Point(110, 155))
-  graph.addBends(edge1, [new Point(123.33, 55), new Point(145, 55)])
-  graph.addBends(edge2, [new Point(96.67, 55), new Point(75, 55)])
-  graph.addBends(edge3, [new Point(65, 130), new Point(30, 130)])
-  graph.addBends(edge4, [new Point(85, 130), new Point(90, 130)])
 }
 
 run().then(finishLoading)

@@ -148,8 +148,8 @@ function initializeInputMode(): void {
   inputMode.marqueeSelectionInputMode.enabled = false
   inputMode.moveUnselectedInputMode.enabled = true
 
-  inputMode.addDeletingSelectionListener((sender, args) => {
-    const selection = args.selection
+  inputMode.addDeletingSelectionListener((_, evt) => {
+    const selection = evt.selection
     for (const item of selection) {
       if (item instanceof INode) {
         filteredGraph.edgesAt(item, AdjacencyTypes.ALL).forEach(edge => {
@@ -277,15 +277,15 @@ function initializeGraph(graph: IGraph): void {
   })
   fraudDetectionComponent.graph = filteredGraph
 
-  filteredGraph.addNodeCreatedListener((sender, args) => {
-    const node = args.item
+  filteredGraph.addNodeCreatedListener((_, evt) => {
+    const node = evt.item
     incrementalNodes.push(node)
     nodesAdded.set(node, true)
   })
 
-  filteredGraph.addEdgeCreatedListener((sender, args) => {
-    const sourceNode = args.item.sourceNode!
-    const targetNode = args.item.targetNode!
+  filteredGraph.addEdgeCreatedListener((_, evt) => {
+    const sourceNode = evt.item.sourceNode!
+    const targetNode = evt.item.targetNode!
     if (!incrementalNodes.includes(sourceNode)) {
       incrementalNodes.push(sourceNode)
     }
@@ -294,9 +294,9 @@ function initializeGraph(graph: IGraph): void {
     }
   })
 
-  filteredGraph.addEdgeRemovedListener((sender, args) => {
-    const sourceNode = args.item.sourceNode!
-    const targetNode = args.item.targetNode!
+  filteredGraph.addEdgeRemovedListener((_, evt) => {
+    const sourceNode = evt.item.sourceNode!
+    const targetNode = evt.item.targetNode!
     if (!incrementalNodes.includes(sourceNode)) {
       incrementalNodes.push(sourceNode)
     }

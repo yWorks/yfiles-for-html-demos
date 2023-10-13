@@ -57,10 +57,10 @@ export class NodeDragInputMode extends InputModeBase {
   private oldAutoDrag: boolean | null = null
   private img: HTMLImageElement | null = null
 
-  private readonly onNodeRemovedListeners: (sender: IGraph, evt: NodeEventArgs) => void
-  private readonly onMouseDragListener: (sender: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseDownListener: (sender: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseUpListener: (sender: GraphComponent, evt: MouseEventArgs) => void
+  private readonly onNodeRemovedListeners: (_: IGraph, evt: NodeEventArgs) => void
+  private readonly onMouseDragListener: (_: GraphComponent, evt: MouseEventArgs) => void
+  private readonly onMouseDownListener: (_: GraphComponent, evt: MouseEventArgs) => void
+  private readonly onMouseUpListener: (_: GraphComponent, evt: MouseEventArgs) => void
   private readonly onDragStartedListener: (evt: DragEvent) => void
   private readonly onDragEndListener: (evt: DragEvent) => void
 
@@ -68,10 +68,10 @@ export class NodeDragInputMode extends InputModeBase {
     super()
 
     // initializes listener functions in order to install/uninstall them
-    this.onNodeRemovedListeners = (_sender, evt) => this.handleNodeRemoved(evt.item)
-    this.onMouseDragListener = (_sender, _evt) => this.onMouseDrag()
-    this.onMouseDownListener = (_sender, evt) => this.onMouseDown(evt.modifiers, evt.location)
-    this.onMouseUpListener = (_sender, _evt) => this.onMouseUp()
+    this.onNodeRemovedListeners = (_, evt) => this.handleNodeRemoved(evt.item)
+    this.onMouseDragListener = (_, _evt) => this.onMouseDrag()
+    this.onMouseDownListener = (_, evt) => this.onMouseDown(evt.modifiers, evt.location)
+    this.onMouseUpListener = (_, _evt) => this.onMouseUp()
     this.onDragStartedListener = evt => this.onDragStarted(evt)
     this.onDragEndListener = _evt => this.onDragEnd()
   }
@@ -174,7 +174,7 @@ export class NodeDragInputMode extends InputModeBase {
       // Don't arm this mode if shift is held down
       return
     }
-    const nodeHitTester = this.inputModeContext!.lookup(INodeHitTester.$class) as INodeHitTester
+    const nodeHitTester = this.inputModeContext!.lookup(INodeHitTester.$class)
     if (nodeHitTester) {
       const node = nodeHitTester.enumerateHits(this.inputModeContext!, location).at(0)
       if (node) {

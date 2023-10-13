@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 02 Using Text Utilities - Label Style Implementation Tutorial
+# 02 Using Text Utilities - Tutorial: Label Style Implementation
 
 # Using text utilities
 
@@ -57,4 +57,4 @@ transform.applyTo(gElement)
 return new SvgVisual(gElement)
 ```
 
-[03 Adding a Background Shape](../../tutorial-style-implementation-label/03-add-background-shape/index.html)
+[03 Adding a Background Shape](../../tutorial-style-implementation-label/03-add-background-shape/)

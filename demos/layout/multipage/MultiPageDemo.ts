@@ -129,19 +129,19 @@ function runMultiPageLayout(): void {
   layouting = true
 
   // parse the pageWidth and pageHeight parameters
-  const pageWidthTextBox = document.getElementById('pageWidthTextBox') as HTMLInputElement
+  const pageWidthTextBox = document.querySelector<HTMLInputElement>('#pageWidthTextBox')!
   let pageWidth: number = parseFloat(pageWidthTextBox.value)
   if (isNaN(pageWidth)) {
     pageWidth = 800
   }
-  const pageHeightTextBox = document.getElementById('pageHeightTextBox') as HTMLInputElement
+  const pageHeightTextBox = document.querySelector<HTMLInputElement>('#pageHeightTextBox')!
   let pageHeight: number = parseFloat(pageHeightTextBox.value)
   if (isNaN(pageHeight)) {
     pageHeight = 800
   }
 
   // get the core layout
-  const coreLayoutComboBox = document.getElementById('coreLayoutComboBox') as HTMLSelectElement
+  const coreLayoutComboBox = document.querySelector<HTMLSelectElement>('#coreLayoutComboBox')!
   const layoutIndex = coreLayoutComboBox.selectedIndex
   const coreLayout = (coreLayoutComboBox.options[layoutIndex > -1 ? layoutIndex : 0] as any).myValue
   if (coreLayoutComboBox.value === 'Tree') {
@@ -149,13 +149,13 @@ function runMultiPageLayout(): void {
     coreLayout.defaultNodePlacer.aspectRatio = pageWidth / pageHeight
   }
 
-  const createProxyReferenceNodes = document.getElementById(
-    'createProxyReferenceNodes'
-  ) as HTMLInputElement
+  const createProxyReferenceNodes = document.querySelector<HTMLInputElement>(
+    '#createProxyReferenceNodes'
+  )!
   const createProxyNodes = createProxyReferenceNodes.checked
-  const placeMultipleComponentsOnSinglePage = document.getElementById(
-    'placeMultipleComponentsOnSinglePage'
-  ) as HTMLInputElement
+  const placeMultipleComponentsOnSinglePage = document.querySelector<HTMLInputElement>(
+    '#placeMultipleComponentsOnSinglePage'
+  )!
   const placeComponentsOnSinglePage = placeMultipleComponentsOnSinglePage.checked
 
   const multiPageLayout = new MultiPageLayout({
@@ -164,7 +164,7 @@ function runMultiPageLayout(): void {
     createProxyReferenceNodes: createProxyNodes,
     multipleComponentsOnSinglePage: placeComponentsOnSinglePage,
     additionalParentCount: Number.parseInt(
-      (document.getElementById('additionalParentCount') as HTMLInputElement).value
+      document.querySelector<HTMLInputElement>('#additionalParentCount')!.value
     ),
     layoutCallback: ILayoutCallback.create(async (result: MultiPageLayoutResult) => {
       await applyLayoutResult(result, pageWidth, pageHeight)
@@ -253,7 +253,7 @@ function setPageNumber(newPageNumber: number, targetNode: INode | null = null): 
       ? viewGraphs.length - 1
       : newPageNumber
 
-  const pageNumberTextBox = document.getElementById('page-number-text-box') as HTMLInputElement
+  const pageNumberTextBox = document.querySelector<HTMLInputElement>('#page-number-text-box')!
   pageNumberTextBox.value = (pageNumber + 1).toString()
   pageNumberTextBox.setAttribute('min', '1')
   pageNumberTextBox.setAttribute('max', `${viewGraphs.length}`)
@@ -348,7 +348,7 @@ function initializeUI(): void {
   document.querySelector<HTMLSelectElement>('#samples')!.addEventListener('change', async evt => {
     const value = (evt.target as HTMLSelectElement).value
     if (value === 'yFiles Layout Namespaces') {
-      ;(document.getElementById('coreLayoutComboBox') as HTMLSelectElement).value = 'Tree'
+      document.querySelector<HTMLSelectElement>('#coreLayoutComboBox')!.value = 'Tree'
     }
     await loadModelGraph(value)
   })
@@ -381,8 +381,8 @@ function initializeCoreLayouts(): void {
   })
   treeLayout.prependStage(new TreeReductionStage())
 
-  const additionalParentCount = document.getElementById('additionalParentCount') as HTMLInputElement
-  const coreLayoutComboBox = document.getElementById('coreLayoutComboBox') as HTMLSelectElement
+  const additionalParentCount = document.querySelector<HTMLInputElement>('#additionalParentCount')!
+  const coreLayoutComboBox = document.querySelector<HTMLSelectElement>('#coreLayoutComboBox')!
   addOption(coreLayoutComboBox, 'Hierarchic', hierarchicLayout)
   addOption(coreLayoutComboBox, 'Circular', new CircularLayout())
   addOption(coreLayoutComboBox, 'Compact Orthogonal', new CompactOrthogonalLayout())
@@ -428,8 +428,8 @@ function initializeInputModes(): void {
   inputMode.itemHoverInputMode.addHoveredItemChangedListener(onHoveredItemChanged)
 
   // handle clicks on nodes
-  inputMode.addItemClickedListener((sender, event) => {
-    goToReferencingNode(event.item as INode)
+  inputMode.addItemClickedListener((_, evt) => {
+    goToReferencingNode(evt.item as INode)
   })
   graphComponent.inputMode = inputMode
 

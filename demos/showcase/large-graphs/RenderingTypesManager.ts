@@ -138,7 +138,7 @@ export default class RenderingTypesManager {
     graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
     graphComponent.focusIndicatorManager.enabled = false
 
-    this.nodeCreatedListener = (inputMode: GraphEditorInputMode, evt: ItemEventArgs<INode>) => {
+    this.nodeCreatedListener = (inputMode, evt) => {
       const node = evt.item
 
       if (this.nodeStyleProvider !== null) {
@@ -159,7 +159,7 @@ export default class RenderingTypesManager {
       )
     }
 
-    this.edgeCreatedListener = (inputMode: CreateEdgeInputMode, evt: EdgeEventArgs) => {
+    this.edgeCreatedListener = (inputMode, evt) => {
       const edge = evt.item
 
       if (this.edgeStyleProvider) {

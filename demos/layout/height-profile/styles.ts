@@ -68,14 +68,14 @@ export const labelNodeSize = new Size(130, 50)
  * The template string used for the label nodes.
  */
 export const templateString = `
-<rect width="{TemplateBinding width}"  height="{TemplateBinding height}" fill="white" opacity="0.4"></rect>
+<rect width="{TemplateBinding width}"  height="{TemplateBinding height}" fill="white" opacity="0.4"/>
 <g visibility="{TemplateBinding styleTag, Converter=labelConverters.iconVisible}">
-  <image  xlink:href="{TemplateBinding styleTag, Converter=labelConverters.iconConverter}" x="0" y="0" width="{TemplateBinding width}" height="{TemplateBinding height, Converter=labelConverters.iconHeight}"></image>
+  <image  xlink:href="{TemplateBinding styleTag, Converter=labelConverters.iconConverter}" x="0" y="0" width="{TemplateBinding width}" height="{TemplateBinding height, Converter=labelConverters.iconHeight}"/>
 </g>
 <g visibility="{TemplateBinding styleTag, Converter=labelConverters.textVisible}" style="font-family: Roboto,sans-serif; fill: #444" >
-  <text x="{TemplateBinding width, Converter=labelConverters.center}" y="10" dominant-baseline="middle" text-anchor="middle" style="font-size: 16px; fill: #336699" data-content="{Binding name}" ></text>
+  <text x="{TemplateBinding width, Converter=labelConverters.center}" y="10" dominant-baseline="middle" text-anchor="middle" style="font-size: 16px; fill: #336699" data-content="{Binding name}" />
 </g>
-<text x="{TemplateBinding width, Converter=labelConverters.center}" y="38" dominant-baseline="middle" text-anchor="middle" style="font-size: 11px; fill: black"  data-content="{Binding y, Converter=labelConverters.altitude}"></text>
+<text x="{TemplateBinding width, Converter=labelConverters.center}" y="38" dominant-baseline="middle" text-anchor="middle" style="font-size: 11px; fill: black"  data-content="{Binding y, Converter=labelConverters.altitude}"/>
 `
 
 /**

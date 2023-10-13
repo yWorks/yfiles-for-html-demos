@@ -80,28 +80,26 @@ export function initializeHighlight(graphComponent: GraphComponent): void {
   mode.itemHoverInputMode.enabled = true
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
   mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener(
-    (sender: object, args: HoveredItemChangedEventArgs): void => {
-      const highlightManager = graphComponent.highlightIndicatorManager
-      // remove all previous highlighting
-      highlightManager.clearHighlights()
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt): void => {
+    const highlightManager = graphComponent.highlightIndicatorManager
+    // remove all previous highlighting
+    highlightManager.clearHighlights()
 
-      const item = args.item
-      if (item instanceof IEdge) {
-        // when an edge is being hovered, highlight first the edge and then its associated labels,
-        // so that the label highlighting stays above the edge highlighting
-        highlightManager.addHighlight(item)
-        item.labels.forEach((label: ILabel): void => {
-          highlightManager.addHighlight(label)
-        })
-      } else if (item instanceof ILabel) {
-        // when a label is being hovered, highlight first its associated edge and then the label,
-        // so that the label highlighting stays above the edge highlighting
-        highlightManager.addHighlight(item.owner!)
-        highlightManager.addHighlight(item)
-      }
+    const item = evt.item
+    if (item instanceof IEdge) {
+      // when an edge is being hovered, highlight first the edge and then its associated labels,
+      // so that the label highlighting stays above the edge highlighting
+      highlightManager.addHighlight(item)
+      item.labels.forEach((label: ILabel): void => {
+        highlightManager.addHighlight(label)
+      })
+    } else if (item instanceof ILabel) {
+      // when a label is being hovered, highlight first its associated edge and then the label,
+      // so that the label highlighting stays above the edge highlighting
+      highlightManager.addHighlight(item.owner!)
+      highlightManager.addHighlight(item)
     }
-  )
+  })
 
   // when a label text changes or a label is added to an edge, clear all previous highlighting for
   // cosmetic reasons

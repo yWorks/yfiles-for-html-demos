@@ -85,7 +85,9 @@ export type JSONNode = {
   center?: JSONPoint
   labels?: JSONLabel[]
   labelTexts?: string[]
+  label?: string
   data?: any
+  tag?: string
 }
 
 /**
@@ -100,7 +102,9 @@ export type JSONEdge = {
   targetPortParameter?: string
   bends?: JSONPoint[]
   labels?: JSONLabel[]
+  label?: string
   data?: any
+  tag?: any
 }
 
 /**

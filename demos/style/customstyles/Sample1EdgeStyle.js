@@ -128,7 +128,7 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
    * @returns {!EdgeRenderDataCache}
    */
   createRenderDataCache(context, edge) {
-    const node = edge.sourcePort.owner
+    const node = edge.sourceNode
     return new EdgeRenderDataCache(
       this.pathThickness,
       Sample1EdgeStyle.isSelected(context, edge),

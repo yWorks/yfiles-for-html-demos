@@ -112,8 +112,8 @@ function initGraphDefaults(graph: IGraph): void {
  * When a node is selected or deselected, update the node data JSON in the left panel.
  */
 function initTagView(graphComponent: GraphComponent): void {
-  graphComponent.selection.addItemSelectionChangedListener(sender => {
-    const firstSelectedNode = sender.selectedNodes.at(0)
+  graphComponent.selection.addItemSelectionChangedListener(graphComponent => {
+    const firstSelectedNode = graphComponent.selectedNodes.at(0)
     if (firstSelectedNode) {
       updateTagView(firstSelectedNode)
     } else {
@@ -128,8 +128,8 @@ function createInputMode(): GraphEditorInputMode {
   })
 
   // When a node is created, we add default dummy data as the user tag.
-  inputMode.addNodeCreatedListener((sender, evt) => {
-    const graph = sender.graphComponent!.graph
+  inputMode.addNodeCreatedListener((inputMode, evt) => {
+    const graph = inputMode.graphComponent!.graph
     evt.item.tag = {
       ...defaultData,
       since: new Date().toISOString().substring(0, 10),

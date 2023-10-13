@@ -63,7 +63,7 @@ export function createInputMode(graphComponent) {
   mode.createEdgeInputMode.edgeDirectionPolicy = EdgeDirectionPolicy.DETERMINE_FROM_PORT_CANDIDATES
   // layout the graph on edge creation if auto-layout is checked
 
-  const autoLayout = document.getElementById('auto-layout-checkbox')
+  const autoLayout = document.querySelector('#auto-layout-checkbox')
 
   mode.createEdgeInputMode.addEdgeCreatedListener(() => {
     if (autoLayout.checked) {
@@ -93,7 +93,7 @@ export function createInputMode(graphComponent) {
   // they should be discarded, rather than be reported as "null"
   mode.itemHoverInputMode.discardInvalidItems = false
   // whenever the currently hovered item changes call our method
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, { item, oldItem }) => {
+  mode.itemHoverInputMode.addHoveredItemChangedListener((_, { item, oldItem }) => {
     if (oldItem instanceof INode) {
       const highlightInfo = getNodeHighlightInfo(oldItem)
       highlightInfo.sourceHighlight = false

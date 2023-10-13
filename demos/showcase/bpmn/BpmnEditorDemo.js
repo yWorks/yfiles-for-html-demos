@@ -154,7 +154,7 @@ let popupSupport
 /**
  * The combo box to choose the sample graphs from.
  */
-const graphChooserBox = document.getElementById('sample-combobox')
+const graphChooserBox = document.querySelector('#sample-combobox')
 addNavigationButtons(graphChooserBox)
 
 /**
@@ -280,9 +280,9 @@ function initializeInputMode() {
   graphEditorInputMode.marqueeSelectionInputMode.enabled = false
 
   // show the popup for the double-clicked item that has been mapped to the item's style earlier
-  graphEditorInputMode.addItemDoubleClickedListener((sender, e) => {
-    popupSupport.showPropertyPopup(e.item)
-    e.handled = true
+  graphEditorInputMode.addItemDoubleClickedListener((_, evt) => {
+    popupSupport.showPropertyPopup(evt.item)
+    evt.handled = true
   })
 
   // hide the popups on double clicks on the GraphComponent's background.
@@ -509,7 +509,7 @@ function initializeUI() {
   // initialize commands for the item popups that are used to change the item's style properties
   popupSupport.registerPopupCommands()
 
-  const fileInput = document.getElementById('file-input')
+  const fileInput = document.querySelector('#file-input')
   if (fileInput) {
     fileInput.addEventListener('change', onFileSelected)
   }
@@ -571,8 +571,8 @@ function initializeContextMenu() {
 
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((sender, args) => {
-    onPopulateItemContextMenu(contextMenu, args)
+  inputMode.addPopulateItemContextMenuListener((_, evt) => {
+    onPopulateItemContextMenu(contextMenu, evt)
   })
 
   // Add a listener that closes the menu when the input mode request this
@@ -593,8 +593,8 @@ function initializeContextMenu() {
  */
 function setUIDisabled(disabled) {
   graphChooserBox.disabled = disabled
-  document.getElementById('layout-button').disabled = disabled
-  document.getElementById('new-button').disabled = disabled
+  document.querySelector('#layout-button').disabled = disabled
+  document.querySelector('#new-button').disabled = disabled
   graphComponent.inputMode.waitInputMode.waiting = disabled
 }
 

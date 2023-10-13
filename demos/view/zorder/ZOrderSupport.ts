@@ -157,13 +157,13 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     let zOrderKeyDefinitionFound = false
     let maxExistingZOrder = Number.MIN_VALUE
 
-    ioHandler.addQueryOutputHandlersListener((o: object, evt: QueryOutputHandlersEventArgs) => {
+    ioHandler.addQueryOutputHandlersListener((_, evt) => {
       if (evt.scope === KeyScope.NODE) {
         evt.addOutputHandler(new ZOrderOutputHandler(this))
       }
     })
 
-    ioHandler.addQueryInputHandlersListener((o: object, evt: QueryInputHandlersEventArgs) => {
+    ioHandler.addQueryInputHandlersListener((_, evt) => {
       if (
         !evt.handled &&
         GraphMLIOHandler.matchesScope(evt.keyDefinition, KeyScope.NODE) &&
@@ -175,7 +175,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       }
     })
 
-    ioHandler.addParsingListener((sender, evt) => {
+    ioHandler.addParsingListener((_, evt) => {
       // clear old z-orders of old graph
       if (ioHandler.clearGraphBeforeRead) {
         this.clear()
@@ -187,7 +187,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       zOrderKeyDefinitionFound = false
     })
 
-    ioHandler.addParsedListener((sender, evt) => {
+    ioHandler.addParsedListener((_, evt) => {
       // enable automatic z-order creation for new nodes again
       this.addZOrderForNewNodes = true
       if (!zOrderKeyDefinitionFound) {
@@ -310,9 +310,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     let prev: ICanvasObject | null = null
     for (const node of viewNodes) {
       this.setZOrder(this.getMasterNode(node), zOrder++)
-      const canvasObject = this.graphComponent.graphModelManager.getMainCanvasObject(
-        node
-      ) as ICanvasObject
+      const canvasObject = this.graphComponent.graphModelManager.getMainCanvasObject(node)!
       if (!prev) {
         canvasObject.toBack()
       } else {
@@ -394,7 +392,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     let prev: INode | null = null
     for (let i = nodes.size - 1; i >= 0; i--) {
       const node = nodes.get(i)
-      const co = this.graphComponent.graphModelManager.getMainCanvasObject(node) as ICanvasObject
+      const co = this.graphComponent.graphModelManager.getMainCanvasObject(node)!
       const nextCO = co.nextSibling
       if (nextCO) {
         let tmp
@@ -416,7 +414,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
 
     let prev: INode | null = null
     for (const node of nodes) {
-      const co = this.graphComponent.graphModelManager.getMainCanvasObject(node) as ICanvasObject
+      const co = this.graphComponent.graphModelManager.getMainCanvasObject(node)!
       const prevCO = co.previousSibling
       if (prevCO) {
         let tmp
@@ -1152,7 +1150,7 @@ class ZOrderInputHandler extends InputHandlerBase<INode, number> {
   }
 
   public applyDefault(context: IParseContext): void {
-    const key = context.getCurrent(INode.$class) as INode
+    const key = context.getCurrent(INode.$class)!
     this.setValue(context, key, 0)
   }
 }

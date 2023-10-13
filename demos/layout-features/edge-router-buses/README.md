@@ -35,7 +35,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-The [Bus Routing Demo](../../layout/busrouting/index.html) is a more complex demo that shows the bus-style routing feature. More features offered by the EdgeRouter algorithm are shown by the [Layout Styles Demo](../../showcase/layoutstyles/index.html).
+The [Bus Routing Demo](../../layout/busrouting/) is a more complex demo that shows the bus-style routing feature. More features offered by the EdgeRouter algorithm are shown by the [Layout Styles Demo](../../showcase/layoutstyles/).
 
 ### Documentation
 

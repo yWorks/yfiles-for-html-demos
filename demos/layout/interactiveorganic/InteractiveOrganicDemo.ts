@@ -29,6 +29,7 @@
 import {
   Animator,
   CopiedLayoutGraph,
+  GraphBuilder,
   GraphComponent,
   GraphConnectivity,
   GraphEditorInputMode,
@@ -51,6 +52,8 @@ import { InteractiveOrganicFastEdgeStyle, InteractiveOrganicFastNodeStyle } from
 import { applyDemoTheme } from 'demo-resources/demo-styles'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
+import type { JSONGraph } from 'demo-utils/json-model'
+import graphData from './graph-data.json'
 
 /**
  * The GraphComponent.
@@ -93,21 +96,47 @@ async function run(): Promise<void> {
 
   graphComponent.inputMode = createEditorMode()
 
-  initializeDefaultStyles(graphComponent.graph)
+  const graph = graphComponent.graph
 
-  createSampleGraph(graphComponent.graph)
+  initializeDefaultStyles(graph)
 
-  // center the initial graph
+  // build the graph from the given data set
+  buildGraph(graph, graphData)
+
+  // center the graph
   graphComponent.fitGraphBounds()
 
+  // enable undo after the initial graph was populated since we don't want to allow undoing that
+  graph.undoEngineEnabled = true
+
   // create a copy of the graph for the layout algorithm
-  copiedLayoutGraph = new LayoutGraphAdapter(graphComponent.graph).createCopiedLayoutGraph()
+  copiedLayoutGraph = new LayoutGraphAdapter(graph).createCopiedLayoutGraph()
 
   // create and start the layout algorithm
   layout = startLayout()
   wakeUp()
 
-  addListeners(graphComponent.graph)
+  addListeners(graph)
+}
+
+/**
+ * Creates nodes and edges according to the given data.
+ */
+function buildGraph(graph: IGraph, graphData: JSONGraph): void {
+  const graphBuilder = new GraphBuilder(graph)
+
+  graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: item => item.id
+  })
+
+  graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: item => item.source,
+    targetId: item => item.target
+  })
+
+  graphBuilder.buildGraph()
 }
 
 /**
@@ -126,12 +155,12 @@ function initializeDefaultStyles(graph: IGraph): void {
  * in the given graph.
  */
 function addListeners(graph: IGraph): void {
-  graph.addNodeCreatedListener((source, args) => {
+  graph.addNodeCreatedListener((_, evt) => {
     if (layout !== null) {
-      const center = args.item.layout.center
+      const center = evt.item.layout.center
       synchronize()
       // we nail down all newly created nodes
-      const copiedNode = copiedLayoutGraph.getCopiedNode(args.item)!
+      const copiedNode = copiedLayoutGraph.getCopiedNode(evt.item)!
       layout.setCenter(copiedNode, center.x, center.y)
       layout.setInertia(copiedNode, 1)
       layout.setStress(copiedNode, 0)
@@ -182,7 +211,7 @@ function createEditorMode(): IInputMode {
  */
 function initMoveMode(moveInputMode: MoveInputMode): void {
   // register callbacks to notify the organic layout of changes
-  moveInputMode.addDragStartedListener(sender => onMoveInitialized(sender.affectedItems))
+  moveInputMode.addDragStartedListener(dragStarted => onMoveInitialized(dragStarted.affectedItems))
   moveInputMode.addDragCanceledListener(onMoveCanceled)
   moveInputMode.addDraggedListener(onMoving)
   moveInputMode.addDragFinishedListener(onMovedFinished)
@@ -320,7 +349,7 @@ function startLayout(): InteractiveOrganicLayout {
   animator.autoInvalidation = false
   animator.allowUserInteraction = true
 
-  animator.animate(() => {
+  void animator.animate(() => {
     layoutContext.continueLayout(20)
     if (organicLayout.commitPositionsSmoothly(50, 0.05) > 0) {
       graphComponent.updateVisual()
@@ -380,42 +409,6 @@ function increaseHeat(
     const oldStress = layoutAlgorithm.getStress(neighbor)
     layoutAlgorithm.setStress(neighbor, Math.min(1, oldStress + delta))
   }
-}
-
-/**
- * Creates sample graph.
- */
-function createSampleGraph(graph: IGraph): void {
-  const nodes: INode[] = []
-  for (let i = 0; i < 20; i++) {
-    nodes[i] = graph.createNode()
-  }
-
-  graph.createEdge(nodes[0], nodes[11])
-  graph.createEdge(nodes[0], nodes[8])
-  graph.createEdge(nodes[0], nodes[19])
-  graph.createEdge(nodes[0], nodes[2])
-  graph.createEdge(nodes[11], nodes[4])
-  graph.createEdge(nodes[11], nodes[18])
-  graph.createEdge(nodes[8], nodes[7])
-  graph.createEdge(nodes[19], nodes[13])
-  graph.createEdge(nodes[19], nodes[2])
-  graph.createEdge(nodes[19], nodes[17])
-  graph.createEdge(nodes[19], nodes[15])
-  graph.createEdge(nodes[19], nodes[10])
-  graph.createEdge(nodes[13], nodes[7])
-  graph.createEdge(nodes[13], nodes[17])
-  graph.createEdge(nodes[2], nodes[15])
-  graph.createEdge(nodes[2], nodes[1])
-  graph.createEdge(nodes[4], nodes[18])
-  graph.createEdge(nodes[16], nodes[6])
-  graph.createEdge(nodes[7], nodes[14])
-  graph.createEdge(nodes[17], nodes[5])
-  graph.createEdge(nodes[15], nodes[10])
-  graph.createEdge(nodes[15], nodes[12])
-  graph.createEdge(nodes[6], nodes[9])
-  graph.createEdge(nodes[5], nodes[3])
-  graph.createEdge(nodes[5], nodes[9])
 }
 
 run().then(finishLoading)

@@ -112,7 +112,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
   graphComponent.inputMode = inputMode
 
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((sender, evt) => {
+  inputMode.addNodeCreatedListener((_, evt) => {
     const node = evt.item
     graphComponent.graph.addLabel(node, styleToText(node.style as ArrowNodeStyle))
   })
@@ -133,7 +133,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     node =>
       new NodeReshapeHandleProvider(
         node,
-        node.lookup(IReshapeHandler.$class) as IReshapeHandler,
+        node.lookup(IReshapeHandler.$class)!,
         HandlePositions.EAST | HandlePositions.SOUTH | HandlePositions.SOUTH_EAST
       )
   )

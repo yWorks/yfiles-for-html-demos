@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# 05 Render Performance - Label Style Implementation Tutorial
+# 05 Render Performance - Tutorial: Label Style Implementation
 
 # Improving rendering performance
 
@@ -149,4 +149,4 @@ Note
 
 Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame-rates during animations and interactive gestures.
 
-[06 Text Alignment](../../tutorial-style-implementation-label/06-text-alignment/index.html)
+[06 Text Alignment](../../tutorial-style-implementation-label/06-text-alignment/)

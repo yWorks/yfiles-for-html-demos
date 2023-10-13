@@ -111,7 +111,7 @@ function configureDragAndDrop() {
  */
 function initializeDragAndDropPanel() {
   // retrieve the panel element
-  const panel = document.getElementById('drag-and-drop-panel')
+  const panel = document.querySelector('#drag-and-drop-panel')
 
   // prepare node styles for the palette
   const defaultNodeStyle = graphComponent.graph.nodeDefaults.style
@@ -164,8 +164,8 @@ function addNodeVisual(style, panel) {
     // Within the GraphComponent, it draws its own preview node. Therefore, we need to hide the additional
     // preview element that is used outside the GraphComponent.
     // The GraphComponent uses its own preview node to support features like snap lines or snapping of the dragged node.
-    dragSource.addQueryContinueDragListener((src, args) => {
-      if (args.dropTarget === null) {
+    dragSource.addQueryContinueDragListener((_, evt) => {
+      if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
         dragPreview.classList.add('hidden')

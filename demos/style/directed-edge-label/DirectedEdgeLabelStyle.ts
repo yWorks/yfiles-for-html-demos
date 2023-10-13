@@ -83,7 +83,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
    */
   createVisual(context: IRenderContext, label: ILabel): SvgVisual {
     // Create a 'g' element and uses it as base for the rendering of the label.
-    const container = document.createElementNS(SVG_NAMESPACE, 'g') as SVGElement
+    const container = document.createElementNS(SVG_NAMESPACE, 'g')
 
     // Get the necessary data for rendering of the label
     const cache = DirectedEdgeLabelStyle.createRenderDataCache(

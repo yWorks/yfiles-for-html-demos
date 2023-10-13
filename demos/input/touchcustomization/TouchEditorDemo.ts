@@ -192,9 +192,9 @@ function configureLassoSelection(geim: GraphEditorInputMode): void {
   // configure tap-down start gesture for lasso selection
   let lastTapLocation = Point.ORIGIN
   let lastTapTime = new Date()
-  geim.tapInputMode.addTappedListener((sender, args) => {
+  geim.tapInputMode.addTappedListener((_, evt) => {
     // remember the location and time of the last tap
-    lastTapLocation = args.location
+    lastTapLocation = evt.location
     lastTapTime = new Date()
   })
   geim.lassoSelectionInputMode.prepareRecognizerTouch = (sender, args) => {
@@ -317,7 +317,7 @@ function initializeContextMenu(geim: GraphEditorInputMode): void {
 
   // Add an event listener that populates the context menu according to the hit elements or cancels showing a menu.
   // In this demo, we add item-specific menu entries for nodes, edges, and the empty canvas
-  geim.addPopulateItemContextMenuListener((sender, args) => populateContextMenu(contextMenu, args))
+  geim.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
 
   // Add a listener that closes the menu when the input mode requests this
   geim.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
@@ -637,11 +637,11 @@ function configureSelectionIndication(graphComponent: GraphComponent): void {
     )
   })
 
-  graphComponent.selection.addItemSelectionChangedListener((sender, args) => {
-    const item = args.item
-    if (args.itemSelected && item instanceof IEdge) {
+  graphComponent.selection.addItemSelectionChangedListener((selectionSender, evt) => {
+    const item = evt.item
+    if (evt.itemSelected && item instanceof IEdge) {
       for (const bend of item.bends) {
-        sender.setSelected(bend, true)
+        selectionSender.setSelected(bend, true)
       }
     }
   })

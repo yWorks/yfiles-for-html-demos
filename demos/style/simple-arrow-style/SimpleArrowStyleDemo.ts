@@ -90,8 +90,8 @@ function createGraphMLIOHandler(graphComponent: GraphComponent) {
     TaperedArrowExtension.$class
   )
   // a serialization listener that must be added when the custom arrow style is serialized
-  graphMLIOHandler.addHandleSerializationListener((sender, args) => {
-    const item = args.item
+  graphMLIOHandler.addHandleSerializationListener((_, evt) => {
+    const item = evt.item
     if (!(item instanceof TaperedArrow)) {
       return
     }
@@ -101,8 +101,8 @@ function createGraphMLIOHandler(graphComponent: GraphComponent) {
     markupExtension.length = item.length
     markupExtension.fill = item.fill
 
-    args.context.serializeReplacement(TaperedArrowExtension.$class, item, markupExtension)
-    args.handled = true
+    evt.context.serializeReplacement(TaperedArrowExtension.$class, item, markupExtension)
+    evt.handled = true
   })
 }
 
